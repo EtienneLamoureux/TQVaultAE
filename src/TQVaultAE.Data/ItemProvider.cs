@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using TQVaultAE.Config;
+using TQVaultAE.Domain.Comparison;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Jitter;
@@ -497,12 +498,18 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 				static (string, GameAttributeSlot, string?)[] Lines(string[] texts, List<GameAttributeSlot> slots, string?[] lineRanges)
 					=> [.. texts.Select((text, i) => (text, slots[i], i < lineRanges.Length ? lineRanges[i] : null))];
 
-				var classic = GameAttributeOrder.MergeWithRanges(GameAttributeOrder.ClassOf(k.Item)
+				var classic = GameAttributeOrder.MergeWithSources(GameAttributeOrder.ClassOf(k.Item)
 					, Lines(res.BaseAttributes, baseSlots, res.BaseAttributeRanges)
 					, Lines(res.PrefixAttributes, prefixSlots, res.PrefixAttributeRanges)
 					, Lines(res.SuffixAttributes, suffixSlots, res.SuffixAttributeRanges));
 				res.ClassicAttributes = [.. classic.Select(l => l.Text)];
 				res.ClassicAttributeRanges = inGame is null ? [] : [.. classic.Select(l => l.Range)];
+				res.ClassicAttributeSources = [.. classic.Select(l => l.Source switch
+				{
+					1 => StatSource.Prefix,
+					2 => StatSource.Suffix,
+					_ => StatSource.Base,
+				})];
 			}
 
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)

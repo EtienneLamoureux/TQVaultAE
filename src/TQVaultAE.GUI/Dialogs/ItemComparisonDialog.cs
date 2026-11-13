@@ -11,7 +11,8 @@ namespace TQVaultAE.GUI.Dialogs;
 
 /// <summary>
 /// Two items side by side in four columns: the first item's differences, its picture and classic tooltip, the second
-/// item's picture and classic tooltip, the second item's differences, under a toolbar ("Align rows", "Hide unchanged").
+/// item's picture and classic tooltip, the second item's differences, under a toolbar ("Align rows", "Hide unchanged",
+/// "Show sources"); a click on a stat with sources shows or hides them for that stat.
 /// The content is decided by <see cref="ItemComparisonContentBuilder"/>; this dialog only draws its lines, with the rows
 /// of the item tooltip, in the TQ border of the other dialogs.
 /// </summary>
@@ -31,6 +32,10 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private readonly FlowLayoutPanel _toolbar;
 	private readonly CheckBox _alignRows;
 	private readonly CheckBox _hideUnchanged;
+	private readonly CheckBox _showSources;
+
+	/// <summary>The stats whose sources were clicked open or closed against "Show sources"; emptied when it changes.</summary>
+	private readonly HashSet<string> _toggled = new(StringComparer.Ordinal);
 
 	/// <summary>The first item, set before the dialog is shown.</summary>
 	public Item First { get; set; } = null!;
@@ -42,7 +47,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	internal ItemComparisonContent? Content { get; private set; }
 
 	/// <summary>The toolbar choices.</summary>
-	internal ItemComparisonOptions Options => new(this._alignRows.Checked, this._hideUnchanged.Checked);
+	internal ItemComparisonOptions Options => new(this._alignRows.Checked, this._hideUnchanged.Checked, this._showSources.Checked);
 
 	public ItemComparisonDialog(MainForm instance, IItemComparisonService comparisonService) : base(instance.Services)
 	{
@@ -127,6 +132,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		var saved = ItemComparisonOptions.From(this.USettings.ItemCompare);
 		this._alignRows = this.MakeToolbarCheckBox("alignRowsCheckBox", Resources.ItemComparisonAlignRows, saved.AlignRows);
 		this._hideUnchanged = this.MakeToolbarCheckBox("hideUnchangedCheckBox", Resources.ItemComparisonHideUnchanged, saved.HideUnchanged);
+		this._showSources = this.MakeToolbarCheckBox("showSourcesCheckBox", Resources.ItemComparisonShowSources, saved.ShowSources);
 		this._toolbar = new FlowLayoutPanel()
 		{
 			Dock = DockStyle.Top,
@@ -140,6 +146,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		};
 		this._toolbar.Controls.Add(this._alignRows);
 		this._toolbar.Controls.Add(this._hideUnchanged);
+		this._toolbar.Controls.Add(this._showSources);
 
 		this.Controls.Add(this._scroll);
 		this.Controls.Add(this._toolbar);
@@ -158,6 +165,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this.FitToContent();
 		this._alignRows.CheckedChanged += this.OptionChanged;
 		this._hideUnchanged.CheckedChanged += this.OptionChanged;
+		this._showSources.CheckedChanged += this.OptionChanged;
 	}
 
 	/// <summary>A check box of the toolbar, in the dialog's font and colors.</summary>
@@ -177,16 +185,43 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 	private void OptionChanged(object? sender, EventArgs e)
 	{
+		// "Show sources" opens or closes them all: the stats clicked one by one start again from it.
+		if (sender == this._showSources)
+			this._toggled.Clear();
+
 		if (this.Options.ApplyTo(this.USettings))
 			this.USettings.Save();
 		this.Fill();
 		this.FitToContent();
 	}
 
+	/// <summary>
+	/// A click on a stat with sources (its marker, its difference or its item line): shows or hides them, once the click is
+	/// over (the rows are made again, the clicked one included).
+	/// </summary>
+	private void SourcesRowClicked(object? sender, EventArgs e)
+	{
+		if ((sender as Control)?.Tag is string key)
+			this.BeginInvoke(() => this.ToggleSources(key));
+	}
+
+	/// <summary>Shows or hides the sources of the stat <paramref name="key"/>, against "Show sources".</summary>
+	private void ToggleSources(string key)
+	{
+		if (!this._toggled.Remove(key))
+			this._toggled.Add(key);
+
+		// The rows under the click stay where they are: same scroll, the window grows from its top.
+		var scroll = this._scroll.AutoScrollPosition;
+		this.Fill();
+		this.FitToContent(keepLocation: true);
+		this._scroll.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
+	}
+
 	/// <summary>Compares <see cref="First"/> and <see cref="Second"/> and lays out the four columns.</summary>
 	internal ItemComparisonContent Fill()
 	{
-		var content = this._builder.Build(this._comparisonService.Compare(this.First, this.Second), this.Options);
+		var content = this._builder.Build(this._comparisonService.Compare(this.First, this.Second), this.Options, this._toggled);
 		this.Content = content;
 
 		this._table.SuspendLayout();
@@ -311,13 +346,32 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 		column.SuspendLayout();
 		foreach (var line in lines)
-			column.Controls.Add(BaseTooltip.MakeLineRow(this.UIService, this.FontService, line, ColumnColor));
+		{
+			var row = BaseTooltip.MakeLineRow(this.UIService, this.FontService, line, ColumnColor);
+			if (row is not null && line.ToggleKey is { } key)
+				this.MakeToggle(row, key);
+			column.Controls.Add(row);
+		}
+
 		column.ResumeLayout();
 		return column;
 	}
 
-	/// <summary>Sizes the dialog to its columns and border, within the working area of its screen; the rest scrolls.</summary>
-	private void FitToContent()
+	/// <summary>A row a click on shows or hides the sources of the stat <paramref name="key"/>, its colored pieces included.</summary>
+	private void MakeToggle(Control row, string key)
+	{
+		row.Tag = key;
+		row.Cursor = Cursors.Hand;
+		row.Click += this.SourcesRowClicked;
+		foreach (Control piece in row.Controls)
+			this.MakeToggle(piece, key);
+	}
+
+	/// <summary>
+	/// Sizes the dialog to its columns and border, within the working area of its screen; the rest scrolls. Centered on
+	/// its owner, or where it is (kept within the working area) when <paramref name="keepLocation"/>.
+	/// </summary>
+	private void FitToContent(bool keepLocation = false)
 	{
 		var area = Screen.FromControl(this.Owner ?? this).WorkingArea;
 		var table = this._table.PreferredSize;
@@ -336,7 +390,13 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			height = Math.Min(height + SystemInformation.GetHorizontalScrollBarHeightForDpi(this.DeviceDpi), maxHeight);
 
 		this.ClientSize = new Size(width, height);
-		if (this.Owner is not null)
+		if (keepLocation)
+		{
+			this.Location = new Point(
+				Math.Clamp(this.Left, area.Left, Math.Max(area.Left, area.Right - this.Width)),
+				Math.Clamp(this.Top, area.Top, Math.Max(area.Top, area.Bottom - this.Height)));
+		}
+		else if (this.Owner is not null)
 		{
 			var owner = this.Owner.Bounds;
 			this.StartPosition = FormStartPosition.Manual;

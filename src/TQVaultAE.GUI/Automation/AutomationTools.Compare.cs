@@ -13,7 +13,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "compare_items", ReadOnly = true)]
-	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged; empty keeps the last ones), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
+	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged, showSources; empty keeps the last ones) and per-stat source clicks (toggle), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
 	public static IEnumerable<ContentBlock> CompareItems(
 		[Description("Panel id of the first item.")] string panel,
 		[Description("Cell column of the first item.")] int x,
@@ -24,7 +24,9 @@ internal static partial class AutomationTools
 		[Description("PNG file the capture is also written to; empty for a temporary file.")] string? path = null,
 		[Description("Leave the dialog open.")] bool keepOpen = false,
 		[Description("The 'Align rows' check box; empty keeps the last choice.")] bool? alignRows = null,
-		[Description("The 'Hide unchanged' check box; empty keeps the last choice.")] bool? hideUnchanged = null)
+		[Description("The 'Hide unchanged' check box; empty keeps the last choice.")] bool? hideUnchanged = null,
+		[Description("The 'Show sources' check box; empty keeps the last choice.")] bool? showSources = null,
+		[Description("Rows to click, like the user, to show or hide one stat's sources: '|'-separated texts, each the start of a clickable row's text (difference or item line of a stat with sources, white space trimmed), clicked in order after the check boxes.")] string? toggle = null)
 	{
 		var (json, png, size) = AutomationHost.OnUi(main =>
 		{
@@ -46,8 +48,26 @@ internal static partial class AutomationTools
 					((CheckBox)dialog.Controls.Find("alignRowsCheckBox", true).Single()).Checked = align;
 				if (hideUnchanged is { } hide)
 					((CheckBox)dialog.Controls.Find("hideUnchangedCheckBox", true).Single()).Checked = hide;
+				if (showSources is { } sources)
+					((CheckBox)dialog.Controls.Find("showSourcesCheckBox", true).Single()).Checked = sources;
 
 				var table = dialog.Controls.Find("comparisonTable", true).Single();
+				var toggled = new List<string>();
+				foreach (var text in (toggle ?? string.Empty).Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				{
+					// A row the dialog made clickable: its key in Tag and the hand cursor, as the mouse finds it.
+					var row = ItemComparisonDialog.ColumnNames.SelectMany(n => table.Controls[n]!.Controls.Cast<Control>())
+						.FirstOrDefault(c => c.Tag is string && c.Cursor == Cursors.Hand && RowText(c).TrimStart().StartsWith(text, StringComparison.Ordinal))
+						?? throw new McpException($"No clickable row starts with '{text}'.");
+					// The rows are made again: read the clicked one first. The mouse lands on a label: the row's first
+					// colored piece for a row in pieces. Its click handler shows or hides the sources once the click
+					// is over (posted to the message loop): let the loop run it.
+					toggled.Add(RowText(row).Trim());
+					var target = row is Label || row.Controls.Count == 0 ? row : row.Controls[0];
+					ClickMethod.Invoke(target, [EventArgs.Empty]);
+					System.Windows.Forms.Application.DoEvents();
+				}
+
 				var columns = ItemComparisonDialog.ColumnNames.ToDictionary(n => n, n =>
 				{
 					var recorder = new ItemTooltipRecorder();
@@ -69,6 +89,7 @@ internal static partial class AutomationTools
 					first = DescribeItem(item1, null),
 					second = DescribeItem(item2, null),
 					options = dialog.Options,
+					toggled,
 					dialogSize = new { dialog.Width, dialog.Height },
 					contentSize = new { table.Width, table.Height },
 					columns,
@@ -97,6 +118,14 @@ internal static partial class AutomationTools
 			new TextContentBlock { Text = $"capture: {size.Width}x{size.Height} px, saved to {file}" },
 		];
 	}
+
+	/// <summary><c>Control.OnClick</c>, which raises the control's Click event as a mouse click does.</summary>
+	private static readonly System.Reflection.MethodInfo ClickMethod = typeof(Control).GetMethod("OnClick",
+		System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, [typeof(EventArgs)])!;
+
+	/// <summary>The text of a comparison row: a label's, or its colored pieces' put together.</summary>
+	private static string RowText(Control row)
+		=> row is Label ? row.Text : string.Concat(row.Controls.Cast<Control>().Select(c => c.Text));
 
 	[McpServerTool(Name = "compare_click", Destructive = true)]
 	[Description("Clicks a cell of a panel like the user while the compare selection may be on (started by the item menu's 'Compare' entry: context_menu_click(panel, x, y, 'Compare')). Left on an item: picks the second item and opens the comparison dialog (modal, after the call returns: drive it with set_control / control_values / capture('Item Comparison') and close it with close_dialog('Item Comparison', 'OK')); left on the first item ends the selection; left on an empty cell keeps it; right cancels it. Without the selection on, a left click picks the item up like pick_item. Returns the compare selection before and after.")]

@@ -32,7 +32,23 @@ public enum StatPresence
 /// <param name="Presence">Which items have the stat.</param>
 /// <param name="Key">The stat's <see cref="StatLine.Key"/>, to find the line of the item tooltip it belongs to.</param>
 /// <param name="LowerIsBetter">Lower numbers are better for this stat (requirements, energy cost, recharge).</param>
-public sealed record StatDifference(string Text, StatTrend Trend, StatPresence Presence, string Key = "", bool LowerIsBetter = false);
+public sealed record StatDifference(string Text, StatTrend Trend, StatPresence Presence, string Key = "", bool LowerIsBetter = false)
+{
+	/// <summary>
+	/// The difference source by source (base item, prefix, suffix, each relic slot, each completion bonus), when the stat
+	/// comes from more than one source on either item; empty otherwise. The sources of both items are matched by role.
+	/// </summary>
+	public IReadOnlyList<StatSourceDifference> Sources { get; init; } = [];
+}
+
+/// <summary>
+/// What one source gives to a stat on this item against what the same source gives on the other item.
+/// </summary>
+/// <param name="Source">The source, matched by role on both items.</param>
+/// <param name="Text">The difference, written as <see cref="StatDifference.Text"/> (a source on one item only counts 0 on the other).</param>
+/// <param name="Trend">Which way the numbers go.</param>
+/// <param name="Own">This item's own line for that source as the item writes it; null when this item has no such source.</param>
+public sealed record StatSourceDifference(StatSource Source, string Text, StatTrend Trend, string? Own);
 
 /// <summary>
 /// The differences of one group.
@@ -90,7 +106,7 @@ public static class ItemStatComparer
 		foreach (var group in otherGroups)
 		{
 			var diff = new StatDifferenceGroup(group.Kind, group.Title, group.LowerIsBetter
-				, [.. group.Stats.Select(s => OnlyOther(s, IsLowerBetter(group, s, lowerIsBetter)))]);
+				, [.. group.Stats.Select(s => WithSources(OnlyOther(s, IsLowerBetter(group, s, lowerIsBetter)), null, s))]);
 			int at = result.FindIndex(g => g.Kind == StatGroupKind.Requirements);
 			if (at >= 0 && group.Kind != StatGroupKind.Requirements)
 				result.Insert(at, diff);
@@ -116,29 +132,64 @@ public static class ItemStatComparer
 		foreach (var stat in self.Stats)
 		{
 			bool lower = IsLowerBetter(self, stat, lowerIsBetter);
-			if (!otherByKey.Remove(stat.Key, out var otherStat))
-			{
-				lines.Add(OnlyThis(stat, lower));
-				continue;
-			}
-
-			var values = stat.Values.Zip(otherStat.Values, (a, b) => a - b).ToArray();
-			var decimals = stat.Decimals.Zip(otherStat.Decimals, Math.Max).ToArray();
-			var separator = stat.Decimals.Any(d => d > 0) ? stat.DecimalSeparator : otherStat.DecimalSeparator;
-			var trend = TrendOf(values);
-
-			// Unchanged: the stat as the item shows it.
-			var text = trend == StatTrend.Unchanged
-				? stat.FormatOwn()
-				: (stat with { DecimalSeparator = separator }).FormatDifference(values, decimals);
-			lines.Add(new StatDifference(text, trend, StatPresence.Both, stat.Key, lower));
+			otherByKey.Remove(stat.Key, out var otherStat);
+			lines.Add(WithSources(Difference(stat, otherStat, lower), stat, otherStat));
 		}
 
 		// What only the other item has, in its order.
 		if (other is not null)
-			lines.AddRange(other.Stats.Where(s => otherByKey.ContainsKey(s.Key)).Select(s => OnlyOther(s, IsLowerBetter(other, s, lowerIsBetter))));
+		{
+			lines.AddRange(other.Stats.Where(s => otherByKey.ContainsKey(s.Key))
+				.Select(s => WithSources(OnlyOther(s, IsLowerBetter(other, s, lowerIsBetter)), null, s)));
+		}
 
 		return lines;
+	}
+
+	/// <summary>
+	/// <paramref name="stat"/> minus <paramref name="other"/>: the difference when both items have the stat, the stat fully
+	/// plus or fully minus when only one has it.
+	/// </summary>
+	private static StatDifference Difference(StatLine? stat, StatLine? other, bool lower)
+	{
+		if (stat is null)
+			return OnlyOther(other!, lower);
+		if (other is null)
+			return OnlyThis(stat, lower);
+
+		var values = stat.Values.Zip(other.Values, (a, b) => a - b).ToArray();
+		var decimals = stat.Decimals.Zip(other.Decimals, Math.Max).ToArray();
+		var separator = stat.Decimals.Any(d => d > 0) ? stat.DecimalSeparator : other.DecimalSeparator;
+		var trend = TrendOf(values);
+
+		// Unchanged: the stat as the item shows it.
+		var text = trend == StatTrend.Unchanged
+			? stat.FormatOwn()
+			: (stat with { DecimalSeparator = separator }).FormatDifference(values, decimals);
+		return new StatDifference(text, trend, StatPresence.Both, stat.Key, lower);
+	}
+
+	/// <summary>
+	/// Adds to <paramref name="total"/> the difference source by source, when <paramref name="stat"/> (this item's, or
+	/// null) and <paramref name="other"/> (the other item's, or null) come from more than one source between them. Each
+	/// source is compared as the totals are, a source on one item only counting 0 on the other.
+	/// </summary>
+	private static StatDifference WithSources(StatDifference total, StatLine? stat, StatLine? other)
+	{
+		var sources = (stat?.Sources ?? []).Concat(other?.Sources ?? []).Select(p => p.Source).Distinct().Order().ToList();
+		if (sources.Count < 2)
+			return total;
+
+		return total with
+		{
+			Sources = [.. sources.Select(source =>
+			{
+				var own = stat?.Sources.FirstOrDefault(p => p.Source == source)?.Line;
+				var theirs = other?.Sources.FirstOrDefault(p => p.Source == source)?.Line;
+				var difference = Difference(own, theirs, total.LowerIsBetter);
+				return new StatSourceDifference(source, difference.Text, difference.Trend, own?.FormatOwn());
+			})],
+		};
 	}
 
 	/// <summary>Lower is better for the whole group (requirements), or for this stat.</summary>

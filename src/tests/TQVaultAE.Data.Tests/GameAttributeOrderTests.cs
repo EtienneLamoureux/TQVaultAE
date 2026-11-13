@@ -216,6 +216,21 @@ public class GameAttributeOrderTests
 	}
 
 	[Fact]
+	public void MergeWithSources_EachLineKeepsTheListItCameFrom_RacialBonusesIncluded()
+	{
+		var racial = GameAttributeOrder.SlotOf("racialBonusPercentDamage", null, false, true);
+
+		var merged = GameAttributeOrder.MergeWithSources(GameItemClass.Weapon
+			, [("base racial", racial, null), ("base damage", BaseDamage, null)]
+			, [("prefix racial", racial, null)]
+			, [("suffix racial", racial, null), ("strength", Strength, null)]);
+
+		// The game lists the racial bonuses prefix first, but each line still belongs to its record.
+		merged.Select(l => (l.Text, l.Source)).Should().Equal(
+			("base damage", 0), ("", 0), ("strength", 2), ("prefix racial", 1), ("suffix racial", 2), ("base racial", 0));
+	}
+
+	[Fact]
 	public void SlotOf_UnknownAttribute_IsListedLast()
 		=> GameAttributeOrder.SlotOf("someNewAttribute", null, false, true).Should().Be(GameAttributeSlot.Other);
 }

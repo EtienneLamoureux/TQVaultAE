@@ -286,4 +286,122 @@ public class ItemStatComparerTests
 		Compare(first, second).FirstMinusSecond.Select(g => g.Kind)
 			.Should().Equal(StatGroupKind.GrantedSkill, StatGroupKind.Requirements);
 	}
+
+	#region Sources
+
+	private static IEnumerable<(StatSource, string, StatTrend, string?)> SourcesOf(StatDifference line)
+		=> line.Sources.Select(s => (s.Source, s.Text, s.Trend, s.Own));
+
+	[Fact]
+	public void Compare_SameTotalFromARelic_IsUnchangedButEachSourceShowsItsPart()
+	{
+		var first = Texts(["20% Pierce Resistance"]);
+		first.Relic1Attributes = ["15% Pierce Resistance"];
+		var second = Texts(["35% Pierce Resistance"]);
+
+		var result = Compare(first, second);
+
+		var total = result.FirstMinusSecond.Single().Lines.Single();
+		(total.Text, total.Trend).Should().Be(("35% Pierce Resistance", StatTrend.Unchanged));
+		SourcesOf(total).Should().Equal(
+			(StatSource.Base, "-15% Pierce Resistance", StatTrend.Lower, "20% Pierce Resistance"),
+			(StatSource.Relic1, "+15% Pierce Resistance", StatTrend.Higher, "15% Pierce Resistance"));
+
+		// The other side: the relic slot it does not have counts 0.
+		SourcesOf(result.SecondMinusFirst.Single().Lines.Single()).Should().Equal(
+			(StatSource.Base, "+15% Pierce Resistance", StatTrend.Higher, "35% Pierce Resistance"),
+			(StatSource.Relic1, "-15% Pierce Resistance", StatTrend.Lower, null));
+	}
+
+	[Fact]
+	public void Compare_ClassicLinesKeepTheirAffix_SameSourcesMatchedByRole()
+	{
+		var first = Texts(["+10 Strength", "+5 Strength"]);
+		first.ClassicAttributeSources = [StatSource.Prefix, StatSource.Suffix];
+		var second = Texts(["+12 Strength"]);
+		second.ClassicAttributeSources = [StatSource.Suffix];
+
+		var line = Compare(first, second).FirstMinusSecond.Single().Lines.Single();
+
+		line.Text.Should().Be("+3 Strength");
+		SourcesOf(line).Should().Equal(
+			(StatSource.Prefix, "+10 Strength", StatTrend.Higher, "+10 Strength"),
+			(StatSource.Suffix, "-7 Strength", StatTrend.Lower, "+5 Strength"));
+	}
+
+	[Fact]
+	public void Compare_WithoutClassicLines_BasePrefixAndSuffixAreTheirOwnSources()
+	{
+		var first = new ToFriendlyNameResult(new Item())
+		{
+			BaseAttributes = ["+10 Strength"],
+			PrefixAttributes = ["+4 Strength"],
+			SuffixAttributes = ["+1 Strength"],
+			RelicBonus1Attributes = ["+2 Strength"],
+			Relic2Attributes = ["+3 Strength"],
+			RelicBonus2Attributes = ["+5 Strength"],
+		};
+		var second = Texts(["+10 Strength"]);
+
+		var line = Compare(first, second).FirstMinusSecond.Single().Lines.Single();
+
+		line.Text.Should().Be("+15 Strength");
+		line.Sources.Select(s => (s.Source, s.Text)).Should().Equal(
+			(StatSource.Base, "+10 Strength"),
+			(StatSource.Prefix, "+4 Strength"),
+			(StatSource.Suffix, "+1 Strength"),
+			(StatSource.RelicBonus1, "+2 Strength"),
+			(StatSource.Relic2, "+3 Strength"),
+			(StatSource.RelicBonus2, "+5 Strength"));
+	}
+
+	[Fact]
+	public void Compare_OneSourceOnBothItems_HasNoSources()
+	{
+		var first = Texts(["+42 Strength"]);
+		first.Relic1Attributes = ["+10% Attack Speed"];
+		var second = Texts(["+30 Strength", "+5% Attack Speed"]);
+
+		var lines = Compare(first, second).FirstMinusSecond.Single().Lines;
+
+		// Strength from the base on both; the attack speed from the relic on one, the base on the other: two sources.
+		lines.Single(l => l.Text.Contains("Strength", StringComparison.Ordinal)).Sources.Should().BeEmpty();
+		lines.Single(l => l.Text.Contains("Attack Speed", StringComparison.Ordinal)).Sources.Select(s => s.Source)
+			.Should().Equal(StatSource.Base, StatSource.Relic1);
+	}
+
+	[Fact]
+	public void Compare_StatOnlyOneItemHas_FromTwoSources_EachSourceAgainstNothing()
+	{
+		var first = Texts(["+42 Strength"]);
+		var second = Texts(["+42 Strength", "+10 Dexterity"]);
+		second.Relic2Attributes = ["+5 Dexterity"];
+
+		var mine = Compare(first, second).FirstMinusSecond.Single().Lines.Single(l => l.Presence == StatPresence.OnlyOther);
+		var theirs = Compare(first, second).SecondMinusFirst.Single().Lines.Single(l => l.Presence == StatPresence.OnlyThis);
+
+		mine.Text.Should().Be("-15 Dexterity");
+		SourcesOf(mine).Should().Equal(
+			(StatSource.Base, "-10 Dexterity", StatTrend.Lower, null),
+			(StatSource.Relic2, "-5 Dexterity", StatTrend.Lower, null));
+		SourcesOf(theirs).Should().Equal(
+			(StatSource.Base, "+10 Dexterity", StatTrend.Higher, "+10 Dexterity"),
+			(StatSource.Relic2, "+5 Dexterity", StatTrend.Higher, "+5 Dexterity"));
+	}
+
+	[Fact]
+	public void From_TwoLinesOfOneSource_SummedInThatSource()
+	{
+		var texts = Texts(["+10 Strength"]);
+		texts.Relic1Attributes = ["+2 Strength"];
+		texts.RelicBonus1Attributes = ["+3 Strength", "+1 Strength"];
+
+		var stat = ItemStatSheet.From(texts).Groups.Single().Stats.Single();
+
+		stat.Values.Should().Equal(16m);
+		stat.Sources.Select(p => (p.Source, p.Line.Values.Single())).Should().Equal(
+			(StatSource.Base, 10m), (StatSource.Relic1, 2m), (StatSource.RelicBonus1, 4m));
+	}
+
+	#endregion
 }

@@ -2301,6 +2301,42 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show sources.
+        /// </summary>
+        public static string ItemComparisonShowSources {
+            get {
+                return ResourceManager.GetString("ItemComparisonShowSources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Completion bonus {0}.
+        /// </summary>
+        public static string ItemComparisonSourceBonus {
+            get {
+                return ResourceManager.GetString("ItemComparisonSourceBonus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        public static string ItemComparisonSourceLine {
+            get {
+                return ResourceManager.GetString("ItemComparisonSourceLine", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Relic or charm {0}.
+        /// </summary>
+        public static string ItemComparisonSourceRelic {
+            get {
+                return ResourceManager.GetString("ItemComparisonSourceRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item Comparison.
         /// </summary>
         public static string ItemComparisonText {

@@ -1,5 +1,6 @@
 ﻿﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using TQVaultAE.Domain.Comparison;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -205,6 +206,13 @@ public partial class ToFriendlyNameResult
 	/// Same length as <see cref="ClassicAttributes"/>, or empty without in-game values.
 	/// </summary>
 	public string?[] ClassicAttributeRanges { get; internal set; } = [];
+
+	/// <summary>
+	/// The record each <see cref="ClassicAttributes"/> line comes from (<see cref="StatSource.Base"/>,
+	/// <see cref="StatSource.Prefix"/> or <see cref="StatSource.Suffix"/>), for the item comparison's sources. Same length as
+	/// <see cref="ClassicAttributes"/>, or empty when they could not be merged.
+	/// </summary>
+	public StatSource[] ClassicAttributeSources { get; internal set; } = [];
 
 	/// <summary>
 	/// One line per value changed by the in-game jitter ("database → in-game"), when <c>ShowInGameValues</c> is on.

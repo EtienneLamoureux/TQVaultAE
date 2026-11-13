@@ -300,6 +300,19 @@ Would you like to restart TQVault?</value>
 	<data name="ItemComparisonNoDifference" xml:space="preserve">
     <value>No difference</value>
   </data>
+	<data name="ItemComparisonShowSources" xml:space="preserve">
+    <value>Show sources</value>
+  </data>
+	<data name="ItemComparisonSourceBonus" xml:space="preserve">
+    <value>Completion bonus {0}</value>
+  </data>
+	<data name="ItemComparisonSourceRelic" xml:space="preserve">
+    <value>Relic or charm {0}</value>
+  </data>
+	<data name="ItemComparisonSourceLine" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>A source under a compared stat: {0} the source (Base item, Prefix...), {1} its value</comment>
+  </data>
 	<data name="ItemComparisonText" xml:space="preserve">
     <value>Item Comparison</value>
   </data>

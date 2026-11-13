@@ -4,7 +4,7 @@ namespace TQVaultAE.Config;
 
 /// <summary>
 /// The toolbar choices of the item comparison dialog, saved as one element with attributes written 0 / 1 like the
-/// other switches of <c>UserConfig.xml</c>: <c>&lt;ItemCompare AlignRows="1" HideUnchanged="0" /&gt;</c>.
+/// other switches of <c>UserConfig.xml</c>: <c>&lt;ItemCompare AlignRows="1" HideUnchanged="0" ShowSources="0" /&gt;</c>.
 /// </summary>
 public class ItemCompareSettings
 {
@@ -15,6 +15,13 @@ public class ItemCompareSettings
 	/// <summary>The stats with the same numbers on both items are left out. Off by default.</summary>
 	[XmlIgnore]
 	public bool HideUnchanged { get; set; }
+
+	/// <summary>
+	/// Each stat summed from several sources (base item, affixes, relics, completion bonuses) shows them under its total.
+	/// Off by default.
+	/// </summary>
+	[XmlIgnore]
+	public bool ShowSources { get; set; }
 
 	/// <summary><see cref="AlignRows"/> as written in the file.</summary>
 	[XmlAttribute(nameof(AlignRows))]
@@ -30,5 +37,13 @@ public class ItemCompareSettings
 	{
 		get => XmlSwitch.Write(this.HideUnchanged);
 		set => this.HideUnchanged = XmlSwitch.Parse(value, this.HideUnchanged);
+	}
+
+	/// <summary><see cref="ShowSources"/> as written in the file.</summary>
+	[XmlAttribute(nameof(ShowSources))]
+	public string ShowSourcesValue
+	{
+		get => XmlSwitch.Write(this.ShowSources);
+		set => this.ShowSources = XmlSwitch.Parse(value, this.ShowSources);
 	}
 }

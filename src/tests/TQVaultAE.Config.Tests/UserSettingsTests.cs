@@ -58,7 +58,7 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(int) => -1000 - i,
 				var t when t == typeof(float) => 0.94945055F + i,
 				var t when t == typeof(double) => -0.123456789012345 - i,
-				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true },
+				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true, ShowSources = true },
 				var t when t == typeof(SortSettings) => new SortSettings { Algorithm = SackSortAlgorithm.Rarity, MergeRelics = true },
 				var t when t == typeof(KeyBindSettings) => KeyBinds(("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "")),
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
@@ -153,34 +153,40 @@ public sealed class UserSettingsTests : IDisposable
 
 		settings.ItemCompare.AlignRows.Should().BeTrue();
 		settings.ItemCompare.HideUnchanged.Should().BeFalse();
+		settings.ItemCompare.ShowSources.Should().BeFalse();
 	}
 
 	[Theory]
-	[InlineData("AlignRows='0' HideUnchanged='1'", false, true)]
-	[InlineData("AlignRows='true' HideUnchanged=' False '", true, false)]
-	[InlineData("HideUnchanged='1'", true, true)]
-	[InlineData("AlignRows='maybe'", true, false)]
-	public void ItemCompare_AttributesParsed_UnknownOrMissingKeepTheDefault(string attributes, bool alignRows, bool hideUnchanged)
+	[InlineData("AlignRows='0' HideUnchanged='1'", false, true, false)]
+	[InlineData("AlignRows='true' HideUnchanged=' False '", true, false, false)]
+	[InlineData("HideUnchanged='1'", true, true, false)]
+	[InlineData("AlignRows='maybe'", true, false, false)]
+	[InlineData("ShowSources='1'", true, false, true)]
+	[InlineData("ShowSources='maybe'", true, false, false)]
+	public void ItemCompare_AttributesParsed_UnknownOrMissingKeepTheDefault(string attributes, bool alignRows, bool hideUnchanged, bool showSources)
 	{
 		var settings = UserSettings.ParseSettings($"""<UserSettings><ItemCompare {attributes} /></UserSettings>""");
 
 		settings.ItemCompare.AlignRows.Should().Be(alignRows);
 		settings.ItemCompare.HideUnchanged.Should().Be(hideUnchanged);
+		settings.ItemCompare.ShowSources.Should().Be(showSources);
 	}
 
 	[Fact]
 	public void ItemCompare_SaveThenRead_OneElementWithZeroOneAttributes()
 	{
-		new UserSettings { ItemCompare = new ItemCompareSettings { AlignRows = false, HideUnchanged = true } }.Save(this._xmlPath);
+		new UserSettings { ItemCompare = new ItemCompareSettings { AlignRows = false, HideUnchanged = true, ShowSources = true } }.Save(this._xmlPath);
 
 		var element = XDocument.Load(this._xmlPath).Root!.Elements("ItemCompare").Should().ContainSingle().Subject;
 		element.Attribute("AlignRows")!.Value.Should().Be("0");
 		element.Attribute("HideUnchanged")!.Value.Should().Be("1");
+		element.Attribute("ShowSources")!.Value.Should().Be("1");
 		element.HasElements.Should().BeFalse();
 
 		var read = UserSettings.Read(this._xmlPath);
 		read.ItemCompare.AlignRows.Should().BeFalse();
 		read.ItemCompare.HideUnchanged.Should().BeTrue();
+		read.ItemCompare.ShowSources.Should().BeTrue();
 	}
 
 	#endregion

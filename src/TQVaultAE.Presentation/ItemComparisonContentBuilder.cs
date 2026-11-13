@@ -1,3 +1,4 @@
+using System.Globalization;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Comparison;
@@ -24,15 +25,23 @@ public sealed record ItemComparisonContent(
 	, bool Aligned = false);
 
 /// <summary>
+/// The two columns of one item in the aligned comparison (<see cref="ItemComparisonContentBuilder.AlignedColumns"/>).
+/// </summary>
+/// <param name="Item">The item's lines, with a row under a stat for each of its sources shown.</param>
+/// <param name="Differences">The difference lines, one per row of <paramref name="Item"/>, then those without a row.</param>
+public sealed record AlignedColumnPair(IReadOnlyList<TooltipLine> Item, IReadOnlyList<TooltipLine> Differences);
+
+/// <summary>
 /// The choices of the comparison dialog's toolbar.
 /// </summary>
 /// <param name="AlignRows">Puts each difference level with the item line of its stat.</param>
 /// <param name="HideUnchanged">Leaves out the stats both items have with the same numbers.</param>
-public sealed record ItemComparisonOptions(bool AlignRows = true, bool HideUnchanged = false)
+/// <param name="ShowSources">Shows under each stat summed from several sources what each source gives.</param>
+public sealed record ItemComparisonOptions(bool AlignRows = true, bool HideUnchanged = false, bool ShowSources = false)
 {
 	/// <summary>The choices saved in the user settings.</summary>
 	public static ItemComparisonOptions From(ItemCompareSettings? settings)
-		=> settings is null ? new() : new(settings.AlignRows, settings.HideUnchanged);
+		=> settings is null ? new() : new(settings.AlignRows, settings.HideUnchanged, settings.ShowSources);
 
 	/// <summary>
 	/// Writes these choices into <paramref name="settings"/>.
@@ -42,12 +51,24 @@ public sealed record ItemComparisonOptions(bool AlignRows = true, bool HideUncha
 	{
 		ArgumentNullException.ThrowIfNull(settings);
 		settings.ItemCompare ??= new ItemCompareSettings();
-		if (settings.ItemCompare.AlignRows == this.AlignRows && settings.ItemCompare.HideUnchanged == this.HideUnchanged)
+		if (settings.ItemCompare.AlignRows == this.AlignRows && settings.ItemCompare.HideUnchanged == this.HideUnchanged
+			&& settings.ItemCompare.ShowSources == this.ShowSources)
 			return false;
 
 		settings.ItemCompare.AlignRows = this.AlignRows;
 		settings.ItemCompare.HideUnchanged = this.HideUnchanged;
+		settings.ItemCompare.ShowSources = this.ShowSources;
 		return true;
+	}
+
+	/// <summary>
+	/// Whether the sources of <paramref name="line"/> show under it: a stat with sources follows <see cref="ShowSources"/>,
+	/// unless its key is in <paramref name="toggled"/> (the stats clicked open or closed against it).
+	/// </summary>
+	public bool SourcesShown(StatDifference line, IReadOnlySet<string>? toggled = null)
+	{
+		ArgumentNullException.ThrowIfNull(line);
+		return line.Sources.Count != 0 && this.ShowSources != (toggled?.Contains(line.Key) ?? false);
 	}
 }
 
@@ -72,26 +93,32 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	private readonly ItemTooltipContentBuilder _tooltip = new(translationService);
 
 	/// <summary>Builds the four columns of <paramref name="comparison"/>.</summary>
-	public ItemComparisonContent Build(ItemComparison comparison, ItemComparisonOptions? options = null)
+	/// <param name="comparison">The two items and their differences.</param>
+	/// <param name="options">The toolbar choices.</param>
+	/// <param name="toggled">The keys of the stats whose sources were clicked open or closed against <see cref="ItemComparisonOptions.ShowSources"/>.</param>
+	public ItemComparisonContent Build(ItemComparison comparison, ItemComparisonOptions? options = null, IReadOnlySet<string>? toggled = null)
 	{
+		ArgumentNullException.ThrowIfNull(comparison);
 		options ??= new ItemComparisonOptions();
+		Func<StatDifference, bool> shown = line => options.SourcesShown(line, toggled);
+
 		// The granted skills' names stay in the item columns: their differences are aligned under them.
 		var skills = comparison.Stats.FirstMinusSecond.Concat(comparison.Stats.SecondMinusFirst)
 			.Where(g => g.Kind == StatGroupKind.GrantedSkill && g.Title is not null).Select(g => g.Title!).Distinct().ToList();
 		var first = ItemColumnLines(this._tooltip.Build(comparison.First, ItemTooltipView.Classic).Lines, skills);
 		var second = ItemColumnLines(this._tooltip.Build(comparison.Second, ItemTooltipView.Classic).Lines, skills);
-		return options.AlignRows
-			? new(
-				AlignedDifferenceLines(first, comparison.Stats.FirstMinusSecond, options.HideUnchanged)
+		if (!options.AlignRows)
+		{
+			return new(
+				DifferenceLines(comparison.Stats.FirstMinusSecond, options.HideUnchanged, shown)
 				, first
 				, second
-				, AlignedDifferenceLines(second, comparison.Stats.SecondMinusFirst, options.HideUnchanged)
-				, Aligned: true)
-			: new(
-				DifferenceLines(comparison.Stats.FirstMinusSecond, options.HideUnchanged)
-				, first
-				, second
-				, DifferenceLines(comparison.Stats.SecondMinusFirst, options.HideUnchanged));
+				, DifferenceLines(comparison.Stats.SecondMinusFirst, options.HideUnchanged, shown));
+		}
+
+		var left = AlignedColumns(first, comparison.Stats.FirstMinusSecond, options.HideUnchanged, shown);
+		var right = AlignedColumns(second, comparison.Stats.SecondMinusFirst, options.HideUnchanged, shown);
+		return new(left.Differences, left.Item, right.Item, right.Differences, Aligned: true);
 	}
 
 	/// <summary>
@@ -151,17 +178,21 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	/// <summary>
 	/// The lines of a difference column: the groups separated by a delimiter, a granted skill under its name, each
 	/// difference colored better or worse for the column's item, unchanged stats in gray unless
-	/// <paramref name="hideUnchanged"/>. "No difference" comes first when no stat differs.
+	/// <paramref name="hideUnchanged"/>. "No difference" comes first when no stat differs. A stat whose sources are
+	/// <paramref name="sourcesShown"/> has them under it, one line each.
 	/// </summary>
-	public static IReadOnlyList<TooltipLine> DifferenceLines(IReadOnlyList<StatDifferenceGroup> groups, bool hideUnchanged = false)
+	public static IReadOnlyList<TooltipLine> DifferenceLines(IReadOnlyList<StatDifferenceGroup> groups, bool hideUnchanged = false
+		, Func<StatDifference, bool>? sourcesShown = null)
 	{
+		ArgumentNullException.ThrowIfNull(groups);
+		sourcesShown ??= NoSources;
 		var lines = new List<TooltipLine>();
 		if (!HasDifference(groups))
 			lines.Add(NoDifferenceLine);
 
 		foreach (var group in groups)
 		{
-			var shown = group.Lines.Where(l => !hideUnchanged || l.Trend != StatTrend.Unchanged).ToList();
+			var shown = group.Lines.Where(l => !Hidden(l, hideUnchanged, sourcesShown(l))).ToList();
 			if (shown.Count == 0)
 				continue;
 
@@ -171,7 +202,13 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 			if (group.Title is not null)
 				lines.Add(TitleLine(group.Title));
 
-			lines.AddRange(shown.Select(line => LineOf(line, group)));
+			foreach (var line in shown)
+			{
+				bool open = sourcesShown(line);
+				lines.Add(LineOf(line, group, open));
+				if (open)
+					lines.AddRange(line.Sources.Select(source => SourceDifferenceLine(line, source, group)));
+			}
 		}
 
 		return lines;
@@ -186,9 +223,22 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	/// </summary>
 	public static IReadOnlyList<TooltipLine> AlignedDifferenceLines(IReadOnlyList<TooltipLine> itemLines, IReadOnlyList<StatDifferenceGroup> groups
 		, bool hideUnchanged = false)
+		=> AlignedColumns(itemLines, groups, hideUnchanged).Differences;
+
+	/// <summary>
+	/// The item's column and its difference column level with it, as <see cref="AlignedDifferenceLines"/>. A stat whose
+	/// sources are <paramref name="sourcesShown"/> has a row under it for each source, in both columns: the item column
+	/// writes what the source gives on this item (a dash when it has no such source), the difference column the difference
+	/// with the same source of the other item.
+	/// </summary>
+	public static AlignedColumnPair AlignedColumns(IReadOnlyList<TooltipLine> itemLines, IReadOnlyList<StatDifferenceGroup> groups
+		, bool hideUnchanged = false, Func<StatDifference, bool>? sourcesShown = null)
 	{
+		ArgumentNullException.ThrowIfNull(itemLines);
+		ArgumentNullException.ThrowIfNull(groups);
+		sourcesShown ??= NoSources;
 		var stats = ItemRowStats(itemLines);
-		var rows = new TooltipLine?[itemLines.Count];
+		var rows = new (StatDifferenceGroup Group, StatDifference Line)?[itemLines.Count];
 		var rest = new List<(StatDifferenceGroup Group, StatDifference Line)>();
 
 		foreach (var group in groups)
@@ -198,23 +248,49 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 			int from = group.Title is null ? 0 : title < 0 ? stats.Length : title + 1;
 			foreach (var line in group.Lines)
 			{
-				if (hideUnchanged && line.Trend == StatTrend.Unchanged)
+				if (Hidden(line, hideUnchanged, sourcesShown(line)))
 					continue;
 
 				int row = line.Presence == StatPresence.OnlyOther ? -1 : IndexOfStat(stats, rows, from, line.Key);
 				if (row < 0)
 					rest.Add((group, line));
 				else
-					rows[row] = LineOf(line, group);
+					rows[row] = (group, line);
 			}
 		}
 
-		if (!HasDifference(groups) && rows.Length != 0)
-			rows[0] = NoDifferenceLine;
-
+		bool noDifference = !HasDifference(groups) && rows.Length != 0;
+		var item = new List<TooltipLine>(itemLines.Count);
 		var lines = new List<TooltipLine>(rows.Length + rest.Count + 2);
 		for (int i = 0; i < rows.Length; i++)
-			lines.Add(rows[i] ?? (itemLines[i].Kind == TooltipLineKind.Delimiter ? TooltipLine.Delimiter : TooltipLine.Spacer));
+		{
+			if (i == 0 && noDifference)
+			{
+				item.Add(itemLines[i]);
+				lines.Add(NoDifferenceLine);
+				continue;
+			}
+
+			if (rows[i] is not var (group, line))
+			{
+				item.Add(itemLines[i]);
+				lines.Add(itemLines[i].Kind == TooltipLineKind.Delimiter ? TooltipLine.Delimiter : TooltipLine.Spacer);
+				continue;
+			}
+
+			// The item's line opens or closes the sources too.
+			bool open = sourcesShown(line);
+			item.Add(line.Sources.Count == 0 ? itemLines[i] : itemLines[i] with { ToggleKey = line.Key });
+			lines.Add(LineOf(line, group, open));
+			if (!open)
+				continue;
+
+			foreach (var source in line.Sources)
+			{
+				item.Add(SourceOwnLine(line, source));
+				lines.Add(SourceDifferenceLine(line, source, group));
+			}
+		}
 
 		StatDifferenceGroup? last = null;
 		foreach (var (group, line) in rest)
@@ -227,13 +303,16 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 				last = group;
 			}
 
-			lines.Add(LineOf(line, group));
+			bool open = sourcesShown(line);
+			lines.Add(LineOf(line, group, open));
+			if (open)
+				lines.AddRange(line.Sources.Select(source => SourceDifferenceLine(line, source, group)));
 		}
 
 		if (lines.Count == 0)
 			lines.Add(NoDifferenceLine);
 
-		return lines;
+		return new AlignedColumnPair(item, lines);
 	}
 
 	/// <summary>The color of a difference: higher is better, unless lower is better for its stat; gray when unchanged.</summary>
@@ -250,8 +329,73 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 
 	private static TooltipLine TitleLine(string title) => TooltipLine.Of(title, ItemStyle.Epic.TQColor(), bold: true);
 
-	private static TooltipLine LineOf(StatDifference line, StatDifferenceGroup group)
-		=> TooltipLine.Of(line.Text, ColorOf(line.Trend, line.LowerIsBetter || group.LowerIsBetter));
+	/// <summary>The marker after a stat whose sources are hidden: a click shows them.</summary>
+	public const string SourcesClosedMarker = "[+]";
+
+	/// <summary>The marker after a stat whose sources are shown: a click hides them.</summary>
+	public const string SourcesOpenMarker = "[-]";
+
+	/// <summary>Written in the item column for a source this item does not have.</summary>
+	public const string NoSourceText = "—";
+
+	/// <summary>
+	/// The name of a source in the lines under a stat: "Base item", "Prefix", "Suffix", "Relic or charm 1", "Completion
+	/// bonus 1"...
+	/// </summary>
+	public static string SourceLabel(StatSource source)
+		=> source switch
+		{
+			StatSource.Base => Resources.ForgeCapSectionBase,
+			StatSource.Prefix => Resources.GlobalPrefix,
+			StatSource.Suffix => Resources.GlobalSuffix,
+			StatSource.Relic1 => string.Format(CultureInfo.CurrentCulture, Resources.ItemComparisonSourceRelic, 1),
+			StatSource.Relic2 => string.Format(CultureInfo.CurrentCulture, Resources.ItemComparisonSourceRelic, 2),
+			StatSource.RelicBonus1 => string.Format(CultureInfo.CurrentCulture, Resources.ItemComparisonSourceBonus, 1),
+			_ => string.Format(CultureInfo.CurrentCulture, Resources.ItemComparisonSourceBonus, 2),
+		};
+
+	private static bool NoSources(StatDifference line) => false;
+
+	/// <summary>
+	/// A stat left out by "Hide unchanged": same numbers on both items, unless its sources are shown and differ (the same
+	/// total made of other parts).
+	/// </summary>
+	private static bool Hidden(StatDifference line, bool hideUnchanged, bool sourcesShown)
+		=> hideUnchanged && line.Trend == StatTrend.Unchanged
+		&& !(sourcesShown && line.Sources.Any(s => s.Trend != StatTrend.Unchanged));
+
+	/// <summary>
+	/// A difference line in its color; a stat with sources ends with a marker saying whether they are shown, and a click
+	/// on it shows or hides them.
+	/// </summary>
+	private static TooltipLine LineOf(StatDifference line, StatDifferenceGroup group, bool sourcesShown = false)
+	{
+		var color = ColorOf(line.Trend, line.LowerIsBetter || group.LowerIsBetter);
+		if (line.Sources.Count == 0)
+			return TooltipLine.Of(line.Text, color);
+
+		var marker = sourcesShown ? SourcesOpenMarker : SourcesClosedMarker;
+		return TooltipLine.Of($"{line.Text}  {NeutralColor.ColorTag()}{marker}", color) with { ToggleKey = line.Key };
+	}
+
+	/// <summary>
+	/// The line of a source under a difference: the source's name, then the difference with the same source of the other
+	/// item, in the colors of the differences.
+	/// </summary>
+	private static TooltipLine SourceDifferenceLine(StatDifference line, StatSourceDifference source, StatDifferenceGroup group)
+		=> TooltipLine.Of(SourceText(line, source.Source, source.Text), ColorOf(source.Trend, line.LowerIsBetter || group.LowerIsBetter))
+			with { Detail = true };
+
+	/// <summary>The line of a source under an item's stat: the source's name, then what it gives on this item, in gray.</summary>
+	private static TooltipLine SourceOwnLine(StatDifference line, StatSourceDifference source)
+		=> TooltipLine.Of(SourceText(line, source.Source, source.Own ?? NoSourceText), NeutralColor) with { Detail = true };
+
+	/// <summary>A source's line, one indent deeper than the stat: "    Relic or charm 1: +15% Pierce Resistance".</summary>
+	private static string SourceText(StatDifference line, StatSource source, string text)
+	{
+		var indent = line.Text[..(line.Text.Length - line.Text.TrimStart().Length)];
+		return indent + StatLine.Indent + string.Format(CultureInfo.CurrentCulture, Resources.ItemComparisonSourceLine, SourceLabel(source), text.TrimStart());
+	}
 
 	private static bool HasDifference(IReadOnlyList<StatDifferenceGroup> groups)
 		=> groups.Any(g => g.Lines.Any(l => l.Trend != StatTrend.Unchanged));
@@ -293,7 +437,7 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 	/// The first free row from <paramref name="from"/> showing the stat <paramref name="key"/>; else the first free row with
 	/// its own text (the item tooltip may head it differently); -1 when none does.
 	/// </summary>
-	private static int IndexOfStat(StatLine?[] stats, TooltipLine?[] rows, int from, string key)
+	private static int IndexOfStat(StatLine?[] stats, (StatDifferenceGroup, StatDifference)?[] rows, int from, string key)
 	{
 		if (key.Length == 0)
 			return -1;

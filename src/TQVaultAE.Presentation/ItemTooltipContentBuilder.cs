@@ -58,6 +58,15 @@ public sealed record TooltipLine(TooltipLineKind Kind, string Text, TQColor? Col
 	/// <summary>The gray line between two sections.</summary>
 	public static readonly TooltipLine Delimiter = new(TooltipLineKind.Delimiter, string.Empty);
 
+	/// <summary>A detail under the line above (a source of a compared stat): drawn in a smaller font.</summary>
+	public bool Detail { get; init; }
+
+	/// <summary>
+	/// A click on the row shows or hides the details of the stat with this key (the item comparison's sources); null for a
+	/// row a click does nothing on.
+	/// </summary>
+	public string? ToggleKey { get; init; }
+
 	/// <summary>A line of text; a null text is shown as an empty line.</summary>
 	public static TooltipLine Of(string? text, TQColor? color = null, bool bold = false)
 		=> new(TooltipLineKind.Text, text ?? string.Empty, color, bold);

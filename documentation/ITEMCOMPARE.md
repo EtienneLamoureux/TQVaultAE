@@ -33,9 +33,32 @@ Toolbar:
 |---|---|
 | Align rows | Each difference sits on the row of the item line showing that stat, a granted skill's effects under the skill's name. The stats only the other item has, and those the tooltip does not list (the effects of a skill the tooltip only names), come after, below a line. Unchecked: the differences are listed one after the other, grouped. |
 | Hide unchanged | Leaves out the stats both items have with the same numbers. |
+| Show sources | Opens the sources of every stat that has some (see [Sources of a stat](#sources-of-a-stat)). |
 
-Both choices are saved in `UserConfig.xml` as soon as they change, in one element:
-`<ItemCompare AlignRows="1" HideUnchanged="0" />` (1 on, 0 off). Without it, rows are aligned and unchanged stats shown.
+The choices are saved in `UserConfig.xml` as soon as they change, in one element:
+`<ItemCompare AlignRows="1" HideUnchanged="0" ShowSources="0" />` (1 on, 0 off). Without it, rows are aligned,
+unchanged stats shown and sources closed.
+
+## Sources of a stat
+
+A stat's total can come from several sources: the base item, its prefix, its suffix, the relic or charm of each slot,
+and each completion bonus. Two items can show the same total made of different parts, for example 20% from the
+base and 15% from a removable relic against 35% from the base alone.
+
+A stat whose total comes from more than one source, on either item, ends with `[+]` in the difference columns. A click
+on the stat (its difference, or its line in the item column) opens one line per source under it, and `[-]` closes
+them. **Show sources** opens them all; a click on a stat then closes that one.
+
+![A sword with two relics and their completion bonus against a sword without relic](compare/compare_sources.png)
+
+- The sources are matched by role: the base item with the base item, the first relic slot with the first relic slot.
+- Each source line, in a smaller font, shows in the item column what that source gives on this item (`—` when the item
+  has no such source), and in the difference column the difference with the same source of the other item, a source
+  missing on one item counting 0. Colors follow the same rules as the totals.
+- Rows not aligned: the source lines come under the stat's difference only.
+- The totals do not change: closed, a stat shows exactly what it shows without sources.
+- With **Hide unchanged**, a stat whose total is the same on both items still shows while its sources are open and
+  differ.
 
 ## Reading the differences
 
@@ -46,7 +69,8 @@ Both choices are saved in `UserConfig.xml` as soon as they change, in one elemen
 - Only lines with a number are compared and shown, in the item columns too: lore, set member lists, `Speed: Fast` or
   `Grants Skill :` are left out. The item name, the warnings, the names of granted skills and a text heading indented
   lines with numbers (`Bonus to all Pets:`) stay.
-- Relics, charms and completion bonuses add to the item's own stats.
+- Relics, charms and completion bonuses add to the item's own stats; their parts show under the total on demand
+  (see [Sources of a stat](#sources-of-a-stat)).
 - Granted skills are compared in their own group.
 - Requirements come last.
 
@@ -97,4 +121,4 @@ Artifact with a granted skill and completion bonus vs an amulet:
   after the item's lines.
 - A stat only one item has is colored by the sign of its numbers: a block recovery time only a shield has shows red on
   the shield's side.
-- Relics are added to the item's stats, not compared relic by relic.
+- Sources split only the item's attributes: a granted skill's effects and the requirements have none.

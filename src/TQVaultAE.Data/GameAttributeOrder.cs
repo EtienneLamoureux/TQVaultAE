@@ -334,6 +334,17 @@ public static class GameAttributeOrder
 		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> baseLines
 		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> prefixLines
 		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> suffixLines)
+		=> [.. MergeWithSources(itemClass, baseLines, prefixLines, suffixLines).Select(l => (l.Text, l.Range))];
+
+	/// <summary>
+	/// Merges the attribute lines of the base, prefix and suffix records in the game's order, as <see cref="MergeWithRanges"/>,
+	/// each line also keeping the list it came from: 0 for the base, 1 for the prefix, 2 for the suffix (0 for the blank
+	/// line after the base stats).
+	/// </summary>
+	public static (string Text, string? Range, int Source)[] MergeWithSources(GameItemClass itemClass
+		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> baseLines
+		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> prefixLines
+		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> suffixLines)
 	{
 		var sections = Sections(itemClass);
 		int SectionRank(GameAttributeSlot slot)
@@ -349,7 +360,7 @@ public static class GameAttributeOrder
 			return sections.Length + 1 + (slot.Store - GameAttributeStore.Racial);
 		}
 
-		var entries = new List<(int Section, int Global, int GlobalSource, int Index, int Source, int Line, string Text, string? Range)>();
+		var entries = new List<(int Section, int Global, int GlobalSource, int Index, int Source, int Line, string Text, string? Range, int Origin)>();
 		void AddAll(IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> lines, int source)
 		{
 			for (int line = 0; line < lines.Count; line++)
@@ -365,8 +376,8 @@ public static class GameAttributeOrder
 
 				// A global chance keeps its groups together under its header line, record by record.
 				entries.Add(slot.Global
-					? (SectionRank(slot), 1, rank, 0, rank, line, text, range)
-					: (SectionRank(slot), 0, 0, slot.Index, rank, line, text, range));
+					? (SectionRank(slot), 1, rank, 0, rank, line, text, range, source)
+					: (SectionRank(slot), 0, 0, slot.Index, rank, line, text, range, source));
 			}
 		}
 
@@ -377,15 +388,15 @@ public static class GameAttributeOrder
 		var ordered = entries
 			.OrderBy(e => e.Section).ThenBy(e => e.Global).ThenBy(e => e.GlobalSource).ThenBy(e => e.Index)
 			.ThenBy(e => e.Source).ThenBy(e => e.Line)
-			.Select(e => (e.Text, e.Range, e.Section, e.Source))
+			.Select(e => (e.Text, e.Range, e.Section, e.Source, e.Origin))
 			.ToList();
 
 		// The base record's stats (damage, speed, armor, block) come first; a blank line separates them from the
 		// affixes and bonuses, including an affix's own armor or damage listed next to them.
 		int baseCount = ordered.TakeWhile(e => e.Source == 0 && IsBaseSection(sections, e.Section)).Count();
-		var result = ordered.Select(e => (e.Text, e.Range)).ToList();
+		var result = ordered.Select(e => (e.Text, e.Range, Source: e.Origin)).ToList();
 		if (baseCount > 0 && baseCount < result.Count && result[baseCount].Text.Length != 0)
-			result.Insert(baseCount, (string.Empty, null));
+			result.Insert(baseCount, (string.Empty, null, 0));
 
 		return [.. result];
 	}

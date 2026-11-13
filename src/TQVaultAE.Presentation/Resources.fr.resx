@@ -290,6 +290,18 @@ Voulez-vous redémarrer TQVault ?</value>
 	<data name="ItemComparisonNoDifference" xml:space="preserve">
     <value>Aucune différence</value>
   </data>
+	<data name="ItemComparisonShowSources" xml:space="preserve">
+    <value>Afficher les sources</value>
+  </data>
+	<data name="ItemComparisonSourceBonus" xml:space="preserve">
+    <value>Bonus d'achèvement {0}</value>
+  </data>
+	<data name="ItemComparisonSourceRelic" xml:space="preserve">
+    <value>Relique ou charme {0}</value>
+  </data>
+	<data name="ItemComparisonSourceLine" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
 	<data name="ItemComparisonText" xml:space="preserve">
     <value>Comparaison d'objets</value>
   </data>

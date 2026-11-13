@@ -20,6 +20,12 @@ public sealed partial record StatLine(string Template, decimal[] Values, int[] D
 	/// <summary>Which numbers were written with an explicit plus sign ("+42 Strength"), to write them back the same way.</summary>
 	public bool[] Plus { get; init; } = [];
 
+	/// <summary>
+	/// What each source gives to this line once lines of the same stat are summed in a <see cref="StatGroup"/>,
+	/// in <see cref="StatSource"/> order; empty for a line read alone.
+	/// </summary>
+	public IReadOnlyList<StatPart> Sources { get; init; } = [];
+
 	/// <summary>Stands for a number in <see cref="Template"/>.</summary>
 	public const char Slot = '\u001F';
 
