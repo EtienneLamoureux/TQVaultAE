@@ -323,6 +323,11 @@ public partial class VaultForm
 		if (this.buttonClose is null || this.buttonMaximize is null || this.ButtonScaleTo1 is null || this.buttonMinimize is null)
 			return;
 
+		// Minimized, the window has no client area: placed for it, the buttons would stay off the window after the
+		// restore. The restore's client size change places them (OnClientSizeChanged).
+		if (this.WindowState == FormWindowState.Minimized || this.ClientSize.Width <= 0)
+			return;
+
 		// Sizes from the design (15 and 26 pixels at 96 DPI) times the scale, the same in every form whatever its
 		// autoscaling, and without the rounding drift of repeated zooms.
 		float scale = this.UIService?.Scale ?? 1.0F;
@@ -368,6 +373,16 @@ public partial class VaultForm
 		this.buttonMaximize.Invalidate();
 		this.ButtonScaleTo1.Invalidate();
 		this.buttonMinimize.Invalidate();
+	}
+
+	/// <summary>
+	/// The caption buttons follow every change of the client area, whatever made it: a zoom, the user's resize, a
+	/// maximize, or a restore from the taskbar, which none of the resize handlers sees as a change of size.
+	/// </summary>
+	protected override void OnClientSizeChanged(EventArgs e)
+	{
+		base.OnClientSizeChanged(e);
+		this.PlaceButtons();
 	}
 
 	/// <summary>The height of <see cref="Images.BorderTop"/>, in pixels.</summary>

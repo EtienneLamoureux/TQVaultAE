@@ -397,6 +397,48 @@ internal static partial class AutomationTools
 			? new { X = r.Left, Y = r.Top, Width = r.Right - r.Left, Height = r.Bottom - r.Top }
 			: new { X = 0, Y = 0, Width = 0, Height = 0 };
 
+	[McpServerTool(Name = "window_state", Destructive = true)]
+	[Description("Sets the main window's state like the taskbar or the caption buttons do: 'minimize', 'restore' (back from minimized or maximized, as a click on the taskbar icon) or 'maximize'. Returns the state, bounds and client size after it, and the bounds of the custom border's caption buttons (to check they are back in place after a restore).")]
+	public static async Task<string> WindowState(
+		[Description("minimize, restore or maximize.")] string state)
+	{
+		var target = state.ToLowerInvariant() switch
+		{
+			"minimize" => FormWindowState.Minimized,
+			"restore" => FormWindowState.Normal,
+			"maximize" => FormWindowState.Maximized,
+			_ => throw new McpException($"Unknown state '{state}': minimize, restore or maximize."),
+		};
+		AutomationHost.OnUi(main =>
+		{
+			main.WindowState = target;
+			return 0;
+		});
+
+		// The resize handlers run on posted messages.
+		await Task.Delay(500);
+
+		return AutomationHost.OnUi(main =>
+		{
+			object Bounds(string name) => main.Controls.Find(name, false).FirstOrDefault() is { } c
+				? new { c.Left, c.Top, c.Width, c.Height, c.Visible }
+				: null!;
+			return Serialize(new
+			{
+				state = main.WindowState.ToString(),
+				bounds = new { main.Bounds.X, main.Bounds.Y, main.Bounds.Width, main.Bounds.Height },
+				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
+				buttons = new
+				{
+					close = Bounds("buttonClose"),
+					maximize = Bounds("buttonMaximize"),
+					normalize = Bounds("ButtonScaleTo1"),
+					minimize = Bounds("buttonMinimize"),
+				},
+			});
+		});
+	}
+
 	[McpServerTool(Name = "move_window", Destructive = true)]
 	[Description("Moves the main window, or another open form, to a screen position (virtual screen pixels, so negative on a monitor left of the primary one), like dragging it there (the size is left to Windows): on a monitor of another DPI, Windows sends the DPI change. Returns the monitors (bounds and DPI) and the window's DPI and scales after the move. Move it back to its monitor when done.")]
 	public static async Task<string> MoveWindow(
