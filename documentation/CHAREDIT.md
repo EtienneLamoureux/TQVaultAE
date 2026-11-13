@@ -22,15 +22,16 @@ the resistances for the highest difficulty the character has unlocked, and no bu
 1. Select a character.
 2. Click **Edit** under the statistics panel of the **Equipment** tab.
 
-Nothing changes before **OK**. **Cancel** drops every change. **OK** changes the character loaded in TQVault; the
-file is written when TQVault saves, as for any other change.
+The editor shows in place of the main content. Nothing changes before **OK**. **Cancel** (or Escape) drops every
+change. **OK** changes the character loaded in TQVault; the file is written when TQVault saves, as for any other change.
 
-## Character page
+## The editor
 
-![Character page](charedit/character_page.png)
+![Character editor](charedit/editor.png)
 
-The left panel is the game's character window, with its three tabs **I**, **II** and **III**. The right panel holds
-the editing options.
+On the left, the game's character window with its three tabs **I**, **II** and **III**, and under it the editing
+options: the statistics options, the leveling and the masteries. On the right, one page per mastery. The statistics
+stay in sight while skill points are spent: they change at each click on a skill.
 
 ### Attributes
 
@@ -46,7 +47,7 @@ once the last point is spent it goes away, and **Undo** or **Reset Attributes** 
 
 **Undo** puts the attributes back as they were when the editor opened. It is the game's button: it takes the place
 of the "Attributes" title once an attribute has changed.
-**Reset Attributes** gives back every point spent since level 1.
+**Reset Attributes**, under the mastery pages, gives back every point spent since level 1.
 
 ### Leveling
 
@@ -57,7 +58,7 @@ character that has never been in the game.
 ### Masteries
 
 The list shows each mastery with its number of skills and points; the mastery itself counts as one skill.
-**Reset Masteries** removes both masteries and refunds their points.
+**Reset Masteries**, under the mastery pages, removes both masteries and refunds their points.
 
 ## Statistics
 
@@ -76,7 +77,7 @@ Hover an icon or a value for its details, as in the game:
 
 ![Statistics tool tip](charedit/stats_tooltip.png)
 
-Two options change what is counted:
+Two options, right under the statistics, change what is counted:
 
 | Option | Effect |
 |---|---|
@@ -85,9 +86,7 @@ Two options change what is counted:
 
 ## Mastery pages
 
-One page per mastery, laid out like the game's skill window.
-
-![Mastery page](charedit/mastery_page.png)
+One page per mastery, laid out like the game's skill window, right of the statistics (see the picture above).
 
 Choose the mastery and its level with the two boxes at the top right, or click the `+` button under the mastery bar,
 which takes the same four clicks as a skill.
