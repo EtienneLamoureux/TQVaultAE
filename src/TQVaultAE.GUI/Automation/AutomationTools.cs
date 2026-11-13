@@ -634,8 +634,14 @@ internal static partial class AutomationTools
 				throw new McpException($"Bag {bag} is out of range 0..{container.BagButtons.Count - 1}.");
 
 			Tooltips.BagButtonTooltip.HideTooltip();
+			Tooltips.BagButtonLabelTooltip.HideTooltip();
 			if (!hide)
-				Tooltips.BagButtonTooltip.ShowTooltip(Program.ServiceProvider.GetRequiredService<GuiServices>(), container.BagButtons[bag]);
+			{
+				// Both tool tips the pointer shows: the bag's custom label above the button, and the summary of its items.
+				var services = Program.ServiceProvider.GetRequiredService<GuiServices>();
+				Tooltips.BagButtonLabelTooltip.ShowTooltip(services, container.BagButtons[bag]);
+				Tooltips.BagButtonTooltip.ShowTooltip(services, container.BagButtons[bag]);
+			}
 
 			return Serialize(new { panel, bag, tooltips = DescribeTooltips() });
 		});
@@ -803,7 +809,15 @@ internal static partial class AutomationTools
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Anonymous JSON payload.")]
 	private static object DescribeTooltips()
-		=> OpenTooltips().Select(t => new { type = t.GetType().Name, width = t.Width, height = t.Height }).ToList();
+		=> OpenTooltips().Select(t => new
+		{
+			type = t.GetType().Name,
+			width = t.Width,
+			height = t.Height,
+			// The font of the tool tip's first text control: shows a tool tip whose text grows or shrinks over time.
+			font = t.Controls.Cast<Control>().FirstOrDefault(c => c is Label) is { } label
+				? FormattableString.Invariant($"{label.Font.Name} {label.Font.SizeInPoints:0.##}pt") : null,
+		}).ToList();
 
 	private static void ReleaseCursor(SackPanel? panel)
 	{
@@ -846,6 +860,15 @@ internal static partial class AutomationTools
 		if (string.Equals(control, "tooltip", StringComparison.OrdinalIgnoreCase))
 			return OpenTooltips().LastOrDefault()
 				?? throw new McpException("No tooltip is shown. Use hover_item first.");
+
+		// 'tooltip:<type>' picks one of several tool tips shown at once, e.g. 'tooltip:BagButtonLabelTooltip'.
+		const string tooltipPrefix = "tooltip:";
+		if (control.StartsWith(tooltipPrefix, StringComparison.OrdinalIgnoreCase))
+		{
+			var type = control[tooltipPrefix.Length..];
+			return OpenTooltips().LastOrDefault(t => string.Equals(t.GetType().Name, type, StringComparison.OrdinalIgnoreCase))
+				?? throw new McpException($"No tooltip of type '{type}' is shown.");
+		}
 
 		var panel = AutomationPanels.List(form).FirstOrDefault(p => string.Equals(p.Id, control, StringComparison.OrdinalIgnoreCase));
 		if (panel is not null)
