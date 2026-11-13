@@ -17,6 +17,9 @@ internal static class CaravanFrame
 	/// <summary>The gap between the glyph and the text of a check box, as the system draws it.</summary>
 	private const int CheckBoxTextGap = 3;
 
+	/// <summary>The space kept on each side of a group's caption, where the frame's top edge is broken.</summary>
+	private const int CaptionGap = 2;
+
 	private static Bitmap? source;
 
 	private static Bitmap Source => source ??= Images.caravan_bg;
@@ -160,15 +163,18 @@ internal static class CaravanFrame
 			var caption = check is not null
 				? check.Bounds
 				: new Rectangle(new Point(Border + 2, 0), TextRenderer.MeasureText(e.Graphics, box.Text, box.Font));
-			// The frame's gold line runs through the middle of the caption.
+			// The frame's top edge is level with the middle of the caption.
 			int top = Math.Max(0, caption.Top + (caption.Height - Border) / 2);
 
 			// The group box drew its own caption and border line before this handler: above the frame they would show
 			// next to the text drawn here, so that strip is painted again with the background. The frame is then drawn
-			// whole, and the caption over it.
+			// whole, its top edge broken behind the caption as a group box breaks its line (through the text, the gold
+			// line read as struck out), and the caption over it.
 			if (top > 0)
 				ButtonRenderer.DrawParentBackground(e.Graphics, new Rectangle(0, 0, box.Width, top), box);
 			e.Graphics.DrawImageUnscaled(frame.Get(new Size(box.Width, box.Height - top)), 0, top);
+			ButtonRenderer.DrawParentBackground(
+				e.Graphics, new Rectangle(caption.Left - CaptionGap, top, caption.Width + 2 * CaptionGap, Border), box);
 			if (check is null)
 			{
 				TextShadow.DrawOutline(e.Graphics, box.Text, box.Font, caption, TextFormatFlags.Default);
