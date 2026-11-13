@@ -75,6 +75,20 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		=> this.Effects(2, Floats("spawnObjectsTimeToLive", 4f, 7f)).Should().Equal("Extra Life Time 7 Seconds");
 
 	[Fact]
+	public void LifeTime_AddsWhatTheModifiersWithPointsAdd()
+	{
+		// Ancestral Horn 20 (24 s) with Lasting Legacy level 7 (+25 s): the game writes "Extra Life Time 49 Seconds".
+		const string ModifierId = """records\test\modifier.dbr""";
+		this.CreateRecord(ModifierId, "Skill_Modifier", Floats("spawnObjectsTimeToLive", 4f, 25f));
+		this.CreateRecord(SkillId, "Skill_Modifier", Str("skillDisplayName", "tagSkillTest"), Floats("spawnObjectsTimeToLive", 20f, 24f));
+		var context = SkillWindowContext.None with { Modifiers = [new SkillModifierLevel(ModifierId, 2)] };
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, context);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal("Extra Life Time 49 Seconds");
+	}
+
+	[Fact]
 	public void CharacterAttributes_FollowTheSkillOrder_ThenTheEnergyReserved()
 		=> this.Effects(1, Int("characterManaLimitReserve", 75), Float("characterAttackSpeedModifier", 5f), Float("characterRunSpeedModifier", 6f),
 				Float("characterDefensiveAbility", 25f))

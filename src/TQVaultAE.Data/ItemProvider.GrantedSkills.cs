@@ -239,8 +239,12 @@ public partial class ItemProvider
 
 		// "Extra Life Time 12 Seconds" (SpawnObjectsTimeToLive), one of the skill's parameters, which the skill window writes
 		// for any skill: a summon (before its attributes) or a modifier that lengthens its parent's summons (Lasting Legacy).
-		// The game's text has no value index ("{%.0f}"), unlike the others ("{%.0f0}").
+		// The game's text has no value index ("{%.0f}"), unlike the others ("{%.0f0}"). The modifiers with points add
+		// theirs (Ancestral Horn 24 + Lasting Legacy 25 = 49), while the summon's own "Life Time" keeps the skill's value.
 		float timeToLive = skillWindow ? ValueAtLevel(skillRecord["spawnObjectsTimeToLive"], level) : 0F;
+		if (timeToLive > 0)
+			timeToLive += context!.Modifiers.Sum(m => Database.GetRecordFromFile(m.Id) is { } modifier
+				? ValueAtLevel(modifier["spawnObjectsTimeToLive"], m.Level) : 0F);
 		if (timeToLive > 0 && TranslationService.TryTranslateXTag("SpawnObjectsTimeToLive", out var lifeTime))
 			ownLines.Add(("spawnObjectsTimeToLive", Format(ItemAttributeProvider.ConvertFormat(lifeTime.Replace("{%.0f}", "{%.0f0}", StringComparison.Ordinal)), timeToLive)));
 
