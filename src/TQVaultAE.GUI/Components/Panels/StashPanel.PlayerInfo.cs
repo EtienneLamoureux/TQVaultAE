@@ -50,7 +50,7 @@ public partial class StashPanel
 	private readonly List<Font> _statsFonts = [];
 	private float _statsScale;
 
-	/// <summary>The loadouts of the character, under the gold bar (right of the Edit button when it shows).</summary>
+	/// <summary>The loadouts of the character, under the gold bar, the whole width of the statistics panel.</summary>
 	private LoadoutBar? _loadoutBar;
 
 	/// <summary>The loadouts file the bar shows.</summary>
@@ -206,7 +206,7 @@ public partial class StashPanel
 
 	/// <summary>
 	/// Places the statistics panel on the box of the equipment background, at the game's size times the scale, with the
-	/// Edit button under its gold bar; its fonts follow the scale.
+	/// loadout bar under its gold bar and the Edit button under the loadout bar; its fonts follow the scale.
 	/// </summary>
 	private void LayoutStatsPanel(CharacterStatsPanel panel)
 	{
@@ -248,18 +248,16 @@ public partial class StashPanel
 		if (panel.Location != location)
 			panel.Location = location;
 
-		var button = this._editButton!;
-		var buttonAt = new Point(location.X, panel.Bottom + Convert.ToInt32(4 * scale));
-		if (button.Location != buttonAt)
-			button.Location = buttonAt;
-
-		// The loadout bar: the rest of the row under the gold bar, level with the Edit button's middle.
-		int gap = Convert.ToInt32(6 * scale);
-		int barHeight = LoadoutBar.HeightAt(scale);
-		int left = this.USettings.AllowCharacterEdit ? button.Right + gap : location.X;
-		var barBounds = new Rectangle(left, buttonAt.Y + Math.Max(0, (button.Height - barHeight) / 2), Math.Max(barHeight * 4, panel.Right - left), barHeight);
+		// The loadout bar: the whole width of the statistics panel, under its gold bar; the Edit button on the line below.
+		int gap = Convert.ToInt32(4 * scale);
+		var barBounds = new Rectangle(location.X, panel.Bottom + gap, panel.Width, LoadoutBar.HeightAt(scale));
 		if (this._loadoutBar!.Bounds != barBounds)
 			this._loadoutBar.Bounds = barBounds;
+
+		var button = this._editButton!;
+		var buttonAt = new Point(location.X, barBounds.Bottom + gap);
+		if (button.Location != buttonAt)
+			button.Location = buttonAt;
 	}
 
 	/// <summary>What the statistics panel shows of the character, from its save: nothing can be changed here.</summary>

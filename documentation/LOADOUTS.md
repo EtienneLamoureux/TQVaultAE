@@ -5,7 +5,8 @@ weapon set is in hand. Save the gear you wear for one build, wear another, and c
 
 ## Where
 
-On the **Equipment** tab, under the gold of the character statistics, right of the **Edit** button when it shows:
+On the **Equipment** tab, under the gold of the character statistics, the whole width of the statistics (the **Edit**
+button of the character editor, when it shows, is on the line below):
 
 ![The loadout bar under the gold](loadouts/loadout_bar.png)
 
