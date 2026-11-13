@@ -1052,6 +1052,44 @@ public class PlayerServiceTests
 	}
 
 	[Fact]
+	public void GetWornEquipment_LeavesTheItemInHandOut_AndKeepsTheOrder()
+	{
+		var helmet = new Item();
+		var amulet = new Item();
+		var ring = new Item();
+
+		_playerService.GetWornEquipment([helmet, amulet, ring], amulet).Should().Equal(helmet, ring);
+		_playerService.GetWornEquipment([helmet, amulet, ring], null).Should().Equal(helmet, amulet, ring);
+		_playerService.GetWornEquipment([helmet], new Item()).Should().Equal(helmet);
+	}
+
+	[Fact]
+	public void UpdateAttributeBonuses_EquipThenUnequip_AttributesReturnToTheBaseValue()
+	{
+		// Arrange: each worn item gives 10 strength
+		var player = PlayerWith(strength: 100);
+		var amulet = new Item();
+		this.SetupAttributeSums(gear: 0, skills: 0, itemSkills: 0);
+		_mockStats.Setup(x => x.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()))
+			.Returns((IEnumerable<Item> items, bool _) =>
+			{
+				var sum = new AttributeSum();
+				sum.Add("characterStrength", 10 * items.Count());
+				return sum;
+			});
+
+		// Act / Assert: worn, picked up (still in its slot), then placed elsewhere
+		_playerService.UpdateAttributeBonuses(player, [amulet]);
+		player.PlayerInfo!.CalculatedStrength.Should().Be(110);
+
+		_playerService.UpdateAttributeBonuses(player, [amulet], amulet);
+		player.PlayerInfo.CalculatedStrength.Should().Be(100);
+
+		_playerService.UpdateAttributeBonuses(player, []);
+		player.PlayerInfo.CalculatedStrength.Should().Be(100);
+	}
+
+	[Fact]
 	public void UpdateAttributeBonuses_SecondSetInHand_IsPassedOn()
 	{
 		var player = PlayerWith();

@@ -447,12 +447,16 @@ public class PlayerService(
 	}
 
 	/// <inheritdoc/>
+	public IReadOnlyList<Item> GetWornEquipment(IEnumerable<Item> equipment, Item? held)
+		=> equipment.Where(item => !ReferenceEquals(item, held)).ToList();
+
+	/// <inheritdoc/>
 	public void UpdateAttributeBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null)
 	{
 		if (player.PlayerInfo is not { } info)
 			return;
 
-		var worn = equipment.Where(item => item != ignored).ToList();
+		var worn = this.GetWornEquipment(equipment, ignored);
 		bool useAlternate = player.UseAlternate;
 		var trees = this.CharacterEditService.GetMasteries(info);
 		var augments = this.CharacterEditService.GetGearSkillAugments(worn, useAlternate);

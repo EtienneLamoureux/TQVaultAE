@@ -117,7 +117,7 @@ public class CharacterPanelViewBuilderTests
 		var player = new PlayerCollection("Hero", @"C:\saves\_Hero\Player.chr") { PlayerInfo = info };
 
 		// Act
-		var input = CharacterPanelInput.FromSave(player, info, [], []);
+		var input = CharacterPanelInput.FromSave(player, info, [], [], []);
 
 		// Assert
 		input.Attributes[CharacterPanelInput.Health].Should().Be(500);
@@ -142,6 +142,65 @@ public class CharacterPanelViewBuilderTests
 		// Assert
 		this._stats.Verify(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()), Times.Once);
 		this._stats.Verify(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()), Times.Once);
+	}
+
+	/// <summary>Gear sums giving 100 energy per item summed, recording the items of each call.</summary>
+	private List<List<Item>> SetupEnergyPerItem()
+	{
+		var summed = new List<List<Item>>();
+		this._stats.Setup(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()))
+			.Returns((IEnumerable<Item> items, bool _) =>
+			{
+				var list = items.ToList();
+				summed.Add(list);
+				var sum = new AttributeSum();
+				sum.Add("characterMana", 100 * list.Count);
+				return sum;
+			});
+		return summed;
+	}
+
+	private static CharacterPanelInput SavedHero(SackCollection sack, IReadOnlyList<Item> worn)
+	{
+		var info = new PlayerInfo(new PathIO()) { BaseHealth = 300, BaseMana = 300, BaseStrength = 50, BaseIntelligence = 60, BaseDexterity = 70 };
+		var player = new PlayerCollection("HeroA", @"C:\saves\_HeroA\Player.chr") { PlayerInfo = info, EquipmentSack = sack };
+		return CharacterPanelInput.FromSave(player, info, worn, [], []);
+	}
+
+	[Fact]
+	public void Build_FromSave_CountsTheWornItems_NotTheItemInHandStillInItsSlot()
+	{
+		// Arrange: an amulet picked up from its slot stays in the equipment sack until it is placed elsewhere
+		var summed = this.SetupEnergyPerItem();
+		var ring = new Item();
+		var amulet = new Item();
+		var sack = new SackCollection { SackType = SackType.Equipment };
+		sack.AddItem(ring);
+		sack.AddItem(amulet);
+
+		// Act
+		var view = this._builder.Build(SavedHero(sack, [ring]));
+
+		// Assert
+		summed.Should().ContainSingle().Which.Should().Equal(ring);
+		view.Attributes[CharacterPanelInput.Energy].Value.Should().Be("400 / 400");
+	}
+
+	[Fact]
+	public void Build_EquipThenUnequip_EnergyReturnsToTheBaseValue()
+	{
+		// Arrange
+		this.SetupEnergyPerItem();
+		var amulet = new Item();
+		var sack = new SackCollection { SackType = SackType.Equipment };
+
+		// Act: the same builder (the panel keeps it) shows the character bare, with the amulet, then bare again
+		var bare = this._builder.Build(SavedHero(sack, [])).Attributes[CharacterPanelInput.Energy].Value;
+		var worn = this._builder.Build(SavedHero(sack, [amulet])).Attributes[CharacterPanelInput.Energy].Value;
+		var unequipped = this._builder.Build(SavedHero(sack, [])).Attributes[CharacterPanelInput.Energy].Value;
+
+		// Assert
+		(bare, worn, unequipped).Should().Be(("300 / 300", "400 / 400", "300 / 300"));
 	}
 
 	[Fact]

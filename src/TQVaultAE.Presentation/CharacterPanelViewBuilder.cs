@@ -17,12 +17,15 @@ public sealed record CharacterPanelInput
 
 	/// <summary>
 	/// The character as saved, for the main window: nothing can be changed, the difficulty is the last one unlocked.
+	/// <paramref name="equipment"/> are the items worn, the ones the item requirements count
+	/// (<see cref="IPlayerService.GetWornEquipment"/>), and <paramref name="augments"/> their skill bonuses.
 	/// </summary>
-	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments)
+	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<Item> equipment, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments)
 		=> new()
 		{
 			Player = player,
 			Info = info,
+			Equipment = equipment,
 			Attributes = [info.BaseHealth, info.BaseMana, info.BaseStrength, info.BaseIntelligence, info.BaseDexterity],
 			AttributePoints = info.AttributesPoints,
 			Level = info.CurrentLevel,
@@ -35,6 +38,9 @@ public sealed record CharacterPanelInput
 
 	public required PlayerCollection Player { get; init; }
 	public required PlayerInfo Info { get; init; }
+
+	/// <summary>The items worn; null takes every item of the character's equipment sack.</summary>
+	public IReadOnlyList<Item>? Equipment { get; init; }
 
 	/// <summary>The base attributes (no bonus): Health, Energy, Strength, Intelligence, Dexterity.</summary>
 	public required IReadOnlyList<int> Attributes { get; init; }
@@ -168,7 +174,8 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 	];
 
 
-	private static IEnumerable<Item> Equipment(CharacterPanelInput input) => input.Player.EquipmentSack ?? Enumerable.Empty<Item>();
+	private static IEnumerable<Item> Equipment(CharacterPanelInput input)
+		=> (IEnumerable<Item>?)input.Equipment ?? input.Player.EquipmentSack ?? Enumerable.Empty<Item>();
 
 	/// <summary>Forgets the sums of the equipped items when the equipment or the weapon set in hand changed.</summary>
 	private void TrackGear(CharacterPanelInput input)

@@ -650,6 +650,14 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	protected virtual bool IsSuitableForCurrentPlayer(Item item)
 		=> this.Services.PlayerService.IsSuitableForCurrentPlayer(item);
 
+	/// <summary>
+	/// Called after an item action changed the items of the shown sack in place (delete, relic removal, affix or bonus
+	/// change, seed...). Drags tell their own panels through <see cref="ItemDragInfo"/>.
+	/// </summary>
+	protected virtual void OnShownItemsChanged()
+	{
+	}
+
 	#endregion SackPanel Protected Methods
 
 	protected void InvalidateItemCacheAll(params Item?[] items)

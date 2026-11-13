@@ -33,7 +33,7 @@ public partial class StashPanel
 	private void GetSkillStatBonus()
 	{
 		if (this.Player is not null)
-			this.Services.PlayerService.UpdateAttributeBonuses(this.Player, this.Player.EquipmentSack ?? Enumerable.Empty<Item>());
+			this.Services.PlayerService.UpdateAttributeBonuses(this.Player, this.equipmentPanel.WornItems);
 	}
 
 	/// <summary>The game's character window statistics (tabs I, II, III), read only, right of the equipment.</summary>
@@ -195,8 +195,10 @@ public partial class StashPanel
 		if (this.Player is not { PlayerInfo: { } info } player || this._statsBuilder is null)
 			return new CharacterPanelView();
 
+		// The items the item requirements count (PlayerInfo's calculated attributes): an equipped item in hand is left out.
+		var worn = this.equipmentPanel.WornItems;
 		var skills = this.Services.CharacterEditService.CreateSkillEditor(info);
 		return this._statsBuilder.Build(CharacterPanelInput.FromSave(
-			player, info, [.. skills.Slots.OfType<MasteryTree>()], this.Services.CharacterEditService.GetGearSkillAugments(player)));
+			player, info, worn, [.. skills.Slots.OfType<MasteryTree>()], this.Services.CharacterEditService.GetGearSkillAugments(worn, player.UseAlternate)));
 	}
 }

@@ -297,13 +297,20 @@ public partial class SackPanel
 		}
 	}
 
+	/// <summary>An affix or bonus of <paramref name="item"/> changed: its cached texts go, and its sack is told.</summary>
+	private void ItemChangedInPlace(Item item)
+	{
+		this.InvalidateItemCacheAll(item);
+		this.OnShownItemsChanged();
+	}
+
 	private void RemoveSuffixItemClicked(object? sender, EventArgs e)
 	{
 		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
 		if (focusedItem is not null)
 		{
 			this.Services.ItemEditService.RemoveSuffix(this.ShownSack, focusedItem);
-			this.InvalidateItemCacheAll(focusedItem);
+			this.ItemChangedInPlace(focusedItem);
 		}
 	}
 
@@ -313,7 +320,7 @@ public partial class SackPanel
 		if (focusedItem is not null)
 		{
 			this.Services.ItemEditService.RemovePrefix(this.ShownSack, focusedItem);
-			this.InvalidateItemCacheAll(focusedItem);
+			this.ItemChangedInPlace(focusedItem);
 		}
 	}
 
@@ -331,7 +338,7 @@ public partial class SackPanel
 			if (menuItem is not null
 				&& this.Services.ItemEditService.ChangeSuffix(this.ShownSack, focusedItem, menuItem.Name.ToRecordId()))
 			{
-				this.InvalidateItemCacheAll(focusedItem);
+				this.ItemChangedInPlace(focusedItem);
 			}
 		}
 	}
@@ -350,7 +357,7 @@ public partial class SackPanel
 			if (menuItem is not null
 				&& this.Services.ItemEditService.ChangePrefix(this.ShownSack, focusedItem, menuItem.Name.ToRecordId()))
 			{
-				this.InvalidateItemCacheAll(focusedItem);
+				this.ItemChangedInPlace(focusedItem);
 			}
 		}
 	}
@@ -373,7 +380,7 @@ public partial class SackPanel
 			if (menuItem is not null
 				&& this.Services.ItemEditService.ChangeCompletionBonus(this.ShownSack, focusedItem, menuItem.Name.ToRecordId(), secondRelic: !isRelic1))
 			{
-				this.InvalidateItemCacheAll(focusedItem);
+				this.ItemChangedInPlace(focusedItem);
 			}
 		}
 	}
@@ -393,7 +400,7 @@ public partial class SackPanel
 			if (item is not null
 				&& this.Services.ItemEditService.ChangeCompletionBonus(this.ShownSack, focusedItem, item.Name.ToRecordId()))
 			{
-				this.InvalidateItemCacheAll(focusedItem);
+				this.ItemChangedInPlace(focusedItem);
 			}
 		}
 	}
@@ -407,6 +414,7 @@ public partial class SackPanel
 		if (action == ItemActions.Delete)
 		{
 			this.DeleteItem(focusedItem, false);
+			this.OnShownItemsChanged();
 		}
 		else if (action is ItemActions.Copy or ItemActions.Duplicate)
 		{
@@ -567,7 +575,7 @@ public partial class SackPanel
 
 			ItemTooltip.HideTooltip();
 			BagButtonTooltip.InvalidateCache(this.ShownSack);
-
+			this.OnShownItemsChanged();
 		}
 	}
 }

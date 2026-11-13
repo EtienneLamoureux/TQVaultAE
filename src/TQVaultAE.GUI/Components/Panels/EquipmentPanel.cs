@@ -58,7 +58,15 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	#region EquipmentPanel Public Methods
 
 	/// <summary>
-	/// Calculates the attribute bonuses of the equipped gear and the skills and updates the player
+	/// The items worn: the equipment without the item being dragged. The item requirements and the statistics panel
+	/// both count these.
+	/// </summary>
+	public IReadOnlyList<Item> WornItems
+		=> this.Sack is null ? [] : this.Services.PlayerService.GetWornEquipment(this.Sack, this.DragInfo.Item);
+
+	/// <summary>
+	/// Calculates the attribute bonuses of the equipped gear and the skills and updates the player, then tells the
+	/// statistics panel to show them.
 	/// </summary>
 	public void GetGearStatBonus()
 	{
@@ -69,14 +77,16 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 		if (currentPlayer is null)
 			return;
 
-		// The item being dragged does not count.
-		this.Services.PlayerService.UpdateAttributeBonuses(currentPlayer, this.Sack, this.DragInfo.Item);
+		this.Services.PlayerService.UpdateAttributeBonuses(currentPlayer, this.WornItems);
 
 		// Let the container panel know that the calculation has changed.
 		OnEquipmentChanged?.Invoke(this, new SackPanelEventArgs(null, null));
 	}
 
 	#endregion EquipmentPanel Public Methods
+
+	/// <summary>An equipped item deleted or changed in place: the bonuses are summed again.</summary>
+	protected override void OnShownItemsChanged() => this.GetGearStatBonus();
 
 	#region EquipmentPanel Protected Methods
 

@@ -166,6 +166,9 @@ public class ItemDragInfo
 	/// <param name="slot">slot if an equipment placement.</param>
 	public void MarkPlaced()
 	{
+		// An item taken off the equipment changes the character's attributes and statistics.
+		EquipmentPanel? unequippedFrom = null;
+
 		// modified items do not have a source sack.
 		// so no one needs to be notified of the placement.
 		if (!this.IsModifiedItem && this.srcSack is not null && this.srcItem is not null)
@@ -174,6 +177,7 @@ public class ItemDragInfo
 			EquipmentRules.TakeOut(this.srcSack, this.srcItem);
 
 			BagButtonTooltip.InvalidateCache(this.SrcSack, this.Original?.SrcSack);
+			unequippedFrom = this.srcSackPanel as EquipmentPanel;
 		}
 
 		// finally clear things out
@@ -184,6 +188,9 @@ public class ItemDragInfo
 		this.AutoMoveDestination = AutoMoveLocation.NotSet;
 		this.DestIndex = -1;
 		this.IsBeingCancelled = false;
+
+		// Wherever the item was put (inventory, vault, stash, another slot), the bonuses are summed again without it.
+		unequippedFrom?.GetGearStatBonus();
 	}
 
 	/// <summary>

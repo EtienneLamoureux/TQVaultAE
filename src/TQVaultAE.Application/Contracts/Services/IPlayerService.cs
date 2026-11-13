@@ -136,6 +136,15 @@ public interface IPlayerService
 	bool IsSuitableForCurrentPlayer(Item item);
 
 	/// <summary>
+	/// The items the character wears: <paramref name="equipment"/> without the item in hand. An equipped item picked up
+	/// stays in its slot until it is placed elsewhere, but no longer counts, for the item requirements as for the
+	/// statistics panel.
+	/// </summary>
+	/// <param name="equipment">The items of the equipment sack.</param>
+	/// <param name="held">The item being dragged, if any.</param>
+	IReadOnlyList<Item> GetWornEquipment(IEnumerable<Item> equipment, Item? held);
+
+	/// <summary>
 	/// Recomputes the bonuses behind the attributes of <paramref name="player"/> (<see cref="PlayerInfo.CalculatedStrength"/>
 	/// and the others, which the item requirements are checked against) with the sums of the statistics panel: the
 	/// equipped items and their sets (<see cref="ICharacterStatsService.GetGearAttributes"/>), the learned skills at
@@ -144,6 +153,6 @@ public interface IPlayerService
 	/// </summary>
 	/// <param name="player">Player to update.</param>
 	/// <param name="equipment">The equipped items.</param>
-	/// <param name="ignored">An item left out, as the item being dragged.</param>
+	/// <param name="ignored">An item left out, as the item being dragged (see <see cref="GetWornEquipment"/>).</param>
 	void UpdateAttributeBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null);
 }
