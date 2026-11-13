@@ -689,9 +689,10 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "capture", ReadOnly = true)]
-	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the character statistics panel and its Edit button (which DrawToBitmap leaves out) drawn over it, or part of a form title.")]
+	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the character statistics panel and its Edit button (which DrawToBitmap leaves out) drawn over it, or part of a form title. 'shown=true' copies the pixels the window really shows on its desktop instead (PrintWindow from the desktop composition): use it when DrawToBitmap may differ from the screen (overlaps, transparent children).")]
 	public static IEnumerable<ContentBlock> Capture(
-		[Description("What to capture.")] string control = "main")
+		[Description("What to capture.")] string control = "main",
+		[Description("Copy the pixels shown on the desktop instead of DrawToBitmap.")] bool shown = false)
 	{
 		var (png, size) = AutomationHost.OnUi(form =>
 		{
@@ -707,11 +708,12 @@ internal static partial class AutomationTools
 			if (target.Width <= 0 || target.Height <= 0)
 				throw new McpException($"'{control}' has no size (is it shown?).");
 
-			using var bitmap = new Bitmap(target.Width, target.Height);
-			target.DrawToBitmap(bitmap, new Rectangle(Point.Empty, target.Size));
+			using var bitmap = shown ? NativeWindows.RenderAsShown(target) : new Bitmap(target.Width, target.Height);
+			if (!shown)
+				target.DrawToBitmap(bitmap, new Rectangle(Point.Empty, target.Size));
 			using var stream = new MemoryStream();
 			bitmap.Save(stream, ImageFormat.Png);
-			return (stream.ToArray(), target.Size);
+			return (stream.ToArray(), bitmap.Size);
 		});
 
 		var path = SaveCapture(control, png);
