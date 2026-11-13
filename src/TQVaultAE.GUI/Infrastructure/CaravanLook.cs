@@ -7,6 +7,12 @@ namespace TQVaultAE.GUI.Infrastructure;
 /// </summary>
 internal static class CaravanLook
 {
+	/// <summary>The size of the text of these dialogs (labels, check boxes, group captions, lines), in points.</summary>
+	public const float TextSize = 11.25F;
+
+	/// <summary>The size of the text of their buttons, in points.</summary>
+	public const float ButtonTextSize = 12F;
+
 	/// <summary>
 	/// Gives <paramref name="form"/> (a dialog, or a view laid in a window) the tiled marble as its background, frames its
 	/// group boxes not framed yet with their caption over the frame's top edge (<see cref="CaravanFrame.ApplyWithCaption"/>),

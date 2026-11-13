@@ -286,19 +286,59 @@ internal static class CaravanFrame
 			return;
 
 		control.Margin = new Padding(Border);
-		var frame = new FrameCache(control);
-		parent.Paint += (_, e) =>
+		DrawAround(parent, [control]);
+	}
+
+	/// <summary>
+	/// Draws one frame around <paramref name="controls"/> together (the cells of a column of a table), on their common
+	/// parent, as <see cref="FrameAround(Control)"/> does for one control: the frame lies in their margins, which the
+	/// caller makes the frame's thickness at least on the outer sides. The frame follows them and goes with the first
+	/// one disposed, so that a parent whose content is made again does not keep the frames of the old one.
+	/// </summary>
+	public static void FrameAround(params Control[] controls)
+	{
+		if (controls.Length == 0 || controls[0].Parent is not { } parent
+			|| controls.Any(c => c.Parent != parent) || !controls.All(MarkFramed))
+			return;
+
+		DrawAround(parent, controls);
+	}
+
+	/// <summary>Paints the frame around the shown <paramref name="controls"/> on <paramref name="parent"/>.</summary>
+	private static void DrawAround(Control parent, Control[] controls)
+	{
+		var frame = new FrameCache(controls[0]);
+		void Paint(object? sender, PaintEventArgs e)
 		{
-			if (!control.Visible)
+			var shown = controls.Where(c => c.Visible).Select(c => c.Bounds).ToList();
+			if (shown.Count == 0)
 				return;
 
-			var bounds = Rectangle.Inflate(control.Bounds, Border, Border);
+			var bounds = Rectangle.Inflate(shown.Aggregate(Rectangle.Union), Border, Border);
 			e.Graphics.DrawImageUnscaled(frame.Get(bounds.Size), bounds.Location);
-		};
+		}
+
 		void Repaint(object? sender, EventArgs e) => parent.Invalidate();
-		control.LocationChanged += Repaint;
-		control.SizeChanged += Repaint;
-		control.VisibleChanged += Repaint;
+		void Detach(object? sender, EventArgs e)
+		{
+			parent.Paint -= Paint;
+			foreach (var control in controls)
+			{
+				control.LocationChanged -= Repaint;
+				control.SizeChanged -= Repaint;
+				control.VisibleChanged -= Repaint;
+				control.Disposed -= Detach;
+			}
+		}
+
+		parent.Paint += Paint;
+		foreach (var control in controls)
+		{
+			control.LocationChanged += Repaint;
+			control.SizeChanged += Repaint;
+			control.VisibleChanged += Repaint;
+			control.Disposed += Detach;
+		}
 	}
 
 	/// <summary>
