@@ -166,6 +166,25 @@ internal static class CaravanFrame
 		foreach (Control child in box.Controls)
 			ShowBlackBehind(child);
 
+		// A text caption sits on the frame's top edge, lower than the middle of the text where a group box has its line:
+		// the content goes down as much, so that the black above it keeps its height. A check box group's content is
+		// laid out under its check box already.
+		if (!box.Controls.OfType<CheckBox>().Any())
+		{
+			int shift = 0;
+			void ShiftContent()
+			{
+				int next = CaptionShift(box.Font);
+				if (next == shift)
+					return;
+				box.Padding = box.Padding with { Top = Math.Max(0, box.Padding.Top - shift + next) };
+				shift = next;
+			}
+
+			ShiftContent();
+			box.FontChanged += (_, _) => ShiftContent();
+		}
+
 		box.Paint += (_, e) =>
 		{
 			var check = box.Controls.OfType<CheckBox>().FirstOrDefault();
@@ -219,6 +238,17 @@ internal static class CaravanFrame
 
 			TextShadow.DrawOutline(e.Graphics, check.Text, check.Font, text, flags);
 		};
+	}
+
+	/// <summary>
+	/// How much lower the frame's top edge is under a text caption in <paramref name="font"/>, set on its baseline, than
+	/// in the middle of the text.
+	/// </summary>
+	private static int CaptionShift(Font font)
+	{
+		using var graphics = Graphics.FromHwnd(IntPtr.Zero);
+		int height = TextRenderer.MeasureText(graphics, "Ag", font).Height;
+		return Math.Max(0, Ascent(graphics, font) - Border) - Math.Max(0, (height - Border) / 2);
 	}
 
 	/// <summary>The height of <paramref name="font"/> above its baseline, in pixels.</summary>
