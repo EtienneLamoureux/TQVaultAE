@@ -36,25 +36,38 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 		}
 	}
 
+	/// <summary>Size of the frame at zoom 1 and 96 dpi, when the text fits in it.</summary>
+	private static readonly Size DesignSize = new(187, 40);
+
+	/// <summary>Room around the text when it is wider or taller than the frame, at zoom 1 and 96 dpi.</summary>
+	private static readonly Size DesignTextMargin = new(25, 20);
+
+	/// <summary>Text size in points at zoom 1.</summary>
+	private const float DesignFontSize = 15F;
+
 	internal string Label
 	{
 		set
 		{
 			_Label = value;
 
+			// The tool tip is kept between shows: its font and size are set again from the current zoom and DPI, never
+			// from the previous show's, else every change of scale since then would add up.
+			// Rounded: the zoom carries float noise after maximize/restore cycles (0.9999998), which would make a new
+			// font of almost the same size.
+			var font = this.FontService.GetFont(MathF.Round(DesignFontSize * this.UIService.FontZoom, 1));
+			this.scalingLabel.Font = font;
 			this.scalingLabel.Text = _Label;
 
-			// Adjust size to text
-			var txtsize = TextRenderer.MeasureText(this._Label, this.scalingLabel.Font, this.Size, TextFormatFlags.SingleLine);// May vary with font
-
-			if (txtsize.Width > this.Width)
-				this.Width = txtsize.Width + 25;// +20 for marging
-
-			if (txtsize.Height > this.Height - 25)
-				this.Height = txtsize.Height + 20;// +20 for marging
+			var frame = Scaled(DesignSize, this.UIService.Scale);
+			var margin = Scaled(DesignTextMargin, this.UIService.Scale);
+			var text = TextRenderer.MeasureText(this._Label, font, Size.Empty, TextFormatFlags.SingleLine);
+			this.ClientSize = new Size(
+				Math.Max(frame.Width, text.Width + margin.Width),
+				Math.Max(frame.Height, text.Height + margin.Height));
+			this.scalingLabel.Bounds = this.ClientRectangle;
 
 			this.scalingLabel.Visible = true;
-
 		}
 	}
 
@@ -80,12 +93,8 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
-		this.scalingLabel.Font = fontService.GetFont(15F, GraphicsUnit.Point);
-
+		// Font and size are set at each show (Label).
 		this.bgimg = this.UIService.LoadBitmap(@"INGAMEUI\HEALTHMANAOVERLAY01_NEW.TEX");
-
-		if (bgimg is not null)
-			this.Size = new Size(bgimg.Width, bgimg.Height);
 		this.BackgroundImage = bgimg;
 	}
 
@@ -124,7 +133,6 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 					, services.TranslationService
 				);
 
-			_Current.ClientSize = new Size(187, 40);// Reset Size before computation
 			_Current.Label = label;
 			_Current.AnchorControl = anchorControl;
 			_Current.Show();

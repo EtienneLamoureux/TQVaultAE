@@ -7,6 +7,11 @@ using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Tooltips;
 
+/// <summary>
+/// A tool tip window. Its sizes and fonts come from the current scale (<see cref="IUIService.Scale"/>,
+/// <see cref="IUIService.FontZoom"/>) each time it is shown, from design values: never from the size or font of a
+/// previous show, since the zoom and the DPI may have changed since then and the changes would add up.
+/// </summary>
 public class BaseTooltip : Form
 {
 	protected IItemProvider ItemProvider;
@@ -30,6 +35,10 @@ public class BaseTooltip : Form
 		this.UIService = uiService;
 		this.TranslationService = translationService;
 	}
+
+	/// <summary>A size given at zoom 1 and 96 dpi, in pixels at <paramref name="scale"/>.</summary>
+	internal static Size Scaled(Size design, float scale)
+		=> new((int)Math.Round(design.Width * scale), (int)Math.Round(design.Height * scale));
 
 	/// <summary>Copy of a cached image shown by this tooltip; owned by the tooltip.</summary>
 	private Bitmap? _shownImage;
