@@ -343,7 +343,7 @@ public class BagButtonBase : Panel
 			// Display the text overlay if we have one.
 			if (!string.IsNullOrEmpty(this.ButtonText))// ButtonText is a number for Vault
 			{
-				Font? font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFontLight(20.0F * UIService.Scale, GraphicsUnit.Pixel));
+				Font? font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFont(20.0F * UIService.Scale, GraphicsUnit.Pixel));
 
 				if (font is not null)
 				{

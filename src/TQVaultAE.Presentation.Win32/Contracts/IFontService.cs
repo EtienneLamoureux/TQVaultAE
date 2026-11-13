@@ -19,7 +19,6 @@ public interface IFontService
 	Font GetFontLight(float fontSize, FontStyle fontStyle, float? scale = null);
 	Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit);
 	Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b);
-	Font GetFontLight(float fontSize, GraphicsUnit unit);
 
 	/// <summary>The shared copy of <paramref name="font"/> in <paramref name="style"/>, for example its bold version.</summary>
 	Font WithStyle(Font font, FontStyle style);
