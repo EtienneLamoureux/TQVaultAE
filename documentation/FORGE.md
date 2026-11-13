@@ -26,8 +26,9 @@ You can access the forge from TQVaultAE upper navigation bar.
 Once inside you can drag & drop items from your left vaults.
 An item must come from a bag: one you just created and still hold is refused with "The item must be stored first!".
 
-While the forge is open, it takes the place of the character, stash and second vault panels, the other buttons of the navigation bar are hidden,
-and the "Forge" button reads "Show Vault": it closes the forge like "Cancel" does.
+While the forge is open, it takes the place of the character, stash and second vault panels, the other buttons of the navigation bar
+are hidden except "Exit", and the "Forge" button reads "Show Vault": it closes the forge like "Cancel" does.
+The forge follows the screen DPI and the TQVault zoom, like the rest of the window.
 
 _**Note:** The Forge doesn't move your objects, however, it changes the properties of the base item used._
 
@@ -119,7 +120,7 @@ A prefix or a suffix put in a relic slot becomes a relic of one shard, without c
 
 _**Note:** Here's an example of a useless quest item with offensive properties._
 <br />
-<img src="./forge/forge_ui_godmode.png" width="750" alt="God Mode Example" />
+<img src="./forge/forge_ui_godmode.png" alt="God Mode Example" />
 <br />
 
 #### <a id="Hardcore"></a>*Hardcore*
