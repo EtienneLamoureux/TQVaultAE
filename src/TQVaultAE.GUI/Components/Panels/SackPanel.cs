@@ -610,6 +610,30 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		this.Location = new Point(
 			Convert.ToInt32((float)this.originalLocation.X * UIService.Scale),
 			Convert.ToInt32((float)this.originalLocation.Y * UIService.Scale));
+
+		// The cells are whole pixels at every zoom while the panel holding the sack is sized in proportion to the zoom:
+		// the panel grows to keep the sack whole.
+		if (ZoomScope.IsZooming)
+			(this.Parent as VaultPanel)?.Contain(this);
+	}
+
+	/// <summary>The sack's size in design pixels.</summary>
+	private DesignSize designSize;
+
+	/// <summary>
+	/// How much larger the sack is than its size in proportion to the scale: its cells are whole pixels.
+	/// </summary>
+	internal Size ZoomExcess
+		=> this.designSize.IsEmpty ? Size.Empty : this.Size - this.designSize.At(UIService.Scale);
+
+	/// <inheritdoc/>
+	protected override void OnSizeChanged(EventArgs e)
+	{
+		base.OnSizeChanged(e);
+
+		// The panel's construction sizes it before the services are set.
+		if (this.UIService is not null)
+			this.designSize.Keep(this.Size, UIService.Scale);
 	}
 
 	/// <summary>

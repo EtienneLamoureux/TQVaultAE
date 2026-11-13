@@ -193,6 +193,24 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	public int BorderPad => Convert.ToInt32(2.0F * UIService.Scale);
 
 	/// <summary>
+	/// After a zoom, grows the panel by what <paramref name="sack"/> came out larger than its size at the zoom, so the
+	/// sack stays whole inside it.
+	/// </summary>
+	internal void Contain(SackPanel sack)
+	{
+		if (this.designSize.IsEmpty)
+			return;
+
+		var scaled = this.designSize.At(UIService.Scale);
+		var excess = sack.ZoomExcess;
+		var size = new Size(
+			Math.Max(this.Width, scaled.Width + Math.Max(0, excess.Width)),
+			Math.Max(this.Height, scaled.Height + Math.Max(0, excess.Height)));
+		if (size != this.Size)
+			this.Size = size;
+	}
+
+	/// <summary>
 	/// Gets the bagbuttons array
 	/// </summary>
 	public Collection<BagButtonBase> BagButtons => this.bagButtons;
@@ -487,6 +505,24 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
 
 		base.ScaleControl(factor, specified);
+
+		// From the scale, not from the size at the zoom before. The sacks, scaled next, make it grow where their
+		// whole-pixel cells need it (Contain).
+		if (ZoomScope.IsZooming && !this.designSize.IsEmpty)
+			this.Size = this.designSize.At(UIService.Scale);
+	}
+
+	/// <summary>The panel's size in design pixels.</summary>
+	private DesignSize designSize;
+
+	/// <inheritdoc/>
+	protected override void OnSizeChanged(EventArgs e)
+	{
+		base.OnSizeChanged(e);
+
+		// The base panel's construction sizes it before the services are set.
+		if (this.UIService is not null)
+			this.designSize.Keep(this.Size, UIService.Scale);
 	}
 
 	/// <summary>
