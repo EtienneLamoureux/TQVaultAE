@@ -238,6 +238,33 @@ public class SkillTooltipContentBuilderTests
 	}
 
 	[Fact]
+	public void Skill_NextLevelStartingWithAGroup_HasAnEmptyLineUnderNextLevel()
+	{
+		// Arrange: Echoes of the Ancestors at level 2, as the game shows it.
+		this._edit.Setup(e => e.DescribeSkill(IceShard, It.IsAny<int>(), It.IsAny<SkillWindowContext?>()))
+			.Returns((RecordId id, int level, SkillWindowContext? _) => new GrantedSkill(id, "Echoes", level, $"{level}", null, null, [],
+				["^w33.0% Chance to be Used : Shen Pao", "", "^wChance for one of the following:", $"^w{16 * level + 22} Fire Damage"]));
+
+		// Act
+		var lines = this.Build(Editor(masteryLevel: 32, iceShard: 2, points: 0), Storm.Skills[0]);
+
+		// Assert
+		var current = lines.FindIndex(l => l.Text == "Current Level : 2");
+		lines.Skip(current).Take(11).Select(l => (l.Text, l.Kind)).Should().Equal(
+			("Current Level : 2", SkillTipKind.Level),
+			("33.0% Chance to be Used : Shen Pao", SkillTipKind.Text),
+			("", SkillTipKind.Blank),
+			("Chance for one of the following:", SkillTipKind.Text),
+			("54 Fire Damage", SkillTipKind.Text),
+			("", SkillTipKind.Blank),
+			("Next Level : 3", SkillTipKind.Level),
+			("", SkillTipKind.Blank),
+			("Chance for one of the following:", SkillTipKind.Next),
+			("70 Fire Damage", SkillTipKind.Next),
+			("", SkillTipKind.Blank));
+	}
+
+	[Fact]
 	public void EmptySlot_HasNoToolTip()
 		=> this._builder.Build(Editor(masteryLevel: 10, iceShard: 1, points: 5), 1, null, [], () => 0, 0).Should().BeEmpty();
 }

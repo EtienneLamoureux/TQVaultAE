@@ -109,6 +109,18 @@ public class SkillTooltipLayoutTests
 	}
 
 	[Fact]
+	public void NextEffects_KeepTheEmptyLineBeforeAHeading_EvenRightUnderTheNextLevel()
+	{
+		// Echoes of the Ancestors 2 → 3 in the game: "Next Level : 3", an empty line, then the group of damages.
+		string[] level2 = ["33.0% Chance to be Used : Shen Pao", "", "Chance for one of the following:", "54 Fire Damage", "54 Cold Damage"];
+		string[] level3 = ["33.0% Chance to be Used : Shen Pao", "", "Chance for one of the following:", "70 Fire Damage", "70 Cold Damage"];
+
+		SkillTooltipLayout.NextEffects(level2, level3).Should().Equal(
+			"", "Chance for one of the following:", "70 Fire Damage", "70 Cold Damage");
+		SkillTooltipLayout.NextEffects([], level2).Should().Equal(level2);
+	}
+
+	[Fact]
 	public void NextEffects_WithoutACurrentLevel_ShowEverything()
 		=> SkillTooltipLayout.NextEffects([], Level6).Should().HaveCount(Level6.Length)
 			.And.StartWith("^a4.0 Second(s) Recharge");

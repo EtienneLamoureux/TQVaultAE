@@ -96,7 +96,8 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 			lines.Add(new SkillTipLine(this.GameText(tag, fallback, level), SkillTipKind.Level));
 			currentEffects = SkillTooltipLayout.CurrentEffects(Effects(id, level));
 			var abilities = SkillTooltipLayout.AbilitiesStart(currentEffects);
-			lines.AddRange(currentEffects.Select((e, i) => new SkillTipLine(e, i < abilities ? SkillTipKind.Text : SkillTipKind.Ability)));
+			lines.AddRange(currentEffects.Select((e, i) => e.Length == 0 ? SkillTipLine.Blank
+				: new SkillTipLine(e, i < abilities ? SkillTipKind.Text : SkillTipKind.Ability)));
 		}
 
 		// The next level is a line type of its own, in grey, with only what it changes.
@@ -106,7 +107,7 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 			lines.Add(new SkillTipLine(this.GameText(tag, fallback, level), SkillTipKind.Level));
 			var next = Effects(id, level).ToList();
 			lines.AddRange(SkillTooltipLayout.NextEffects([.. currentEffects], next, modified)
-				.Select(e => new SkillTipLine(e, SkillTipKind.Next)));
+				.Select(e => e.Length == 0 ? SkillTipLine.Blank : new SkillTipLine(e, SkillTipKind.Next)));
 		}
 
 		var masteryLevel = skills.GetMasteryLevel(slot);

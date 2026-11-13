@@ -31,8 +31,9 @@ public static class SkillTooltipLayout
 	/// <summary>
 	/// The effects of the next level: the recharge first, then only what the next level changes. A line that the current
 	/// level already shows as is (an energy cost, a flat damage that does not grow...) is left out, as in the game.
-	/// From the first heading on (a summon's "Totem Attributes:", "Totem Abilities:"), every line is shown again.
-	/// With no current level, every effect is shown.
+	/// From the first heading on (a summon's "Totem Attributes:", "Totem Abilities:", Echoes of the Ancestors' "Chance for
+	/// one of the following:"), every line is shown again, with the empty line before that heading when the effects have
+	/// one, even right under "Next Level". With no current level, every effect is shown.
 	/// </summary>
 	/// <param name="current">The current level's effects.</param>
 	/// <param name="next">The next level's effects.</param>
@@ -45,8 +46,13 @@ public static class SkillTooltipLayout
 	{
 		var shown = new List<string>();
 		bool inBlock = false;
+		string? previous = null;
 		foreach (var line in CurrentEffects(next))
 		{
+			if (!inBlock && IsHeading(line) && previous is { Length: 0 })
+				shown.Add(string.Empty);
+
+			previous = line;
 			inBlock |= IsHeading(line);
 			if (inBlock
 				? line.Length != 0 || shown.Count != 0
