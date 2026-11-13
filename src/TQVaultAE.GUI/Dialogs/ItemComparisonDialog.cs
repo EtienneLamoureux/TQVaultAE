@@ -56,8 +56,12 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._builder = new ItemComparisonContentBuilder(this.Services.TranslationService);
 		this.Owner = instance;
 
-		// Built in code and sized with UIService.Scale: no WinForms scaling on top.
-		this.AutoScaleMode = AutoScaleMode.None;
+		// The DPI of the dialog's monitor: the toolbar and the button are made at the dialog's DPI before it has a
+		// window (the system's), fonts with the user's zoom only, and Windows Forms scales them to its monitor's DPI when it
+		// opens and when it moves to a monitor of another DPI (AutoScaleMode.Dpi); the columns, made again at each change,
+		// are made at the dialog's DPI (ContentScale), and again when it changes (OnDpiChanged).
+		this.AutoScaleDimensions = new SizeF(96F, 96F);
+		this.AutoScaleMode = AutoScaleMode.Dpi;
 		this.BackColor = DialogColor;
 		this.ForeColor = Color.White;
 		this.MaximizeBox = false;
@@ -69,10 +73,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this.Text = Resources.ItemComparisonText;
 		this.Name = nameof(ItemComparisonDialog);
 
-		float scale = this.UIService.Scale;
+		float scale = this.ContentScale;
 		int gap = (int)Math.Round(4 * scale);
-		var border = CustomBorderThickness;
-		this.Padding = new Padding(border.Left + gap, border.Top + gap, border.Right + gap, border.Bottom + gap);
+		this.SetPadding();
 
 		this._table = new TableLayoutPanel()
 		{
@@ -117,7 +120,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			Text = Resources.GlobalOK,
 			UseCustomGraphic = true,
 			UseVisualStyleBackColor = false,
-			Font = this.FontService.GetFontLight(CaravanLook.ButtonTextSize, this.UIService.FontZoom),
+			Font = this.FontService.GetFontLight(CaravanLook.ButtonTextSize, this.UIService.Zoom),
 		};
 		ok.Click += (_, _) => this.Close();
 		ok.FlatAppearance.BorderSize = 0;
@@ -168,9 +171,52 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this.DrawCustomBorder = true;
 	}
 
+	/// <summary>
+	/// The scale of the columns, made at each change of the content, in pixels of the dialog's monitor: the user's zoom
+	/// and that monitor's DPI.
+	/// </summary>
+	private float ContentScale => this.UIService.Zoom * this.DeviceDpi / 96F;
+
+	/// <summary>
+	/// The space between the border and the content, at the dialog's DPI: Windows Forms does not scale a window's own
+	/// padding when its DPI changes.
+	/// </summary>
+	private void SetPadding()
+	{
+		int gap = (int)Math.Round(4 * this.ContentScale);
+		var border = CustomBorderThickness;
+		this.Padding = new Padding(border.Left + gap, border.Top + gap, border.Right + gap, border.Bottom + gap);
+	}
+
+	/// <summary>
+	/// The dialog moved to a monitor of another DPI: Windows Forms scaled the toolbar and the button; the columns are made
+	/// again at the new scale and the dialog fits them where it is.
+	/// </summary>
+	protected override void OnDpiChanged(DpiChangedEventArgs e)
+	{
+		base.OnDpiChanged(e);
+		if (e.Cancel || this.Content is null)
+			return;
+
+		this.SetPadding();
+
+		this.BeginInvoke(() =>
+		{
+			if (this.IsDisposed)
+				return;
+
+			var scroll = this._scroll.AutoScrollPosition;
+			this.Fill();
+			this.FitToContent(keepLocation: true);
+			this._scroll.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
+		});
+	}
+
 	protected override void OnLoad(EventArgs e)
 	{
 		base.OnLoad(e);
+		// The window now has its monitor's DPI, which the padding made before it may not have had.
+		this.SetPadding();
 		this.Fill();
 		this.FitToContent();
 		this._alignRows.CheckedChanged += this.OptionChanged;
@@ -186,8 +232,8 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			Checked = isChecked,
 			ForeColor = Color.White,
 			BackColor = Color.Transparent,
-			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.UIService.FontZoom),
-			Margin = new Padding((int)Math.Round(4 * this.UIService.Scale), 0, (int)Math.Round(12 * this.UIService.Scale), 0),
+			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.UIService.Zoom),
+			Margin = new Padding((int)Math.Round(4 * this.ContentScale), 0, (int)Math.Round(12 * this.ContentScale), 0),
 			Name = name,
 			Text = text,
 		};
@@ -200,8 +246,10 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 		if (this.Options.ApplyTo(this.USettings))
 			this.USettings.Save();
+
+		// The dialog stays where it is, on the monitor the user may have moved it to.
 		this.Fill();
-		this.FitToContent();
+		this.FitToContent(keepLocation: true);
 	}
 
 	/// <summary>
@@ -311,7 +359,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// </summary>
 	private Padding CellMargin(bool top)
 	{
-		int side = CaravanFrame.Border + (int)Math.Round(ColumnGap / 2 * this.UIService.Scale);
+		int side = CaravanFrame.Border + (int)Math.Round(ColumnGap / 2 * this.ContentScale);
 		return new Padding(side, top ? CaravanFrame.Border : 0, side, top ? 0 : CaravanFrame.Border);
 	}
 
@@ -321,7 +369,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// </summary>
 	private Panel MakePicture(Item? item, string name)
 	{
-		float scale = this.UIService.Scale;
+		float scale = this.ContentScale;
 		int padding = (int)Math.Round(6 * scale);
 		var bitmap = item is null ? null : this.UIService.GetBitmap(item);
 		var size = bitmap is null
@@ -349,7 +397,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// <summary>A column: the rows of its lines, top to bottom, on the tooltip background.</summary>
 	private FlowLayoutPanel MakeColumn(IReadOnlyList<TooltipLine> lines, string name)
 	{
-		float scale = this.UIService.Scale;
+		float scale = this.ContentScale;
 		int padding = (int)Math.Round(6 * scale);
 		var column = new FlowLayoutPanel()
 		{
@@ -367,7 +415,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		column.SuspendLayout();
 		foreach (var line in lines)
 		{
-			var row = BaseTooltip.MakeLineRow(this.UIService, this.FontService, line, ColumnColor);
+			var row = BaseTooltip.MakeLineRow(this.UIService, this.FontService, line, ColumnColor, this.UIService.Zoom);
 			if (row is not null && line.ToggleKey is { } key)
 				this.MakeToggle(row, key);
 			column.Controls.Add(row);
@@ -389,11 +437,12 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 	/// <summary>
 	/// Sizes the dialog to its columns and border, within the working area of its screen; the rest scrolls. Centered on
-	/// its owner, or where it is (kept within the working area) when <paramref name="keepLocation"/>.
+	/// its owner, on the owner's screen, or where it is, kept within the working area of the screen it is on, when
+	/// <paramref name="keepLocation"/> (the user may have moved it to another monitor).
 	/// </summary>
 	private void FitToContent(bool keepLocation = false)
 	{
-		var area = Screen.FromControl(this.Owner ?? this).WorkingArea;
+		var area = Screen.FromControl(keepLocation ? this : this.Owner ?? this).WorkingArea;
 		var table = this._table.PreferredSize;
 		var content = new Size(Math.Max(table.Width, this._toolbar.PreferredSize.Width), table.Height);
 		var frame = new Size(this.Padding.Horizontal, this.Padding.Vertical + this._buttons.Height + this._toolbar.PreferredSize.Height);

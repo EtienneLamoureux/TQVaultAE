@@ -98,7 +98,9 @@ public class BaseTooltip : Form
 		}
 	}
 
-	internal static Control? MakeRow(IUIService uiService, IFontService fontService, string? friendlyName, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
+	/// <param name="fontZoom">The zoom of the fonts; by default <see cref="IUIService.FontZoom"/>, for a tool tip window. A
+	/// dialog that Windows Forms scales to its monitor's DPI gives the user zoom only (<see cref="IUIService.Zoom"/>).</param>
+	internal static Control? MakeRow(IUIService uiService, IFontService fontService, string? friendlyName, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null, float? fontZoom = null)
 	{
 		friendlyName ??= string.Empty;
 		Control? row = null;
@@ -107,7 +109,7 @@ public class BaseTooltip : Form
 			row = new Label()
 			{
 				Text = " ",
-				Font = fontService.GetFontLight(fontSize, style, uiService.FontZoom),
+				Font = fontService.GetFontLight(fontSize, style, fontZoom ?? uiService.FontZoom),
 				AutoSize = true,
 			};
 		}
@@ -149,12 +151,12 @@ public class BaseTooltip : Form
 
 					row.SuspendLayout();
 					foreach (var coloredSegment in multiColors)
-						row.Controls.Add(MakeSingleColorLabel(uiService, fontService, coloredSegment, FGColor, fontSize, style, BGColor));
+						row.Controls.Add(MakeSingleColorLabel(uiService, fontService, coloredSegment, FGColor, fontSize, style, BGColor, fontZoom));
 					row.ResumeLayout();
 				}
 			}
 			else
-				row = MakeSingleColorLabel(uiService, fontService, friendlyName, FGColor, fontSize, style, BGColor);
+				row = MakeSingleColorLabel(uiService, fontService, friendlyName, FGColor, fontSize, style, BGColor, fontZoom);
 		}
 
 		return row;
@@ -162,15 +164,16 @@ public class BaseTooltip : Form
 
 	/// <summary>
 	/// The row of a tooltip line built in Presentation: text, spacer or delimiter. A range line is drawn as its text followed
-	/// by its range; the item tooltip aligns ranges itself. A detail line is drawn smaller.
+	/// by its range; the item tooltip aligns ranges itself. A detail line is drawn smaller. The fonts' zoom is
+	/// <paramref name="fontZoom"/>, see <see cref="MakeRow"/>.
 	/// </summary>
-	internal static Control? MakeLineRow(IUIService uiService, IFontService fontService, TooltipLine line, Color? BGColor = null)
+	internal static Control? MakeLineRow(IUIService uiService, IFontService fontService, TooltipLine line, Color? BGColor = null, float? fontZoom = null)
 		=> line.Kind switch
 		{
-			TooltipLineKind.Spacer => MakeRow(uiService, fontService, TOOLTIPSPACER, BGColor: BGColor),
-			TooltipLineKind.Delimiter => MakeRow(uiService, fontService, TOOLTIPDELIM, BGColor: BGColor),
-			TooltipLineKind.Range => MakeRow(uiService, fontService, $"{line.Text}  {line.Range}", line.Color?.Color(), line.Detail ? DetailFontSize : LineFontSize, line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor),
-			_ => MakeRow(uiService, fontService, line.Text, line.Color?.Color(), line.Detail ? DetailFontSize : LineFontSize, line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor),
+			TooltipLineKind.Spacer => MakeRow(uiService, fontService, TOOLTIPSPACER, BGColor: BGColor, fontZoom: fontZoom),
+			TooltipLineKind.Delimiter => MakeRow(uiService, fontService, TOOLTIPDELIM, BGColor: BGColor, fontZoom: fontZoom),
+			TooltipLineKind.Range => MakeRow(uiService, fontService, $"{line.Text}  {line.Range}", line.Color?.Color(), line.Detail ? DetailFontSize : LineFontSize, line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor, fontZoom),
+			_ => MakeRow(uiService, fontService, line.Text, line.Color?.Color(), line.Detail ? DetailFontSize : LineFontSize, line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor, fontZoom),
 		};
 
 	/// <summary>The font size of a tooltip line.</summary>
@@ -179,7 +182,7 @@ public class BaseTooltip : Form
 	/// <summary>The font size of a detail line (<see cref="TooltipLine.Detail"/>).</summary>
 	private const float DetailFontSize = 9F;
 
-	internal static Label MakeSingleColorLabel(IUIService uiService, IFontService fontService, string friendlyName, Color? FGColor, float fontSize, FontStyle style, Color? BGColor = null)
+	internal static Label MakeSingleColorLabel(IUIService uiService, IFontService fontService, string friendlyName, Color? FGColor, float fontSize, FontStyle style, Color? BGColor = null, float? fontZoom = null)
 	{
 		// Single Color
 		var (tagColor, txt) = friendlyName.SplitLeadingColorTag();
@@ -188,7 +191,7 @@ public class BaseTooltip : Form
 		{
 			Text = txt,
 			ForeColor = FGColor.Value,
-			Font = fontService.GetFontLight(fontSize, style, uiService.FontZoom),
+			Font = fontService.GetFontLight(fontSize, style, fontZoom ?? uiService.FontZoom),
 			AutoSize = true,
 			Anchor = AnchorStyles.Left,
 			BackColor = BGColor ?? Color.Transparent,
