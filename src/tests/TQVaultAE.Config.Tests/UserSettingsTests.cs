@@ -59,7 +59,7 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(float) => 0.94945055F + i,
 				var t when t == typeof(double) => -0.123456789012345 - i,
 				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true, ShowSources = true },
-				var t when t == typeof(SortSettings) => new SortSettings { Algorithm = SackSortAlgorithm.Rarity, MergeRelics = true },
+				var t when t == typeof(SortSettings) => SortWithOwnOrders(),
 				var t when t == typeof(KeyBindSettings) => KeyBinds(("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "")),
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
 			};
@@ -67,6 +67,18 @@ public sealed class UserSettingsTests : IDisposable
 		}
 
 		return settings;
+	}
+
+	/// <summary>Sort choices with a default and every button's own order changed.</summary>
+	private static SortSettings SortWithOwnOrders()
+	{
+		var sort = new SortSettings { Algorithm = SackSortAlgorithm.Rarity, MergeRelics = true };
+		sort.SetAlgorithm(SortButtonKey.Vault, SackSortAlgorithm.Level);
+		sort.SetAlgorithm(SortButtonKey.SecondaryVault, SackSortAlgorithm.Type);
+		sort.SetAlgorithm(SortButtonKey.Player, SackSortAlgorithm.Normal);
+		sort.SetAlgorithm(SortButtonKey.PlayerBag, SackSortAlgorithm.Level);
+		sort.SetAlgorithm(SortButtonKey.Stash, SackSortAlgorithm.Type);
+		return sort;
 	}
 
 	private static T InCulture<T>(string cultureName, Func<T> action)
