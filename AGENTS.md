@@ -193,6 +193,12 @@ Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127
 | Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_mode_card(mode)` (the text and PNG of a mode card), `forge_set_hardcore`, `forge_drop(slot)`, `forge_select_part`, `forge_drag_cursor`, `forge_hover(slot, hide?)` (a slot's tooltip, for Base the preview, drawn on a PNG of the main window), `forge_reset`, `forge_forge`, `forge_cancel` |
 | Evidence | `capture(control, shown?)`, a PNG made with `DrawToBitmap` that works even when the window is hidden (`shown=true` copies the pixels the window shows on its desktop instead) (`capture("playerInfo")` for the player information panel, whose labels `DrawToBitmap` leaves out); `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded; `picture_fault(resourceId, mode)` makes a picture read as missing or damaged (in memory) to check the placeholder of an item whose picture cannot be loaded |
 
+Loadouts (saved equipment sets, `documentation/LOADOUTS.md`):
+
+| Purpose | Tools |
+|---|---|
+| Loadout bar | `loadouts(action?, name?, newName?, menu?, gameRunning?)` reads the bar, its menus, the loadouts file and each loadout's pieces (identical to the worn one or not); actions `select`, `add`, `update`, `rename`, `copy`, `delete`, `load` on test characters, `gameRunning` stands for the game process; `select_search_result` gives a loadout result's `loadout` |
+
 Rules:
 - Nothing blocks saves: work only in your own test files, vaults `claude-vault1`, `claude-vault2`, ... and characters `claude-character1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
 - Put items back with `cancel_drag`.

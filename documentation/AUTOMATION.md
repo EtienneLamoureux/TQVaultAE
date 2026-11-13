@@ -190,6 +190,18 @@ Cells are grid coordinates, as reported by `get_state`.
 
 Every forge tool returns the forge state, with the `newMessages` and `sounds` that the call produced.
 
+### Loadouts
+
+The loadout bar under the statistics panel of the Equipment tab (see `documentation/LOADOUTS.md`).
+
+| Tool | What it does |
+|---|---|
+| `loadouts(action?, name?, newName?, menu?, gameRunning?, realGame?)` | Reads the loadouts of the character shown: the bar (visible, `bounds`, `field`, `add`, `load` as `[x, y, width, height]` in the stash panel, names, selected, `canChange`, font), the loadouts file (`file`, `fileExists`, `readFailed`), each loadout's pieces by slot (record, seed, `worn` when the piece worn in that slot is identical) and the worn pieces. `menu` = `list` or `actions` reads the entries of the drop-down or of the right-click menu (text, enabled, checked). `action` first does what the bar does: `select` (name), `add` (name), `update`, `rename` (newName), `copy` (newName), `delete`, `load`, on the selected loadout unless `name` is given; add, rename and copy take the name instead of the name dialog. Actions run after the call returns: queue the answers of their boxes first (update and delete confirm; load and update ask while the game runs). Test characters only. `gameRunning=true/false` makes the next actions take the game as running or not, `realGame=true` goes back to the real processes. |
+
+`select_search_result` also gives the result's `loadout`: a loadout piece selects its character, the Equipment tab and
+that loadout in the bar. `search_containers("Loadouts")` lists the loadout pieces in the search, one container per
+character's loadouts file.
+
 ### How drags are simulated
 
 The real cursor is never moved. The tools call the panels' own `MouseMove` / `MouseDown` / `MouseLeave` handlers
