@@ -567,13 +567,10 @@ public partial class ItemProvider
 				amount = GetAmountSingle(itm, data, variableNumber, minVar, maxVar, ref label, labelColor);
 		}
 
-		// Figure out the duration string: a range when the max duration at the index shown is above the min.
-		string? duration = null;
+		// Figure out the duration string: the game keeps only the min duration (it loads the max but never uses it), so a
+		// duration is a single value, never a range.
 		bool fixedDuration = !IsDurationReliantValue(data.Effect);
-		if (minDurVar is not null && maxDurVar is not null && ValueAt(maxDurVar) > ValueAt(minDurVar))
-			duration = GetDurationRange(variableNumber, minDurVar, maxDurVar, fixedDuration);
-		else
-			duration = GetDurationSingle(variableNumber, minDurVar, maxDurVar, fixedDuration);
+		string? duration = GetDurationSingle(variableNumber, minDurVar, maxDurVar, fixedDuration);
 
 		// Figure out the Damage Ratio string
 		string? damageRatio = null;

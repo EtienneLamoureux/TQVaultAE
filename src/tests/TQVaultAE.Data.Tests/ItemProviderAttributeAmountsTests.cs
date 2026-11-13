@@ -72,11 +72,12 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 	[InlineData("retaliationSlowOffensiveAbility")]
 	public void EffectAppliedForATime_IsNotMultiplied_AndLastsFor(string effect)
 	{
-		// Slam: "70% Chance of Impaired Aim for 3.4 - 5.1 Seconds", not 70 x 4 = 280% "over" the time.
+		// Slam: "70% Chance of Impaired Aim for 3.4 Seconds", not 70 x 4 = 280% "over" the time. The game keeps only the
+		// min duration: it loads the max but never uses it.
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float($"{effect}Min", 70f), Float($"{effect}DurationMin", 3.4f), Float($"{effect}DurationMax", 5.1f));
 
-		this.BaseAttributes(item).Should().ContainSingle().Which.Should().StartWith($"{Epic}70").And.EndWith(" for 3.4 - 5.1 Seconds");
+		this.BaseAttributes(item).Should().ContainSingle().Which.Should().StartWith($"{Epic}70").And.EndWith(" for 3.4 Seconds");
 	}
 
 	[Fact]
@@ -89,12 +90,12 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
-	public void DifferentDurationBounds_ShowADurationRange_AndTheAmountUsesTheMinimumDuration()
+	public void DifferentDurationBounds_ShowOnlyTheMinimumDuration_WhichTheAmountUses()
 	{
 		var item = this.CreateItem("ArmorJewelry_Ring",
 			Float("offensiveSlowFireMin", 5f), Float("offensiveSlowFireDurationMin", 2f), Float("offensiveSlowFireDurationMax", 4f));
 
-		this.BaseAttributes(item).Should().Equal($"{Epic}10 Burn Damage over 2.0 - 4.0 Seconds");
+		this.BaseAttributes(item).Should().Equal($"{Epic}10 Burn Damage over 2.0 Seconds");
 	}
 
 	[Fact]
@@ -238,7 +239,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 			Float("offensiveSlowFireMin", 5f), Float("offensiveSlowFireDurationMin", 2f), Float("offensiveSlowFireDurationMax", 4f));
 
 		this.BaseAttributes(single).Should().Equal($"{Epic}10 Burn Damage {Legendary}2");
-		this.BaseAttributes(range).Should().Equal($"{Epic}10 Burn Damage {Legendary}for 2..4 seconds");
+		this.BaseAttributes(range).Should().Equal($"{Epic}10 Burn Damage {Legendary}2");
 	}
 
 	[Fact]

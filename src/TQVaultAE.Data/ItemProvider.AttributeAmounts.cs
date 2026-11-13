@@ -201,37 +201,6 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
-	/// Gets the formatted duration range values
-	/// </summary>
-	/// <param name="varNum">offset number of the variable value that we are using</param>
-	/// <param name="minDurVar">minimum duration variable</param>
-	/// <param name="maxDurVar">maximum duration variable</param>
-	/// <param name="fixedDuration">An effect applied at full strength for the time ("for"), not damage over time ("over").</param>
-	/// <returns>formatted duration string</returns>
-	private string GetDurationRange(int varNum, Variable minDurVar, Variable maxDurVar, bool fixedDuration)
-	{
-		string? duration = null;
-		TQColor? color = null;
-
-		if (!TranslationService.TryTranslateXTag(fixedDuration ? "DamageFixedRangeFormatTime" : "DamageRangeFormatTime", out var formatSpec))
-		{
-			formatSpec = "for {0}..{1} seconds";
-			color = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (time range) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-		}
-
-		duration = this.Format(formatSpec, minDurVar[Math.Min(minDurVar.NumberOfValues - 1, varNum)], maxDurVar[Math.Min(maxDurVar.NumberOfValues - 1, varNum)]);
-
-		return color.HasValue ? $"{color?.ColorTag()}{duration}" : duration;
-	}
-
-	/// <summary>
 	/// Gets the formatted duration single value
 	/// </summary>
 	/// <param name="varNum">offset number of the variable value that we are using</param>
