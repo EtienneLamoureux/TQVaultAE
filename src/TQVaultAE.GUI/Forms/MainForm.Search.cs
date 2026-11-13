@@ -4,6 +4,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Models.Search;
 using TQVaultAE.Presentation;
@@ -26,10 +27,7 @@ public partial class MainForm
 	/// Search dialog kept between openings: building its thousands of category entries is the slow part,
 	/// so it is created once and only rebuilt when the items change. Disposed with the main form.
 	/// </summary>
-	private SearchDialogAdvanced? _searchDialog;
-
-	/// <summary>Whether the search dialog is disposed with the main form; it may be made again (zoom change).</summary>
-	private bool _searchDialogDisposedOnClose;
+	private readonly KeptDialog<SearchDialogAdvanced> keptSearchDialog = new();
 
 	/// <summary>
 	/// Opens the search dialog and shows its results.
@@ -39,28 +37,19 @@ public partial class MainForm
 		// A dialog made at another zoom is made again at this one, scaled once from its design like the other dialogs;
 		// the new one restores what the user had set in the old one.
 		SearchDialogState? keptState = null;
-		if (this._searchDialog is { IsDisposed: false } stale && stale.ScaledZoom != UIService.Zoom)
+		var watch = System.Diagnostics.Stopwatch.StartNew();
+		var zoom = UIService.Zoom;
+		var searchDialog = this.keptSearchDialog.Get(this, zoom, () =>
 		{
-			keptState = stale.ClosedState;
-			stale.Dispose();
-			this._searchDialog = null;
-		}
+			var dialog = this.Services.Forms.Create<SearchDialogAdvanced>();
+			dialog.ApplyZoom(zoom);
+			dialog.RestoreWhenBuilt(keptState);
+			return dialog;
+		}, out bool built, stale => keptState = stale.ClosedState);
 
-		if (this._searchDialog is null || this._searchDialog.IsDisposed)
-		{
-			var watch = System.Diagnostics.Stopwatch.StartNew();
-			this._searchDialog = this.Services.Forms.Create<SearchDialogAdvanced>();
-			this._searchDialog.ApplyZoom(UIService.Zoom);
-			this._searchDialog.RestoreWhenBuilt(keptState);
+		if (built)
 			this.Log.LogInformation("Search dialog created in {Elapsed} ms", watch.ElapsedMilliseconds);
-			if (!this._searchDialogDisposedOnClose)
-			{
-				this._searchDialogDisposedOnClose = true;
-				this.FormClosed += (_, _) => this._searchDialog?.Dispose();
-			}
-		}
 
-		var searchDialog = this._searchDialog;
 		var result = searchDialog.ShowDialog();
 
 		if (result == DialogResult.OK && searchDialog.QueryResults.Length != 0)
