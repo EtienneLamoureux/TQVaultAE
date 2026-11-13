@@ -402,4 +402,22 @@ public class ItemAttributeProviderTests
 	}
 
 	#endregion
+
+	#region ConvertFormat Tests
+
+	[Theory]
+	[InlineData("{%+.0f0}% Health", 5.0, "+5% Health")]
+	[InlineData("{%+.0f0}% Health", -5.0, "-5% Health")]
+	[InlineData("{%+.0f0}% Health", 0.0, "+0% Health")]
+	[InlineData("{%+.1f0} Damage", -2.5, "-2.5 Damage")]
+	[InlineData("{%.0f0} Health", -5.0, "-5 Health")]
+	[InlineData("-{%.0f0}% Energy Cost", 15.0, "-15% Energy Cost")]
+	public void ConvertFormat_WritesOneSign_AsPrintfDoes(string tqFormat, double value, string expected)
+	{
+		var format = _provider.ConvertFormat(tqFormat);
+
+		string.Format(System.Globalization.CultureInfo.InvariantCulture, format, value).Should().Be(expected);
+	}
+
+	#endregion
 }

@@ -611,9 +611,10 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 						decimalSpec = ".".PadRight(numDecimalParsed + 1, '0');
 				}
 
-				// See if they want the +- sign.
-				return sign.Length != 0
-					? $"[{formatNumber}:{sign}#0{decimalSpec}]"
+				// "%+": the sign of the number, '+' included, as printf writes it. A single section "+#0" would write a
+				// negative number "-+5", so negative numbers get their own section. "%-" only aligns left: no sign added.
+				return sign == "+"
+					? $"[{formatNumber}:+#0{decimalSpec};-#0{decimalSpec}]"
 					: $"[{formatNumber}:#0{decimalSpec}]";
 			}
 			else
