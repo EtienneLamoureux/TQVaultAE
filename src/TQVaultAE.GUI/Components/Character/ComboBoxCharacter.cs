@@ -155,13 +155,6 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 		this.bufferedTableLayoutPanelSkeleton.ColumnStyles[2].Width = toolsWidth;
 	}
 
-	/// <summary>
-	/// Applies the user's zoom at startup. The control sizes itself to its skeleton (AutoSize), so a zoom given to the
-	/// control's own size is undone: the skeleton's width takes it, as a live zoom scales it.
-	/// </summary>
-	internal void ApplyZoom(float zoom)
-		=> this.bufferedTableLayoutPanelSkeleton.Width = (int)Math.Round(this.bufferedTableLayoutPanelSkeleton.Width * zoom);
-
 	/// <summary>On a monitor of another DPI the name font changes: the row height follows it.</summary>
 	protected override void OnDpiChangedAfterParent(EventArgs e)
 	{

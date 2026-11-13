@@ -30,4 +30,19 @@ public static class WindowLayout
 	/// </summary>
 	public static Size FillTo(Rectangle area, Point location)
 		=> new(Math.Max(0, area.Right - location.X), Math.Max(0, area.Bottom - location.Y));
+
+	/// <summary>
+	/// <paramref name="design"/> (a size in design pixels) at <paramref name="scale"/> (zoom times DPI factor).
+	/// </summary>
+	public static Size Scaled(Size design, float scale)
+		=> new((int)Math.Round(design.Width * scale), (int)Math.Round(design.Height * scale));
+
+	/// <summary>
+	/// <paramref name="client"/>, grown so that <paramref name="content"/> placed at <paramref name="location"/> fits
+	/// inside <paramref name="area"/>, the content area of that client size; never smaller than <paramref name="client"/>.
+	/// </summary>
+	public static Size GrowToFit(Size client, Rectangle area, Point location, Size content)
+		=> new(
+			client.Width + Math.Max(0, location.X + content.Width - area.Right),
+			client.Height + Math.Max(0, location.Y + content.Height - area.Bottom));
 }

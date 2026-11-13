@@ -199,40 +199,26 @@ public partial class MainForm : VaultForm
 
 		InitForm();
 
-		#region Apply custom font & scaling
+		#region Apply custom font
 
+		// The window is built at zoom 1 (InitForm): the fonts are those of zoom 1, the user's zoom scales them below.
 		this.exitButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.exitButton);
-
-		this.comboBoxCharacter.ApplyZoom(UIService.Zoom);
-
 		this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.FontZoom);
-
 		this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.vaultListComboBox, false);
 		this.secondaryVaultListComboBox.Font = FontService.GetFontLight(13F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.secondaryVaultListComboBox, false);
 		this.configureButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.configureButton);
 		this.showVaulButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.showVaulButton);
 		this.aboutButton.Font = FontService.GetFontLight(8.25F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.aboutButton);
 		this.titleLabel.Font = FontService.GetFontLight(24F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.titleLabel);
 		this.searchButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.searchButton);
-		ScaleControl(this.UIService, this.tableLayoutPanelMain);
-
 		this.saveButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.saveButton);
 		this.forgeButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		ScaleControl(this.UIService, this.forgeButton);
-
-		this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
+		this.ApplyHighlightLabelFont();
 		this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
 
 		#endregion
+
+		this.ApplyStartupZoom();
 
 		if (USettings.DebugEnabled)
 		{

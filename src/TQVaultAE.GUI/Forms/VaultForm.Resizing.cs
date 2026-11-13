@@ -90,13 +90,9 @@ public partial class VaultForm
 		}
 		else
 		{
-			float scalingWidth = (float)NORMAL_FORMWIDTH * dpi / (float)this.Width * scaleFactor;
-			float scalingHeight = (float)NORMAL_FORMHEIGHT * dpi / (float)this.Height * scaleFactor;
-			float scaling = scalingWidth;
-
-			// Use the scaling factor closest to one.
-			if ((scalingHeight < scalingWidth && scalingHeight > 1.0F) || (scalingHeight > scalingWidth && scalingHeight < 1.0F))
-				scaling = scalingHeight;
+			// From the width, as a reset does: the main window may be taller than its design ratio, grown to fit its
+			// content.
+			float scaling = (float)NORMAL_FORMWIDTH * dpi / (float)this.Width * scaleFactor;
 
 			UIService.Scale = scaleFactor * dpi;
 			using (ZoomScope.Enter())
@@ -139,7 +135,10 @@ public partial class VaultForm
 		this.LastFormSize = this.Size;
 	}
 
-	protected Size InitialScaling(Rectangle workingArea)
+	/// <summary>
+	/// The zoom saved from the last session, lowered (and saved) when the window would not fit the working area at it.
+	/// </summary>
+	protected float InitialZoom(Rectangle workingArea)
 	{
 		// The working area is in screen pixels, the normal size in design pixels.
 		float dpi = UIService.DpiScale;
@@ -159,13 +158,7 @@ public partial class VaultForm
 			}
 		}
 
-		// Rescale from last saved value
-		var thisClientSize = new Size(
-			(int)Math.Round(NORMAL_FORMWIDTH * USettings.Scale * dpi)
-			, (int)Math.Round(NORMAL_FORMHEIGHT * USettings.Scale * dpi)
-		);
-
-		return thisClientSize;
+		return USettings.Scale;
 	}
 
 	/// <summary>
@@ -272,8 +265,9 @@ public partial class VaultForm
 		if (this.ScaleOnResize)
 		{
 			Size resizeTo = this.LastFormSize;
-			// Scale the internal controls to the new size.
-			float scalingFactor = (float)this.Size.Height / (float)resizeTo.Height;
+			// Scale the internal controls to the new size, from the width as a zoom does: the main window may be taller
+			// than its design ratio, grown to fit its content.
+			float scalingFactor = (float)this.Size.Width / (float)resizeTo.Width;
 
 			// Reset scaling to 1.0 if resize from minimize/maximize to normal with its modifier held (Shift).
 			if (fromMinimizedMaximized)

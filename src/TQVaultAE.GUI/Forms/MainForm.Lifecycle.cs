@@ -319,10 +319,90 @@ public partial class MainForm
 	{
 		base.ScaleForm(scaleFactor, useRelativeScaling);
 
+		// A link label does not scale its font with the zoom by itself.
+		this.ApplyHighlightLabelFont();
+
+		this.ApplyDesignMargins();
+		this.SizeToZoom();
+
 		this.NotificationText.Text = string.Empty;
 
 		this.Invalidate();
 	}
+
+	/// <summary>
+	/// The margins of the window's controls as built, at <see cref="designMarginScale"/>, kept by
+	/// <see cref="KeepDesignMargins"/>.
+	/// </summary>
+	private readonly List<(Control Control, Padding Margin)> designMargins = [];
+
+	/// <summary>The scale the window was built at, the one of <see cref="designMargins"/>.</summary>
+	private float designMarginScale;
+
+	/// <summary>
+	/// Keeps the margins of the window's controls as built, before the user's zoom is applied.
+	/// </summary>
+	private void KeepDesignMargins()
+	{
+		void Keep(Control.ControlCollection controls)
+		{
+			foreach (Control control in controls)
+			{
+				if (control.Margin != Padding.Empty)
+					this.designMargins.Add((control, control.Margin));
+				Keep(control.Controls);
+			}
+		}
+
+		this.designMarginScale = UIService.Scale;
+		Keep(this.Controls);
+	}
+
+	/// <summary>
+	/// Gives the controls their margins at the current scale. A zoom scales a margin from its value at the zoom before,
+	/// rounded at each step: a 4 px margin came back as 6 px from zoom 0.7, and the rows holding it grew.
+	/// </summary>
+	private void ApplyDesignMargins()
+	{
+		if (this.designMargins.Count == 0)
+			return;
+
+		float factor = UIService.Scale / this.designMarginScale;
+		int Scaled(int value) => (int)Math.Round(value * factor);
+		foreach (var (control, m) in this.designMargins)
+			control.Margin = new Padding(Scaled(m.Left), Scaled(m.Top), Scaled(m.Right), Scaled(m.Bottom));
+	}
+
+	/// <summary>The client size of the window at zoom 1 and 96 dpi.</summary>
+	private static readonly Size DesignClientSize = new(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
+
+	/// <summary>
+	/// Gives the window in its normal state its size at the current zoom: the design size at the current scale, grown
+	/// where the panels need more room. They are not exactly proportional to the zoom (whole-pixel item cells, margins
+	/// and fonts rounded at each zoom step), and nothing in them may be cut by the border. Setting the size also undoes
+	/// the rounding a relative scaling left in it, so a reset gives back the size of a start at zoom 1.
+	/// </summary>
+	private void SizeToZoom()
+	{
+		if (this.WindowState != FormWindowState.Normal)
+			return;
+
+		// A maximize and restore gives back the zoom within float noise (0.99997): not a pixel less for it.
+		var zoom = MathF.Round(UIService.Zoom, 3);
+		var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, zoom * UIService.DpiScale);
+		client = TQVaultAE.Application.WindowLayout.GrowToFit(
+			client, this.ContentAreaOf(client), this.tableLayoutPanelMain.Location, this.tableLayoutPanelMain.PreferredSize);
+		if (client == this.ClientSize)
+			return;
+
+		// The size before the next resize: the change is not a resize by the user to keep in the design ratio.
+		this.LastFormSize = this.SizeFromClientSize(client);
+		this.ClientSize = client;
+	}
+
+	/// <summary>The highlight label's font at the current zoom.</summary>
+	private void ApplyHighlightLabelFont()
+		=> this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
 
 	/// <summary>
 	/// The panels' table fills the window inside its border at each layout (startup, zoom, maximize, restore, DPI
@@ -343,7 +423,8 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Sets the size of the main form along with scaling the internal controls for startup.
+	/// Sets the size of the main form at zoom 1 for startup; <see cref="ApplyStartupZoom"/> gives it the user's zoom once
+	/// the panels are built.
 	/// </summary>
 	private void SetupFormSize()
 	{
@@ -357,20 +438,48 @@ public partial class MainForm
 		// the drawing follow UIService.Scale, which gets the same factor on top of the user's zoom.
 		UIService.DpiScale = this.CurrentAutoScaleDimensions.Width / UIService.DESIGNDPI;
 
+		// The window and its panels are built at zoom 1, then take the user's zoom as a live zoom gives it
+		// (ApplyStartupZoom): every control then follows the zoom the same way, so the content keeps the room the zoom 1
+		// layout leaves it inside the window, and a reset gives back the layout of a start at zoom 1.
+		this.startupZoom = this.InitialZoom(workingArea);
+
 		this.ScaleOnResize = false;
 
-		this.ClientSize = InitialScaling(workingArea);
+		this.ClientSize = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.DpiScale);
 
 		this.ScaleOnResize = true;
 
-		UIService.Scale = USettings.Scale * UIService.DpiScale;
+		UIService.Scale = UIService.DpiScale;
+
+		// The height / width ratio a resize or a maximize keeps.
+		this.FormDesignRatio = (float)this.Height / (float)this.Width;
+	}
+
+	/// <summary>
+	/// The zoom the window takes once built at zoom 1 (<see cref="SetupFormSize"/>).
+	/// </summary>
+	private float startupZoom = 1.0F;
+
+	/// <summary>
+	/// Gives the window built at zoom 1 the user's zoom, through the same scaling as a live zoom, then keeps the sizes
+	/// the user's resizing and maximizing start from and centers the window on its monitor.
+	/// </summary>
+	private void ApplyStartupZoom()
+	{
+		Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
+		this.KeepDesignMargins();
+
+		if (this.startupZoom != 1.0F)
+			this.ScaleForm(this.startupZoom, false);
+		else
+			this.SizeToZoom();
+
 		this.Log.LogDebug("Zoom {Zoom} at {Dpi} times the design DPI: scale {Scale}", UIService.Zoom, UIService.DpiScale, UIService.Scale);
 
 		// The caption buttons were placed for the previous scale.
 		this.PlaceButtons();
 
-		// Save the height / width ratio for resizing.
-		this.FormDesignRatio = (float)this.Height / (float)this.Width;
 		this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
 		this.FormMinimumSize = new Size(
 			Convert.ToInt32((float)this.Width * 0.4F),

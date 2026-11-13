@@ -42,4 +42,34 @@ public class WindowLayoutTests
 	[Fact]
 	public void FillTo_NeverGivesANegativeSize()
 		=> WindowLayout.FillTo(new Rectangle(0, 0, 10, 10), new Point(20, 30)).Should().Be(Size.Empty);
+
+	// The main window's design client size, 1350 x 910, at 125 % DPI and zoom 1, then at 96 dpi and zoom 0.8.
+	[Theory]
+	[InlineData(1.25F, 1688, 1138)]
+	[InlineData(0.8F, 1080, 728)]
+	public void Scaled_RoundsTheDesignSize(float scale, int width, int height)
+		=> WindowLayout.Scaled(new Size(1350, 910), scale).Should().Be(new Size(width, height));
+
+	// 96 dpi, zoom 0.8: the panels at (15, 48) need 686 px of height, the content area of a 728 px high window ends at
+	// 722 (bottom picture 4 px, grip 2 px): the window grows by the 12 px missing, not in width.
+	[Fact]
+	public void GrowToFit_GrowsByWhatTheContentLacks()
+	{
+		var client = new Size(1080, 728);
+		var area = WindowLayout.ContentArea(client, side: 4, top: 17, bottom: 4, grip: 2);
+
+		var grown = WindowLayout.GrowToFit(client, area, new Point(15, 48), new Size(1040, 686));
+
+		grown.Should().Be(new Size(1080, 740));
+		(48 + 686).Should().Be(WindowLayout.ContentArea(grown, 4, 17, 4, 2).Bottom);
+	}
+
+	[Fact]
+	public void GrowToFit_KeepsAClientTheContentFits()
+	{
+		var client = new Size(1688, 1138);
+		var area = WindowLayout.ContentArea(client, side: 4, top: 17, bottom: 4, grip: 2);
+
+		WindowLayout.GrowToFit(client, area, new Point(19, 75), new Size(1624, 1039)).Should().Be(client);
+	}
 }

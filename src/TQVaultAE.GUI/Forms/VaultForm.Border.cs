@@ -409,9 +409,14 @@ public partial class VaultForm
 	/// The part of the client area the content may use: inside the border pictures and clear of the resize grips (the
 	/// whole client area without the custom border).
 	/// </summary>
-	protected Rectangle ContentArea => this.DrawCustomBorder
-		? WindowLayout.ContentArea(this.ClientSize, this.sideBorder.Width, this.topBorder.Height, this.bottomBorder.Height, GripMargin)
-		: this.ClientRectangle;
+	protected Rectangle ContentArea => this.ContentAreaOf(this.ClientSize);
+
+	/// <summary>
+	/// The <see cref="ContentArea"/> the window would have with the client size <paramref name="client"/>.
+	/// </summary>
+	protected Rectangle ContentAreaOf(Size client) => this.DrawCustomBorder
+		? WindowLayout.ContentArea(client, this.sideBorder.Width, this.topBorder.Height, this.bottomBorder.Height, GripMargin)
+		: new Rectangle(Point.Empty, client);
 
 	/// <summary>
 	/// Creates the bounding Rectangles for the border graphics
