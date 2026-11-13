@@ -27,6 +27,15 @@
 
 	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The save folders (IGamePathService) and the game's text encoding come from TQVault's shared layers. -->
+		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

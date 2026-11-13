@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using TQ.SaveFilesExplorer.Helpers;
+using TQ.SaveFilesExplorer.Services;
 
 namespace TQ.SaveFilesExplorer;
 
@@ -13,10 +13,13 @@ public partial class MainForm : Form
 {
 	internal static MainForm? StaticRef { get; private set; }
 
-	public MainForm()
+	private readonly SaveFolderDetector saveFolders;
+
+	public MainForm(SaveFolderDetector saveFolders)
 	{
 		InitializeComponent();
 		StaticRef = this;
+		this.saveFolders = saveFolders;
 	}
 
 	private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -27,7 +30,7 @@ public partial class MainForm : Form
 
 	private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		if (string.IsNullOrWhiteSpace(this.folderBrowserDialogMain.SelectedPath)) this.folderBrowserDialogMain.SelectedPath = TQPath.DefaultSaveDirectory;
+		if (string.IsNullOrWhiteSpace(this.folderBrowserDialogMain.SelectedPath)) this.folderBrowserDialogMain.SelectedPath = this.saveFolders.DefaultSaveDirectory;
 		var result = this.folderBrowserDialogMain.ShowDialog();
 		if (result == DialogResult.OK)
 		{
@@ -48,7 +51,7 @@ public partial class MainForm : Form
 
 	private void OpenFileToolStripMenuItem_Click(object sender, EventArgs e)
 	{
-		if (string.IsNullOrWhiteSpace(this.openFileDialogMain.InitialDirectory)) this.openFileDialogMain.InitialDirectory = TQPath.DefaultSaveDirectory;
+		if (string.IsNullOrWhiteSpace(this.openFileDialogMain.InitialDirectory)) this.openFileDialogMain.InitialDirectory = this.saveFolders.DefaultSaveDirectory;
 		DialogResult result = this.openFileDialogMain.ShowDialog();
 		if (result == DialogResult.OK)
 		{
@@ -103,51 +106,19 @@ public partial class MainForm : Form
 	/// </summary>
 	private void DetectLocalSaves()
 	{
-		// Detecting local players saves 
-		var saveDirectoryTQIT = TQPath.SaveDirectoryTQIT;
-		List<ToolStripItem> items = new string?[] { saveDirectoryTQIT, TQPath.SaveDirectoryTQ }
-			.OfType<string>()
-			.Where(p => !string.IsNullOrWhiteSpace(p))
-			.SelectMany(p => Directory.GetDirectories(p, "_*"))
-			.Select(d =>
+		// Characters, transfer stash, custom map transfer stashes, custom map characters: a separator between groups.
+		List<ToolStripItem> items = [];
+		var groups = this.saveFolders.Detect();
+		for (var i = 0; i < groups.Count; i++)
+		{
+			if (i > 0) items.Add(new ToolStripSeparator());
+
+			foreach (var folder in groups[i])
 			{
-				var isTQIT = saveDirectoryTQIT is not null && d.StartsWith(saveDirectoryTQIT, StringComparison.Ordinal);
-				var itm = new ToolStripMenuItem($"{(isTQIT ? "TQIT" : "TQ")} : {Path.GetFileName(d)}") { Tag = d, };
+				var itm = new ToolStripMenuItem(folder.Label) { Tag = folder.Path, };
 				itm.Click += new System.EventHandler(this.toolStripMenuItem_DetectedPlayers_Click);
-				return itm;
+				items.Add(itm);
 			}
-		).Cast<ToolStripItem>().ToList();
-
-		items.Add(new ToolStripSeparator());
-
-		// Add transfer stash
-		var ts = TQPath.SaveDirectoryTQITTransferStash;
-		if (ts is not null)
-		{
-			var itm = new ToolStripMenuItem("TQIT : Transfer Stash") { Tag = ts, };
-			itm.Click += new System.EventHandler(this.toolStripMenuItem_DetectedPlayers_Click);
-			items.Add(itm);
-		}
-
-		items.Add(new ToolStripSeparator());
-
-		// Add modded transfer stash
-		var mod = TQPath.SaveDirectoryTQITModdedTransferStash;
-		foreach (var m in mod)
-		{
-			var itm = new ToolStripMenuItem($"{Path.GetFileName(m)} : Transfer Stash") { Tag = m, };
-			itm.Click += new System.EventHandler(this.toolStripMenuItem_DetectedPlayers_Click);
-			items.Add(itm);
-		}
-
-		items.Add(new ToolStripSeparator());
-
-		var modplayers = TQPath.SaveDirectoryTQITModdedPlayers;
-		foreach (var m in modplayers)
-		{
-			var itm = new ToolStripMenuItem($"Mod : {Path.GetFileName(m)}") { Tag = m, };
-			itm.Click += new System.EventHandler(this.toolStripMenuItem_DetectedPlayers_Click);
-			items.Add(itm);
 		}
 
 		toolStripMenuItem_DetectedPlayers.DropDownItems.AddRange(items.ToArray());
