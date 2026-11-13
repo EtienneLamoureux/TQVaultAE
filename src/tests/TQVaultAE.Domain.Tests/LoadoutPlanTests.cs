@@ -18,7 +18,7 @@ public class LoadoutPlanTests
 	private const int Weapon2 = EquipmentRules.Weapon2Slot;
 	private const int Shield2 = EquipmentRules.Shield2Slot;
 
-	private static Item Piece(int seed) => ItemIdentityTests.Piece(seed);
+	private static Item Piece(int seed) => ItemKeyTests.Piece(seed);
 
 	/// <summary>Worn equipment: empty items in the slots not given, as the save has them.</summary>
 	private static Item?[] Worn(params (int Slot, Item Item)[] items)

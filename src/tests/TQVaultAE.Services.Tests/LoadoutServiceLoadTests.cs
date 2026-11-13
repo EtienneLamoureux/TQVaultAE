@@ -100,7 +100,7 @@ public sealed partial class LoadoutServiceTests
 		equipment.GetItem(EquipmentRules.Ring2Slot).Should().BeSameAs(ringB);
 		equipment.GetItem(EquipmentRules.Weapon1Slot).Should().BeSameAs(sword);
 		sword.Location.Should().Be(SackCollection.GetEquipmentLocationOffset(EquipmentRules.Weapon1Slot));
-		ItemIdentity.IsEmpty(equipment.GetItem(EquipmentRules.Weapon2Slot)).Should().BeTrue();
+		ItemKey.IsEmptyItem(equipment.GetItem(EquipmentRules.Weapon2Slot)).Should().BeTrue();
 		player.UseAlternate.Should().BeTrue("the loadout's weapon set is put in hand");
 		bag.Should().BeEmpty();
 	}

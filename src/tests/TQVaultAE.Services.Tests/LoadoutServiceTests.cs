@@ -89,8 +89,8 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		var loadout = read.Loadouts.Should().ContainSingle().Subject;
 		loadout.Name.Should().Be("Fire set");
 		loadout.UseAlternate.Should().BeTrue();
-		ItemIdentity.AreIdentical(loadout.Pieces[0], helm).Should().BeTrue();
-		ItemIdentity.AreIdentical(loadout.Pieces[EquipmentRules.Ring2Slot], ring).Should().BeTrue();
+		ItemIdentityComparer.Instance.Equals(loadout.Pieces[0], helm).Should().BeTrue();
+		ItemIdentityComparer.Instance.Equals(loadout.Pieces[EquipmentRules.Ring2Slot], ring).Should().BeTrue();
 		loadout.Items.Should().HaveCount(2);
 		loadout.Pieces[0]!.Mod.Should().Be(CharacterMod, "a piece without its own map takes the character's");
 		loadout.Pieces[0]!.ModOrigin.Should().Be(ModOrigin.Inherited);
@@ -183,7 +183,7 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		set.Loadouts.Should().HaveCount(2);
 		set.Loadouts[1].UseAlternate.Should().BeTrue();
 		set.Loadouts[1].Pieces[0].Should().NotBeSameAs(set.Loadouts[0].Pieces[0]);
-		ItemIdentity.AreIdentical(set.Loadouts[1].Pieces[0], set.Loadouts[0].Pieces[0]).Should().BeTrue();
+		ItemIdentityComparer.Instance.Equals(set.Loadouts[1].Pieces[0], set.Loadouts[0].Pieces[0]).Should().BeTrue();
 		this.Read().Loadouts.Select(l => l.Name).Should().Equal("A", "A2");
 	}
 

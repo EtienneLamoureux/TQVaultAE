@@ -5,7 +5,6 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Data.Dto;
-using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Services;
@@ -138,7 +137,7 @@ public partial class LoadoutService(
 
 	/// <summary>A loadout of the worn equipment: copies of the pieces, and the weapon set in hand.</summary>
 	private static Loadout Record(string name, PlayerCollection player)
-		=> new(name, player.UseAlternate, [.. player.EquipmentSack!.Select(item => ItemIdentity.IsEmpty(item) ? null : item.Clone())]);
+		=> new(name, player.UseAlternate, [.. player.EquipmentSack!.Select(item => ItemKey.IsEmptyItem(item) ? null : item.Clone())]);
 
 	/// <summary>Writes the loadouts (or deletes the file when none is left), then keeps them for the session.</summary>
 	private LoadoutChange Write(LoadoutSet target, IReadOnlyList<Loadout> list)

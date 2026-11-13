@@ -25,7 +25,7 @@ public enum LoadoutSlotAction
 public readonly record struct LoadoutSlotStep(int Slot, LoadoutSlotAction Action, int FromSlot = -1);
 
 /// <summary>
-/// How the worn equipment becomes a loadout's: a worn piece identical to a loadout piece (<see cref="ItemIdentity"/>)
+/// How the worn equipment becomes a loadout's: a worn piece identical to a loadout piece (<see cref="ItemKey"/>)
 /// stays worn, in its slot or moved to the loadout's slot for it (rings or weapon sets swapped); the loadout pieces not
 /// worn are copied in; the worn pieces the loadout does not use leave the equipment.
 /// </summary>
@@ -74,9 +74,9 @@ public sealed class LoadoutPlan
 		for (int slot = 0; slot < slots; slot++)
 		{
 			var piece = PieceOf(slot);
-			if (ItemIdentity.IsEmpty(piece))
-				steps[slot] = new LoadoutSlotStep(slot, ItemIdentity.IsEmpty(worn[slot]) ? LoadoutSlotAction.Keep : LoadoutSlotAction.Clear);
-			else if (ItemIdentity.AreIdentical(worn[slot], piece))
+			if (ItemKey.IsEmptyItem(piece))
+				steps[slot] = new LoadoutSlotStep(slot, ItemKey.IsEmptyItem(worn[slot]) ? LoadoutSlotAction.Keep : LoadoutSlotAction.Clear);
+			else if (ItemIdentityComparer.Instance.Equals(worn[slot], piece))
 			{
 				steps[slot] = new LoadoutSlotStep(slot, LoadoutSlotAction.Keep);
 				used[slot] = true;
@@ -93,7 +93,7 @@ public sealed class LoadoutPlan
 			int from = -1;
 			for (int other = 0; other < slots; other++)
 			{
-				if (!used[other] && ItemIdentity.AreIdentical(worn[other], piece))
+				if (!used[other] && ItemIdentityComparer.Instance.Equals(worn[other], piece))
 				{
 					from = other;
 					break;
@@ -109,7 +109,7 @@ public sealed class LoadoutPlan
 			}
 		}
 
-		var leaving = Enumerable.Range(0, slots).Where(slot => !used[slot] && !ItemIdentity.IsEmpty(worn[slot])).ToList();
+		var leaving = Enumerable.Range(0, slots).Where(slot => !used[slot] && !ItemKey.IsEmptyItem(worn[slot])).ToList();
 		return new LoadoutPlan([.. steps.Select(step => step!.Value)], leaving);
 	}
 }

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
-using TQVaultAE.Domain.Actions;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
 
 namespace TQVaultAE.GUI.Automation;
@@ -115,11 +115,11 @@ internal static partial class AutomationTools
 						slot,
 						record = piece.BaseItemId.Raw,
 						seed = piece.Seed,
-						worn = worn is not null && slot < worn.Count && ItemIdentity.AreIdentical(worn[slot], piece),
+						worn = worn is not null && slot < worn.Count && ItemIdentityComparer.Instance.Equals(worn[slot], piece),
 						search = piece.Place.SackType.ToString(),
 					}).Where(p => p is not null),
 				}),
-				worn = worn?.Select((item, slot) => ItemIdentity.IsEmpty(item) ? null : new { slot, record = item.BaseItemId.Raw, seed = item.Seed }).Where(w => w is not null),
+				worn = worn?.Select((item, slot) => ItemKey.IsEmptyItem(item) ? null : new { slot, record = item.BaseItemId.Raw, seed = item.Seed }).Where(w => w is not null),
 				notification = form.AutomationNotificationText,
 			});
 		});

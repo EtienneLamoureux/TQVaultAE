@@ -32,7 +32,7 @@ public partial class LoadoutService
 			LoadoutSlotAction.Keep => worn[step.Slot],
 			LoadoutSlotAction.Move => worn[step.FromSlot],
 			LoadoutSlotAction.Copy => CopyIn(loadout.Pieces[step.Slot]!, worn[step.Slot]),
-			_ => ItemIdentity.IsEmpty(worn[step.Slot]) ? worn[step.Slot] : worn[step.Slot].MakeEmptyItem(),
+			_ => ItemKey.IsEmptyItem(worn[step.Slot]) ? worn[step.Slot] : worn[step.Slot].MakeEmptyItem(),
 		}).ToList();
 
 		// The equipment's place in the search, for the items put in.
@@ -48,7 +48,7 @@ public partial class LoadoutService
 			equipment.InsertItem(slot, item);
 
 			// A slot's empty item replaced leaves the search; a copy or a new empty item enters it.
-			if (ItemIdentity.IsEmpty(worn[slot]) && !next.Contains(worn[slot]))
+			if (ItemKey.IsEmptyItem(worn[slot]) && !next.Contains(worn[slot]))
 				this.ItemDatabaseService.RemoveItemFromDatabase(worn[slot]);
 			if (!worn.Contains(item))
 				this.ItemDatabaseService.AddItemToDatabase(item, equipmentPlace.Path, equipmentPlace.Name, equipmentPlace.SackNumber, SackType.Equipment);
