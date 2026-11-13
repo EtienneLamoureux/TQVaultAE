@@ -81,15 +81,16 @@ internal static partial class AutomationTools
 		[Description("Part of the dialog title (case-insensitive). Empty picks the only dialog that is open.")] string title,
 		[Description("Button text, e.g. OK, Cancel, Yes, No.")] string button)
 	{
-		// The settings are a view of the main window now, not a dialog: their buttons are pressed like a click.
-		if (!string.IsNullOrEmpty(title)
-			&& AutomationHost.OnUi(main => main.AutomationShownView(title) is { } view ? PressViewButton(main, view, button) : null) is { } viewResult)
-			return viewResult;
-
 		var candidates = NativeWindows.GetProcessTopLevelWindows()
 			.Where(w => w.Enabled && (string.IsNullOrEmpty(title) || w.Title.Contains(title, StringComparison.OrdinalIgnoreCase)))
 			.Where(w => w.IsDialogClass || NativeWindows.GetButtons(w.Handle).Count > 0)
 			.ToList();
+
+		// The settings are a view of the main window, not a dialog: their buttons are pressed like a click. A message
+		// box they opened (same title, "Configure Settings") is answered first, as the user can only answer it then.
+		if (candidates.Count == 0 && !string.IsNullOrEmpty(title)
+			&& AutomationHost.OnUi(main => main.AutomationShownView(title) is { } view ? PressViewButton(main, view, button) : null) is { } viewResult)
+			return viewResult;
 
 		if (candidates.Count == 0)
 			throw new McpException($"No enabled dialog with title containing '{title}'. Call list_windows to see what is open.");
