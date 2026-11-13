@@ -114,6 +114,12 @@ public partial class ForgePanel
 		return true;
 	}
 
+	/// <summary>Rests the mouse on a slot, like its MouseEnter: shows the item tooltip (the preview for the base slot).</summary>
+	internal void AutomationHover(ForgeSlot slot) => this.pictureBox_MouseEnter(this.SlotOf(slot).Picture, EventArgs.Empty);
+
+	/// <summary>Leaves a slot, like its MouseLeave: hides the item tooltip.</summary>
+	internal void AutomationHoverEnd(ForgeSlot slot) => this.pictureBox_MouseLeave(this.SlotOf(slot).Picture, EventArgs.Empty);
+
 	internal void AutomationReset() => this.scalingButtonReset_Click(this.ResetButton, EventArgs.Empty);
 
 	internal void AutomationForge() => this.ForgeButton_Click(this.ForgeButton, EventArgs.Empty);

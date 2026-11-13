@@ -184,6 +184,7 @@ Cells are grid coordinates, as reported by `get_state`.
 | `forge_drop(slot)` | Drops the dragged item on a forge slot. The rules of the current mode decide. A refusal is reported in `newMessages`, and the item stays dragged. |
 | `forge_select_part(slot, part)` | God mode: chooses which part of a material item is merged, like its combo box. |
 | `forge_drag_cursor` | Runs the drag cursor update of a mouse move over the forge while an item is dragged: whether the cursor was built from the item's bitmap (native `CreateIconIndirect`), its size and hot spot. |
+| `forge_hover(slot, hide?)` | Rests the mouse on a forge slot through the slot's own mouse handler: the item tooltip shows, for the `Base` slot the preview of the forged item. Returns the tooltips shown, the tooltip window and the forge on screen, and a PNG of the main window with the tooltip drawn at its place (magenta where the tooltip leaves the window). `hide=true` ends the hover and closes the tooltip. Refused while an item is dragged, since the forge shows no tooltip then. |
 | `forge_reset` / `forge_cancel` / `forge_forge` | Like the Reset, Cancel and Forge buttons. `forge_forge` merges into the base item, which is saved with its vault or character like any change, and reports the forged item and the sounds played. |
 
 Every forge tool returns the forge state, with the `newMessages` and `sounds` that the call produced.

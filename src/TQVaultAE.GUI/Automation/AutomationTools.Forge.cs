@@ -149,6 +149,69 @@ internal static partial class AutomationTools
 			});
 		});
 
+	[McpServerTool(Name = "forge_hover", Destructive = true)]
+	[Description("Rests the mouse on a forge slot through the slot's own MouseEnter: the item tooltip shows, for the Base slot the preview of the forged item. Returns the tooltips shown, the tooltip and forge rectangles on screen, and a PNG of the main window with the tooltip drawn at its place. hide=true ends the hover (MouseLeave), which closes the tooltip.")]
+	public static IEnumerable<ContentBlock> ForgeHover(
+		[Description("Base, Prefix, Suffix, Relic1 or Relic2.")] string slot,
+		[Description("true to end the hover instead.")] bool hide = false)
+	{
+		var (json, png) = AutomationHost.OnUi(form =>
+		{
+			var forge = RequireForge(form);
+			var value = ParseSlot(slot);
+			if (hide)
+			{
+				forge.AutomationHoverEnd(value);
+				return (Serialize(new { slot = value.ToString(), tooltips = DescribeTooltips() }), (byte[]?)null);
+			}
+
+			if (form.AutomationDragInfo.IsActive)
+				throw new McpException("An item is being dragged: the forge shows no tooltip then. Drop it or cancel_drag first.");
+
+			forge.AutomationHover(value);
+			var tooltip = OpenTooltips().LastOrDefault();
+			var formScreen = form.RectangleToScreen(form.ClientRectangle);
+			var tooltipScreen = tooltip?.Bounds ?? Rectangle.Empty;
+			byte[]? image = null;
+			if (tooltip is { Width: > 0, Height: > 0 })
+			{
+				var canvas = Rectangle.Union(formScreen, tooltipScreen);
+				using var bitmap = new Bitmap(canvas.Width, canvas.Height);
+				using (var g = Graphics.FromImage(bitmap))
+				{
+					g.Clear(Color.Magenta);
+					using (var main = new Bitmap(form.ClientSize.Width, form.ClientSize.Height))
+					{
+						form.DrawToBitmap(main, new Rectangle(Point.Empty, form.ClientSize));
+						g.DrawImage(main, formScreen.X - canvas.X, formScreen.Y - canvas.Y);
+					}
+
+					using var tip = RenderTooltip(tooltip);
+					g.DrawImage(tip, tooltipScreen.X - canvas.X, tooltipScreen.Y - canvas.Y);
+				}
+
+				using var stream = new MemoryStream();
+				bitmap.Save(stream, ImageFormat.Png);
+				image = stream.ToArray();
+			}
+
+			static object Box(Rectangle r) => new { r.X, r.Y, r.Width, r.Height };
+			return (Serialize(new
+			{
+				slot = value.ToString(),
+				tooltips = DescribeTooltips(),
+				tooltipWindow = tooltip is null ? null : Box(tooltipScreen),
+				forgePanel = Box(forge.RectangleToScreen(forge.ClientRectangle)),
+				mainWindow = Box(formScreen),
+			}), image);
+		});
+
+		var blocks = new List<ContentBlock> { new TextContentBlock { Text = json } };
+		if (png is not null)
+			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
+		return blocks;
+	}
+
 	[McpServerTool(Name = "forge_cancel", Destructive = true)]
 	[Description("Cancels the forge, like its Cancel button: clears the slots and closes the forge.")]
 	public static string ForgeCancel() => OnForge((form, forge) => forge.AutomationCancel());

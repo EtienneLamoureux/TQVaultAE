@@ -418,8 +418,7 @@ internal static partial class AutomationTools
 			byte[]? image = null;
 			if (tooltip is { Width: > 0, Height: > 0 })
 			{
-				using var bitmap = new Bitmap(tooltip.Width, tooltip.Height);
-				tooltip.DrawToBitmap(bitmap, new Rectangle(Point.Empty, tooltip.Size));
+				using var bitmap = RenderTooltip(tooltip);
 				using var stream = new MemoryStream();
 				bitmap.Save(stream, ImageFormat.Png);
 				image = stream.ToArray();
@@ -806,6 +805,14 @@ internal static partial class AutomationTools
 	/// <summary>The tooltip windows shown, oldest first.</summary>
 	private static List<Tooltips.BaseTooltip> OpenTooltips()
 		=> System.Windows.Forms.Application.OpenForms.OfType<Tooltips.BaseTooltip>().Where(t => t.Visible).ToList();
+
+	/// <summary>Draws an open tooltip window to a bitmap of its size.</summary>
+	private static Bitmap RenderTooltip(Tooltips.BaseTooltip tooltip)
+	{
+		var bitmap = new Bitmap(tooltip.Width, tooltip.Height);
+		tooltip.DrawToBitmap(bitmap, new Rectangle(Point.Empty, tooltip.Size));
+		return bitmap;
+	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Anonymous JSON payload.")]
 	private static object DescribeTooltips()
