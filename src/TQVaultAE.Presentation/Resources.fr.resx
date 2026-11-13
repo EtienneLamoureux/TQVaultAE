@@ -938,16 +938,19 @@ Vous pouvez utiliser | dans un terme comme condition OU. '$épique | rare' renvo
 Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
   </data>
 	<data name="GlobalClose" xml:space="preserve">
-    <value>Sortir</value>
+    <value>Fermer</value>
   </data>
 	<data name="GlobalMaximize" xml:space="preserve">
-    <value>Maximiser les</value>
+    <value>Agrandir</value>
   </data>
 	<data name="GlobalMinimize" xml:space="preserve">
-    <value>Minimiser les</value>
+    <value>Réduire</value>
   </data>
 	<data name="GlobalMove" xml:space="preserve">
-    <value>Déplacez</value>
+    <value>Déplacer</value>
+  </data>
+	<data name="GlobalNormalize" xml:space="preserve">
+    <value>Revenir à la taille normale</value>
   </data>
 	<data name="GlobalRestore" xml:space="preserve">
     <value>Restaurer</value>
