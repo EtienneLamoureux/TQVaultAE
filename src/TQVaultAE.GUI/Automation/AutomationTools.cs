@@ -747,9 +747,9 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
-	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), a panel id with x and y for the right-click menu of that cell, or '<panel>.sort' (vault.sort, player.sort, playerBag.sort, stash.sort...) for the right-click menu of that panel's sort button.")]
+	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), a panel id with x and y for the right-click menu of that cell, or '<panel>.sort' (vault.sort, player.sort, playerBag.sort, stash.sort...) for the right-click menu of that panel's sort button, 'loadouts' for the loadout bar's right-click menu, 'loadouts.list' for its drop-down list.")]
 	public static IEnumerable<ContentBlock> CaptureMenu(
-		[Description("'vaultTools', 'characterTools', a panel id, or '<panel>.sort'.")] string target,
+		[Description("'vaultTools', 'characterTools', a panel id, '<panel>.sort', 'loadouts' or 'loadouts.list'.")] string target,
 		[Description("Cell column, for a panel.")] int x = 0,
 		[Description("Cell row, for a panel.")] int y = 0,
 		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
@@ -765,6 +765,8 @@ internal static partial class AutomationTools
 					? form.AutomationCharacterCombo.AutomationRenderMenu(path)
 					: target.EndsWith(".sort", StringComparison.OrdinalIgnoreCase)
 					? RenderSortMenu(form, target[..^".sort".Length])
+					: target.StartsWith("loadouts", StringComparison.OrdinalIgnoreCase)
+					? RenderLoadoutMenu(form, target)
 					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
 				using var stream = new MemoryStream();
 				bitmap.Save(stream, ImageFormat.Png);
@@ -783,6 +785,15 @@ internal static partial class AutomationTools
 			ImageContentBlock.FromBytes(png, "image/png"),
 			new TextContentBlock { Text = $"menu {target}: {size.Width}x{size.Height} px, saved to {file}" },
 		];
+	}
+
+	/// <summary>The loadout bar's right-click menu ('loadouts') or drop-down list ('loadouts.list'), drawn as it opens.</summary>
+	private static Bitmap RenderLoadoutMenu(MainForm form, string target)
+	{
+		var bar = form.AutomationStashPanel?.LoadoutBar ?? throw new InvalidOperationException("The loadout bar is not built yet: show the Equipment tab first.");
+		var menu = target.EndsWith(".list", StringComparison.OrdinalIgnoreCase) ? bar.ListMenu : bar.ActionMenu;
+		menu.Show(bar, new Point(0, bar.Height));
+		return AutomationMenus.Render(menu, []);
 	}
 
 	/// <summary>The sort menu of <paramref name="panel"/>'s sort button, drawn as it opens.</summary>

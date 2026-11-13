@@ -102,6 +102,16 @@ internal static partial class AutomationTools
 					canChange = bar.CanChange,
 					font = bar.TextFont?.ToString(),
 				},
+				// Where the bar sits among its neighbours, in the stash panel's pixels: the statistics panel above, the
+				// Edit button, and the panel's own size (nothing may go past its bottom).
+				layout = bar is null ? null : new
+				{
+					statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? Box(stats.Bounds) : null,
+					editButton = stash.AutomationEditButton is { } edit ? Box(edit.Bounds) : null,
+					editButtonVisible = stash.AutomationEditButton?.Visible,
+					editButtonFont = stash.AutomationEditButton?.Font.ToString(),
+					stashClient = Box(stash.ClientRectangle),
+				},
 				menu = menuEntries,
 				file = set?.FilePath,
 				fileExists = set is not null && File.Exists(set.FilePath),
