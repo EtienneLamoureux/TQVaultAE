@@ -44,5 +44,7 @@ the vault instead when you want only one.
 - The loadouts are kept in `TQVaultAE.Loadouts.json` in the character's save folder (`SaveData\Main\_<name>` or
   `SaveData\User\_<name>`), next to `Player.chr`. They follow the character when it is archived, duplicated by
   TQVault (**Duplicate Character**) or backed up with the [Git backup](GITBACKUP.md).
-- Steam Cloud: whether Steam keeps, uploads or removes a file of its own in the save folder is not checked yet. If you
-  play on several computers through Steam Cloud, keep a copy of that file.
+- Steam Cloud does not carry this file: the game's Steam Cloud settings sync its own save files by file type, and a
+  `.json` file is not one of them (checked on a Steam install: the character's save files were synced after the TQVault
+  files were written, the TQVault files were not). Steam leaves the file alone; it simply stays on the computer where
+  the loadouts were made. To have them on another computer, use the [Git backup](GITBACKUP.md).
