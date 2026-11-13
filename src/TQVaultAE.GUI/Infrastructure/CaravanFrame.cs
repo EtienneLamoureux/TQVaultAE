@@ -17,13 +17,10 @@ internal static class CaravanFrame
 	/// <summary>The gap between the glyph and the text of a check box, as the system draws it.</summary>
 	private const int CheckBoxTextGap = 3;
 
-	/// <summary>The space kept on each side of a group's caption, where the frame's top edge is broken.</summary>
-	private const int CaptionGap = 2;
-
 	/// <summary>How a framed group's top edge meets its caption (<see cref="ApplyWithCaption"/>).</summary>
 	public enum CaptionEdge
 	{
-		/// <summary>The top edge is broken behind the caption, as a group box breaks its line.</summary>
+		/// <summary>The top edge is broken behind the caption, from its first to its last pixel of text (or of the check box's glyph).</summary>
 		Broken,
 
 		/// <summary>The top edge runs whole, level with the middle of the caption, the caption over it.</summary>
@@ -185,11 +182,14 @@ internal static class CaravanFrame
 			if (top > 0)
 				ButtonRenderer.DrawParentBackground(e.Graphics, new Rectangle(0, 0, box.Width, top), box);
 			e.Graphics.DrawImageUnscaled(frame.Get(new Size(box.Width, box.Height - top)), 0, top);
-			if (edge == CaptionEdge.Broken)
-				ButtonRenderer.DrawParentBackground(
-					e.Graphics, new Rectangle(caption.Left - CaptionGap, top, caption.Width + 2 * CaptionGap, Border), box);
 			if (check is null)
 			{
+				if (edge == CaptionEdge.Broken)
+				{
+					var (pad, width) = TextExtent(e.Graphics, box.Text, box.Font, TextFormatFlags.Default);
+					BreakTopEdge(e.Graphics, box, caption.Left + pad, caption.Left + pad + width, top);
+				}
+
 				TextShadow.DrawOutline(e.Graphics, box.Text, box.Font, caption, TextFormatFlags.Default);
 				TextRenderer.DrawText(e.Graphics, box.Text, box.Font, caption, box.ForeColor);
 				return;
@@ -206,8 +206,32 @@ internal static class CaravanFrame
 			var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
 			if (!check.UseMnemonic)
 				flags |= TextFormatFlags.NoPrefix;
+			if (edge == CaptionEdge.Broken)
+			{
+				var (pad, width) = TextExtent(e.Graphics, check.Text, check.Font, flags);
+				BreakTopEdge(e.Graphics, box, check.Left + check.Padding.Left, text.Left + pad + width, top);
+			}
+
 			TextShadow.DrawOutline(e.Graphics, check.Text, check.Font, text, flags);
 		};
+	}
+
+	/// <summary>
+	/// Where the text drawn with <paramref name="flags"/> starts after the padding the text renderer adds, and its width
+	/// without that padding.
+	/// </summary>
+	private static (int Pad, int Width) TextExtent(Graphics graphics, string text, Font font, TextFormatFlags flags)
+	{
+		int padded = TextRenderer.MeasureText(graphics, text, font, Size.Empty, flags).Width;
+		int width = TextRenderer.MeasureText(graphics, text, font, Size.Empty, flags | TextFormatFlags.NoPadding).Width;
+		return ((padded - width) / 2, width);
+	}
+
+	/// <summary>Paints the background back over the frame's top edge of <paramref name="box"/> between two columns.</summary>
+	private static void BreakTopEdge(Graphics graphics, GroupBox box, int left, int right, int top)
+	{
+		if (right > left)
+			ButtonRenderer.DrawParentBackground(graphics, new Rectangle(left, top, right - left, Border), box);
 	}
 
 	/// <summary>
