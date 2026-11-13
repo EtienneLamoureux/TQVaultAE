@@ -105,5 +105,22 @@ public static partial class EquipmentRollTable
 	private static RollAttribute[] BuildOrdered()
 		=> CreateAttributes().OrderBy(a => a.Store).ThenBy(a => a.Order).ToArray();
 
+	/// <summary>The <see cref="RollAttribute.Requires"/> of each attribute, by its first required variable.</summary>
+	private static readonly Dictionary<string, string[]> RequiresByFirst = Attributes
+		.Where(a => a.Requires is { Length: > 0 })
+		.GroupBy(a => a.Requires![0], StringComparer.OrdinalIgnoreCase)
+		.ToDictionary(g => g.Key, g => g.First().Requires!, StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>
+	/// Gets the variables a damage, retaliation or defense attribute needs, all non-zero, for the game to load it at all:
+	/// its min (<c>offensiveLifeMin</c>), and the duration of an effect over time (<c>offensiveSlowFireDurationMin</c>).
+	/// The game neither applies nor shows such an attribute without them: a chance alone, or a reduction without a duration.
+	/// </summary>
+	/// <remarks>The same rule holds for items and skills: both load these attributes the same way.</remarks>
+	/// <param name="minVariable">The min variable of the attribute, e.g. <c>offensiveTotalResistanceReductionAbsoluteMin</c>.</param>
+	/// <returns>The required variables, the min first; <see langword="null"/> for an attribute without requirements.</returns>
+	public static IReadOnlyList<string>? RequiredVariables(string minVariable)
+		=> RequiresByFirst.TryGetValue(minVariable, out var required) ? required : null;
+
 	private static partial RollAttribute[] CreateAttributes();
 }

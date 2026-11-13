@@ -518,6 +518,20 @@ public partial class ItemProvider
 			}
 		}
 
+		// The value of a variable at the index shown (the level of a skill, the shard count of a relic), 0 when missing.
+		float ValueAt(Variable? variable)
+			=> variable is null || variable.NumberOfValues == 0 ? 0F : variable.GetSingle(Math.Min(variable.NumberOfValues - 1, variableNumber));
+
+		// The game loads a damage attribute only with its min, and an effect over time only with its duration too, and
+		// writes nothing at a level where one of them is zero: no line for a chance alone (Frightening Power's vitality
+		// damage chance) nor for a resistance reduction without a duration (Doom Horn).
+		bool notLoaded = EquipmentRollTable.RequiredVariables(data.Effect + "Min") is { } required
+			&& required.Any(name => ValueAt(record[name]) == 0F);
+
+		// At a known skill level, an effect that is zero at that level shows nothing either (Active Block's movement speed
+		// at level 1, the empty first levels of a modifier).
+		bool dropZero = skillLevelIndex is not null;
+
 		// Figure out the label string
 		string? labelTag = null;
 		TQColor? labelColor = null;
@@ -532,11 +546,12 @@ public partial class ItemProvider
 		if (label is not null)
 			label = ItemAttributeProvider.ConvertFormat(label);
 
-		// Figure out the Amount string
+		// Figure out the Amount string. The game keeps a max only above the min (it stores the min and max(0, max - min)):
+		// a max below the min is a single value.
 		string? amount = null;
 		if (minVar is not null
 			&& maxVar is not null
-			&& minVar.GetSingle(Math.Min(minVar.NumberOfValues - 1, variableNumber)) != maxVar.GetSingle(Math.Min(maxVar.NumberOfValues - 1, variableNumber))
+			&& ValueAt(maxVar) > ValueAt(minVar)
 		)
 		{
 			if (minDurVar is not null)
@@ -552,19 +567,10 @@ public partial class ItemProvider
 				amount = GetAmountSingle(itm, data, variableNumber, minVar, maxVar, ref label, labelColor);
 		}
 
-		// Figure out the duration string
+		// Figure out the duration string: a range when the max duration at the index shown is above the min.
 		string? duration = null;
-		//If we have both minDurData and maxDurData we also need to check if the actual Values of minDurVar and maxDurVar are actually different
-		float minDurVarValue = -1;
-		float maxDurVarValue = -1;
-
-		if (minDurVar is not null)
-			minDurVarValue = (float)minDurVar[minDurVar.NumberOfValues - 1];
-
-		if (maxDurVar is not null)
-			maxDurVarValue = (float)maxDurVar[maxDurVar.NumberOfValues - 1];
 		bool fixedDuration = !IsDurationReliantValue(data.Effect);
-		if (minDurVar is not null && maxDurVar is not null && minDurVarValue != maxDurVarValue)
+		if (minDurVar is not null && maxDurVar is not null && ValueAt(maxDurVar) > ValueAt(minDurVar))
 			duration = GetDurationRange(variableNumber, minDurVar, maxDurVar, fixedDuration);
 		else
 			duration = GetDurationSingle(variableNumber, minDurVar, maxDurVar, fixedDuration);
@@ -610,7 +616,14 @@ public partial class ItemProvider
 			// Added by VillageIdiot
 			strarray[numberOfStrings++] = damageRatio;
 
-		if (!string.IsNullOrEmpty(amount) || !string.IsNullOrEmpty(duration))
+		if (notLoaded || (dropZero && minVar is not null && ValueAt(minVar) == 0F && ValueAt(maxVar) == 0F))
+		{
+			// Not shown, but its variables are used: none is written raw below.
+			amount ??= string.Empty;
+			duration ??= string.Empty;
+			chance ??= string.Empty;
+		}
+		else if (!string.IsNullOrEmpty(amount) || !string.IsNullOrEmpty(duration))
 		{
 			string amountOrDurationText = string.Join(" ", strarray, 0, numberOfStrings);
 
@@ -694,7 +707,14 @@ public partial class ItemProvider
 		if (!string.IsNullOrEmpty(durationModifier))
 			strarray[numberOfStrings++] = durationModifier;
 
-		if (!string.IsNullOrEmpty(modifier))
+		if (dropZero && modifierVar is not null && ValueAt(modifierVar) == 0F)
+		{
+			// Zero at the skill level shown: not shown, and not written raw below either.
+			modifier = string.Empty;
+			modifierChance ??= string.Empty;
+			durationModifier ??= string.Empty;
+		}
+		else if (!string.IsNullOrEmpty(modifier))
 		{
 			string modifierText = string.Join(" ", strarray, 0, numberOfStrings);
 
@@ -751,6 +771,9 @@ public partial class ItemProvider
 				&& normalizedAttributeVariable != "XOR"
 			)
 			{
+				if (dropZero && variable.DataType is VariableDataType.Integer or VariableDataType.Float && ValueAt(variable) == 0F)
+					continue;
+
 				string? line = null;
 				TQColor? color = null;
 				string normalizedFullAttribute = attributeData.FullAttribute.ToUpperInvariant();

@@ -17,6 +17,13 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
+	/// The duration of an effect over time at the index shown (the skill level, the relic's shard count), the last one
+	/// beyond: damage over time is written as its value per second times this duration.
+	/// </summary>
+	private static float DurationAt(Variable duration, int varNum)
+		=> (float)duration[Math.Min(duration.NumberOfValues - 1, varNum)];
+
+	/// <summary>
 	/// Gets a formatted range amount
 	/// </summary>
 	/// <param name="data">ItemAttributesData data</param>
@@ -78,8 +85,8 @@ public partial class ItemProvider
 		// AMS: Added If the value is reliant on the duration.
 		if ((minDurVar is not null) && IsDurationReliantValue(data.Effect))
 		{
-			min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
-			max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
+			min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
+			max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
 		}
 		else
 		{
@@ -161,7 +168,7 @@ public partial class ItemProvider
 			{
 				if ((minDurVar is not null) && IsDurationReliantValue(data.Effect))
 				{
-					curvar = (float)curvar * (float)minDurVar[minDurVar.NumberOfValues - 1] * itm.itemScalePercent;
+					curvar = (float)curvar * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
 				}
 				else
 				{
