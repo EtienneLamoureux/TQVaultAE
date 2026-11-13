@@ -20,6 +20,16 @@ internal static class CaravanFrame
 	/// <summary>The space kept on each side of a group's caption, where the frame's top edge is broken.</summary>
 	private const int CaptionGap = 2;
 
+	/// <summary>How a framed group's top edge meets its caption (<see cref="ApplyWithCaption"/>).</summary>
+	public enum CaptionEdge
+	{
+		/// <summary>The top edge is broken behind the caption, as a group box breaks its line.</summary>
+		Broken,
+
+		/// <summary>The top edge runs whole, level with the middle of the caption, the caption over it.</summary>
+		Whole,
+	}
+
 	private static Bitmap? source;
 
 	private static Bitmap Source => source ??= Images.caravan_bg;
@@ -130,11 +140,11 @@ internal static class CaravanFrame
 	/// Draws every group box under <paramref name="root"/> (a dialog, a panel) not framed yet as a framed group with its
 	/// caption, see <see cref="ApplyWithCaption"/>.
 	/// </summary>
-	public static void ApplyWithCaptionToAll(Control root)
+	public static void ApplyWithCaptionToAll(Control root, CaptionEdge edge = CaptionEdge.Broken)
 		=> root.ProcessAllControls(c =>
 		{
 			if (c is GroupBox box)
-				ApplyWithCaption(box);
+				ApplyWithCaption(box, edge);
 		});
 
 	/// <summary>
@@ -145,7 +155,9 @@ internal static class CaravanFrame
 	/// padding off the frame and is made transparent so that the black shows behind it (a grid or a list keeps its own
 	/// background, black).
 	/// </summary>
-	public static void ApplyWithCaption(GroupBox box)
+	/// <param name="box">The group.</param>
+	/// <param name="edge">Whether the frame's top edge is broken behind the caption or runs whole under it.</param>
+	public static void ApplyWithCaption(GroupBox box, CaptionEdge edge = CaptionEdge.Broken)
 	{
 		if (!MarkFramed(box))
 			return;
@@ -168,13 +180,14 @@ internal static class CaravanFrame
 
 			// The group box drew its own caption and border line before this handler: above the frame they would show
 			// next to the text drawn here, so that strip is painted again with the background. The frame is then drawn
-			// whole, its top edge broken behind the caption as a group box breaks its line (through the text, the gold
-			// line read as struck out), and the caption over it.
+			// whole, its top edge broken behind the caption when asked, as a group box breaks its line, and the caption
+			// over it.
 			if (top > 0)
 				ButtonRenderer.DrawParentBackground(e.Graphics, new Rectangle(0, 0, box.Width, top), box);
 			e.Graphics.DrawImageUnscaled(frame.Get(new Size(box.Width, box.Height - top)), 0, top);
-			ButtonRenderer.DrawParentBackground(
-				e.Graphics, new Rectangle(caption.Left - CaptionGap, top, caption.Width + 2 * CaptionGap, Border), box);
+			if (edge == CaptionEdge.Broken)
+				ButtonRenderer.DrawParentBackground(
+					e.Graphics, new Rectangle(caption.Left - CaptionGap, top, caption.Width + 2 * CaptionGap, Border), box);
 			if (check is null)
 			{
 				TextShadow.DrawOutline(e.Graphics, box.Text, box.Font, caption, TextFormatFlags.Default);

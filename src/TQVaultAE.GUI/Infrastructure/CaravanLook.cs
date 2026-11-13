@@ -16,12 +16,21 @@ internal static class CaravanLook
 	/// <param name="form">The dialog.</param>
 	/// <param name="transparent">The panels laid over the whole dialog, made transparent so that the marble shows.</param>
 	public static void Apply(Form form, params Control[] transparent)
+		=> Apply(form, CaravanFrame.CaptionEdge.Broken, transparent);
+
+	/// <summary>
+	/// <see cref="Apply(Form, Control[])"/> with the way the group frames' top edge meets their caption.
+	/// </summary>
+	/// <param name="form">The dialog.</param>
+	/// <param name="captionEdge">Whether the frame's top edge is broken behind a group's caption or runs whole under it.</param>
+	/// <param name="transparent">The panels laid over the whole dialog, made transparent so that the marble shows.</param>
+	public static void Apply(Form form, CaravanFrame.CaptionEdge captionEdge, params Control[] transparent)
 	{
 		MarbleBackground.ApplyTo(form);
 		foreach (var control in transparent)
 			control.BackColor = Color.Transparent;
 
-		CaravanFrame.ApplyWithCaptionToAll(form);
+		CaravanFrame.ApplyWithCaptionToAll(form, captionEdge);
 		form.ProcessAllControls(c =>
 		{
 			bool inFrame = CaravanFrame.IsInFrame(c);
