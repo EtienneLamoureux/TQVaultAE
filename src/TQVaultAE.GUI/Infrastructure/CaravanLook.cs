@@ -28,6 +28,25 @@ internal static class CaravanLook
 	public static void Apply(Control form, CaravanFrame.CaptionEdge captionEdge, params Control[] transparent)
 	{
 		MarbleBackground.ApplyTo(form);
+		ApplyFrames(form, captionEdge, transparent);
+	}
+
+	/// <summary>
+	/// <see cref="Apply(Control, Control[])"/> without the marble: for a view laid in the main window, over the window's
+	/// own background, which shows through it (the view and <paramref name="transparent"/> made transparent).
+	/// </summary>
+	/// <param name="view">The view.</param>
+	/// <param name="transparent">The panels laid over the whole view, made transparent so that the background shows.</param>
+	public static void ApplyFrames(Control view, params Control[] transparent)
+	{
+		view.BackColor = Color.Transparent;
+		view.BackgroundImage = null;
+		ApplyFrames(view, CaravanFrame.CaptionEdge.Broken, transparent);
+	}
+
+	/// <summary>The frames, captions and text shadows of <see cref="Apply(Control, CaravanFrame.CaptionEdge, Control[])"/>.</summary>
+	private static void ApplyFrames(Control form, CaravanFrame.CaptionEdge captionEdge, Control[] transparent)
+	{
 		foreach (var control in transparent)
 			control.BackColor = Color.Transparent;
 

@@ -21,9 +21,9 @@ using TQVaultAE.Services;
 namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// The settings: every option with its rules, the key binds button and the OK, Cancel and reset buttons, on the marble
-/// with the caravan frames. The main window shows it in place of its main content: it shows the settings in use with
-/// <see cref="ShowSettingsInUse"/> at each opening, and leaves it on <see cref="Applied"/> (OK, the edits saved in
+/// The settings: every option with its rules, the key binds button and the OK, Cancel and reset buttons, with the
+/// caravan frames over the main window's own background. The main window shows it in place of its main content: it
+/// shows the settings in use with <see cref="ShowSettingsInUse"/> at each opening, and leaves it on <see cref="Applied"/> (OK, the edits saved in
 /// <see cref="UserSettings"/>) or <see cref="Cancelled"/> (Cancel or Escape, the edits dropped).
 /// </summary>
 /// <remarks>
@@ -179,7 +179,8 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 
 		#endregion
 
-		CaravanLook.Apply(this, this.bufferedTableLayoutPanelSkeleton);
+		// Shown in the main window: over the window's own background, which the main content shows too.
+		CaravanLook.ApplyFrames(this, this.bufferedTableLayoutPanelSkeleton);
 
 		this.groupBoxVaultPath.Text = Resources.SettingsLabel1;
 		this.languageLabel.Text = Resources.SettingsLabel2;
@@ -338,14 +339,6 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 			content.Location = location;
 	}
 
-	/// <summary>
-	/// The marble, painted from a brush made once (<see cref="MarbleBackground.TryPaint"/>).
-	/// </summary>
-	protected override void OnPaintBackground(PaintEventArgs e)
-	{
-		if (!MarbleBackground.TryPaint(this, e))
-			base.OnPaintBackground(e);
-	}
 
 	/// <summary>
 	/// Shows the settings in use, dropping the edits: at each opening and by the reset button. The settings changed
