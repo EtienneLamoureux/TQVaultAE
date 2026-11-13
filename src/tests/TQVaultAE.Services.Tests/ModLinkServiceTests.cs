@@ -185,16 +185,16 @@ public sealed class ModLinkServiceTests : IDisposable
 	}
 
 	[Fact]
-	public void FindMod_SourceNotInstalledHere_FallsBackOnTheOnlyModOfThatName()
+	public void FindMod_SourceNotInstalledHere_FindsNothingEvenWithTheOnlyModOfThatName()
 	{
-		// Exported on a computer with the Workshop mod, imported where it is a custom map.
-		var customMap = this.AddCustomMap("shadowchampions");
+		// Exported on a computer with the Workshop mod, imported where it is a custom map: another mod.
+		this.AddCustomMap("shadowchampions");
 
-		this._service.FindMod("shadowchampions|workshop:1949340853").Should().Be(customMap);
+		this._service.FindMod("shadowchampions|workshop:1949340853").Should().BeNull();
 	}
 
 	[Fact]
-	public void Resolve_ModMovedToAnotherFolder_FindsItByName()
+	public void Resolve_ModNowInstalledTheOtherWay_SaysTheLinkedModIsMissing()
 	{
 		var before = this.AddWorkshopMod("1949340853", "shadowchampions");
 		this._service.Link(this._save, before);
@@ -205,9 +205,8 @@ public sealed class ModLinkServiceTests : IDisposable
 
 		var resolved = this._service.Resolve(this._save, true);
 
-		resolved.State.Should().Be(CharacterModState.Linked);
-		resolved.Mod!.Folder.Should().Be(after.Folder);
-		resolved.Mod.Source.Should().Be(ModSource.Legacy);
+		resolved.State.Should().Be(CharacterModState.LinkedModMissing);
+		resolved.Mod.Should().BeNull();
 	}
 
 	[Fact]

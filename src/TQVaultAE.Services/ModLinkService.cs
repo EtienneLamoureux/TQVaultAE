@@ -63,14 +63,7 @@ public class ModLinkService(
 		if (ModIdentity.SourceOf(key) is null)
 			return null;
 
-		var mods = this.GetInstalledMods();
-		if (mods.FirstOrDefault(m => m.Id.Equals(key, StringComparison.OrdinalIgnoreCase)) is { } exact)
-			return exact;
-
-		// The same mod installed the other way here (from the Workshop, or in the custom maps): the only one of its name.
-		string name = ModIdentity.NameOf(key)!;
-		var named = mods.Where(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Take(2).ToList();
-		return named.Count == 1 ? named[0] : null;
+		return this.GetInstalledMods().FirstOrDefault(m => m.Id.Equals(key, StringComparison.OrdinalIgnoreCase));
 	}
 
 	private string LinkFile(string saveFolder) => this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName);

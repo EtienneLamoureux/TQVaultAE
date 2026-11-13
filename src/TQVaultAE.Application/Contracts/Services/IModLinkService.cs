@@ -22,9 +22,8 @@ public interface IModLinkService
 
 	/// <summary>
 	/// Finds an installed mod by its identity (<see cref="InstalledMod.Id"/>, name and source, as items, vaults and
-	/// links name it), else the only installed mod of that name (the same mod installed the other way here: from the
-	/// Workshop, or in the custom maps). A name without its source names no mod: a Steam Workshop mod and a custom map
-	/// can share it.
+	/// links name it), and only by it: the same mod installed the other way (from the Workshop, or in the custom maps) is
+	/// another mod. A name without its source names no mod: a Steam Workshop mod and a custom map can share it.
 	/// </summary>
 	/// <returns>The mod; null for none, a key without a source, or a mod that is not installed.</returns>
 	InstalledMod? FindMod(string? key);

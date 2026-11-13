@@ -159,8 +159,8 @@ source beside it in `"modSource"` (`"source"` in a link file): `workshop:<item i
 
 Both are needed: a link file without its source is not read (the character is not linked), and a vault or an item that
 names a mod by its name alone names no installed mod (read with the base game data, like a mod that is not installed).
-A source not installed here still finds the mod when one installed mod only has that name (the same mod installed the
-other way); with homonyms, nothing is guessed.
+The match is exact: the same mod installed the other way here (from the Workshop instead of the custom maps, or the
+reverse) is another mod, and a character linked to it shows its mod as not installed until it is linked again.
 
 ### In the files
 
