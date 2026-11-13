@@ -197,6 +197,8 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 	public void SlowModifier_WithoutTranslations_FallsBackToTheTagsBetweenQuestionMarks()
 	{
 		this.Translations.Remove("DamageDurationModifierFire");
+		// Else the modifier reads from the effect's name (ModifierWithoutGameText_ReadsFromTheEffectName).
+		this.Translations.Remove("DamageDurationFire");
 		this.Translations.Remove("ImprovedTimeFormat");
 		this.Translations.Remove("ChanceOfTag");
 		var item = this.CreateItem("ArmorJewelry_Ring",
@@ -246,6 +248,36 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring", Float("characterLife", 40f));
 
 		this.BaseAttributes(item).Should().Equal($"{Epic}40 Health");
+	}
+
+	[Fact]
+	public void ArmorAbsorption_AndItsChance_AreNotShown()
+	{
+		// The game shows no armor absorption and has no text for it: its chance alone made a raw "ATTR<...>" line.
+		var item = this.CreateItem("ArmorProtective_LowerBody",
+			Float("defensiveAbsorption", 250f), Float("defensiveAbsorptionChance", 15f));
+
+		this.BaseAttributes(item).Should().BeEmpty();
+	}
+
+	[Fact]
+	public void ModifierWithoutGameText_ReadsFromTheEffectName()
+	{
+		this.Translations["DamageDurationDefensiveReduction"] = "Reduced Armor";
+		this.Translations.Remove("DamageDurationModifierDefensiveReduction");
+		var item = this.CreateItem("WeaponMelee_Sword",
+			Float("offensiveSlowDefensiveReductionModifier", 200f), Float("offensiveSlowDefensiveReductionModifierChance", 20f));
+
+		this.BaseAttributes(item).Should().ContainSingle().Which.Should().EndWith("+200% Reduced Armor").And.NotContain("?");
+	}
+
+	[Fact]
+	public void LabelFormatWithPlusSign_WritesOneSign_ForANegativeValue()
+	{
+		this.Translations["characterLife"] = "{%+.0f0} Health";
+		var item = this.CreateItem("ArmorJewelry_Ring", Float("characterLife", -40f));
+
+		this.BaseAttributes(item).Should().Equal($"{Epic}-40 Health");
 	}
 
 	[Fact]

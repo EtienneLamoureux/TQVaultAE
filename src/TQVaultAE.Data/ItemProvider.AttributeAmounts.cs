@@ -347,7 +347,8 @@ public partial class ItemProvider
 		}
 		else
 		{
-			if (!TranslationService.TryTranslateXTag(tag, out formatSpec))
+			if (!TranslationService.TryTranslateXTag(tag, out formatSpec)
+				&& !this.TryModifierOfEffectName(data, out formatSpec))
 			{
 				formatSpec = string.Concat("{0:f1}% ?", modifierData.FullAttribute, "?");
 				color = ItemStyle.Legendary.TQColor();
@@ -365,6 +366,33 @@ public partial class ItemProvider
 		modifier = Format(formatSpec, modifierVar[Math.Min(modifierVar.NumberOfValues - 1, varNum)]);
 
 		return $"{color?.ColorTag()}{modifier}";
+	}
+
+	/// <summary>
+	/// The game has no modifier text for some effects over time (the armor reduction's): the modifier then reads like the
+	/// others, "+200% Reduced Armor", from the effect's own name.
+	/// </summary>
+	/// <param name="data">The modifier's attribute data.</param>
+	/// <param name="formatSpec">The game format (converted by the caller), when the effect has a name.</param>
+	private bool TryModifierOfEffectName(ItemAttributesData data, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? formatSpec)
+	{
+		formatSpec = null;
+		var effectType = data.EffectType switch
+		{
+			ItemAttributesEffectType.OffenseSlowModifier => ItemAttributesEffectType.OffenseSlow,
+			ItemAttributesEffectType.RetaliationSlowModifier => ItemAttributesEffectType.RetaliationSlow,
+			_ => (ItemAttributesEffectType?)null,
+		};
+		if (effectType is null)
+			return false;
+
+		var effect = new ItemAttributesData(effectType.Value, data.Effect, data.Effect, string.Empty, data.Suborder);
+		string nameTag = ItemAttributeProvider.GetAttributeTextTag(effect);
+		if (string.IsNullOrEmpty(nameTag) || !TranslationService.TryTranslateXTag(nameTag, out var name) || string.IsNullOrWhiteSpace(name))
+			return false;
+
+		formatSpec = string.Concat("{%+.0f0}% ", name);
+		return true;
 	}
 
 	/// <summary>

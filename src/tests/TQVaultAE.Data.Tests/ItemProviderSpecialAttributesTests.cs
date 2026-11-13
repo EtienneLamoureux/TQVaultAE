@@ -178,6 +178,15 @@ public class ItemProviderSpecialAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void DamageQualifier_WithoutItsDamageTypeText_ShowsTheEnglishName_NotTheTag()
+	{
+		// The French game texts have no tagQualifyingDamagePoison.
+		var armor = this.CreateItem("ArmorProtective_UpperBody", Int("poisonDamageQualifier", 1));
+
+		this.BaseAttributes(armor).Should().Equal("Protects Against :", $"{Mundane}     Poison");
+	}
+
+	[Fact]
 	public void UnfilteredRecord_ShowsStringValuesToo()
 	{
 		var item = this.CreateItem("ArmorJewelry_Ring", Str("itemNameTag", "tagSomething"), Int("characterStrength", 5));

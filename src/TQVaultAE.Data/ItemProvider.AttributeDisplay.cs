@@ -828,7 +828,9 @@ public partial class ItemProvider
 					// Show the damage type - Optimized using span-based RemoveSuffix and ToFirstCharUpperCase
 					string damageTag = attributeData.FullAttribute.AsSpan().RemoveSuffix(15);
 					damageTag = damageTag.AsSpan().ToFirstCharUpperCase();
-					TranslationService.TryTranslateXTag(string.Concat("tagQualifyingDamage", damageTag), out var damageType);
+					// A translation without this damage type (the French one has no Poison) shows its English name, not the tag.
+					if (!TranslationService.TryTranslateXTag(string.Concat("tagQualifyingDamage", damageTag), out var damageType))
+						damageType = damageTag;
 
 					if (!TranslationService.TryTranslateXTag("formatQualifyingDamage", out var formatSpec))
 						formatSpec = "{0}";

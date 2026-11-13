@@ -19,7 +19,9 @@ public partial class ItemProvider
 	// Frozen sets with an ignore-case comparer: lookups need no uppercase copy of the key (the names are ASCII).
 	internal static readonly FrozenSet<string> unwantedTags = new[]
 	{
+			// The armor absorption the game does not show, nor its chance (no game text: a raw line otherwise).
 			"DEFENSIVEABSORPTION",
+			"DEFENSIVEABSORPTIONCHANCE",
 			"MAXTRANSPARENCY",
 			"SCALE",
 			"CASTSSHADOWS",
