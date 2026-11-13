@@ -72,6 +72,18 @@ public partial class VaultPanel
 		}
 	}
 
+	/// <summary>
+	/// Right-clicks the sort button of <paramref name="target"/> through its regular handler and draws the menu it opens;
+	/// the menu is closed after, nothing picked.
+	/// </summary>
+	internal Bitmap AutomationRenderSortMenu(SackPanel target)
+	{
+		var button = this.SortButtonOf(target);
+		this.contextMenu.Items.Clear();
+		this.AutoSortButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		return AutomationMenus.Render(this.contextMenu, []);
+	}
+
 	/// <summary>Left-clicks the sort button of <paramref name="target"/> after the calling tool has returned (a failed sort shows a message).</summary>
 	internal void AutomationSortClickLater(SackPanel target)
 	{

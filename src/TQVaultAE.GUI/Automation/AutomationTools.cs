@@ -726,9 +726,9 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
-	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), or a panel id with x and y for the right-click menu of that cell.")]
+	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), a panel id with x and y for the right-click menu of that cell, or '<panel>.sort' (vault.sort, player.sort, playerBag.sort, stash.sort...) for the right-click menu of that panel's sort button.")]
 	public static IEnumerable<ContentBlock> CaptureMenu(
-		[Description("'vaultTools', 'characterTools', or a panel id.")] string target,
+		[Description("'vaultTools', 'characterTools', a panel id, or '<panel>.sort'.")] string target,
 		[Description("Cell column, for a panel.")] int x = 0,
 		[Description("Cell row, for a panel.")] int y = 0,
 		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
@@ -742,6 +742,8 @@ internal static partial class AutomationTools
 					? form.AutomationRenderVaultMenu(path)
 					: string.Equals(target, "characterTools", StringComparison.OrdinalIgnoreCase)
 					? form.AutomationCharacterCombo.AutomationRenderMenu(path)
+					: target.EndsWith(".sort", StringComparison.OrdinalIgnoreCase)
+					? RenderSortMenu(form, target[..^".sort".Length])
 					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
 				using var stream = new MemoryStream();
 				bitmap.Save(stream, ImageFormat.Png);
@@ -760,6 +762,14 @@ internal static partial class AutomationTools
 			ImageContentBlock.FromBytes(png, "image/png"),
 			new TextContentBlock { Text = $"menu {target}: {size.Width}x{size.Height} px, saved to {file}" },
 		];
+	}
+
+	/// <summary>The sort menu of <paramref name="panel"/>'s sort button, drawn as it opens.</summary>
+	private static Bitmap RenderSortMenu(MainForm form, string panel)
+	{
+		var named = AutomationPanels.Resolve(form, panel);
+		var container = named.Container ?? throw new InvalidOperationException($"Panel '{panel}' has no sort button.");
+		return container.AutomationRenderSortMenu(named.Panel);
 	}
 
 	#endregion
