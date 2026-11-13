@@ -1405,7 +1405,6 @@ internal partial class SettingsDialog
 		StartPosition = FormStartPosition.CenterParent;
 		Text = "Configure Settings";
 		TopMost = true;
-		Load += SettingsDialogLoad;
 		Controls.SetChildIndex(bufferedTableLayoutPanelSkeleton, 0);
 		checkGroupBoxGitBackup.ResumeLayout(false);
 		checkGroupBoxGitBackup.PerformLayout();

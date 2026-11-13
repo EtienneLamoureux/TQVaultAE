@@ -300,6 +300,32 @@ public class SettingsEditorTests
 	}
 
 	[Fact]
+	public void NextOpening_StartsFromTheSettingsInUse_DroppingCancelledEditsAndKeepingAppliedOnes()
+	{
+		// The settings dialog is kept between openings and makes a new editor from the settings at each one.
+		var settings = NewSettings();
+		settings.SkipTitle = false;
+
+		var cancelled = NewEditor(settings);
+		cancelled.Current.SkipTitle = true;
+		cancelled.Current.CSVDelimiter = "Tab";
+
+		var afterCancel = NewEditor(settings);
+		afterCancel.Current.SkipTitle.Should().BeFalse();
+		afterCancel.Current.CSVDelimiter.Should().Be("Comma");
+		afterCancel.ConfigurationChanged.Should().BeFalse();
+
+		afterCancel.Current.SkipTitle = true;
+		afterCancel.ApplyTo(settings);
+		settings.BaseFont = "Arial"; // changed elsewhere between two openings
+
+		var afterOk = NewEditor(settings);
+		afterOk.Current.SkipTitle.Should().BeTrue();
+		afterOk.Current.BaseFont.Should().Be("Arial");
+		afterOk.ConfigurationChanged.Should().BeFalse();
+	}
+
+	[Fact]
 	public void Original_IsNotChangedByTheEdits()
 	{
 		var editor = NewEditor();

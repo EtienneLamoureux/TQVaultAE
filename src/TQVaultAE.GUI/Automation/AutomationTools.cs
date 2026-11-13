@@ -885,7 +885,7 @@ internal static partial class AutomationTools
 
 		foreach (Form open in System.Windows.Forms.Application.OpenForms)
 		{
-			if (open.Text.Contains(control, StringComparison.OrdinalIgnoreCase))
+			if (open.Visible && open.Text.Contains(control, StringComparison.OrdinalIgnoreCase))
 				return open;
 		}
 

@@ -70,8 +70,7 @@ internal partial class SettingsDialog
 	{
 		if (this.ConfigurationChanged)
 		{
-			this.LoadSettings();
-			this.UpdateDialogSettings();
+			this.ShowSettingsInUse();
 			this.Invalidate();
 		}
 	}

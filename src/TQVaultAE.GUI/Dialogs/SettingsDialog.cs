@@ -268,14 +268,27 @@ internal sealed partial class SettingsDialog : VaultForm, IScalingControl
 	}
 
 	/// <summary>
-	/// Handler for loading this dialog box
+	/// Each opening starts from the settings in use, the first one as the next ones: the main window keeps the dialog
+	/// between openings, and Cancel or the close button only hide it, so their edits are dropped here; the settings
+	/// changed elsewhere since the last opening show too. The focus left on a button by the last closing is cleared, so
+	/// that the dialog picks its first control again, as a new one does.
 	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void SettingsDialogLoad(object? sender, EventArgs e)
+	protected override void SetVisibleCore(bool value)
 	{
-		this.settingsLoaded = false;
+		if (value && !this.Visible)
+		{
+			this.ShowSettingsInUse();
+			this.ActiveControl = null;
+		}
 
+		base.SetVisibleCore(value);
+	}
+
+	/// <summary>
+	/// Shows the settings in use, dropping the edits: at each opening and by the reset button.
+	/// </summary>
+	private void ShowSettingsInUse()
+	{
 		this.LoadSettings();
 		this.UpdateDialogSettings();
 	}

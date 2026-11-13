@@ -327,6 +327,12 @@ public partial class MainForm
 	}
 
 	/// <summary>
+	/// The settings dialog, built at its first opening and kept for the next ones: building it is the slow part of an
+	/// opening. Each opening shows the settings in use (see <see cref="SettingsDialog"/>).
+	/// </summary>
+	private readonly KeptDialog<SettingsDialog> keptSettingsDialog = new();
+
+	/// <summary>
 	/// Handler for clicking the configure button.
 	/// Shows the Settings Dialog.
 	/// </summary>
@@ -334,12 +340,29 @@ public partial class MainForm
 	/// <param name="e">EventArgs data</param>
 	private void ConfigureButtonClick(object? sender, EventArgs e)
 	{
-		SettingsDialog settingsDialog = new SettingsDialog(this);
+		var watch = System.Diagnostics.Stopwatch.StartNew();
+		var zoom = UIService.Zoom;
+		var settingsDialog = this.keptSettingsDialog.Get(this, zoom, () =>
+		{
+			var dialog = new SettingsDialog(this);
+			using (ZoomScope.Enter())
+				dialog.Scale(new SizeF(zoom, zoom));
+			return dialog;
+		}, out bool built);
 		bool restart = false;
-		using (ZoomScope.Enter())
-			settingsDialog.Scale(new SizeF(UIService.Zoom, UIService.Zoom));
 
-		if (settingsDialog.ShowDialog() == DialogResult.OK && settingsDialog.ConfigurationChanged)
+		// The first idle time of the dialog's message loop: it is drawn and answers the user.
+		void Shown(object? s, EventArgs e)
+		{
+			System.Windows.Forms.Application.Idle -= Shown;
+			this.Log.LogDebug("Settings dialog shown {Elapsed} ms after the click ({How})", watch.ElapsedMilliseconds, built ? "built" : "kept");
+		}
+		System.Windows.Forms.Application.Idle += Shown;
+
+		var result = settingsDialog.ShowDialog();
+		System.Windows.Forms.Application.Idle -= Shown;
+
+		if (result == DialogResult.OK && settingsDialog.ConfigurationChanged)
 		{
 			if (settingsDialog.VaultPathChanged)
 			{

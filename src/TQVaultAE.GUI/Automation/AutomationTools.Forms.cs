@@ -38,7 +38,7 @@ internal static partial class AutomationTools
 		{
 			Form target = string.IsNullOrEmpty(form)
 				? main
-				: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
+				: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Visible && f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
 					?? throw new McpException($"No open form has '{form}' in its title.");
 
 			object Describe(Control c, int level) => new
@@ -448,7 +448,7 @@ internal static partial class AutomationTools
 	{
 		Form Target(Form main) => string.IsNullOrEmpty(form)
 			? main
-			: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
+			: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Visible && f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
 				?? throw new McpException($"No open form has '{form}' in its title.");
 
 		AutomationHost.OnUi(main =>
