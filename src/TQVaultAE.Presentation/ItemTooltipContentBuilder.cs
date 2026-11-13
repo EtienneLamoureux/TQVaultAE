@@ -214,9 +214,9 @@ public class ItemTooltipContentBuilder
 					, .. Padded(data.PrefixAttributeRanges, data.PrefixAttributes.Length)
 					, .. Padded(data.SuffixAttributeRanges, data.SuffixAttributes.Length)];
 
-			// Rings and amulets have no base stats: a blank line separates their bonuses from the name, as the base
-			// stats of the other items are separated from theirs.
-			if (item.IsJewellery && attributes.Length != 0 && attributes[0].Length != 0 && lines[^1].Kind != TooltipLineKind.Spacer)
+			// Rings, amulets and artifacts have no base stats: a blank line separates their bonuses from the name (and
+			// the artifact's class), as the base stats of the other items are separated from theirs.
+			if ((item.IsJewellery || item.IsArtifact) && attributes.Length != 0 && attributes[0].Length != 0 && lines[^1].Kind != TooltipLineKind.Spacer)
 				lines.Add(TooltipLine.Spacer);
 
 			AddAttributes(lines, attributes, ranges);

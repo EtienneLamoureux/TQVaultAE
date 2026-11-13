@@ -129,6 +129,21 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Fact]
+	public void Build_Classic_Artifact_BlankLineBetweenItsClassAndBonuses()
+	{
+		var data = new ToFriendlyNameResult(ItemOf("""records\xpack\items\artifacts\a.dbr""", Item.ICLASS_ARTIFACT))
+		{
+			ArtifactClass = "Divine Artifact",
+			ClassicAttributes = ["100% Sleep Resistance", "+1 to all Skills"],
+		};
+
+		var shape = Shape(this._builder.Build(data, ItemTooltipView.Classic)).Take(4);
+
+		shape.Should().Equal((TooltipLineKind.Text, data.FullName), (TooltipLineKind.Text, "Divine Artifact")
+			, (TooltipLineKind.Spacer, string.Empty), (TooltipLineKind.Text, "100% Sleep Resistance"));
+	}
+
+	[Fact]
 	public void Build_Classic_NotJewellery_NoBlankLineUnderTheName()
 	{
 		var data = Sword();
