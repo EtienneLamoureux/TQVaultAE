@@ -1,12 +1,8 @@
 //-----------------------------------------------------------------------
-// <copyright file="SettingsDialog.EventHandlers.cs" company="None">
+// <copyright file="SettingsUserControl.EventHandlers.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-/// <summary>
-/// Class for the Settings/Configuration Dialog
-/// </summary>
-
 using System.Globalization;
 using System.Text.RegularExpressions;
 using EnumsNET;
@@ -22,9 +18,12 @@ using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
 
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
-internal partial class SettingsDialog
+/// <summary>
+/// The handlers of the settings controls: each writes its value to the editor, which applies the rules between settings.
+/// </summary>
+internal partial class SettingsUserControl
 {
 	/// <summary>
 	/// Handler for clicking the vault path browse button
@@ -50,10 +49,10 @@ internal partial class SettingsDialog
 	/// </summary>
 	private void KeyBindsButtonClick(object? sender, EventArgs e)
 	{
-		using var dialog = this.Services.Forms.Create<KeyBindsDialog>();
+		using var dialog = this.Services.Forms.Create<Dialogs.KeyBindsDialog>();
 		dialog.Bindings = KeyBindMap.FromOverrides(this.editor.Current.KeyBinds.Overrides);
 		dialog.Options = new KeyBindOptions(this.editor.Current.AllowItemCopy, this.editor.Current.AllowCharacterEdit);
-		if (dialog.ShowDialog(this) != DialogResult.OK)
+		if (dialog.ShowDialog(this.FindForm()) != DialogResult.OK)
 			return;
 
 		var edited = new KeyBindSettings();
@@ -84,7 +83,8 @@ internal partial class SettingsDialog
 		=> this.editor.Current.SkipTitle = this.skipTitleCheckBox.Checked;
 
 	/// <summary>
-	/// Handler for clicking the OK button
+	/// Handler for clicking the OK button: checks the settings, applies the edits and raises <see cref="Applied"/>; an
+	/// invalid setting is told and the settings stay open.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
@@ -94,7 +94,6 @@ internal partial class SettingsDialog
 		if (!this.editor.IsGitRepositoryValid)
 		{
 			this.UIService.ShowError(Resources.SettingsGitRepositoryUrlInvalid, Buttons: Application.Contracts.Services.ShowMessageButtons.OK);
-			this.DialogResult = DialogResult.None;
 			return;
 		}
 
@@ -111,8 +110,13 @@ internal partial class SettingsDialog
 				this.FontService.Reload();
 		}
 
-		this.DialogResult = DialogResult.OK;
+		this.Applied?.Invoke(this, EventArgs.Empty);
 	}
+
+	/// <summary>
+	/// Handler for clicking the Cancel button: the host leaves the settings, the edits are dropped.
+	/// </summary>
+	private void CancelButtonClick(object? sender, EventArgs e) => this.Cancelled?.Invoke(this, EventArgs.Empty);
 
 	/// <summary>
 	/// Handler for clicking the allow item editing check box

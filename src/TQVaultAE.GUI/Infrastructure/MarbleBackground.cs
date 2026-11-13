@@ -30,19 +30,19 @@ internal static class MarbleBackground
 	/// </summary>
 	private static TextureBrush Brush => brush ??= new TextureBrush(Tile, System.Drawing.Drawing2D.WrapMode.Tile);
 
-	/// <summary>Gives <paramref name="form"/> the tiled marble as its background.</summary>
-	public static void ApplyTo(Form form)
+	/// <summary>Gives <paramref name="form"/> (a window, or a view laid in one) the tiled marble as its background.</summary>
+	public static void ApplyTo(Control form)
 	{
 		form.BackgroundImage = Tile;
 		form.BackgroundImageLayout = ImageLayout.Tile;
 	}
 
 	/// <summary>
-	/// Paints the background of a window given the marble by <see cref="ApplyTo"/>, as Windows Forms would (the tiles
-	/// start at its client origin), on the area to paint only: a transparent control asks for the part behind it.
+	/// Paints the background of a window or view given the marble by <see cref="ApplyTo"/>, as Windows Forms would (the
+	/// tiles start at its client origin), on the area to paint only: a transparent control asks for the part behind it.
 	/// </summary>
 	/// <returns>False when the window has another background, left to Windows Forms.</returns>
-	public static bool TryPaint(Form form, PaintEventArgs e)
+	public static bool TryPaint(ScrollableControl form, PaintEventArgs e)
 	{
 		if (tile is null || !ReferenceEquals(form.BackgroundImage, tile) || form.BackgroundImageLayout != ImageLayout.Tile
 			|| SystemInformation.HighContrast || form.RightToLeft == RightToLeft.Yes || form.AutoScrollPosition != Point.Empty)

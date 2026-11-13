@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="SettingsDialog.Designer.cs" company="None">
+// <copyright file="SettingsUserControl.Designer.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -9,12 +9,12 @@ using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// Form Designer Class for SettingsDialog
+/// Designer class for SettingsUserControl
 /// </summary>
-internal partial class SettingsDialog
+internal partial class SettingsUserControl
 {
 	/// <summary>
 	/// Check box to allow item editing
@@ -162,7 +162,7 @@ internal partial class SettingsDialog
 	private void InitializeComponent()
 	{
 		components = new System.ComponentModel.Container();
-		System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsDialog));
+		System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsUserControl));
 		allowItemEditCheckBox = new ScalingCheckBox();
 		allowItemCopyCheckBox = new ScalingCheckBox();
 		skipTitleCheckBox = new ScalingCheckBox();
@@ -362,7 +362,7 @@ internal partial class SettingsDialog
 		// 
 		cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 		cancelButton.BackColor = Color.Transparent;
-		cancelButton.DialogResult = DialogResult.Cancel;
+		cancelButton.Click += CancelButtonClick;
 		cancelButton.DownBitmap = (Bitmap)resources.GetObject("cancelButton.DownBitmap");
 		cancelButton.FlatAppearance.BorderSize = 0;
 		cancelButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
@@ -386,7 +386,6 @@ internal partial class SettingsDialog
 		// 
 		okayButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 		okayButton.BackColor = Color.Transparent;
-		okayButton.DialogResult = DialogResult.OK;
 		okayButton.DownBitmap = (Bitmap)resources.GetObject("okayButton.DownBitmap");
 		okayButton.FlatAppearance.BorderSize = 0;
 		okayButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
@@ -1228,7 +1227,7 @@ internal partial class SettingsDialog
 		bufferedTableLayoutPanelSkeleton.Controls.Add(tableLayoutPanelButtons, 0, 1);
 		bufferedTableLayoutPanelSkeleton.Controls.Add(bufferedFlowLayoutPanelSkeletonLeft, 0, 0);
 		bufferedTableLayoutPanelSkeleton.Controls.Add(bufferedFlowLayoutPanelSkeletonCenter, 2, 0);
-		bufferedTableLayoutPanelSkeleton.Location = new Point(10, 25);
+		bufferedTableLayoutPanelSkeleton.Location = new Point(0, 0);
 		bufferedTableLayoutPanelSkeleton.Margin = new Padding(0);
 		bufferedTableLayoutPanelSkeleton.Name = "bufferedTableLayoutPanelSkeleton";
 		bufferedTableLayoutPanelSkeleton.RowCount = 2;
@@ -1382,29 +1381,18 @@ internal partial class SettingsDialog
 		bufferedFlowLayoutPanelSkeletonCenter.Size = new Size(342, 568);
 		bufferedFlowLayoutPanelSkeletonCenter.TabIndex = 1;
 		// 
-		// SettingsDialog
+		// SettingsUserControl
 		// 
 		AutoScaleDimensions = new SizeF(96F, 96F);
 		AutoScaleMode = AutoScaleMode.Dpi;
 		AutoValidate = AutoValidate.EnablePreventFocusChange;
 		BackColor = Color.FromArgb(46, 31, 21);
-		CancelButton = cancelButton;
-		ClientSize = new Size(1222, 666);
 		Controls.Add(bufferedTableLayoutPanelSkeleton);
-		DrawCustomBorder = true;
 		Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
 		ForeColor = Color.White;
-		FormBorderStyle = FormBorderStyle.None;
-		MaximizeBox = false;
-		MinimizeBox = false;
-		Name = "SettingsDialog";
-		Padding = new Padding(5, 5, 10, 5);
-		ShowIcon = false;
-		ShowInTaskbar = false;
-		SizeGripStyle = SizeGripStyle.Hide;
-		StartPosition = FormStartPosition.CenterParent;
-		Text = "Configure Settings";
-		TopMost = true;
+		Margin = new Padding(0);
+		Name = "SettingsUserControl";
+		Size = new Size(1198, 616);
 		Controls.SetChildIndex(bufferedTableLayoutPanelSkeleton, 0);
 		checkGroupBoxGitBackup.ResumeLayout(false);
 		checkGroupBoxGitBackup.PerformLayout();
