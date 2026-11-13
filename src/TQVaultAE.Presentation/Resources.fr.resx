@@ -822,6 +822,11 @@ automatiquement activé sur l'écran d'accueil.</value>
 	<data name="SettingsTitle" xml:space="preserve">
     <value>Configuration</value>
   </data>
+	<data name="SettingsDiscardChanges" xml:space="preserve">
+    <value>La configuration a été modifiée.
+
+La quitter sans enregistrer les changements ?</value>
+  </data>
 	<data name="StashNotFound" xml:space="preserve">
     <value>Impossible de trouver le fichier caravane.</value>
   </data>

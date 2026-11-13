@@ -30,15 +30,16 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "control_tree", ReadOnly = true)]
-	[Description("Lists the controls of an open form with their type, bounds (client coordinates of their parent, in pixels), font, visibility and enabled state, to check layout and scaling. Also reports the form's DPI and TQVault's scale, zoom and DPI factor.")]
+	[Description("Lists the controls of an open form, or of the settings shown in the main window ('Settings'), with their type, bounds (client coordinates of their parent, in pixels), font, visibility and enabled state, to check layout and scaling. Also reports the form's DPI and TQVault's scale, zoom and DPI factor.")]
 	public static string ControlTree(
 		[Description("Part of the form title (case-insensitive); empty for the main window.")] string form = "",
 		[Description("Maximum depth below the form (default 3).")] int depth = 3)
 		=> AutomationHost.OnUi(main =>
 		{
-			Form target = string.IsNullOrEmpty(form)
+			Control target = string.IsNullOrEmpty(form)
 				? main
 				: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Visible && f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
+					?? main.AutomationShownView(form)
 					?? throw new McpException($"No open form has '{form}' in its title.");
 
 			object Describe(Control c, int level) => new
@@ -75,7 +76,7 @@ internal static partial class AutomationTools
 	[McpServerTool(Name = "open_form", Destructive = true)]
 	[Description("Creates a form or dialog from the container, as the app does (FormFactory), so its InitializeComponent and resources run. With show=false (the default) it reports the created form and disposes it; with show=true it opens it modeless over the main window, to capture or close afterwards with capture and close_dialog. Singletons (MainForm, BagButtonSettings) are only reported. Dialogs that need data first (ResultsDialog, ItemProperties...) may fail when shown: see recent_log.")]
 	public static string OpenForm(
-		[Description("Type name, as listed by list_forms, e.g. AboutBox or SettingsDialog.")] string name,
+		[Description("Type name, as listed by list_forms, e.g. AboutBox or KeyBindsDialog.")] string name,
 		[Description("true to show the form modeless instead of disposing it.")] bool show = false)
 		=> AutomationHost.OnUi(main =>
 		{

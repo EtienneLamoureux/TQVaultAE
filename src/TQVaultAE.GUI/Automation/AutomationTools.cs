@@ -76,11 +76,16 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "close_dialog", Destructive = true)]
-	[Description("Answers a modal dialog by pressing one of its buttons, e.g. title 'Default Vault Path', button 'OK'. Works for message boxes and WinForms dialogs, even when they are not in the foreground.")]
+	[Description("Answers a modal dialog by pressing one of its buttons, e.g. title 'Default Vault Path', button 'OK'. Works for message boxes and WinForms dialogs, even when they are not in the foreground, and for the settings shown in the main window (title 'Settings': OK or Cancel, pressed after the call returns, since OK may ask to restart).")]
 	public static string CloseDialog(
 		[Description("Part of the dialog title (case-insensitive). Empty picks the only dialog that is open.")] string title,
 		[Description("Button text, e.g. OK, Cancel, Yes, No.")] string button)
 	{
+		// The settings are a view of the main window now, not a dialog: their buttons are pressed like a click.
+		if (!string.IsNullOrEmpty(title)
+			&& AutomationHost.OnUi(main => main.AutomationShownView(title) is { } view ? PressViewButton(main, view, button) : null) is { } viewResult)
+			return viewResult;
+
 		var candidates = NativeWindows.GetProcessTopLevelWindows()
 			.Where(w => w.Enabled && (string.IsNullOrEmpty(title) || w.Title.Contains(title, StringComparison.OrdinalIgnoreCase)))
 			.Where(w => w.IsDialogClass || NativeWindows.GetButtons(w.Handle).Count > 0)
@@ -101,6 +106,20 @@ internal static partial class AutomationTools
 
 		var available = candidates.SelectMany(c => NativeWindows.GetButtons(c.Handle)).Select(b => b.Text);
 		throw new McpException($"No button '{button}' found. Buttons: {string.Join(", ", available)}");
+	}
+
+	/// <summary>
+	/// Presses the button of a view of the main window whose text is <paramref name="button"/> (ignoring case and the
+	/// mnemonic '&amp;'), after the call returns, as <c>click_control</c> does.
+	/// </summary>
+	private static string PressViewButton(Forms.MainForm main, Control view, string button)
+	{
+		static string Plain(string text) => text.Replace("&", string.Empty, StringComparison.Ordinal);
+		var target = AllControls(view).OfType<Button>()
+			.FirstOrDefault(b => b.Visible && b.Enabled && string.Equals(Plain(b.Text), Plain(button), StringComparison.OrdinalIgnoreCase))
+			?? throw new McpException($"No button '{button}' in '{view.Text}'. Buttons: {string.Join(", ", AllControls(view).OfType<ButtonBase>().Where(b => b.Visible).Select(b => b.Text))}");
+		main.BeginInvoke(() => ((IButtonControl)target).PerformClick());
+		return Serialize(new { dialog = view.Text, pressed = target.Text });
 	}
 
 	#endregion
@@ -130,6 +149,7 @@ internal static partial class AutomationTools
 			{
 				endpoint = AutomationHost.Address,
 				loadingComplete = form.AutomationLoadingComplete,
+				view = form.AutomationShownViewName,
 				// The last message shown to the user in the main window (NotifyUser): an import's end message, for example.
 				notification = form.AutomationNotificationText,
 				vault = form.AutomationSelectedVault,

@@ -1,16 +1,17 @@
 namespace TQVaultAE.GUI.Infrastructure;
 
 /// <summary>
-/// A dialog built at its first opening and kept for the next ones, since building it is the slow part; it is disposed
-/// with its owner. A modal dialog closed by its buttons or its close button is only hidden, so the kept one is shown
-/// again as is: the dialog itself starts each opening from the current state.
+/// A dialog, or a view of the main window, built at its first opening and kept for the next ones, since building it is
+/// the slow part; it is disposed with its owner. A modal dialog closed by its buttons or its close button is only hidden
+/// (a view is taken out of the window), so the kept one is shown again as is: the dialog or view itself starts each
+/// opening from the current state.
 /// </summary>
 /// <remarks>
 /// The dialog is scaled once to the user's zoom when it is built. After a zoom change it is built again at the new zoom:
 /// scaling it back and forth would drift by rounding (margins and positions).
 /// </remarks>
-/// <typeparam name="T">The dialog type.</typeparam>
-internal sealed class KeptDialog<T> where T : Form
+/// <typeparam name="T">The dialog or view type.</typeparam>
+internal sealed class KeptDialog<T> where T : Control
 {
 	private T? dialog;
 

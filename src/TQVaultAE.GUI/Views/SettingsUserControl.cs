@@ -22,10 +22,14 @@ namespace TQVaultAE.GUI.Views;
 
 /// <summary>
 /// The settings: every option with its rules, the key binds button and the OK, Cancel and reset buttons, on the marble
-/// with the caravan frames. A window hosts it: it shows the settings in use with <see cref="ShowSettingsInUse"/> at each
-/// opening, and leaves it on <see cref="Applied"/> (OK, the edits saved in <see cref="UserSettings"/>) or
-/// <see cref="Cancelled"/> (Cancel, the edits dropped).
+/// with the caravan frames. The main window shows it in place of its main content: it shows the settings in use with
+/// <see cref="ShowSettingsInUse"/> at each opening, and leaves it on <see cref="Applied"/> (OK, the edits saved in
+/// <see cref="UserSettings"/>) or <see cref="Cancelled"/> (Cancel or Escape, the edits dropped).
 /// </summary>
+/// <remarks>
+/// Sized to its content (<see cref="Control.AutoSize"/>) by default; given an area by its host instead (AutoSize off), it
+/// lays its content in the middle, with scroll bars when the area is smaller (<see cref="ScrollableControl.AutoScroll"/>).
+/// </remarks>
 internal sealed partial class SettingsUserControl : UserControl
 {
 	#region Properties & Fields
@@ -94,15 +98,9 @@ internal sealed partial class SettingsUserControl : UserControl
 	public event EventHandler? Applied;
 
 	/// <summary>
-	/// Cancel (or Escape in a host that maps it to <see cref="CancelButton"/>) was pressed: the edits are dropped at the
-	/// next <see cref="ShowSettingsInUse"/>.
+	/// Cancel or Escape was pressed: the edits are dropped at the next <see cref="ShowSettingsInUse"/>.
 	/// </summary>
 	public event EventHandler? Cancelled;
-
-	/// <summary>
-	/// The Cancel button, for a host window's <see cref="Form.CancelButton"/>.
-	/// </summary>
-	public IButtonControl CancelButton => this.cancelButton;
 
 	private static readonly Dictionary<string, string> PasteBinExpirationOptions = new()
 	{
@@ -285,6 +283,38 @@ internal sealed partial class SettingsUserControl : UserControl
 	{
 		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
 		base.ScaleControl(factor, specified);
+	}
+
+	/// <summary>
+	/// Escape presses Cancel, as in a dialog: once the focused control left it (an open drop-down list closes first).
+	/// </summary>
+	protected override bool ProcessDialogKey(Keys keyData)
+	{
+		if (keyData == Keys.Escape)
+		{
+			this.cancelButton.PerformClick();
+			return true;
+		}
+
+		return base.ProcessDialogKey(keyData);
+	}
+
+	/// <summary>
+	/// In an area given by the host, the settings sit in its middle; at its top left when it is smaller, scrolled.
+	/// </summary>
+	protected override void OnLayout(LayoutEventArgs e)
+	{
+		base.OnLayout(e);
+
+		if (this.AutoSize)
+			return;
+
+		var content = this.bufferedTableLayoutPanelSkeleton;
+		var location = new Point(
+			Math.Max(0, (this.ClientSize.Width - content.Width) / 2) + this.AutoScrollPosition.X,
+			Math.Max(0, (this.ClientSize.Height - content.Height) / 2) + this.AutoScrollPosition.Y);
+		if (content.Location != location)
+			content.Location = location;
 	}
 
 	/// <summary>

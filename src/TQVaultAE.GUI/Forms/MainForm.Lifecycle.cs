@@ -45,6 +45,13 @@ public partial class MainForm
 		if (e.CloseReason == CloseReason.ApplicationExitCall)
 			return;
 
+		// Settings shown: their edits are dropped, after a question when the user closes the window.
+		if (!this.LeaveSettingsView(confirm: e.CloseReason == CloseReason.UserClosing))
+		{
+			e.Cancel = true;
+			return;
+		}
+
 		e.Cancel = !this.DoCloseStuff();
 	}
 
@@ -164,6 +171,10 @@ public partial class MainForm
 	/// <param name="e">MouseEventArgs data</param>
 	private void MainFormMouseWheel(object? sender, MouseEventArgs e)
 	{
+		// The vault list is hidden with the main content.
+		if (this.shownSettings is not null)
+			return;
+
 		// Force a single line regardless of the delta value.
 		int numberOfTextLinesToMove = ((e.Delta > 0) ? 1 : 0) - ((e.Delta < 0) ? 1 : 0);
 		if (numberOfTextLinesToMove != 0)
@@ -188,6 +199,10 @@ public partial class MainForm
 	/// <param name="e">KeyEventArgs data</param>
 	private void MainFormKeyDown(object? sender, KeyEventArgs e)
 	{
+		// The keys of the main content sleep while the settings are shown.
+		if (this.shownSettings is not null)
+			return;
+
 		var gesture = KeyBindInput.FromKeys(e.KeyData);
 		var action = this.Services.KeyBinds.Find(
 			gesture
@@ -429,6 +444,10 @@ public partial class MainForm
 		var size = TQVaultAE.Application.WindowLayout.FillTo(this.ContentArea, this.mainView.Location);
 		if (this.mainView.Size != size)
 			this.mainView.Size = size;
+
+		// The settings take the place of the main content.
+		if (this.shownSettings is { } settings && settings.Bounds != this.mainView.Bounds)
+			settings.Bounds = this.mainView.Bounds;
 	}
 
 	/// <summary>

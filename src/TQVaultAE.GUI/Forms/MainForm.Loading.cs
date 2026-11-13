@@ -327,89 +327,12 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// The settings dialog, built at its first opening and kept for the next ones: building it is the slow part of an
-	/// opening. Each opening shows the settings in use (see <see cref="SettingsDialog"/>).
-	/// </summary>
-	private readonly KeptDialog<SettingsDialog> keptSettingsDialog = new();
-
-	/// <summary>
-	/// Handler for clicking the configure button.
-	/// Shows the Settings Dialog.
+	/// Handler for clicking the configure button: shows the settings in place of the main content, or leaves them as
+	/// their Cancel does, asking first when they were changed.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
-	private void ConfigureButtonClick(object? sender, EventArgs e)
-	{
-		var watch = System.Diagnostics.Stopwatch.StartNew();
-		var zoom = UIService.Zoom;
-		var settingsDialog = this.keptSettingsDialog.Get(this, zoom, () =>
-		{
-			var dialog = new SettingsDialog(this);
-			using (ZoomScope.Enter())
-				dialog.Scale(new SizeF(zoom, zoom));
-			return dialog;
-		}, out bool built);
-		bool restart = false;
-
-		// The first idle time of the dialog's message loop: it is drawn and answers the user.
-		void Shown(object? s, EventArgs e)
-		{
-			System.Windows.Forms.Application.Idle -= Shown;
-			this.Log.LogDebug("Settings dialog shown {Elapsed} ms after the click ({How})", watch.ElapsedMilliseconds, built ? "built" : "kept");
-		}
-		System.Windows.Forms.Application.Idle += Shown;
-
-		var result = settingsDialog.ShowDialog();
-		System.Windows.Forms.Application.Idle -= Shown;
-
-		if (result == DialogResult.OK && settingsDialog.ConfigurationChanged)
-		{
-			if (settingsDialog.VaultPathChanged)
-			{
-				GamePathResolver.TQVaultSaveFolder = settingsDialog.VaultPath;
-				this.vaultService.UpdateVaultPath(settingsDialog.VaultPath);
-				this.GetVaultList(true);
-			}
-
-			if (settingsDialog.EnableTQVaultSoundsChanged)
-			{
-				var soundSrv = this.Services.SoundService;
-				soundSrv.InitAllPlayers();
-			}
-
-			var restartReason = settingsDialog.RestartReason;
-
-			if (restartReason != RestartReason.None)
-			{
-				var (title, message) = restartReason switch
-				{
-					RestartReason.Settings => (Resources.MainFormSettingsChanged, Resources.MainFormSettingsChangedMsg),
-					RestartReason.GamePath => (Resources.MainFormPathsChanged, Resources.MainFormPathsChangedMsg),
-					_ => (Resources.MainFormLanguageChanged, Resources.MainFormLanguageChangedMsg),
-				};
-
-				restart = this.Services.MessageBoxes.Confirm(message, title);
-			}
-
-			if (settingsDialog.ItemBGColorOpacityChanged || settingsDialog.EnableItemRequirementRestrictionChanged)
-				this.Refresh();
-
-			if (settingsDialog.EnableCharacterEditChanged)
-				stashPanel?.UpdatePlayerInfo();
-
-			this.userContext.ConfigChanged = true;
-			this.SaveConfiguration();
-
-
-			AdjustMenuButtonVisibility();
-
-			if (restart)
-			{
-				if (this.DoCloseStuff())
-					System.Windows.Forms.Application.Restart();
-			}
-		}
-	}
+	private void ConfigureButtonClick(object? sender, EventArgs e) => this.ToggleSettingsView();
 
 	#endregion
 }

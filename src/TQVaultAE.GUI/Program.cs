@@ -213,7 +213,6 @@ public static class Program
 				.AddTransient<ModLinkDialog>()
 				.AddTransient<ResultsDialog>()
 				.AddTransient<SearchDialogAdvanced>()
-				.AddTransient<SettingsDialog>()
 				.AddTransient<VaultMaintenanceDialog>()
 				.AddTransient<SplashScreenForm>();
 

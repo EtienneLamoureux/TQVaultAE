@@ -15,7 +15,7 @@ internal static partial class AutomationTools
 	#region Form controls
 
 	[McpServerTool(Name = "control_values", ReadOnly = true)]
-	[Description("Reads the input controls of an open form or dialog (check boxes, radio buttons, numeric boxes, combo boxes, text boxes, check group boxes): name, type, enabled, visible and value. Use it to check the rules a dialog applies when another control changes.")]
+	[Description("Reads the input controls of an open form or dialog, or of the settings shown in the main window ('Settings'), (check boxes, radio buttons, numeric boxes, combo boxes, text boxes, check group boxes): name, type, enabled, visible and value. Use it to check the rules a dialog applies when another control changes.")]
 	public static string ControlValues(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("true to also list the labels and their text.")] bool labels = false)
@@ -30,7 +30,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "set_control", Destructive = true)]
-	[Description("Sets the value of a control of an open form or dialog, like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or '#index' for combo boxes (any text for an editable one) and list boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
+	[Description("Sets the value of a control of an open form or dialog, or of the settings shown in the main window ('Settings'), like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or '#index' for combo boxes (any text for an editable one) and list boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
 	public static string SetControl(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("Control name, as listed by control_values.")] string control,
@@ -111,13 +111,13 @@ internal static partial class AutomationTools
 
 
 	[McpServerTool(Name = "click_control", Destructive = true)]
-	[Description("Clicks a button of an open form, like a user (form '' for the main window, e.g. control 'configureButton' opens the settings from the main window, so its OK runs the main window's rules). The click runs after this call returns, since a button may open a modal dialog: follow with list_windows, control_values or close_dialog.")]
+	[Description("Clicks a button of an open form, or of the settings shown in the main window ('Settings'), like a user (form '' for the main window, e.g. control 'configureButton' shows the settings in the main window, or leaves them as their Cancel does, asking first when they were changed). The click runs after this call returns, since a button may open a modal dialog: follow with list_windows, control_values or close_dialog.")]
 	public static string ClickControl(
 		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
 		[Description("Button name, as listed by control_values or control_tree.")] string control)
 		=> AutomationHost.OnUi(main =>
 		{
-			Form target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
+			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
 			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
 				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
 			if (c is not IButtonControl and not ButtonBase)
@@ -141,7 +141,7 @@ internal static partial class AutomationTools
 		[Description("Y in the control's client coordinates.")] int y)
 		=> AutomationHost.OnUi(main =>
 		{
-			Form target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
+			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
 			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
 				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
 
@@ -197,10 +197,16 @@ internal static partial class AutomationTools
 			pending = AutomationHost.PendingDialogAnswers.Select(a => a.ToString()).ToList(),
 		});
 
-	private static Form FindOpenForm(string form)
+	/// <summary>
+	/// The shown form whose title has <paramref name="form"/> or whose type is named so, else the view shown in the main
+	/// window in place of its main content (the settings), found the same way: the tools drive it as they drove the
+	/// settings dialog.
+	/// </summary>
+	private static Control FindOpenForm(string form)
 		=> System.Windows.Forms.Application.OpenForms.Cast<Form>().LastOrDefault(f => f.Visible
 			&& (f.Text.Contains(form, StringComparison.OrdinalIgnoreCase) || string.Equals(f.GetType().Name, form, StringComparison.OrdinalIgnoreCase)))
-		?? throw new McpException($"No open form '{form}'. Open forms: {string.Join(", ", System.Windows.Forms.Application.OpenForms.Cast<Form>().Where(f => f.Visible).Select(f => $"'{f.Text}' ({f.GetType().Name})"))}");
+		?? AutomationHost.MainForm?.AutomationShownView(form)
+		?? throw new McpException($"No open form '{form}'. Open forms: {string.Join(", ", System.Windows.Forms.Application.OpenForms.Cast<Form>().Where(f => f.Visible).Select(f => $"'{f.Text}' ({f.GetType().Name})"))}; view shown in the main window: {AutomationHost.MainForm?.AutomationShownViewName}");
 
 	private static IEnumerable<Control> AllControls(Control parent)
 	{

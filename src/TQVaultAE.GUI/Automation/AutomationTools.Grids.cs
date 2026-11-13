@@ -67,11 +67,11 @@ internal static partial class AutomationTools
 			return Serialize(new { grid = view.Name, edited = new { row = rowIndex, column = columnIndex, value } });
 		});
 
-	private static DataGridView FindGrid(Form form, string grid)
+	private static DataGridView FindGrid(Control form, string grid)
 		=> AllControls(form).OfType<DataGridView>().FirstOrDefault(g => string.Equals(g.Name, grid, StringComparison.OrdinalIgnoreCase))
 			?? throw new McpException($"No grid '{grid}' in '{form.Text}'. Grids: {string.Join(", ", AllControls(form).OfType<DataGridView>().Select(g => g.Name))}");
 
-	private static object DescribeGrid(Form form, DataGridView grid) => new
+	private static object DescribeGrid(Control form, DataGridView grid) => new
 	{
 		form = form.Text,
 		grid = grid.Name,

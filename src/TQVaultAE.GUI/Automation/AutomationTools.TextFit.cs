@@ -17,7 +17,7 @@ internal static partial class AutomationTools
 		[Description("Pixels of slack before a control counts as too small (default 1).")] int tolerance = 1)
 		=> AutomationHost.OnUi(main =>
 		{
-			Form target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
+			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
 			var problems = new List<object>();
 			int checkedControls = 0;
 

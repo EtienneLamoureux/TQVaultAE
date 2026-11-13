@@ -843,6 +843,11 @@ the Enter key on the title screen.</value>
 	<data name="SettingsTitle" xml:space="preserve">
     <value>Configure Settings</value>
   </data>
+	<data name="SettingsDiscardChanges" xml:space="preserve">
+    <value>The settings have been changed.
+
+Leave them without saving the changes?</value>
+  </data>
 	<data name="StashNotFound" xml:space="preserve">
     <value>Cannot find Stash file.</value>
   </data>

@@ -103,7 +103,7 @@ public partial class MainForm
 		var folder = fw.Path;
 		var fileName = e.Name;
 
-		this.FileReloadDebouncer.Schedule(e.FullPath, () =>
+		this.ScheduleReload(e.FullPath, () =>
 		{
 			// retrieve PlayerSave
 			var playerSave = this.comboBoxCharacter.Items.OfType<PlayerSave>().FirstOrDefault(ps => ps.Folder == folder);

@@ -31,6 +31,19 @@ public partial class MainForm
 	/// <summary>Gets the table that lays out the vault, player and stash panels.</summary>
 	internal TableLayoutPanel AutomationLayoutTable => this.tableLayoutPanelMain;
 
+	/// <summary>The view shown under the toolbar: <c>main</c> (the main content) or <c>settings</c>.</summary>
+	internal string AutomationShownViewName => this.shownSettings is null ? "main" : "settings";
+
+	/// <summary>
+	/// The view shown in place of the main content (the settings), when <paramref name="name"/> is part of its title or
+	/// its type name, as the tools find a dialog; null otherwise.
+	/// </summary>
+	internal Control? AutomationShownView(string name)
+		=> this.shownSettings is { } view
+			&& (view.Text.Contains(name, StringComparison.OrdinalIgnoreCase) || string.Equals(view.GetType().Name, name, StringComparison.OrdinalIgnoreCase))
+			? view
+			: null;
+
 	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
 
 	/// <summary>Shows a search result like a click on its row in the results dialog.</summary>

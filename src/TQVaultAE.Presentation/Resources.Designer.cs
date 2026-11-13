@@ -5163,6 +5163,17 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The settings have been changed.
+        ///
+        ///Leave them without saving the changes?.
+        /// </summary>
+        public static string SettingsDiscardChanges {
+            get {
+                return ResourceManager.GetString("SettingsDiscardChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skill Points.
         /// </summary>
         public static string SkillPoints {
