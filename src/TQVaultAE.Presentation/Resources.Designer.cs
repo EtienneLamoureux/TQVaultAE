@@ -5906,15 +5906,6 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to {0}: installed from the Steam Workshop and in the custom maps, and named without telling which one. The Steam Workshop one is used: choose with Modded or Mod link... to keep the other..
-        /// </summary>
-        public static string ModAmbiguous {
-            get {
-                return ResourceManager.GetString("ModAmbiguous", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Read with the data of its map here, {0} has no room in this tab: drop it in another tab..
         /// </summary>
         public static string ModDropNoRoomInTab {

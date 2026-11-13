@@ -1,6 +1,4 @@
-using System.Globalization;
 using TQVaultAE.Application;
-using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.Presentation;
 
@@ -38,24 +36,6 @@ public partial class MainForm
 
 		this.Invalidate(true);
 	}
-
-	/// <summary>
-	/// Warns on the notification line of mods named by a name several installed mods have (a Steam Workshop mod and a
-	/// custom map of the same name) without telling which one: the Steam Workshop one is used until the user chooses.
-	/// </summary>
-	/// <param name="names">The names of those mods.</param>
-	private void NotifyAmbiguousMods(IReadOnlyCollection<string> names)
-	{
-		if (names.Count != 0)
-			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ModAmbiguous, string.Join(", ", names)), TQColor.Yellow);
-	}
-
-	/// <summary>
-	/// Warns of the mods a vault or its items name ambiguously (<see cref="NotifyAmbiguousMods"/>).
-	/// </summary>
-	private void NotifyAmbiguousMods(PlayerCollection vault)
-		=> this.NotifyAmbiguousMods(this.Services.ItemModService.AmbiguousMods(
-			vault.Where(sack => sack is not null).SelectMany(sack => sack).Select(item => item.Mod).Prepend(vault.Mod)));
 
 	/// <summary>
 	/// Opens the mod link dialog of a character (the character list's context menu). When the link of the character

@@ -57,32 +57,20 @@ public class ModLinkService(
 	}
 
 	/// <inheritdoc/>
-	public InstalledMod? FindMod(string? key) => this.Match(key).Mod;
-
-	/// <inheritdoc/>
-	public bool IsAmbiguous(string? key) => this.Match(key).Ambiguous;
-
-	/// <summary>
-	/// The installed mod a mod identity names: exactly, else the only one of that name, else the Steam Workshop one of
-	/// the homonyms (ambiguous).
-	/// </summary>
-	private (InstalledMod? Mod, bool Ambiguous) Match(string? key)
+	public InstalledMod? FindMod(string? key)
 	{
-		if (string.IsNullOrWhiteSpace(key))
-			return (null, false);
+		// A name without its source names no mod: a Steam Workshop mod and a custom map can share it.
+		if (ModIdentity.SourceOf(key) is null)
+			return null;
 
 		var mods = this.GetInstalledMods();
 		if (mods.FirstOrDefault(m => m.Id.Equals(key, StringComparison.OrdinalIgnoreCase)) is { } exact)
-			return (exact, false);
+			return exact;
 
+		// The same mod installed the other way here (from the Workshop, or in the custom maps): the only one of its name.
 		string name = ModIdentity.NameOf(key)!;
-		var named = mods.Where(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
-		return named.Count switch
-		{
-			0 => (null, false),
-			1 => (named[0], false),
-			_ => (named.FirstOrDefault(m => m.Source == ModSource.SteamWorkshop) ?? named[0], true),
-		};
+		var named = mods.Where(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Take(2).ToList();
+		return named.Count == 1 ? named[0] : null;
 	}
 
 	private string LinkFile(string saveFolder) => this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName);
@@ -97,7 +85,8 @@ public class ModLinkService(
 		try
 		{
 			var link = JsonSerializer.Deserialize<ModLinkFile>(this.FileIO.ReadAllText(file), JsonOptions);
-			return string.IsNullOrWhiteSpace(link?.Mod) ? null : link;
+			// The name and the source make the mod: without both, the character is not linked.
+			return string.IsNullOrWhiteSpace(link?.Mod) || string.IsNullOrWhiteSpace(link.Source) ? null : link;
 		}
 		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
 		{
@@ -116,14 +105,13 @@ public class ModLinkService(
 		if (link is null)
 			return CharacterMod.Unlinked;
 
-		// The folder where it was linked first; else its name and source (the name alone for an older link).
+		// The folder where it was linked first; else its name and source.
 		if (this.GetInstalledMods().FirstOrDefault(m => link.Folder is not null && this.SameFolder(m.Folder, link.Folder)) is { } linked)
 			return new CharacterMod(CharacterModState.Linked, linked, link);
 
-		var (mod, ambiguous) = this.Match(ModIdentity.Compose(link.Mod, link.Source));
-		return mod is null
-			? new CharacterMod(CharacterModState.LinkedModMissing, null, link)
-			: new CharacterMod(CharacterModState.Linked, mod, link, ambiguous);
+		return this.FindMod(ModIdentity.Compose(link.Mod, link.Source)) is { } mod
+			? new CharacterMod(CharacterModState.Linked, mod, link)
+			: new CharacterMod(CharacterModState.LinkedModMissing, null, link);
 	}
 
 	private bool SameFolder(string a, string b)

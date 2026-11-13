@@ -233,10 +233,6 @@ internal sealed class ModLinkDialog : VaultForm
 
 		this.labelState.Text = ModLinkText.State(mod);
 
-		// A link by a name several installed mods have: the user links again to the right one.
-		if (mod is { Ambiguous: true, Link: { } link })
-			this.labelState.Text += Environment.NewLine + string.Format(CultureInfo.CurrentCulture, Resources.ModAmbiguous, link.Mod);
-
 		if (selectLinked)
 			this.listBoxMods.SelectedItem = mod.Mod;
 

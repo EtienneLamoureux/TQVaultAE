@@ -202,8 +202,6 @@ public partial class MainForm
 	{
 		// The character's mod data first: its database, archives and shared stash files.
 		bool mapChanged = this.ActivateMapFor(selectedSave);
-		if (this.gameMapService.ModOf(selectedSave) is { Ambiguous: true, Link: { } link })
-			this.NotifyAmbiguousMods([link.Mod]);
 
 		var session = this.playerService.LoadCharacterSession(
 			selectedSave

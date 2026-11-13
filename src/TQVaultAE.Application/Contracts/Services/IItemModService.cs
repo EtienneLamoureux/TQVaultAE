@@ -21,13 +21,6 @@ public interface IItemModService
 	InstalledMod? Find(string? modName);
 
 	/// <summary>
-	/// The names of the mods, among those given, that are named by a name several installed mods have (a Steam
-	/// Workshop mod and a custom map of the same name) without telling which: the Steam Workshop one is used.
-	/// </summary>
-	/// <param name="mods">Mod identities, as items and vaults name them.</param>
-	IReadOnlyList<string> AmbiguousMods(IEnumerable<string?> mods);
-
-	/// <summary>
 	/// Makes the database of an item's map answer for the current thread until disposed, so that reading, drawing and
 	/// describing the item use its map's data: its mod's, or the base game's for none or a mod that is not installed.
 	/// An item without a map yet (<see cref="ModOrigin.None"/>) gets nothing: it uses the data in use at that moment.

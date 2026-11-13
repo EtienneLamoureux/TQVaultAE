@@ -68,5 +68,4 @@ Vault tools button > **Modded vault**. The vault list shows the mod, and the vau
   link to a mod that is not installed and names it.
 - Character files cannot store an item's link: it lasts until the character is read again. Keep linked items in a vault.
 - A Steam Workshop mod and a custom map of the same folder name are two mods: the menus and the dialog show where each
-  comes from. A vault or a character named by that name alone (files of earlier versions) uses the Steam Workshop one,
-  and the notification line says so: choose the mod again to keep the other.
+  comes from.

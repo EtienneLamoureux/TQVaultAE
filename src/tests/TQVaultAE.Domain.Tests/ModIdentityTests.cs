@@ -27,18 +27,8 @@ public class ModIdentityTests
 	[Fact]
 	public void NameOf_KeyWithoutSource_IsTheKey()
 	{
-		// A file written before the source was kept names the mod alone; a folder name never holds the separator.
+		// A map folder that is no installed mod is named by its folder alone; a folder name never holds the separator.
 		ModIdentity.NameOf("Diablo 2 Lilith").Should().Be("Diablo 2 Lilith");
 		ModIdentity.SourceOf("Diablo 2 Lilith").Should().BeNull();
 	}
-
-	[Theory]
-	[InlineData("shadowchampions|custommaps", "shadowchampions|custommaps", true)]
-	[InlineData("shadowchampions|custommaps", "SHADOWCHAMPIONS", true)]
-	[InlineData("shadowchampions|custommaps", "shadowchampions|workshop:1949340853", false)]
-	[InlineData("shadowchampions", "Lilith", false)]
-	[InlineData(null, null, true)]
-	[InlineData(null, "shadowchampions", false)]
-	public void SameData_HomonymsOfAnotherSourceDiffer_ANameAloneMatchesEither(string? a, string? b, bool expected)
-		=> ModIdentity.SameData(a, b).Should().Be(expected);
 }

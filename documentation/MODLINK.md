@@ -154,15 +154,13 @@ read with a new map has its tooltip, its names and its search entry made again.
 ### The identity of a mod
 
 A mod is its folder name and where it is installed from: a Steam Workshop mod and a custom map with the same folder name
-are two mods, which the dialog, the *Modded* menus and the files tell apart. Files keep the name in `"mod"` (what older
-versions read) and the source beside it in `"modSource"` (`"source"` in a link file): `workshop:<item id>` or
-`custommaps`.
+are two mods, which the dialog, the *Modded* menus and the files tell apart. Files keep the name in `"mod"` and the
+source beside it in `"modSource"` (`"source"` in a link file): `workshop:<item id>` or `custommaps`.
 
-A file that names a mod by its name alone (written before the source was kept) still finds it when one installed mod
-only has that name, and so does a source not installed here when one mod of that name is (the same mod installed the
-other way). When both a Workshop mod and a custom map have the name, the Steam Workshop one is used, and the
-notification line says so when the vault or the character is shown (the mod link dialog too): choosing the mod again
-with *Modded* or *Mod link...* writes its source.
+Both are needed: a link file without its source is not read (the character is not linked), and a vault or an item that
+names a mod by its name alone names no installed mod (read with the base game data, like a mod that is not installed).
+A source not installed here still finds the mod when one installed mod only has that name (the same mod installed the
+other way); with homonyms, nothing is guessed.
 
 ### In the files
 

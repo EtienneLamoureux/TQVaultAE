@@ -69,7 +69,7 @@ public sealed class ModLinkFile
 
 	/// <summary>
 	/// Where the mod was installed from (<see cref="InstalledMod.SourceKey"/>): with <see cref="Mod"/>, it tells a Steam
-	/// Workshop mod from a custom map of the same name. Absent from links made before it was kept.
+	/// Workshop mod from a custom map of the same name. A link without it is not read (the character is not linked).
 	/// </summary>
 	public string? Source { get; set; }
 
@@ -116,9 +116,7 @@ public enum CharacterModState
 /// <param name="State">How the character relates to the installed mods.</param>
 /// <param name="Mod">The linked mod, when installed.</param>
 /// <param name="Link">The link file, when there is one.</param>
-/// <param name="Ambiguous">True when the link names its mod by a name several installed mods have (a link made before
-/// the source was kept, whose folder moved): <paramref name="Mod"/> is then the Steam Workshop one.</param>
-public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, ModLinkFile? Link, bool Ambiguous = false)
+public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, ModLinkFile? Link)
 {
 	public static readonly CharacterMod BaseGame = new(CharacterModState.BaseGame, null, null);
 

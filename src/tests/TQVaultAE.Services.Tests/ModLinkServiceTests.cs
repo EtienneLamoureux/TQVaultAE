@@ -139,21 +139,17 @@ public sealed class ModLinkServiceTests : IDisposable
 		var resolved = this._service.Resolve(this._save, true);
 
 		resolved.Mod.Should().Be(customMap);
-		resolved.Ambiguous.Should().BeFalse();
 	}
 
 	[Fact]
-	public void Resolve_HomonymsOldLinkByNameOnly_IsAmbiguousAndUsesTheWorkshopMod()
+	public void Resolve_LinkWithoutSource_IsUnlinked()
 	{
-		var workshop = this.AddWorkshopMod("1949340853", "shadowchampions");
-		this.AddCustomMap("shadowchampions");
-		File.WriteAllText(this.LinkFile, """{ "version": 1, "mod": "shadowchampions" }""");
+		// The name and the source make the mod: a link naming the mod alone is not read, even when its folder exists.
+		var mod = this.AddWorkshopMod("1949340853", "shadowchampions");
+		File.WriteAllText(this.LinkFile, $$"""{ "version": 1, "mod": "shadowchampions", "folder": {{System.Text.Json.JsonSerializer.Serialize(mod.Folder)}} }""");
 
-		var resolved = this._service.Resolve(this._save, true);
-
-		resolved.State.Should().Be(CharacterModState.Linked);
-		resolved.Mod.Should().Be(workshop);
-		resolved.Ambiguous.Should().BeTrue();
+		this._service.ReadLink(this._save).Should().BeNull();
+		this._service.Resolve(this._save, true).State.Should().Be(CharacterModState.Unlinked);
 	}
 
 	[Fact]
@@ -166,22 +162,26 @@ public sealed class ModLinkServiceTests : IDisposable
 		customMap.Id.Should().Be("shadowchampions|custommaps");
 		this._service.FindMod("shadowchampions|custommaps").Should().Be(customMap);
 		this._service.FindMod("SHADOWCHAMPIONS|workshop:1949340853").Should().Be(workshop);
-		this._service.IsAmbiguous("shadowchampions|custommaps").Should().BeFalse();
 	}
 
 	[Fact]
-	public void FindMod_NameOnly_ResolvesWhenOneModHasIt_AndIsAmbiguousWhenSeveralHave()
+	public void FindMod_NameWithoutSource_FindsNothing()
 	{
-		var masteries = this.AddWorkshopMod("756997480", "Masteries");
-		var workshop = this.AddWorkshopMod("1949340853", "shadowchampions");
+		this.AddWorkshopMod("756997480", "Masteries");
+
+		this._service.FindMod("Masteries").Should().BeNull();
+		this._service.FindMod("Masteries|workshop:756997480").Should().NotBeNull();
+		this._service.FindMod(null).Should().BeNull();
+	}
+
+	[Fact]
+	public void FindMod_SourceNotInstalledHere_AndHomonyms_FindsNothing()
+	{
+		// Neither homonym is the one named: no guess.
+		this.AddWorkshopMod("1949340853", "shadowchampions");
 		this.AddCustomMap("shadowchampions");
 
-		this._service.FindMod("Masteries").Should().Be(masteries);
-		this._service.IsAmbiguous("Masteries").Should().BeFalse();
-		this._service.FindMod("shadowchampions").Should().Be(workshop);
-		this._service.IsAmbiguous("shadowchampions").Should().BeTrue();
-		this._service.FindMod("Lilith").Should().BeNull();
-		this._service.FindMod(null).Should().BeNull();
+		this._service.FindMod("shadowchampions|workshop:1").Should().BeNull();
 	}
 
 	[Fact]

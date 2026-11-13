@@ -21,29 +21,23 @@ public interface IModLinkService
 	IReadOnlyList<InstalledMod> GetInstalledMods(bool refresh = false);
 
 	/// <summary>
-	/// Finds an installed mod by its identity (<see cref="InstalledMod.Id"/>, as items, vaults and links name it):
-	/// exactly, else by its name alone when one installed mod only has that name (a file written before the source was
-	/// kept, or a mod moved between the custom maps and the Workshop). When several have it (a Steam Workshop mod and a
-	/// custom map of the same name), the Steam Workshop one, and <see cref="IsAmbiguous"/> tells it.
+	/// Finds an installed mod by its identity (<see cref="InstalledMod.Id"/>, name and source, as items, vaults and
+	/// links name it), else the only installed mod of that name (the same mod installed the other way here: from the
+	/// Workshop, or in the custom maps). A name without its source names no mod: a Steam Workshop mod and a custom map
+	/// can share it.
 	/// </summary>
-	/// <returns>The mod; null for none or when it is not installed.</returns>
+	/// <returns>The mod; null for none, a key without a source, or a mod that is not installed.</returns>
 	InstalledMod? FindMod(string? key);
-
-	/// <summary>
-	/// True when a mod's identity names it by a name several installed mods have, without telling which one:
-	/// <see cref="FindMod"/> then picks the Steam Workshop one.
-	/// </summary>
-	bool IsAmbiguous(string? key);
 
 	/// <summary>
 	/// Reads the link file of a save folder.
 	/// </summary>
-	/// <returns>The link; null when there is none or it cannot be read.</returns>
+	/// <returns>The link; null when there is none, it cannot be read, or it lacks the mod's name or source.</returns>
 	ModLinkFile? ReadLink(string saveFolder);
 
 	/// <summary>
 	/// Resolves the mod of a character: none for a main campaign character, else its link and the installed mod it
-	/// names (by folder first, then by name).
+	/// names (by folder first, then by name and source).
 	/// </summary>
 	/// <param name="saveFolder">The character's save folder.</param>
 	/// <param name="isCustomCharacter">True for a custom map character (<c>SaveData\User</c>).</param>

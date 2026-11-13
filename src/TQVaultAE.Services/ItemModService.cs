@@ -22,12 +22,6 @@ public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkServ
 	public InstalledMod? Find(string? modName) => this.ModLinks.FindMod(modName);
 
 	/// <inheritdoc/>
-	public IReadOnlyList<string> AmbiguousMods(IEnumerable<string?> mods)
-		=> [.. mods.Where(this.ModLinks.IsAmbiguous)
-			.Select(mod => ModIdentity.NameOf(mod)!)
-			.Distinct(StringComparer.OrdinalIgnoreCase)];
-
-	/// <inheritdoc/>
 	public IDisposable Scope(Item? item)
 		// The item's map, and only it: a mod not installed reads the base game data. An item without a map yet (being
 		// read, or a placeholder) uses the data in use at that moment.

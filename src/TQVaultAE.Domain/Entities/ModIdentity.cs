@@ -18,8 +18,8 @@ public static class ModIdentity
 	public const string WorkshopPrefix = "workshop:";
 
 	/// <summary>
-	/// The key of a mod from its name and source; the name alone without a source (a file written before the source
-	/// was kept).
+	/// The key of a mod from its name and source. A name without a source gives the name alone, kept as read but naming
+	/// no installed mod (an installed mod's key always has its source): an unknown mod.
 	/// </summary>
 	/// <returns>Null for no name (the base game).</returns>
 	public static string? Compose(string? name, string? source)
@@ -35,22 +35,6 @@ public static class ModIdentity
 
 		int at = key.IndexOf(Separator, StringComparison.Ordinal);
 		return at < 0 ? key : key[..at];
-	}
-
-	/// <summary>
-	/// Whether two keys may name the same mod's data: the same name, and the same source unless one of them has none
-	/// (a file written before the source was kept). Null is the base game.
-	/// </summary>
-	public static bool SameData(string? a, string? b)
-	{
-		if (a is null || b is null)
-			return a is null && b is null;
-
-		if (!string.Equals(NameOf(a), NameOf(b), StringComparison.OrdinalIgnoreCase))
-			return false;
-
-		string? sourceA = SourceOf(a), sourceB = SourceOf(b);
-		return sourceA is null || sourceB is null || string.Equals(sourceA, sourceB, StringComparison.OrdinalIgnoreCase);
 	}
 
 	/// <summary>Where the mod is installed from; null when the key names the mod only.</summary>

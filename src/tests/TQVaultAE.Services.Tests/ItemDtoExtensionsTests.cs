@@ -36,14 +36,6 @@ public class ItemDtoExtensionsTests
 	}
 
 	[Fact]
-	public void Import_OlderExportWithTheNameOnly_KeepsTheName()
-	{
-		var dto = new TQVaultAE.Data.Dto.ItemDto { baseName = "records/a.dbr", mod = "shadowchampions" };
-
-		(dto.ToItem().Mod, dto.ToItem().ModOrigin).Should().Be(("shadowchampions", ModOrigin.Own));
-	}
-
-	[Fact]
 	public void Export_ItemWithAMod_WritesNoBaseGameMark()
 	{
 		var dto = ItemDtoExtensions.FromItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "Lilith" });
