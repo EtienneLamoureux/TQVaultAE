@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,9 +20,6 @@ static class Program
 	[STAThread]
 	static void Main()
 	{
-		// The save files use Windows-1252 text, which .NET only provides through the code pages provider.
-		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
 

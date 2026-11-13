@@ -8,6 +8,7 @@ using TQ.SaveFilesExplorer.Entities;
 using System.Diagnostics;
 using System.IO;
 using EnumsNET;
+using TQVaultAE.GameFiles;
 
 namespace TQ.SaveFilesExplorer.Components;
 
@@ -243,7 +244,7 @@ private bool _DisplayDataDecimal = true;
 		List<string> result = [];
 		foreach (var b in dataAsByteArray)
 		{
-			result.Add(b < 32 ? specialCharsMapping[b] : TQFileRecord.Encoding1252.GetString([b]));
+			result.Add(b < 32 ? specialCharsMapping[b] : TextEncodings.Cp1252.GetString([b]));
 		}
 		return string.Concat(result.ToArray());
 	}

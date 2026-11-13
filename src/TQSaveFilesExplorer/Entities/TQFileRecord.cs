@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TQVaultAE.GameFiles;
 
 namespace TQ.SaveFilesExplorer.Entities;
 
@@ -13,9 +14,6 @@ public class TQFileRecord
 	/// Unhandled data
 	/// </summary>
 	public const string unknown_segment = "Unknown segment";
-
-	internal static readonly Encoding Encoding1252 = Encoding.GetEncoding(1252);
-	internal static readonly Encoding EncodingUTF16 = Encoding.Unicode;
 
 	/// <summary>
 	/// Key match in the file content. <see langword="null"/> for unknown segments.
@@ -87,7 +85,7 @@ public class TQFileRecord
 		this.KeyName = m.Groups["Key"].Value;
 		this.KeyRaw = m.Groups["Key"].Value;
 
-		var barray = Encoding1252.GetBytes(this.KeyLength.ToArray());
+		var barray = TextEncodings.Cp1252.GetBytes(this.KeyLength.ToArray());
 		this.KeyLengthAsInt = BitConverter.ToInt32(barray, 0);
 
 		if (this.KeyLengthAsInt < this.KeyName.Length)
@@ -126,7 +124,7 @@ public class TQFileRecord
 				// Read Str
 				ValueEnd = ValueStart + sizeof(int) - 1 + len;
 				DataAsByteArray = new ArraySegment<byte>(this.AttachedFile.Content, ValueStart + sizeof(int), len).ToArray();
-				DataAsStr = Encoding1252.GetString(DataAsByteArray);
+				DataAsStr = TextEncodings.Cp1252.GetString(DataAsByteArray);
 				break;
 			case TQFileDataType.StringUTF16:
 				// Read StrLen
@@ -134,7 +132,7 @@ public class TQFileRecord
 				// Read Str
 				ValueEnd = ValueStart + sizeof(int) - 1 + (len * 2);
 				DataAsByteArray = new ArraySegment<byte>(this.AttachedFile.Content, ValueStart + sizeof(int), len * 2).ToArray();// * 2 because UTF16 has 2 byte encoding
-				DataAsStr = EncodingUTF16.GetString(DataAsByteArray); //ReadUTF16String();
+				DataAsStr = Encoding.Unicode.GetString(DataAsByteArray);
 				break;
 			case TQFileDataType.ByteArrayVar:
 				// Read Len

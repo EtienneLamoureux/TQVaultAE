@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GameFiles;
 
 namespace TQ.SaveFilesExplorer.Entities;
 
@@ -94,7 +96,7 @@ public partial class TQFile
 	/// </summary>
 	public void Parse()
 	{
-		var asString = TQFileRecord.Encoding1252.GetString(this.Content);
+		var asString = TextEncodings.Cp1252.GetString(this.Content);
 
 		// Regex save file / Where the magic lies
 		var keyMatches = RegexKeyMatch().Matches(asString)
@@ -106,10 +108,6 @@ public partial class TQFile
 			.ToArray();
 	}
 
-	private const int PLAYER_HEADERVERSION_VALUE_TQ = 1;
-	private const int PLAYER_HEADERVERSION_VALUE_TQIT = 2;
-	private const int PLAYER_HEADERVERSION_VALUE_TQAE = 3;
-
 	private void FindFileVersion()
 	{
 		if (_Version.HasValue) return;
@@ -119,13 +117,14 @@ public partial class TQFile
 			case Ext_Player:
 				var headerVersionKey = this.Records.FirstOrDefault(k => k.KeyName == TQFilePlayerRecordKey.headerVersion.ToString())
 					?? throw new InvalidDataException($"No {TQFilePlayerRecordKey.headerVersion} key in file \"{this.Path}\".");
-				var fileVersionValue = BitConverter.ToInt32(new ArraySegment<byte>(this.Content, headerVersionKey.ValueStart, sizeof(int)).ToArray(), 0);
-				if (fileVersionValue == PLAYER_HEADERVERSION_VALUE_TQ)
-					_Version = TQVersion.TQ;
-				else if (fileVersionValue == PLAYER_HEADERVERSION_VALUE_TQIT)
-					_Version = TQVersion.TQIT;
-				else if (fileVersionValue == PLAYER_HEADERVERSION_VALUE_TQAE)
-					_Version = TQVersion.TQAE;
+				var fileVersionValue = (PlayerFileHeaderVersion)BitConverter.ToInt32(new ArraySegment<byte>(this.Content, headerVersionKey.ValueStart, sizeof(int)).ToArray(), 0);
+				_Version = fileVersionValue switch
+				{
+					PlayerFileHeaderVersion.TQ => TQVersion.TQ,
+					PlayerFileHeaderVersion.TQIT => TQVersion.TQIT,
+					PlayerFileHeaderVersion.TQAE => TQVersion.TQAE,
+					_ => null,
+				};
 				break;
 			case Ext_SharedStash:
 			case Ext_SharedStashBackup:
@@ -154,11 +153,11 @@ public partial class TQFile
 			switch (this.Ext)
 			{
 				case Ext_Player:
-					retval = MapToPlayerRecord(m);
+					retval = MapTo<TQFilePlayerRecord>(m);
 					break;
 				case Ext_SharedStash:
 				case Ext_SharedStashBackup:
-					retval = MapToTransferStashRecord(m);
+					retval = MapTo<TQFilePlayerTransferStashRecord>(m);
 					break;
 				default:
 					throw new ArgumentException("must be a file with extension chr, dxb, dxg");
@@ -305,34 +304,12 @@ public partial class TQFile
 	}
 
 	/// <summary>
-	/// Maps TQFileRecord to TQFilePlayerRecord manually
+	/// Copies a raw record into the record type of the file (<see cref="TQFilePlayerRecord"/>,
+	/// <see cref="TQFilePlayerTransferStashRecord"/>).
 	/// </summary>
-	private static TQFilePlayerRecord MapToPlayerRecord(TQFileRecord source)
+	private static T MapTo<T>(TQFileRecord source) where T : TQFileRecord, new()
 	{
-		return new TQFilePlayerRecord
-		{
-			RegExMatch = source.RegExMatch,
-			KeyLength = source.KeyLength,
-			KeyLengthAsInt = source.KeyLengthAsInt,
-			KeyRaw = source.KeyRaw,
-			KeyName = source.KeyName,
-			DataType = source.DataType,
-			File = source.File,
-			ValueStart = source.ValueStart,
-			ValueEnd = source.ValueEnd,
-			DataAsStr = source.DataAsStr,
-			DataAsByteArray = source.DataAsByteArray,
-			DataAsInt = source.DataAsInt,
-			DataAsFloat = source.DataAsFloat
-		};
-	}
-
-	/// <summary>
-	/// Maps TQFileRecord to TQFilePlayerTransferStashRecord manually
-	/// </summary>
-	private static TQFilePlayerTransferStashRecord MapToTransferStashRecord(TQFileRecord source)
-	{
-		return new TQFilePlayerTransferStashRecord
+		return new T
 		{
 			RegExMatch = source.RegExMatch,
 			KeyLength = source.KeyLength,
