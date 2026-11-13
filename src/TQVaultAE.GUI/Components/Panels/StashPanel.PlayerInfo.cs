@@ -56,6 +56,9 @@ public partial class StashPanel
 	/// <summary>The loadouts file the bar shows.</summary>
 	private string? _loadoutsShown;
 
+	/// <summary>The loadout to select once the bar is built (a search result shown before the equipment tab was).</summary>
+	private string? _loadoutToSelect;
+
 	/// <summary>Raised for each action asked on the loadout bar (add, load, update, rename, copy, delete, select).</summary>
 	public event EventHandler<LoadoutBarEventArgs>? OnLoadoutAction;
 
@@ -114,8 +117,13 @@ public partial class StashPanel
 	public void RefreshLoadouts(string? select = null)
 	{
 		if (this._loadoutBar is not { } bar)
+		{
+			this._loadoutToSelect = select;
 			return;
+		}
 
+		select ??= this._loadoutToSelect;
+		this._loadoutToSelect = null;
 		var player = this.Player;
 		var set = player is null ? null : this.Services.Loadouts.Find(System.IO.Path.GetDirectoryName(player.PlayerFile) ?? string.Empty);
 		if (select is null && set?.FilePath == this._loadoutsShown)

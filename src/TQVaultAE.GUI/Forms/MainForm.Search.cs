@@ -152,6 +152,12 @@ public partial class MainForm
 				this.playerPanel.BagSackPanel.SelectItem(location.Cell);
 				break;
 
+			case ResultPanelKind.Loadout:
+				// No panel shows a loadout's pieces: the equipment tab with the loadout selected in its bar.
+				this.stashPanel.CurrentBag = location.Bag;
+				this.stashPanel.RefreshLoadouts(selectedResult.LoadoutName);
+				break;
+
 			default:
 				// Bail if we are attempting to highlight something in the stash panel and the stash does not exist.
 				if (this.stashPanel.SackPanel is null)

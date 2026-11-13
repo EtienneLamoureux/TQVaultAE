@@ -32,6 +32,11 @@ public record ContainerPlace
 	public StashType? StashType { get; set; }
 
 	/// <summary>
+	/// Gets or sets the loadout's name, for <see cref="SackType.Loadout"/>; null otherwise
+	/// </summary>
+	public string? Loadout { get; set; }
+
+	/// <summary>
 	/// Copies another place into this one, keeping this instance: the item and its search result share it.
 	/// </summary>
 	/// <param name="other">The place to copy.</param>
@@ -42,5 +47,6 @@ public record ContainerPlace
 		this.Name = other.Name;
 		this.StashType = other.StashType;
 		this.SackNumber = other.SackNumber;
+		this.Loadout = other.Loadout;
 	}
 }

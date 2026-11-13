@@ -50,7 +50,7 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 			case SearchCategory.Characters:
 				foreach (var r in items)
 				{
-					if (r.SackType == SackType.Player || r.SackType == SackType.Equipment)
+					if (r.SackType is SackType.Player or SackType.Equipment or SackType.Loadout)
 						groups.Add(r.ContainerName, r);
 				}
 				break;

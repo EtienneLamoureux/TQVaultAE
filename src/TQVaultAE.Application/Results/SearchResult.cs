@@ -44,6 +44,11 @@ public class SearchResult
 	/// </summary>
 	public StashType? StashType => this.Item?.Place?.StashType;
 
+	/// <summary>
+	/// Gets the loadout's name, for an item of a character's loadout; null otherwise
+	/// </summary>
+	public string? LoadoutName => this.Item?.Place?.Loadout;
+
 	private readonly Lazy<ToFriendlyNameResult> FriendlyNamesLazyLoader;
 	public ToFriendlyNameResult? FriendlyNames { get; private set; }
 
@@ -63,6 +68,7 @@ public class SearchResult
 			, ContainerName
 			, SackNumber.ToString()
 			, this.SackType.ToString()
+			, this.LoadoutName ?? string.Empty
 			, this.FriendlyNames?.FullNameBagTooltip ?? string.Empty
 		});
 

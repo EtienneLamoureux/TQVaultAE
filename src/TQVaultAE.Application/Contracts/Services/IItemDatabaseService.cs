@@ -44,6 +44,13 @@ public interface IItemDatabaseService
     void RemoveContainerFromDatabase(string containerPath);
 
     /// <summary>
+    /// Puts the pieces of a character's loadouts in the search, in place of those it had for them; each result names
+    /// the character and the loadout.
+    /// </summary>
+    /// <param name="loadouts">The character's loadouts.</param>
+    void AddLoadoutsToDatabase(LoadoutSet loadouts);
+
+    /// <summary>
     /// Clears all items from the search database.
     /// </summary>
     void ClearItemDatabase();

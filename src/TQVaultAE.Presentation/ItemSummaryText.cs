@@ -29,6 +29,7 @@ public static class ItemSummaryText
 			SackType.Vault => Resources.ResultsContainerVault,
 			SackType.Player => Resources.ResultsContainerPlayer,
 			SackType.Equipment => Resources.ResultsContainerEquip,
+			SackType.Loadout => Resources.LoadoutResultsContainer,
 			SackType.Stash => stashType switch
 			{
 				StashType.TransferStash => Resources.GlobalTransferStash,
@@ -47,6 +48,15 @@ public static class ItemSummaryText
 		=> bagNumber is int number
 			? string.Format(CultureInfo.CurrentCulture, Resources.ResultsBag, number)
 			: string.Empty;
+
+	/// <summary>
+	/// Gets where in its container a search result lies, as shown in the search results: the loadout's name for an item
+	/// of a character's loadout, else its bag label.
+	/// </summary>
+	/// <param name="loadout">The loadout's name, or null.</param>
+	/// <param name="bagNumber">The 1-based bag number, or null where no bag applies.</param>
+	public static string PlaceLabel(string? loadout, int? bagNumber)
+		=> string.IsNullOrEmpty(loadout) ? BagLabel(bagNumber) : loadout;
 
 	/// <summary>
 	/// Groups items by their bag tooltip name and counts them ("N x name"), sorted by the name without color tags.

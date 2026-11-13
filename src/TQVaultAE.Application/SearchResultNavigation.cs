@@ -43,6 +43,11 @@ public enum ResultPanelKind
 	/// The transfer stash or relic vault tab of the stash panel, shared by every character.
 	/// </summary>
 	SharedStash,
+
+	/// <summary>
+	/// A loadout of the character (a copy of its pieces, in no panel): its loadout bar, on the equipment tab.
+	/// </summary>
+	Loadout,
 }
 
 /// <summary>
@@ -60,13 +65,13 @@ public readonly record struct ResultLocation(ResultPanelKind Panel, int Bag, Poi
 	/// Gets whether the panel belongs to the character named by the result, which must be selected first.
 	/// </summary>
 	public bool NeedsCharacter => this.Panel is ResultPanelKind.PlayerMainSack or ResultPanelKind.PlayerBag
-		or ResultPanelKind.Equipment or ResultPanelKind.CharacterStash;
+		or ResultPanelKind.Equipment or ResultPanelKind.CharacterStash or ResultPanelKind.Loadout;
 
 	/// <summary>
 	/// Gets whether the item is shown in the stash panel (equipment or a stash tab).
 	/// </summary>
 	public bool OnStashPanel => this.Panel is ResultPanelKind.Equipment or ResultPanelKind.CharacterStash
-		or ResultPanelKind.SharedStash;
+		or ResultPanelKind.SharedStash or ResultPanelKind.Loadout;
 
 	/// <summary>
 	/// Gets the bag number shown to the user, 1-based like the bag buttons: vault bag N + 1 and player bag N + 1
@@ -108,6 +113,7 @@ public static class SearchResultNavigation
 			SackType.Player => new(ResultPanelKind.PlayerBag, result.SackNumber - 1, cell),
 			SackType.Equipment => new(ResultPanelKind.Equipment, result.SackNumber, cell),
 			SackType.Stash => new(ResultPanelKind.CharacterStash, result.SackNumber, cell),
+			SackType.Loadout => new(ResultPanelKind.Loadout, BagIdConstants.BAGID_EQUIPMENTPANEL, cell),
 			_ => new(ResultPanelKind.None, 0, cell),
 		};
 	}

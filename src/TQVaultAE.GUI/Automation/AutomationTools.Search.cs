@@ -89,6 +89,7 @@ internal static partial class AutomationTools
 				x = entry.Item.PositionX,
 				y = entry.Item.PositionY,
 				stashType = entry.StashType?.ToString(),
+				loadout = entry.LoadoutName,
 			};
 		});
 

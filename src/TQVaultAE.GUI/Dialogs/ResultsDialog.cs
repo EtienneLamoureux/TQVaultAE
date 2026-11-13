@@ -205,7 +205,7 @@ public partial class ResultsDialog : VaultForm
 				, result.ItemStyle
 				, result.ContainerName
 				, ItemSummaryText.ContainerTypeLabel(result.SackType, result.StashType)
-				, ItemSummaryText.BagLabel(SearchResultNavigation.Resolve(result).BagNumber)
+				, ItemSummaryText.PlaceLabel(result.LoadoutName, SearchResultNavigation.Resolve(result).BagNumber)
 				, result.RequiredLevel
 			);
 

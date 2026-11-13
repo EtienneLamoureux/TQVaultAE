@@ -167,8 +167,8 @@ public partial class LoadoutService(
 		return LoadoutChange.Succeeded;
 	}
 
-	/// <summary>Called once the loadouts of a character are read or changed.</summary>
-	partial void Changed(LoadoutSet loadouts);
+	/// <summary>Once the loadouts of a character are read or changed: the search shows their pieces.</summary>
+	private void Changed(LoadoutSet loadouts) => this.ItemDatabaseService.AddLoadoutsToDatabase(loadouts);
 
 	private static LoadoutDto ToDto(Loadout loadout)
 		=> new()

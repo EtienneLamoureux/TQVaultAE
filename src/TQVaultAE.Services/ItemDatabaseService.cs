@@ -128,6 +128,25 @@ public class ItemDatabaseService(
     }
 
     /// <inheritdoc/>
+    public void AddLoadoutsToDatabase(LoadoutSet loadouts)
+    {
+        ArgumentNullException.ThrowIfNull(loadouts);
+
+        // The loadouts file is their container: a character's reload (its player file) leaves them, and theirs leaves
+        // the character's items.
+        this.RemoveContainerFromDatabase(loadouts.FilePath);
+        for (int index = 0; index < loadouts.Loadouts.Count; index++)
+        {
+            var loadout = loadouts.Loadouts[index];
+            foreach (var item in loadout.Items)
+            {
+                item.Place.Loadout = loadout.Name;
+                this.AddItemToDatabase(item, loadouts.FilePath, loadouts.CharacterName, index, SackType.Loadout);
+            }
+        }
+    }
+
+    /// <inheritdoc/>
     public void ClearItemDatabase()
         => this._database = Database.Of([]);
 
@@ -182,6 +201,10 @@ public class ItemDatabaseService(
             }
         }
 
+        // Add the characters' loadouts
+        foreach (var set in this._sessionContext.Loadouts.Values)
+            this.AddLoadoutsToDatabase(set);
+
         // Add stash items
         foreach (var kvp in this._sessionContext.Stashes)
         {
@@ -222,6 +245,10 @@ public class ItemDatabaseService(
 
         foreach (var result in this.ItemDatabase)
         {
+            // A loadout holds copies of pieces a character wears or wore: they are not more items owned.
+            if (result.SackType == SackType.Loadout)
+                continue;
+
             if (result.Item.BaseItemId is { } id && counts.TryGetValue(id, out var count))
                 counts[id] = count + 1;
         }
