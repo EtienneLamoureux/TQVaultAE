@@ -51,11 +51,11 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 			$"{Mundane}3 Summon Limit",
 			$"{Mundane}Wolf Attributes:",
 			$"{Mundane}Life Time 30.0 Seconds",
-			$"{Mundane}500  Health",
-			$"{Mundane}100  Energy",
+			$"{Mundane} 500 Health",
+			$"{Mundane} 100 Energy",
 			string.Empty,
 			$"{Mundane}Wolf Abilities:",
-			$"{Mundane}10 - 20  Damage",
+			$"{Mundane} 10 - 20 Damage",
 			$"{Mundane}Bite",
 			$"{Epic}10 Physical Damage", // the pet has the skill at level 2
 			string.Empty,
@@ -75,7 +75,7 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 			$"{Mundane}Wolf Attributes:",
 			string.Empty,
 			$"{Mundane}Wolf Abilities:",
-			$"{Mundane}10  Damage");
+			$"{Mundane} 10 Damage");
 	}
 
 	[Fact]
@@ -85,7 +85,7 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 		this.CreateRecord(PetId, "Monster", Str("description", "tagWolf"), Float("handHitDamageMin", 12f), Float("handHitDamageMax", 12f));
 		var equal = this.CreateItem("OneShot_Scroll", Str("skillName", SpawnSkillId));
 
-		this.BaseAttributes(equal).Should().Contain($"{Mundane}12  Damage");
+		this.BaseAttributes(equal).Should().Contain($"{Mundane} 12 Damage");
 
 		this.CreateRecord("""records\test\weak.dbr""", "Skill_SpawnPet", Str("spawnObjects", """records\test\weakpet.dbr"""));
 		this.CreateRecord("""records\test\weakpet.dbr""", "Monster", Str("description", "tagWolf"), Float("handHitDamageMin", 1f), Float("handHitDamageMax", 2f));
@@ -108,6 +108,18 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void PetStatistics_WithoutTwoSpaces_KeepTheirText()
+	{
+		// The game's two spaces become a leading one (" 500 Health"); the French "{%.0f0} de vie" has none to move.
+		this.Translations["SkillPetDescriptionHealth"] = "{%.0f0} de vie";
+		this.CreateRecord(SpawnSkillId, "Skill_SpawnPet", Str("spawnObjects", PetId));
+		this.CreateRecord(PetId, "Monster", Str("description", "tagWolf"), Float("characterLife", 500f));
+		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SpawnSkillId));
+
+		this.BaseAttributes(scroll).Should().Contain($"{Mundane}500 de vie");
+	}
+
+	[Fact]
 	public void PetStatistics_WithoutTranslations_FallBackToEnglish()
 	{
 		foreach (var tag in new[] { "SkillPetLimit", "SkillPetDescriptionHeading", "tagSkillPetTimeToLive", "SkillPetDescriptionHealth",
@@ -123,11 +135,11 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 			$"{Mundane}2 Summon Limit",
 			$"{Mundane}Wolf Attributes:",
 			$"{Mundane}Life Time 15 Seconds",
-			$"{Mundane}500  Health",
-			$"{Mundane}100  Energy",
+			$"{Mundane} 500 Health",
+			$"{Mundane} 100 Energy",
 			string.Empty,
 			$"{Mundane}Wolf Abilities:",
-			$"{Mundane}10 - 20  Damage");
+			$"{Mundane} 10 - 20 Damage");
 	}
 
 	[Fact]

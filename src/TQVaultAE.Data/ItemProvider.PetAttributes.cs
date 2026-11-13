@@ -32,6 +32,17 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
+	/// The format of a pet statistic line ("{%.0f0}  Health"), spaced as the game writes it: the two spaces after the value
+	/// become one leading space and one inside (" 720 Health"). A text without two spaces is kept (the French "{%.0f0} de vie").
+	/// </summary>
+	private string PetStatFormat(string tag, string fallback)
+	{
+		var format = TranslationService.TryTranslateXTag(tag, out var text) ? ItemAttributeProvider.ConvertFormat(text) : fallback;
+		int gap = format.IndexOf("  ", StringComparison.Ordinal);
+		return gap < 0 ? format : string.Concat(" ", format.AsSpan(0, gap), format.AsSpan(gap + 1));
+	}
+
+	/// <summary>
 	/// Used for showing the pet statistics
 	/// </summary>
 	/// <param name="skillRecord">DBRecord of the skill</param>
@@ -98,10 +109,7 @@ public partial class ItemProvider
 			value = petRecord.GetSingle("characterLife", 0);
 			if (value != 0.0F)
 			{
-				if (!TranslationService.TryTranslateXTag("SkillPetDescriptionHealth", out formatSpec))
-					formatSpec = "{0}  Health";
-				else
-					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
+				formatSpec = this.PetStatFormat("SkillPetDescriptionHealth", "{0}  Health");
 
 				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
@@ -113,10 +121,7 @@ public partial class ItemProvider
 			value = petRecord.GetSingle("characterMana", 0);
 			if (value != 0.0F)
 			{
-				if (!TranslationService.TryTranslateXTag("SkillPetDescriptionMana", out formatSpec))
-					formatSpec = "{0}  Energy";
-				else
-					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
+				formatSpec = this.PetStatFormat("SkillPetDescriptionMana", "{0}  Energy");
 
 				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
@@ -143,10 +148,7 @@ public partial class ItemProvider
 			{
 				if (value2 == 0.0F || value == value2)
 				{
-					if (!TranslationService.TryTranslateXTag("SkillPetDescriptionDamageMinOnly", out formatSpec))
-						formatSpec = "{0}  Damage";
-					else
-						formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
+					formatSpec = this.PetStatFormat("SkillPetDescriptionDamageMinOnly", "{0}  Damage");
 
 					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
@@ -155,10 +157,7 @@ public partial class ItemProvider
 				}
 				else
 				{
-					if (!TranslationService.TryTranslateXTag("SkillPetDescriptionDamageMinMax", out formatSpec))
-						formatSpec = "{0} - {1}  Damage";
-					else
-						formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
+					formatSpec = this.PetStatFormat("SkillPetDescriptionDamageMinMax", "{0} - {1}  Damage");
 
 					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value, value2);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
