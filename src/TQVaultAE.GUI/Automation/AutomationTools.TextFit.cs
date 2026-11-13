@@ -74,13 +74,24 @@ internal static partial class AutomationTools
 		// AutoSize controls take the size of their text: check them against their parent instead.
 		bool autoSize = c.AutoSize && c is not GroupBox;
 		bool wraps = c is Label or ButtonBase && !autoSize;
+		// A label of a fixed size with an ellipsis is shortened on purpose, the whole text in its tool tip: only its place
+		// is checked. An auto size one wraps and draws no ellipsis on a word cut at its maximum width.
+		bool ellipsis = c is Label { AutoEllipsis: true, AutoSize: false };
+		bool fixedSize = !autoSize && !ellipsis;
 
-		if (!autoSize && c is GroupBox)
+		if (autoSize && c is Label && c.MaximumSize.Width > 0)
+		{
+			// An auto size label wrapped at its maximum width: a word longer than that width is cut.
+			int longestWord = LongestWord(text, c.Font);
+			if (longestWord > c.MaximumSize.Width - c.Padding.Horizontal + tolerance)
+				yield return new FitProblem("a word is wider than the label's maximum width", new Size(longestWord, singleLine.Height));
+		}
+		else if (fixedSize && c is GroupBox)
 		{
 			if (singleLine.Width > availableWidth + tolerance)
 				yield return new FitProblem("caption wider than the group box", singleLine);
 		}
-		else if (!autoSize && singleLine.Width > availableWidth + tolerance)
+		else if (fixedSize && singleLine.Width > availableWidth + tolerance)
 		{
 			if (!wraps)
 				yield return new FitProblem("text wider than the control", singleLine);
@@ -88,17 +99,14 @@ internal static partial class AutomationTools
 			{
 				var wrapped = TextRenderer.MeasureText(text, c.Font, new Size(Math.Max(availableWidth, 1), int.MaxValue),
 					TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix | TextFormatFlags.TextBoxControl);
-				var longestWord = text.Split([' ', '\n', '\r', '\t'], StringSplitOptions.RemoveEmptyEntries)
-					.Select(w => TextRenderer.MeasureText(w, c.Font, Size.Empty, TextFormatFlags.NoPrefix).Width)
-					.DefaultIfEmpty(0)
-					.Max();
+				int longestWord = LongestWord(text, c.Font);
 				if (wrapped.Height > availableHeight + tolerance)
 					yield return new FitProblem($"text needs {wrapped.Height}px of height after word wrap, has {availableHeight}px", wrapped);
 				else if (longestWord > availableWidth + tolerance)
 					yield return new FitProblem("a word is wider than the control", new Size(longestWord, wrapped.Height));
 			}
 		}
-		else if (!autoSize && singleLine.Height > availableHeight + tolerance && !text.Contains('\n'))
+		else if (fixedSize && singleLine.Height > availableHeight + tolerance && !text.Contains('\n'))
 		{
 			yield return new FitProblem("text taller than the control", singleLine);
 		}
@@ -113,6 +121,13 @@ internal static partial class AutomationTools
 				yield return new FitProblem($"sticks out of {parent.Name} ({c.Right}x{c.Bottom} beyond {area.Width}x{area.Height})", null);
 		}
 	}
+
+	/// <summary>Width of the widest word of <paramref name="text"/>: the line can't wrap inside it.</summary>
+	private static int LongestWord(string text, Font font)
+		=> text.Split([' ', '\n', '\r', '\t'], StringSplitOptions.RemoveEmptyEntries)
+			.Select(w => TextRenderer.MeasureText(w, font, Size.Empty, TextFormatFlags.NoPrefix).Width)
+			.DefaultIfEmpty(0)
+			.Max();
 
 	private static string ControlPath(Control c, Control root)
 	{

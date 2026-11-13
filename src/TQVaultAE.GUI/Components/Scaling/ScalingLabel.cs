@@ -57,13 +57,31 @@ public class ScalingLabel : Label, IScalingControl
 	private bool textShadow;
 
 	/// <summary>
+	/// Gets or sets a value indicating whether a text too long for one line keeps its start and end and loses its middle
+	/// ("C:\Games\...\mod"), on one line: for a path, whose last folder matters most. Set <see cref="Label.AutoEllipsis"/>
+	/// too for the tool tip of the whole text and an ellipsis at the end of a last folder longer than the line.
+	/// </summary>
+	[System.ComponentModel.DefaultValue(false)]
+	public bool PathEllipsis
+	{
+		get => this.pathEllipsis;
+		set
+		{
+			this.pathEllipsis = value;
+			this.Invalidate();
+		}
+	}
+
+	private bool pathEllipsis;
+
+	/// <summary>
 	/// Draws disabled light text dimmed instead of the system dark gray, which is not readable on the dark UI, and the
 	/// drop shadow under the text when <see cref="TextShadow"/> is set.
 	/// </summary>
 	protected override void OnPaint(PaintEventArgs e)
 	{
 		bool dimmed = !this.Enabled && DisabledTextPainter.Applies(this.ForeColor);
-		if (this.Image is not null || (!dimmed && !this.TextShadow)) {
+		if (this.Image is not null || (!dimmed && !this.TextShadow && !this.PathEllipsis)) {
 			base.OnPaint(e);
 			return;
 		}
@@ -73,7 +91,9 @@ public class ScalingLabel : Label, IScalingControl
 			flags |= TextFormatFlags.NoPrefix;
 		// Wraps like the base label: a fixed size, or an auto size whose width is capped by MaximumSize (measured on
 		// several lines, so drawn on several lines too).
-		if (!this.AutoSize || this.MaximumSize.Width > 0)
+		if (this.PathEllipsis)
+			flags |= TextFormatFlags.SingleLine | TextFormatFlags.PathEllipsis;
+		else if (!this.AutoSize || this.MaximumSize.Width > 0)
 			flags |= TextFormatFlags.WordBreak;
 		if (this.AutoEllipsis)
 			flags |= TextFormatFlags.EndEllipsis;

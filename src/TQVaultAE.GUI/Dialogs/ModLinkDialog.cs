@@ -90,6 +90,8 @@ internal sealed class ModLinkDialog : VaultForm
 			BackColor = Color.Black,
 			BorderStyle = BorderStyle.None,
 			ForeColor = TQColor.Silver.Color(),
+			// A mod name longer than the list scrolls sideways rather than being cut.
+			HorizontalScrollbar = true,
 			IntegralHeight = false,
 			Size = new Size(width - (2 * CaravanFrame.Border), Zoomed(150)),
 		};
@@ -97,8 +99,16 @@ internal sealed class ModLinkDialog : VaultForm
 		this.listBoxMods.DoubleClick += (_, _) => this.LinkSelected();
 		this.labelFolder = NewLabel(nameof(this.labelFolder));
 		this.labelFolder.ForeColor = TQColor.Silver.Color();
-		// A folder has no space to wrap at: a longer one ends with an ellipsis.
+		// One line as wide as the list, so the window keeps its height while the user goes through the list: a longer
+		// folder loses its middle (its mod folder stays at the end), and shows whole in a tool tip.
+		this.labelFolder.AutoSize = false;
 		this.labelFolder.AutoEllipsis = true;
+		this.labelFolder.PathEllipsis = true;
+		// No maximum size: scaled to a new DPI, a maximum of no height would cut the label to no height.
+		this.labelFolder.MaximumSize = Size.Empty;
+		this.labelFolder.Width = width;
+		// One line of its font, even empty (a measure of no text has no height).
+		this.labelFolder.FontChanged += (_, _) => this.labelFolder.Height = this.labelFolder.Font.Height;
 		this.labelSuggestion = NewLabel(nameof(this.labelSuggestion));
 
 		ScalingButton NewButton(string name, string text)
@@ -158,6 +168,8 @@ internal sealed class ModLinkDialog : VaultForm
 		this.AutoScaleDimensions = new SizeF(96F, 96F);
 		this.AutoScaleMode = AutoScaleMode.Dpi;
 		this.BackColor = Color.FromArgb(46, 31, 21);
+		// Enter links the chosen mod, like a double click (nothing while Link is disabled); Escape closes.
+		this.AcceptButton = this.buttonLink;
 		this.CancelButton = this.buttonClose;
 		this.Font = this.FontService.GetFontLight(11F, zoom);
 		this.ForeColor = Color.White;
@@ -174,6 +186,7 @@ internal sealed class ModLinkDialog : VaultForm
 		this.Padding = new Padding(border.Left + gap, border.Top + Zoomed(4), border.Right + gap, border.Bottom + Zoomed(6));
 		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
 		this.Controls.Add(layout);
+		this.labelFolder.Height = this.labelFolder.Font.Height;
 		this.DrawCustomBorder = true;
 		CaravanLook.Apply(this, layout, buttons);
 		this.ResumeLayout(false);
@@ -181,6 +194,10 @@ internal sealed class ModLinkDialog : VaultForm
 
 		// The window follows its table: a longer state or a suggestion changes its height.
 		this.FitAround(layout);
+
+		// The keyboard starts on the list, not on the first button of the window, the close button of its border, which
+		// took Enter and closed the dialog.
+		this.ActiveControl = this.listBoxMods;
 	}
 
 	private InstalledMod? SelectedMod => this.listBoxMods.SelectedItem as InstalledMod;
@@ -202,6 +219,7 @@ internal sealed class ModLinkDialog : VaultForm
 
 		this.labelMods.Text = mods.Count == 0 ? Resources.ModLinkNoMods : Resources.ModLinkInstalledMods;
 		this.labelSuggestion.Text = string.Empty;
+		this.labelSuggestion.Visible = false;
 		this.ShowState(selectLinked: true);
 	}
 
@@ -281,7 +299,9 @@ internal sealed class ModLinkDialog : VaultForm
 			this.Cursor = cursor;
 		}
 
+		// Its line shows from the first suggestion on: before, it would leave an empty band over the buttons.
 		this.labelSuggestion.Text = ModLinkText.Suggestion(suggestion);
+		this.labelSuggestion.Visible = true;
 		if (!suggestion.OnlyBaseGameRecords && suggestion.Best is { } best)
 			this.listBoxMods.SelectedItem = best.Mod;
 	}
