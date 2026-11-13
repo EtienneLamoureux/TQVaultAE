@@ -204,7 +204,7 @@ public partial class MainForm : VaultForm
 		this.exitButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		ScaleControl(this.UIService, this.exitButton);
 
-		ScaleControl(this.UIService, this.comboBoxCharacter, false);
+		this.comboBoxCharacter.ApplyZoom(UIService.Zoom);
 
 		this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.FontZoom);
 
