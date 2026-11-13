@@ -62,7 +62,8 @@ public partial class MainForm
 
 	/// <summary>
 	/// The settings, built at their first opening and kept for the next ones (building them is the slow part), out of
-	/// the window while the main content is shown; built again when the zoom changed since.
+	/// the window while the main content is shown; built again when the zoom or the window's DPI changed since: scaled
+	/// from one DPI to another, a view built at a small zoom kept its rounded margins (3 px became 2).
 	/// </summary>
 	private readonly KeptDialog<SettingsUserControl> keptSettingsView = new();
 
@@ -91,7 +92,8 @@ public partial class MainForm
 
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		var zoom = UIService.Zoom;
-		var settings = this.keptSettingsView.Get(this, zoom, () =>
+		// Kept by the scale, the zoom times the DPI: a move to a monitor of another DPI builds them again too.
+		var settings = this.keptSettingsView.Get(this, UIService.Scale, () =>
 		{
 			var view = new SettingsUserControl(this.Services)
 			{
@@ -110,15 +112,19 @@ public partial class MainForm
 
 		settings.ShowSettingsInUse();
 
-		this.SuspendLayout();
-		this.Controls.Add(settings);
-		this.Controls.SetChildIndex(settings, this.Controls.GetChildIndex(this.mainView));
-		settings.Bounds = this.mainView.Bounds;
-		this.shownSettings = settings;
-		this.mainView.Visible = false;
-		settings.Visible = true;
-		this.EnableMainViewButtons(false);
-		this.ResumeLayout(true);
+		// Drawn once, switched: else the settings' controls showed one by one over the panels for a few frames.
+		using (new LayoutBatch(this, this))
+		{
+			this.Controls.Add(settings);
+			this.Controls.SetChildIndex(settings, this.Controls.GetChildIndex(this.mainView));
+			settings.Bounds = this.mainView.Bounds;
+			this.shownSettings = settings;
+			this.mainView.Visible = false;
+			settings.Visible = true;
+			this.EnableMainViewButtons(false);
+		}
+
+		this.Update();
 
 		// As a new dialog did: the first control of the settings takes the focus.
 		this.ActiveControl = null;
@@ -153,13 +159,17 @@ public partial class MainForm
 		if (this.shownSettings is not { } settings)
 			return;
 
-		this.SuspendLayout();
-		this.shownSettings = null;
-		this.mainView.Visible = true;
-		settings.Visible = false;
-		this.Controls.Remove(settings);
-		this.EnableMainViewButtons(true);
-		this.ResumeLayout(true);
+		// Drawn once, switched (see ShowSettingsView).
+		using (new LayoutBatch(this, this))
+		{
+			this.shownSettings = null;
+			this.mainView.Visible = true;
+			settings.Visible = false;
+			this.Controls.Remove(settings);
+			this.EnableMainViewButtons(true);
+		}
+
+		this.Update();
 
 		this.scalingTextBoxHighlight.Focus();
 

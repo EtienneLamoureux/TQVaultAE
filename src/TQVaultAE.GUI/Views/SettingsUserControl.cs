@@ -286,6 +286,21 @@ internal sealed partial class SettingsUserControl : UserControl
 	}
 
 	/// <summary>
+	/// The settings and their many transparent controls are painted in one pass (<c>WS_EX_COMPOSITED</c>): shown in
+	/// place of the main content, they appeared control by control over its panels for a few frames.
+	/// </summary>
+	protected override CreateParams CreateParams
+	{
+		get
+		{
+			const int WS_EX_COMPOSITED = 0x02000000;
+			var parameters = base.CreateParams;
+			parameters.ExStyle |= WS_EX_COMPOSITED;
+			return parameters;
+		}
+	}
+
+	/// <summary>
 	/// Escape presses Cancel, as in a dialog: once the focused control left it (an open drop-down list closes first).
 	/// </summary>
 	protected override bool ProcessDialogKey(Keys keyData)
