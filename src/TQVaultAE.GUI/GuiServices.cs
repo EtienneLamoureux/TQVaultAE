@@ -62,6 +62,8 @@ public sealed class GuiServices
 		, IGameMapService gameMapService
 		, ICharacterReadOnlyService characterReadOnlyService
 		, KeyBindMap keyBinds
+		, ILoadoutService loadouts
+		, IGameProcessService gameProcess
 	)
 	{
 		this.CharacterReadOnlyService = characterReadOnlyService;
@@ -103,6 +105,8 @@ public sealed class GuiServices
 		this.CharacterStatsService = characterStatsService;
 		this.SettingsPersistence = settingsPersistence;
 		this.KeyBinds = keyBinds;
+		this.Loadouts = loadouts;
+		this.GameProcess = gameProcess;
 	}
 
 	/// <summary>Creates dialogs and gives access to the main form.</summary>
@@ -197,6 +201,12 @@ public sealed class GuiServices
 	/// its gestures when the user changes them.
 	/// </summary>
 	public KeyBindMap KeyBinds { get; }
+
+	/// <summary>The characters' loadouts (saved equipment sets).</summary>
+	public ILoadoutService Loadouts { get; }
+
+	/// <summary>Whether the game is running.</summary>
+	public IGameProcessService GameProcess { get; }
 
 	/// <summary>Logger for <typeparamref name="T"/>.</summary>
 	public ILogger<T> Logger<T>() => this._loggerFactory.CreateLogger<T>();

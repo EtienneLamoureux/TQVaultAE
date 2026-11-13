@@ -7366,5 +7366,220 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CharacterViewDiscardChanges", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to No loadout.
+        /// </summary>
+        public static string LoadoutNone {
+            get {
+                return ResourceManager.GetString("LoadoutNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a loadout of the gear worn now.
+        /// </summary>
+        public static string LoadoutAdd {
+            get {
+                return ResourceManager.GetString("LoadoutAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add....
+        /// </summary>
+        public static string LoadoutAddMenu {
+            get {
+                return ResourceManager.GetString("LoadoutAddMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load.
+        /// </summary>
+        public static string LoadoutLoad {
+            get {
+                return ResourceManager.GetString("LoadoutLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wear the selected loadout; the pieces taken off go to the vault bag shown.
+        /// </summary>
+        public static string LoadoutLoadTip {
+            get {
+                return ResourceManager.GetString("LoadoutLoadTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update with the gear worn now.
+        /// </summary>
+        public static string LoadoutUpdate {
+            get {
+                return ResourceManager.GetString("LoadoutUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename....
+        /// </summary>
+        public static string LoadoutRename {
+            get {
+                return ResourceManager.GetString("LoadoutRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy....
+        /// </summary>
+        public static string LoadoutCopy {
+            get {
+                return ResourceManager.GetString("LoadoutCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string LoadoutDelete {
+            get {
+                return ResourceManager.GetString("LoadoutDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read-only character: its loadouts are only listed.
+        /// </summary>
+        public static string LoadoutReadOnly {
+            get {
+                return ResourceManager.GetString("LoadoutReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadouts.
+        /// </summary>
+        public static string LoadoutTitle {
+            get {
+                return ResourceManager.GetString("LoadoutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name of the loadout:.
+        /// </summary>
+        public static string LoadoutNamePrompt {
+            get {
+                return ResourceManager.GetString("LoadoutNamePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a name for the loadout..
+        /// </summary>
+        public static string LoadoutNameEmpty {
+            get {
+                return ResourceManager.GetString("LoadoutNameEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} already has a loadout named "{1}"..
+        /// </summary>
+        public static string LoadoutNameUsed {
+            get {
+                return ResourceManager.GetString("LoadoutNameUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace the pieces of the loadout "{0}" with the gear worn now?.
+        /// </summary>
+        public static string LoadoutUpdateConfirm {
+            get {
+                return ResourceManager.GetString("LoadoutUpdateConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the loadout "{0}"?.
+        /// </summary>
+        public static string LoadoutDeleteConfirm {
+            get {
+                return ResourceManager.GetString("LoadoutDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadouts of {0} could not be saved: {1}.
+        /// </summary>
+        public static string LoadoutWriteFailed {
+            get {
+                return ResourceManager.GetString("LoadoutWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadouts file of {0} could not be read: it is left as it is..
+        /// </summary>
+        public static string LoadoutReadFailed {
+            get {
+                return ResourceManager.GetString("LoadoutReadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game is running. If it plays this character, it keeps it in memory and it[rest of string was truncated].
+        /// </summary>
+        public static string LoadoutGameRunning {
+            get {
+                return ResourceManager.GetString("LoadoutGameRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show a vault to receive the pieces taken off..
+        /// </summary>
+        public static string LoadoutNoVault {
+            get {
+                return ResourceManager.GetString("LoadoutNoVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not enough room in bag {0} of {1} for the {2} piece(s) taken off: nothing was[rest of string was truncated].
+        /// </summary>
+        public static string LoadoutNoRoom {
+            get {
+                return ResourceManager.GetString("LoadoutNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout "{0}" worn: {1} piece(s) stored in bag {2} of {3}, {4} copied in..
+        /// </summary>
+        public static string LoadoutLoaded {
+            get {
+                return ResourceManager.GetString("LoadoutLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadout "{0}" is already worn..
+        /// </summary>
+        public static string LoadoutAlreadyWorn {
+            get {
+                return ResourceManager.GetString("LoadoutAlreadyWorn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout.
+        /// </summary>
+        public static string LoadoutResultsContainer {
+            get {
+                return ResourceManager.GetString("LoadoutResultsContainer", resourceCulture);
+            }
+        }
     }
 }

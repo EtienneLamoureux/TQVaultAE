@@ -2685,4 +2685,76 @@ A completed relic gets its bonus, as when you stack it by hand.</value>
 
 Leave the editor without applying the changes?</value>
   </data>
+	<data name="LoadoutNone" xml:space="preserve">
+    <value>No loadout</value>
+  </data>
+	<data name="LoadoutAdd" xml:space="preserve">
+    <value>Add a loadout of the gear worn now</value>
+  </data>
+	<data name="LoadoutAddMenu" xml:space="preserve">
+    <value>Add...</value>
+  </data>
+	<data name="LoadoutLoad" xml:space="preserve">
+    <value>Load</value>
+  </data>
+	<data name="LoadoutLoadTip" xml:space="preserve">
+    <value>Wear the selected loadout; the pieces taken off go to the vault bag shown</value>
+  </data>
+	<data name="LoadoutUpdate" xml:space="preserve">
+    <value>Update with the gear worn now</value>
+  </data>
+	<data name="LoadoutRename" xml:space="preserve">
+    <value>Rename...</value>
+  </data>
+	<data name="LoadoutCopy" xml:space="preserve">
+    <value>Copy...</value>
+  </data>
+	<data name="LoadoutDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+	<data name="LoadoutReadOnly" xml:space="preserve">
+    <value>Read-only character: its loadouts are only listed</value>
+  </data>
+	<data name="LoadoutTitle" xml:space="preserve">
+    <value>Loadouts</value>
+  </data>
+	<data name="LoadoutNamePrompt" xml:space="preserve">
+    <value>Name of the loadout:</value>
+  </data>
+	<data name="LoadoutNameEmpty" xml:space="preserve">
+    <value>Enter a name for the loadout.</value>
+  </data>
+	<data name="LoadoutNameUsed" xml:space="preserve">
+    <value>{0} already has a loadout named "{1}".</value>
+  </data>
+	<data name="LoadoutUpdateConfirm" xml:space="preserve">
+    <value>Replace the pieces of the loadout "{0}" with the gear worn now?</value>
+  </data>
+	<data name="LoadoutDeleteConfirm" xml:space="preserve">
+    <value>Delete the loadout "{0}"?</value>
+  </data>
+	<data name="LoadoutWriteFailed" xml:space="preserve">
+    <value>The loadouts of {0} could not be saved: {1}</value>
+  </data>
+	<data name="LoadoutReadFailed" xml:space="preserve">
+    <value>The loadouts file of {0} could not be read: it is left as it is.</value>
+  </data>
+	<data name="LoadoutGameRunning" xml:space="preserve">
+    <value>The game is running. If it plays this character, it keeps it in memory and its next save replaces the changes made here. Continue?</value>
+  </data>
+	<data name="LoadoutNoVault" xml:space="preserve">
+    <value>Show a vault to receive the pieces taken off.</value>
+  </data>
+	<data name="LoadoutNoRoom" xml:space="preserve">
+    <value>Not enough room in bag {0} of {1} for the {2} piece(s) taken off: nothing was changed.</value>
+  </data>
+	<data name="LoadoutLoaded" xml:space="preserve">
+    <value>Loadout "{0}" worn: {1} piece(s) stored in bag {2} of {3}, {4} copied in.</value>
+  </data>
+	<data name="LoadoutAlreadyWorn" xml:space="preserve">
+    <value>The loadout "{0}" is already worn.</value>
+  </data>
+	<data name="LoadoutResultsContainer" xml:space="preserve">
+    <value>Loadout</value>
+  </data>
 </root>

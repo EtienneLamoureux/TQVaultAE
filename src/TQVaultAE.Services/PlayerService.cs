@@ -34,8 +34,10 @@ public class PlayerService(
 	, ICharacterEditService characterEditService
 	, IItemModService? itemModService = null
 	, ICharacterReadOnlyService? characterReadOnlyService = null
+	, ILoadoutService? loadoutService = null
 ) : IPlayerService
 {
+	private readonly ILoadoutService? LoadoutService = loadoutService;
 	private readonly IItemModService? ItemModService = itemModService;
 	private readonly ICharacterReadOnlyService? CharacterReadOnly = characterReadOnlyService;
 	private readonly ILogger Log = log;
@@ -126,6 +128,9 @@ public class PlayerService(
 						foreach (var item in resultPC.EquipmentSack)
 							this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, 0, SackType.Equipment);
 					}
+
+					// Its loadouts, read with its map like its items.
+					this.LoadoutService?.Read(selectedSave.Folder, selectedSave.Name, characterMod);
 				}
 				catch (ArgumentException argumentException)
 				{

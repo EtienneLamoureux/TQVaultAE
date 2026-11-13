@@ -2315,4 +2315,76 @@ Une relique complétée reçoit son bonus, comme quand vous l'empilez à la main
 
 Quitter l'éditeur sans appliquer les changements ?</value>
   </data>
+	<data name="LoadoutNone" xml:space="preserve">
+    <value>Aucune tenue</value>
+  </data>
+	<data name="LoadoutAdd" xml:space="preserve">
+    <value>Ajouter une tenue de l'équipement porté</value>
+  </data>
+	<data name="LoadoutAddMenu" xml:space="preserve">
+    <value>Ajouter...</value>
+  </data>
+	<data name="LoadoutLoad" xml:space="preserve">
+    <value>Charger</value>
+  </data>
+	<data name="LoadoutLoadTip" xml:space="preserve">
+    <value>Porter la tenue choisie ; les pièces retirées vont dans le sac du coffre affiché</value>
+  </data>
+	<data name="LoadoutUpdate" xml:space="preserve">
+    <value>Mettre à jour avec l'équipement porté</value>
+  </data>
+	<data name="LoadoutRename" xml:space="preserve">
+    <value>Renommer...</value>
+  </data>
+	<data name="LoadoutCopy" xml:space="preserve">
+    <value>Copier...</value>
+  </data>
+	<data name="LoadoutDelete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+	<data name="LoadoutReadOnly" xml:space="preserve">
+    <value>Personnage en lecture seule : ses tenues sont seulement listées</value>
+  </data>
+	<data name="LoadoutTitle" xml:space="preserve">
+    <value>Tenues</value>
+  </data>
+	<data name="LoadoutNamePrompt" xml:space="preserve">
+    <value>Nom de la tenue :</value>
+  </data>
+	<data name="LoadoutNameEmpty" xml:space="preserve">
+    <value>Saisissez un nom pour la tenue.</value>
+  </data>
+	<data name="LoadoutNameUsed" xml:space="preserve">
+    <value>{0} a déjà une tenue nommée « {1} ».</value>
+  </data>
+	<data name="LoadoutUpdateConfirm" xml:space="preserve">
+    <value>Remplacer les pièces de la tenue « {0} » par l'équipement porté ?</value>
+  </data>
+	<data name="LoadoutDeleteConfirm" xml:space="preserve">
+    <value>Supprimer la tenue « {0} » ?</value>
+  </data>
+	<data name="LoadoutWriteFailed" xml:space="preserve">
+    <value>Les tenues de {0} n'ont pas pu être enregistrées : {1}</value>
+  </data>
+	<data name="LoadoutReadFailed" xml:space="preserve">
+    <value>Le fichier des tenues de {0} n'a pas pu être lu : il est laissé tel quel.</value>
+  </data>
+	<data name="LoadoutGameRunning" xml:space="preserve">
+    <value>Le jeu est lancé. S'il joue ce personnage, il le garde en mémoire et sa prochaine sauvegarde remplace les changements faits ici. Continuer ?</value>
+  </data>
+	<data name="LoadoutNoVault" xml:space="preserve">
+    <value>Affichez un coffre pour recevoir les pièces retirées.</value>
+  </data>
+	<data name="LoadoutNoRoom" xml:space="preserve">
+    <value>Pas assez de place dans le sac {0} de {1} pour les {2} pièce(s) retirée(s) : rien n'a été changé.</value>
+  </data>
+	<data name="LoadoutLoaded" xml:space="preserve">
+    <value>Tenue « {0} » portée : {1} pièce(s) rangée(s) dans le sac {2} de {3}, {4} copiée(s).</value>
+  </data>
+	<data name="LoadoutAlreadyWorn" xml:space="preserve">
+    <value>La tenue « {0} » est déjà portée.</value>
+  </data>
+	<data name="LoadoutResultsContainer" xml:space="preserve">
+    <value>Tenue</value>
+  </data>
 </root>

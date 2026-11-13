@@ -50,6 +50,18 @@ public partial class StashPanel
 	private readonly List<Font> _statsFonts = [];
 	private float _statsScale;
 
+	/// <summary>The loadouts of the character, under the gold bar (right of the Edit button when it shows).</summary>
+	private LoadoutBar? _loadoutBar;
+
+	/// <summary>The loadouts file the bar shows.</summary>
+	private string? _loadoutsShown;
+
+	/// <summary>Raised for each action asked on the loadout bar (add, load, update, rename, copy, delete, select).</summary>
+	public event EventHandler<LoadoutBarEventArgs>? OnLoadoutAction;
+
+	/// <summary>The loadout bar, once the statistics panel was shown.</summary>
+	internal LoadoutBar? LoadoutBar => this._loadoutBar;
+
 	/// <summary>Shows the statistics panel of the character next to the equipment, and hides it on the other tabs.</summary>
 	private void DisplayPlayerInfo()
 	{
@@ -60,6 +72,8 @@ public partial class StashPanel
 				this._statsPanel.Visible = false;
 			if (this._editButton is not null)
 				this._editButton.Visible = false;
+			if (this._loadoutBar is not null)
+				this._loadoutBar.Visible = false;
 			this._statsTooltip?.Hide();
 			return;
 		}
@@ -68,6 +82,7 @@ public partial class StashPanel
 		this.LayoutStatsPanel(panel);
 		panel.Visible = true;
 		this._editButton!.Visible = this.USettings.AllowCharacterEdit;
+		this._loadoutBar!.Visible = true;
 
 		if (DisplayPlayerInfoLastName == this.Player!.PlayerName)
 			return;
@@ -76,6 +91,26 @@ public partial class StashPanel
 		DisplayPlayerInfoLastName = this.Player.PlayerName;
 		this._statsView = null;
 		panel.Invalidate();
+		this.RefreshLoadouts();
+	}
+
+	/// <summary>
+	/// Shows the loadouts of the shown character in the bar: those read with it, listed only for a read-only character
+	/// or a file that could not be read.
+	/// </summary>
+	/// <param name="select">The loadout to select; by default the one selected, when the bar still shows this character.</param>
+	public void RefreshLoadouts(string? select = null)
+	{
+		if (this._loadoutBar is not { } bar)
+			return;
+
+		var player = this.Player;
+		var set = player is null ? null : this.Services.Loadouts.Find(System.IO.Path.GetDirectoryName(player.PlayerFile) ?? string.Empty);
+		if (select is null && set?.FilePath == this._loadoutsShown)
+			select = bar.Selected;
+
+		this._loadoutsShown = set?.FilePath;
+		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly);
 	}
 
 	private CharacterStatsPanel EnsureStatsPanel()
@@ -117,10 +152,15 @@ public partial class StashPanel
 		editButton.Click += EditButton_Click;
 		this._editButton = editButton;
 
+		this._loadoutBar = new LoadoutBar(this.UIService) { Name = "loadoutBar", Visible = false };
+		this._loadoutBar.ActionRequested += (_, e) => this.OnLoadoutAction?.Invoke(this, e);
+
 		this.Controls.Add(this._statsPanel);
 		this.Controls.Add(editButton);
+		this.Controls.Add(this._loadoutBar);
 		this._statsPanel.BringToFront();
 		editButton.BringToFront();
+		this._loadoutBar.BringToFront();
 		this.Disposed += (_, _) =>
 		{
 			this._statsTooltip?.Dispose();
@@ -175,6 +215,8 @@ public partial class StashPanel
 				scale,
 				GameTooltipFrame.Load(this.UIService));
 			panel.Tooltip = this._statsTooltip;
+			this._loadoutBar!.TextFont = this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
+			this._loadoutBar.BarScale = scale;
 			foreach (var font in old)
 				font.Dispose();
 		}
@@ -187,6 +229,14 @@ public partial class StashPanel
 		var buttonAt = new Point(location.X, panel.Bottom + Convert.ToInt32(4 * scale));
 		if (button.Location != buttonAt)
 			button.Location = buttonAt;
+
+		// The loadout bar: the rest of the row under the gold bar, level with the Edit button's middle.
+		int gap = Convert.ToInt32(6 * scale);
+		int barHeight = LoadoutBar.HeightAt(scale);
+		int left = this.USettings.AllowCharacterEdit ? button.Right + gap : location.X;
+		var barBounds = new Rectangle(left, buttonAt.Y + Math.Max(0, (button.Height - barHeight) / 2), Math.Max(barHeight * 4, panel.Right - left), barHeight);
+		if (this._loadoutBar!.Bounds != barBounds)
+			this._loadoutBar.Bounds = barBounds;
 	}
 
 	/// <summary>What the statistics panel shows of the character, from its save: nothing can be changed here.</summary>
