@@ -143,8 +143,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl
 		int value = column < first ? column
 			: column >= first + this.VisibleColumns ? column - this.VisibleColumns + 1
 			: first;
-		int max = this._scroll.Maximum - this._scroll.LargeChange + 1;
-		this._scroll.Value = Math.Clamp(value, 0, Math.Max(0, max));
+		this.FirstColumn = value;
 	}
 
 	public void BeginUpdate() => this._updateDepth++;
@@ -243,7 +242,32 @@ public partial class VirtualCheckedListBox : Control, IScalingControl
 
 	private int VisibleColumns => Math.Max(1, this.ClientSize.Width / this.ColumnWidth);
 
-	private int FirstColumn => this._scroll.Visible ? this._scroll.Value : 0;
+	/// <summary>
+	/// Whether the list itself is set visible: <see cref="Control.Visible"/> also reads <see langword="false"/> while a
+	/// parent is hidden (a hidden category, a closed dialog).
+	/// </summary>
+	[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+	public bool VisibleSelf { get; private set; } = true;
+
+	protected override void SetVisibleCore(bool value)
+	{
+		this.VisibleSelf = value;
+		base.SetVisibleCore(value);
+	}
+
+	/// <summary>First column shown, where the horizontal scroll bar stands; set, it scrolls (within the columns).</summary>
+	[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+	public int FirstColumn
+	{
+		get => this._scroll.Visible ? this._scroll.Value : 0;
+		set
+		{
+			if (!this._scroll.Visible)
+				return;
+			int max = this._scroll.Maximum - this._scroll.LargeChange + 1;
+			this._scroll.Value = Math.Clamp(value, 0, Math.Max(0, max));
+		}
+	}
 
 	private void UpdateLayout()
 	{
@@ -473,9 +497,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl
 		base.OnMouseWheel(e);
 		if (!this._scroll.Visible)
 			return;
-		int max = this._scroll.Maximum - this._scroll.LargeChange + 1;
-		int value = this._scroll.Value - Math.Sign(e.Delta);
-		this._scroll.Value = Math.Clamp(value, 0, Math.Max(0, max));
+		this.FirstColumn = this._scroll.Value - Math.Sign(e.Delta);
 		if (e is HandledMouseEventArgs handled)
 			handled.Handled = true;
 	}

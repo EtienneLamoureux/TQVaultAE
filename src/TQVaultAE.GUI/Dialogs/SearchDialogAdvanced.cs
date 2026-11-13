@@ -354,12 +354,16 @@ public partial class SearchDialogAdvanced : VaultForm
 		if (ReferenceEquals(database, this._builtDatabase) && database.Count == this._builtCount)
 		{
 			this.Log.LogInformation("Search dialog reopened in {Elapsed} ms (items unchanged)", this._openWatch.ElapsedMilliseconds);
+			// Closed before the given state was restored.
+			this.RestorePendingState();
 			this.scalingTextBoxSearchTerm.Focus();
 			return;
 		}
 
 		if (this._buildingSearchData)
 			return;
+
+		this.CheckPendingStateItems(database);
 
 		if (this._builtDatabase is not null)
 			this.ClearForRebuild();
@@ -463,6 +467,9 @@ public partial class SearchDialogAdvanced : VaultForm
 			stepTimes.Add(stepWatch.ElapsedMilliseconds);
 		}
 		this.FitCategoriesHeight();
+		bool firstBuild = this._builtDatabase is null;
+		if (firstBuild)
+			this.KeepLayoutSize();
 		this.Log.LogInformation(
 			"Search dialog build: data {DataMs} ms, UI steps [{Steps}] ms (last is ResumeLayout), list items [{Items}]"
 			, dataBuilt
@@ -474,6 +481,9 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		scalingLabelProgress.Text = $"{Resources.SearchEngineReady} - {string.Format(Resources.SearchItemCountIs, this._builtCount)}";
 		this.Log.LogInformation("Search dialog ready in {Elapsed} ms ({Count} items)", this._openWatch.ElapsedMilliseconds, this._builtCount);
+
+		// A dialog made again at another zoom: the user's state of the previous one.
+		this.RestorePendingState();
 
 		// Start
 		this.scalingTextBoxSearchTerm.Focus();
@@ -508,7 +518,8 @@ public partial class SearchDialogAdvanced : VaultForm
 
 	/// <summary>
 	/// The user's zoom the dialog is scaled to. It is kept between openings while the zoom may change: the main window
-	/// then makes a new one, since scaling it back and forth would drift by rounding (margins and positions).
+	/// then makes a new one, since scaling it back and forth would drift by rounding (margins and positions); the new one
+	/// restores the user's state of the old one (<see cref="SearchDialogState"/>).
 	/// </summary>
 	public float ScaledZoom { get; private set; } = 1.0F;
 
@@ -563,6 +574,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		int top = Math.Max(screen.Top, Math.Min(this.Top, screen.Bottom - height));
 		this.SetBounds(this.Left, top, this.Width, height);
 		this.LastFormSize = this.Size;
+		this.KeepLayoutSize();
 	}
 
 	private void AdjustCheckBoxesWidth()
@@ -590,15 +602,15 @@ public partial class SearchDialogAdvanced : VaultForm
 		=> AdjustCheckBoxesHeight();
 
 	private void buttonCollapseAll_Click(object? sender, EventArgs e)
-		=> this.ShowCategoryLists(false);
+		=> this.ShowCategoryLists(_ => false);
 
 	private void buttonExpandAll_Click(object? sender, EventArgs e)
-		=> this.ShowCategoryLists(true);
+		=> this.ShowCategoryLists(_ => true);
 
 	/// <summary>
 	/// Shows or hides every category list in one batch: the panels are laid out and drawn once, not once per list.
 	/// </summary>
-	private void ShowCategoryLists(bool visible)
+	private void ShowCategoryLists(Func<VirtualCheckedListBox, bool> visible)
 	{
 		var containers = this.CachedCheckedListBoxes
 			.Select(lb => lb.Parent)
@@ -610,7 +622,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		using (new LayoutBatch(this.flowLayoutPanelMainAutoScroll, containers))
 		{
 			foreach (var lb in this.CachedCheckedListBoxes)
-				lb.Visible = visible;
+				lb.Visible = visible(lb);
 		}
 	}
 

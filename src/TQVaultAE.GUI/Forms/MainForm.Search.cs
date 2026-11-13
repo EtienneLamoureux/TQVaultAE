@@ -5,6 +5,7 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Models.Search;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Forms;
@@ -35,9 +36,12 @@ public partial class MainForm
 	/// </summary>
 	private void OpenSearchDialog()
 	{
-		// A dialog made at another zoom is made again at this one, scaled once from its design like the other dialogs.
+		// A dialog made at another zoom is made again at this one, scaled once from its design like the other dialogs;
+		// the new one restores what the user had set in the old one.
+		SearchDialogState? keptState = null;
 		if (this._searchDialog is { IsDisposed: false } stale && stale.ScaledZoom != UIService.Zoom)
 		{
+			keptState = stale.ClosedState;
 			stale.Dispose();
 			this._searchDialog = null;
 		}
@@ -47,6 +51,7 @@ public partial class MainForm
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 			this._searchDialog = this.Services.Forms.Create<SearchDialogAdvanced>();
 			this._searchDialog.ApplyZoom(UIService.Zoom);
+			this._searchDialog.RestoreWhenBuilt(keptState);
 			this.Log.LogInformation("Search dialog created in {Elapsed} ms", watch.ElapsedMilliseconds);
 			if (!this._searchDialogDisposedOnClose)
 			{

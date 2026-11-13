@@ -67,6 +67,21 @@ public class SearchQuery
 			|| this.IsSetItem
 			|| this.HavingSkill;
 
+	/// <summary>
+	/// A copy keeping only the dialog settings (shown categories, category filter, values per category, reduce, operator):
+	/// no selected filter, search term, quick filter or requirement. The search dialog keeps this much when the items it
+	/// was built from changed, since its filters referred to the previous items.
+	/// </summary>
+	public SearchQuery SettingsOnly()
+		=> new()
+		{
+			Filter = this.Filter,
+			Visible = [.. this.Visible],
+			MaxElement = this.MaxElement,
+			Reduce = this.Reduce,
+			Logic = this.Logic,
+		};
+
 	public override string ToString()
 		=> this.QueryName;
 }

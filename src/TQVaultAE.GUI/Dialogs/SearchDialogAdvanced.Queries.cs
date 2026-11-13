@@ -67,7 +67,18 @@ public partial class SearchDialogAdvanced
 		if (queries.Count == 0)
 			return;
 
-		// The live category values, by saved filter - use cached list for performance
+		var liveFilters = this.LiveFilters();
+
+		// Saved filters may not be found if you have lost the items that carry the corresponding properties.
+		foreach (var query in queries)
+			this.QueryFilters[query] = this.AttachFilters(query, liveFilters);
+
+		SearchQueriesInit();
+	}
+
+	/// <summary>The live category values, by filter - use cached list for performance.</summary>
+	private Dictionary<SearchFilter, BoxItem> LiveFilters()
+	{
 		var liveFilters = new Dictionary<SearchFilter, BoxItem>();
 		foreach (var lb in this.CachedCheckedListBoxes)
 		{
@@ -76,12 +87,12 @@ public partial class SearchDialogAdvanced
 				liveFilters.TryAdd(boxItem.ToFilter(), boxItem);
 		}
 
-		// Saved filters may not be found if you have lost the items that carry the corresponding properties.
-		foreach (var query in queries)
-			this.QueryFilters[query] = this.SearchQueryService.AttachFilters(query, liveFilters, scalingLabelSearchTerm.Name, term => MakeSearchTermBoxItem(term));
-
-		SearchQueriesInit();
+		return liveFilters;
 	}
+
+	/// <summary>The live values of the filters of <paramref name="query"/>, the search term made again.</summary>
+	private IReadOnlyList<BoxItem> AttachFilters(SearchQuery query, IReadOnlyDictionary<SearchFilter, BoxItem> liveFilters)
+		=> this.SearchQueryService.AttachFilters(query, liveFilters, scalingLabelSearchTerm.Name, term => MakeSearchTermBoxItem(term));
 
 	/// <summary>The query as set in the dialog.</summary>
 	private SearchQuery CurrentQuery()

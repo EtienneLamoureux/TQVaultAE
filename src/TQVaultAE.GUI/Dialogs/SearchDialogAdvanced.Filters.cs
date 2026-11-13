@@ -382,7 +382,8 @@ public partial class SearchDialogAdvanced
 		numericUpDownMinStr.Value = 0;
 	}
 
-	private void typeAssistantFilterCategories_Idled(object? sender, EventArgs e)
+	/// <summary>Reads the category filter box into <see cref="FilterCategories"/>.</summary>
+	private void ReadFilterCategories()
 	{
 		var f = FilterCategories;
 
@@ -393,6 +394,11 @@ public partial class SearchDialogAdvanced
 		if (f.HasFilterCategory)
 			(f.IsRegex, f.Search, f.Regex, f.RegexIsValid)
 				= StringHelper.IsTQVaultSearchRegEx(f.SearchRaw);
+	}
+
+	private void typeAssistantFilterCategories_Idled(object? sender, EventArgs e)
+	{
+		this.ReadFilterCategories();
 
 		/// Wrapped into an Invoke() because i'm currently in the thread of the
 		/// <see cref="typeAssistantFilterCategories"> and i need  <see cref="ApplyCategoriesReducer"/> to be executed from the main thread to avoid concurrent access exception

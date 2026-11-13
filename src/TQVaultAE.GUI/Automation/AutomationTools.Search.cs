@@ -108,6 +108,41 @@ internal static partial class AutomationTools
 		}));
 	}
 
+	[McpServerTool(Name = "search_dialog_state", ReadOnly = true)]
+	[Description("Reads the user's state of the open Advanced Search dialog from its controls: zoom and size, search text (typed and applied), category filter, saved query box, operator, reduce, values per category, quick filters, requirements, selected filters, category order and hidden categories, per category list its checked entries, collapsed state, focus entry and first column, the categories area scroll, and the results (count, a hash of the sorted results, the first ones). Use it to check that the dialog made again after a zoom change keeps the state.")]
+	public static string SearchDialogState()
+		=> AutomationHost.OnUi(_ => Serialize(OpenSearchDialog().AutomationState()));
+
+	[McpServerTool(Name = "search_dialog_scroll", Destructive = true)]
+	[Description("Scrolls the open Advanced Search dialog like its scroll bars: the categories area to x, y (pixels from the top left), and/or a category list to its first shown column. Returns the dialog state as search_dialog_state does.")]
+	public static string SearchDialogScroll(
+		[Description("Horizontal scroll of the categories area, in pixels; omit to keep it.")] int? x = null,
+		[Description("Vertical scroll of the categories area, in pixels; omit to keep it.")] int? y = null,
+		[Description("Category list name (as list_items lists them) whose columns to scroll.")] string? list = null,
+		[Description("First column the list shows.")] int firstColumn = 0)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var dialog = OpenSearchDialog();
+			var area = AllControls(dialog).OfType<FlowLayoutPanel>().First(c => c.Name == "flowLayoutPanelMainAutoScroll");
+			if (x is not null || y is not null)
+			{
+				var current = area.AutoScrollPosition;
+				area.AutoScrollPosition = new Point(x ?? -current.X, y ?? -current.Y);
+			}
+			if (!string.IsNullOrEmpty(list))
+			{
+				var target = AllControls(dialog).OfType<Components.Layout.VirtualCheckedListBox>()
+					.FirstOrDefault(c => string.Equals(c.Name, list, StringComparison.OrdinalIgnoreCase))
+					?? throw new McpException($"No category list '{list}'.");
+				target.FirstColumn = firstColumn;
+			}
+			return Serialize(dialog.AutomationState());
+		});
+
+	private static Dialogs.SearchDialogAdvanced OpenSearchDialog()
+		=> FindOpenForm(nameof(Dialogs.SearchDialogAdvanced)) as Dialogs.SearchDialogAdvanced
+			?? throw new McpException("The Advanced Search dialog is not open.");
+
 	/// <summary>The name the search shows for an entry, loaded as the search loads it.</summary>
 	private static string SearchName(TQVaultAE.Application.Results.SearchResult entry)
 	{
