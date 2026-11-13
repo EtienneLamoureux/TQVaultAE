@@ -16,26 +16,6 @@ public class PlayerLoadResult
 	public PlayerCollection? Player { get; set; }
 
 	/// <summary>
-	/// The player's stash.
-	/// </summary>
-	public Stash? PlayerStash { get; set; }
-
-	/// <summary>
-	/// The player's stash file path.
-	/// </summary>
-	public string? PlayerStashFile { get; set; }
-
-	/// <summary>
-	/// The transfer stash (Immortal Throne).
-	/// </summary>
-	public Stash? TransferStash { get; set; }
-
-	/// <summary>
-	/// The relic vault stash.
-	/// </summary>
-	public Stash? RelicVaultStash { get; set; }
-
-	/// <summary>
 	/// Indicates whether the player was loaded successfully.
 	/// </summary>
 	[MemberNotNullWhen(true, nameof(Player))]

@@ -59,11 +59,12 @@ public class PlayerService(
 	private readonly ICharacterEditService CharacterEditService = characterEditService;
 
 	/// <summary>
-	/// Loads a player and their stash.
+	/// Loads a player. Its stash is loaded apart (<see cref="IStashService.LoadPlayerStash"/>), see
+	/// <see cref="LoadCharacterSession"/>.
 	/// </summary>
 	/// <param name="selectedSave">Player save information.</param>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns>Player load result with player, stash, and error information.</returns>
+	/// <returns>Player load result with the player and error information.</returns>
 	public PlayerLoadResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false)
 	{
 		var result = new PlayerLoadResult();
@@ -150,14 +151,6 @@ public class PlayerService(
 			this.TagService.LoadTags(selectedSave);
 
 			#endregion
-
-			// Load stash if not from file watcher
-			if (!fromFileWatcher)
-			{
-				var stashResult = StashService.LoadPlayerStash(selectedSave, fromFileWatcher);
-				result.PlayerStash = stashResult.Stash;
-				result.PlayerStashFile = stashResult.StashFile;
-			}
 		}
 		catch (Exception ex)
 		{
@@ -182,15 +175,6 @@ public class PlayerService(
 			return new CharacterLabels(className, PlayerInfoText.MasteryNames(this.CharacterEditService.GetMasteries(info), this.TranslationService));
 		}
 	}
-
-	/// <summary>
-	/// Loads a player stash.
-	/// </summary>
-	/// <param name="playerSave">Player save information.</param>
-	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns>Stash load result.</returns>
-	public StashLoadResult LoadPlayerStash(PlayerSave playerSave, bool fromFileWatcher = false)
-		=> StashService.LoadPlayerStash(playerSave, fromFileWatcher);
 
 	/// <inheritdoc/>
 	public CharacterSessionLoadResult LoadCharacterSession(PlayerSave selectedSave, bool loadTransferStash, bool loadRelicVaultStash)

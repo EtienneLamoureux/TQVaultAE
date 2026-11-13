@@ -441,26 +441,20 @@ public class PlayerServiceTests
 		_mockFileIO.Verify(x => x.WriteAllBytes(playerFile, It.IsAny<byte[]>()), Times.Once);
 	}
 
-	/// <summary>
-	/// Test LoadPlayerStash returns result from StashService
-	/// </summary>
 	[Fact]
-	public void LoadPlayerStash_WithValidPlayerSave_ReturnsStashResult()
+	public void LoadCharacterSession_ImmortalThroneCharacter_LoadsItsStashOnce()
 	{
-		// Arrange
+		// Arrange: the character alone is read by LoadPlayer, its stash by the stash service, once
 		var playerSave = CreatePlayerSave("/Test/Players/_TestPlayer", isIT: true);
-		var expectedResult = new StashLoadResult { StashFile = "/path/to/stash.dxt" };
-
-		_mockStashService.Setup(x => x.LoadPlayerStash(playerSave, false))
-			.Returns(expectedResult);
+		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null));
+		_mockStashService.Setup(x => x.LoadCharacterStash(playerSave, false)).Returns((StashLoadResult?)null);
 
 		// Act
-		var result = _playerService.LoadPlayerStash(playerSave, false);
+		_playerService.LoadCharacterSession(playerSave, loadTransferStash: false, loadRelicVaultStash: false);
 
 		// Assert
-		result.Should().NotBeNull();
-		result.StashFile.Should().Be(expectedResult.StashFile);
-		_mockStashService.Verify(x => x.LoadPlayerStash(playerSave, false), Times.Once);
+		_mockStashService.Verify(x => x.LoadCharacterStash(playerSave, false), Times.Once);
+		_mockStashService.Verify(x => x.LoadPlayerStash(It.IsAny<PlayerSave?>(), It.IsAny<bool>()), Times.Never);
 	}
 
 	/// <summary>

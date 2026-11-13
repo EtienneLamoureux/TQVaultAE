@@ -7,11 +7,12 @@ namespace TQVaultAE.Application.Contracts.Services;
 public interface IPlayerService
 {
 	/// <summary>
-	/// Loads a player and their stash.
+	/// Loads a player. Its stash is loaded apart (<see cref="IStashService.LoadPlayerStash"/>), see
+	/// <see cref="LoadCharacterSession"/>.
 	/// </summary>
 	/// <param name="selectedSave">Player save information.</param>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns>Player load result with player, stash, and error information.</returns>
+	/// <returns>Player load result with the player and error information.</returns>
 	PlayerLoadResult LoadPlayer(PlayerSave selectedSave, bool fromFileWatcher = false);
 
 	/// <summary>
@@ -21,14 +22,6 @@ public interface IPlayerService
 	/// </summary>
 	/// <param name="save">The character; <see cref="CharacterLabels.Empty"/> while it is not loaded.</param>
 	CharacterLabels DescribeCharacter(PlayerSave save);
-
-	/// <summary>
-	/// Loads a player stash.
-	/// </summary>
-	/// <param name="playerSave">Player save information.</param>
-	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns>Stash load result.</returns>
-	StashLoadResult LoadPlayerStash(PlayerSave playerSave, bool fromFileWatcher = false);
 
 	/// <summary>
 	/// Loads what a character selection shows: the character, then for an Immortal Throne character
