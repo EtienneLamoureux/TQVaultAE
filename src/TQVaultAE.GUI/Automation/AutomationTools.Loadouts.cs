@@ -100,6 +100,7 @@ internal static partial class AutomationTools
 					names = bar.Names,
 					selected = bar.Selected,
 					canChange = bar.CanChange,
+					loadLocked = bar.LoadLocked,
 					font = bar.TextFont?.ToString(),
 				},
 				// Where the bar sits among its neighbours, in the stash panel's pixels: the statistics panel above, the

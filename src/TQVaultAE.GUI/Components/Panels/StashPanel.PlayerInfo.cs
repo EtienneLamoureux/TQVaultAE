@@ -133,7 +133,11 @@ public partial class StashPanel
 			select = bar.Selected;
 
 		this._loadoutsShown = set?.FilePath;
-		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly);
+		// The PlayerReadonly setting keeps the equipment as it is: Load is greyed, the other actions stay.
+		string? loadLocked = this.USettings.PlayerReadonly
+			? string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly)
+			: null;
+		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly, loadLocked);
 	}
 
 	private CharacterStatsPanel EnsureStatsPanel()

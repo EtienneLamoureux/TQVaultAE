@@ -124,6 +124,12 @@ public sealed class LoadoutBar : Control
 	/// <summary>False for a read-only character (or a file that could not be read): the loadouts are only listed.</summary>
 	public bool CanChange { get; private set; }
 
+	/// <summary>
+	/// Why the equipment cannot change (the PlayerReadonly setting), or null: Load is then greyed and its tool tip says
+	/// why; the loadouts can still be added, updated, renamed, copied and deleted.
+	/// </summary>
+	public string? LoadLocked { get; private set; }
+
 	/// <summary>The font of the name, made by the owner at the panel's scale (not disposed here).</summary>
 	public Font? TextFont { get; set; }
 
@@ -142,15 +148,17 @@ public sealed class LoadoutBar : Control
 	/// <param name="names">Their names.</param>
 	/// <param name="selected">The one to select; the first one when null or unknown.</param>
 	/// <param name="canChange">False for a character whose loadouts are only listed.</param>
-	public void ShowLoadouts(IReadOnlyList<string> names, string? selected, bool canChange)
+	/// <param name="loadLocked">Why the equipment cannot change, or null when Load can wear a loadout.</param>
+	public void ShowLoadouts(IReadOnlyList<string> names, string? selected, bool canChange, string? loadLocked = null)
 	{
 		selected = names.FirstOrDefault(n => string.Equals(n, selected, StringComparison.OrdinalIgnoreCase)) ?? (names.Count > 0 ? names[0] : null);
-		if (canChange == this.CanChange && selected == this.Selected && names.SequenceEqual(this.Names, StringComparer.Ordinal))
+		if (canChange == this.CanChange && loadLocked == this.LoadLocked && selected == this.Selected && names.SequenceEqual(this.Names, StringComparer.Ordinal))
 			return;
 
 		this.Names = names;
 		this.Selected = selected;
 		this.CanChange = canChange;
+		this.LoadLocked = loadLocked;
 		this._toolTip.SetToolTip(this, canChange ? null : Resources.LoadoutReadOnly);
 		this.Invalidate();
 	}
@@ -201,6 +209,7 @@ public sealed class LoadoutBar : Control
 	{
 		LoadoutBarAction.Select => this.Names.Count > 0,
 		LoadoutBarAction.Add => this.CanChange,
+		LoadoutBarAction.Load => this.CanChange && this.Selected is not null && this.LoadLocked is null,
 		_ => this.CanChange && this.Selected is not null,
 	};
 
@@ -280,7 +289,7 @@ public sealed class LoadoutBar : Control
 		this._toolTip.SetToolTip(this, part switch
 		{
 			Part.Add => Resources.LoadoutAdd,
-			Part.Load => Resources.LoadoutLoadTip,
+			Part.Load => this.LoadLocked ?? Resources.LoadoutLoadTip,
 			_ => this.CanChange ? this.Selected : Resources.LoadoutReadOnly,
 		});
 		this.Invalidate();

@@ -13,8 +13,9 @@ button of the character editor, when it shows, is on the line below):
 - The box lists the character's loadouts: click it to choose one.
 - **[+]** records the gear worn now as a new loadout. TQVault asks a name, as for **Duplicate Character**; two loadouts
   of a character cannot have the same name (case is ignored).
-- The gold arrow (**Load**) wears the loadout chosen in the box; it is grey when there is nothing to load or the
-  character is read-only.
+- The gold arrow (**Load**) wears the loadout chosen in the box; it is grey when there is nothing to load, the
+  character is read-only, or the setting **Player Equipment ReadOnly** is on (its tool tip then says so; the other
+  actions stay).
 - A right click on the bar gives every action: **Load**, **Update with the gear worn now** (asks first), **Rename**,
   **Copy** (the same pieces under another name), **Delete** (asks first) and **Add**.
 
