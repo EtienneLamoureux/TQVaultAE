@@ -388,16 +388,36 @@ public partial class ItemProvider
 		if (damages.Count == 0)
 			return;
 
-		// A skill that also casts a named skill writes its chance with that skill (GetCastSkill).
+		// A skill that also casts a named skill writes its chance with that skill (GetCastSkill). The skill whose kills
+		// trigger it (triggeringSkill) follows the chance: "33.0% Chance to be Used : Shen Pao".
 		if (string.IsNullOrEmpty(skillRecord.GetString("skillCastName", 0))
 			&& TranslationService.TryTranslateXTag("SkillChanceWeightFloat", out var chanceFormat))
-			attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)}");
+		{
+			var chanceLine = Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance);
+			if (this.TriggeringSkillName(skillRecord) is { } trigger)
+				chanceLine += " : " + trigger;
+			attributes.Add($"{text}{chanceLine}");
+		}
 
 		attributes.Add(string.Empty);
 		if (TranslationService.TryTranslateXTag("GlobalChanceOfOneTag", out var oneOf))
 			attributes.Add($"{text}{oneOf}");
 
 		attributes.AddRange(damages);
+	}
+
+	/// <summary>
+	/// The name of the skill whose kills trigger a skill (<c>triggeringSkill</c>: Shen Pao for Echoes of the Ancestors).
+	/// </summary>
+	/// <returns><see langword="null"/> when the skill names none, or names a missing or unnamed record.</returns>
+	private string? TriggeringSkillName(DBRecordCollection skillRecord)
+	{
+		var triggerId = skillRecord.GetString("triggeringSkill", 0).ToRecordId();
+		if (RecordId.IsNullOrEmpty(triggerId) || Database.GetRecordFromFile(triggerId) is not { } trigger
+			|| string.IsNullOrWhiteSpace(trigger.GetString("skillDisplayName", 0)))
+			return null;
+
+		return this.SkillDisplayName(trigger, triggerId);
 	}
 
 	/// <summary>The value of a skill parameter at a level: one value per level, the last one beyond.</summary>

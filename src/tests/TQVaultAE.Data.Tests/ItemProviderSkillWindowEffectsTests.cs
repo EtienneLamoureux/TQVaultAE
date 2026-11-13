@@ -98,4 +98,32 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
 			"33.0% Chance to be Used", string.Empty, "Chance for one of the following:", fire, cold, lightning);
 	}
+
+	[Fact]
+	public void SkillCastOnDamageType_TriggeredByASkill_NamesItAfterTheChance()
+	{
+		// Echoes of the Ancestors triggers on Shen Pao's kills: the game writes "33.0% Chance to be Used : Shen Pao".
+		this.Translations["tagShenPao"] = "Shen Pao";
+		this.CreateRecord("""records\test\shenpao.dbr""", "Skill_AttackProjectile", Str("skillDisplayName", "tagShenPao"));
+		this.CreateRecord("""records\test\fire.dbr""", "Skill_AttackRadius", Floats("offensiveFireMin", 40f, 54.6f));
+		this.CreateRecord(SkillId, "Skill_PassiveOnTargetKilled", Str("skillDisplayName", "tagSkillTest"), Floats("skillCastChance", 33f, 33f),
+			Str("skillNameCastOnDamage_Fire", """records\test\fire.dbr"""), Str("triggeringSkill", """records\test\shenpao.dbr"""));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, SkillWindowContext.None);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
+			"33.0% Chance to be Used : Shen Pao", string.Empty, "Chance for one of the following:", "54 Fire Damage");
+	}
+
+	[Fact]
+	public void SkillCastOnDamageType_TriggeringSkillMissing_WritesTheChanceAlone()
+	{
+		this.CreateRecord("""records\test\fire.dbr""", "Skill_AttackRadius", Floats("offensiveFireMin", 40f, 54.6f));
+		this.CreateRecord(SkillId, "Skill_PassiveOnTargetKilled", Str("skillDisplayName", "tagSkillTest"), Floats("skillCastChance", 33f, 33f),
+			Str("skillNameCastOnDamage_Fire", """records\test\fire.dbr"""), Str("triggeringSkill", """records\test\missing.dbr"""));
+
+		var skill = this.Provider.GetSkillAtLevel(SkillId, 1, SkillWindowContext.None);
+
+		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).First().Should().Be("33.0% Chance to be Used");
+	}
 }
