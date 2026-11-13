@@ -146,7 +146,7 @@ internal static partial class AutomationTools
 	/// <summary>Selects the page of a mastery slot in the open character editor and returns its pane.</summary>
 	private static SkillPaneControl ShowSkillPane(int slot)
 	{
-		var form = FindOpenForm("CharacterEditDialog");
+		var form = FindCharacterEditor();
 		var name = $"SkillsMastery{slot}Pane";
 		var pane = AllControls(form).OfType<SkillPaneControl>().FirstOrDefault(p => p.Name == name)
 			?? throw new McpException($"No skill pane for slot {slot}.");

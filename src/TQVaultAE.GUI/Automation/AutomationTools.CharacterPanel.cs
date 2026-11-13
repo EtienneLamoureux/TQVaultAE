@@ -21,7 +21,7 @@ internal static partial class AutomationTools
 		{
 			var panel = ShowCharacterPanel();
 			panel.Tab = Math.Clamp(tab, 1, 3) - 1;
-			var side = AllControls(FindOpenForm("CharacterEditDialog")).OfType<CharacterSidePanel>().FirstOrDefault();
+			var side = AllControls(FindCharacterEditor()).OfType<CharacterSidePanel>().FirstOrDefault();
 			var state = Serialize(new { stats = panel.AutomationState(), side = side?.AutomationState() });
 			if (!capture)
 				return (state, (byte[]?)null);
@@ -122,15 +122,18 @@ internal static partial class AutomationTools
 		[Description("Part of the variable names to keep; empty for all.")] string filter = "")
 		=> AutomationHost.OnUi(_ =>
 		{
-			var form = FindOpenForm("CharacterEditDialog") as Dialogs.CharacterEditDialog
-				?? throw new McpException("No character editor open.");
-			return Serialize(form.AutomationStatSources(filter));
+			return Serialize(FindCharacterEditor().AutomationStatSources(filter));
 		});
+
+	/// <summary>The open character editor.</summary>
+	private static Views.CharacterEditorUserControl FindCharacterEditor()
+		=> AllControls(FindOpenForm(nameof(Dialogs.CharacterEditDialog))).OfType<Views.CharacterEditorUserControl>().FirstOrDefault()
+			?? throw new McpException("No character editor open.");
 
 	/// <summary>Shows the Character page of the open character editor and returns its statistics panel.</summary>
 	private static CharacterStatsPanel ShowCharacterPanel()
 	{
-		var form = FindOpenForm("CharacterEditDialog");
+		var form = FindCharacterEditor();
 		var panel = AllControls(form).OfType<CharacterStatsPanel>().FirstOrDefault()
 			?? throw new McpException("No statistics panel in the character editor.");
 		if (AllControls(form).OfType<GameTabControl>().FirstOrDefault() is { } frame)

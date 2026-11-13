@@ -4,14 +4,14 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
 /// The statistics the Character page computes like the game (<see cref="CharacterStatsCalculator"/>): defense on tab I,
 /// tab II, the damage and race bonuses of tab III, from the equipped items, the skills of the editor (their current
 /// points), the attributes of the editor, the difficulty chosen and the buffs option.
 /// </summary>
-internal sealed partial class CharacterEditDialog
+internal sealed partial class CharacterEditorUserControl
 {
 	private CharacterPanelViewBuilder? _viewBuilder;
 

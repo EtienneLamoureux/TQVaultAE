@@ -1,12 +1,12 @@
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Components;
 
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// Form designer class for ItemSeedDialog
+/// Designer part of the character editor
 /// </summary>
-internal partial class CharacterEditDialog
+internal partial class CharacterEditorUserControl
 {
 
 	/// <summary>
@@ -46,7 +46,7 @@ internal partial class CharacterEditDialog
 	/// </summary>
 	private void InitializeComponent()
 	{
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CharacterEditDialog));
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CharacterEditorUserControl));
         this.ok = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.cancel = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.manacUpDown = new System.Windows.Forms.NumericUpDown();
@@ -99,7 +99,6 @@ internal partial class CharacterEditDialog
         // cancel
         // 
         this.cancel.BackColor = System.Drawing.Color.Transparent;
-        this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
         this.cancel.DownBitmap = ((System.Drawing.Bitmap)(resources.GetObject("cancel.DownBitmap")));
         this.cancel.FlatAppearance.BorderSize = 0;
         this.cancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
@@ -421,28 +420,18 @@ internal partial class CharacterEditDialog
         this.ResetAttributesScalingButton.UseVisualStyleBackColor = false;
         this.ResetAttributesScalingButton.Click += new System.EventHandler(this.ResetAttributesScalingButton_Click);
         // 
-        // CharacterEditDialog
+        // CharacterEditorUserControl
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-        this.ClientSize = new System.Drawing.Size(1010, 710);
+        this.BackColor = System.Drawing.Color.Transparent;
         this.Controls.Add(this.cancel);
         this.Controls.Add(this.ok);
-        this.DrawCustomBorder = true;
         this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.ForeColor = System.Drawing.Color.White;
-        this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-        this.MaximizeBox = false;
-        this.MinimizeBox = false;
-        this.Name = "CharacterEditDialog";
-        this.ShowInTaskbar = false;
-        this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-        this.Text = "Character Editor";
-        this.TopMost = true;
-        this.Load += new System.EventHandler(this.CharacterEditDlg_Load);
+        this.Name = "CharacterEditorUserControl";
+        this.Size = new System.Drawing.Size(1010, 710);
         this.Controls.SetChildIndex(this.ok, 0);
         this.Controls.SetChildIndex(this.cancel, 0);
         ((System.ComponentModel.ISupportInitialize)(this.manacUpDown)).EndInit();

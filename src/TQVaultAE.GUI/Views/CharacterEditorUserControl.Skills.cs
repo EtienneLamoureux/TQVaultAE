@@ -7,14 +7,14 @@ using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// The mastery pages of the character edit dialog: one page per mastery slot, with the mastery, its level and its pane
+/// The mastery pages of the character editor: one page per mastery slot, with the mastery, its level and its pane
 /// drawn as the game's skill window. The rules are in <see cref="CharacterSkillEditor"/>; this part only shows its state
 /// and passes the user's changes.
 /// </summary>
-internal sealed partial class CharacterEditDialog
+internal sealed partial class CharacterEditorUserControl
 {
 	private CharacterSkillEditor? _skills;
 
@@ -140,7 +140,7 @@ internal sealed partial class CharacterEditDialog
 				scale,
 				GameTooltipFrame.Load(this.UIService));
 			var tooltip = this._skillTooltip;
-			this.FormClosed += (_, _) => tooltip.Dispose();
+			this.Disposed += (_, _) => tooltip.Dispose();
 		}
 
 		return this._skillTooltip;

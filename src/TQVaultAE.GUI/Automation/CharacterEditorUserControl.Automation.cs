@@ -1,7 +1,7 @@
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>Debug-only access to the character editor for the automation endpoint.</summary>
-internal sealed partial class CharacterEditDialog
+internal sealed partial class CharacterEditorUserControl
 {
 	/// <summary>
 	/// The sums behind the computed statistics: the equipped items and sets, the skills that count (with the buffs

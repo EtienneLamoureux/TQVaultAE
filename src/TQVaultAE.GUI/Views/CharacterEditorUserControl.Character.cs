@@ -9,14 +9,14 @@ using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
 
-namespace TQVaultAE.GUI.Dialogs;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// The frame of the character edit dialog, drawn as the game's skill window (<see cref="GameTabControl"/>), and its
+/// The frame of the character editor, drawn as the game's skill window (<see cref="GameTabControl"/>), and its
 /// Character page: the statistics panel of the game's character window (<see cref="CharacterStatsPanel"/>) with the
 /// attribute "+" buttons and the leveling editors, the gold bar and the reset buttons.
 /// </summary>
-internal sealed partial class CharacterEditDialog
+internal sealed partial class CharacterEditorUserControl
 {
 	private GameTabControl _tabs = null!;
 	private CharacterStatsPanel _stats = null!;
@@ -51,21 +51,30 @@ internal sealed partial class CharacterEditDialog
 	/// <summary>The size of a game pixel on screen: the frame is drawn at the game's size times the DPI factor.</summary>
 	private float GameScale => this.DeviceDpi / 96F;
 
+	/// <summary>
+	/// The game frame with OK and Cancel under it, sized to them; laid at the top left of the control, or in its middle
+	/// when the host gives it a larger area (<see cref="OnLayout"/>).
+	/// </summary>
+	private readonly Panel _content = new() { Name = "CharacterEditorContent", BackColor = Color.Transparent };
+
+	/// <summary>The size of the frame with OK and Cancel under it and the margins around: the editor's natural size.</summary>
+	internal Size ContentSize => this._content.Size;
+
 	/// <summary>Builds the game frame, its Character page and moves the editors of the designer into it.</summary>
 	private void InitCharacterPage()
 	{
 		var scale = this.GameScale;
-		this.UseMarbleBackground();
 		this._tabs = new GameTabControl
 		{
 			Name = "EditorTabs",
 			FrameScale = scale,
-			Location = new Point(this.LogicalToDeviceUnits(14), this.LogicalToDeviceUnits(26)),
+			Location = new Point(this.LogicalToDeviceUnits(14), this.LogicalToDeviceUnits(14)),
 			TabFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
 		};
-		this.Controls.Add(this._tabs);
+		this._content.Controls.Add(this._tabs);
+		this.Controls.Add(this._content);
 
-		// The page shows the dialog's marble rather than the black of the frame, where the game draws its mastery panes.
+		// The page shows the editor's marble rather than the black of the frame, where the game draws its mastery panes.
 		var page = new BufferedPanel { Name = "CharacterPage", BackgroundImageLayout = ImageLayout.None };
 
 		// The panel at 1.24 times the game size fills the height of the page with the gold bar under it.
@@ -150,7 +159,7 @@ internal sealed partial class CharacterEditDialog
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
 			box.ValueChanged += (_, _) => this.InvalidateStats();
 
-		this.FormClosed += (_, _) =>
+		this.Disposed += (_, _) =>
 		{
 			foreach (var font in this._ownedFonts)
 				font.Dispose();
@@ -234,44 +243,30 @@ internal sealed partial class CharacterEditDialog
 			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
 		};
 		page.Controls.Add(picture);
-		this.FormClosed += (_, _) => medallion.Dispose();
+		this.Disposed += (_, _) => medallion.Dispose();
 	}
 
 	/// <summary>
-	/// The background of the Character page, made once at its size: the dialog's marble, with the thin edge of the
-	/// mastery panes (a gold and a black line with a shadow inside) around it. A picture at the page's size is copied as
-	/// is when the page repaints, where stretching both at every paint made switching to the page flicker.
+	/// The background of the Character page, made once at its size: the plain marble of TQVault's own background picture
+	/// (<see cref="Images.CharacterEditorMarble"/>) stretched to the page, with the thin edge of the mastery panes (a gold
+	/// and a black line with a shadow inside) around it. A picture at the page's size is copied as is when the page
+	/// repaints, where stretching both at every paint made switching to the page flicker.
 	/// </summary>
 	private Bitmap RenderPageBackground(Size page)
 	{
 		var background = new Bitmap(Math.Max(1, page.Width), Math.Max(1, page.Height));
 		using (var g = Graphics.FromImage(background))
+		using (var marble = Images.CharacterEditorMarble)
 		using (var edge = Images.CharacterEditorPaneEdge)
 		{
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-			if (this.BackgroundImage is { } marble)
-				g.DrawImage(marble, new Rectangle(Point.Empty, page));
+			g.DrawImage(marble, new Rectangle(Point.Empty, page));
 			g.DrawImage(edge, new Rectangle(Point.Empty, page));
 		}
 
-		this.FormClosed += (_, _) => background.Dispose();
+		this.Disposed += (_, _) => background.Dispose();
 		return background;
-	}
-
-	/// <summary>
-	/// The dialog's background: the plain marble of TQVault's own background picture
-	/// (<see cref="Images.CharacterEditorMarble"/>), stretched to the dialog, around the game frame and under OK and Cancel.
-	/// </summary>
-	private void UseMarbleBackground()
-	{
-		var marble = Images.CharacterEditorMarble;
-		this.BackgroundImage = marble;
-		this.BackgroundImageLayout = ImageLayout.Stretch;
-		this.FormClosed += (_, _) =>
-		{
-			marble.Dispose();
-		};
 	}
 
 	/// <summary>A font the dialog made itself, disposed with it (never one of the font service's, which are shared).</summary>
@@ -288,14 +283,31 @@ internal sealed partial class CharacterEditDialog
 		this._side.Invalidate();
 	}
 
-	/// <summary>Sizes the dialog around the frame, with OK and Cancel under it.</summary>
+	/// <summary>Sizes the content around the frame, with OK and Cancel under it.</summary>
 	private void FitToFrame()
 	{
 		var margin = this.LogicalToDeviceUnits(14);
 		var gap = this.LogicalToDeviceUnits(10);
-		this.ClientSize = new Size(this._tabs.Right + margin, this._tabs.Bottom + gap + this.ok.Height + margin);
+		this._content.Size = new Size(this._tabs.Right + margin, this._tabs.Bottom + gap + this.ok.Height + margin);
+		this.ok.Parent = this.cancel.Parent = this._content;
 		this.cancel.Location = new Point(this._tabs.Right - this.cancel.Width, this._tabs.Bottom + gap);
 		this.ok.Location = new Point(this.cancel.Left - gap - this.ok.Width, this.cancel.Top);
+		this.PerformLayout();
+	}
+
+	/// <summary>
+	/// The content at the top left of the control; in the middle of a larger area, at its top left when it is smaller,
+	/// scrolled (<see cref="ScrollableControl.AutoScroll"/>).
+	/// </summary>
+	protected override void OnLayout(LayoutEventArgs e)
+	{
+		base.OnLayout(e);
+
+		var location = new Point(
+			Math.Max(0, (this.ClientSize.Width - this._content.Width) / 2) + this.AutoScrollPosition.X,
+			Math.Max(0, (this.ClientSize.Height - this._content.Height) / 2) + this.AutoScrollPosition.Y);
+		if (this._content.Location != location)
+			this._content.Location = location;
 	}
 
 	/// <summary>What the statistics panel shows, read from the editors and the save.</summary>
