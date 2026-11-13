@@ -172,8 +172,13 @@ internal static class CaravanFrame
 			var caption = check is not null
 				? check.Bounds
 				: new Rectangle(new Point(Border + 2, 0), TextRenderer.MeasureText(e.Graphics, box.Text, box.Font));
-			// The frame's top edge is level with the middle of the caption.
-			int top = Math.Max(0, caption.Top + (caption.Height - Border) / 2);
+			// The caption sits on the frame's top edge: the bottom of that edge, where the black starts, is level with the
+			// text's baseline. The text is drawn from the caption's top, or centred in the check box.
+			var font = check?.Font ?? box.Font;
+			int textTop = check is null
+				? caption.Top
+				: caption.Top + (check.ClientSize.Height - TextRenderer.MeasureText(e.Graphics, check.Text, font).Height) / 2;
+			int top = Math.Max(0, textTop + Ascent(e.Graphics, font) - Border);
 
 			// The group box drew its own caption and border line before this handler: above the frame they would show
 			// next to the text drawn here, so that strip is painted again with the background. The frame is then drawn
@@ -214,6 +219,13 @@ internal static class CaravanFrame
 
 			TextShadow.DrawOutline(e.Graphics, check.Text, check.Font, text, flags);
 		};
+	}
+
+	/// <summary>The height of <paramref name="font"/> above its baseline, in pixels.</summary>
+	private static int Ascent(Graphics graphics, Font font)
+	{
+		var family = font.FontFamily;
+		return (int)Math.Round(font.GetHeight(graphics) * family.GetCellAscent(font.Style) / family.GetLineSpacing(font.Style));
 	}
 
 	/// <summary>
