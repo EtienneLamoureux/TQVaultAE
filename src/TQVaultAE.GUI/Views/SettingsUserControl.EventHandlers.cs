@@ -192,8 +192,10 @@ internal partial class SettingsUserControl
 		if (this.Services.SettingsPersistence.GameLanguage is null)
 			return;
 
-		// No selection happens only while the list is rebuilt.
-		if (this.languageComboBox.SelectedItem is ComboBoxItem language)
+		// No selection happens only while the list is rebuilt. The game may name the language in another case than the
+		// list ("ENGLISH"): the same language, left as it was, else opening the settings would count as a change.
+		if (this.languageComboBox.SelectedItem is ComboBoxItem language
+			&& !string.Equals(language.Value, this.editor.Current.TQLanguage, StringComparison.OrdinalIgnoreCase))
 			this.editor.Current.TQLanguage = language.Value;
 	}
 
