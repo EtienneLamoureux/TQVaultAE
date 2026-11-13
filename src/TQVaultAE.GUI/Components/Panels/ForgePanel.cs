@@ -19,6 +19,12 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <remarks>
 /// While an item is dragged over the panel it is shown as the mouse cursor (<see cref="ItemDragCursor"/>), so moving
 /// the mouse repaints nothing; clicking a slot drops it there.
+/// <para>
+/// The panel scales with the screen DPI like the main window (<c>AutoScaleMode.Dpi</c>), not with its font: the font's
+/// pixel size is rounded per DPI (Segoe UI 9 pt is 7 x 15 pixels at 96 dpi but 8 x 20 at 120 dpi), which made the
+/// panel about 6% shorter at 100% than at 125% next to the panels it stands for. Its design dimensions (90 x 78) keep
+/// the size the font gave it at 120 dpi (125%), where it fills its place, and scale it in proportion at every other DPI.
+/// </para>
 /// </remarks>
 public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 {

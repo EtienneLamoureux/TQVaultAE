@@ -34,7 +34,9 @@ public partial class ForgePanel
 	/// <summary>The panel's height against its limit: the height, the preferred height, the limit, and the slots' cut and height.</summary>
 	internal object AutomationLayout => new
 	{
+		width = this.Width,
 		height = this.Height,
+		autoScale = new { mode = this.AutoScaleMode.ToString(), design = this.AutoScaleDimensions, current = this.CurrentAutoScaleDimensions },
 		preferredHeight = this.GetPreferredSize(Size.Empty).Height,
 		heightLimit = this.HeightLimit?.Invoke() ?? 0,
 		slotCut = this.slotCut,
