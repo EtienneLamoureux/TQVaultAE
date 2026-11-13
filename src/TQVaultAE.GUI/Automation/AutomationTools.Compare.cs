@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -13,7 +14,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "compare_items", ReadOnly = true)]
-	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged, showSources; empty keeps the last ones) and per-stat source clicks (toggle), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
+	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged, showSources; empty keeps the last ones) and per-stat source clicks (toggle), then scrolls its columns like the user (height, scroll), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
 	public static IEnumerable<ContentBlock> CompareItems(
 		[Description("Panel id of the first item.")] string panel,
 		[Description("Cell column of the first item.")] int x,
@@ -26,7 +27,9 @@ internal static partial class AutomationTools
 		[Description("The 'Align rows' check box; empty keeps the last choice.")] bool? alignRows = null,
 		[Description("The 'Hide unchanged' check box; empty keeps the last choice.")] bool? hideUnchanged = null,
 		[Description("The 'Show sources' check box; empty keeps the last choice.")] bool? showSources = null,
-		[Description("Rows to click, like the user, to show or hide one stat's sources: '|'-separated texts, each the start of a clickable row's text (difference or item line of a stat with sources, white space trimmed), clicked in order after the check boxes.")] string? toggle = null)
+		[Description("Rows to click, like the user, to show or hide one stat's sources: '|'-separated texts, each the start of a clickable row's text (difference or item line of a stat with sources, white space trimmed), clicked in order after the check boxes.")] string? toggle = null,
+		[Description("Scrolls the columns after the clicks with the messages the user's input sends: 'page:N' (N pages down with the scroll bar, negative up) or 'wheel:N' (N notches of the mouse wheel down, negative up). With keepOpen, capture('Item Comparison', shown=true) then shows the window as scrolled. Empty does not scroll.")] string? scroll = null,
+		[Description("Height in pixels to give the dialog before scrolling, as dragging its bottom border does (the columns then scroll); 0 keeps the height it fits to.")] int height = 0)
 	{
 		var (json, png, size) = AutomationHost.OnUi(main =>
 		{
@@ -68,6 +71,14 @@ internal static partial class AutomationTools
 					System.Windows.Forms.Application.DoEvents();
 				}
 
+				if (height > 0)
+				{
+					dialog.Height = height;
+					System.Windows.Forms.Application.DoEvents();
+				}
+
+				var scrolled = Scroll(table.Parent as ScrollableControl, scroll);
+
 				var columns = ItemComparisonDialog.ColumnNames.ToDictionary(n => n, n =>
 				{
 					var recorder = new ItemTooltipRecorder();
@@ -77,8 +88,8 @@ internal static partial class AutomationTools
 
 				// The whole dialog with its border when it shows all the content; else the whole table at its size,
 				// beyond what the dialog shows without scrolling.
-				Control captured = table.Parent is ScrollableControl scroll
-					&& table.Width <= scroll.ClientSize.Width && table.Height <= scroll.ClientSize.Height ? dialog : table;
+				Control captured = table.Parent is ScrollableControl scrolledPanel
+					&& table.Width <= scrolledPanel.ClientSize.Width && table.Height <= scrolledPanel.ClientSize.Height ? dialog : table;
 				using var bitmap = new Bitmap(captured.Width, captured.Height);
 				captured.DrawToBitmap(bitmap, new Rectangle(Point.Empty, captured.Size));
 				using var stream = new MemoryStream();
@@ -90,6 +101,7 @@ internal static partial class AutomationTools
 					second = DescribeItem(item2, null),
 					options = dialog.Options,
 					toggled,
+					scrolled,
 					dialogSize = new { dialog.Width, dialog.Height },
 					contentSize = new { table.Width, table.Height },
 					columns,
@@ -118,6 +130,49 @@ internal static partial class AutomationTools
 			new TextContentBlock { Text = $"capture: {size.Width}x{size.Height} px, saved to {file}" },
 		];
 	}
+
+	/// <summary>
+	/// Scrolls <paramref name="scroll"/> by <paramref name="request"/> ('page:N' or 'wheel:N') with the window messages a
+	/// scroll bar click or the mouse wheel sends, so that the control's own handlers and events run; returns the scroll
+	/// position after it, or null without a request.
+	/// </summary>
+	private static Point? Scroll(ScrollableControl? scroll, string? request)
+	{
+		if (string.IsNullOrWhiteSpace(request))
+			return null;
+		if (scroll is null)
+			throw new McpException("The comparison table is not in a scrolled panel.");
+
+		var parts = request.Split(':', 2, StringSplitOptions.TrimEntries);
+		if (parts.Length != 2 || !int.TryParse(parts[1], System.Globalization.CultureInfo.InvariantCulture, out int count))
+			throw new McpException($"Unknown scroll '{request}'. Use 'page:N' or 'wheel:N'.");
+
+		const int WM_VSCROLL = 0x0115, SB_PAGEUP = 2, SB_PAGEDOWN = 3, SB_ENDSCROLL = 8, WM_MOUSEWHEEL = 0x020A, WHEEL_DELTA = 120;
+		for (int i = 0; i < Math.Abs(count); i++)
+		{
+			switch (parts[0].ToLowerInvariant())
+			{
+				case "page":
+					SendScrollMessage(scroll.Handle, WM_VSCROLL, count > 0 ? SB_PAGEDOWN : SB_PAGEUP, 0);
+					SendScrollMessage(scroll.Handle, WM_VSCROLL, SB_ENDSCROLL, 0);
+					break;
+				case "wheel":
+					// The wheel delta in the high word, the pointer (screen coordinates) over the panel's centre.
+					var center = scroll.PointToScreen(new Point(scroll.ClientSize.Width / 2, scroll.ClientSize.Height / 2));
+					SendScrollMessage(scroll.Handle, WM_MOUSEWHEEL, (count > 0 ? -WHEEL_DELTA : WHEEL_DELTA) << 16,
+						(center.Y << 16) | (center.X & 0xFFFF));
+					break;
+				default:
+					throw new McpException($"Unknown scroll '{request}'. Use 'page:N' or 'wheel:N'.");
+			}
+		}
+
+		System.Windows.Forms.Application.DoEvents();
+		return new Point(-scroll.AutoScrollPosition.X, -scroll.AutoScrollPosition.Y);
+	}
+
+	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+	private static partial nint SendScrollMessage(nint hWnd, int msg, nint wParam, nint lParam);
 
 	/// <summary><c>Control.OnClick</c>, which raises the control's Click event as a mouse click does.</summary>
 	private static readonly System.Reflection.MethodInfo ClickMethod = typeof(Control).GetMethod("OnClick",
