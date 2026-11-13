@@ -40,7 +40,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "player_stats_fonts", ReadOnly = true)]
-	[Description("Lists the fonts of the statistics panel shown next to the equipment (name, class, text, title, number, tab and resistance fonts: family, size, unit, style) and the application base font, to check that the panel follows a live font change (settings dialog).")]
+	[Description("Lists the fonts of the statistics panel shown next to the equipment (name, class, text, title, number, tab and resistance fonts: family, size, unit, style) and the application base font, to check that the panel follows a live font change (settings).")]
 	public static string PlayerStatsFonts()
 		=> AutomationHost.OnUi(form =>
 		{
