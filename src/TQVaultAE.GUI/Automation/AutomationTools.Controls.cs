@@ -335,14 +335,14 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_character_editor", Destructive = true)]
-	[Description("Opens the character editor of the selected character, like the Edit button of the stash panel. It is modal: read and change it with control_values and set_control (form 'CharacterEditDialog'), then close it with close_dialog (OK applies the changes in memory; save_files writes them). Work only on claude-* test characters.")]
+	[Description("Shows the character editor of the selected character in place of the main content, like the Edit button of the stash panel, before returning. Read and change it with control_values and set_control (form 'Character Editor'), then leave it with close_dialog('Character Editor', OK or Cancel) (OK applies the changes in memory; save_files writes them). Work only on claude-* test characters.")]
 	public static string OpenCharacterEditor()
 		=> AutomationHost.OnUi(form =>
 		{
 			if (form.AutomationCurrentPlayerFile is null)
 				throw new McpException("No character is selected. Use select_character first.");
 			form.AutomationOpenCharacterEditor();
-			return Serialize(new { opening = "CharacterEditDialog", character = form.AutomationSelectedCharacter });
+			return Serialize(new { view = form.AutomationShownViewName, character = form.AutomationSelectedCharacter });
 		});
 
 	[McpServerTool(Name = "tag_box", Destructive = true)]

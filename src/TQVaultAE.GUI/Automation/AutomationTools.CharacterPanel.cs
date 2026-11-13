@@ -125,10 +125,10 @@ internal static partial class AutomationTools
 			return Serialize(FindCharacterEditor().AutomationStatSources(filter));
 		});
 
-	/// <summary>The open character editor.</summary>
+	/// <summary>The character editor shown in the main window.</summary>
 	private static Views.CharacterEditorUserControl FindCharacterEditor()
-		=> AllControls(FindOpenForm(nameof(Dialogs.CharacterEditDialog))).OfType<Views.CharacterEditorUserControl>().FirstOrDefault()
-			?? throw new McpException("No character editor open.");
+		=> AutomationHost.MainForm?.AutomationShownView(nameof(Views.CharacterEditorUserControl)) as Views.CharacterEditorUserControl
+			?? throw new McpException($"The character editor is not shown (view shown: {AutomationHost.MainForm?.AutomationShownViewName}). Use open_character_editor.");
 
 	/// <summary>Shows the Character page of the open character editor and returns its statistics panel.</summary>
 	private static CharacterStatsPanel ShowCharacterPanel()

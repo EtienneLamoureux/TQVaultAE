@@ -2677,4 +2677,12 @@ A completed relic gets its bonus, as when you stack it by hand.</value>
 	<data name="KeyBindActionSortMenu" xml:space="preserve">
     <value>Sort button: choose the order</value>
   </data>
+	<data name="CharacterViewTitle" xml:space="preserve">
+    <value>Character Editor</value>
+  </data>
+	<data name="CharacterViewDiscardChanges" xml:space="preserve">
+    <value>The character has been changed in the editor.
+
+Leave the editor without applying the changes?</value>
+  </data>
 </root>

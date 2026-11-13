@@ -31,6 +31,7 @@ public partial class MainForm
 		this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 		this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 		this.stashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+		this.stashPanel.EditCharacterClicked += (_, _) => this.ShowCharacterEditorView(this.stashPanel.ShownPlayer);
 
 		this.flowLayoutPanelRightPanels.Controls.Add(this.stashPanel);
 		this.stashPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;

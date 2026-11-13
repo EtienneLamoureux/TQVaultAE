@@ -31,15 +31,23 @@ public partial class MainForm
 	/// <summary>Gets the table that lays out the vault, player and stash panels.</summary>
 	internal TableLayoutPanel AutomationLayoutTable => this.tableLayoutPanelMain;
 
-	/// <summary>The view shown under the toolbar: <c>main</c> (the main content) or <c>settings</c>.</summary>
-	internal string AutomationShownViewName => this.shownSettings is null ? "main" : "settings";
+	/// <summary>
+	/// The view shown under the toolbar: <c>main</c> (the main content), <c>settings</c> or <c>characterEditor</c>.
+	/// </summary>
+	internal string AutomationShownViewName => this.shownView switch
+	{
+		null => "main",
+		Views.SettingsUserControl => "settings",
+		Views.CharacterEditorUserControl => "characterEditor",
+		var other => other.Name,
+	};
 
 	/// <summary>
-	/// The view shown in place of the main content (the settings), when <paramref name="name"/> is part of its title or
-	/// its type name, as the tools find a dialog; null otherwise.
+	/// The view shown in place of the main content (the settings or the character editor), when <paramref name="name"/>
+	/// is part of its title or its type name, as the tools find a dialog; null otherwise.
 	/// </summary>
 	internal Control? AutomationShownView(string name)
-		=> this.shownSettings is { } view
+		=> this.shownView is { } view
 			&& (view.Text.Contains(name, StringComparison.OrdinalIgnoreCase) || string.Equals(view.GetType().Name, name, StringComparison.OrdinalIgnoreCase))
 			? view
 			: null;
@@ -252,13 +260,13 @@ public partial class MainForm
 	internal ComboBoxCharacter AutomationCharacterCombo => this.comboBoxCharacter;
 
 	/// <summary>
-	/// Opens the character editor like the Edit button of the stash panel, after the calling tool has returned
-	/// (the editor is modal).
+	/// Shows the character editor in place of the main content like the Edit button of the stash panel (its click
+	/// handler), before the calling tool returns.
 	/// </summary>
 	internal void AutomationOpenCharacterEditor()
 	{
 		var edit = typeof(StashPanel).GetMethod("EditButton_Click", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
 			?? throw new InvalidOperationException("StashPanel.EditButton_Click not found");
-		this.BeginInvoke(() => edit.Invoke(this.stashPanel, [this.stashPanel, EventArgs.Empty]));
+		edit.Invoke(this.stashPanel, [this.stashPanel, EventArgs.Empty]);
 	}
 }

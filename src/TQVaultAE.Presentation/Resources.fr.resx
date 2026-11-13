@@ -2307,4 +2307,12 @@ Une relique complétée reçoit son bonus, comme quand vous l'empilez à la main
 	<data name="KeyBindActionSortMenu" xml:space="preserve">
     <value>Bouton de tri : choisir l'ordre</value>
   </data>
+	<data name="CharacterViewTitle" xml:space="preserve">
+    <value>Éditeur de personnage</value>
+  </data>
+	<data name="CharacterViewDiscardChanges" xml:space="preserve">
+    <value>Le personnage a été modifié dans l'éditeur.
+
+Quitter l'éditeur sans appliquer les changements ?</value>
+  </data>
 </root>

@@ -268,11 +268,18 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		DisplayPlayerInfo();
 	}
 
+	/// <summary>
+	/// The Edit button under the gold asks for the character editor of <see cref="VaultPanel.ShownPlayer"/>, which the
+	/// main window shows in place of its main content; it calls <see cref="CharacterEdited"/> once the editor is left.
+	/// </summary>
+	internal event EventHandler? EditCharacterClicked;
+
 	private void EditButton_Click(object? sender, EventArgs e)
+		=> this.EditCharacterClicked?.Invoke(this, EventArgs.Empty);
+
+	/// <summary>The character editor was left: the statistics are computed and shown again.</summary>
+	internal void CharacterEdited()
 	{
-		using var dlg = this.Services.Forms.Create<CharacterEditDialog>();
-		dlg.PlayerCollection = this.ShownPlayer;
-		dlg.ShowDialog();
 		this.GetSkillStatBonus();
 		this.DisplayPlayerInfoLastName = null;
 		this.DisplayPlayerInfo();

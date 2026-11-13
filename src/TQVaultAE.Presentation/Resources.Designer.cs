@@ -7346,5 +7346,25 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("KeyBindActionSortMenu", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character Editor.
+        /// </summary>
+        public static string CharacterViewTitle {
+            get {
+                return ResourceManager.GetString("CharacterViewTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The character has been changed in the editor.
+        ///
+        ///Leave the editor without applying the changes?.
+        /// </summary>
+        public static string CharacterViewDiscardChanges {
+            get {
+                return ResourceManager.GetString("CharacterViewDiscardChanges", resourceCulture);
+            }
+        }
     }
 }

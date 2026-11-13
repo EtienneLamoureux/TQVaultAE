@@ -45,8 +45,8 @@ public partial class MainForm
 		if (e.CloseReason == CloseReason.ApplicationExitCall)
 			return;
 
-		// Settings shown: their edits are dropped, after a question when the user closes the window.
-		if (!this.LeaveSettingsView(confirm: e.CloseReason == CloseReason.UserClosing))
+		// Settings or character editor shown: their edits are dropped, after a question when the user closes the window.
+		if (!this.LeaveShownView(confirm: e.CloseReason == CloseReason.UserClosing))
 		{
 			e.Cancel = true;
 			return;
@@ -172,7 +172,7 @@ public partial class MainForm
 	private void MainFormMouseWheel(object? sender, MouseEventArgs e)
 	{
 		// The vault list is hidden with the main content.
-		if (this.shownSettings is not null)
+		if (this.shownView is not null)
 			return;
 
 		// Force a single line regardless of the delta value.
@@ -199,8 +199,8 @@ public partial class MainForm
 	/// <param name="e">KeyEventArgs data</param>
 	private void MainFormKeyDown(object? sender, KeyEventArgs e)
 	{
-		// The keys of the main content sleep while the settings are shown.
-		if (this.shownSettings is not null)
+		// The keys of the main content sleep while another view is shown.
+		if (this.shownView is not null)
 			return;
 
 		var gesture = KeyBindInput.FromKeys(e.KeyData);
@@ -445,9 +445,9 @@ public partial class MainForm
 		if (this.mainView.Size != size)
 			this.mainView.Size = size;
 
-		// The settings take the place of the main content.
-		if (this.shownSettings is { } settings && settings.Bounds != this.mainView.Bounds)
-			settings.Bounds = this.mainView.Bounds;
+		// The other views take the place of the main content.
+		if (this.shownView is { } view && view.Bounds != this.mainView.Bounds)
+			view.Bounds = this.mainView.Bounds;
 	}
 
 	/// <summary>

@@ -30,7 +30,7 @@ namespace TQVaultAE.GUI.Views;
 /// Sized to its content (<see cref="Control.AutoSize"/>) by default; given an area by its host instead (AutoSize off), it
 /// lays its content in the middle, with scroll bars when the area is smaller (<see cref="ScrollableControl.AutoScroll"/>).
 /// </remarks>
-internal sealed partial class SettingsUserControl : UserControl
+internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 {
 	#region Properties & Fields
 
@@ -60,6 +60,12 @@ internal sealed partial class SettingsUserControl : UserControl
 	/// Indicates that any configuration item has been changed
 	/// </summary>
 	public bool ConfigurationChanged => this.editor.ConfigurationChanged;
+
+	/// <inheritdoc/>
+	bool IMainWindowView.HasChanges => this.ConfigurationChanged;
+
+	/// <inheritdoc/>
+	string IMainWindowView.DiscardChangesQuestion => Resources.SettingsDiscardChanges;
 
 	/// <summary>
 	/// Indicates that the settings have been loaded

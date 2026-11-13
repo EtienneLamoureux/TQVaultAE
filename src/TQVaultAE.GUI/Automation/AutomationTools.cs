@@ -76,7 +76,7 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "close_dialog", Destructive = true)]
-	[Description("Answers a modal dialog by pressing one of its buttons, e.g. title 'Default Vault Path', button 'OK'. Works for message boxes and WinForms dialogs, even when they are not in the foreground, and for the settings shown in the main window (title 'Settings': OK or Cancel, pressed after the call returns, since OK may ask to restart).")]
+	[Description("Answers a modal dialog by pressing one of its buttons, e.g. title 'Default Vault Path', button 'OK'. Works for message boxes and WinForms dialogs, even when they are not in the foreground, and for the views shown in the main window: the settings (title 'Settings': OK or Cancel, pressed after the call returns, since OK may ask to restart) and the character editor (title 'Character Editor').")]
 	public static string CloseDialog(
 		[Description("Part of the dialog title (case-insensitive). Empty picks the only dialog that is open.")] string title,
 		[Description("Button text, e.g. OK, Cancel, Yes, No.")] string button)
@@ -920,7 +920,11 @@ internal static partial class AutomationTools
 				return open;
 		}
 
-		throw new McpException($"Unknown capture target '{control}'. Use 'main', 'tooltip', 'characterList[:name]', a panel id ({string.Join(", ", AutomationPanels.List(form).Select(p => p.Id))}), '<panel>.container' or a form title.");
+		// The settings or the character editor shown in the main window, by title or type name.
+		if (form.AutomationShownView(control) is { } view)
+			return view;
+
+		throw new McpException($"Unknown capture target '{control}'. Use 'main', 'tooltip', 'characterList[:name]', a panel id ({string.Join(", ", AutomationPanels.List(form).Select(p => p.Id))}), '<panel>.container', a form title or the title of the view shown in the main window ({form.AutomationShownViewName}).");
 	}
 
 	private static string ItemName(Item item)

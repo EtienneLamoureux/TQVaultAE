@@ -3,6 +3,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Views;
@@ -20,7 +21,7 @@ using Microsoft.Extensions.Logging;
 /// window (it is built for that character only), and leaves it on <see cref="Applied"/> (OK, the edits applied to the
 /// character in memory) or <see cref="Cancelled"/> (Cancel, the edits dropped).
 /// </summary>
-internal sealed partial class CharacterEditorUserControl : UserControl
+internal sealed partial class CharacterEditorUserControl : UserControl, IMainWindowView
 {
 	private struct DifficultData
 	{
@@ -83,7 +84,78 @@ internal sealed partial class CharacterEditorUserControl : UserControl
 		this.ok.Text = Resources.GlobalOK;
 		this.ResetMasteriesScalingButton.Text = Resources.ResetMasteriesButton;
 		this.ResetAttributesScalingButton.Text = Resources.ResetAttributesButton;
+		this.Text = Resources.CharacterViewTitle;
+
+		// Around the game frame, the marble of the other views (the settings), tiled to any area.
+		MarbleBackground.ApplyTo(this);
 	}
+
+	/// <inheritdoc/>
+	public bool HasChanges => this._loaded
+		&& (this.CurrentState() != this._startState || this._skills?.Changed == true || this._skills?.MasteriesChanged == true);
+
+	/// <inheritdoc/>
+	public string DiscardChangesQuestion => Resources.CharacterViewDiscardChanges;
+
+	/// <summary>The values of the editors, to tell whether the user changed any.</summary>
+	private readonly record struct EditorState(int Level, string Xp, int Difficulty, int SkillPoints, int AttributePoints, int Health, int Mana, int Strength, int Intelligence, int Dexterity);
+
+	/// <summary>The values of the editors once the character is shown.</summary>
+	private EditorState _startState;
+
+	private EditorState CurrentState() => new(
+		Convert.ToInt32(this.levelNumericUpDown.Value),
+		this.xpTextBox.Text,
+		// Ticking Enable leveling selects the difficulty unlocked: no change until another one is chosen.
+		this.difficultlyComboBox.Enabled ? this.difficultlyComboBox.SelectedIndex : this.Info.DifficultyUnlocked,
+		Convert.ToInt32(this.skillPointsNumericUpDown.Value),
+		Convert.ToInt32(this.attributeNumericUpDown.Value),
+		Convert.ToInt32(this.healthUpDown.Value),
+		Convert.ToInt32(this.manacUpDown.Value),
+		Convert.ToInt32(this.strengthUpDown.Value),
+		Convert.ToInt32(this.intelligenceUpDown.Value),
+		Convert.ToInt32(this.dexterityUpDown.Value));
+
+	/// <summary>
+	/// Escape presses Cancel, as in a dialog: once the focused control left it (an open drop-down list closes first).
+	/// </summary>
+	protected override bool ProcessDialogKey(Keys keyData)
+	{
+		if (keyData == Keys.Escape)
+		{
+			this.cancel.PerformClick();
+			return true;
+		}
+
+		return base.ProcessDialogKey(keyData);
+	}
+
+	/// <summary>
+	/// Scrolled (an area smaller than the editor), the editor stays where the user put it when a control takes the
+	/// focus: it jumped to the first control at each opening, and to any control clicked.
+	/// </summary>
+	protected override Point ScrollToControl(Control activeControl) => this.DisplayRectangle.Location;
+
+	/// <summary>The tiled marble, painted on the area asked only (<see cref="MarbleBackground.TryPaint"/>).</summary>
+	protected override void OnPaintBackground(PaintEventArgs e)
+	{
+		if (!MarbleBackground.TryPaint(this, e))
+			base.OnPaintBackground(e);
+	}
+
+	/// <summary>
+	/// Once built, the editor keeps its size: its game frame is drawn at the DPI it was built for, which scaling its
+	/// controls would not change (a zoom of the main window, or a move to a monitor of another DPI, while it is shown).
+	/// It is built for one opening, so the next one takes the new scale.
+	/// </summary>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+	{
+		if (!this._loaded)
+			base.ScaleControl(factor, specified);
+	}
+
+	/// <inheritdoc cref="ScaleControl"/>
+	protected override bool ScaleChildren => !this._loaded;
 
 
 	/// <summary>
@@ -236,6 +308,7 @@ internal sealed partial class CharacterEditorUserControl : UserControl
 		this._startAttributes = [.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))];
 		this.FitToFrame();
 		_loaded = true;
+		this._startState = this.CurrentState();
 	}
 
 	private void LevelNumericUpDown_ValueChanged(object? sender, EventArgs e)
