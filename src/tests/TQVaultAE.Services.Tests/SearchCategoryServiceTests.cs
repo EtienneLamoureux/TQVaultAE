@@ -239,10 +239,14 @@ public class SearchCategoryServiceTests
 					SearchCategory.SuffixAttributes => f => f.SuffixAttributes,
 					_ => throw new ArgumentOutOfRangeException(nameof(category)),
 				};
+				// The attribute lists also write each run of spaces as one (a pet's "720  Health").
+				bool attributes = category is SearchCategory.ItemAttributes or SearchCategory.BaseAttributes
+					or SearchCategory.PrefixAttributes or SearchCategory.SuffixAttributes;
 				groups = from id in db
 						 from att in field(id.LoadedFriendlyNames)
 						 where !string.IsNullOrWhiteSpace(att)
-						 let attClean = att.RemoveAllTQTags().Trim()
+						 let trimmed = att.RemoveAllTQTags().Trim()
+						 let attClean = attributes ? trimmed.CollapseWhiteSpace() : trimmed
 						 where !string.IsNullOrEmpty(attClean)
 						 orderby attClean
 						 group id by attClean into grp
@@ -331,6 +335,18 @@ public class SearchCategoryServiceTests
 		var entries = this._service.BuildCategory(category, [item]);
 
 		entries.Select(e => e.DisplayValue).Should().BeEquivalentTo(["Healing Light (Activated on low health)", "+50 Health"]);
+	}
+
+	[Fact]
+	public void BuildCategory_Attributes_WriteEachRunOfSpacesAsOne()
+	{
+		// A pet's statistics keep the game's text, "720  Health", in the tool tip; the search lists "720 Health".
+		var pet = Result(new Item(), f => f.BaseAttributes = ["{^W}720  Health"]);
+		var other = Result(new Item(), f => f.BaseAttributes = ["720 Health"]);
+
+		var entries = this._service.BuildCategory(SearchCategory.BaseAttributes, [pet, other]);
+
+		entries.Should().ContainSingle().Which.DisplayValue.Should().Be("720 Health");
 	}
 
 	[Fact]

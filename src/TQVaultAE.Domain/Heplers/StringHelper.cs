@@ -368,6 +368,9 @@ public static partial class StringHelper
 	[GeneratedRegex(@"\s+")]
 	private static partial Regex AllContiguousSpaceRegEx();
 
+	/// <summary>Each run of white space (spaces, line breaks) becomes one space: "720  Health" reads "720 Health".</summary>
+	public static string CollapseWhiteSpace(this string text) => AllContiguousSpaceRegEx().Replace(text, " ");
+
 	[GeneratedRegex(TQColorHelper.RegExStartingColorTagOrEmpty + @"(?<Content>.+)")]
 	private static partial Regex InsertAfterColorPrefixRegEx();
 	/// <summary>

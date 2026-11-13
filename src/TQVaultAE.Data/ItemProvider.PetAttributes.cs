@@ -32,15 +32,10 @@ public partial class ItemProvider
 	}
 
 	/// <summary>
-	/// The format of a pet statistic line ("{%.0f0}  Health"), spaced as the game writes it: the two spaces after the value
-	/// become one leading space and one inside (" 720 Health"). A text without two spaces is kept (the French "{%.0f0} de vie").
+	/// The format of a pet statistic line, the game's text as it is ("{%.0f0}  Health"), or <paramref name="fallback"/>.
 	/// </summary>
 	private string PetStatFormat(string tag, string fallback)
-	{
-		var format = TranslationService.TryTranslateXTag(tag, out var text) ? ItemAttributeProvider.ConvertFormat(text) : fallback;
-		int gap = format.IndexOf("  ", StringComparison.Ordinal);
-		return gap < 0 ? format : string.Concat(" ", format.AsSpan(0, gap), format.AsSpan(gap + 1));
-	}
+		=> TranslationService.TryTranslateXTag(tag, out var text) ? ItemAttributeProvider.ConvertFormat(text) : fallback;
 
 	/// <summary>
 	/// Used for showing the pet statistics

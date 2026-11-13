@@ -215,7 +215,8 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 		}
 
 		/// <summary>
-		/// Adds the attribute lines of an item, each without its TQ tags and trimmed, leaving out empty ones and those
+		/// Adds the attribute lines of an item, each without its TQ tags, trimmed and on one line with single spaces (a pet's
+		/// "720  Health", the game's text, lists "720 Health"), leaving out empty ones and those
 		/// that are text, not attributes (a granted skill's description, a header): they are no filter.
 		/// </summary>
 		public void AddAttributes(string[] raws, SearchResult result)
@@ -229,7 +230,7 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 				var clean = raw.RemoveAllTQTags().Trim();
 				// A line written on two lines (a granted skill's activation, then its chance) is one entry on one line.
 				if (!names.IsTextLine(clean))
-					this.AddIfNotEmpty(clean.Replace('\n', ' '), result);
+					this.AddIfNotEmpty(clean.CollapseWhiteSpace(), result);
 			}
 		}
 
