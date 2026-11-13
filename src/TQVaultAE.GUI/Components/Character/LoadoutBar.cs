@@ -43,8 +43,8 @@ public sealed class LoadoutBarEventArgs(LoadoutBarAction action, string? name) :
 
 /// <summary>
 /// The loadouts of the shown character, under the gold of the statistics panel: a drop-down of their names in the gold
-/// box of the character window, the [+] button of the attributes to add one, and a Load button in the look of the
-/// attributes' Undo button. The right-click menu holds every action. Everything is drawn at the panel's scale.
+/// box of the character window, the [+] button of the attributes to add one, and the game's gold "next" arrow to load
+/// the chosen one. The right-click menu holds every action. Everything is drawn at the panel's scale.
 /// </summary>
 public sealed class LoadoutBar : Control
 {
@@ -54,10 +54,13 @@ public sealed class LoadoutBar : Control
 	private const string PlusUp = """InGameUI\CharacterScreen\StatIncrementButtonUp01.tex""";
 	private const string PlusOver = """InGameUI\CharacterScreen\StatIncrementButtonOver01.tex""";
 	private const string PlusDown = """InGameUI\CharacterScreen\StatIncrementButtonDown01.tex""";
-	private const string ButtonUp = """XPack\UI\Character\ButtonAttributeUndo01Up.tex""";
-	private const string ButtonOver = """XPack\UI\Character\ButtonAttributeUndo01Over.tex""";
-	private const string ButtonDown = """XPack\UI\Character\ButtonAttributeUndo01Down.tex""";
-	private const string ButtonDisabled = """XPack\UI\Character\ButtonAttributeUndo01Disable.tex""";
+	private const string LoadUp = """InGameUI\tutorial\buttonnextup01.tex""";
+	private const string LoadOver = """InGameUI\tutorial\buttonnextover01.tex""";
+	private const string LoadDown = """InGameUI\tutorial\buttonnextdown01.tex""";
+	private const string LoadDisabled = """InGameUI\tutorial\buttonnextdisable01.tex""";
+
+	/// <summary>Width over height of the "next" arrow pictures (16 x 20).</summary>
+	private const float LoadAspect = 16F / 20F;
 
 	/// <summary>Height of the bar at scale 1: the gold box of the character window.</summary>
 	public const int ReferenceHeight = 22;
@@ -66,7 +69,6 @@ public sealed class LoadoutBar : Control
 	private const int BoxCorner = 4;
 
 	private static readonly Color Grey = Color.FromArgb(190, 190, 190);
-	private static readonly Color Disabled = Color.FromArgb(110, 110, 110);
 
 	private readonly IUIService _uiService;
 	private readonly Bitmap _box = Images.CharacterNumberBox;
@@ -158,14 +160,17 @@ public sealed class LoadoutBar : Control
 
 	private int Gap => Math.Max(1, Convert.ToInt32(4 * this._scale));
 
-	/// <summary>The Load button, the attributes' Undo button stretched to the bar's height.</summary>
+	/// <summary>Height of the picture buttons ([+] and Load): the bar's height less a margin.</summary>
+	private int IconHeight => Math.Max(1, this.Height - Convert.ToInt32(4 * this._scale));
+
+	/// <summary>The Load button, the "next" arrow at the height of the [+] button, at the right end.</summary>
 	internal Rectangle LoadBounds
 	{
 		get
 		{
-			int height = this.Height;
-			int width = Convert.ToInt32(height * 59F / 19F);
-			return new Rectangle(this.Width - width, 0, width, height);
+			int height = this.IconHeight;
+			int width = Math.Max(1, Convert.ToInt32(height * LoadAspect));
+			return new Rectangle(this.Width - width, (this.Height - height) / 2, width, height);
 		}
 	}
 
@@ -174,7 +179,7 @@ public sealed class LoadoutBar : Control
 	{
 		get
 		{
-			int size = Math.Max(1, this.Height - Convert.ToInt32(4 * this._scale));
+			int size = this.IconHeight;
 			return new Rectangle(this.LoadBounds.Left - this.Gap - size, (this.Height - size) / 2, size, size);
 		}
 	}
@@ -341,15 +346,23 @@ public sealed class LoadoutBar : Control
 		TextRenderer.DrawText(g, text, font, textBounds, this.Selected is null ? Grey : Color.White
 			, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
 
-		bool canAdd = this.CanAct(LoadoutBarAction.Add);
-		this.DrawPicture(g, !canAdd ? PlusUp : this._pressed == Part.Add ? PlusDown : this._hovered == Part.Add ? PlusOver : PlusUp, this.AddBounds, !canAdd);
+		this.DrawIconButton(g, Part.Add, this.AddBounds, this.CanAct(LoadoutBarAction.Add), PlusUp, PlusOver, PlusDown);
+		this.DrawIconButton(g, Part.Load, this.LoadBounds, this.CanAct(LoadoutBarAction.Load), LoadUp, LoadOver, LoadDown, LoadDisabled);
+	}
 
-		bool canLoad = this.CanAct(LoadoutBarAction.Load);
-		var load = this.LoadBounds;
-		this.DrawPicture(g, !canLoad ? ButtonDisabled : this._pressed == Part.Load ? ButtonDown : this._hovered == Part.Load ? ButtonOver : ButtonUp, load);
-		// The text of the gold buttons, as on the Edit button.
-		TextRenderer.DrawText(g, Resources.LoadoutLoad, font, load, canLoad ? Theme.ButtonText : Disabled
-			, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
+	/// <summary>
+	/// One of the bar's picture buttons, with the game picture of its state: pressed, under the mouse, or up; when it
+	/// cannot be used, its disabled picture, or the up picture dimmed for a button that has none.
+	/// </summary>
+	private void DrawIconButton(Graphics g, Part part, Rectangle bounds, bool enabled, string up, string over, string down, string? disabled = null)
+	{
+		if (!enabled)
+		{
+			this.DrawPicture(g, disabled ?? up, bounds, greyed: disabled is null);
+			return;
+		}
+
+		this.DrawPicture(g, this._pressed == part ? down : this._hovered == part ? over : up, bounds);
 	}
 
 	/// <summary>The gold box of the character window, its corners kept and its edges stretched to the bounds.</summary>
