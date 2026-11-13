@@ -328,8 +328,11 @@ public partial class VaultForm
 		float scale = this.UIService?.Scale ?? 1.0F;
 		var small = new Size((int)Math.Round(CaptionButtonSize * scale), (int)Math.Round(CaptionButtonSize * scale));
 		this.buttonClose.Size = new Size((int)Math.Round(CloseButtonSize * scale), (int)Math.Round(CloseButtonSize * scale));
-		this.DrawCloseButton();
 		this.buttonMaximize.Size = this.ButtonScaleTo1.Size = this.buttonMinimize.Size = small;
+		this.DrawCaptionButton(this.buttonClose, CaptionButtonArt.Glyph.Close);
+		this.DrawCaptionButton(this.buttonMaximize, CaptionButtonArt.Glyph.Window);
+		this.DrawCaptionButton(this.ButtonScaleTo1, CaptionButtonArt.Glyph.Window);
+		this.DrawCaptionButton(this.buttonMinimize, CaptionButtonArt.Glyph.Minimize);
 
 		this.buttonClose.Text = Resources.GlobalClose;
 		this.buttonClose.Location = new Point(
@@ -357,28 +360,29 @@ public partial class VaultForm
 		}
 	}
 
-	/// <summary>The size the close button's pictures were drawn at; 0 before the first drawing.</summary>
-	private int closeButtonArtSize;
+	/// <summary>The size each caption button's pictures were drawn at; a button not drawn yet is missing.</summary>
+	private readonly Dictionary<ScalingButton, int> captionButtonArtSizes = [];
 
 	/// <summary>
-	/// Draws the close button's pictures at the size it is shown (<see cref="CloseButtonArt"/>), so it stays sharp at
+	/// Draws a caption button's pictures at the size it is shown (<see cref="CaptionButtonArt"/>), so it stays sharp at
 	/// any zoom and screen DPI; again only when that size changes.
 	/// </summary>
-	private void DrawCloseButton()
+	private void DrawCaptionButton(ScalingButton button, CaptionButtonArt.Glyph glyph)
 	{
-		int size = this.buttonClose.Width;
-		if (size <= 0 || size == this.closeButtonArtSize)
+		int size = button.Width;
+		bool drawn = this.captionButtonArtSizes.TryGetValue(button, out int drawnSize);
+		if (size <= 0 || (drawn && size == drawnSize))
 			return;
 
-		var old = this.closeButtonArtSize == 0 ? null : new[] { this.buttonClose.UpBitmap, this.buttonClose.OverBitmap, this.buttonClose.DownBitmap };
-		this.buttonClose.UpBitmap = CloseButtonArt.Render(size, CloseButtonArt.State.Up);
-		this.buttonClose.OverBitmap = CloseButtonArt.Render(size, CloseButtonArt.State.Over);
-		this.buttonClose.DownBitmap = CloseButtonArt.Render(size, CloseButtonArt.State.Down);
-		var shown = this.buttonClose.Image;
-		this.buttonClose.Image = shown == old?[1] ? this.buttonClose.OverBitmap
-			: shown == old?[2] ? this.buttonClose.DownBitmap
-			: this.buttonClose.UpBitmap;
-		this.closeButtonArtSize = size;
+		var old = drawn ? new[] { button.UpBitmap, button.OverBitmap, button.DownBitmap } : null;
+		button.UpBitmap = CaptionButtonArt.Render(glyph, size, CaptionButtonArt.State.Up);
+		button.OverBitmap = CaptionButtonArt.Render(glyph, size, CaptionButtonArt.State.Over);
+		button.DownBitmap = CaptionButtonArt.Render(glyph, size, CaptionButtonArt.State.Down);
+		var shown = button.Image;
+		button.Image = shown == old?[1] ? button.OverBitmap
+			: shown == old?[2] ? button.DownBitmap
+			: button.UpBitmap;
+		this.captionButtonArtSizes[button] = size;
 
 		if (old is not null)
 			foreach (var bitmap in old)
