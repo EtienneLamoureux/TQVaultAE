@@ -345,7 +345,8 @@ public partial class VaultForm : Form, IScalingControl
 
 	/// <summary>
 	/// A window opened from a topmost one (Settings, Advanced Search, the item dialogs) is topmost too: otherwise it
-	/// opens behind its owner and a modal one leaves the application blocked with nothing visible.
+	/// opens behind its owner and a modal one leaves the application blocked with nothing visible. A window sized around
+	/// its content (<see cref="FitAround"/>) fits it once more, laid out at its final DPI.
 	/// </summary>
 	protected override void OnLoad(EventArgs e)
 	{
@@ -353,6 +354,7 @@ public partial class VaultForm : Form, IScalingControl
 			this.TopMost = true;
 
 		base.OnLoad(e);
+		this.FitToContent();
 	}
 
 	/// <summary>

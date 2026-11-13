@@ -213,6 +213,33 @@ public partial class VaultForm
 	}
 
 	/// <summary>
+	/// The control the window is sized around, set by <see cref="FitAround"/>.
+	/// </summary>
+	private Control? fitContent;
+
+	/// <summary>
+	/// Sizes the window around <paramref name="content"/> (its inner table, at its place), plus the padding on the right
+	/// and bottom, now and each time the content changes size (a text, a font, a DPI change), after a DPI change and on
+	/// load. Not Form.AutoSize: it measures the close button of the custom border too, which sits on the right edge, so
+	/// each layout pass widened the window by the button's margins and it never shrank back.
+	/// </summary>
+	protected void FitAround(Control content)
+	{
+		this.fitContent = content;
+		content.SizeChanged += (_, _) => this.FitToContent();
+		this.FitToContent();
+	}
+
+	/// <summary>
+	/// Sizes the window around the content given to <see cref="FitAround"/>; nothing without one.
+	/// </summary>
+	private void FitToContent()
+	{
+		if (this.fitContent is { } content)
+			this.ClientSize = new Size(content.Right + this.Padding.Right, content.Bottom + this.Padding.Bottom);
+	}
+
+	/// <summary>
 	/// The window moved to a monitor of another DPI and Windows Forms scaled it: the sizes kept for the user's resizing
 	/// follow, else the end of the move would read the new size as a zoom.
 	/// </summary>
@@ -222,6 +249,10 @@ public partial class VaultForm
 		base.OnDpiChanged(e);
 		if (e.Cancel || factor == 1.0F)
 			return;
+
+		// Windows gives the window its suggested size after the layout was scaled, over the fit made while the content
+		// changed: fit again once it is applied.
+		this.FitToContent();
 
 		Size Scaled(Size size) => new((int)Math.Round(size.Width * factor), (int)Math.Round(size.Height * factor));
 		this.OriginalFormSize = Scaled(this.OriginalFormSize);

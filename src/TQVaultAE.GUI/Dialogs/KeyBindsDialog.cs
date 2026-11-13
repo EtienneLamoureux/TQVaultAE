@@ -221,7 +221,6 @@ internal sealed partial class KeyBindsDialog : VaultForm
 			Margin = new Padding(0),
 		};
 		this.layout.Controls.AddRange([this.listPanel, this.labelStatus, buttons]);
-		this.layout.SizeChanged += (_, _) => this.FitToContent();
 		CaravanFrame.FrameAround(this.listPanel);
 
 		this.SuspendLayout();
@@ -250,7 +249,7 @@ internal sealed partial class KeyBindsDialog : VaultForm
 		this.PerformLayout();
 
 		this.RefreshCells();
-		this.FitToContent();
+		this.FitAround(this.layout);
 	}
 
 	/// <summary>
@@ -263,29 +262,18 @@ internal sealed partial class KeyBindsDialog : VaultForm
 	}
 
 	/// <summary>
-	/// The window around its table, as the settings dialog does: not Form.AutoSize, which kept the width the window had
-	/// before the DPI scaling.
+	/// The list follows the DPI; the window follows its table (<see cref="VaultForm.FitAround"/>).
 	/// </summary>
-	private void FitToContent()
-	{
-		if (this.layout is null)
-			return;
-
-		this.ClientSize = new Size(this.layout.Right + this.Padding.Right, this.layout.Bottom + this.Padding.Bottom);
-	}
-
 	protected override void OnDpiChanged(DpiChangedEventArgs e)
 	{
 		base.OnDpiChanged(e);
 		this.FitList();
-		this.FitToContent();
 	}
 
 	protected override void OnLoad(EventArgs e)
 	{
 		base.OnLoad(e);
 		this.FitList();
-		this.FitToContent();
 	}
 
 	#region Capture

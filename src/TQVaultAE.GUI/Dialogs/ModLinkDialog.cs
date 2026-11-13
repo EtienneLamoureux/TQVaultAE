@@ -149,7 +149,6 @@ internal sealed class ModLinkDialog : VaultForm
 			AutoSize = true,
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
 			ColumnCount = 1,
-			Dock = DockStyle.Fill,
 			Margin = new Padding(0),
 		};
 		layout.Controls.AddRange([this.labelCharacter, this.labelState, this.labelMods, this.listBoxMods, this.labelFolder, this.labelSuggestion, buttons]);
@@ -158,8 +157,6 @@ internal sealed class ModLinkDialog : VaultForm
 		this.SuspendLayout();
 		this.AutoScaleDimensions = new SizeF(96F, 96F);
 		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.AutoSize = true;
-		this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 		this.BackColor = Color.FromArgb(46, 31, 21);
 		this.CancelButton = this.buttonClose;
 		this.Font = this.FontService.GetFontLight(11F, zoom);
@@ -175,11 +172,15 @@ internal sealed class ModLinkDialog : VaultForm
 		var border = CustomBorderThickness;
 		int gap = Zoomed(10);
 		this.Padding = new Padding(border.Left + gap, border.Top + Zoomed(4), border.Right + gap, border.Bottom + Zoomed(6));
+		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
 		this.Controls.Add(layout);
 		this.DrawCustomBorder = true;
 		CaravanLook.Apply(this, layout, buttons);
 		this.ResumeLayout(false);
 		this.PerformLayout();
+
+		// The window follows its table: a longer state or a suggestion changes its height.
+		this.FitAround(layout);
 	}
 
 	private InstalledMod? SelectedMod => this.listBoxMods.SelectedItem as InstalledMod;

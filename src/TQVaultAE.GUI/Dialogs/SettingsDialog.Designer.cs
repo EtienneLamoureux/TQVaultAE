@@ -1398,7 +1398,7 @@ internal partial class SettingsDialog
 		MaximizeBox = false;
 		MinimizeBox = false;
 		Name = "SettingsDialog";
-		Padding = new Padding(5, 5, 5, 0);
+		Padding = new Padding(5, 5, 10, 5);
 		ShowIcon = false;
 		ShowInTaskbar = false;
 		SizeGripStyle = SizeGripStyle.Hide;
