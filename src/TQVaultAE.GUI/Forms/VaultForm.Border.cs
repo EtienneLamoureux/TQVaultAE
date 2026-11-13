@@ -334,10 +334,13 @@ public partial class VaultForm
 		this.DrawCaptionButton(this.ButtonScaleTo1, CaptionButtonArt.Glyph.Window);
 		this.DrawCaptionButton(this.buttonMinimize, CaptionButtonArt.Glyph.Minimize);
 
+		// The border pictures start with one black line outside their gold line: the buttons sit on the gold line, the
+		// close button in the top right corner.
+		int edge = this.topBorder is null ? 0 : Math.Max(1, (int)Math.Round(this.topBorder.Height / (float)BorderTopDesignHeight));
 		this.buttonClose.Text = Resources.GlobalClose;
 		this.buttonClose.Location = new Point(
-			this.ClientRectangle.Right - (this.buttonClose.Width + (this.sideBorder?.Width ?? 0))
-			, this.ClientRectangle.Top);
+			this.ClientRectangle.Right - edge - this.buttonClose.Width
+			, this.ClientRectangle.Top + edge);
 
 		this.buttonMaximize.Text = Resources.GlobalMaximize;
 		this.ButtonScaleTo1.Text = Resources.GlobalNormalize;
@@ -355,10 +358,20 @@ public partial class VaultForm
 			if (!this.DrawCustomBorder || !shown)
 				continue;
 
-			button.Location = new Point(right - gap - button.Width, this.ClientRectangle.Top);
+			button.Location = new Point(right - gap - button.Width, this.ClientRectangle.Top + edge);
 			right = button.Left;
 		}
+
+		// A zoom moves the controls under the buttons before the buttons: repaint them whole, or a corner keeps what
+		// the moved controls left there.
+		this.buttonClose.Invalidate();
+		this.buttonMaximize.Invalidate();
+		this.ButtonScaleTo1.Invalidate();
+		this.buttonMinimize.Invalidate();
 	}
+
+	/// <summary>The height of <see cref="Images.BorderTop"/>, in pixels.</summary>
+	private const int BorderTopDesignHeight = 17;
 
 	/// <summary>The size each caption button's pictures were drawn at; a button not drawn yet is missing.</summary>
 	private readonly Dictionary<ScalingButton, int> captionButtonArtSizes = [];
