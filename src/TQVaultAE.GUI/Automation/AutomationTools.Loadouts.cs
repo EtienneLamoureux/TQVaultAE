@@ -64,6 +64,9 @@ internal static partial class AutomationTools
 					case "delete":
 						form.BeginInvoke(() => form.DeleteLoadout(target));
 						break;
+					case "load":
+						form.BeginInvoke(() => form.LoadLoadout(target));
+						break;
 					default:
 						throw new McpException($"Unknown action '{action}'.");
 				}

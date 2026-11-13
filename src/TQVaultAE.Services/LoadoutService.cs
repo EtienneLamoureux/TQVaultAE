@@ -14,6 +14,8 @@ namespace TQVaultAE.Services;
 public partial class LoadoutService(
 	ILogger<LoadoutService> log
 	, IItemProvider itemProvider
+	, IItemMovementService itemMovementService
+	, IItemDatabaseService itemDatabaseService
 	, SessionContext sessionContext
 	, IFileIO fileIO
 	, IPathIO pathIO
@@ -31,6 +33,8 @@ public partial class LoadoutService(
 
 	private readonly ILogger Log = log;
 	private readonly IItemProvider ItemProvider = itemProvider;
+	private readonly IItemMovementService ItemMovementService = itemMovementService;
+	private readonly IItemDatabaseService ItemDatabaseService = itemDatabaseService;
 	private readonly SessionContext Session = sessionContext;
 	private readonly IFileIO FileIO = fileIO;
 	private readonly IPathIO PathIO = pathIO;

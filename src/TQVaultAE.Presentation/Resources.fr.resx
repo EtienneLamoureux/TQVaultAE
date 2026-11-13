@@ -2387,4 +2387,7 @@ Quitter l'éditeur sans appliquer les changements ?</value>
 	<data name="LoadoutResultsContainer" xml:space="preserve">
     <value>Tenue</value>
   </data>
+	<data name="LoadoutEquipmentLocked" xml:space="preserve">
+    <value>Le réglage « {0} » est activé : l'équipement ne peut pas changer.</value>
+  </data>
 </root>

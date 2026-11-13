@@ -68,4 +68,8 @@ public enum LoadoutLoadOutcome
 /// <param name="ToBag">Pieces taken off and stored in the bag (or that would have been, for <see cref="LoadoutLoadOutcome.NoRoom"/>).</param>
 /// <param name="Moved">Worn pieces that changed slot.</param>
 /// <param name="Copied">Loadout pieces copied in.</param>
-public sealed record LoadoutLoadResult(LoadoutLoadOutcome Outcome, int ToBag = 0, int Moved = 0, int Copied = 0);
+public sealed record LoadoutLoadResult(LoadoutLoadOutcome Outcome, int ToBag = 0, int Moved = 0, int Copied = 0)
+{
+	/// <summary>The pieces stored in the bag.</summary>
+	public IReadOnlyList<Domain.Entities.Item> Stored { get; init; } = [];
+}

@@ -4,6 +4,7 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Forms;
@@ -31,6 +32,9 @@ public partial class MainForm
 				break;
 			case LoadoutBarAction.Delete when e.Name is not null:
 				this.DeleteLoadout(e.Name);
+				break;
+			case LoadoutBarAction.Load when e.Name is not null:
+				this.LoadLoadout(e.Name);
 				break;
 		}
 	}
@@ -180,6 +184,58 @@ public partial class MainForm
 			return false;
 
 		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Copy(loadouts, loadout.Name, newName), newName.Trim(), newName);
+	}
+
+	/// <summary>
+	/// Wears a loadout: the pieces taken off go to the bag shown in the vault panel; without room for all of them, nothing
+	/// changes and the user is told. Asks first when the game runs.
+	/// </summary>
+	/// <param name="name">The loadout.</param>
+	internal bool LoadLoadout(string name)
+	{
+		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
+			return false;
+
+		if (this.Services.Settings.PlayerReadonly)
+		{
+			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
+			return false;
+		}
+
+		int bagNumber = this.vaultPanel.CurrentBag;
+		if (this.vaultPanel.Player is not { } vault || vault.GetSack(bagNumber) is not { } bag)
+		{
+			this.UIService.NotifyUser(Resources.LoadoutNoVault, TQColor.Red);
+			return false;
+		}
+
+		if (!this.GoOnThoughGameRuns())
+			return false;
+
+		this.PutBackHeldItem();
+		var bagSize = this.vaultPanel.SackPanel.SackSize;
+		var place = this.Services.ItemMovementService.PlaceIn(vault, SackType.Vault, bagNumber);
+		var result = this.Services.Loadouts.Load(loadouts, loadout.Name, player, bag, bagSize, place);
+		switch (result.Outcome)
+		{
+			case LoadoutLoadOutcome.NoRoom:
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutNoRoom, bagNumber + 1, vault.PlayerName, result.ToBag), TQColor.Red);
+				return false;
+			case LoadoutLoadOutcome.AlreadyWorn:
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, loadout.Name));
+				return false;
+			case LoadoutLoadOutcome.Refused:
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
+				return false;
+		}
+
+		// The pieces stored take the vault's map rules, as a dropped item; then the panels show the new state.
+		this.vaultPanel.AdoptVaultMod(bag, result.Stored, bagSize);
+		BagButtonTooltip.InvalidateCache(bag);
+		this.vaultPanel.Refresh();
+		this.stashPanel.EquipmentReplaced();
+		this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoaded, loadout.Name, result.ToBag, bagNumber + 1, vault.PlayerName, result.Copied));
+		return true;
 	}
 
 	/// <summary>Deletes a loadout, once confirmed.</summary>

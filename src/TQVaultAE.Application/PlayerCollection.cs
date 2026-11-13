@@ -104,7 +104,7 @@ public class PlayerCollection : IEnumerable<SackCollection>
 
 	/// <summary>
 	/// Gets or sets whether the second weapon set (rows 2 and 3 of the weapon slots) is the one in hand: the save's
-	/// <c>useAlternate</c> (<c>EquipmentCtrl</c>). Read only: the save keeps its own value.
+	/// <c>useAlternate</c> (<c>EquipmentCtrl</c>). Loading a loadout sets it; the save writes it only when it changed.
 	/// </summary>
 	public bool UseAlternate { get; set; }
 

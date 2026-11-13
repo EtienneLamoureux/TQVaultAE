@@ -95,6 +95,18 @@ public partial class StashPanel
 	}
 
 	/// <summary>
+	/// The equipment changed outside the panels (a loadout loaded): the attributes the requirements count and the
+	/// statistics are computed again, and the panel drawn again.
+	/// </summary>
+	public void EquipmentReplaced()
+	{
+		this.GetSkillStatBonus();
+		this.DisplayPlayerInfoLastName = null;
+		this.equipmentPanel.Invalidate();
+		this.Refresh();
+	}
+
+	/// <summary>
 	/// Shows the loadouts of the shown character in the bar: those read with it, listed only for a read-only character
 	/// or a file that could not be read.
 	/// </summary>

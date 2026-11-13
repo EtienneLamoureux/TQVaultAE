@@ -20,13 +20,15 @@ public sealed partial class LoadoutServiceTests : IDisposable
 
 	private readonly string _save = Path.Combine(Path.GetTempPath(), $"tqvault-loadouts-{Guid.NewGuid():N}", "_HeroA");
 	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemDatabaseService> _database = new();
 	private readonly SessionContext _session = new();
 	private readonly LoadoutService _service;
 
 	public LoadoutServiceTests()
 	{
 		Directory.CreateDirectory(this._save);
-		this._service = new LoadoutService(new Mock<ILogger<LoadoutService>>().Object, this._itemProvider.Object, this._session, new FileIO(), new PathIO());
+		this._service = new LoadoutService(new Mock<ILogger<LoadoutService>>().Object, this._itemProvider.Object
+			, new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object), this._database.Object, this._session, new FileIO(), new PathIO());
 	}
 
 	public void Dispose()
@@ -52,6 +54,8 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		RelicBonus2Id = RecordId.Empty,
 		Var2 = 2023419968,
 		Seed = seed,
+		Width = 1,
+		Height = 2,
 		Mod = CharacterMod,
 		ModOrigin = ModOrigin.Inherited,
 	};

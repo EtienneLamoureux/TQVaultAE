@@ -21,6 +21,13 @@ public sealed class ActiveWeaponSetTests : IDisposable
 		return chr;
 	}
 
+	/// <summary>The useAlternate value written in a player file.</summary>
+	private static int SavedUseAlternate(byte[] chr)
+	{
+		var key = Encoding.ASCII.GetBytes("useAlternate");
+		return BitConverter.ToInt32(chr, chr.AsSpan().IndexOf(key) + key.Length);
+	}
+
 	[Fact]
 	public void LoadFile_UseAlternate_IsRead()
 	{
@@ -36,6 +43,29 @@ public sealed class ActiveWeaponSetTests : IDisposable
 		var encoded = this._fixtures.PlayerProvider.Encode(pc);
 
 		this._fixtures.Reload(encoded).UseAlternate.Should().BeTrue();
+	}
+
+	[Theory]
+	[InlineData(0, true)]
+	[InlineData(1, false)]
+	public void Encode_WeaponSetInHandChanged_WritesIt(int saved, bool inHand)
+	{
+		var pc = this._fixtures.Reload(WithUseAlternate(saved));
+		pc.UseAlternate = inHand;
+
+		var encoded = this._fixtures.PlayerProvider.Encode(pc);
+
+		SavedUseAlternate(encoded).Should().Be(inHand ? 1 : 0);
+		encoded.Length.Should().Be(WithUseAlternate(saved).Length);
+	}
+
+	[Fact]
+	public void Encode_UnchangedNonZeroValue_KeepsItsBytes()
+	{
+		// Any value but 0 means the second set: an unchanged one is not rewritten as 1.
+		var pc = this._fixtures.Reload(WithUseAlternate(7));
+
+		SavedUseAlternate(this._fixtures.PlayerProvider.Encode(pc)).Should().Be(7);
 	}
 
 	[Theory]

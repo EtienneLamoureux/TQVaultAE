@@ -263,6 +263,12 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		// In between segment
 		int betweenLen = equipmentBlockStartOffset - itemBlockEndOffset;
 		pc.rawData.AsSpan(itemBlockEndOffset, betweenLen).CopyTo(resultSpan);
+
+		// It ends with the useAlternate value: written only when the weapon set in hand changed (a loadout loaded), so an
+		// unchanged file keeps its bytes.
+		bool savedAlternate = BitConverter.ToInt32(pc.rawData, equipmentBlockStartOffset - sizeof(int)) != 0;
+		if (savedAlternate != pc.UseAlternate)
+			BitConverter.TryWriteBytes(resultSpan.Slice(betweenLen - sizeof(int), sizeof(int)), pc.UseAlternate ? 1 : 0);
 		resultSpan = resultSpan.Slice(betweenLen);
 
 		// New equipment segment

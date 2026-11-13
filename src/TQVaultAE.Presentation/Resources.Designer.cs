@@ -7581,5 +7581,14 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("LoadoutResultsContainer", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The setting "{0}" is on: the equipment cannot change..
+        /// </summary>
+        public static string LoadoutEquipmentLocked {
+            get {
+                return ResourceManager.GetString("LoadoutEquipmentLocked", resourceCulture);
+            }
+        }
     }
 }

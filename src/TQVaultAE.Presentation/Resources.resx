@@ -2757,4 +2757,7 @@ Leave the editor without applying the changes?</value>
 	<data name="LoadoutResultsContainer" xml:space="preserve">
     <value>Loadout</value>
   </data>
+	<data name="LoadoutEquipmentLocked" xml:space="preserve">
+    <value>The setting "{0}" is on: the equipment cannot change.</value>
+  </data>
 </root>
