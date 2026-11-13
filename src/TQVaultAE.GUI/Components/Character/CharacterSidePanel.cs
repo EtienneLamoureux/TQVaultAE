@@ -28,22 +28,25 @@ internal sealed record CharacterSideView
 }
 
 /// <summary>
-/// The editor's own rows beside the game's character window, drawn in its style: the leveling editors (where the game
-/// draws defense and offense in its window), the masteries, and the options of the statistics TQVault computes
-/// (difficulty, buffs). Sizes are in pixels of the game window times <see cref="PanelScale"/>.
+/// The editor's own rows under the game's character window, drawn in its style: the options of the statistics TQVault
+/// computes (difficulty, buffs), the leveling editors (where the game draws defense and offense in its window) and the
+/// masteries. Sizes are in pixels of the game window times <see cref="PanelScale"/>.
 /// </summary>
 internal sealed partial class CharacterSidePanel : Control
 {
 	private const int PanelWidth = 256;
 	private const string StatsBar = """InGameUI\CharacterScreen\StatsBar01.tex""";
 
-	/// <summary>Top of the titles and first rows of the three parts, rows every 20 pixels.</summary>
-	private const int LevelingTop = 6;
-	private const int MasteriesTop = 134;
-	/// <summary>Two lines per mastery (its name, then what it has), two masteries at most.</summary>
-	private const int StatisticsTop = MasteriesTop + 20 + 4 * 18 + 12;
+	/// <summary>
+	/// Top of the titles and first rows of the three parts, rows every 20 pixels. The statistics options come first: the
+	/// panel is under the statistics panel, whose values they change.
+	/// </summary>
+	private const int StatisticsTop = 6;
 	private const int RowHeight = 20;
-	private const int PanelHeight = StatisticsTop + 26 + 2 * RowHeight + 6;
+	private const int LevelingTop = StatisticsTop + 26 + 2 * RowHeight + 6;
+	private const int MasteriesTop = LevelingTop + 128;
+	/// <summary>Two lines per mastery (its name, then what it has), two masteries at most.</summary>
+	private const int PanelHeight = MasteriesTop + 20 + 4 * 18 + 12;
 
 	private static readonly Color Grey = Color.FromArgb(200, 200, 190);
 
@@ -146,6 +149,11 @@ internal sealed partial class CharacterSidePanel : Control
 		if (this.View?.Invoke() is not { } view)
 			return;
 
+		this.DrawText(g, view.StatisticsTitle, this.TitleFont, Color.White, new Rectangle(15, StatisticsTop, 228, 18), StringAlignment.Near);
+		for (int i = 0; i < view.StatisticsLabels.Count; i++)
+			this.DrawText(g, view.StatisticsLabels[i], this.TextFont, Grey, new Rectangle(15, RowTop(StatisticsTop, i), 125, 16), StringAlignment.Near);
+
+		this.Bar(g, LevelingTop - 8);
 		this.DrawText(g, view.LevelingTitle, this.TitleFont, Color.White, new Rectangle(15, LevelingTop, 228, 18), StringAlignment.Near);
 		for (int i = 0; i < view.LevelingLabels.Count; i++)
 		{
@@ -164,11 +172,6 @@ internal sealed partial class CharacterSidePanel : Control
 			this.DrawText(g, view.Masteries[i].Name, this.TextFont, Grey, new Rectangle(15, y, 228, 16), StringAlignment.Near);
 			this.DrawText(g, view.Masteries[i].Value, this.TextFont, Color.White, new Rectangle(30, y + 18, 213, 16), StringAlignment.Near);
 		}
-
-		this.Bar(g, StatisticsTop - 8);
-		this.DrawText(g, view.StatisticsTitle, this.TitleFont, Color.White, new Rectangle(15, StatisticsTop, 228, 18), StringAlignment.Near);
-		for (int i = 0; i < view.StatisticsLabels.Count; i++)
-			this.DrawText(g, view.StatisticsLabels[i], this.TextFont, Grey, new Rectangle(15, RowTop(StatisticsTop, i), 125, 16), StringAlignment.Near);
 	}
 
 	private void Bar(Graphics g, int y)

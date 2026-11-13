@@ -7,7 +7,7 @@ using TQVaultAE.Presentation;
 namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// The statistics the Character page computes like the game (<see cref="CharacterStatsCalculator"/>): defense on tab I,
+/// The statistics the editor's statistics panel computes like the game (<see cref="CharacterStatsCalculator"/>): defense on tab I,
 /// tab II, the damage and race bonuses of tab III, from the equipped items, the skills of the editor (their current
 /// points), the attributes of the editor, the difficulty chosen and the buffs option.
 /// </summary>

@@ -175,9 +175,6 @@
 	<data name="CharacterEditorTab" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\CharacterEditorTab.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
-	<data name="CharacterEditorPaneEdge" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\CharacterEditorPaneEdge.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
 	<data name="CharacterStatsPanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\CharacterStatsPanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>

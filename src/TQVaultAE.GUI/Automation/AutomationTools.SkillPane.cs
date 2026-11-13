@@ -112,7 +112,7 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "select_tab")]
-	[Description("Selects a page of a tab control of an open form, like a click on its tab (for example the Character page or a mastery page of the character editor), so that capture shows it. Returns the pages of the tab controls of the form.")]
+	[Description("Selects a page of a tab control of an open form, like a click on its tab (for example a mastery page of the character editor), so that capture shows it. Returns the pages of the tab controls of the form.")]
 	public static string SelectTab(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("The page: its index, name or part of its text.")] string tab)

@@ -12,7 +12,7 @@ internal static partial class AutomationTools
 	#region Character panel
 
 	[McpServerTool(Name = "character_panel", ReadOnly = true)]
-	[Description("In the open character editor, shows the Character page and reads its statistics panel (drawn like the game's character window) on tab 1, 2 or 3: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, tab III statistics, gold and Electrum, the values computed like the game (armor, resistances, tab II rows, tab III damage and race bonuses with their tool tips), and the side panel beside it (leveling rows, masteries, the statistics options Difficulty and Include buffs, and their editors: visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
+	[Description("In the open character editor, reads its statistics panel (drawn like the game's character window) on tab 1, 2 or 3: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, tab III statistics, gold and Electrum, the values computed like the game (armor, resistances, tab II rows, tab III damage and race bonuses with their tool tips), and the side panel next to it (leveling rows, masteries, the statistics options Difficulty and Include buffs, and their editors: visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
 	public static IEnumerable<ContentBlock> CharacterPanel(
 		[Description("Tab of the panel: 1 (I), 2 (II) or 3 (III).")] int tab = 1,
 		[Description("true to return a PNG of the panel too.")] bool capture = false)
@@ -117,7 +117,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "character_stat_sources", ReadOnly = true)]
-	[Description("In the open character editor, returns the sums behind the statistics the Character page computes like the game: the variables of the equipped items and item sets (gear), of the skills that count (skills: passives, masteries, modifiers of counted skills, buffs when 'Include buffs' is ticked), both at their level, and the racial bonuses; plus the difficulty and buffs options. 'filter' keeps the variables whose name contains it (e.g. 'defensive').")]
+	[Description("In the open character editor, returns the sums behind the statistics the editor computes like the game: the variables of the equipped items and item sets (gear), of the skills that count (skills: passives, masteries, modifiers of counted skills, buffs when 'Include buffs' is ticked), both at their level, and the racial bonuses; plus the difficulty and buffs options. 'filter' keeps the variables whose name contains it (e.g. 'defensive').")]
 	public static string CharacterStatSources(
 		[Description("Part of the variable names to keep; empty for all.")] string filter = "")
 		=> AutomationHost.OnUi(_ =>
@@ -130,17 +130,10 @@ internal static partial class AutomationTools
 		=> AutomationHost.MainForm?.AutomationShownView(nameof(Views.CharacterEditorUserControl)) as Views.CharacterEditorUserControl
 			?? throw new McpException($"The character editor is not shown (view shown: {AutomationHost.MainForm?.AutomationShownViewName}). Use open_character_editor.");
 
-	/// <summary>Shows the Character page of the open character editor and returns its statistics panel.</summary>
+	/// <summary>The statistics panel of the open character editor, always shown beside the mastery pages.</summary>
 	private static CharacterStatsPanel ShowCharacterPanel()
-	{
-		var form = FindCharacterEditor();
-		var panel = AllControls(form).OfType<CharacterStatsPanel>().FirstOrDefault()
+		=> AllControls(FindCharacterEditor()).OfType<CharacterStatsPanel>().FirstOrDefault()
 			?? throw new McpException("No statistics panel in the character editor.");
-		if (AllControls(form).OfType<GameTabControl>().FirstOrDefault() is { } frame)
-			frame.SelectedIndex = 0;
-
-		return panel;
-	}
 
 	#endregion
 }

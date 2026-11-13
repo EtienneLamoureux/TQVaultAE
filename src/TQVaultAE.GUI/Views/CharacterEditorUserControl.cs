@@ -225,7 +225,7 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 		// Its handle gives the control the DPI of its window (a control without one has the primary monitor's).
 		_ = this.Handle;
 
-		this.InitCharacterPage();
+		this.InitStatisticsColumn();
 
 		// A read-only character can be looked at, not changed: OK would apply nothing (CharacterEditService.Apply).
 		this.ok.Enabled = !this.PlayerCollection.IsReadOnly;

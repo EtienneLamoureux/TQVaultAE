@@ -12,9 +12,10 @@ using TQVaultAE.Presentation.Win32;
 namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// The frame of the character editor, drawn as the game's skill window (<see cref="GameTabControl"/>), and its
-/// Character page: the statistics panel of the game's character window (<see cref="CharacterStatsPanel"/>) with the
-/// attribute "+" buttons and the leveling editors, the gold bar and the reset buttons.
+/// The statistics column of the character editor: the statistics panel of the game's character window
+/// (<see cref="CharacterStatsPanel"/>) with the attribute "+" buttons and the gold bar, and the side panel with the
+/// leveling editors, the masteries and the statistics options; right of it the frame of the mastery pages, drawn as the
+/// game's skill window (<see cref="GameTabControl"/>), with the reset buttons, OK and Cancel under it.
 /// </summary>
 internal sealed partial class CharacterEditorUserControl
 {
@@ -42,7 +43,7 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The attribute boxes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
 	private NumericUpDown[] AttributeBoxes => [this.healthUpDown, this.manacUpDown, this.strengthUpDown, this.intelligenceUpDown, this.dexterityUpDown];
 
-	/// <summary>The leveling editors, in row order under the "Leveling" title of tab I.</summary>
+	/// <summary>The leveling editors, in row order under the "Leveling" title of the side panel.</summary>
 	private Control[] LevelingEditors => [this.levelNumericUpDown, this.xpTextBox, this.skillPointsNumericUpDown, this.difficultlyComboBox, this.levelingCheckBox];
 
 	/// <summary>The attribute values at the start, for Shift + right click.</summary>
@@ -60,31 +61,29 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The size of the frame with OK and Cancel under it and the margins around: the editor's natural size.</summary>
 	internal Size ContentSize => this._content.Size;
 
-	/// <summary>Builds the game frame, its Character page and moves the editors of the designer into it.</summary>
-	private void InitCharacterPage()
+	/// <summary>
+	/// The statistics column's panels against the game size: at 1.05 times, the column (statistics panel and side panel,
+	/// one above the other) and the frame beside it fit in the main window at zoom 1, with a margin.
+	/// </summary>
+	private const float ColumnScale = 1.05F;
+
+	/// <summary>
+	/// Builds the statistics column (the statistics panel of the game's character window, and under it the side panel
+	/// with the statistics options, the leveling editors and the masteries) and, right of it, the game frame of the
+	/// mastery pages: the statistics stay in sight while points are spent in the masteries.
+	/// </summary>
+	private void InitStatisticsColumn()
 	{
 		var scale = this.GameScale;
-		this._tabs = new GameTabControl
-		{
-			Name = "EditorTabs",
-			FrameScale = scale,
-			Location = new Point(this.LogicalToDeviceUnits(14), this.LogicalToDeviceUnits(14)),
-			TabFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
-		};
-		this._content.Controls.Add(this._tabs);
+		var margin = this.LogicalToDeviceUnits(14);
 		this.Controls.Add(this._content);
 
-		// The page shows the editor's marble rather than the black of the frame, where the game draws its mastery panes.
-		var page = new BufferedPanel { Name = "CharacterPage", BackgroundImageLayout = ImageLayout.None };
-
-		// The panel at 1.24 times the game size fills the height of the page with the gold bar under it.
-		var panelScale = scale * 1.24F;
+		var panelScale = scale * ColumnScale;
 		this._stats = new CharacterStatsPanel(this.UIService)
 		{
 			KeyBinds = this.Services.KeyBinds,
 			Name = "CharacterStatsPanel",
 			PanelScale = panelScale,
-			Location = new Point((int)Math.Round(24 * scale), (int)Math.Round(8 * scale)),
 			View = this.CharacterView,
 			NameFont = this.FontService.GetFontLight(20F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
 			ClassFont = this.FontService.GetFontLight(16F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
@@ -95,26 +94,40 @@ internal sealed partial class CharacterEditorUserControl
 			ResistanceFont = this.OwnedFont(new Font("Arial", 14F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel)),
 		};
 		this._stats.Tooltip = this.SkillTooltipWindow();
-		page.Controls.Add(this._stats);
 
 		// The attribute boxes stay the model of the attributes (their events count the points); the panel shows them.
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
 			box.Visible = false;
 
-		// The leveling editors, the masteries and the statistics options, right of the panel where the game window has
-		// none: the game draws defense and offense where the editor had them.
+		// The leveling editors, the masteries and the statistics options, in the frame of the statistics panel: the game
+		// window has none, it draws defense and offense where the editor had them.
 		this._side = new CharacterSidePanel(this.UIService)
 		{
 			Name = "CharacterSidePanel",
 			PanelScale = panelScale,
-			// Its top on the statistics panel's frame, under the tab strip (the frame's gold line is 20 pixels down).
-			Location = new Point(this._stats.Right + (int)Math.Round(40 * scale), this._stats.Top + (int)Math.Round(CharacterPanelLayout.FrameTop * panelScale)),
 			View = this.SideView,
 			TextFont = this._stats.TextFont,
 			TitleFont = this._stats.TitleFont,
 			NumberFont = this._stats.NumberFont,
 		};
-		page.Controls.Add(this._side);
+
+		// The column at the top left: the statistics panel, its tabs level with the mastery tabs, and under its gold bar
+		// the side panel, as wide as the statistics panel's frame, whose statistics options come first.
+		this._stats.Location = new Point(margin, margin);
+		this._side.Location = new Point(margin, this._stats.Bottom + (int)Math.Round(10 * scale));
+
+		this._content.Controls.Add(this._stats);
+		this._content.Controls.Add(this._side);
+
+		// The frame of the mastery pages right of the column, its tabs level with the top of the column.
+		this._tabs = new GameTabControl
+		{
+			Name = "EditorTabs",
+			FrameScale = scale,
+			Location = new Point(this._stats.Right + (int)Math.Round(16 * scale), margin),
+			TabFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
+		};
+		this._content.Controls.Add(this._tabs);
 
 		var editorFont = this.OwnedFont(new Font("Arial", 12F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
 		var editors = this.LevelingEditors;
@@ -142,17 +155,6 @@ internal sealed partial class CharacterEditorUserControl
 
 		this._statsToolTip.SetToolTip(this._statsDifficulty, Resources.CEStatisticsDifficultyToolTip);
 		this._statsToolTip.SetToolTip(this._includeBuffs, Resources.CEIncludeBuffsToolTip);
-
-		// The reset buttons under the side panel.
-		var buttonX = this._side.Left;
-		this.ResetAttributesScalingButton.Parent = page;
-		this.ResetAttributesScalingButton.Location = new Point(buttonX, this._side.Bottom + (int)Math.Round(16 * scale));
-		this.ResetMasteriesScalingButton.Parent = page;
-		this.ResetMasteriesScalingButton.Location = new Point(this.ResetAttributesScalingButton.Right + (int)Math.Round(16 * scale), this.ResetAttributesScalingButton.Top);
-
-		this._tabs.AddPage(Resources.CECharacter, page);
-		page.BackgroundImage = this.RenderPageBackground(page.ClientSize);
-		this.AddMedallion(page, scale);
 
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
 		this._stats.UndoClicked += (_, _) => this.CharacterAttributes_Undo();
@@ -211,64 +213,6 @@ internal sealed partial class CharacterEditorUserControl
 		}
 	}
 
-	/// <summary>
-	/// TQVault's medallion picture (<see cref="Images.tqmedallion"/>) in the free column of the Character page, right of
-	/// the side panel, at most twice its size so that it stays sharp.
-	/// </summary>
-	private void AddMedallion(Panel page, float scale)
-	{
-		var medallion = Images.tqmedallion;
-		var area = Rectangle.FromLTRB(
-			this._side.Right + (int)Math.Round(24 * scale),
-			this._side.Top,
-			page.Width - (int)Math.Round(24 * scale),
-			page.Height - (int)Math.Round(24 * scale));
-		if (area.Width < medallion.Width / 2 || area.Height < medallion.Height / 2)
-		{
-			// No room left right of the side panel.
-			medallion.Dispose();
-			return;
-		}
-
-		var zoom = Math.Min(2F * scale, Math.Min(area.Width / (float)medallion.Width, area.Height / (float)medallion.Height));
-		var size = new Size((int)Math.Round(medallion.Width * zoom), (int)Math.Round(medallion.Height * zoom));
-		var picture = new PictureBox
-		{
-			Name = "CharacterMedallion",
-			Image = medallion,
-			SizeMode = PictureBoxSizeMode.Zoom,
-			BackColor = Color.Transparent,
-			Size = size,
-			// Centred in the column right of the side panel.
-			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
-		};
-		page.Controls.Add(picture);
-		this.Disposed += (_, _) => medallion.Dispose();
-	}
-
-	/// <summary>
-	/// The background of the Character page, made once at its size: the plain marble of TQVault's own background picture
-	/// (<see cref="Images.CharacterEditorMarble"/>) stretched to the page, with the thin edge of the mastery panes (a gold
-	/// and a black line with a shadow inside) around it. A picture at the page's size is copied as is when the page
-	/// repaints, where stretching both at every paint made switching to the page flicker.
-	/// </summary>
-	private Bitmap RenderPageBackground(Size page)
-	{
-		var background = new Bitmap(Math.Max(1, page.Width), Math.Max(1, page.Height));
-		using (var g = Graphics.FromImage(background))
-		using (var marble = Images.CharacterEditorMarble)
-		using (var edge = Images.CharacterEditorPaneEdge)
-		{
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-			g.DrawImage(marble, new Rectangle(Point.Empty, page));
-			g.DrawImage(edge, new Rectangle(Point.Empty, page));
-		}
-
-		this.Disposed += (_, _) => background.Dispose();
-		return background;
-	}
-
 	/// <summary>A font the dialog made itself, disposed with it (never one of the font service's, which are shared).</summary>
 	private Font OwnedFont(Font font)
 	{
@@ -283,16 +227,62 @@ internal sealed partial class CharacterEditorUserControl
 		this._side.Invalidate();
 	}
 
-	/// <summary>Sizes the content around the frame, with OK and Cancel under it.</summary>
+	/// <summary>
+	/// Sizes the content around the statistics column and the frame, with the reset buttons, OK and Cancel under the frame
+	/// and TQVault's medallion between them, in the room the column leaves under the frame.
+	/// </summary>
 	private void FitToFrame()
 	{
 		var margin = this.LogicalToDeviceUnits(14);
 		var gap = this.LogicalToDeviceUnits(10);
-		this._content.Size = new Size(this._tabs.Right + margin, this._tabs.Bottom + gap + this.ok.Height + margin);
+		var buttonsTop = this._tabs.Bottom + gap;
+		var bottom = Math.Max(this._stats.Bottom, this._side.Bottom);
+		bottom = Math.Max(bottom, buttonsTop + Math.Max(this.ok.Height, this.ResetAttributesScalingButton.Height));
+
+		// The size first: OK and Cancel are anchored to the bottom right, a later size would move them.
+		this._content.Size = new Size(this._tabs.Right + margin, bottom + margin);
+
+		// The reset buttons on the left under the frame, OK and Cancel on the right.
+		this.ResetAttributesScalingButton.Parent = this.ResetMasteriesScalingButton.Parent = this._content;
+		this.ResetAttributesScalingButton.Location = new Point(this._tabs.Left, buttonsTop);
+		this.ResetMasteriesScalingButton.Location = new Point(this.ResetAttributesScalingButton.Right + gap, buttonsTop);
 		this.ok.Parent = this.cancel.Parent = this._content;
-		this.cancel.Location = new Point(this._tabs.Right - this.cancel.Width, this._tabs.Bottom + gap);
-		this.ok.Location = new Point(this.cancel.Left - gap - this.ok.Width, this.cancel.Top);
+		this.cancel.Location = new Point(this._tabs.Right - this.cancel.Width, buttonsTop);
+		this.ok.Location = new Point(this.cancel.Left - gap - this.ok.Width, buttonsTop);
+
+		this.AddMedallion(Rectangle.FromLTRB(
+			this._tabs.Left,
+			buttonsTop + this.ok.Height + gap,
+			this._tabs.Right,
+			bottom));
 		this.PerformLayout();
+	}
+
+	/// <summary>
+	/// TQVault's medallion picture (<see cref="Images.tqmedallion"/>) in the middle of <paramref name="area"/>, at most
+	/// twice its size so that it stays sharp; left out when the area is too small for half its size.
+	/// </summary>
+	private void AddMedallion(Rectangle area)
+	{
+		var medallion = Images.tqmedallion;
+		if (area.Width < medallion.Width / 2 || area.Height < medallion.Height / 2)
+		{
+			medallion.Dispose();
+			return;
+		}
+
+		var zoom = Math.Min(2F * this.GameScale, Math.Min(area.Width / (float)medallion.Width, area.Height / (float)medallion.Height));
+		var size = new Size((int)Math.Round(medallion.Width * zoom), (int)Math.Round(medallion.Height * zoom));
+		this._content.Controls.Add(new PictureBox
+		{
+			Name = "CharacterMedallion",
+			Image = medallion,
+			SizeMode = PictureBoxSizeMode.Zoom,
+			BackColor = Color.Transparent,
+			Size = size,
+			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
+		});
+		this.Disposed += (_, _) => medallion.Dispose();
 	}
 
 	/// <summary>
@@ -339,6 +329,9 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		this._characterView = null;
 		this._stats.Invalidate();
+
+		// The masteries the side panel sums up change with the points spent.
+		this._side.Invalidate();
 	}
 
 	/// <summary>What the side panel shows: the leveling rows, the masteries and the statistics options.</summary>

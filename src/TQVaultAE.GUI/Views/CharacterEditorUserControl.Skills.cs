@@ -50,7 +50,7 @@ internal sealed partial class CharacterEditorUserControl
 		public override string ToString() => this.Text;
 	}
 
-	/// <summary>Builds a page per mastery slot of the character, after the Character page.</summary>
+	/// <summary>Builds a page per mastery slot of the character in the frame.</summary>
 	private void InitSkills()
 	{
 		this._skills = this.Services.CharacterEditService.CreateSkillEditor(this.Info);

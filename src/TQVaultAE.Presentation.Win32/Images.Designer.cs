@@ -533,16 +533,6 @@ namespace TQVaultAE.Presentation.Win32 {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CharacterEditorPaneEdge {
-            get {
-                object obj = ResourceManager.GetObject("CharacterEditorPaneEdge", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap CharacterStatsPanel {
             get {
                 object obj = ResourceManager.GetObject("CharacterStatsPanel", resourceCulture);
