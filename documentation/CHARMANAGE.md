@@ -23,7 +23,7 @@ TQVault will prompt you for a new name and create a copy of the selected charact
 
 ## Archiving
 
-An archived character shows a greyed out background color.
+An archived character shows an "Archived" badge in the dropdown, and its box turns silver when it is selected.
 
 *"Archived"* is a toggle.
 
@@ -41,7 +41,7 @@ Explorer, or by a download).
 Nothing of a read-only character can change in TQVault: no item can be taken out of its bags, equipment or storage
 area, moved, deleted, sorted or edited (seed, affixes, relics, forge), no item can be put in, its character editor
 only shows it (OK is disabled) and its mod link cannot change. TQVault tells why in the notification bar. Copy, Share,
-Properties and Compare still work, and the save skips the character. The dropdown shows a "Read-only" tag on it.
+Properties and Compare still work, and the save skips the character. The dropdown shows a "Read-only" badge on it, and its box turns icy blue when it is selected.
 
 The transfer stash and the relic vault belong to every character: they stay writable.
 
@@ -68,6 +68,8 @@ The character dropdown display detailed informations on the characters, includin
 
 It make it easier to manage your roster.
 
-A character of a custom map also shows its mod in brackets, a "Modded" tag and the state of its mod link (see [Mods](MODS.md)).
+The status badges sit on the right of each entry: "Archived", "Read-only", and for a character of a custom map a "Modded"
+badge with the state of its mod link, its mod named in brackets beside its name (see [Mods](MODS.md)). The tags line
+keeps only the tags. The selected character's box turns icy blue when it is read-only, silver when it is archived.
 
-![Other actions](charmanage/dropdown.png)
+![Detailed dropdown](charmanage/dropdown.png)

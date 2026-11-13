@@ -33,8 +33,8 @@ Workshop items) and links the character to one, or removes its link. The choice 
 - `folder` is where the mod was when linked, preferred while it exists.
 - The game never writes a file with this name; it is copied with the character (*Duplicate*, archive).
 
-In the character list, a custom map character shows its mod's name in brackets beside its name, and on its tags line,
-on the right, a *Modded* tag and the link state: *Linked* (green), *Not installed* (red, the linked mod is gone) or *Not
+In the character list, a custom map character shows its mod's name in brackets beside its name, and on the
+right, with its other status badges, a *Modded* badge and the link state: *Linked* (green), *Not installed* (red, the linked mod is gone) or *Not
 linked* (yellow).
 
 A character linked to an installed mod is described with that mod's data, which takes precedence over the base game's,
