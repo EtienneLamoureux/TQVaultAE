@@ -3,6 +3,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
@@ -14,14 +15,14 @@ namespace TQVaultAE.GUI.Dialogs;
 /// item's picture and classic tooltip, the second item's differences, under a toolbar ("Align rows", "Hide unchanged",
 /// "Show sources"); a click on a stat with sources shows or hides them for that stat.
 /// The content is decided by <see cref="ItemComparisonContentBuilder"/>; this dialog only draws its lines, with the rows
-/// of the item tooltip, in the TQ border of the other dialogs.
+/// of the item tooltip, in the look of Item Properties: the marble behind, each column on black in a caravan frame.
 /// </summary>
 internal sealed partial class ItemComparisonDialog : VaultForm
 {
-	/// <summary>Background of the columns, as the item tooltip's.</summary>
-	private static readonly Color ColumnColor = Color.FromArgb(10, 10, 10);
+	/// <summary>Background of the columns: the black inside their caravan frame, as Item Properties' lines.</summary>
+	private static readonly Color ColumnColor = Color.Black;
 
-	/// <summary>Background of the dialog, as Item Properties'.</summary>
+	/// <summary>Background of the dialog where the marble is not drawn (high contrast), as Item Properties'.</summary>
 	private static readonly Color DialogColor = Color.FromArgb(46, 31, 21);
 
 	private readonly IItemComparisonService _comparisonService;
@@ -30,9 +31,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private readonly TableLayoutPanel _table;
 	private readonly Panel _buttons;
 	private readonly FlowLayoutPanel _toolbar;
-	private readonly CheckBox _alignRows;
-	private readonly CheckBox _hideUnchanged;
-	private readonly CheckBox _showSources;
+	private readonly ScalingCheckBox _alignRows;
+	private readonly ScalingCheckBox _hideUnchanged;
+	private readonly ScalingCheckBox _showSources;
 
 	/// <summary>The stats whose sources were clicked open or closed against "Show sources"; emptied when it changes.</summary>
 	private readonly HashSet<string> _toggled = new(StringComparer.Ordinal);
@@ -71,7 +72,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		float scale = this.UIService.Scale;
 		int gap = (int)Math.Round(4 * scale);
 		var border = CustomBorderThickness;
-		this.Padding = new Padding(border.Left + gap, border.Top + gap, border.Right + gap, border.Bottom);
+		this.Padding = new Padding(border.Left + gap, border.Top + gap, border.Right + gap, border.Bottom + gap);
 
 		this._table = new TableLayoutPanel()
 		{
@@ -79,7 +80,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
 			ColumnCount = 4,
 			RowCount = 2,
-			BackColor = DialogColor,
 			Margin = new Padding(0),
 			Padding = new Padding(0),
 			Location = Point.Empty,
@@ -94,11 +94,16 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		{
 			AutoScroll = true,
 			Dock = DockStyle.Fill,
-			BackColor = DialogColor,
 		};
 		this._scroll.Controls.Add(this._table);
 
-		// OK closes, as Escape and the close button of the border do.
+		// The marble shows through the scrolled area: Windows moves the drawn pixels when it scrolls, the marble with the
+		// columns, so it is drawn again at its place.
+		this._scroll.Scroll += (_, _) => this._scroll.Invalidate(true);
+		this._scroll.MouseWheel += (_, _) => this._scroll.Invalidate(true);
+
+		// OK closes, as Escape and the close button of the border do (shown modeless too); at the bottom right, as in Item
+		// Properties.
 		var ok = new ScalingButton()
 		{
 			Anchor = AnchorStyles.None,
@@ -112,20 +117,23 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			Text = Resources.GlobalOK,
 			UseCustomGraphic = true,
 			UseVisualStyleBackColor = false,
-			Font = this.FontService.GetFontLight(12F, this.UIService.FontZoom),
+			Font = this.FontService.GetFontLight(CaravanLook.ButtonTextSize, this.UIService.FontZoom),
 		};
+		ok.Click += (_, _) => this.Close();
 		ok.FlatAppearance.BorderSize = 0;
 		ok.FlatAppearance.MouseDownBackColor = Theme.TransparentButton;
 		ok.FlatAppearance.MouseOverBackColor = Theme.TransparentButton;
 
+		// Right-aligned with the last column's frame.
+		int frameGap = (int)Math.Round(ColumnGap / 2 * scale);
 		this._buttons = new Panel()
 		{
 			Dock = DockStyle.Bottom,
 			Height = ok.Height + (2 * gap),
-			BackColor = DialogColor,
 		};
 		this._buttons.Controls.Add(ok);
-		this._buttons.Resize += (_, _) => ok.Location = new Point((this._buttons.Width - ok.Width) / 2, (this._buttons.Height - ok.Height) / 2);
+		this._buttons.Resize += (_, _) => ok.Location = new Point(
+			Math.Max(0, this._buttons.Width - ok.Width - frameGap), (this._buttons.Height - ok.Height) / 2);
 
 		// The toolbar, first row of the dialog: changing a choice lays the columns out again.
 		// The choices saved in UserConfig.xml (<ItemCompare ... />).
@@ -140,7 +148,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
 			FlowDirection = FlowDirection.LeftToRight,
 			WrapContents = true,
-			BackColor = DialogColor,
 			Padding = new Padding(0, 0, 0, gap),
 			Name = "comparisonToolbar",
 		};
@@ -153,6 +160,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this.Controls.Add(this._buttons);
 		this.AcceptButton = ok;
 		this.CancelButton = ok;
+
+		// Item Properties' look: the marble behind the toolbar, the columns and the button, the toolbar's text shadowed.
+		CaravanLook.Apply(this, this._scroll, this._table, this._toolbar, this._buttons);
 
 		this.ResizeCustomAllowed = true;
 		this.DrawCustomBorder = true;
@@ -168,16 +178,15 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._showSources.CheckedChanged += this.OptionChanged;
 	}
 
-	/// <summary>A check box of the toolbar, in the dialog's font and colors.</summary>
-	private CheckBox MakeToolbarCheckBox(string name, string text, bool isChecked)
+	/// <summary>A check box of the toolbar, as Item Properties' "Filter Extra Info": white text over the marble.</summary>
+	private ScalingCheckBox MakeToolbarCheckBox(string name, string text, bool isChecked)
 		=> new()
 		{
 			AutoSize = true,
 			Checked = isChecked,
-			// Light text on the dark brown background (the button text color is meant for the gold buttons).
-			ForeColor = TQColor.Silver.Color(),
-			BackColor = DialogColor,
-			Font = this.FontService.GetFontLight(11F, this.UIService.FontZoom),
+			ForeColor = Color.White,
+			BackColor = Color.Transparent,
+			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.UIService.FontZoom),
 			Margin = new Padding((int)Math.Round(4 * this.UIService.Scale), 0, (int)Math.Round(12 * this.UIService.Scale), 0),
 			Name = name,
 			Text = text,
@@ -232,12 +241,15 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		// columns start there too.
 		Item?[] pictures = [null, this.First, this.Second, null];
 		IReadOnlyList<TooltipLine>[] columns = [content.FirstDifferences, content.First, content.Second, content.SecondDifferences];
+		// Each column under its picture in one caravan frame, drawn by the table in their margins.
 		var panels = new FlowLayoutPanel[columns.Length];
 		for (int i = 0; i < columns.Length; i++)
 		{
 			panels[i] = this.MakeColumn(columns[i], ColumnNames[i]);
-			this._table.Controls.Add(this.MakePicture(pictures[i], PictureNames[i]), i, 0);
+			var picture = this.MakePicture(pictures[i], PictureNames[i]);
+			this._table.Controls.Add(picture, i, 0);
 			this._table.Controls.Add(panels[i], i, 1);
+			CaravanFrame.FrameAround(picture, panels[i]);
 		}
 
 		// Aligned: each difference row as tall as the item row it faces, so that they stay level.
@@ -290,8 +302,18 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// <summary>The names of the cells above the four columns, left to right: the item pictures above the item columns.</summary>
 	internal static readonly string[] PictureNames = ["firstDifferencesPicture", "firstPicture", "secondPicture", "secondDifferencesPicture"];
 
-	/// <summary>Space between two columns, at 96 DPI and zoom 1.</summary>
-	private const float ColumnGap = 2F;
+	/// <summary>Space between two column frames, at 96 DPI and zoom 1: half on each side.</summary>
+	private const float ColumnGap = 8F;
+
+	/// <summary>
+	/// The margin of a column's cells: the frame's thickness and half the gap on the sides, the frame's thickness on the
+	/// outer side of the column (top for the picture, bottom for the lines).
+	/// </summary>
+	private Padding CellMargin(bool top)
+	{
+		int side = CaravanFrame.Border + (int)Math.Round(ColumnGap / 2 * this.UIService.Scale);
+		return new Padding(side, top ? CaravanFrame.Border : 0, side, top ? 0 : CaravanFrame.Border);
+	}
 
 	/// <summary>
 	/// The cell above a column: the item's picture, centered, at the size the sacks draw it; an empty cell on the column
@@ -300,7 +322,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private Panel MakePicture(Item? item, string name)
 	{
 		float scale = this.UIService.Scale;
-		int gap = (int)Math.Round(ColumnGap * scale);
 		int padding = (int)Math.Round(6 * scale);
 		var bitmap = item is null ? null : this.UIService.GetBitmap(item);
 		var size = bitmap is null
@@ -311,7 +332,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		{
 			BackColor = ColumnColor,
 			Dock = DockStyle.Fill,
-			Margin = new Padding(gap, 0, gap, 0),
+			Margin = this.CellMargin(top: true),
 			MinimumSize = new Size(size.Width + (2 * padding), size.IsEmpty ? 0 : size.Height + (2 * padding)),
 			Size = new Size(size.Width + (2 * padding), size.IsEmpty ? 0 : size.Height + (2 * padding)),
 			Name = name,
@@ -330,7 +351,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	{
 		float scale = this.UIService.Scale;
 		int padding = (int)Math.Round(6 * scale);
-		int gap = (int)Math.Round(ColumnGap * scale);
 		var column = new FlowLayoutPanel()
 		{
 			FlowDirection = FlowDirection.TopDown,
@@ -339,7 +359,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
 			BackColor = ColumnColor,
 			Padding = new Padding(padding),
-			Margin = new Padding(gap, 0, gap, 0),
+			Margin = this.CellMargin(top: false),
 			Dock = DockStyle.Fill,
 			Name = name,
 		};
