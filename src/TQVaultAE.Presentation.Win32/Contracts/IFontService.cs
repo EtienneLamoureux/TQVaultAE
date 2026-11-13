@@ -41,4 +41,16 @@ public interface IFontService
 	/// <paramref name="font"/> itself otherwise.
 	/// </summary>
 	Font Rebase(Font font);
+
+	/// <summary>
+	/// The text the fonts must draw, in the language of the game texts. When the base font lacks some of its letters
+	/// (the game font has no Cyrillic, for example), Windows draws them in a substitute font that looks smaller; the
+	/// service then uses a family that has every letter, at the same sizes, as the game does with its own fonts. Call it
+	/// once the game texts are loaded, before the windows are made.
+	/// </summary>
+	/// <param name="sample">Translated texts holding the letters of the language.</param>
+	void EnsureCovers(string sample);
+
+	/// <summary>Whether <paramref name="family"/> has a glyph for every letter of <paramref name="text"/>.</summary>
+	bool Covers(FontFamily family, string text);
 }

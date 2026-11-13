@@ -58,6 +58,7 @@ public class FontService : IFontService
 					families = (this.CreateFamily(baseFont, light: false), this.CreateFamily(baseFont, light: true));
 					this._familiesByBaseFont[baseFont] = families;
 				}
+				families = (this.Covering(families.Regular), this.Covering(families.Light));
 			}
 			else
 			{
@@ -84,6 +85,75 @@ public class FontService : IFontService
 
 		// The font could not be created: let GDI+ pick a safe one rather than fail.
 		return family ?? FontFamily.GenericSansSerif;
+	}
+
+	/// <summary>
+	/// Text the fonts must draw (<see cref="EnsureCovers"/>); <see langword="null"/> before it is given. Shared by every
+	/// instance: the game texts have one language for the whole process.
+	/// </summary>
+	private static volatile string? s_coverageSample;
+
+	/// <summary>
+	/// The family used for the letters the base font lacks: Arial, the font the game draws Russian with (its
+	/// <c>arial_russian</c> font), which has the Latin, Greek and Cyrillic alphabets.
+	/// </summary>
+	private const string CoveringFamilyName = "Arial";
+
+	/// <summary>Whether each family has every letter of a sample, by family name and sample.</summary>
+	private static readonly ConcurrentDictionary<(string Family, string Sample), bool> s_covers = new();
+
+	/// <summary>
+	/// <paramref name="family"/>, or the covering family when <paramref name="family"/> lacks letters of the sample and
+	/// that one has them all (no family is better for scripts it lacks too, such as Chinese: Windows' substitute then).
+	/// </summary>
+	private FontFamily Covering(FontFamily family)
+	{
+		if (s_coverageSample is not { } sample || this.CoversCached(family, sample))
+			return family;
+
+		var covering = this._coveringFamily ??= new FontFamily(CoveringFamilyName);
+		return this.CoversCached(covering, sample) ? covering : family;
+	}
+
+	private FontFamily? _coveringFamily;
+
+	private bool CoversCached(FontFamily family, string sample)
+		=> s_covers.GetOrAdd((family.Name, sample), _ => this.Covers(family, sample));
+
+	/// <inheritdoc/>
+	public void EnsureCovers(string sample)
+	{
+		ArgumentNullException.ThrowIfNull(sample);
+		if (string.Equals(sample, s_coverageSample, StringComparison.Ordinal))
+			return;
+
+		s_coverageSample = sample;
+		var before = this._families;
+		if (before is null)
+			return;
+
+		// Fonts were made already: the next ones use the covering family, and the windows move theirs to it.
+		this._families = null;
+		var after = this.Families;
+		if (after.Regular.Name != before.Value.Regular.Name || after.Light.Name != before.Value.Light.Name)
+		{
+			this._families = before;
+			this.Reload();
+		}
+	}
+
+	/// <inheritdoc/>
+	public bool Covers(FontFamily family, string text)
+	{
+		ArgumentNullException.ThrowIfNull(family);
+		ArgumentNullException.ThrowIfNull(text);
+
+		var letters = text.Where(char.IsLetter).Distinct().ToArray();
+		if (letters.Length == 0)
+			return true;
+
+		using var font = new Font(family, 12F, family.IsStyleAvailable(FontStyle.Regular) ? FontStyle.Regular : FontStyle.Bold);
+		return this.FontLoader.HasEveryGlyph(font, new string(letters));
 	}
 
 	private static FontFamily CreateDesignFamily(string name)

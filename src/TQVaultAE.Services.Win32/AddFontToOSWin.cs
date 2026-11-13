@@ -37,4 +37,8 @@ public partial class AddFontToOSWin : IAddFontToOS
 		}
 		return privateFontCollection.Families.First(f => f.Name == fontName);
 	}
+
+	/// <inheritdoc/>
+	public bool HasEveryGlyph(Font font, string text)
+		=> NativeGlyphs.HasEveryGlyph(font, text);
 }

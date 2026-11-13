@@ -8,4 +8,7 @@ namespace TQVaultAE.Presentation.Win32.Contracts;
 public interface IAddFontToOS
 {
 	FontFamily AddFontToOS(string fontName, byte[] fontData);
+
+	/// <summary>Whether <paramref name="font"/> has its own glyph for every character of <paramref name="text"/>, as drawn.</summary>
+	bool HasEveryGlyph(Font font, string text);
 }

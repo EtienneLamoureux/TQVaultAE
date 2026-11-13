@@ -13,7 +13,12 @@ public class FontServiceTests
 	private readonly UserSettings _settings = new() { BaseFont = "Arial" };
 	private readonly FontService _service;
 
-	public FontServiceTests() => this._service = new(Mock.Of<IAddFontToOS>(), this._settings);
+	public FontServiceTests()
+	{
+		this._service = new(Mock.Of<IAddFontToOS>(), this._settings);
+		// The text to cover is shared by every instance: no letter to cover unless a test gives some.
+		this._service.EnsureCovers(string.Empty);
+	}
 
 	[Fact]
 	public void GetFont_SameArguments_ReturnsTheSharedInstance()
@@ -165,5 +170,54 @@ public class FontServiceTests
 
 		loader.Verify(l => l.AddFontToOS("Albertus MT", It.IsAny<byte[]>()), Times.Once);
 		loader.Verify(l => l.AddFontToOS("Albertus MT Light", It.IsAny<byte[]>()), Times.Once);
+	}
+
+	// Game texts: Russian "Strength", French "Dexterity".
+	private const string Russian = "Сила";
+	private const string French = "Dextérité";
+
+	[Fact]
+	public void Covers_TellsWhetherTheFamilyHasEveryLetter()
+	{
+		var service = new FontService(new TQVaultAE.Services.Win32.AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
+		var game = service.GetFont(10F).FontFamily;
+		using var arial = new FontFamily("Arial");
+
+		game.Name.Should().Be("Albertus MT");
+		service.Covers(game, French).Should().BeTrue();
+		service.Covers(game, Russian).Should().BeFalse("the game font has no Cyrillic");
+		service.Covers(arial, Russian).Should().BeTrue();
+		service.Covers(game, "12 + 3%").Should().BeTrue("only letters count");
+	}
+
+	[Fact]
+	public void EnsureCovers_LettersTheGameFontLacks_TakeArial_AtTheSameSize_AndTheWindowsAreTold()
+	{
+		var service = new FontService(new TQVaultAE.Services.Win32.AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
+		var before = service.GetFontLight(10F);
+		int changes = 0;
+		service.FontChanged += (_, _) => changes++;
+
+		service.EnsureCovers(Russian);
+
+		var after = service.GetFontLight(10F);
+		after.FontFamily.Name.Should().Be("Arial");
+		after.Size.Should().Be(10F);
+		service.GetFont(9F).FontFamily.Name.Should().Be("Arial");
+		service.Rebase(before).Should().BeSameAs(after);
+		changes.Should().Be(1);
+	}
+
+	[Fact]
+	public void EnsureCovers_LettersTheGameFontHas_KeepTheGameFont()
+	{
+		var service = new FontService(new TQVaultAE.Services.Win32.AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
+		int changes = 0;
+		service.FontChanged += (_, _) => changes++;
+
+		service.EnsureCovers(French);
+
+		service.GetFont(10F).FontFamily.Name.Should().Be("Albertus MT");
+		changes.Should().Be(0);
 	}
 }

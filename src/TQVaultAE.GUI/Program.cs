@@ -247,6 +247,11 @@ public static class Program
 			var database = ServiceProvider.GetRequiredService<IDatabase>();
 			database.LoadDBFile();
 
+			// Game texts the game font may lack letters of (Cyrillic): the fonts then take a family that has them all.
+			ServiceProvider.GetRequiredService<IFontService>().EnsureCovers(string.Concat(
+				new[] { "Strength", "Dexterity", "Intelligence", "tagCAttributes", "tagMenuButton07", "tagMenuButton06", "xtagLobbySearchSearch", "tagWindowName01" }
+					.Select(database.GetFriendlyName)));
+
 			var mainform = Program.ServiceProvider.GetRequiredService<MainForm>();
 			var filterMouseWheel = new FormFilterMouseWheelGlobally(mainform);
 			var filterMouseButtons = new FormFilterMouseButtonGlobally(mainform);
