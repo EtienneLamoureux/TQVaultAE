@@ -21,6 +21,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Components;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;
 
 /// <summary>
@@ -358,6 +359,15 @@ public partial class VaultForm : Form, IScalingControl
 	}
 
 	/// <summary>
+	/// A marble window paints its background from a brush made once (<see cref="MarbleBackground.TryPaint"/>).
+	/// </summary>
+	protected override void OnPaintBackground(PaintEventArgs e)
+	{
+		if (!MarbleBackground.TryPaint(this, e))
+			base.OnPaintBackground(e);
+	}
+
+	/// <summary>
 	/// Scales the form.
 	/// </summary>
 	/// <param name="factor">factor which the form will be scaled.</param>
@@ -391,6 +401,14 @@ public partial class VaultForm : Form, IScalingControl
 	protected virtual void ResizeEndCallback(object? sender, EventArgs e) => DoResizeEndCallback(sender, e);
 
 	/// <summary>
+	/// The top border picture at its design size, read once: the paint handler measures the title's background on it, and
+	/// a transparent control has its window painted behind it, so it was read from the resources several times per control.
+	/// </summary>
+	private static Bitmap DesignTopBorder => designTopBorder ??= Images.BorderTop;
+
+	private static Bitmap? designTopBorder;
+
+	/// <summary>
 	/// Handler for the form Paint callback
 	/// </summary>
 	/// <param name="sender">sender object</param>
@@ -414,19 +432,19 @@ public partial class VaultForm : Form, IScalingControl
 					Rectangle textRect = new Rectangle(new Point((this.ClientSize.Width - textSize.Width) / 2, (this.topBorder.Height - textSize.Height) / 2), textSize);
 
 					// Check if the background for the title text needs to be resized.
-					float factor = (float)topBorderRect.Width / (float)Images.BorderTop.Width;
+					float factor = (float)topBorderRect.Width / (float)DesignTopBorder.Width;
 					int textBackroundWidth = Convert.ToInt32(114.0F * factor);
 					if (textRect.Width > textBackroundWidth)
 					{
 						// Copy the center 126 pixels from the top border which make up the background to the title text.
-						Rectangle srcRect = new Rectangle((Images.BorderTop.Width / 2) - 61, 0, 126, Images.BorderTop.Height);
+						Rectangle srcRect = new Rectangle((DesignTopBorder.Width / 2) - 61, 0, 126, DesignTopBorder.Height);
 						Rectangle destRect = new Rectangle(
 							textRect.Left - Convert.ToInt32(6.0F * factor)
 							, 0
 							, textRect.Width + Convert.ToInt32(12.0F * factor)
 							, topBorderRect.Height
 						);
-						e.Graphics.DrawImage(Images.BorderTop, destRect, srcRect, GraphicsUnit.Pixel);
+						e.Graphics.DrawImage(DesignTopBorder, destRect, srcRect, GraphicsUnit.Pixel);
 					}
 
 					TextRenderer.DrawText(
@@ -439,7 +457,7 @@ public partial class VaultForm : Form, IScalingControl
 				}
 			}
 
-			int topBorderOffset = Convert.ToInt32(3.0F * ((float)this.topBorder.Height) / (float)Images.BorderTop.Height);
+			int topBorderOffset = Convert.ToInt32(3.0F * ((float)this.topBorder.Height) / (float)DesignTopBorder.Height);
 
 			// Draw the Left side
 			e.Graphics.DrawImage(
