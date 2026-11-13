@@ -36,8 +36,7 @@ internal static partial class AutomationTools
 		var blocks = new List<ContentBlock> { new TextContentBlock { Text = state } };
 		if (png is not null)
 		{
-			var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-characterpanel{tab}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
-			File.WriteAllBytes(path, png);
+			var path = SaveCapture($"characterpanel{tab}", png);
 			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
 			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
 		}
@@ -73,8 +72,7 @@ internal static partial class AutomationTools
 		var blocks = new List<ContentBlock> { new TextContentBlock { Text = text } };
 		if (png is not null)
 		{
-			var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-charactertooltip-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
-			File.WriteAllBytes(path, png);
+			var path = SaveCapture("charactertooltip", png);
 			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
 			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
 		}

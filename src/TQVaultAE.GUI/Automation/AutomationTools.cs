@@ -669,6 +669,20 @@ internal static partial class AutomationTools
 
 	#region Capture
 
+	/// <summary>
+	/// Writes a capture to the temp folder as <c>tqvault-capture-&lt;name&gt;-&lt;time&gt;.png</c> and returns its path. Every
+	/// character a file name can't hold becomes '-': a ':' would otherwise write the picture into a hidden NTFS stream of a
+	/// file named before it.
+	/// </summary>
+	internal static string SaveCapture(string name, byte[] png)
+	{
+		var invalid = Path.GetInvalidFileNameChars();
+		var safe = new string(name.Select(c => c == '.' || Array.IndexOf(invalid, c) >= 0 ? '-' : c).ToArray());
+		var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-{safe}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
+		File.WriteAllBytes(path, png);
+		return path;
+	}
+
 	[McpServerTool(Name = "capture", ReadOnly = true)]
 	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the character statistics panel and its Edit button (which DrawToBitmap leaves out) drawn over it, or part of a form title.")]
 	public static IEnumerable<ContentBlock> Capture(
@@ -695,8 +709,7 @@ internal static partial class AutomationTools
 			return (stream.ToArray(), target.Size);
 		});
 
-		var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-{control.Replace('.', '-')}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
-		File.WriteAllBytes(path, png);
+		var path = SaveCapture(control, png);
 
 		return
 		[

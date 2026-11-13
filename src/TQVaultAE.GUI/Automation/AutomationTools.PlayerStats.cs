@@ -115,8 +115,7 @@ internal static partial class AutomationTools
 		var blocks = new List<ContentBlock> { new TextContentBlock { Text = text } };
 		if (png is not null)
 		{
-			var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-playerstatshover-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
-			File.WriteAllBytes(path, png);
+			var path = SaveCapture("playerstatshover", png);
 			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
 			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
 		}
