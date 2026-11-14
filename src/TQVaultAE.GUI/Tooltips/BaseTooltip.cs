@@ -54,6 +54,74 @@ public class BaseTooltip : Form
 		return null;
 	}
 
+	/// <summary>The control the tool tip was put beside by <see cref="PlaceUnder(Control)"/>, whose mouse moves switch its side.</summary>
+	private Control? besideAnchor;
+
+	/// <summary>The screen X of the tool tip on the left and on the right of <see cref="besideAnchor"/>.</summary>
+	private int besideLeft, besideRight;
+
+	/// <summary>Where <see cref="PlaceUnder(Rectangle, Size, Rectangle)"/> puts a tool tip.</summary>
+	/// <param name="Location">Its screen location.</param>
+	/// <param name="BesideLeft">Set when it is put beside the anchor, on its right: the screen X on its left.</param>
+	internal readonly record struct Placement(Point Location, int? BesideLeft);
+
+	/// <summary>
+	/// Where a tool tip of <paramref name="tooltip"/> size goes under <paramref name="anchor"/> (screen coordinates), in the
+	/// <paramref name="workingArea"/> of the anchor's monitor. When it does not fit below, it is pushed up, at most to the
+	/// top of the working area; it then covers the anchor, so it goes on the anchor's right, with the left side as the
+	/// other choice.
+	/// </summary>
+	internal static Placement PlaceUnder(Rectangle anchor, Size tooltip, Rectangle workingArea)
+	{
+		var below = new Point(anchor.Left, anchor.Bottom);
+		if (below.Y + tooltip.Height <= workingArea.Bottom)
+			return new(below, null);
+
+		int top = Math.Max(workingArea.Top, workingArea.Bottom - tooltip.Height);
+		return new(new Point(anchor.Right, top), anchor.Left - tooltip.Width);
+	}
+
+	/// <summary>The working area of the monitor <paramref name="anchor"/> is on.</summary>
+	protected static Rectangle WorkingAreaOf(Control anchor) => Screen.FromControl(anchor).WorkingArea;
+
+	/// <summary>
+	/// Places the tool tip under <paramref name="anchor"/> (<see cref="PlaceUnder(Rectangle, Size, Rectangle)"/>). Put beside
+	/// it, the tool tip follows the mouse over the anchor: on the right while the mouse is in the anchor's right half, on
+	/// the left otherwise, so it never hides the pointer.
+	/// </summary>
+	protected void PlaceUnder(Control anchor)
+	{
+		var bounds = new Rectangle(anchor.PointToScreen(Point.Empty), anchor.Size);
+		var placement = PlaceUnder(bounds, this.Size, WorkingAreaOf(anchor));
+		this.Location = placement.Location;
+
+		if (placement.BesideLeft is int left && this.besideAnchor is null)
+		{
+			this.besideLeft = left;
+			this.besideRight = placement.Location.X;
+			this.besideAnchor = anchor;
+			anchor.MouseMove += this.BesideAnchor_MouseMove;
+		}
+	}
+
+	private void BesideAnchor_MouseMove(object? sender, MouseEventArgs e)
+	{
+		if (this.besideAnchor is not { } anchor)
+			return;
+
+		this.Location = new Point(e.Location.X > anchor.Width / 2 ? this.besideRight : this.besideLeft, this.Location.Y);
+	}
+
+	protected override void OnFormClosing(FormClosingEventArgs e)
+	{
+		base.OnFormClosing(e);
+		if (this.besideAnchor is not null)
+		{
+			this.besideAnchor.MouseMove -= this.BesideAnchor_MouseMove;
+			this.besideAnchor = null;
+		}
+	}
+
 	/// <summary>Copy of a cached image shown by this tooltip; owned by the tooltip.</summary>
 	private Bitmap? _shownImage;
 

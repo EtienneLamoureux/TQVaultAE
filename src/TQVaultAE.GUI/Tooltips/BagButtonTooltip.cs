@@ -20,9 +20,6 @@ public partial class BagButtonTooltip : BaseTooltip
 
 	public required BagButtonBase ButtonSack;
 
-	private Rectangle CurrentWorkingArea;
-	private int RightSide;
-	private int LeftSide;
 
 #if DEBUG
 	// For Design Mode
@@ -39,12 +36,8 @@ public partial class BagButtonTooltip : BaseTooltip
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
-		this.CurrentWorkingArea = Screen.FromControl(this).WorkingArea;
-		// Tooltip can goes multi-columns (especially for bloated Relic Vault)
-		this.flowLayoutPanelFriendlyNames.MaximumSize = new Size(this.CurrentWorkingArea.Width, this.CurrentWorkingArea.Height);
-
 		// Fill it outside of screen to avoid flickering
-		this.Location = new Point(0, this.CurrentWorkingArea.Height);
+		this.Location = new Point(0, Screen.FromControl(this).WorkingArea.Height);
 	}
 
 	public static void InvalidateCache(params SackCollection?[] sack)
@@ -143,48 +136,13 @@ public partial class BagButtonTooltip : BaseTooltip
 
 	private void BagButtonTooltip_Load(object? sender, EventArgs e)
 	{
+		// The tool tip may go multi-column, up to the size of the anchor's monitor.
+		this.flowLayoutPanelFriendlyNames.MaximumSize = WorkingAreaOf(this.ButtonSack).Size;
+
 		this.FillSackToolTip();
 
-		// Move it under BagButton
-		var loc = this.ButtonSack.PointToScreen(Point.Empty);
-		loc.Y += this.ButtonSack.Size.Height;
-
-		// Ajust position if tooltip size goes offscreen
-		var bottom = loc.Y + this.Height;
-		if (bottom > this.CurrentWorkingArea.Height)
-		{
-			// Maximize vertical view
-			var offScreenHeight = bottom - this.CurrentWorkingArea.Height;
-			if (loc.Y - offScreenHeight < 0)
-				loc.Y = 0;// Do your best
-			else
-				loc.Y -= offScreenHeight;
-
-			this.LeftSide = loc.X - this.Width;
-
-			// Put tooltip on right side of button to avoid mouse pointer overlap
-			loc.X += Convert.ToInt32(this.ButtonSack.Size.Width * UIService.Scale);
-
-			this.RightSide = loc.X;
-
-			// Capture mouse move when overing the button to allow dynamic tooltip placement on left<->right
-			this.ButtonSack.MouseMove += ButtonSack_MouseMove;
-		}
-
-		this.Location = loc;
+		this.PlaceUnder(this.ButtonSack);
 	}
 
-	private void ButtonSack_MouseMove(object? sender, MouseEventArgs e)
-	{
-		var loc = this.Location;
 
-		if (e.Location.X > this.ButtonSack.Width / 2)
-			loc.X = this.RightSide;
-		else
-			loc.X = this.LeftSide;
-
-		this.Location = loc;
-	}
-
-	private void BagButtonTooltip_FormClosing(object? sender, FormClosingEventArgs e) => this.ButtonSack.MouseMove -= ButtonSack_MouseMove;
 }

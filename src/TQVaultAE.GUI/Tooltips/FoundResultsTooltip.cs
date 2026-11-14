@@ -16,9 +16,6 @@ public partial class FoundResultsTooltip : BaseTooltip
 	/// <summary>Rendered search result summaries, up to 16 MB.</summary>
 	private static readonly TooltipImageCache<(string ResultCollectionHash, float Scale), object?> ToImage = new(16L << 20);
 
-	private Rectangle CurrentWorkingArea;
-	private int RightSide;
-	private int LeftSide;
 	private static FoundResultsTooltip? _Current = null;
 	public Control AnchorControl { get; private set; }
 	public IEnumerable<SearchResult> ResultsToDisplay { get; private set; } = [];
@@ -40,13 +37,8 @@ public partial class FoundResultsTooltip : BaseTooltip
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
-		this.CurrentWorkingArea = Screen.FromControl(this).WorkingArea;
-
-		// Tooltip can goes multi-columns
-		this.flowLayoutPanelFriendlyNames.MaximumSize = new Size(this.CurrentWorkingArea.Width, this.CurrentWorkingArea.Height);
-
 		// Fill it outside of screen to avoid flickering
-		this.Location = new Point(0, this.CurrentWorkingArea.Height);
+		this.Location = new Point(0, Screen.FromControl(this).WorkingArea.Height);
 	}
 
 
@@ -155,48 +147,13 @@ public partial class FoundResultsTooltip : BaseTooltip
 
 	private void ItemTooltip_Load(object? sender, EventArgs e)
 	{
+		// The tool tip may go multi-column, up to the size of the anchor's monitor.
+		this.flowLayoutPanelFriendlyNames.MaximumSize = WorkingAreaOf(this.AnchorControl).Size;
+
 		this.FillToolTip();
 
-		// Move it under BagButton
-		var loc = this.AnchorControl.PointToScreen(Point.Empty);
-		loc.Y += this.AnchorControl.Size.Height;
-
-		// Ajust position if tooltip size goes offscreen
-		var bottom = loc.Y + this.Height;
-		if (bottom > this.CurrentWorkingArea.Height)
-		{
-			// Maximize vertical view
-			var offScreenHeight = bottom - this.CurrentWorkingArea.Height;
-			if (loc.Y - offScreenHeight < 0)
-				loc.Y = 0;// Do your best
-			else
-				loc.Y -= offScreenHeight;
-
-			this.LeftSide = loc.X - this.Width;
-
-			// Put tooltip on right side of button to avoid mouse pointer overlap
-			loc.X += Convert.ToInt32(this.AnchorControl.Size.Width * UIService.Scale);
-
-			this.RightSide = loc.X;
-
-			// Capture mouse move when overing the button to allow dynamic tooltip placement on left<->right
-			this.AnchorControl.MouseMove += AnchorControl_MouseMove;
-		}
-
-		this.Location = loc;
+		this.PlaceUnder(this.AnchorControl);
 	}
 
-	private void AnchorControl_MouseMove(object? sender, MouseEventArgs e)
-	{
-		var loc = this.Location;
 
-		if (e.Location.X > this.AnchorControl.Width / 2)
-			loc.X = this.RightSide;
-		else
-			loc.X = this.LeftSide;
-
-		this.Location = loc;
-	}
-
-	private void ItemTooltip_FormClosing(object? sender, FormClosingEventArgs e) => this.AnchorControl.MouseMove -= AnchorControl_MouseMove;
 }
