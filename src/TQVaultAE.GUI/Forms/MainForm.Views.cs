@@ -28,31 +28,12 @@ public partial class MainForm
 	/// </summary>
 	private readonly MainFormUserControl mainView;
 
-	#region Controls of the main content
+	#region Main content
 
-	// The window builds and drives the panels of the main content: these are the view's controls it works on.
-	private System.Windows.Forms.Panel itemTextPanel => this.mainView.itemTextPanel;
+	/// <summary>
+	/// The notification line of the main content (the vault panel's menu writes to it through the form).
+	/// </summary>
 	internal ScalingLabel NotificationText => this.mainView.NotificationText;
-	private ScalingComboBox vaultListComboBox => this.mainView.vaultListComboBox;
-	private BufferedFlowLayoutPanel flowLayoutPanelVaultSelector => this.mainView.flowLayoutPanelVaultSelector;
-	private System.Windows.Forms.PictureBox vaultPictureBox => this.mainView.vaultPictureBox;
-	internal BufferedTableLayoutPanel tableLayoutPanelMain => this.mainView.tableLayoutPanelMain;
-	private System.Windows.Forms.TableLayoutPanel tableLayoutPanelHighlight => this.mainView.tableLayoutPanelHighlight;
-	private System.Windows.Forms.LinkLabel scalingLabelHighlight => this.mainView.scalingLabelHighlight;
-	private ScalingTextBox scalingTextBoxHighlight => this.mainView.scalingTextBoxHighlight;
-	private BufferedFlowLayoutPanel flowLayoutPanelRightPanels => this.mainView.flowLayoutPanelRightPanels;
-	private BufferedFlowLayoutPanel flowLayoutPanelRightComboBox => this.mainView.flowLayoutPanelRightComboBox;
-	private ComboBoxCharacter comboBoxCharacter => this.mainView.comboBoxCharacter;
-	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelsecondaryVaultList => this.mainView.bufferedFlowLayoutPanelsecondaryVaultList;
-	private System.Windows.Forms.PictureBox pictureBoxSecondVault => this.mainView.pictureBoxSecondVault;
-	private ScalingComboBox secondaryVaultListComboBox => this.mainView.secondaryVaultListComboBox;
-	private HighlightFilters highlightFilters => this.mainView.highlightFilters;
-	private Models.ItemDragInfo DragInfo => this.mainView.DragInfo;
-	private Components.Panels.VaultPanel vaultPanel => this.mainView.VaultPanel;
-	private Components.Panels.VaultPanel secondaryVaultPanel => this.mainView.SecondaryVaultPanel;
-	private Components.Panels.PlayerPanel playerPanel => this.mainView.PlayerPanel;
-	private Components.Panels.StashPanel stashPanel => this.mainView.StashPanel;
-	private bool showSecondaryVault => this.mainView.SecondaryVaultShown;
 
 	/// <summary>
 	/// The vaults the main content knows (the vault maintenance dialog checks new names against them).
@@ -166,7 +147,7 @@ public partial class MainForm
 
 		this.Update();
 
-		this.scalingTextBoxHighlight.Focus();
+		this.mainView.FocusHighlightSearch(dock: false);
 
 		left?.Invoke();
 
@@ -175,30 +156,6 @@ public partial class MainForm
 		this.deferredReloads.Clear();
 		foreach (var (path, reload) in reloads)
 			this.ScheduleReload(path, reload);
-	}
-
-	/// <summary>
-	/// Makes the main content ready to be hidden: the item held on the cursor goes back to its place, the tool tips close.
-	/// </summary>
-	/// <returns>False when the held item cannot go back (a modified item), which the user is told: the content stays.</returns>
-	private bool PutMainViewToSleep()
-	{
-		if (this.DragInfo.IsActive)
-		{
-			if (!this.DragInfo.CanBeCanceled)
-			{
-				this.Services.MessageBoxes.Inform(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2);
-				return false;
-			}
-
-			this.DragInfo.Cancel();
-		}
-
-		Tooltips.ItemTooltip.HideTooltip();
-		Tooltips.BagButtonTooltip.HideTooltip();
-		Tooltips.BagButtonLabelTooltip.HideTooltip();
-		Tooltips.FoundResultsTooltip.HideTooltip();
-		return true;
 	}
 
 	/// <summary>
@@ -237,7 +194,7 @@ public partial class MainForm
 	/// </summary>
 	private void ShowCharacterEditorView(PlayerCollection player)
 	{
-		if (this.shownView is not null || !this.PutMainViewToSleep())
+		if (this.shownView is not null || !this.mainView.PrepareToHide())
 			return;
 
 		var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -296,7 +253,7 @@ public partial class MainForm
 	/// </summary>
 	private void ShowSettingsView()
 	{
-		if (this.shownView is not null || !this.PutMainViewToSleep())
+		if (this.shownView is not null || !this.mainView.PrepareToHide())
 			return;
 
 		var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -375,7 +332,7 @@ public partial class MainForm
 			this.Refresh();
 
 		if (settings.EnableCharacterEditChanged)
-			stashPanel?.UpdatePlayerInfo();
+			this.mainView.UpdatePlayerInfo();
 
 		this.userContext.ConfigChanged = true;
 		this.SaveConfiguration();

@@ -97,7 +97,7 @@ public partial class MainForm
 			return;
 
 		var saved = string.Format(Resources.SavedAtNotification, DateTime.Now);
-		this.NotificationText.Text = saved;
+		this.mainView.ShowNotification(saved);
 		this.toolTip.SetToolTip(this.saveButton, saved);
 	}
 

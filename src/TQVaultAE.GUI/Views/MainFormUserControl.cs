@@ -65,6 +65,8 @@ public partial class MainFormUserControl : UserControl
 	{
 		var toolTip = new ToolTip(this.components);
 
+		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
+
 		this.vaultPictureBox.Image = Images.Majestic_Chest_small;
 		this.vaultPictureBox.Size = Images.Majestic_Chest_small.Size;
 		toolTip.SetToolTip(this.vaultPictureBox, Resources.MainFormLabel2);
@@ -100,6 +102,82 @@ public partial class MainFormUserControl : UserControl
 		this.vaultPictureBox.BorderStyle =
 		this.comboBoxCharacter.BorderStyle = border;
 		this.tableLayoutPanelMain.CellBorderStyle = visible ? TableLayoutPanelCellBorderStyle.Single : TableLayoutPanelCellBorderStyle.None;
+	}
+
+	/// <summary>
+	/// The fonts of the view's own controls at zoom 1: the window's zoom scales them afterwards.
+	/// </summary>
+	internal void ApplyFonts()
+	{
+		var fonts = this.Services.FontService;
+		var fontZoom = this.Services.UIService.FontZoom;
+		this.NotificationText.Font = fonts.GetFontLight(11F, FontStyle.Bold, fontZoom);
+		this.vaultListComboBox.Font = fonts.GetFontLight(13F, fontZoom);
+		this.secondaryVaultListComboBox.Font = fonts.GetFontLight(13F, fontZoom);
+		this.ApplyHighlightFonts();
+		this.scalingTextBoxHighlight.Font = fonts.GetFontLight(10F, fontZoom);
+	}
+
+	/// <summary>The fonts of the highlight link and of its filters panel at the current zoom.</summary>
+	internal void ApplyHighlightFonts()
+	{
+		this.scalingLabelHighlight.Font = this.Services.FontService.GetFontLight(10F, this.Services.UIService.FontZoom);
+		this.highlightFilters.ApplyFonts(this.Services.FontService, this.Services.UIService.FontZoom);
+	}
+
+	/// <summary>
+	/// Shows a message on the notification line, in <paramref name="color"/> when given.
+	/// </summary>
+	internal void ShowNotification(string message, Color? color = null)
+	{
+		if (color is { } foreColor)
+			this.NotificationText.ForeColor = foreColor;
+
+		this.NotificationText.Text = message;
+	}
+
+	/// <summary>The size the panels' table needs, to size the window around it.</summary>
+	internal Size PanelsPreferredSize => this.tableLayoutPanelMain.PreferredSize;
+
+	/// <summary>
+	/// Gives the focus to the highlight search box (the window is shown, or the main content again).
+	/// </summary>
+	/// <param name="dock">Docks the box in its cell first (when the window is first shown).</param>
+	internal void FocusHighlightSearch(bool dock)
+	{
+		if (dock)
+			this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
+
+		this.scalingTextBoxHighlight.Focus();
+	}
+
+	/// <summary>
+	/// The setting of the character edition changed: the stash panel's player information shows it.
+	/// </summary>
+	internal void UpdatePlayerInfo() => this.stashPanel?.UpdatePlayerInfo();
+
+	/// <summary>
+	/// Makes the main content ready to be hidden: the item held on the cursor goes back to its place, the tool tips close.
+	/// </summary>
+	/// <returns>False when the held item cannot go back (a modified item), which the user is told: the content stays.</returns>
+	internal bool PrepareToHide()
+	{
+		if (this.DragInfo.IsActive)
+		{
+			if (!this.DragInfo.CanBeCanceled)
+			{
+				this.Services.MessageBoxes.Inform(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2);
+				return false;
+			}
+
+			this.DragInfo.Cancel();
+		}
+
+		Tooltips.ItemTooltip.HideTooltip();
+		Tooltips.BagButtonTooltip.HideTooltip();
+		Tooltips.BagButtonLabelTooltip.HideTooltip();
+		Tooltips.FoundResultsTooltip.HideTooltip();
+		return true;
 	}
 
 	#region HighlightItems

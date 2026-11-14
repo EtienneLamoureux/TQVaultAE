@@ -19,7 +19,7 @@ namespace TQVaultAE.GUI.Forms;
 /// </summary>
 public partial class MainForm
 {
-	internal ItemDragInfo AutomationDragInfo => this.DragInfo;
+	internal ItemDragInfo AutomationDragInfo => this.mainView.DragInfo;
 
 	/// <summary>Zooms like Ctrl + / Ctrl - (delta 0.1 / -0.1) or Ctrl Home (delta 1, back to 100 %).</summary>
 	internal void AutomationZoom(float delta) => this.ResizeFormCallback(this, new ResizeEventArgs(delta));
@@ -33,7 +33,7 @@ public partial class MainForm
 	internal int AutomationZoomStep => this.ZoomStep;
 
 	/// <summary>Gets the table that lays out the vault, player and stash panels.</summary>
-	internal TableLayoutPanel AutomationLayoutTable => this.tableLayoutPanelMain;
+	internal TableLayoutPanel AutomationLayoutTable => this.mainView.tableLayoutPanelMain;
 
 	/// <summary>
 	/// The view shown under the toolbar: <c>main</c> (the main content), <c>settings</c> or <c>characterEditor</c>.
@@ -56,7 +56,7 @@ public partial class MainForm
 			? view
 			: null;
 
-	internal string? AutomationSelectedVault => this.vaultListComboBox?.SelectedItem?.ToString();
+	internal string? AutomationSelectedVault => this.mainView.vaultListComboBox?.SelectedItem?.ToString();
 
 	/// <summary>Shows a search result like a click on its row in the results dialog.</summary>
 	internal void AutomationSelectResult(TQVaultAE.Application.Results.SearchResult result) => this.SelectResult(this, new ResultChangedEventArgs(result));
@@ -81,18 +81,18 @@ public partial class MainForm
 	}
 
 	/// <summary>The mod the shown vault is linked to; null for none.</summary>
-	internal string? AutomationSelectedVaultMod => this.vaultPanel?.Vault?.Mod;
+	internal string? AutomationSelectedVaultMod => this.mainView.VaultPanel?.Vault?.Mod;
 
 	internal string? AutomationSelectedSecondaryVault
-		=> this.showSecondaryVault ? this.secondaryVaultListComboBox?.SelectedItem?.ToString() : null;
+		=> this.mainView.SecondaryVaultShown ? this.mainView.secondaryVaultListComboBox?.SelectedItem?.ToString() : null;
 
-	internal string? AutomationSelectedCharacter => this.comboBoxCharacter?.SelectedItem?.ToString();
+	internal string? AutomationSelectedCharacter => this.mainView.comboBoxCharacter?.SelectedItem?.ToString();
 
 	internal IReadOnlyList<string> AutomationCharacters
-		=> this.comboBoxCharacter?.Items.Select(i => i?.ToString() ?? string.Empty).ToList() ?? [];
+		=> this.mainView.comboBoxCharacter?.Items.Select(i => i?.ToString() ?? string.Empty).ToList() ?? [];
 
 	internal IReadOnlyList<string> AutomationVaults
-		=> this.vaultListComboBox?.Items.Cast<object>().Select(i => i?.ToString() ?? string.Empty).ToList() ?? [];
+		=> this.mainView.vaultListComboBox?.Items.Cast<object>().Select(i => i?.ToString() ?? string.Empty).ToList() ?? [];
 
 	/// <summary>
 	/// Selects a character like the user would in the drop down, which loads the player and its stashes.
@@ -100,11 +100,11 @@ public partial class MainForm
 	/// <returns>false when no character has that name.</returns>
 	internal bool AutomationSelectCharacter(string name)
 	{
-		var item = this.comboBoxCharacter.Items.FirstOrDefault(i => string.Equals(i?.ToString(), name, StringComparison.OrdinalIgnoreCase));
+		var item = this.mainView.comboBoxCharacter.Items.FirstOrDefault(i => string.Equals(i?.ToString(), name, StringComparison.OrdinalIgnoreCase));
 		if (item is null)
 			return false;
 
-		this.comboBoxCharacter.SelectedItem = item;
+		this.mainView.comboBoxCharacter.SelectedItem = item;
 		return true;
 	}
 
@@ -114,15 +114,15 @@ public partial class MainForm
 	/// <returns>false when no vault has that name.</returns>
 	internal bool AutomationSelectVault(string name)
 	{
-		var item = this.vaultListComboBox.Items.Cast<object>().FirstOrDefault(i => string.Equals(i?.ToString(), name, StringComparison.OrdinalIgnoreCase));
+		var item = this.mainView.vaultListComboBox.Items.Cast<object>().FirstOrDefault(i => string.Equals(i?.ToString(), name, StringComparison.OrdinalIgnoreCase));
 		if (item is null)
 			return false;
 
 		// The first entry opens the modal maintenance dialog: select it after the calling tool has returned.
-		if (this.vaultListComboBox.Items.IndexOf(item) == 0)
-			this.BeginInvoke(() => this.vaultListComboBox.SelectedItem = item);
+		if (this.mainView.vaultListComboBox.Items.IndexOf(item) == 0)
+			this.BeginInvoke(() => this.mainView.vaultListComboBox.SelectedItem = item);
 		else
-			this.vaultListComboBox.SelectedItem = item;
+			this.mainView.vaultListComboBox.SelectedItem = item;
 		return true;
 	}
 
@@ -132,7 +132,7 @@ public partial class MainForm
 	/// <returns>The name of the exported vault, or null when no vault is shown.</returns>
 	internal string? AutomationExportVault(string fileName)
 	{
-		var vault = this.vaultPanel.Player;
+		var vault = this.mainView.VaultPanel.Player;
 		if (vault is null)
 			return null;
 
@@ -146,11 +146,11 @@ public partial class MainForm
 	/// <returns>The name of the exported vault, or null when no vault is shown.</returns>
 	internal string? AutomationExportCsv(string fileName, int? bagIndex)
 	{
-		var vault = this.vaultPanel.Player;
+		var vault = this.mainView.VaultPanel.Player;
 		if (vault is null)
 			return null;
 
-		File.WriteAllText(fileName, this.vaultPanel.BuildCsvExport(bagIndex));
+		File.WriteAllText(fileName, this.mainView.VaultPanel.BuildCsvExport(bagIndex));
 		return vault.PlayerName;
 	}
 
@@ -179,20 +179,20 @@ public partial class MainForm
 
 	internal bool AutomationLoadingComplete => this.loadingComplete;
 
-	internal VaultPanel? AutomationVaultPanel => this.vaultPanel;
+	internal VaultPanel? AutomationVaultPanel => this.mainView.VaultPanel;
 
-	internal VaultPanel? AutomationSecondaryVaultPanel => this.secondaryVaultPanel;
+	internal VaultPanel? AutomationSecondaryVaultPanel => this.mainView.SecondaryVaultPanel;
 
-	internal PlayerPanel? AutomationPlayerPanel => this.playerPanel;
+	internal PlayerPanel? AutomationPlayerPanel => this.mainView.PlayerPanel;
 
-	internal StashPanel? AutomationStashPanel => this.stashPanel;
+	internal StashPanel? AutomationStashPanel => this.mainView.StashPanel;
 
 	internal ForgePanel? AutomationForgePanel => this.mainView.ForgePanel;
 
 	internal bool AutomationForgeShown => this.mainView.ForgePanel?.Visible == true;
 
 	/// <summary>Text of the notification bar, which shows the name of the item under the cursor.</summary>
-	internal string AutomationNotificationText => this.NotificationText.Text;
+	internal string AutomationNotificationText => this.mainView.NotificationText.Text;
 
 	/// <summary>
 	/// Shows or hides the forge like the Forge button does, which also hides or restores the other panels.
@@ -206,9 +206,9 @@ public partial class MainForm
 	/// <summary>Shows the highlight filters panel like its link, and returns it.</summary>
 	internal HighlightFilters AutomationShowHighlightFilters()
 	{
-		if (!this.highlightFilters.Visible)
+		if (!this.mainView.highlightFilters.Visible)
 			this.mainView.ToggleHighlightFilters();
-		return this.highlightFilters;
+		return this.mainView.highlightFilters;
 	}
 
 
@@ -222,7 +222,7 @@ public partial class MainForm
 		if (error != VaultMaintenanceError.None)
 			return error;
 
-		this.vaultListComboBox.Items.Add(name);
+		this.mainView.vaultListComboBox.Items.Add(name);
 		this.mainView.SelectVault(name);
 		return VaultMaintenanceError.None;
 	}
@@ -236,11 +236,11 @@ public partial class MainForm
 
 
 	/// <summary>The character drop down, whose context menu holds the tag boxes.</summary>
-	internal ComboBoxCharacter AutomationCharacterCombo => this.comboBoxCharacter;
+	internal ComboBoxCharacter AutomationCharacterCombo => this.mainView.comboBoxCharacter;
 
 	/// <summary>
 	/// Shows the character editor in place of the main content like the Edit button of the stash panel (its click
 	/// handler), before the calling tool returns.
 	/// </summary>
-	internal void AutomationOpenCharacterEditor() => this.stashPanel.AutomationClickEdit();
+	internal void AutomationOpenCharacterEditor() => this.mainView.StashPanel.AutomationClickEdit();
 }

@@ -67,7 +67,7 @@ public partial class MainForm
 		try
 		{
 			// Make sure we are not dragging anything
-			if (this.DragInfo.IsActive)
+			if (this.mainView.DragInfo.IsActive)
 			{
 				this.Services.MessageBoxes.Inform(Resources.MainFormHoldingItem, Resources.MainFormHoldingItem2);
 				return false;
@@ -148,8 +148,7 @@ public partial class MainForm
 	/// <param name="e">EventArgs data</param>
 	private void MainFormShown(object? sender, EventArgs e)
 	{
-		this.scalingTextBoxHighlight.Dock = DockStyle.Fill;
-		this.scalingTextBoxHighlight.Focus();
+		this.mainView.FocusHighlightSearch(dock: true);
 	}
 
 	/// <summary>
@@ -311,7 +310,7 @@ public partial class MainForm
 	{
 		if (this.LayOutFromSnapshot(UIService.Scale))
 		{
-			this.ApplyHighlightFonts();
+			this.mainView.ApplyHighlightFonts();
 			this.SizeToZoom();
 			this.Invalidate(true);
 		}
@@ -327,11 +326,11 @@ public partial class MainForm
 		base.ScaleForm(zoomStep);
 
 		// The highlight link and the filters panel's non-zooming controls do not scale their fonts by themselves.
-		this.ApplyHighlightFonts();
+		this.mainView.ApplyHighlightFonts();
 
 		this.SizeToZoom();
 
-		this.NotificationText.Text = string.Empty;
+		this.mainView.ShowNotification(string.Empty);
 
 		this.Invalidate();
 	}
@@ -350,7 +349,7 @@ public partial class MainForm
 		{
 			var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.Scale);
 			client = TQVaultAE.Application.WindowLayout.GrowToFit(
-				client, this.ContentAreaOf(client), this.mainView.Location, this.tableLayoutPanelMain.PreferredSize);
+				client, this.ContentAreaOf(client), this.mainView.Location, this.mainView.PanelsPreferredSize);
 
 			// Never larger than Windows lets the window be (the zoom stops before, LargestZoom): Windows would cut it
 			// itself, the resize would then be read as the user's and constrained to the design ratio, down to a 4 x 4
@@ -367,13 +366,6 @@ public partial class MainForm
 		// The caption buttons last, on the final size: placed before it (ScaleForm places them), the resize moved
 		// them and a corner of the close button kept what the moved controls had left there.
 		this.PlaceButtons();
-	}
-
-	/// <summary>The fonts of the highlight link and of its filters panel at the current zoom.</summary>
-	private void ApplyHighlightFonts()
-	{
-		this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
-		this.highlightFilters.ApplyFonts(FontService, UIService.FontZoom);
 	}
 
 	/// <summary>

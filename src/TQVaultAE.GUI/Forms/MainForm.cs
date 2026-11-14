@@ -146,9 +146,6 @@ public partial class MainForm : VaultForm
 
 		// The window is built at zoom 1 (InitForm): the fonts are those of zoom 1, the user's zoom scales them below.
 		this.exitButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		this.NotificationText.Font = FontService.GetFontLight(11F, FontStyle.Bold, UIService.FontZoom);
-		this.vaultListComboBox.Font = FontService.GetFontLight(13F, UIService.FontZoom);
-		this.secondaryVaultListComboBox.Font = FontService.GetFontLight(13F, UIService.FontZoom);
 		this.configureButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		this.showVaulButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		this.aboutButton.Font = FontService.GetFontLight(8.25F, UIService.FontZoom);
@@ -156,8 +153,7 @@ public partial class MainForm : VaultForm
 		this.searchButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		this.saveButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		this.forgeButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		this.ApplyHighlightFonts();
-		this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
+		this.mainView.ApplyFonts();
 
 		#endregion
 
@@ -214,7 +210,6 @@ Item Debug Level: {ItemDebugLevel}
 		this.showVaulButton.Text = Resources.MainFormBtnPanelSelect;
 		this.Icon = Images.TQVIcon;
 		this.searchButton.Text = Resources.MainFormSearchButtonText;
-		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
 #if DEBUG
 		this.DebugLayoutBorderVisible = false;// Set here what you want during debug
@@ -258,8 +253,7 @@ Item Debug Level: {ItemDebugLevel}
 
 	private void UIService_NotifyUserEvent(object? sender, string message, Color color)
 	{
-		this.NotificationText.ForeColor = color;
-		this.NotificationText.Text = message;
+		this.mainView.ShowNotification(message, color);
 	}
 
 	private void AdjustMenuButtonVisibility()

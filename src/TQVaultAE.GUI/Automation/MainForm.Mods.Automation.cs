@@ -10,7 +10,7 @@ public partial class MainForm
 {
 	internal IGameMapService AutomationGameMapService => this.gameMapService;
 
-	internal IReadOnlyList<PlayerSave> AutomationPlayerSaves => [.. this.comboBoxCharacter.Items.OfType<PlayerSave>()];
+	internal IReadOnlyList<PlayerSave> AutomationPlayerSaves => [.. this.mainView.comboBoxCharacter.Items.OfType<PlayerSave>()];
 
-	internal PlayerSave? AutomationSelectedSave => this.comboBoxCharacter.SelectedItem as PlayerSave;
+	internal PlayerSave? AutomationSelectedSave => this.mainView.comboBoxCharacter.SelectedItem as PlayerSave;
 }
