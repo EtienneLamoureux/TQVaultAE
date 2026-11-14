@@ -6,6 +6,7 @@
 using TQVaultAE.Application;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Config;
+using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Components.Character;
