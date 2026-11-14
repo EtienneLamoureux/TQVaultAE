@@ -123,6 +123,32 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
+	/// Right-clicks a bag button like the user and draws the menu it opens, with the sub menus opened along
+	/// <paramref name="open"/>: the vault bag menu built by the click handler, or the stash tab's own menu (its tool tip
+	/// entries). The menu is closed after, nothing picked.
+	/// </summary>
+	internal Bitmap AutomationRenderBagMenu(int bag, IReadOnlyList<string> open)
+	{
+		if (bag < 0 || bag >= this.BagButtons.Count)
+			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+
+		var button = this.BagButtons[bag];
+		var at = new Point(button.Width / 2, button.Height / 2);
+		if (button.ContextMenuStrip is { } own)
+		{
+			own.Show(button, at);
+			return AutomationMenus.Render(own, open);
+		}
+
+		this.contextMenu.Items.Clear();
+		this.BagButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, at.X, at.Y, 0));
+		if (!this.contextMenu.Visible)
+			throw new InvalidOperationException("This bag button opens no menu: only the vault bags and the stash tabs have one.");
+
+		return AutomationMenus.Render(this.contextMenu, open);
+	}
+
+	/// <summary>
 	/// Right-clicks the sort button of <paramref name="target"/> through its regular handler and draws the menu it opens;
 	/// the menu is closed after, nothing picked.
 	/// </summary>

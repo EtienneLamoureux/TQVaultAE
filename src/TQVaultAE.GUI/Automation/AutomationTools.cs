@@ -768,9 +768,9 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
-	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), a panel id with x and y for the right-click menu of that cell, or '<panel>.sort' (vault.sort, player.sort, playerBag.sort, stash.sort...) for the right-click menu of that panel's sort button, 'loadouts' for the loadout bar's right-click menu, 'loadouts.list' for its drop-down list.")]
+	[Description("Opens a menu like the user and renders it to PNG with the sub menus opened along 'open' (' > ' between levels, e.g. 'Modded'), drawn to the right level with their entry, then closes it without choosing anything. Target: 'vaultTools' for the vault tools button next to the vault list, 'characterTools' for the tools button next to the character list (as it opens for the selected character), a panel id with x and y for the right-click menu of that cell, or '<panel>.sort' (vault.sort, player.sort, playerBag.sort, stash.sort...) for the right-click menu of that panel's sort button, '<panel>.bag<N>' (vault.bag3, stash.bag1...) for the right-click menu of that bag button (it selects that bag), 'loadouts' for the loadout bar's right-click menu, 'loadouts.list' for its drop-down list.")]
 	public static IEnumerable<ContentBlock> CaptureMenu(
-		[Description("'vaultTools', 'characterTools', a panel id, '<panel>.sort', 'loadouts' or 'loadouts.list'.")] string target,
+		[Description("'vaultTools', 'characterTools', a panel id, '<panel>.sort', '<panel>.bag<N>', 'loadouts' or 'loadouts.list'.")] string target,
 		[Description("Cell column, for a panel.")] int x = 0,
 		[Description("Cell row, for a panel.")] int y = 0,
 		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
@@ -786,6 +786,8 @@ internal static partial class AutomationTools
 					? form.AutomationCharacterCombo.AutomationRenderMenu(path)
 					: target.EndsWith(".sort", StringComparison.OrdinalIgnoreCase)
 					? RenderSortMenu(form, target[..^".sort".Length])
+					: BagMenuTarget(target) is var (bagPanel, bag)
+					? RenderBagMenu(form, bagPanel, bag, path)
 					: target.StartsWith("loadouts", StringComparison.OrdinalIgnoreCase)
 					? RenderLoadoutMenu(form, target)
 					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
@@ -815,6 +817,21 @@ internal static partial class AutomationTools
 		var menu = target.EndsWith(".list", StringComparison.OrdinalIgnoreCase) ? bar.ListMenu : bar.ActionMenu;
 		menu.Show(bar, new Point(0, bar.Height));
 		return AutomationMenus.Render(menu, []);
+	}
+
+	/// <summary>The panel and bag of a '<panel>.bag<N>' target, null for another target.</summary>
+	private static (string Panel, int Bag)? BagMenuTarget(string target)
+	{
+		int dot = target.LastIndexOf(".bag", StringComparison.OrdinalIgnoreCase);
+		return dot > 0 && int.TryParse(target.AsSpan(dot + ".bag".Length), out int bag) ? (target[..dot], bag) : null;
+	}
+
+	/// <summary>The right-click menu of <paramref name="panel"/>'s bag button <paramref name="bag"/>, drawn as it opens.</summary>
+	private static Bitmap RenderBagMenu(MainForm form, string panel, int bag, IReadOnlyList<string> open)
+	{
+		var container = AutomationPanels.Resolve(form, panel).Container
+			?? throw new InvalidOperationException($"Panel '{panel}' has no bag buttons.");
+		return container.AutomationRenderBagMenu(bag, open);
 	}
 
 	/// <summary>The sort menu of <paramref name="panel"/>'s sort button, drawn as it opens.</summary>
