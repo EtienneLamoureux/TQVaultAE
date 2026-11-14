@@ -32,20 +32,7 @@ public partial class MainForm
 	/// every listed Immortal Throne character.
 	/// </summary>
 	private List<string> SharedStashMaps()
-	{
-		var maps = new List<string>();
-		foreach (var save in this.mainView.ListedCharacters().Where(c => c.IsImmortalThrone))
-		{
-			var map = this.gameMapService.MapFor(save);
-			if (!maps.Any(m => GameMaps.Same(m, map)))
-				maps.Add(map);
-		}
-
-		if (maps.Count != 0 && !maps.Any(m => GameMaps.Same(m, string.Empty)))
-			maps.Insert(0, string.Empty);
-
-		return maps;
-	}
+		=> SharedStashes.Maps(this.mainView.ListedCharacters().Where(c => c.IsImmortalThrone).Select(this.gameMapService.MapFor));
 
 	/// <summary>
 	/// Loads all of the players, stashes, and vaults.
