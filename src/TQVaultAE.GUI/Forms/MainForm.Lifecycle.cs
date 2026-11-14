@@ -462,7 +462,16 @@ public partial class MainForm
 		this.ResizeCustomAllowed = true;
 		this.fadeInterval = USettings.FadeInInterval;
 
+		this.openingScreen = this.PlaceForCreation();
+
+		// Creates the window.
 		Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
+		// The zoom fits the monitor the window opens on, measured at the DPI it is built at.
+		if (this.openingScreen is { } opening && MonitorDpi.Of(opening) is int openingDpi)
+			workingArea = new Rectangle(
+				opening.WorkingArea.Location,
+				TQVaultAE.Application.WindowLayout.Scaled(opening.WorkingArea.Size, (float)this.DeviceDpi / openingDpi));
 
 		// Windows Forms already scaled the designer layout to the screen DPI (AutoScaleMode.Dpi); the code-built panels and
 		// the drawing follow UIService.Scale, which gets the same factor on top of the user's zoom.
@@ -491,13 +500,57 @@ public partial class MainForm
 	private float startupZoom = 1.0F;
 
 	/// <summary>
+	/// Places the window, before it is created, on a monitor at the DPI Windows Forms laid the designer out at (the
+	/// system DPI), when the monitor under the mouse, where it opens (CenterScreen), has another DPI: created there, the
+	/// window was scaled while it was created, through DPI changes nested in each other, which left sizes of the other
+	/// DPI in the content (panels cut and overlapping, a wider window). Returns that monitor, which the window is moved
+	/// to once built (<see cref="MoveToOpeningScreen"/>); null when the window can be created where it opens.
+	/// </summary>
+	private Screen? PlaceForCreation()
+	{
+		var opening = Screen.FromPoint(Control.MousePosition);
+		if (MonitorDpi.Of(opening) is not int openingDpi || openingDpi == this.DeviceDpi)
+			return null;
+
+		var creation = Screen.AllScreens.FirstOrDefault(screen => MonitorDpi.Of(screen) == this.DeviceDpi);
+		if (creation is null)
+			return null;
+
+		this.StartPosition = FormStartPosition.Manual;
+		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(creation.WorkingArea, this.Size);
+		return opening;
+	}
+
+	/// <summary>
+	/// The monitor the window opens on, when it is created on another one (<see cref="PlaceForCreation"/>).
+	/// </summary>
+	private Screen? openingScreen;
+
+	/// <summary>
+	/// Moves the window, built on the monitor it was created on (<see cref="PlaceForCreation"/>), to the one it opens on,
+	/// at the size it takes there: Windows sends one DPI change, which scales it as a move there does, then it is
+	/// centered there. Once shown, still transparent before its fade in: a hidden window scaled to another DPI kept
+	/// sizes of the DPI before in its auto-sized panels (the vault list row was 5 px higher).
+	/// </summary>
+	private void MoveToOpeningScreen()
+	{
+		if (this.openingScreen is not { } opening)
+			return;
+
+		this.openingScreen = null;
+		var size = MonitorDpi.Of(opening) is int dpi
+			? TQVaultAE.Application.WindowLayout.Scaled(this.Size, (float)dpi / this.DeviceDpi)
+			: this.Size;
+		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(opening.WorkingArea, size);
+		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(Screen.FromControl(this).WorkingArea, this.Size);
+	}
+
+	/// <summary>
 	/// Gives the window built at zoom 1 the user's zoom, through the same scaling as a live zoom, then keeps the sizes
 	/// the user's resizing and maximizing start from and centers the window on its monitor.
 	/// </summary>
 	private void ApplyStartupZoom()
 	{
-		Rectangle workingArea = Screen.FromControl(this).WorkingArea;
-
 		this.KeepDesignMargins();
 
 		if (this.startupZoom != 1.0F)
@@ -518,10 +571,7 @@ public partial class MainForm
 		this.LastFormSize = this.Size;
 
 		// A maximize keeps the aspect ratio on the monitor the window is on then (VaultForm, WM_GETMINMAXINFO).
-		// Centered, but never above nor left of the working area: a window larger than it keeps its caption on screen.
-		this.Location = new Point(
-			workingArea.Left + Math.Max(0, (workingArea.Width - this.Width) / 2),
-			workingArea.Top + Math.Max(0, (workingArea.Height - this.Height) / 2));
+		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(Screen.FromControl(this).WorkingArea, this.Size);
 	}
 
 

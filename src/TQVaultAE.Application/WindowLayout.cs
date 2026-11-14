@@ -58,4 +58,13 @@ public static class WindowLayout
 	/// </summary>
 	public static Size Within(Size size, Size limit)
 		=> new(Math.Min(size.Width, limit.Width), Math.Min(size.Height, limit.Height));
+
+	/// <summary>
+	/// Where a window of <paramref name="size"/> is centered in <paramref name="workingArea"/>, but never above nor left
+	/// of it: a window larger than the area keeps its caption on screen.
+	/// </summary>
+	public static Point CenteredIn(Rectangle workingArea, Size size)
+		=> new(
+			workingArea.Left + Math.Max(0, (workingArea.Width - size.Width) / 2),
+			workingArea.Top + Math.Max(0, (workingArea.Height - size.Height) / 2));
 }

@@ -155,6 +155,7 @@ public partial class MainForm
 		this.ShowInTaskbar = true;
 		this.Enabled = true;
 		this.Show();
+		this.MoveToOpeningScreen();
 		this.Activate();
 	}
 

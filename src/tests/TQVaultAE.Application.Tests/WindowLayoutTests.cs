@@ -97,4 +97,15 @@ public class WindowLayoutTests
 		WindowLayout.Within(new Size(2362, 1592), new Size(2572, 1462)).Should().Be(new Size(2362, 1462));
 		WindowLayout.Within(new Size(1688, 1138), new Size(2572, 1462)).Should().Be(new Size(1688, 1138));
 	}
+
+	// A 1920 x 1032 working area of a monitor left of the primary one.
+	[Fact]
+	public void CenteredIn_CentersAWindowThatFits()
+		=> WindowLayout.CenteredIn(new Rectangle(-1920, 358, 1920, 1032), new Size(1350, 910))
+			.Should().Be(new Point(-1920 + 285, 358 + 61));
+
+	[Fact]
+	public void CenteredIn_KeepsTheCaptionOfALargerWindowOnScreen()
+		=> WindowLayout.CenteredIn(new Rectangle(-1920, 358, 1920, 1032), new Size(1688, 1138))
+			.Should().Be(new Point(-1920 + 116, 358));
 }
