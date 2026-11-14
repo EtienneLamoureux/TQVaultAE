@@ -328,6 +328,21 @@ public partial class MainForm
 	}
 
 	/// <summary>
+	/// Windows Forms scaled the layout from the DPI before, rounded again at each change (a round trip 144 -> 96 -> 120 ->
+	/// 144 left 88 controls off): the layout is made again from the one kept at zoom 1, scaled once to the new DPI and the
+	/// same zoom step, as a zoom does, and the window takes the step's size there.
+	/// </summary>
+	protected override void FollowDpi()
+	{
+		if (this.LayOutFromSnapshot(UIService.Scale))
+		{
+			this.ApplyHighlightLabelFont();
+			this.SizeToZoom();
+			this.Invalidate(true);
+		}
+	}
+
+	/// <summary>
 	/// Gives the main form the zoom of <paramref name="zoomStep"/>, then the fonts set in code and the window's size at that
 	/// zoom.
 	/// </summary>

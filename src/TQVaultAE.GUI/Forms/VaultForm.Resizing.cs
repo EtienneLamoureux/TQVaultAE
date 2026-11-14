@@ -87,23 +87,7 @@ public partial class VaultForm
 		// Maximized (or minimized), the window cannot be given its size at zoom 1, and the size Windows restores it to
 		// follows the scaling of its size: it is scaled from the zoom before, as the content until it is restored; the
 		// zoom of the restore gives the content its layout from zoom 1 back.
-		if (this.zoomSnapshot is { } snapshot && this.WindowState == FormWindowState.Normal)
-		{
-			snapshot.Zoom(previous, UIService.Scale, factor =>
-			{
-				// The window at zoom 1 too: the content is scaled as the window holding it; the size before the next
-				// resize is not a resize by the user to keep in the design ratio.
-				if (this.ClientSize != snapshot.ClientSize)
-				{
-					this.LastFormSize = this.SizeFromClientSize(snapshot.ClientSize);
-					this.ClientSize = snapshot.ClientSize;
-				}
-
-				using (ZoomScope.Enter())
-					this.Scale(new SizeF(factor, factor));
-			});
-		}
-		else
+		if (!this.LayOutFromSnapshot(previous))
 		{
 			float factor = UIService.Scale / previous;
 			using (ZoomScope.Enter())
@@ -116,6 +100,33 @@ public partial class VaultForm
 		RefreshNormalizeBox();
 
 		this.Log.LogDebug("Config.Settings.Default.Scale changed to {Scale} !", USettings.Scale);
+	}
+
+	/// <summary>
+	/// Gives the window, in its normal state, the layout kept at zoom 1 scaled once to <see cref="UIService"/>'s scale
+	/// (the zoom step's on the current DPI); false, and nothing done, without a snapshot or when the window is maximized
+	/// or minimized.
+	/// </summary>
+	/// <param name="previous">The scale the controls made after the snapshot were made or last scaled at.</param>
+	protected bool LayOutFromSnapshot(float previous)
+	{
+		if (this.zoomSnapshot is not { } snapshot || this.WindowState != FormWindowState.Normal)
+			return false;
+
+		snapshot.Zoom(previous, UIService.Scale, factor =>
+		{
+			// The window at zoom 1 too: the content is scaled as the window holding it; the size before the next resize
+			// is not a resize by the user to keep in the design ratio.
+			if (this.ClientSize != snapshot.ClientSize)
+			{
+				this.LastFormSize = this.SizeFromClientSize(snapshot.ClientSize);
+				this.ClientSize = snapshot.ClientSize;
+			}
+
+			using (ZoomScope.Enter())
+				this.Scale(new SizeF(factor, factor));
+		});
+		return true;
 	}
 
 	/// <summary>
@@ -283,8 +294,54 @@ public partial class VaultForm
 		this.OriginalFormSize = TQVaultAE.Application.WindowLayout.Scaled(this.OriginalFormSize, factor);
 		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMaximumSize, factor);
 		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMinimumSize, factor);
+		// The layout made again for the new DPI; during a drag by the title bar, once the drag ends: Windows gives the
+		// window its suggested size during its move loop, over a size set here, and the end of the drag then read the
+		// difference as a resize by the user.
+		if (this.inMoveLoop)
+			this.followDpiPending = true;
+		else
+			this.FollowDpi();
+
 		this.LastFormSize = this.Size;
 		this.PlaceButtons();
+	}
+
+	/// <summary>
+	/// The window moved to a monitor of another DPI and Windows Forms scaled it: a window that keeps its layout at zoom 1
+	/// makes it again from there. Nothing by default.
+	/// </summary>
+	protected virtual void FollowDpi()
+	{
+	}
+
+	/// <summary>Whether Windows' move or size loop is running (a drag by the title bar or the border).</summary>
+	private bool inMoveLoop;
+
+	/// <summary>Whether the DPI changed during the move loop: <see cref="FollowDpi"/> runs when it ends.</summary>
+	private bool followDpiPending;
+
+	/// <inheritdoc/>
+	protected override void OnResizeBegin(EventArgs e)
+	{
+		this.inMoveLoop = true;
+		base.OnResizeBegin(e);
+	}
+
+	/// <summary>
+	/// The move or size loop ended: a DPI change during it makes the layout again now, before the end is read as a
+	/// resize by the user (the window's size then is the one it takes, not a resize).
+	/// </summary>
+	protected override void OnResizeEnd(EventArgs e)
+	{
+		this.inMoveLoop = false;
+		if (this.followDpiPending)
+		{
+			this.followDpiPending = false;
+			this.FollowDpi();
+			this.LastFormSize = this.Size;
+		}
+
+		base.OnResizeEnd(e);
 	}
 
 	/// <summary>The zoom step before the window was maximized, given back when it is restored.</summary>
