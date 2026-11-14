@@ -347,18 +347,7 @@ public static class GameAttributeOrder
 		, IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> suffixLines)
 	{
 		var sections = Sections(itemClass);
-		int SectionRank(GameAttributeSlot slot)
-		{
-			if (slot.Store is GameAttributeStore.Offense or GameAttributeStore.Retaliation or GameAttributeStore.Defense
-				or GameAttributeStore.Character or GameAttributeStore.Skill)
-			{
-				int i = Array.IndexOf(sections, (slot.Store, slot.Store == GameAttributeStore.Skill ? 1 : slot.Output));
-				return i < 0 ? sections.Length : i;
-			}
-
-			// After the stores: racial bonuses, skill augments, granted skill, pet bonuses, then unknown attributes.
-			return sections.Length + 1 + (slot.Store - GameAttributeStore.Racial);
-		}
+		int SectionRank(GameAttributeSlot slot) => GameAttributeOrder.SectionRank(sections, slot);
 
 		var entries = new List<(int Section, int Global, int GlobalSource, int Index, int Source, int Line, string Text, string? Range, int Origin)>();
 		void AddAll(IReadOnlyList<(string Text, GameAttributeSlot Slot, string? Range)> lines, int source)
@@ -399,6 +388,35 @@ public static class GameAttributeOrder
 			result.Insert(baseCount, (string.Empty, null, 0));
 
 		return [.. result];
+	}
+
+	/// <summary>
+	/// Where an attribute group of one record comes in the game's order for an item class: its store output (in the
+	/// class's order), then, inside it, the plain groups by attribute type and after them the groups of a global chance,
+	/// its header first. Groups with the same key keep the record's order (sort with a stable sort).
+	/// </summary>
+	/// <param name="itemClass">The class of the item, which orders the stores.</param>
+	/// <param name="slot">The slot of the group (<see cref="SlotOf"/>).</param>
+	public static (int Section, int Global, int Index) SortKeyOf(GameItemClass itemClass, GameAttributeSlot slot)
+	{
+		int section = SectionRank(Sections(itemClass), slot);
+		return slot.Global ? (section, 1, slot.Index < 0 ? -1 : 0) : (section, 0, slot.Index);
+	}
+
+	/// <summary>
+	/// The rank of a slot's section: its store output in the class's order, then, after the stores, racial bonuses,
+	/// skill augments, granted skill, pet bonuses and unknown attributes.
+	/// </summary>
+	private static int SectionRank((GameAttributeStore Store, int Output)[] sections, GameAttributeSlot slot)
+	{
+		if (slot.Store is GameAttributeStore.Offense or GameAttributeStore.Retaliation or GameAttributeStore.Defense
+			or GameAttributeStore.Character or GameAttributeStore.Skill)
+		{
+			int i = Array.IndexOf(sections, (slot.Store, slot.Store == GameAttributeStore.Skill ? 1 : slot.Output));
+			return i < 0 ? sections.Length : i;
+		}
+
+		return sections.Length + 1 + (slot.Store - GameAttributeStore.Racial);
 	}
 
 	/// <summary>

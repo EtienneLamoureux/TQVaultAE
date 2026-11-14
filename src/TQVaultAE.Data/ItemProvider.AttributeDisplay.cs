@@ -158,10 +158,20 @@ public partial class ItemProvider
 		if (itm.attributeCount != 0)
 			itm.isAttributeCounted = true;
 
-		// Now we have all our attributes grouped by effect.  Now lets sort them
-		List<Variable?>[] attrArray = new List<Variable?>[attrByEffect.Count];
-		attrByEffect.Values.CopyTo(attrArray, 0);
-		Array.Sort(attrArray, itm.IsArmor || itm.IsShield ? this.SortArmorAttributeGroups : this.SortOtherAttributeGroups);
+		// Now we have all our attributes grouped by effect: list them in the game's order for the item's class (a stable
+		// sort keeps the record's order for groups the game ranks alike). A skill's effects (a granted or triggered skill)
+		// are not item attributes: they keep TQVault's order, which matches the skill window column.
+		List<Variable?>[] attrArray;
+		if (record.GetString("Class", 0).StartsWith("Skill", noCase))
+		{
+			attrArray = [.. attrByEffect.Values];
+			Array.Sort(attrArray, itm.IsArmor || itm.IsShield ? this.SortArmorAttributeGroups : this.SortOtherAttributeGroups);
+		}
+		else
+		{
+			var itemClass = GameAttributeOrder.ClassOf(itm);
+			attrArray = [.. attrByEffect.Values.OrderBy(g => GameAttributeOrder.SortKeyOf(itemClass, this.GameSlotOf(itm, g)))];
+		}
 
 		// The skill window lists the groups in its own order (a stable sort keeps the order above for equal ranks).
 		Dictionary<object, SkillWindowRank>? skillRanks = null;

@@ -31,6 +31,7 @@ public class ItemProviderAttributeDisplayTests
 		["ChanceOfTag"] = "{%.0f0}% Chance of",
 		["characterStrength"] = "{%+.0f0} Strength",
 		["characterLife"] = "{%+.0f0} Health",
+		["DefensePoison"] = "{%.0f0}% Poison Resistance",
 		["DamageBasePhysical"] = "Physical Damage",
 		["DamageDurationFire"] = "Burn Damage",
 		["DamageStun"] = "Stun",
@@ -112,6 +113,25 @@ public class ItemProviderAttributeDisplayTests
 		var lines = this.BaseAttributes(item);
 
 		lines.Should().Equal($"{Mundane}10-20 Physical Damage");
+	}
+
+	[Theory]
+	[InlineData("ArmorJewelry_Ring", "Poison", "Physical", "Strength")]
+	[InlineData("WeaponMelee_Sword", "Physical", "Poison", "Strength")]
+	public void AttributeGroups_OfOneRecord_FollowTheGameOrderOfTheItemClass(string itemClass, string first, string second, string third)
+	{
+		// Armor and jewellery list the defense store before the offense one, weapons their damage first; the
+		// character bonuses come after both. The record lists them in another order.
+		var item = this.CreateItem(itemClass
+			, Int("characterStrength", 15)
+			, Float("offensivePhysicalMin", 10f), Float("offensivePhysicalMax", 20f)
+			, Float("defensivePoison", 25f));
+
+		var lines = this.BaseAttributes(item);
+
+		lines.Select(l => new[] { "Poison", "Physical", "Strength" }.FirstOrDefault(l.Contains))
+			.Where(w => w is not null)
+			.Should().Equal(first, second, third);
 	}
 
 	[Fact]

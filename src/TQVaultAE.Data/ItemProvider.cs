@@ -82,7 +82,8 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 		this.SortDamageQualifiers = ((IComparer<Variable?>)new ItemAttributeSubListCompare(itemAttributeProvider)).Compare;
 	}
 
-	// Sort delegates made once: Array.Sort and List.Sort given an IComparer build a Comparison from it on every call,
+	// Sort delegates made once (TQVault's order, kept for a skill's effects and the damage qualifiers): Array.Sort and
+	// List.Sort given an IComparer build a Comparison from it on every call,
 	// and building that delegate was the most contended step of the parallel search warm-up.
 	private readonly Comparison<List<Variable?>> SortArmorAttributeGroups;
 	private readonly Comparison<List<Variable?>> SortOtherAttributeGroups;
