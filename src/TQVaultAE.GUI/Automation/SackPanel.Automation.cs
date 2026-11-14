@@ -117,7 +117,8 @@ internal static class AutomationMenus
 
 	/// <summary>
 	/// Draws a menu and the sub menus opened along <paramref name="open"/>, as the user sees them: each drop down is
-	/// shown, drawn, and the menu closed at the end. The sub menus are drawn to the right, level with their entry.
+	/// shown, drawn, and the menu closed at the end. The sub menus are drawn to the right, level with their entry, which
+	/// is drawn selected.
 	/// </summary>
 	internal static Bitmap Render(ContextMenuStrip menu, IReadOnlyList<string> open)
 	{
@@ -137,6 +138,12 @@ internal static class AutomationMenus
 					?? items.FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true);
 				if (entry is not ToolStripMenuItem { HasDropDownItems: true } parent)
 					throw new InvalidOperationException($"No sub menu '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
+
+				// The entry whose sub menu is open is drawn selected, as under the user's mouse.
+				parent.Select();
+				var (drawn, y) = parts[^1];
+				parts[^1] = (Draw(current), y);
+				drawn.Dispose();
 
 				top += parent.Bounds.Y;
 				parent.ShowDropDown();
