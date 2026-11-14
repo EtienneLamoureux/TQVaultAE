@@ -428,9 +428,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 		// Room for the scroll bar that the other direction needs.
 		if (content.Height + frame.Height > maxHeight)
-			width = Math.Min(width + SystemInformation.GetVerticalScrollBarWidthForDpi(this.DeviceDpi), maxWidth);
+			width = Math.Min(width + this.VerticalScrollBarWidth(), maxWidth);
 		if (content.Width + frame.Width > maxWidth)
-			height = Math.Min(height + SystemInformation.GetHorizontalScrollBarHeightForDpi(this.DeviceDpi), maxHeight);
+			height = Math.Min(height + this.HorizontalScrollBarHeight(), maxHeight);
 
 		this.ClientSize = new Size(width, height);
 		if (keepLocation)

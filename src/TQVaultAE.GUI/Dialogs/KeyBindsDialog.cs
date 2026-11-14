@@ -224,7 +224,7 @@ internal sealed partial class KeyBindsDialog : VaultForm
 	/// </summary>
 	private void FitList()
 	{
-		this.listPanel.Width = this.table.Width + SystemInformation.GetVerticalScrollBarWidthForDpi(this.DeviceDpi) + 2;
+		this.listPanel.Width = this.table.Width + this.VerticalScrollBarWidth() + 2;
 		this.labelStatus.MaximumSize = new Size(this.listPanel.Width + this.listPanel.Margin.Horizontal, 0);
 	}
 
