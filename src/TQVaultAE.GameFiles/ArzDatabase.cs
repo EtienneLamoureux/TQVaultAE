@@ -6,7 +6,6 @@
 
 using System.Buffers;
 using System.Buffers.Binary;
-using System.IO.Compression;
 
 
 namespace TQVaultAE.GameFiles;
@@ -115,23 +114,7 @@ internal sealed class ArzDatabase : IArzDatabase
 	internal static string NormalizeId(string id) => id.Replace('/', '\\');
 
 	private int InflateRecord(ArzRecordInfo info, ref byte[] buffer)
-	{
-		using var src = this._file.Stream(info.Offset, info.CompressedSize);
-		using var z = new ZLibStream(src, CompressionMode.Decompress);
-		int total = 0;
-		while (true) {
-			if (total == buffer.Length) {
-				var bigger = ArrayPool<byte>.Shared.Rent(buffer.Length * 2);
-				buffer.AsSpan(0, total).CopyTo(bigger);
-				ArrayPool<byte>.Shared.Return(buffer);
-				buffer = bigger;
-			}
-			int n = z.Read(buffer, total, buffer.Length - total);
-			if (n == 0)
-				return total;
-			total += n;
-		}
-	}
+		=> this._file.Inflate(info.Offset, info.CompressedSize, ref buffer);
 
 	private ArzVariable[] Decode(ArzRecordInfo info, ReadOnlySpan<byte> data)
 	{
@@ -229,14 +212,4 @@ internal sealed class ArzDatabase : IArzDatabase
 		}
 		return records;
 	}
-}
-
-/// <summary>FILETIME helpers.</summary>
-internal static class FileTime
-{
-	private static readonly long MaxFileTime = DateTime.MaxValue.ToFileTimeUtc();
-
-	/// <summary>Converts a FILETIME, mapping invalid values to <see cref="DateTime.MinValue"/> (UTC).</summary>
-	public static DateTime ToUtc(long fileTime) =>
-		fileTime > 0 && fileTime <= MaxFileTime ? DateTime.FromFileTimeUtc(fileTime) : DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
 }

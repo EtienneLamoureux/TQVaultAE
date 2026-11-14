@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Buffers;
 using System.IO.Compression;
 using System.IO.MemoryMappedFiles;
 
@@ -63,6 +64,29 @@ internal sealed unsafe class MappedFile : IDisposable
 			total += n;
 		}
 		return total;
+	}
+
+	/// <summary>
+	/// Inflates the zlib stream at [offset, offset+compressedSize) when its size is unknown: <paramref name="pooledBuffer"/>,
+	/// rented from <see cref="ArrayPool{T}.Shared"/>, is replaced by a bigger rented one as needed; returns the bytes written.
+	/// </summary>
+	public int Inflate(long offset, int compressedSize, ref byte[] pooledBuffer)
+	{
+		using var src = this.Stream(offset, compressedSize);
+		using var z = new ZLibStream(src, CompressionMode.Decompress);
+		int total = 0;
+		while (true) {
+			if (total == pooledBuffer.Length) {
+				var bigger = ArrayPool<byte>.Shared.Rent(pooledBuffer.Length * 2);
+				pooledBuffer.AsSpan(0, total).CopyTo(bigger);
+				ArrayPool<byte>.Shared.Return(pooledBuffer);
+				pooledBuffer = bigger;
+			}
+			int n = z.Read(pooledBuffer, total, pooledBuffer.Length - total);
+			if (n == 0)
+				return total;
+			total += n;
+		}
 	}
 
 	private void Check(long offset, long length)
