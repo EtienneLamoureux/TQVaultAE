@@ -538,6 +538,26 @@ internal static partial class AutomationTools
 			return Serialize(new { panel = named.Id, exported, path });
 		});
 
+	[McpServerTool(Name = "export_tab")]
+	[Description("Right-clicks a bag button of a vault panel like the user (which shows that bag), then runs its menu's 'Export tab > File' without the file dialog: the tab is written as exported JSON to path. Only the vault bags holding items have the entry: an empty bag, the character's bags and the stash tabs are refused. Never touches the clipboard or PasteBin.")]
+	public static string ExportTab(
+		[Description("Path of the JSON file to write.")] string path,
+		[Description("Zero-based bag button index.")] int bag,
+		[Description("Panel id of a vault: vault or secondaryVault.")] string panel = "vault")
+		=> AutomationHost.OnUi(form =>
+		{
+			var container = AutomationPanels.Resolve(form, panel).Container
+				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			try
+			{
+				return Serialize(new { panel, bag, exported = container.AutomationExportTab(bag, path), path });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "press_key", Destructive = true)]
 	[Description("Rests the cursor on a cell of a panel and presses a key there like the keyboard: the key messages go to the window that has the keyboard focus, through the message loop (ProcessCmdKey, IsInputKey, ProcessDialogKey, the main window's key preview, then the control's KeyDown), the modifiers held in the keyboard state; so the key binds apply as for the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor by default (with its confirmation: queue the answer first), 'escape' cancels a drag, 'ctrl+a', 'alt+w', 'f5'... With an empty panel the cursor does not move (the forge keys 'enter' / 'space'). Returns the control that received the key; runs after the call returns: follow with get_state, forge_state or dialog_answers.")]
 	public static string PressKey(

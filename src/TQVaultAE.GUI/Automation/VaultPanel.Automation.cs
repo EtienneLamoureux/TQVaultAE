@@ -7,6 +7,7 @@ using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Buttons;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -64,6 +65,29 @@ public partial class VaultPanel
 		}
 
 		return AutomationMenus.ClickLater(this, [entry]);
+	}
+
+	/// <summary>
+	/// Right-clicks a bag button like <see cref="AutomationBagMenu"/> (which shows that bag), closes the menu, then runs
+	/// its "Export tab > File" without the file dialog.
+	/// </summary>
+	/// <returns><see langword="false"/> when there was no tab to export.</returns>
+	/// <exception cref="InvalidOperationException">The bag's menu has no such entry: only the vault bags holding items have it.</exception>
+	internal bool AutomationExportTab(int bag, string path)
+	{
+		if (bag < 0 || bag >= this.BagButtons.Count)
+			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+
+		this.contextMenu.Items.Clear();
+		var button = this.BagButtons[bag];
+		this.BagButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		var exportTab = this.contextMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text == Resources.PlayerPanelMenuExportTab);
+		bool hasFile = exportTab?.DropDownItems.OfType<ToolStripItem>().Any(i => i.Text == Resources.PlayerPanelMenuExportTabFile && i.Enabled) == true;
+		this.contextMenu.Close();
+		if (!hasFile)
+			throw new InvalidOperationException("This bag's menu has no 'Export tab > File' entry: only the vault bags holding items have it.");
+
+		return this.ExportTabToFile(path);
 	}
 
 	/// <summary>

@@ -125,20 +125,31 @@ public partial class VaultPanel
 
 	private void ExportTabToFileClicked(object? sender, EventArgs e)
 	{
-		var exchangeService = this.ExchangeService;
-		if (exchangeService is not null && this.BagSackPanel?.Sack is not null)
-		{
-			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
-			using var dialog = new SaveFileDialog
-			{
-				Filter = Resources.GlobalJsonFileFilter,
-				DefaultExt = "json",
-				FileName = ItemExchangeService.TabExportFileName
-			};
+		if (this.ExchangeService is null || this.BagSackPanel?.Sack is null)
+			return;
 
-			if (dialog.ShowDialog() == DialogResult.OK)
-				exchangeService.ExportToFile(json, dialog.FileName);
-		}
+		using var dialog = new SaveFileDialog
+		{
+			Filter = Resources.GlobalJsonFileFilter,
+			DefaultExt = "json",
+			FileName = ItemExchangeService.TabExportFileName
+		};
+
+		if (dialog.ShowDialog() == DialogResult.OK)
+			this.ExportTabToFile(dialog.FileName);
+	}
+
+	/// <summary>Writes the shown tab to a JSON file, as "Export tab > File" does once its file is chosen.</summary>
+	/// <returns><see langword="false"/> when there is no tab to export.</returns>
+	private bool ExportTabToFile(string path)
+	{
+		var exchangeService = this.ExchangeService;
+		if (exchangeService is null || this.BagSackPanel?.Sack is null)
+			return false;
+
+		var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
+		exchangeService.ExportToFile(json, path);
+		return true;
 	}
 
 	private async void ExportTabToPasteBinClicked(object? sender, EventArgs e)
