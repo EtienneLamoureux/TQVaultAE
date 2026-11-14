@@ -221,6 +221,49 @@ public class ItemDatabaseService(
         return this.ApplyTextSearch(itemDatabase, searchText, isRegex).ToList();
     }
 
+    /// <inheritdoc/>
+    public IReadOnlyList<SearchResult> FindCopies(Item source, CopySearchKind kind)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (!ItemCopySearch.IsAvailable(source, kind))
+            return Array.Empty<SearchResult>();
+
+        var matches = ItemCopySearch.Matcher(source, kind);
+        var results = this.ItemDatabase.ToArray();
+        var sourceResult = results.FirstOrDefault(r => ReferenceEquals(r.Item, source)) ?? this.NewResult(source);
+
+        var copies = results
+            .Where(r => !ReferenceEquals(r.Item, source) && matches(r.Item))
+            .Where(this.TryLoad)
+            .OrderBy(r => r.ContainerName, StringComparer.CurrentCultureIgnoreCase)
+            .ThenBy(r => r.SackType)
+            .ThenBy(r => r.SackNumber)
+            .ThenBy(r => r.LoadoutName, StringComparer.CurrentCultureIgnoreCase)
+            .ThenBy(r => r.Item.PositionY)
+            .ThenBy(r => r.Item.PositionX);
+
+        // The source is listed even without a name, so the window always shows what was searched from.
+        this.TryLoad(sourceResult);
+        return [sourceResult, .. copies];
+    }
+
+    /// <summary>
+    /// Loads the display data of a result; false for a broken one or one without a name (logged).
+    /// </summary>
+    private bool TryLoad(SearchResult result)
+    {
+        try
+        {
+            result.LazyLoad();
+            return !string.IsNullOrWhiteSpace(result.ItemName);
+        }
+        catch (Exception ex)
+        {
+            this._log.LogWarning(ex, "Copy search: {Item} could not be loaded", result.Item.BaseItemId);
+            return false;
+        }
+    }
+
     private void ResetAllItemDatabase(List<SearchResult> validItems)
     {
 	    this._database = Database.Of(validItems);

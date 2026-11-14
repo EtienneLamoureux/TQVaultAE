@@ -106,6 +106,16 @@ public interface IItemDatabaseService
     /// <returns>Matching results.</returns>
     IReadOnlyList<SearchResult> FullTextSearch(string searchText, bool isRegex = false);
 
+    /// <summary>
+    /// Finds the items matching <paramref name="source"/> for the item menu's <i>Search</i> (<see cref="ItemCopySearch"/>)
+    /// among every loaded item: vaults, characters, stashes and loadout pieces. The source comes first, the others
+    /// follow by container and place; each result is loaded (<see cref="SearchResult.LazyLoad"/>), and the items
+    /// without a name are left out. Nothing for an unavailable search.
+    /// </summary>
+    /// <param name="source">The item clicked; listed even when the search database does not hold it.</param>
+    /// <param name="kind">The search.</param>
+    IReadOnlyList<SearchResult> FindCopies(Item source, CopySearchKind kind);
+
     #endregion
 
     /// <summary>
