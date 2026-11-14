@@ -7,12 +7,12 @@ using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Forms;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
 /// The loadouts of the shown character (saved equipment sets), asked from the loadout bar under the statistics panel.
 /// </summary>
-public partial class MainForm
+public partial class MainFormUserControl
 {
 	private void LoadoutActionCallback(object? sender, LoadoutBarEventArgs e)
 	{
@@ -48,13 +48,13 @@ public partial class MainForm
 
 		if (loadouts.ReadFailed)
 		{
-			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutReadFailed, loadouts.CharacterName), TQColor.Red);
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutReadFailed, loadouts.CharacterName), TQColor.Red);
 			return null;
 		}
 
 		if (player.IsReadOnly)
 		{
-			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
 			return null;
 		}
 
@@ -196,7 +196,7 @@ public partial class MainForm
 
 		if (this.Services.Settings.PlayerReadonly)
 		{
-			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
 			return false;
 		}
 
@@ -206,7 +206,7 @@ public partial class MainForm
 		int bagNumber = this.vaultPanel.CurrentBag;
 		if (this.vaultPanel.Player is not { } vault || vault.GetSack(bagNumber) is not { } bag)
 		{
-			this.UIService.NotifyUser(Resources.LoadoutNoVault, TQColor.Red);
+			this.Services.UIService.NotifyUser(Resources.LoadoutNoVault, TQColor.Red);
 			return false;
 		}
 
@@ -220,13 +220,13 @@ public partial class MainForm
 		switch (result.Outcome)
 		{
 			case LoadoutLoadOutcome.NoRoom:
-				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutNoRoom, bagNumber + 1, vault.PlayerName, result.ToBag), TQColor.Red);
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutNoRoom, bagNumber + 1, vault.PlayerName, result.ToBag), TQColor.Red);
 				return false;
 			case LoadoutLoadOutcome.AlreadyWorn:
-				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, loadout.Name));
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, loadout.Name));
 				return false;
 			case LoadoutLoadOutcome.Refused:
-				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
 				return false;
 		}
 
@@ -235,7 +235,7 @@ public partial class MainForm
 		BagButtonTooltip.InvalidateCache(bag);
 		this.vaultPanel.Refresh();
 		this.stashPanel.EquipmentReplaced();
-		this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoaded, loadout.Name, result.ToBag, bagNumber + 1, vault.PlayerName, result.Copied));
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoaded, loadout.Name, result.ToBag, bagNumber + 1, vault.PlayerName, result.Copied));
 		return true;
 	}
 
@@ -261,15 +261,15 @@ public partial class MainForm
 		switch (result.Outcome)
 		{
 			case LoadoutLoadOutcome.AlreadyWorn:
-				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, name));
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, name));
 				return false;
 			case LoadoutLoadOutcome.Refused or LoadoutLoadOutcome.NoRoom:
-				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
 				return false;
 		}
 
 		this.stashPanel.EquipmentReplaced();
-		this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoadedReplaced, name, result.Replaced.Count, result.Copied));
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoadedReplaced, name, result.Replaced.Count, result.Copied));
 		return true;
 	}
 

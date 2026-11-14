@@ -208,7 +208,7 @@ public partial class MainFormUserControl
 		this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
 		this.stashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 		this.stashPanel.EditCharacterClicked += (_, _) => this.EditCharacterRequested?.Invoke(this, this.stashPanel.ShownPlayer);
-		this.stashPanel.OnLoadoutAction += (sender, e) => this.LoadoutAction?.Invoke(sender, e);
+		this.stashPanel.OnLoadoutAction += this.LoadoutActionCallback;
 
 		this.flowLayoutPanelRightPanels.Controls.Add(this.stashPanel);
 		this.stashPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
@@ -217,9 +217,6 @@ public partial class MainFormUserControl
 
 	/// <summary>Raised by the Edit button of the stash panel, with the character it shows.</summary>
 	internal event EventHandler<PlayerCollection>? EditCharacterRequested;
-
-	/// <summary>Raised by the loadout bar of the stash panel.</summary>
-	internal event EventHandler<Components.Character.LoadoutBarEventArgs>? LoadoutAction;
 
 	/// <summary>
 	/// The character edited in the character editor view is shown again: the stash panel shows its new state.
