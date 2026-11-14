@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -25,22 +24,11 @@ internal static partial class AutomationTools
 			if (!capture)
 				return (state, (byte[]?)null);
 
-			using var bitmap = new Bitmap(pane.Width, pane.Height);
-			pane.DrawToBitmap(bitmap, new Rectangle(Point.Empty, pane.Size));
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return (state, stream.ToArray());
+			using var bitmap = AutomationImages.Render(pane);
+			return (state, AutomationImages.Png(bitmap));
 		});
 
-		var blocks = new List<ContentBlock> { new TextContentBlock { Text = state } };
-		if (png is not null)
-		{
-			var path = SaveCapture($"skillpane{slot}", png);
-			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
-			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
-		}
-
-		return blocks;
+		return AutomationImages.Result(state, png, $"skillpane{slot}");
 	}
 
 	[McpServerTool(Name = "skill_panel_click", Destructive = true)]
@@ -96,19 +84,11 @@ internal static partial class AutomationTools
 			var lines = pane.ToolTipLines?.Invoke(target) ?? [];
 			var tooltip = pane.Tooltip ?? throw new McpException("The pane has no tool tip.");
 			using var bitmap = tooltip.Render(lines);
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
 			var text = Serialize(lines.Select(l => new { text = l.Text, color = l.Color.IsEmpty ? null : $"#{l.Color.R:X2}{l.Color.G:X2}{l.Color.B:X2}", title = l.Title }).ToList());
-			return (text, stream.ToArray());
+			return (text, AutomationImages.Png(bitmap));
 		});
 
-		var path = SaveCapture("skilltooltip", png);
-		return
-		[
-			new TextContentBlock { Text = text },
-			ImageContentBlock.FromBytes(png, "image/png"),
-			new TextContentBlock { Text = $"saved to {path}" },
-		];
+		return AutomationImages.Result(text, png, "skilltooltip");
 	}
 
 	[McpServerTool(Name = "select_tab")]

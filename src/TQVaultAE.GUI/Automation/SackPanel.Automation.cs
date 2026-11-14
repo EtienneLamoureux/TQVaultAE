@@ -127,7 +127,7 @@ internal static class AutomationMenus
 		{
 			if (!menu.Visible)
 				menu.Show(Point.Empty);
-			parts.Add((Draw(menu), 0));
+			parts.Add((AutomationImages.Render(menu), 0));
 
 			ToolStripDropDown current = menu;
 			int top = 0;
@@ -147,7 +147,7 @@ internal static class AutomationMenus
 
 				top += parent.Bounds.Y;
 				parent.ShowDropDown();
-				parts.Add((Draw(parent.DropDown), top));
+				parts.Add((AutomationImages.Render(parent.DropDown), top));
 				current = parent.DropDown;
 			}
 
@@ -171,13 +171,6 @@ internal static class AutomationMenus
 			foreach (var (image, _) in parts)
 				image.Dispose();
 		}
-	}
-
-	private static Bitmap Draw(Control control)
-	{
-		var bitmap = new Bitmap(control.Width, control.Height);
-		control.DrawToBitmap(bitmap, new Rectangle(Point.Empty, control.Size));
-		return bitmap;
 	}
 }
 

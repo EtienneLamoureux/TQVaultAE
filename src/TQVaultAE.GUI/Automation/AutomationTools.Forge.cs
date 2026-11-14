@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -53,9 +52,7 @@ internal static partial class AutomationTools
 			var forge = form.AutomationForgePanel ?? throw new McpException("The forge is not created yet. Use forge_show first.");
 			var (card, image) = forge.AutomationModeCard(value) ?? throw new McpException("The mode cards are not set yet.");
 			using (image)
-			using (var stream = new MemoryStream())
 			{
-				image.Save(stream, ImageFormat.Png);
 				return (Serialize(new
 				{
 					mode = value.ToString(),
@@ -67,11 +64,11 @@ internal static partial class AutomationTools
 						lines = s.Lines.Select(l => (l.Allowed ? "+ " : "- ") + l.Text).ToList(),
 					}).ToList(),
 					card.Footer,
-				}), stream.ToArray());
+				}), AutomationImages.Png(image));
 			}
 		});
 
-		return [new TextContentBlock { Text = json }, ImageContentBlock.FromBytes(png, "image/png")];
+		return AutomationImages.Result(json, png);
 	}
 
 	[McpServerTool(Name = "forge_set_hardcore", Destructive = true)]
@@ -176,24 +173,9 @@ internal static partial class AutomationTools
 			byte[]? image = null;
 			if (tooltip is { Width: > 0, Height: > 0 })
 			{
-				var canvas = Rectangle.Union(formScreen, tooltipScreen);
-				using var bitmap = new Bitmap(canvas.Width, canvas.Height);
-				using (var g = Graphics.FromImage(bitmap))
-				{
-					g.Clear(Color.Magenta);
-					using (var main = new Bitmap(form.ClientSize.Width, form.ClientSize.Height))
-					{
-						form.DrawToBitmap(main, new Rectangle(Point.Empty, form.ClientSize));
-						g.DrawImage(main, formScreen.X - canvas.X, formScreen.Y - canvas.Y);
-					}
-
-					using var tip = RenderTooltip(tooltip);
-					g.DrawImage(tip, tooltipScreen.X - canvas.X, tooltipScreen.Y - canvas.Y);
-				}
-
-				using var stream = new MemoryStream();
-				bitmap.Save(stream, ImageFormat.Png);
-				image = stream.ToArray();
+				using var tip = AutomationImages.Render(tooltip);
+				using var bitmap = AutomationImages.RenderWithOverlays(form, (tip, tooltipScreen.Location));
+				image = AutomationImages.Png(bitmap);
 			}
 
 			static object Box(Rectangle r) => new { r.X, r.Y, r.Width, r.Height };
@@ -207,10 +189,7 @@ internal static partial class AutomationTools
 			}), image);
 		});
 
-		var blocks = new List<ContentBlock> { new TextContentBlock { Text = json } };
-		if (png is not null)
-			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
-		return blocks;
+		return AutomationImages.Result(json, png);
 	}
 
 	[McpServerTool(Name = "forge_cancel", Destructive = true)]

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
@@ -68,30 +67,11 @@ internal static partial class AutomationTools
 
 			// The main window with the statistics panel over the stash, and the tool tip at its place.
 			using var rendered = tooltip.Render(tips[index.Value]);
-			var placed = window.IsEmpty ? Rectangle.Empty : new Rectangle(window.Location, rendered.Size);
-			var canvas = placed.IsEmpty ? formScreen : Rectangle.Union(formScreen, placed);
-			using var bitmap = new Bitmap(canvas.Width, canvas.Height);
-			using (var g = Graphics.FromImage(bitmap))
-			{
-				g.Clear(Color.Magenta);
-				using (var main = new Bitmap(form.ClientSize.Width, form.ClientSize.Height))
-				{
-					form.DrawToBitmap(main, new Rectangle(Point.Empty, form.ClientSize));
-					g.DrawImage(main, formScreen.X - canvas.X, formScreen.Y - canvas.Y);
-				}
-
-				using (var stashPicture = RenderStashWithPlayerInfo(form))
-				{
-					var stashScreen = stash.RectangleToScreen(stash.ClientRectangle);
-					g.DrawImage(stashPicture, stashScreen.X - canvas.X, stashScreen.Y - canvas.Y);
-				}
-
-				if (!placed.IsEmpty)
-					g.DrawImage(rendered, placed.X - canvas.X, placed.Y - canvas.Y);
-			}
-
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
+			using var stashPicture = RenderStashWithPlayerInfo(form);
+			var stashScreen = stash.RectangleToScreen(stash.ClientRectangle).Location;
+			using var bitmap = window.IsEmpty
+				? AutomationImages.RenderWithOverlays(form, (stashPicture, stashScreen))
+				: AutomationImages.RenderWithOverlays(form, (stashPicture, stashScreen), (rendered, window.Location));
 			static object Box(Rectangle r) => new { r.X, r.Y, r.Width, r.Height };
 			return (Serialize(new
 			{
@@ -109,18 +89,10 @@ internal static partial class AutomationTools
 				insideWorkingArea = !window.IsEmpty && working.Contains(window),
 				coversHoveredArea = !window.IsEmpty && window.IntersectsWith(areaScreen),
 				overlapsEquipmentPanel = !window.IsEmpty && window.IntersectsWith(equipmentScreen),
-			}), stream.ToArray());
+			}), AutomationImages.Png(bitmap));
 		});
 
-		var blocks = new List<ContentBlock> { new TextContentBlock { Text = text } };
-		if (png is not null)
-		{
-			var path = SaveCapture("playerstatshover", png);
-			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
-			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
-		}
-
-		return blocks;
+		return AutomationImages.Result(text, png, "playerstatshover");
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

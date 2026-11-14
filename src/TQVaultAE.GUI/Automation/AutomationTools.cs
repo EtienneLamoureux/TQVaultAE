@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
@@ -439,10 +438,8 @@ internal static partial class AutomationTools
 			byte[]? image = null;
 			if (tooltip is { Width: > 0, Height: > 0 })
 			{
-				using var bitmap = RenderTooltip(tooltip);
-				using var stream = new MemoryStream();
-				bitmap.Save(stream, ImageFormat.Png);
-				image = stream.ToArray();
+				using var bitmap = AutomationImages.Render(tooltip);
+				image = AutomationImages.Png(bitmap);
 			}
 
 			return (Serialize(new
@@ -453,10 +450,7 @@ internal static partial class AutomationTools
 			}), image);
 		});
 
-		var blocks = new List<ContentBlock> { new TextContentBlock { Text = json } };
-		if (png is not null)
-			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
-		return blocks;
+		return AutomationImages.Result(json, png);
 	}
 
 	[McpServerTool(Name = "context_menu", Destructive = true)]
@@ -704,55 +698,29 @@ internal static partial class AutomationTools
 
 	#region Capture
 
-	/// <summary>
-	/// Writes a capture to the temp folder as <c>tqvault-capture-&lt;name&gt;-&lt;time&gt;.png</c> and returns its path. Every
-	/// character a file name can't hold becomes '-': a ':' would otherwise write the picture into a hidden NTFS stream of a
-	/// file named before it.
-	/// </summary>
-	internal static string SaveCapture(string name, byte[] png)
-	{
-		var invalid = Path.GetInvalidFileNameChars();
-		var safe = new string(name.Select(c => c == '.' || Array.IndexOf(invalid, c) >= 0 ? '-' : c).ToArray());
-		var path = Path.Combine(Path.GetTempPath(), $"tqvault-capture-{safe}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
-		File.WriteAllBytes(path, png);
-		return path;
-	}
-
 	[McpServerTool(Name = "capture", ReadOnly = true)]
 	[Description("Renders a control to PNG with Control.DrawToBitmap, so it works when the window is hidden behind others. Target: a panel id (vault, player, equipment...), '<panel>.container' for the panel with its bag buttons, 'main' for the main window, 'playerInfo' for the stash panel with the character statistics panel and its Edit button (which DrawToBitmap leaves out) drawn over it, or part of a form title. 'shown=true' copies the pixels the window really shows on its desktop instead (PrintWindow from the desktop composition): use it when DrawToBitmap may differ from the screen (overlaps, transparent children).")]
 	public static IEnumerable<ContentBlock> Capture(
 		[Description("What to capture.")] string control = "main",
 		[Description("Copy the pixels shown on the desktop instead of DrawToBitmap.")] bool shown = false)
 	{
-		var (png, size) = AutomationHost.OnUi(form =>
+		var png = AutomationHost.OnUi(form =>
 		{
 			if (string.Equals(control, "playerInfo", StringComparison.OrdinalIgnoreCase))
 			{
 				using var withPlayerInfo = RenderStashWithPlayerInfo(form);
-				using var pngStream = new MemoryStream();
-				withPlayerInfo.Save(pngStream, ImageFormat.Png);
-				return (pngStream.ToArray(), withPlayerInfo.Size);
+				return AutomationImages.Png(withPlayerInfo);
 			}
 
 			var target = ResolveCaptureTarget(form, control);
 			if (target.Width <= 0 || target.Height <= 0)
 				throw new McpException($"'{control}' has no size (is it shown?).");
 
-			using var bitmap = shown ? NativeWindows.RenderAsShown(target) : new Bitmap(target.Width, target.Height);
-			if (!shown)
-				target.DrawToBitmap(bitmap, new Rectangle(Point.Empty, target.Size));
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return (stream.ToArray(), bitmap.Size);
+			using var bitmap = shown ? NativeWindows.RenderAsShown(target) : AutomationImages.Render(target);
+			return AutomationImages.Png(bitmap);
 		});
 
-		var path = SaveCapture(control, png);
-
-		return
-		[
-			ImageContentBlock.FromBytes(png, "image/png"),
-			new TextContentBlock { Text = $"{control}: {size.Width}x{size.Height} px, saved to {path}" },
-		];
+		return AutomationImages.Result(null, png, control);
 	}
 
 	[McpServerTool(Name = "capture_menu", ReadOnly = true)]
@@ -764,7 +732,7 @@ internal static partial class AutomationTools
 		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
 	{
 		var path = open?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
-		var (png, size) = AutomationHost.OnUi(form =>
+		var png = AutomationHost.OnUi(form =>
 		{
 			using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)
 				? form.AutomationRenderVaultMenu(path)
@@ -777,18 +745,10 @@ internal static partial class AutomationTools
 				: target.StartsWith("loadouts", StringComparison.OrdinalIgnoreCase)
 				? RenderLoadoutMenu(form, target)
 				: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return (stream.ToArray(), bitmap.Size);
+			return AutomationImages.Png(bitmap);
 		});
 
-		var file = Path.Combine(Path.GetTempPath(), $"tqvault-menu-{target}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
-		File.WriteAllBytes(file, png);
-		return
-		[
-			ImageContentBlock.FromBytes(png, "image/png"),
-			new TextContentBlock { Text = $"menu {target}: {size.Width}x{size.Height} px, saved to {file}" },
-		];
+		return AutomationImages.Result(null, png, $"menu-{target}");
 	}
 
 	/// <summary>The loadout bar's right-click menu ('loadouts') or drop-down list ('loadouts.list'), drawn as it opens.</summary>
@@ -868,14 +828,6 @@ internal static partial class AutomationTools
 	/// <summary>The tooltip windows shown, oldest first.</summary>
 	private static List<Tooltips.BaseTooltip> OpenTooltips()
 		=> System.Windows.Forms.Application.OpenForms.OfType<Tooltips.BaseTooltip>().Where(t => t.Visible).ToList();
-
-	/// <summary>Draws an open tooltip window to a bitmap of its size.</summary>
-	private static Bitmap RenderTooltip(Tooltips.BaseTooltip tooltip)
-	{
-		var bitmap = new Bitmap(tooltip.Width, tooltip.Height);
-		tooltip.DrawToBitmap(bitmap, new Rectangle(Point.Empty, tooltip.Size));
-		return bitmap;
-	}
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Anonymous JSON payload.")]
 	private static object DescribeTooltips()

@@ -530,8 +530,7 @@ internal static partial class AutomationTools
 		if (panel is not { Visible: true })
 			throw new McpException("The statistics panel is not shown: select a character and stash bag 0 (equipment).");
 
-		var bitmap = new Bitmap(stash.Width, stash.Height);
-		stash.DrawToBitmap(bitmap, new Rectangle(Point.Empty, stash.Size));
+		var bitmap = AutomationImages.Render(stash);
 		panel.DrawToBitmap(bitmap, panel.Bounds);
 		if (stash.AutomationEditButton is { Visible: true } edit)
 			edit.DrawToBitmap(bitmap, edit.Bounds);

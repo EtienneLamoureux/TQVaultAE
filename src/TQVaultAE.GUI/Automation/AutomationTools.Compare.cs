@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
@@ -31,7 +30,7 @@ internal static partial class AutomationTools
 		[Description("Scrolls the columns after the clicks with the messages the user's input sends: 'page:N' (N pages down with the scroll bar, negative up) or 'wheel:N' (N notches of the mouse wheel down, negative up). With keepOpen, capture('Item Comparison', shown=true) then shows the window as scrolled. Empty does not scroll.")] string? scroll = null,
 		[Description("Height in pixels to give the dialog before scrolling, as dragging its bottom border does (the columns then scroll); 0 keeps the height it fits to.")] int height = 0)
 	{
-		var (json, png, size) = AutomationHost.OnUi(main =>
+		var (json, png) = AutomationHost.OnUi(main =>
 		{
 			var first = ResolveShownPanel(main, panel);
 			var second = string.IsNullOrWhiteSpace(panel2) ? first : ResolveShownPanel(main, panel2);
@@ -90,10 +89,7 @@ internal static partial class AutomationTools
 				// beyond what the dialog shows without scrolling.
 				Control captured = table.Parent is ScrollableControl scrolledPanel
 					&& table.Width <= scrolledPanel.ClientSize.Width && table.Height <= scrolledPanel.ClientSize.Height ? dialog : table;
-				using var bitmap = new Bitmap(captured.Width, captured.Height);
-				captured.DrawToBitmap(bitmap, new Rectangle(Point.Empty, captured.Size));
-				using var stream = new MemoryStream();
-				bitmap.Save(stream, ImageFormat.Png);
+				using var bitmap = AutomationImages.Render(captured);
 
 				var result = Serialize(new
 				{
@@ -106,7 +102,7 @@ internal static partial class AutomationTools
 					contentSize = new { table.Width, table.Height },
 					columns,
 				});
-				return (result, stream.ToArray(), captured.Size);
+				return (result, AutomationImages.Png(bitmap));
 			}
 			finally
 			{
@@ -118,17 +114,7 @@ internal static partial class AutomationTools
 			}
 		});
 
-		var file = string.IsNullOrWhiteSpace(path)
-			? Path.Combine(Path.GetTempPath(), $"tqvault-compare-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png")
-			: Path.GetFullPath(path);
-		File.WriteAllBytes(file, png);
-
-		return
-		[
-			new TextContentBlock { Text = json },
-			ImageContentBlock.FromBytes(png, "image/png"),
-			new TextContentBlock { Text = $"capture: {size.Width}x{size.Height} px, saved to {file}" },
-		];
+		return AutomationImages.Result(json, png, "compare", path);
 	}
 
 	/// <summary>

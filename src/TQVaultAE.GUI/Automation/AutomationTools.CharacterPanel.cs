@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing.Imaging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -26,22 +25,11 @@ internal static partial class AutomationTools
 			if (!capture)
 				return (state, (byte[]?)null);
 
-			using var bitmap = new Bitmap(panel.Width, panel.Height);
-			panel.DrawToBitmap(bitmap, new Rectangle(Point.Empty, panel.Size));
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return (state, stream.ToArray());
+			using var bitmap = AutomationImages.Render(panel);
+			return (state, AutomationImages.Png(bitmap));
 		});
 
-		var blocks = new List<ContentBlock> { new TextContentBlock { Text = state } };
-		if (png is not null)
-		{
-			var path = SaveCapture($"characterpanel{tab}", png);
-			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
-			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
-		}
-
-		return blocks;
+		return AutomationImages.Result(state, png, $"characterpanel{tab}");
 	}
 
 	[McpServerTool(Name = "character_tooltip", ReadOnly = true)]
@@ -64,20 +52,10 @@ internal static partial class AutomationTools
 			var lines = tips[index.Value];
 			var tooltip = panel.Tooltip ?? throw new McpException("The panel has no game tool tip.");
 			using var bitmap = tooltip.Render(lines);
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return (Serialize(lines.Select(l => new { text = l.Text, color = l.Color.IsEmpty ? null : $"#{l.Color.R:X2}{l.Color.G:X2}{l.Color.B:X2}", title = l.Title }).ToList()), stream.ToArray());
+			return (Serialize(lines.Select(l => new { text = l.Text, color = l.Color.IsEmpty ? null : $"#{l.Color.R:X2}{l.Color.G:X2}{l.Color.B:X2}", title = l.Title }).ToList()), AutomationImages.Png(bitmap));
 		});
 
-		var blocks = new List<ContentBlock> { new TextContentBlock { Text = text } };
-		if (png is not null)
-		{
-			var path = SaveCapture("charactertooltip", png);
-			blocks.Add(ImageContentBlock.FromBytes(png, "image/png"));
-			blocks.Add(new TextContentBlock { Text = $"saved to {path}" });
-		}
-
-		return blocks;
+		return AutomationImages.Result(text, png, "charactertooltip");
 	}
 
 	[McpServerTool(Name = "character_attribute_click", Destructive = true)]
