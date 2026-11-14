@@ -31,7 +31,7 @@ public partial class StashPanel
 	/// </summary>
 	/// <param name="bagNumber">The bag number for button that is being created.</param>
 	/// <returns>The new StashButton that is created, placed by <see cref="LayOut"/>.</returns>
-	protected StashButton CreateBagButton(int bagNumber)
+	protected override StashButton CreateBagButton(int bagNumber)
 	{
 		StashButton button = new StashButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Services);
 		button.Visible = false;
@@ -51,20 +51,6 @@ public partial class StashPanel
 	/// <summary>Tabs are only made narrower as there are more of them: their height follows the scale alone.</summary>
 	protected override Size BagButtonSize(float scale, Size picture)
 		=> new((int)Math.Round(scale * (float)picture.Width), Convert.ToInt32((float)picture.Height * UIService.Scale));
-
-	/// <summary>
-	/// Creates all of the stash buttons.
-	/// </summary>
-	/// <param name="numberOfBags">The total number of buttons to create.</param>
-	/// <remarks>We need this override since the CreateBagButton() method above has a different return type than the base class.</remarks>
-	protected override void CreateBagButtons(int numberOfBags)
-	{
-		for (int i = 0; i < numberOfBags; ++i)
-		{
-			this.BagButtons.Insert(i, this.CreateBagButton(i));
-			this.Controls.Add(this.BagButtons[i]);
-		}
-	}
 
 	/// <summary>
 	/// Handler for clicking on a bag button

@@ -45,7 +45,7 @@ public partial class VaultPanel
 	/// Creates all of the bag buttons and adds them to the control.
 	/// </summary>
 	/// <param name="numberOfBags">total number of buttons to create</param>
-	protected virtual void CreateBagButtons(int numberOfBags)
+	private void CreateBagButtons(int numberOfBags)
 	{
 		for (int i = 0; i < numberOfBags; ++i)
 		{
@@ -351,7 +351,7 @@ public partial class VaultPanel
 	/// </summary>
 	/// <param name="bagNumber">Bag number that we are creating</param>
 	/// <returns>Instance of the new BagButton</returns>
-	private BagButton CreateBagButton(int bagNumber)
+	protected virtual BagButtonBase CreateBagButton(int bagNumber)
 	{
 		BagButton button = new BagButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Services);
 
