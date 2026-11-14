@@ -143,5 +143,5 @@ public class ItemExchangeServiceExportTests
 	[InlineData(1, "item_export.json")]
 	[InlineData(2, "items_export.json")]
 	public void ItemsExportFileName_OneItemOrASelection(int count, string expected)
-		=> ItemExchangeService.ItemsExportFileName(count).Should().Be(expected);
+		=> IItemExchangeService.ItemsExportFileName(count).Should().Be(expected);
 }

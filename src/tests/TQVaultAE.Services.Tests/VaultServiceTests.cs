@@ -656,14 +656,14 @@ public class VaultServiceTests
 	[Fact]
 	public void RenameVault_ToMainVault_MovesAndDropsBothNamesFromCache()
 	{
-		var (oldFile, newFile) = SetupVaultFiles("Gear", VaultService.MAINVAULT);
+		var (oldFile, newFile) = SetupVaultFiles("Gear", IVaultService.MainVault);
 		_mockFileIO.Setup(x => x.Exists(oldFile)).Returns(true);
 		_mockFileIO.Setup(x => x.Exists(newFile)).Returns(false);
 		_sessionContext.Vaults.GetOrAddAtomic(oldFile, _ => new PlayerCollection("Gear", oldFile));
 		// The Main Vault is always listed, so an empty unsaved one may be cached.
-		_sessionContext.Vaults.GetOrAddAtomic(newFile, _ => new PlayerCollection(VaultService.MAINVAULT, newFile));
+		_sessionContext.Vaults.GetOrAddAtomic(newFile, _ => new PlayerCollection(IVaultService.MainVault, newFile));
 
-		var renamed = _vaultService.RenameVault("Gear", VaultService.MAINVAULT);
+		var renamed = _vaultService.RenameVault("Gear", IVaultService.MainVault);
 
 		renamed.Should().BeTrue();
 		_mockFileIO.Verify(x => x.Move(oldFile, newFile), Times.Once);
@@ -740,7 +740,7 @@ public class VaultServiceTests
 	[Fact]
 	public void BuildVaultChoices_ExcludedMainVault_IsNotAddedBack()
 	{
-		var choices = _vaultService.BuildVaultChoices(["Arms", "Main Vault"], "<Select>", VaultService.MAINVAULT);
+		var choices = _vaultService.BuildVaultChoices(["Arms", "Main Vault"], "<Select>", IVaultService.MainVault);
 
 		choices.Should().Equal("<Select>", "Arms");
 	}
@@ -888,7 +888,7 @@ public class VaultServiceTests
 
 	[Theory]
 	[InlineData(true, "Rings")]
-	[InlineData(false, VaultService.MAINVAULT)]
+	[InlineData(false, IVaultService.MainVault)]
 	public void ResolveVaultToLoad_LoadLastVault_ChecksTheVaultFile(bool fileExists, string expected)
 	{
 		this._userSettings.LoadLastVault = true;

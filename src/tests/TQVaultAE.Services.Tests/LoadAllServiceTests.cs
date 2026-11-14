@@ -65,7 +65,7 @@ public class LoadAllServiceTests
 	[InlineData(2, 5, 9)]
 	public void CountSteps_OnePerCharacterStashAndVault(int characters, int vaults, int expected)
 	{
-		LoadAllService.CountSteps(characters, vaults).Should().Be(expected);
+		ILoadAllService.CountSteps(characters, vaults).Should().Be(expected);
 	}
 
 	[Fact]
@@ -78,7 +78,7 @@ public class LoadAllServiceTests
 		var result = this._service.LoadAll(characters, vaults, progress);
 
 		result.Ran.Should().BeTrue();
-		progress.Total.Should().Be(LoadAllService.CountSteps(characters.Length, vaults.Length));
+		progress.Total.Should().Be(ILoadAllService.CountSteps(characters.Length, vaults.Length));
 		this._playerService.Verify(p => p.LoadPlayer(It.IsAny<PlayerSave>(), false), Times.Exactly(2));
 		this._stashService.Verify(s => s.LoadPlayerStash(It.IsAny<PlayerSave>(), false), Times.Exactly(2));
 		this._vaultService.Verify(v => v.LoadVault(It.IsAny<string>()), Times.Exactly(3));
@@ -97,7 +97,7 @@ public class LoadAllServiceTests
 		this._service.LoadAll([NewCharacter("A")], [], progress, maps);
 
 		// Assert: a transfer stash and a relic vault per map, each counted
-		progress.Total.Should().Be(LoadAllService.CountSteps(1, 0, maps.Length));
+		progress.Total.Should().Be(ILoadAllService.CountSteps(1, 0, maps.Length));
 		foreach (var map in maps)
 		{
 			this._stashService.Verify(s => s.LoadTransferStash(false, map), Times.Once);

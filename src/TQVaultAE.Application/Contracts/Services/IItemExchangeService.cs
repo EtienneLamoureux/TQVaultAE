@@ -5,6 +5,14 @@ namespace TQVaultAE.Application.Contracts.Services;
 
 public interface IItemExchangeService
 {
+	/// <summary>The file name offered when a vault tab is exported to a file.</summary>
+	const string TabExportFileName = "tab_export.json";
+
+	/// <summary>The file name offered when items are exported to a file: one item or a selection.</summary>
+	/// <param name="itemCount">The number of items exported.</param>
+	static string ItemsExportFileName(int itemCount)
+		=> itemCount == 1 ? "item_export.json" : "items_export.json";
+
 	string SerializeItem(Item item);
 	string SerializeItems(IEnumerable<Item> items);
 

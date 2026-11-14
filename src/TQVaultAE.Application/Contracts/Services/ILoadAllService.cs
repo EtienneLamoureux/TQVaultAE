@@ -8,6 +8,12 @@ namespace TQVaultAE.Application.Contracts.Services;
 public interface ILoadAllService
 {
 	/// <summary>
+	/// Number of progress steps of <see cref="LoadAll"/>: one per character, one per character stash, one per vault, and
+	/// two per map whose shared stashes are read (transfer stash and relic vault).
+	/// </summary>
+	static int CountSteps(int characters, int vaults, int sharedStashMaps = 0) => (characters * 2) + vaults + (sharedStashMaps * 2);
+
+	/// <summary>
 	/// Gets whether the last load of all the files did not complete, the application having stopped during it.
 	/// </summary>
 	bool LastRunFailed { get; }

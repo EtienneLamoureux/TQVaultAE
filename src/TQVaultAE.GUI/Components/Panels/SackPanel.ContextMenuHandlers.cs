@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.ObjectModel;
+using TQVaultAE.Application.Contracts.Services;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Actions;
@@ -234,7 +235,7 @@ public partial class SackPanel
 			{
 				Filter = Resources.GlobalJsonFileFilter,
 				DefaultExt = "json",
-				FileName = ItemExchangeService.ItemsExportFileName(items.Count)
+				FileName = IItemExchangeService.ItemsExportFileName(items.Count)
 			};
 
 			if (dialog.ShowDialog() == DialogResult.OK)

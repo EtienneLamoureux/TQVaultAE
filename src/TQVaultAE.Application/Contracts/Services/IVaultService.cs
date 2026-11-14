@@ -6,6 +6,9 @@ namespace TQVaultAE.Application.Contracts.Services;
 
 public interface IVaultService
 {
+	/// <summary>The name of the vault TQVault creates and opens first.</summary>
+	const string MainVault = "Main Vault";
+
 	/// <summary>
 	/// Creates a new empty vault file.
 	/// </summary>

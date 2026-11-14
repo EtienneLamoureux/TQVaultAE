@@ -1,4 +1,5 @@
 using System.Globalization;
+using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
@@ -80,7 +81,7 @@ public partial class MainForm
 		string[] vaults = this.vaultService.GetVaultList();
 
 		// There was something already selected so we will save it.
-		string? currentVault = (this.vaultListComboBox.Items.Count > 0) ? this.vaultListComboBox.SelectedItemText() : VaultService.MAINVAULT;
+		string? currentVault = (this.vaultListComboBox.Items.Count > 0) ? this.vaultListComboBox.SelectedItemText() : IVaultService.MainVault;
 
 		// Added by VillageIdiot
 		// Clear the list before creating since this function can be called multiple times.
@@ -94,7 +95,7 @@ public partial class MainForm
 		this.vaultListComboBox.Items.AddRange(choices.ToArray<object>());
 
 		// The last loaded vault when it is set to load, else the one already selected.
-		currentVault = this.vaultService.ResolveVaultToLoad(currentVault ?? VaultService.MAINVAULT);
+		currentVault = this.vaultService.ResolveVaultToLoad(currentVault ?? IVaultService.MainVault);
 
 		if (loadVault)
 		{
@@ -279,7 +280,7 @@ public partial class MainForm
 
 						// If we renamed something to main vault we need to remove it,
 						// since the list always contains Main Vault.
-						if (newName == VaultService.MAINVAULT)
+						if (newName == IVaultService.MainVault)
 							this.vaultListComboBox.Items.Remove(newName);
 
 						// Add the new name to the list

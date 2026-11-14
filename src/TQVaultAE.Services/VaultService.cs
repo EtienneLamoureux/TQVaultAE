@@ -31,7 +31,6 @@ public class VaultService(
 	private readonly IPathIO PathIO = pathIO;
 	private readonly UserSettings UserSettings = userSettings;
 	private readonly IItemProvider ItemProvider = itemProvider;
-	public const string MAINVAULT = "Main Vault";
 
 	/// <summary>
 	/// Creates a new empty vault file.
@@ -165,13 +164,13 @@ public class VaultService(
 		if (leadingEntry is not null)
 			choices.Add(leadingEntry);
 
-		bool isMainVaultExcluded = MAINVAULT.Equals(excludedVault, StringComparison.Ordinal);
-		if (!isMainVaultExcluded && (alwaysIncludeMainVault || names.Contains(MAINVAULT)))
-			choices.Add(MAINVAULT);
+		bool isMainVaultExcluded = IVaultService.MainVault.Equals(excludedVault, StringComparison.Ordinal);
+		if (!isMainVaultExcluded && (alwaysIncludeMainVault || names.Contains(IVaultService.MainVault)))
+			choices.Add(IVaultService.MainVault);
 
 		foreach (string name in names)
 		{
-			if (name.Equals(MAINVAULT, StringComparison.Ordinal) || name.Equals(excludedVault, StringComparison.Ordinal))
+			if (name.Equals(IVaultService.MainVault, StringComparison.Ordinal) || name.Equals(excludedVault, StringComparison.Ordinal))
 				continue;
 
 			choices.Add(name);

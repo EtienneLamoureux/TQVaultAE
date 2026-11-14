@@ -1,4 +1,5 @@
 using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 
 namespace TQVaultAE.Services;
@@ -24,7 +25,7 @@ public sealed record StartupSelection(string? CharacterKey, string VaultName, bo
 	{
 		string? characterKey = settings.LoadLastCharacter ? ResolveCharacter(settings.LastCharacterName, characterKeys) : null;
 
-		string vaultName = ResolveVault(settings, VaultService.MAINVAULT, vaultExists);
+		string vaultName = ResolveVault(settings, IVaultService.MainVault, vaultExists);
 
 		var skipTitle = args.IsAutomatic || settings.SkipTitle;
 
@@ -71,7 +72,7 @@ public sealed record StartupSelection(string? CharacterKey, string VaultName, bo
 
 		string lastVault = settings.LastVaultName;
 		return string.IsNullOrEmpty(lastVault) || !vaultExists(lastVault)
-			? VaultService.MAINVAULT
+			? IVaultService.MainVault
 			: lastVault;
 	}
 }

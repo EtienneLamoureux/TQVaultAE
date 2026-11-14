@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application;
 using TQVaultAE.Config;
 using TQVaultAE.Services;
@@ -71,7 +72,7 @@ public class StartupSelectionTests
 		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, NoArgs);
 
 		selection.CharacterKey.Should().BeNull();
-		selection.VaultName.Should().Be(VaultService.MAINVAULT);
+		selection.VaultName.Should().Be(IVaultService.MainVault);
 	}
 
 	[Fact]
@@ -79,7 +80,7 @@ public class StartupSelectionTests
 	{
 		var selection = StartupSelection.Resolve(this._settings, Characters, name => name != "Rings", NoArgs);
 
-		selection.VaultName.Should().Be(VaultService.MAINVAULT);
+		selection.VaultName.Should().Be(IVaultService.MainVault);
 	}
 
 	[Fact]
@@ -90,7 +91,7 @@ public class StartupSelectionTests
 
 		var selection = StartupSelection.Resolve(this._settings, Characters, name => { checkedFiles.Add(name); return true; }, NoArgs);
 
-		selection.VaultName.Should().Be(VaultService.MAINVAULT);
+		selection.VaultName.Should().Be(IVaultService.MainVault);
 		checkedFiles.Should().BeEmpty();
 	}
 
@@ -128,7 +129,7 @@ public class StartupSelectionTests
 
 	[Theory]
 	[InlineData(true, "Rings")]
-	[InlineData(false, VaultService.MAINVAULT)]
+	[InlineData(false, IVaultService.MainVault)]
 	public void ResolveVault_LoadLastVaultOn_ReplacesTheCurrentVaultByTheLastOneWhenItsFileExists(bool exists, string expected)
 	{
 		var vault = StartupSelection.ResolveVault(this._settings, "Potions", name => name == "Rings" && exists);

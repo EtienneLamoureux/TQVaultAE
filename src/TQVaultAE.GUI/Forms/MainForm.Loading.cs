@@ -26,7 +26,7 @@ public partial class MainForm
 	/// </summary>
 	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 	private int LoadAllFilesTotal()
-		=> LoadAllService.CountSteps(this.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.SharedStashMaps().Count);
+		=> ILoadAllService.CountSteps(this.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.SharedStashMaps().Count);
 
 	/// <summary>
 	/// The listed characters: each is read with its own map's database.

@@ -132,7 +132,7 @@ public partial class VaultPanel
 		{
 			Filter = Resources.GlobalJsonFileFilter,
 			DefaultExt = "json",
-			FileName = ItemExchangeService.TabExportFileName
+			FileName = IItemExchangeService.TabExportFileName
 		};
 
 		if (dialog.ShowDialog() == DialogResult.OK)

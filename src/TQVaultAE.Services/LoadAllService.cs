@@ -25,12 +25,6 @@ public class LoadAllService(
 	private readonly IStashService _stashService = stashService;
 	private readonly IVaultService _vaultService = vaultService;
 
-	/// <summary>
-	/// Number of progress steps of <see cref="LoadAll"/>: one per character, one per character stash, one per vault, and
-	/// two per map whose shared stashes are read (transfer stash and relic vault).
-	/// </summary>
-	public static int CountSteps(int characters, int vaults, int sharedStashMaps = 0) => (characters * 2) + vaults + (sharedStashMaps * 2);
-
 	public bool LastRunFailed => !this._userSettings.LoadAllFilesCompleted;
 
 	public void DisableLoadAll()
@@ -44,7 +38,7 @@ public class LoadAllService(
 		, IReadOnlyCollection<string>? sharedStashMaps = null)
 	{
 		sharedStashMaps ??= [];
-		if (CountSteps(characters.Count, vaults.Count, sharedStashMaps.Count) == 0)
+		if (ILoadAllService.CountSteps(characters.Count, vaults.Count, sharedStashMaps.Count) == 0)
 			return LoadAllResult.Nothing;
 
 		// Cleared while loading: still cleared on the next start means the application stopped during the load.
