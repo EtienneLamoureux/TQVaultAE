@@ -2,6 +2,7 @@
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Icons;
 using TQVaultAE.GUI.Components.Panels;
+using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -138,27 +139,33 @@ public partial class BagButtonSettings : VaultForm
 
 		#region Custom font & Scaling
 
-		this.Font = FontService.GetFont(9F, FontStyle.Regular, GraphicsUnit.Point);
-
-		var title = FontService.GetFont(12F, FontStyle.Regular, GraphicsUnit.Point);
-		this.scalingLabelSelectedButton.Font = title;
-		this.groupBoxEdit.Font = title;
-		this.groupBoxSelectedPictures.Font = title;
-		this.groupBoxAvailablePictures.Font = title;
-		this.cancelButton.Font = title;
-		this.applyButton.Font = title;
-
-		var text = FontService.GetFontLight(11.25F, FontStyle.Regular, GraphicsUnit.Point);
-		this.scalingLabelSelectedButtonValue.Font = text;
-		this.groupBoxEdit.ProcessAllControls(ctr => ctr.Font = text);
-		this.groupBoxSelectedPictures.ProcessAllControls(ctr => ctr.Font = text);
-		this.groupBoxAvailablePictures.ProcessAllControls(ctr => ctr.Font = text);
+		// One rule, as in the other marble dialogs: the buttons in the larger size, the rest in the base size. The scaling
+		// controls hold their font (they grow it with the zoom); the others, group captions included, take the dialog's.
+		var baseFont = FontService.GetFontLight(CaravanLook.TextSize);
+		this.Font = baseFont;
+		this.tableLayoutPanelSkeleton.ProcessAllControls(c =>
+		{
+			if (c is Button)
+				c.Font = FontService.GetFontLight(CaravanLook.ButtonTextSize);
+			else if (c is IScalingControl)
+				c.Font = baseFont;
+			else
+				c.ResetFont();
+		});
 
 		ScaleControl(this.UIService, this.cancelButton);
 		ScaleControl(this.UIService, this.applyButton);
 
 		this.FitExitButtons();
 		this.ApplyBorderPadding();
+
+		// The main window's marble behind the panels, each group in a caravan frame with its gold caption over the frame's
+		// top edge, the icons on the frames' black, and the text over the marble outlined like the captions.
+		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow, this.tableLayoutPanelSkeleton
+			, this.flowLayoutPanelSelectedButton, this.flowLayoutPanelUpperParts, this.tableLayoutPanelBottom);
+		foreach (var slot in new[] { this.groupBoxOffBitmap, this.groupBoxOnBitmap, this.groupBoxOverBitmap, this.groupBoxSimpleImage })
+			slot.ForeColor = Color.Gold;
+		CaravanLook.OutlineText(this);
 
 
 		#endregion
@@ -185,6 +192,8 @@ public partial class BagButtonSettings : VaultForm
 
 		foreach (var grid in this.GridByCategory.Values)
 		{
+			grid.BackColor = Color.Black;
+
 			// Magnifier
 			grid.HoverChanged += this.Grid_HoverChanged;
 

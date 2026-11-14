@@ -65,7 +65,7 @@ partial class BagButtonSettings
         this.pictureBoxOver = new System.Windows.Forms.PictureBox();
         this.flowLayoutPanelUpperParts = new System.Windows.Forms.FlowLayoutPanel();
         this.groupBoxAvailablePictures = new System.Windows.Forms.GroupBox();
-        this.tabControlPics = new System.Windows.Forms.TabControl();
+        this.tabControlPics = new TQVaultAE.GUI.Components.Layout.CaravanTabControl();
         this.tabPageSkills = new System.Windows.Forms.TabPage();
         this.iconGridSkills = new TQVaultAE.GUI.Components.Icons.IconGrid();
         this.tabPageRelics = new System.Windows.Forms.TabPage();
@@ -957,7 +957,7 @@ partial class BagButtonSettings
 	private ScalingLabel scalingLabelDragDropNotice;
 	private TQVaultAE.GUI.Components.Icons.IconGrid iconGridMisc;
 	private ScalingTextBox scalingTextBoxDebug;
-	private System.Windows.Forms.TabControl tabControlPics;
+	private TQVaultAE.GUI.Components.Layout.CaravanTabControl tabControlPics;
 	private System.Windows.Forms.TabPage tabPageMisc;
 	private System.Windows.Forms.TabPage tabPageArtifacts;
 	private System.Windows.Forms.TabPage tabPageRelics;
