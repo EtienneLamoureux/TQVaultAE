@@ -69,15 +69,8 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		#region Apply custom font
 
-		this.ProcessAllControls(c =>
-		{
-			if (c is IScalingControl) c.Font = FontService.GetFont(9F);
-		});
-
-		this.applyButton.Font = FontService.GetFontLight(12F);
-		this.cancelButton.Font = FontService.GetFontLight(12F);
-
-		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)(0));
+		// The marble dialogs' font rule, in the dense text size: the 17 category lists fit on one screen.
+		CaravanLook.ApplyFonts(this, this.FontService, CaravanLook.DenseTextSize);
 
 		// The 17 category buttons, with the designer's 3 px margins, need more height than the column gets,
 		// so the last one ("Suffix") wrapped into a second column, out of sight.

@@ -66,18 +66,8 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 
 		#region Apply custom font
 
-		this.targetTextBox.Font = FontService.GetFontLight(11F);
-		this.instructionsLabel.Font = FontService.GetFontLight(11F);
-		this.okayButton.Font = FontService.GetFontLight(12F);
-		this.cancelButton.Font = FontService.GetFontLight(12F);
-		this.vaultListComboBox.Font = FontService.GetFontLight(11F);
-		this.newRadioButton.Font = FontService.GetFontLight(11.25F);
-		this.renameRadioButton.Font = FontService.GetFontLight(11.25F);
-		this.copyRadioButton.Font = FontService.GetFontLight(11.25F);
-		this.deleteRadioButton.Font = FontService.GetFontLight(11.25F);
-		this.sourceLabel.Font = FontService.GetFontLight(11F);
-		this.targetLabel.Font = FontService.GetFontLight(11F);
-		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		// The marble dialogs' font rule.
+		CaravanLook.ApplyFonts(this, this.FontService);
 
 		#endregion
 

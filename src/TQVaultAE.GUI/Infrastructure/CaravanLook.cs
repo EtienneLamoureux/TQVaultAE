@@ -1,3 +1,4 @@
+using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.GUI.Components.Scaling;
 
 namespace TQVaultAE.GUI.Infrastructure;
@@ -12,6 +13,38 @@ internal static class CaravanLook
 
 	/// <summary>The size of the text of their buttons, in points.</summary>
 	public const float ButtonTextSize = 12F;
+
+	/// <summary>
+	/// The one exception to <see cref="TextSize"/>: the text of Advanced Search, whose 17 category lists must fit on one
+	/// screen (at 11.25 pt the last two categories went below the window at zoom 1), in points.
+	/// </summary>
+	public const float DenseTextSize = 9F;
+
+	/// <summary>
+	/// The one font rule of the marble dialogs and views: <paramref name="root"/> and the controls without a font of their
+	/// own in <see cref="TextSize"/>, the buttons in <see cref="ButtonTextSize"/>. The scaling controls get the text font
+	/// itself (they hold their font and grow it with the zoom); the others, group captions included, take the dialog's,
+	/// which grows with the zoom (<see cref="Forms.VaultForm.ApplyUserZoom"/>). Called before the dialog is zoomed; a
+	/// dialog sets its exceptions (a title) after it.
+	/// </summary>
+	/// <param name="root">The dialog or view.</param>
+	/// <param name="fonts">The font service.</param>
+	/// <param name="textSize">The text size: <see cref="TextSize"/>, or <see cref="DenseTextSize"/> for Advanced Search.</param>
+	public static void ApplyFonts(Control root, IFontService fonts, float textSize = TextSize)
+	{
+		var text = fonts.GetFontLight(textSize);
+		var button = fonts.GetFontLight(ButtonTextSize);
+		root.Font = text;
+		root.ProcessAllControls(control =>
+		{
+			if (control is Button)
+				control.Font = button;
+			else if (control is IScalingControl)
+				control.Font = text;
+			else
+				control.ResetFont();
+		});
+	}
 
 	/// <summary>
 	/// Gives <paramref name="form"/> (a dialog, or a view laid in a window) the tiled marble as its background, frames its

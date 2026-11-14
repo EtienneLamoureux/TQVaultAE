@@ -139,19 +139,8 @@ public partial class BagButtonSettings : VaultForm
 
 		#region Custom font & Scaling
 
-		// One rule, as in the other marble dialogs: the buttons in the larger size, the rest in the base size. The scaling
-		// controls hold their font (they grow it with the zoom); the others, group captions included, take the dialog's.
-		var baseFont = FontService.GetFontLight(CaravanLook.TextSize);
-		this.Font = baseFont;
-		this.tableLayoutPanelSkeleton.ProcessAllControls(c =>
-		{
-			if (c is Button)
-				c.Font = FontService.GetFontLight(CaravanLook.ButtonTextSize);
-			else if (c is IScalingControl)
-				c.Font = baseFont;
-			else
-				c.ResetFont();
-		});
+		// The marble dialogs' font rule.
+		CaravanLook.ApplyFonts(this, this.FontService);
 
 		this.FitExitButtons();
 		this.ApplyBorderPadding();

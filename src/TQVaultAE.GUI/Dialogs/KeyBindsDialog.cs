@@ -80,7 +80,7 @@ internal sealed partial class KeyBindsDialog : VaultForm
 		float zoom = this.UserZoomForLayout();
 		int Zoomed(int value) => (int)Math.Round(value * zoom);
 
-		var font = this.FontService.GetFontLight(11F, zoom);
+		var font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);
 		var headerFont = this.FontService.GetFontLight(11.5F, FontStyle.Bold, zoom);
 
 		this.table = new TableLayoutPanel()

@@ -158,19 +158,9 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 
 		#region Apply custom font
 
-		var font12 = FontService.GetFontLight(12F);
-		var font1125 = FontService.GetFontLight(11.25F);
-
-		// One rule for every control, the PasteBin group's included: the buttons in the larger size, the rest in the base
-		// size. The group boxes keep no font of their own (CaravanFrame draws their caption).
-		this.Font = font1125;
-		this.ProcessAllControls(ctr =>
-		{
-			if (ctr is Button)
-				ctr.Font = font12;
-			else if (ctr is not GroupBox)
-				ctr.Font = font1125;
-		});
+		// The marble dialogs' font rule, for every control, the PasteBin group's included.
+		CaravanLook.ApplyFonts(this, this.FontService);
+		var font12 = FontService.GetFontLight(CaravanLook.ButtonTextSize);
 
 		#endregion
 

@@ -30,12 +30,7 @@ internal sealed partial class AboutBox : VaultForm
 		#region Apply custom font
 
 		// The sizes of the other marble dialogs: the text in the base size, the button larger.
-		var text = FontService.GetFontLight(CaravanLook.TextSize);
-		this.labelProductName.Font = text;
-		this.labelVersion.Font = text;
-		this.labelCopyright.Font = text;
-		this.textBoxDescription.Font = text;
-		this.buttonOK.Font = FontService.GetFontLight(CaravanLook.ButtonTextSize);
+		CaravanLook.ApplyFonts(this, this.FontService);
 
 		#endregion
 

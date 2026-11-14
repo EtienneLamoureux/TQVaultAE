@@ -61,10 +61,10 @@ public partial class ResultsDialog : VaultForm
 
 		#region Apply custom font
 
-		var regular = FontService.GetFont(9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+		// The marble dialogs' text size; the item name in italics, the other columns regular.
+		var regular = FontService.GetFontLight(CaravanLook.TextSize);
 		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = regular;
-		// The item name in italics, the other columns regular.
-		this.columnItem.DefaultCellStyle.Font = FontService.GetFont(9F, FontStyle.Italic, GraphicsUnit.Point, 0);
+		this.columnItem.DefaultCellStyle.Font = FontService.GetFontLight(CaravanLook.TextSize, FontStyle.Italic);
 		foreach (var column in new DataGridViewColumn[] { this.columnQuality, this.columnContainerName, this.columnContainerType, this.columnSack, this.columnLevel })
 			column.DefaultCellStyle.Font = regular;
 		this.Font = regular;

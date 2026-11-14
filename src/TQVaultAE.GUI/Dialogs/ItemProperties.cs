@@ -58,18 +58,8 @@ internal sealed partial class ItemProperties : VaultForm
 
 		#region Apply custom font
 
-		// One rule, as in the settings dialog: the button in the larger size, the item name as the title, the rest in the
-		// base size. The scaling controls hold their font (they grow it with the zoom); the group boxes and the grids'
-		// lines take the dialog's.
-		var baseFont = FontService.GetFontLight(CaravanLook.TextSize);
-		this.Font = baseFont;
-		this.ProcessAllControls(c =>
-		{
-			if (c is Button)
-				c.Font = FontService.GetFontLight(CaravanLook.ButtonTextSize);
-			else if (c is IScalingControl)
-				c.Font = baseFont;
-		});
+		// The marble dialogs' font rule, the item name as the title.
+		CaravanLook.ApplyFonts(this, this.FontService);
 		this.labelItemName.Font = FontService.GetFontLight(18F);
 
 		#endregion

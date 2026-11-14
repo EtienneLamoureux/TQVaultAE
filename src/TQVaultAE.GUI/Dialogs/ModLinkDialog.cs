@@ -148,7 +148,7 @@ internal sealed class ModLinkDialog : VaultForm
 		// Enter links the chosen mod, like a double click (nothing while Link is disabled); Escape closes.
 		this.AcceptButton = this.buttonLink;
 		this.CancelButton = this.buttonClose;
-		this.Font = this.FontService.GetFontLight(11F, zoom);
+		this.Font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);
 		this.Text = Resources.ModLinkDialogTitle;
 		this.Padding = CaravanDialog.ContentPadding(zoom);
 		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
