@@ -76,11 +76,11 @@ internal partial class ItemSeedDialog
         // itemSeedBox
         // 
         this.itemSeedBox.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
-        this.itemSeedBox.Location = new System.Drawing.Point(99, 281);
-        this.itemSeedBox.Margin = new System.Windows.Forms.Padding(4);
+        this.itemSeedBox.Location = new System.Drawing.Point(79, 225);
+        this.itemSeedBox.Margin = new System.Windows.Forms.Padding(3);
         this.itemSeedBox.MaxLength = 5;
         this.itemSeedBox.Name = "itemSeedBox";
-        this.itemSeedBox.Size = new System.Drawing.Size(105, 35);
+        this.itemSeedBox.Size = new System.Drawing.Size(85, 29);
         this.itemSeedBox.TabIndex = 0;
         this.itemSeedBox.Text = "123456";
         // 
@@ -95,11 +95,11 @@ internal partial class ItemSeedDialog
         this.ButtonRandom.Font = new System.Drawing.Font("Albertus MT Light", 15F);
         this.ButtonRandom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ButtonRandom.Image = ((System.Drawing.Image)(resources.GetObject("ButtonRandom.Image")));
-        this.ButtonRandom.Location = new System.Drawing.Point(245, 280);
-        this.ButtonRandom.Margin = new System.Windows.Forms.Padding(4);
+        this.ButtonRandom.Location = new System.Drawing.Point(196, 224);
+        this.ButtonRandom.Margin = new System.Windows.Forms.Padding(3);
         this.ButtonRandom.Name = "ButtonRandom";
         this.ButtonRandom.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonRandom.OverBitmap")));
-        this.ButtonRandom.Size = new System.Drawing.Size(171, 38);
+        this.ButtonRandom.Size = new System.Drawing.Size(137, 30);
         this.ButtonRandom.SizeToGraphic = false;
         this.ButtonRandom.TabIndex = 1;
         this.ButtonRandom.Text = "Random";
@@ -119,11 +119,11 @@ internal partial class ItemSeedDialog
         this.ButtonOk.Font = new System.Drawing.Font("Albertus MT Light", 15F);
         this.ButtonOk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ButtonOk.Image = ((System.Drawing.Image)(resources.GetObject("ButtonOk.Image")));
-        this.ButtonOk.Location = new System.Drawing.Point(68, 356);
-        this.ButtonOk.Margin = new System.Windows.Forms.Padding(4);
+        this.ButtonOk.Location = new System.Drawing.Point(54, 285);
+        this.ButtonOk.Margin = new System.Windows.Forms.Padding(3);
         this.ButtonOk.Name = "ButtonOk";
         this.ButtonOk.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonOk.OverBitmap")));
-        this.ButtonOk.Size = new System.Drawing.Size(171, 38);
+        this.ButtonOk.Size = new System.Drawing.Size(137, 30);
         this.ButtonOk.SizeToGraphic = false;
         this.ButtonOk.TabIndex = 2;
         this.ButtonOk.Text = "OK";
@@ -144,11 +144,11 @@ internal partial class ItemSeedDialog
         this.ButtonCancel.Font = new System.Drawing.Font("Albertus MT Light", 15F);
         this.ButtonCancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ButtonCancel.Image = ((System.Drawing.Image)(resources.GetObject("ButtonCancel.Image")));
-        this.ButtonCancel.Location = new System.Drawing.Point(268, 356);
-        this.ButtonCancel.Margin = new System.Windows.Forms.Padding(4);
+        this.ButtonCancel.Location = new System.Drawing.Point(214, 285);
+        this.ButtonCancel.Margin = new System.Windows.Forms.Padding(3);
         this.ButtonCancel.Name = "ButtonCancel";
         this.ButtonCancel.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("ButtonCancel.OverBitmap")));
-        this.ButtonCancel.Size = new System.Drawing.Size(171, 38);
+        this.ButtonCancel.Size = new System.Drawing.Size(137, 30);
         this.ButtonCancel.SizeToGraphic = false;
         this.ButtonCancel.TabIndex = 3;
         this.ButtonCancel.Text = "Cancel";
@@ -161,19 +161,19 @@ internal partial class ItemSeedDialog
         // 
         this.labelInfos.AutoSize = true;
         this.labelInfos.Font = new System.Drawing.Font("Albertus MT Light", 14.0625F);
-        this.labelInfos.Location = new System.Drawing.Point(15, 36);
-        this.labelInfos.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+        this.labelInfos.Location = new System.Drawing.Point(12, 29);
+        this.labelInfos.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
         this.labelInfos.Name = "labelInfos";
-        this.labelInfos.Size = new System.Drawing.Size(604, 196);
+        this.labelInfos.Size = new System.Drawing.Size(483, 157);
         this.labelInfos.TabIndex = 4;
         this.labelInfos.Text = resources.GetString("labelInfos.Text");
         // 
         // ItemSeedDialog
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+        this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-        this.ClientSize = new System.Drawing.Size(512, 418);
+        this.ClientSize = new System.Drawing.Size(410, 334);
         this.Controls.Add(this.labelInfos);
         this.Controls.Add(this.ButtonCancel);
         this.Controls.Add(this.ButtonOk);
@@ -183,7 +183,7 @@ internal partial class ItemSeedDialog
         this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.Margin = new System.Windows.Forms.Padding(5);
+        this.Margin = new System.Windows.Forms.Padding(4);
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.Name = "ItemSeedDialog";
