@@ -71,20 +71,19 @@ internal static partial class AutomationTools
 			using var bitmap = window.IsEmpty
 				? AutomationImages.RenderWithOverlays(form, (stashPicture, stashScreen))
 				: AutomationImages.RenderWithOverlays(form, (stashPicture, stashScreen), (rendered, window.Location));
-			static object Box(Rectangle r) => new { r.X, r.Y, r.Width, r.Height };
 			return (Serialize(new
 			{
 				tab = panel.Tab + 1,
 				index,
 				shown = tooltip.Visible,
 				lines = tooltip.Lines.Select(l => l.Text).ToList(),
-				tooltipWindow = window.IsEmpty ? null : Box(window),
-				renderedSize = new { rendered.Width, rendered.Height },
-				hoveredArea = Box(areaScreen),
-				statsPanel = Box(panelScreen),
-				equipmentPanel = Box(equipmentScreen),
-				mainWindow = Box(formScreen),
-				workingArea = Box(working),
+				tooltipWindow = window.IsEmpty ? (Rectangle?)null : window,
+				renderedSize = rendered.Size,
+				hoveredArea = areaScreen,
+				statsPanel = panelScreen,
+				equipmentPanel = equipmentScreen,
+				mainWindow = formScreen,
+				workingArea = working,
 				insideWorkingArea = !window.IsEmpty && working.Contains(window),
 				coversHoveredArea = !window.IsEmpty && window.IntersectsWith(areaScreen),
 				overlapsEquipmentPanel = !window.IsEmpty && window.IntersectsWith(equipmentScreen),

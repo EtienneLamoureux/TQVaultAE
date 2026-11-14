@@ -140,7 +140,7 @@ internal static partial class AutomationTools
 				built = cursor is not null,
 				width = cursor?.Size.Width,
 				height = cursor?.Size.Height,
-				hotSpot = cursor is null ? null : new { x = cursor.HotSpot.X, y = cursor.HotSpot.Y },
+				hotSpot = cursor?.HotSpot,
 			});
 		});
 
@@ -175,14 +175,13 @@ internal static partial class AutomationTools
 				image = AutomationImages.Png(bitmap);
 			}
 
-			static object Box(Rectangle r) => new { r.X, r.Y, r.Width, r.Height };
 			return (Serialize(new
 			{
 				slot = value.ToString(),
 				tooltips = DescribeTooltips(),
-				tooltipWindow = tooltip is null ? null : Box(tooltipScreen),
-				forgePanel = Box(forge.RectangleToScreen(forge.ClientRectangle)),
-				mainWindow = Box(formScreen),
+				tooltipWindow = tooltip is null ? (Rectangle?)null : tooltipScreen,
+				forgePanel = forge.RectangleToScreen(forge.ClientRectangle),
+				mainWindow = formScreen,
 			}), image);
 		});
 

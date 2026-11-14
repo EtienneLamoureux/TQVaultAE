@@ -42,8 +42,8 @@ internal static partial class AutomationTools
 						type = c.GetType().Name,
 						text = c.Text,
 						font = FontText(c.Font),
-						size = new { c.Width, c.Height },
-						needed = reason.Needed is { } n ? new { n.Width, n.Height } : null,
+						size = c.Size,
+						needed = reason.Needed,
 						reason = reason.Text,
 						visible = c.Visible,
 					});

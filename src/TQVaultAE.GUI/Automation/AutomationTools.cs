@@ -31,7 +31,8 @@ namespace TQVaultAE.GUI.Automation;
 [McpServerToolType]
 internal static partial class AutomationTools
 {
-	private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+	/// <summary>The serializer options of the tools: the one JSON format of <see cref="AutomationJson"/>.</summary>
+	private static JsonSerializerOptions JsonOptions => AutomationJson.Options;
 
 	private static readonly MethodInfo OnMouseDownMethod
 		= typeof(Control).GetMethod("OnMouseDown", BindingFlags.Instance | BindingFlags.NonPublic)!;
@@ -168,7 +169,7 @@ internal static partial class AutomationTools
 						sourcePanel = AutomationPanels.IdOf(form, drag.SrcSackPanel),
 						canBeCanceled = drag.CanBeCanceled,
 						isModified = drag.IsModifiedItem,
-						mouseOffset = new { x = drag.MouseOffset.X, y = drag.MouseOffset.Y },
+						mouseOffset = drag.MouseOffset,
 					}
 					: null,
 				virtualCursor = VirtualCursor.Target is SackPanel cursorPanel
@@ -183,7 +184,7 @@ internal static partial class AutomationTools
 					hasSack = p.Panel.Sack is not null,
 					currentBag = p.Container?.ShownBag(),
 					bagCount = p.Container?.BagButtons?.Count,
-					gridSize = new { width = p.Panel.SackSize.Width, height = p.Panel.SackSize.Height },
+					gridSize = p.Panel.SackSize,
 					itemCount = p.Panel.Sack?.Count(i => !RecordId.IsNullOrEmpty(i.BaseItemId)),
 					isModified = p.Panel.Sack?.IsModified,
 					// The sack belongs to a read-only character.
@@ -408,7 +409,7 @@ internal static partial class AutomationTools
 			return Serialize(new
 			{
 				accepted = !stillHeld,
-				targetCells = target.Size.IsEmpty ? null : new { x = target.X, y = target.Y, width = target.Width, height = target.Height },
+				targetCells = target.Size.IsEmpty ? (Rectangle?)null : target,
 				droppedItem = DescribeItem(dropped, null),
 				status = DragStatus(form),
 				hint = stillHeld ? "The panel refused the drop (cell out of range, occupied by several items, wrong slot, requirements or a read-only character: see notification). The item is still dragged." : null,
@@ -861,7 +862,7 @@ internal static partial class AutomationTools
 			item = drag.IsActive ? DescribeItem(drag.Item, null) : null,
 			sourcePanel = drag.IsActive ? AutomationPanels.IdOf(form, drag.SrcSackPanel) : null,
 			hoveredPanel = AutomationPanels.IdOf(form, hovered),
-			cellsUnderItem = cells.Size.IsEmpty ? null : new { x = cells.X, y = cells.Y, width = cells.Width, height = cells.Height },
+			cellsUnderItem = cells.Size.IsEmpty ? (Rectangle?)null : cells,
 		};
 	}
 

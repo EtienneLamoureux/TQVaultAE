@@ -39,7 +39,7 @@ internal sealed partial class ItemProperties
 
 		return new AutomationContent(
 			this.labelItemName.Text,
-			Hex(this.labelItemName.ForeColor),
+			TQVaultAE.GUI.Automation.AutomationJson.Hex(this.labelItemName.ForeColor),
 			[
 				Section(this.groupBoxBaseItemProperties, this.dataGridViewBaseItemProperties),
 				Section(this.groupBoxPrefixProperties, this.dataGridViewPrefixProperties),
@@ -53,9 +53,7 @@ internal sealed partial class ItemProperties
 			caption.Visible && grid.Visible,
 			grid.Rows.Cast<DataGridViewRow>()
 				.Select(r => r.Cells[0])
-				.Select(c => new AutomationRow(c.Value as string ?? string.Empty, Hex(c.Style.ForeColor), Hex(c.Style.SelectionForeColor)))
+				.Select(c => new AutomationRow(c.Value as string ?? string.Empty, TQVaultAE.GUI.Automation.AutomationJson.Hex(c.Style.ForeColor), TQVaultAE.GUI.Automation.AutomationJson.Hex(c.Style.SelectionForeColor)))
 				.ToArray());
-
-	private static string Hex(Color color) => $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
 }
 #endif

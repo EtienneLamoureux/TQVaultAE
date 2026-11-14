@@ -35,7 +35,7 @@ internal static partial class AutomationTools
 				currentBag = stash.ShownBag(),
 				zoom = Program.ServiceProvider.GetRequiredService<IUIService>().Scale,
 				before = before is null ? null : new { source = beforeIsSource, replaced = !ReferenceEquals(before, after), disposed = IsDisposed(before) },
-				after = after is null ? null : new { source = stash.AutomationIsSourceBackground(after), size = IsDisposed(after) ? null : (object)new { after.Width, after.Height } },
+				after = after is null ? null : new { source = stash.AutomationIsSourceBackground(after), size = IsDisposed(after) ? null : (object)after.Size },
 			});
 		});
 
@@ -47,7 +47,7 @@ internal static partial class AutomationTools
 			var panel = (AutomationPanels.Resolve(form, "stash").Container as StashPanel)?.AutomationPlayerStatsPanel
 				?? throw new McpException("No statistics panel yet: select a character first.");
 
-			static object? Describe(Font? font) => font is null ? null : new { family = font.FontFamily.Name, font.Size, unit = font.Unit.ToString(), style = font.Style.ToString() };
+			static object? Describe(Font? font) => font is null ? null : new { family = font.FontFamily.Name, size = font.Size, unit = font.Unit.ToString(), style = font.Style.ToString() };
 
 			return Serialize(new
 			{

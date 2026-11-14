@@ -79,7 +79,7 @@ internal static partial class AutomationTools
 			var lines = pane.ToolTipLines?.Invoke(target) ?? [];
 			var tooltip = pane.Tooltip ?? throw new McpException("The pane has no tool tip.");
 			using var bitmap = tooltip.Render(lines);
-			var text = Serialize(lines.Select(l => new { text = l.Text, color = l.Color.IsEmpty ? null : $"#{l.Color.R:X2}{l.Color.G:X2}{l.Color.B:X2}", title = l.Title }).ToList());
+			var text = Serialize(lines.Select(l => new { text = l.Text, color = AutomationJson.HexOrNull(l.Color), title = l.Title }).ToList());
 			return (text, AutomationImages.Png(bitmap));
 		});
 

@@ -43,7 +43,7 @@ public partial class ForgePanel
 		slotCut = this.slotCut,
 		slotHeight = this.pictureBoxBaseItem.Height,
 		rowHeights = this.tableLayoutPanelForge.GetRowHeights(),
-		combos = this.Slots.Where(s => s.Combo is { Visible: true }).Select(s => new { s.Slot, s.Combo!.Height, Font = s.Combo.Font.SizeInPoints }),
+		combos = this.Slots.Where(s => s.Combo is { Visible: true }).Select(s => new { slot = s.Slot, height = s.Combo!.Height, font = s.Combo.Font.SizeInPoints }),
 	};
 
 	/// <summary>Messages the forge showed to the user, oldest first.</summary>

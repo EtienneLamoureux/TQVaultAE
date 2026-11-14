@@ -92,8 +92,8 @@ internal static partial class AutomationTools
 					options = dialog.Options,
 					toggled,
 					scrolled,
-					dialogSize = new { dialog.Width, dialog.Height },
-					contentSize = new { table.Width, table.Height },
+					dialogSize = dialog.Size,
+					contentSize = table.Size,
 					columns,
 				});
 				return (result, AutomationImages.Png(bitmap));

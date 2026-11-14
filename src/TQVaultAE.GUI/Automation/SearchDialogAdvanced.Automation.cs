@@ -22,8 +22,8 @@ public partial class SearchDialogAdvanced
 		return new
 		{
 			zoom = this.ScaledZoom,
-			size = new { width = this.Width, height = this.Height },
-			layoutSize = new { width = this._layoutSize.Width, height = this._layoutSize.Height },
+			size = this.Size,
+			layoutSize = this._layoutSize,
 			windowState = this.WindowState.ToString(),
 			statePending = this._pendingState is not null,
 			searchText = this.scalingTextBoxSearchTerm.Text,

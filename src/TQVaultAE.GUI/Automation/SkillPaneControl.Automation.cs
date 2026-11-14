@@ -23,7 +23,7 @@ internal sealed partial class SkillPaneControl
 			barFill = SkillPaneLayout.BarFill(this.MasteryLevel),
 			availablePoints = this.AvailablePoints,
 			scale = this.PaneScale,
-			size = new { this.Width, this.Height },
+			size = this.Size,
 			background = tree?.Pane?.Background,
 			skills = tree?.Skills.Select(skill =>
 			{

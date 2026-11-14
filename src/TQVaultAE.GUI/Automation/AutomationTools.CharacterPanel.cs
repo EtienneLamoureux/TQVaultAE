@@ -52,7 +52,7 @@ internal static partial class AutomationTools
 			var lines = tips[index.Value];
 			var tooltip = panel.Tooltip ?? throw new McpException("The panel has no game tool tip.");
 			using var bitmap = tooltip.Render(lines);
-			return (Serialize(lines.Select(l => new { text = l.Text, color = l.Color.IsEmpty ? null : $"#{l.Color.R:X2}{l.Color.G:X2}{l.Color.B:X2}", title = l.Title }).ToList()), AutomationImages.Png(bitmap));
+			return (Serialize(lines.Select(l => new { text = l.Text, color = AutomationJson.HexOrNull(l.Color), title = l.Title }).ToList()), AutomationImages.Png(bitmap));
 		});
 
 		return AutomationImages.Result(text, png, "charactertooltip");

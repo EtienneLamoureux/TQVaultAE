@@ -34,7 +34,7 @@ internal static partial class AutomationTools
 				zoom = ui.Zoom,
 				dpiScale = ui.DpiScale,
 				scale = ui.Scale,
-				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
+				clientSize = main.ClientSize,
 			});
 		});
 
@@ -51,7 +51,7 @@ internal static partial class AutomationTools
 			{
 				name = c.Name,
 				type = c.GetType().Name,
-				bounds = new { c.Left, c.Top, c.Width, c.Height },
+				bounds = c.Bounds,
 				font = FontText(c.Font),
 				visible = c.Visible,
 				enabled = c.Enabled,
@@ -68,7 +68,7 @@ internal static partial class AutomationTools
 			{
 				form = target.Text,
 				deviceDpi = target.DeviceDpi,
-				clientSize = new { target.ClientSize.Width, target.ClientSize.Height },
+				clientSize = target.ClientSize,
 				scale = ui.Scale,
 				zoom = ui.Zoom,
 				dpiScale = ui.DpiScale,
@@ -104,7 +104,7 @@ internal static partial class AutomationTools
 				type = type.FullName,
 				singleton,
 				title = form.Text,
-				size = new { width = form.Width, height = form.Height },
+				size = form.Size,
 				controls = CountControls(form),
 				backgroundImage = form.BackgroundImage is not null,
 				icon = form.Icon is not null,
@@ -185,7 +185,7 @@ internal static partial class AutomationTools
 				d.InputValue = value;
 			});
 			dialog.Show(main);
-			return Serialize(new { title = dialog.Text, size = new { dialog.Width, dialog.Height }, deviceDpi = dialog.DeviceDpi });
+			return Serialize(new { title = dialog.Text, size = dialog.Size, deviceDpi = dialog.DeviceDpi });
 		});
 
 	[McpServerTool(Name = "bag_menu", Destructive = true)]
@@ -366,16 +366,16 @@ internal static partial class AutomationTools
 			string Under(Point point) => main.GetChildAtPoint(point, GetChildAtPointSkip.Invisible)?.Name ?? "(window)";
 			return Serialize(new
 			{
-				bounds = new { main.Bounds.X, main.Bounds.Y, main.Bounds.Width, main.Bounds.Height },
-				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
+				bounds = main.Bounds,
+				clientSize = main.ClientSize,
 				contentRight = children.Count == 0 ? 0 : children.Max(c => c.Right),
 				contentBottom = children.Count == 0 ? 0 : children.Max(c => c.Bottom),
 				layout = new
 				{
-					border = new { border.Left, border.Top, border.Right, border.Bottom },
-					inside = new { inside.X, inside.Y, inside.Width, inside.Height },
-					table = new { table.Bounds.X, table.Bounds.Y, table.Bounds.Width, table.Bounds.Height },
-					preferred = new { table.PreferredSize.Width, table.PreferredSize.Height },
+					border = new { left = border.Left, top = border.Top, right = border.Right, bottom = border.Bottom },
+					inside,
+					table = table.Bounds,
+					preferred = table.PreferredSize,
 					overflowRight = table.Right - inside.Right,
 					overflowBottom = table.Bottom - inside.Bottom,
 					// The panels in the table (without their empty margins): past the inside edge a human sees them cut.
@@ -393,12 +393,12 @@ internal static partial class AutomationTools
 				scale = ui.Scale,
 				deviceDpi = main.DeviceDpi,
 				monitor = screen.DeviceName,
-				workingArea = new { screen.WorkingArea.X, screen.WorkingArea.Y, screen.WorkingArea.Width, screen.WorkingArea.Height },
+				workingArea = screen.WorkingArea,
 				insideWorkingArea = screen.WorkingArea.Contains(main.Bounds),
 				// The window as Windows has it (Bounds is what Windows Forms last asked for), the largest client size
 				// Windows lets it take and the largest zoom that fits it (a zoom in stops there).
-				windowRect = NativeWindowRect(main.Handle),
-				maxClientSize = new { main.AutomationZoomLimit.MaxClientSize.Width, main.AutomationZoomLimit.MaxClientSize.Height },
+				windowRect = NativeWindows.WindowRect(main.Handle),
+				maxClientSize = main.AutomationZoomLimit.MaxClientSize,
 				step = main.AutomationZoomStep,
 				nominalZoom = main.NominalZoom,
 				cell = ui.ItemUnitSize,
@@ -407,17 +407,11 @@ internal static partial class AutomationTools
 				// The window sizes a resize by the user is kept between.
 				resizeBounds = new
 				{
-					minimum = new { main.FormMinimumSize.Width, main.FormMinimumSize.Height },
-					maximum = new { main.FormMaximumSize.Width, main.FormMaximumSize.Height },
+					minimum = main.FormMinimumSize,
+					maximum = main.FormMaximumSize,
 				},
 			});
 		});
-
-	private static object NativeWindowRect(IntPtr handle)
-	{
-		var r = NativeWindows.WindowRect(handle);
-		return new { r.X, r.Y, r.Width, r.Height };
-	}
 
 	[McpServerTool(Name = "window_state", Destructive = true)]
 	[Description("Sets the main window's state like the taskbar or the caption buttons do: 'minimize', 'restore' (back from minimized or maximized, as a click on the taskbar icon) or 'maximize'. Returns the state, bounds and client size after it, and the bounds of the custom border's caption buttons (to check they are back in place after a restore).")]
@@ -439,13 +433,13 @@ internal static partial class AutomationTools
 		return AutomationHost.OnUi(main =>
 		{
 			object Bounds(string name) => main.Controls.Find(name, false).FirstOrDefault() is { } c
-				? new { c.Left, c.Top, c.Width, c.Height, c.Visible }
+				? new { x = c.Left, y = c.Top, width = c.Width, height = c.Height, visible = c.Visible }
 				: null!;
 			return Serialize(new
 			{
 				state = main.WindowState.ToString(),
-				bounds = new { main.Bounds.X, main.Bounds.Y, main.Bounds.Width, main.Bounds.Height },
-				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
+				bounds = main.Bounds,
+				clientSize = main.ClientSize,
 				buttons = new
 				{
 					close = Bounds("buttonClose"),
@@ -486,9 +480,9 @@ internal static partial class AutomationTools
 			var target = Target(main);
 			return Serialize(new
 			{
-				location = new { target.Location.X, target.Location.Y },
-				size = new { target.Width, target.Height },
-				clientSize = new { target.ClientSize.Width, target.ClientSize.Height },
+				location = target.Location,
+				size = target.Size,
+				clientSize = target.ClientSize,
 				deviceDpi = target.DeviceDpi,
 				zoom = ui.Zoom,
 				dpiScale = ui.DpiScale,
@@ -497,9 +491,9 @@ internal static partial class AutomationTools
 				fontZoom = ui.FontZoom,
 				monitors = Screen.AllScreens.Select(s => new
 				{
-					s.DeviceName,
-					bounds = new { s.Bounds.X, s.Bounds.Y, s.Bounds.Width, s.Bounds.Height },
-					s.Primary,
+					deviceName = s.DeviceName,
+					bounds = s.Bounds,
+					primary = s.Primary,
 				}),
 			});
 		});

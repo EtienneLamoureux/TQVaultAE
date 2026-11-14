@@ -44,7 +44,7 @@ internal static partial class AutomationTools
 					? equipment.LoadoutMarks.Where(m => m.Slot == hoverSlot).Select(m => (Domain.Actions.LoadoutSlotMark?)m).FirstOrDefault()
 						?? throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).")
 					: null;
-				markTooltip = equipment.AutomationHoverMark(hovered).Select(line => new { text = line.Text, color = ColorTranslator.ToHtml(line.Color) }).ToList();
+				markTooltip = equipment.AutomationHoverMark(hovered).Select(line => new { text = line.Text, color = AutomationJson.HexOrNull(line.Color) }).ToList();
 				action = null;
 			}
 
@@ -104,10 +104,10 @@ internal static partial class AutomationTools
 				bar = bar is null ? null : new
 				{
 					visible = bar.Visible,
-					bounds = Box(bar.Bounds),
-					field = Box(bar.FieldBounds),
-					add = Box(bar.AddBounds),
-					load = Box(bar.LoadBounds),
+					bounds = bar.Bounds,
+					field = bar.FieldBounds,
+					add = bar.AddBounds,
+					load = bar.LoadBounds,
 					names = bar.Names,
 					selected = bar.Selected,
 					canChange = bar.CanChange,
@@ -118,20 +118,20 @@ internal static partial class AutomationTools
 				// Edit button, and the panel's own size (nothing may go past its bottom).
 				layout = bar is null ? null : new
 				{
-					statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? Box(stats.Bounds) : null,
-					editButton = stash.AutomationEditButton is { } edit ? Box(edit.Bounds) : null,
+					statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? stats.Bounds : (Rectangle?)null,
+					editButton = stash.AutomationEditButton is { } edit ? edit.Bounds : (Rectangle?)null,
 					editButtonVisible = stash.AutomationEditButton?.Visible,
 					editButtonFont = stash.AutomationEditButton?.Font.ToString(),
-					stashClient = Box(stash.ClientRectangle),
+					stashClient = stash.ClientRectangle,
 				},
 				menu = menuEntries,
-				equipmentPanel = Box(equipment.Bounds),
+				equipmentPanel = equipment.Bounds,
 				marks = equipment.LoadoutMarks.Select(m => new
 				{
 					slot = m.Slot,
 					match = m.Match.ToString(),
 					canCompare = m.CanCompare,
-					bounds = Box(equipment.MarkScreenBounds(m)),
+					bounds = equipment.MarkScreenBounds(m),
 				}),
 				markTooltip,
 				file = set?.FilePath,
@@ -155,7 +155,6 @@ internal static partial class AutomationTools
 			});
 		});
 
-	private static int[] Box(Rectangle r) => [r.X, r.Y, r.Width, r.Height];
 
 	/// <summary>Selects a loadout like the user: a click on the bar's name box opens its list, then a click on the name.</summary>
 	private static void PickLoadout(LoadoutBar bar, string name)

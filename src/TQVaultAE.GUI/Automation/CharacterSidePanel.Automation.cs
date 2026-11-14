@@ -8,7 +8,7 @@ internal sealed partial class CharacterSidePanel
 	{
 		panel = this.Name,
 		scale = this.PanelScale,
-		bounds = new { this.Left, this.Top, this.Width, this.Height },
+		bounds = this.Bounds,
 		view = this.View?.Invoke(),
 		editors = this.Editors.Select(c => new { c.Name, c.Visible, c.Enabled, c.Text }).ToList(),
 	};

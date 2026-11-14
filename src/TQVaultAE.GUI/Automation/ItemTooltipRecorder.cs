@@ -126,7 +126,5 @@ internal sealed class ItemTooltipRecorder
 	}
 
 	private static TooltipDumpSegment Segment(Label label)
-		=> new(label.Text, Hex(label.ForeColor), label.Font.Bold);
-
-	private static string Hex(Color color) => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+		=> new(label.Text, AutomationJson.Hex(label.ForeColor), label.Font.Bold);
 }

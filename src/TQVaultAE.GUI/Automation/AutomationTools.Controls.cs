@@ -164,7 +164,7 @@ internal static partial class AutomationTools
 			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
 
 			main.BeginInvoke(() => AutomationInput.SendMouse(hit, point, mouseButton, clicks));
-			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point = new { point.X, point.Y }, button = mouseButton.ToString(), clicks });
+			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point, button = mouseButton.ToString(), clicks });
 		});
 
 	[McpServerTool(Name = "mouse_wheel", Destructive = true)]
@@ -201,7 +201,7 @@ internal static partial class AutomationTools
 					scroll.Add(new { control = up.Name, type = up.GetType().Name, scrollBar = bar.GetType().Name, value = bar.Value, maximum = bar.Maximum });
 			}
 
-			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point = new { point.X, point.Y }, notches, scroll });
+			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point, notches, scroll });
 		});
 
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
@@ -460,7 +460,7 @@ internal static partial class AutomationTools
 			var selected = form.AutomationCharacterCombo.SelectedItem as PlayerSave;
 			return Serialize(new
 			{
-				tags = tags.Select(t => new { name = t.Key, color = $"#{t.Value.R:X2}{t.Value.G:X2}{t.Value.B:X2}" }).ToList(),
+				tags = tags.Select(t => new { name = t.Key, color = AutomationJson.Hex(t.Value) }).ToList(),
 				selectedCharacterTags = selected?.Tags.Keys.ToList(),
 			});
 		});
@@ -495,7 +495,7 @@ internal static partial class AutomationTools
 				health = info.CalculatedHealth,
 				energy = info.CalculatedMana,
 			};
-			return Serialize(new { visible = panel.Visible, bounds = new { panel.Left, panel.Top, panel.Width, panel.Height }, stats = panel.AutomationState(), requirementAttributes });
+			return Serialize(new { visible = panel.Visible, bounds = panel.Bounds, stats = panel.AutomationState(), requirementAttributes });
 		});
 
 	/// <summary>

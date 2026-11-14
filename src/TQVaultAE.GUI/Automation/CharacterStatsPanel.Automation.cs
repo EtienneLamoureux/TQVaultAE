@@ -27,7 +27,7 @@ internal sealed partial class CharacterStatsPanel
 			panel = this.Name,
 			tab = this.Tab + 1,
 			scale = this.PanelScale,
-			size = new { this.Width, this.Height },
+			size = this.Size,
 			view,
 		};
 	}
