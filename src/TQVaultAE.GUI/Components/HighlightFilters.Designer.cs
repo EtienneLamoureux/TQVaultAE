@@ -488,6 +488,7 @@ partial class HighlightFilters
         "Potion",
         "Equipment",
         "Dye"});
+        this.scalingCheckedListBoxTypes.IntegralHeight = false;
         this.scalingCheckedListBoxTypes.Location = new System.Drawing.Point(4, 94);
         this.scalingCheckedListBoxTypes.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckedListBoxTypes.MultiColumn = true;
@@ -511,6 +512,7 @@ partial class HighlightFilters
         "Rare",
         "Epic",
         "Legendary"});
+        this.scalingCheckedListBoxRarity.IntegralHeight = false;
         this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(4, 275);
         this.scalingCheckedListBoxRarity.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckedListBoxRarity.MultiColumn = true;
@@ -533,6 +535,7 @@ partial class HighlightFilters
         "Atlantis",
         "Ragnarök",
         "Eternal Embers"});
+        this.scalingCheckedListBoxOrigin.IntegralHeight = false;
         this.scalingCheckedListBoxOrigin.Location = new System.Drawing.Point(4, 340);
         this.scalingCheckedListBoxOrigin.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckedListBoxOrigin.MultiColumn = true;
