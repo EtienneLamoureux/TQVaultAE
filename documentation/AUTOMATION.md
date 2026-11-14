@@ -75,7 +75,10 @@ If you use another port (`TQVAULT_MCP_PORT`), update the URL in `.mcp.json` too.
 
 ## Tools
 
-All UI access is marshalled to the UI thread with `Control.Invoke`.
+Every access to the UI is marshalled to the UI thread with `Control.Invoke`. The tools that read state the request
+thread can read safely run on it: `recent_log`, `queue_dialog_answers`, `dialog_answers`, `recent_sounds`, `list_forms`,
+`load_resource`, `picture_fault` and `game_text`, and the native window calls of `list_windows` and `close_dialog`. A
+refusal (a hidden entry, a greyed button, a bag out of range) comes back as a tool error with its reason.
 Panel ids are `vault`, `secondaryVault`, `player` (main inventory), `playerBag`, `stash` and `equipment`.
 Cells are grid coordinates, as reported by `get_state`.
 

@@ -24,7 +24,9 @@ namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
 /// MCP tools that inspect and drive the running TQVault UI.
-/// Every UI access is marshalled to the UI thread through <see cref="AutomationHost.OnUi{T}"/>.
+/// Every UI access is marshalled to the UI thread through <see cref="AutomationHost.OnUi{T}(Func{MainForm, T})"/>; the tools
+/// that read only thread-safe state (the log, the dialog answers, the recorded sounds, the registered forms, the game
+/// files) and the native window calls run on the request thread.
 /// </summary>
 [McpServerToolType]
 internal static partial class AutomationTools

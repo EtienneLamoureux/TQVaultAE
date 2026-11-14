@@ -105,12 +105,11 @@ internal static class AutomationHost
 	/// <summary>
 	/// Takes the next queued answer when it is one of <paramref name="buttons"/>; an OK-only box takes only an OK answer,
 	/// so an unexpected message does not use up the answer meant for a question.
-	/// </summary>
 	/// In headless mode a box is never shown: without a queued answer it takes <see cref="HeadlessAnswer"/>, which is recorded
 	/// in <see cref="UnansweredDialogs"/>.
 	/// </summary>
-	/// <returns>Whether the box is answered without being shown.</returns>
 	/// <param name="headlessAnswer">The answer to take in headless mode without a queued one, instead of <see cref="HeadlessAnswer"/>.</param>
+	/// <returns>Whether the box is answered without being shown.</returns>
 	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer, DialogResult? headlessAnswer = null)
 	{
 		var shortMessage = message.Length > 120 ? message[..120] + "..." : message;
