@@ -485,7 +485,7 @@ public partial class BagButtonSettings : VaultForm
 			return;
 
 		var found = flowLayoutPanelPicturePickup.GetChildAtPoint(
-			flowLayoutPanelPicturePickup.PointToClient(Cursor.Position)
+			flowLayoutPanelPicturePickup.PointToClient(Models.ScreenCursor.Position)
 			, GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent
 		);
 

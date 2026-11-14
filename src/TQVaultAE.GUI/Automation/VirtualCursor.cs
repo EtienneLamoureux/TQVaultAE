@@ -35,6 +35,11 @@ internal static class VirtualCursor
 	public static Point ClientLocation => _clientLocation;
 
 	/// <summary>
+	/// Gets the virtual cursor location on the screen; the real cursor's when automation does not hold it.
+	/// </summary>
+	public static Point ScreenPosition => _target is { IsDisposed: false } target ? target.PointToScreen(_clientLocation) : Cursor.Position;
+
+	/// <summary>
 	/// Places the virtual cursor over <paramref name="target"/> at a client location.
 	/// </summary>
 	public static void Set(Control target, Point clientLocation)

@@ -331,7 +331,7 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing, I
 	private void Forge_MouseLeave(object? sender, EventArgs e)
 	{
 		// Leaving a child for another one stays inside the panel
-		if (!this.ClientRectangle.Contains(this.PointToClient(Cursor.Position)))
+		if (!this.ClientRectangle.Contains(this.PointToClient(ScreenCursor.Position)))
 			this.EndDragCursor();
 	}
 
@@ -341,7 +341,7 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing, I
 			return;
 
 		var slot = Slots.FirstOrDefault(s => s.Picture.Visible
-			&& s.Picture.RectangleToScreen(s.Picture.ClientRectangle).Contains(Cursor.Position));
+			&& s.Picture.RectangleToScreen(s.Picture.ClientRectangle).Contains(ScreenCursor.Position));
 		if (slot is not null)
 			this.DropDraggedItem(slot.Slot);
 	}

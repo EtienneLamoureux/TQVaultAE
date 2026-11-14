@@ -80,17 +80,25 @@ internal static partial class AutomationTools
 		=> OnForge((form, forge) => forge.AutomationSetHardcore(enabled));
 
 	[McpServerTool(Name = "forge_drop", Destructive = true)]
-	[Description("Drops the item being dragged (picked with pick_item) on a forge slot, like a click on that slot. The forge rules of the current mode decide; a refusal is reported in 'newMessages' and the item stays dragged.")]
+	[Description("Drops the item being dragged (picked with pick_item) on a forge slot like the user: the virtual cursor moves onto the slot's picture (the panel hovered before gets its mouse leave) and a click goes to the picture with mouse messages; the forge's click handler drops on the slot under the cursor. The forge rules of the current mode decide; a refusal is reported in 'newMessages' and the item stays dragged, the virtual cursor on the slot. A slot hidden in this mode is refused.")]
 	public static string ForgeDrop([Description("Base, Prefix, Suffix, Relic1 or Relic2.")] string slot)
 		=> OnForge((form, forge) =>
 		{
 			var value = ParseSlot(slot);
 			RequireDrag(form);
-			forge.AutomationDrop(value);
+			ReleaseCursor(VirtualCursor.Target as SackPanel);
+			try
+			{
+				forge.AutomationDrop(value);
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
 
-			// An accepted drop returns the item to its sack: stop hovering the panel it came from.
+			// An accepted drop returns the item to its sack: the cursor goes back to the real mouse.
 			if (!form.AutomationDragInfo.IsActive)
-				ReleaseCursor(VirtualCursor.Target as SackPanel);
+				VirtualCursor.Release();
 		});
 
 	[McpServerTool(Name = "forge_select_part", Destructive = true)]

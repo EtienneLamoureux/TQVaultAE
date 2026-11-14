@@ -97,7 +97,14 @@ public partial class ForgePanel
 		if (!this.IsDraging)
 			return false;
 
-		this.DropDraggedItem(slot);
+		// A click anywhere in the forge drops on the slot under the cursor: the virtual cursor rests on the slot, and the
+		// click goes to its picture with mouse messages.
+		var picture = this.SlotOf(slot).Picture;
+		if (!picture.Visible)
+			throw new InvalidOperationException($"The {slot} slot is hidden in this mode: a user could not click it.");
+		var center = Automation.AutomationInput.Center(picture);
+		Automation.VirtualCursor.Set(picture, center);
+		Automation.AutomationInput.SendMouse(picture, center, MouseButtons.Left, 1);
 		return true;
 	}
 

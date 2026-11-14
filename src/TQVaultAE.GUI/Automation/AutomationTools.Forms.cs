@@ -321,6 +321,26 @@ internal static partial class AutomationTools
 			}
 		});
 
+	[McpServerTool(Name = "bag_settings_drag_icon", Destructive = true)]
+	[Description("In the open bag button settings dialog, drags an icon of a tab's grid onto a picture box like the user: left button down on the icon, the virtual cursor moved onto the target box, button up to the grid (which has the mouse capture), whose handler finds the box under the cursor. target: on, off or over (Detailed pictures) or simple (Simple picture); a box hidden in the current mode is refused. The drop switches to Custom icon. Then read the dialog with control_values and apply it with click_control('Bag Button Settings', 'applyButton').")]
+	public static string BagSettingsDragIcon(
+		[Description("Tab: Skills, Relics, Artifacts, Jewellery, Scrolls, Potions, Buttons, Misc, Helmets, Shields, Armbands, Greaves.")] string tab,
+		[Description("Zero-based icon index in that grid.")] int index,
+		[Description("on, off, over or simple.")] string target)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
+				?? throw new McpException("The bag button settings are not open.");
+			try
+			{
+				return Serialize(new { dragged = dialog.AutomationDragIcon(tab, index, target), target });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "open_bag_settings", Destructive = true)]
 	[Description("Opens the bag button settings (icon and label picker) of a vault bag like the user: right-clicks its bag button (which shows that bag) and clicks 'Change icon' (bag_menu(panel, bag, 'Change icon')), after this call returns; OK applies the choice and redraws the button, as for the user. Only vault bags have the entry: the character's bags and the stash tabs are refused. The dialog is modal: capture it with capture('Bag Button Settings') and close it with close_dialog('Bag Button Settings', 'Cancel'). Waits for the game icons, which load in the background after startup ('iconsLoaded').")]
 	public static async Task<string> OpenBagSettings(

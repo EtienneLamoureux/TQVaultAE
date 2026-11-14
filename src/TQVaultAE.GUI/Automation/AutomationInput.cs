@@ -148,6 +148,17 @@ internal static partial class AutomationInput
 	}
 
 	/// <summary>
+	/// Sends one button message to <paramref name="target"/> at a client point (which may lie outside it, as for the
+	/// control that has the mouse capture during a drag): the button down, with its key flag, or up.
+	/// </summary>
+	public static void SendButton(Control target, Point client, MouseButtons button, bool down)
+	{
+		bool right = button == MouseButtons.Right;
+		int message = down ? (right ? WM_RBUTTONDOWN : WM_LBUTTONDOWN) : (right ? WM_RBUTTONUP : WM_LBUTTONUP);
+		SendMessage(target.Handle, message, down ? (right ? MK_RBUTTON : MK_LBUTTON) : 0, (client.Y << 16) | (client.X & 0xFFFF));
+	}
+
+	/// <summary>
 	/// Turns the mouse wheel over a client point of <paramref name="target"/> (<c>WM_MOUSEWHEEL</c>, the point on the
 	/// screen): positive notches away from the user (up), negative towards. The modifiers are held as for
 	/// <see cref="SendClick"/>; an unhandled wheel goes on to the parent windows, as for the user.
