@@ -838,8 +838,11 @@ internal static partial class AutomationTools
 			height = t.Height,
 			// The font of the tool tip's first text control: shows a tool tip whose text grows or shrinks over time.
 			font = t.Controls.Cast<Control>().FirstOrDefault(c => c is Label) is { } label
-				? FormattableString.Invariant($"{label.Font.Name} {label.Font.SizeInPoints:0.##}pt") : null,
+				? FontText(label.Font) : null,
 		}).ToList();
+
+	/// <summary>A font as the tools report it, "Name 9.75pt": with a dot whatever the UI language (OnUi sets its culture).</summary>
+	private static string FontText(Font font) => FormattableString.Invariant($"{font.Name} {font.SizeInPoints:0.##}pt");
 
 	private static void ReleaseCursor(SackPanel? panel)
 	{

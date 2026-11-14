@@ -52,7 +52,7 @@ internal static partial class AutomationTools
 				name = c.Name,
 				type = c.GetType().Name,
 				bounds = new { c.Left, c.Top, c.Width, c.Height },
-				font = $"{c.Font.Name} {c.Font.SizeInPoints:0.##}pt",
+				font = FontText(c.Font),
 				visible = c.Visible,
 				enabled = c.Enabled,
 				autoScale = c is ContainerControl container && container.AutoScaleMode != AutoScaleMode.Inherit

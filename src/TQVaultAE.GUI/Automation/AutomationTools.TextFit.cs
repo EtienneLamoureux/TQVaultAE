@@ -41,7 +41,7 @@ internal static partial class AutomationTools
 						path = ControlPath(c, target),
 						type = c.GetType().Name,
 						text = c.Text,
-						font = $"{c.Font.Name} {c.Font.SizeInPoints:0.##}pt",
+						font = FontText(c.Font),
 						size = new { c.Width, c.Height },
 						needed = reason.Needed is { } n ? new { n.Width, n.Height } : null,
 						reason = reason.Text,
