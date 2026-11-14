@@ -23,7 +23,14 @@ public partial class SearchDialogAdvanced : VaultForm
 	private readonly ILogger Log;
 	private readonly Bitmap ButtonImageUp;
 	private readonly Bitmap ButtonImageDown;
-	private readonly (ScalingButton Button, FlowLayoutPanel Panel)[] NavMap;
+	/// <summary>
+	/// One search category: its navigation button, the panel it shows or hides, the title over the list, the list, and the
+	/// localized title shown by both the button and the label.
+	/// </summary>
+	private sealed record CategoryView(SearchCategory Category, ScalingButton Button, FlowLayoutPanel Panel, ScalingLabel Label, VirtualCheckedListBox List, Func<string> Title);
+
+	/// <summary>The 17 categories, in the order of their navigation buttons.</summary>
+	private readonly CategoryView[] NavMap;
 	private readonly List<BoxItem> SelectedFilters = [];
 	private readonly HashSet<BoxItem> SelectedFiltersSet = [];
 	private readonly List<VirtualCheckedListBox> CachedCheckedListBoxes = [];
@@ -113,57 +120,9 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.scalingComboBoxOperator.Items.Clear();
 		this.scalingComboBoxOperator.Items.AddRange(new[] { Resources.SearchOperatorAnd, Resources.SearchOperatorOr });
 
-		this.scalingButtonMenuAttribute.Text
-			= this.scalingLabelItemAttributes.Text
-			= TranslationService.TranslateXTag("tagCAttributes");
-		this.scalingButtonMenuBaseAttribute.Text
-			= this.scalingLabelBaseAttributes.Text
-			= Resources.GlobalBaseAttribute;
-		this.scalingButtonMenuCharacters.Text
-			= this.scalingLabelCharacters.Text
-			= TranslationService.TranslateXTag("tagWindowName01");
-		this.scalingButtonMenuPrefixAttribute.Text
-			= this.scalingLabelPrefixAttributes.Text
-			= Resources.GlobalPrefix;
-		this.scalingButtonMenuPrefixName.Text
-			= this.scalingLabelPrefixName.Text
-			= Resources.GlobalPrefixName;
-		this.scalingButtonMenuQuality.Text
-			= this.scalingLabelQuality.Text
-			= Resources.ResultsQuality;
-		this.scalingButtonMenuRarity.Text
-			= this.scalingLabelRarity.Text
-			= Resources.GlobalRarity;
-		this.scalingButtonMenuStyle.Text
-			= this.scalingLabelStyle.Text
-			= Resources.GlobalStyle;
-		this.scalingButtonMenuSuffixAttribute.Text
-			= this.scalingLabelSuffixAttributes.Text
-			= Resources.GlobalSuffix;
-		this.scalingButtonMenuSuffixName.Text
-			= this.scalingLabelSuffixName.Text
-			= Resources.GlobalSuffixName;
-		this.scalingButtonMenuType.Text
-			= this.scalingLabelItemType.Text
-			= Resources.GlobalType;
-		this.scalingButtonMenuVaults.Text
-			= this.scalingLabelInVaults.Text
-			= Resources.GlobalVaults;
-		this.scalingButtonMenuWithCharm.Text
-			= this.scalingLabelWithCharm.Text
-			= Resources.SearchHavingCharm;
-		this.scalingButtonMenuWithRelic.Text
-			= this.scalingLabelWithRelic.Text
-			= Resources.SearchHavingRelic;
-		this.scalingButtonMenuOrigin.Text
-			= this.scalingLabelOrigin.Text
-			= Resources.GlobalOrigin;
-		this.scalingButtonMenuSetItems.Text
-			= this.scalingLabelSetItems.Text
-			= Resources.SearchSetItem;
-		this.scalingButtonMenuSkills.Text
-			= this.scalingLabelSkills.Text
-			= Resources.SearchItemSkills;
+		this.NavMap = this.BuildCategoryViews();
+		foreach (var view in this.NavMap)
+			view.Button.Text = view.Label.Text = view.Title();
 
 		scalingCheckBoxMinReq.Text = $"{Resources.GlobalMin} {Resources.GlobalRequirements} :";
 		scalingCheckBoxMaxReq.Text = $"{Resources.GlobalMax} {Resources.GlobalRequirements} :";
@@ -183,27 +142,6 @@ public partial class SearchDialogAdvanced : VaultForm
 		scalingCheckBoxHavingSkill.Text = Resources.SearchHavingSkill;
 
 		#endregion
-
-		// Mapping between nav button & content component
-		NavMap = [
-			(this.scalingButtonMenuAttribute, this.flowLayoutPanelItemAttributes),
-			(this.scalingButtonMenuBaseAttribute, this.flowLayoutPanelBaseAttributes),
-			(this.scalingButtonMenuCharacters, this.flowLayoutPanelCharacters),
-			(this.scalingButtonMenuPrefixAttribute, this.flowLayoutPanelPrefixAttributes),
-			(this.scalingButtonMenuPrefixName, this.flowLayoutPanelPrefixName),
-			(this.scalingButtonMenuRarity, this.flowLayoutPanelRarity),
-			(this.scalingButtonMenuStyle, this.flowLayoutPanelStyle),
-			(this.scalingButtonMenuSuffixAttribute, this.flowLayoutPanelSuffixAttributes),
-			(this.scalingButtonMenuSuffixName, this.flowLayoutPanelSuffixName),
-			(this.scalingButtonMenuType, this.flowLayoutPanelItemType),
-			(this.scalingButtonMenuVaults, this.flowLayoutPanelInVaults),
-			(this.scalingButtonMenuWithCharm, this.flowLayoutPanelWithCharm),
-			(this.scalingButtonMenuWithRelic, this.flowLayoutPanelWithRelic),
-			(this.scalingButtonMenuQuality, this.flowLayoutPanelQuality),
-			(this.scalingButtonMenuOrigin, this.flowLayoutPanelOrigin),
-			(this.scalingButtonMenuSetItems, this.flowLayoutPanelSetItems),
-			(this.scalingButtonMenuSkills, this.flowLayoutPanelSkills),
-		];
 
 		// Keep reference of base Up & Down button image
 		this.ButtonImageUp = this.scalingButtonMenuAttribute.UpBitmap;
@@ -263,6 +201,27 @@ public partial class SearchDialogAdvanced : VaultForm
 			control.Anchor = horizontal == AnchorStyles.None ? AnchorStyles.Left : horizontal;
 		}
 	}
+
+	/// <summary>The categories, in the order of their navigation buttons, with their controls and titles.</summary>
+	private CategoryView[] BuildCategoryViews() => [
+		new(SearchCategory.ItemAttributes, this.scalingButtonMenuAttribute, this.flowLayoutPanelItemAttributes, this.scalingLabelItemAttributes, this.scalingCheckedListBoxItemAttributes, () => this.TranslationService.TranslateXTag("tagCAttributes")),
+		new(SearchCategory.BaseAttributes, this.scalingButtonMenuBaseAttribute, this.flowLayoutPanelBaseAttributes, this.scalingLabelBaseAttributes, this.scalingCheckedListBoxBaseAttributes, () => Resources.GlobalBaseAttribute),
+		new(SearchCategory.Characters, this.scalingButtonMenuCharacters, this.flowLayoutPanelCharacters, this.scalingLabelCharacters, this.scalingCheckedListBoxCharacters, () => this.TranslationService.TranslateXTag("tagWindowName01")),
+		new(SearchCategory.PrefixAttributes, this.scalingButtonMenuPrefixAttribute, this.flowLayoutPanelPrefixAttributes, this.scalingLabelPrefixAttributes, this.scalingCheckedListBoxPrefixAttributes, () => Resources.GlobalPrefix),
+		new(SearchCategory.PrefixName, this.scalingButtonMenuPrefixName, this.flowLayoutPanelPrefixName, this.scalingLabelPrefixName, this.scalingCheckedListBoxPrefixName, () => Resources.GlobalPrefixName),
+		new(SearchCategory.Rarity, this.scalingButtonMenuRarity, this.flowLayoutPanelRarity, this.scalingLabelRarity, this.scalingCheckedListBoxRarity, () => Resources.GlobalRarity),
+		new(SearchCategory.Style, this.scalingButtonMenuStyle, this.flowLayoutPanelStyle, this.scalingLabelStyle, this.scalingCheckedListBoxStyle, () => Resources.GlobalStyle),
+		new(SearchCategory.SuffixAttributes, this.scalingButtonMenuSuffixAttribute, this.flowLayoutPanelSuffixAttributes, this.scalingLabelSuffixAttributes, this.scalingCheckedListBoxSuffixAttributes, () => Resources.GlobalSuffix),
+		new(SearchCategory.SuffixName, this.scalingButtonMenuSuffixName, this.flowLayoutPanelSuffixName, this.scalingLabelSuffixName, this.scalingCheckedListBoxSuffixName, () => Resources.GlobalSuffixName),
+		new(SearchCategory.ItemType, this.scalingButtonMenuType, this.flowLayoutPanelItemType, this.scalingLabelItemType, this.scalingCheckedListBoxItemType, () => Resources.GlobalType),
+		new(SearchCategory.Vaults, this.scalingButtonMenuVaults, this.flowLayoutPanelInVaults, this.scalingLabelInVaults, this.scalingCheckedListBoxVaults, () => Resources.GlobalVaults),
+		new(SearchCategory.WithCharm, this.scalingButtonMenuWithCharm, this.flowLayoutPanelWithCharm, this.scalingLabelWithCharm, this.scalingCheckedListBoxWithCharm, () => Resources.SearchHavingCharm),
+		new(SearchCategory.WithRelic, this.scalingButtonMenuWithRelic, this.flowLayoutPanelWithRelic, this.scalingLabelWithRelic, this.scalingCheckedListBoxWithRelic, () => Resources.SearchHavingRelic),
+		new(SearchCategory.Quality, this.scalingButtonMenuQuality, this.flowLayoutPanelQuality, this.scalingLabelQuality, this.scalingCheckedListBoxQuality, () => Resources.ResultsQuality),
+		new(SearchCategory.Origin, this.scalingButtonMenuOrigin, this.flowLayoutPanelOrigin, this.scalingLabelOrigin, this.scalingCheckedListBoxOrigin, () => Resources.GlobalOrigin),
+		new(SearchCategory.SetItems, this.scalingButtonMenuSetItems, this.flowLayoutPanelSetItems, this.scalingLabelSetItems, this.scalingCheckedListBoxSetItems, () => Resources.SearchSetItem),
+		new(SearchCategory.Skills, this.scalingButtonMenuSkills, this.flowLayoutPanelSkills, this.scalingLabelSkills, this.scalingCheckedListBoxSkills, () => Resources.SearchItemSkills),
+	];
 
 	private void SetSearchBoxVisibility(bool isVisible)
 		=> NavMap.ToList().ForEach(m => m.Panel.Visible = isVisible);
@@ -655,7 +614,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	private void scalingButtonMenu_Click(object? sender, EventArgs e)
 	{
 		// Toggle
-		var (button, panel) = NavMap.First(m => object.ReferenceEquals(m.Button, sender));
+		var panel = NavMap.First(m => object.ReferenceEquals(m.Button, sender)).Panel;
 		panel.Visible = !panel.Visible;
 
 		SyncNaveButton();
@@ -791,7 +750,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	}
 }
 
-public static class SearchDialogAdvancedExtension
+internal static class SearchDialogAdvancedExtension
 {
 	public static (VirtualCheckedListBox, BoxTag) GetBoxTag(this Control obj)
 	{

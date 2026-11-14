@@ -30,26 +30,17 @@ public partial class SearchDialogAdvanced
 		}
 	}
 
-	/// <summary>The categories, in the order they are filled, and the list showing each one.</summary>
-	private (SearchCategory Category, VirtualCheckedListBox List)[] CategoryLists => [
-		(SearchCategory.Characters, this.scalingCheckedListBoxCharacters),
-		(SearchCategory.ItemType, this.scalingCheckedListBoxItemType),
-		(SearchCategory.Rarity, this.scalingCheckedListBoxRarity),
-		(SearchCategory.Style, this.scalingCheckedListBoxStyle),
-		(SearchCategory.Quality, this.scalingCheckedListBoxQuality),
-		(SearchCategory.Vaults, this.scalingCheckedListBoxVaults),
-		(SearchCategory.WithCharm, this.scalingCheckedListBoxWithCharm),
-		(SearchCategory.WithRelic, this.scalingCheckedListBoxWithRelic),
-		(SearchCategory.Origin, this.scalingCheckedListBoxOrigin),
-		(SearchCategory.SetItems, this.scalingCheckedListBoxSetItems),
-		(SearchCategory.Skills, this.scalingCheckedListBoxSkills),
-		(SearchCategory.ItemAttributes, this.scalingCheckedListBoxItemAttributes),
-		(SearchCategory.BaseAttributes, this.scalingCheckedListBoxBaseAttributes),
-		(SearchCategory.PrefixName, this.scalingCheckedListBoxPrefixName),
-		(SearchCategory.PrefixAttributes, this.scalingCheckedListBoxPrefixAttributes),
-		(SearchCategory.SuffixName, this.scalingCheckedListBoxSuffixName),
-		(SearchCategory.SuffixAttributes, this.scalingCheckedListBoxSuffixAttributes),
+	/// <summary>The order the categories are filled in (the progress bar's steps), which is not the buttons' order.</summary>
+	private static readonly SearchCategory[] FillOrder = [
+		SearchCategory.Characters, SearchCategory.ItemType, SearchCategory.Rarity, SearchCategory.Style, SearchCategory.Quality,
+		SearchCategory.Vaults, SearchCategory.WithCharm, SearchCategory.WithRelic, SearchCategory.Origin, SearchCategory.SetItems,
+		SearchCategory.Skills, SearchCategory.ItemAttributes, SearchCategory.BaseAttributes, SearchCategory.PrefixName,
+		SearchCategory.PrefixAttributes, SearchCategory.SuffixName, SearchCategory.SuffixAttributes,
 	];
+
+	/// <summary>The categories, in the order they are filled, and the list showing each one.</summary>
+	private IEnumerable<(SearchCategory Category, VirtualCheckedListBox List)> CategoryLists
+		=> FillOrder.Select(category => (category, this.NavMap.First(view => view.Category == category).List));
 
 	/// <summary>Items the categories are built from, taken once for all of them by <see cref="SearchEngineReady"/>.</summary>
 	private SearchResult[] _categoryItems = [];
