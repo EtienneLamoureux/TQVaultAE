@@ -14,9 +14,6 @@ internal static class CaravanFrame
 	/// <summary>The thickness of the frame in the picture, in pixels (7, and one of black inside).</summary>
 	public const int Border = 8;
 
-	/// <summary>The gap between the glyph and the text of a check box, as the system draws it.</summary>
-	private const int CheckBoxTextGap = 3;
-
 	/// <summary>How a framed group's top edge meets its caption (<see cref="ApplyWithCaption"/>).</summary>
 	public enum CaptionEdge
 	{
@@ -221,11 +218,11 @@ internal static class CaravanFrame
 
 			// The check box is transparent: it paints this group behind itself, so the outline drawn here lies under the
 			// text it draws, and its glyph, its clicks and its focus rectangle stay the system's.
-			int left = CheckBoxRenderer.GetGlyphSize(e.Graphics, CheckBoxState.UncheckedNormal).Width + CheckBoxTextGap;
+			int left = CheckBoxGlyph.TextLeft(e.Graphics, check, CheckBoxState.UncheckedNormal);
 			var text = new Rectangle(
-				check.Left + check.Padding.Left + left,
+				check.Left + left,
 				check.Top,
-				Math.Max(0, check.ClientSize.Width - check.Padding.Left - left),
+				Math.Max(0, check.ClientSize.Width - left),
 				check.ClientSize.Height);
 			var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
 			if (!check.UseMnemonic)

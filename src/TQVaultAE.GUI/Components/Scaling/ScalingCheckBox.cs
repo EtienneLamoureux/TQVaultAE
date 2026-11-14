@@ -79,8 +79,7 @@ public class ScalingCheckBox : CheckBox, IScalingControl, IZoomedFont
 		// background, the shadow and the text drawn over it.
 		base.OnPaint(pevent);
 
-		var glyph = CheckBoxRenderer.GetGlyphSize(g, state);
-		int textLeft = this.Padding.Left + glyph.Width + TextGap;
+		int textLeft = CheckBoxGlyph.TextLeft(g, this, state);
 		var textBounds = new Rectangle(textLeft, 0, Math.Max(0, this.ClientSize.Width - textLeft), this.ClientSize.Height);
 		if (textBounds.Width == 0)
 			return;
@@ -109,9 +108,6 @@ public class ScalingCheckBox : CheckBox, IScalingControl, IZoomedFont
 			ControlPaint.DrawFocusRectangle(g, focus);
 		}
 	}
-
-	/// <summary>Gap between the glyph and the text, as drawn by the system checkbox.</summary>
-	private const int TextGap = 3;
 
 	/// <inheritdoc/>
 	Font IZoomedFont.ZoomedFont
