@@ -110,7 +110,7 @@ partial class HighlightFilters
         this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
         this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
         this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(495, 391);
+        this.tableLayoutPanelHighlight.Size = new System.Drawing.Size(639, 429);
         this.tableLayoutPanelHighlight.TabIndex = 25;
         // 
         // flowLayoutPanelMax
@@ -125,9 +125,10 @@ partial class HighlightFilters
         this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxDex);
         this.flowLayoutPanelMax.Controls.Add(this.scalingLabelMaxInt);
         this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxInt);
-        this.flowLayoutPanelMax.Location = new System.Drawing.Point(154, 29);
+        this.flowLayoutPanelMax.Location = new System.Drawing.Point(154, 35);
+        this.flowLayoutPanelMax.Margin = new System.Windows.Forms.Padding(4);
         this.flowLayoutPanelMax.Name = "flowLayoutPanelMax";
-        this.flowLayoutPanelMax.Size = new System.Drawing.Size(338, 20);
+        this.flowLayoutPanelMax.Size = new System.Drawing.Size(462, 23);
         this.flowLayoutPanelMax.TabIndex = 25;
         this.flowLayoutPanelMax.WrapContents = false;
         // 
@@ -136,9 +137,10 @@ partial class HighlightFilters
         this.scalingLabelMaxLvl.AutoSize = true;
         this.scalingLabelMaxLvl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMaxLvl.ForeColor = System.Drawing.Color.White;
-        this.scalingLabelMaxLvl.Location = new System.Drawing.Point(3, 0);
+        this.scalingLabelMaxLvl.Location = new System.Drawing.Point(4, 0);
+        this.scalingLabelMaxLvl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMaxLvl.Name = "scalingLabelMaxLvl";
-        this.scalingLabelMaxLvl.Size = new System.Drawing.Size(46, 16);
+        this.scalingLabelMaxLvl.Size = new System.Drawing.Size(35, 16);
         this.scalingLabelMaxLvl.TabIndex = 0;
         this.scalingLabelMaxLvl.Text = "Level :";
         // 
@@ -149,10 +151,10 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMaxLvl.Location = new System.Drawing.Point(52, 0);
+        this.numericUpDownMaxLvl.Location = new System.Drawing.Point(43, 0);
         this.numericUpDownMaxLvl.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMaxLvl.Name = "numericUpDownMaxLvl";
-        this.numericUpDownMaxLvl.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMaxLvl.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMaxLvl.TabIndex = 1;
         this.numericUpDownMaxLvl.Value = new decimal(new int[] {
         100,
@@ -167,8 +169,9 @@ partial class HighlightFilters
         this.scalingLabelMaxStr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMaxStr.ForeColor = System.Drawing.Color.White;
         this.scalingLabelMaxStr.Location = new System.Drawing.Point(99, 0);
+        this.scalingLabelMaxStr.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMaxStr.Name = "scalingLabelMaxStr";
-        this.scalingLabelMaxStr.Size = new System.Drawing.Size(29, 16);
+        this.scalingLabelMaxStr.Size = new System.Drawing.Size(56, 16);
         this.scalingLabelMaxStr.TabIndex = 2;
         this.scalingLabelMaxStr.Text = "Str :";
         // 
@@ -179,7 +182,7 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMaxStr.Location = new System.Drawing.Point(131, 0);
+        this.numericUpDownMaxStr.Location = new System.Drawing.Point(159, 0);
         this.numericUpDownMaxStr.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMaxStr.Maximum = new decimal(new int[] {
         9000,
@@ -187,7 +190,7 @@ partial class HighlightFilters
         0,
         0});
         this.numericUpDownMaxStr.Name = "numericUpDownMaxStr";
-        this.numericUpDownMaxStr.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMaxStr.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMaxStr.TabIndex = 3;
         this.numericUpDownMaxStr.Value = new decimal(new int[] {
         9000,
@@ -201,9 +204,10 @@ partial class HighlightFilters
         this.scalingLabelMaxDex.AutoSize = true;
         this.scalingLabelMaxDex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMaxDex.ForeColor = System.Drawing.Color.White;
-        this.scalingLabelMaxDex.Location = new System.Drawing.Point(178, 0);
+        this.scalingLabelMaxDex.Location = new System.Drawing.Point(215, 0);
+        this.scalingLabelMaxDex.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMaxDex.Name = "scalingLabelMaxDex";
-        this.scalingLabelMaxDex.Size = new System.Drawing.Size(37, 16);
+        this.scalingLabelMaxDex.Size = new System.Drawing.Size(61, 16);
         this.scalingLabelMaxDex.TabIndex = 4;
         this.scalingLabelMaxDex.Text = "Dex :";
         // 
@@ -214,7 +218,7 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMaxDex.Location = new System.Drawing.Point(218, 0);
+        this.numericUpDownMaxDex.Location = new System.Drawing.Point(280, 0);
         this.numericUpDownMaxDex.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMaxDex.Maximum = new decimal(new int[] {
         9000,
@@ -222,7 +226,7 @@ partial class HighlightFilters
         0,
         0});
         this.numericUpDownMaxDex.Name = "numericUpDownMaxDex";
-        this.numericUpDownMaxDex.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMaxDex.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMaxDex.TabIndex = 5;
         this.numericUpDownMaxDex.Value = new decimal(new int[] {
         9000,
@@ -236,9 +240,10 @@ partial class HighlightFilters
         this.scalingLabelMaxInt.AutoSize = true;
         this.scalingLabelMaxInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMaxInt.ForeColor = System.Drawing.Color.White;
-        this.scalingLabelMaxInt.Location = new System.Drawing.Point(265, 0);
+        this.scalingLabelMaxInt.Location = new System.Drawing.Point(336, 0);
+        this.scalingLabelMaxInt.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMaxInt.Name = "scalingLabelMaxInt";
-        this.scalingLabelMaxInt.Size = new System.Drawing.Size(26, 16);
+        this.scalingLabelMaxInt.Size = new System.Drawing.Size(70, 16);
         this.scalingLabelMaxInt.TabIndex = 6;
         this.scalingLabelMaxInt.Text = "Int :";
         // 
@@ -249,7 +254,7 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMaxInt.Location = new System.Drawing.Point(294, 0);
+        this.numericUpDownMaxInt.Location = new System.Drawing.Point(410, 0);
         this.numericUpDownMaxInt.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMaxInt.Maximum = new decimal(new int[] {
         9000,
@@ -257,7 +262,7 @@ partial class HighlightFilters
         0,
         0});
         this.numericUpDownMaxInt.Name = "numericUpDownMaxInt";
-        this.numericUpDownMaxInt.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMaxInt.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMaxInt.TabIndex = 7;
         this.numericUpDownMaxInt.Value = new decimal(new int[] {
         9000,
@@ -271,9 +276,10 @@ partial class HighlightFilters
         this.scalingCheckBoxMax.AutoSize = true;
         this.scalingCheckBoxMax.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxMax.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxMax.Location = new System.Drawing.Point(3, 29);
+        this.scalingCheckBoxMax.Location = new System.Drawing.Point(4, 35);
+        this.scalingCheckBoxMax.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckBoxMax.Name = "scalingCheckBoxMax";
-        this.scalingCheckBoxMax.Size = new System.Drawing.Size(145, 20);
+        this.scalingCheckBoxMax.Size = new System.Drawing.Size(142, 20);
         this.scalingCheckBoxMax.TabIndex = 5;
         this.scalingCheckBoxMax.Text = "Max Requierement :";
         this.scalingCheckBoxMax.UseVisualStyleBackColor = true;
@@ -283,9 +289,10 @@ partial class HighlightFilters
         this.scalingCheckBoxMin.AutoSize = true;
         this.scalingCheckBoxMin.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxMin.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxMin.Location = new System.Drawing.Point(3, 3);
+        this.scalingCheckBoxMin.Location = new System.Drawing.Point(4, 4);
+        this.scalingCheckBoxMin.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckBoxMin.Name = "scalingCheckBoxMin";
-        this.scalingCheckBoxMin.Size = new System.Drawing.Size(141, 20);
+        this.scalingCheckBoxMin.Size = new System.Drawing.Size(139, 20);
         this.scalingCheckBoxMin.TabIndex = 3;
         this.scalingCheckBoxMin.Text = "Min Requierement :";
         this.scalingCheckBoxMin.UseVisualStyleBackColor = true;
@@ -302,9 +309,10 @@ partial class HighlightFilters
         this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinDex);
         this.flowLayoutPanelMin.Controls.Add(this.scalingLabelMinInt);
         this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinInt);
-        this.flowLayoutPanelMin.Location = new System.Drawing.Point(154, 3);
+        this.flowLayoutPanelMin.Location = new System.Drawing.Point(154, 4);
+        this.flowLayoutPanelMin.Margin = new System.Windows.Forms.Padding(4);
         this.flowLayoutPanelMin.Name = "flowLayoutPanelMin";
-        this.flowLayoutPanelMin.Size = new System.Drawing.Size(338, 20);
+        this.flowLayoutPanelMin.Size = new System.Drawing.Size(462, 23);
         this.flowLayoutPanelMin.TabIndex = 4;
         this.flowLayoutPanelMin.WrapContents = false;
         // 
@@ -313,9 +321,10 @@ partial class HighlightFilters
         this.scalingLabelMinLvl.AutoSize = true;
         this.scalingLabelMinLvl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMinLvl.ForeColor = System.Drawing.Color.White;
-        this.scalingLabelMinLvl.Location = new System.Drawing.Point(3, 0);
+        this.scalingLabelMinLvl.Location = new System.Drawing.Point(4, 0);
+        this.scalingLabelMinLvl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMinLvl.Name = "scalingLabelMinLvl";
-        this.scalingLabelMinLvl.Size = new System.Drawing.Size(46, 16);
+        this.scalingLabelMinLvl.Size = new System.Drawing.Size(35, 16);
         this.scalingLabelMinLvl.TabIndex = 0;
         this.scalingLabelMinLvl.Text = "Level :";
         // 
@@ -326,10 +335,10 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMinLvl.Location = new System.Drawing.Point(52, 0);
+        this.numericUpDownMinLvl.Location = new System.Drawing.Point(43, 0);
         this.numericUpDownMinLvl.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMinLvl.Name = "numericUpDownMinLvl";
-        this.numericUpDownMinLvl.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMinLvl.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMinLvl.TabIndex = 1;
         this.numericUpDownMinLvl.Value = new decimal(new int[] {
         100,
@@ -344,8 +353,9 @@ partial class HighlightFilters
         this.scalingLabelMinStr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMinStr.ForeColor = System.Drawing.Color.White;
         this.scalingLabelMinStr.Location = new System.Drawing.Point(99, 0);
+        this.scalingLabelMinStr.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMinStr.Name = "scalingLabelMinStr";
-        this.scalingLabelMinStr.Size = new System.Drawing.Size(29, 16);
+        this.scalingLabelMinStr.Size = new System.Drawing.Size(56, 16);
         this.scalingLabelMinStr.TabIndex = 2;
         this.scalingLabelMinStr.Text = "Str :";
         // 
@@ -356,7 +366,7 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMinStr.Location = new System.Drawing.Point(131, 0);
+        this.numericUpDownMinStr.Location = new System.Drawing.Point(159, 0);
         this.numericUpDownMinStr.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMinStr.Maximum = new decimal(new int[] {
         9000,
@@ -364,7 +374,7 @@ partial class HighlightFilters
         0,
         0});
         this.numericUpDownMinStr.Name = "numericUpDownMinStr";
-        this.numericUpDownMinStr.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMinStr.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMinStr.TabIndex = 3;
         this.numericUpDownMinStr.Value = new decimal(new int[] {
         9000,
@@ -378,9 +388,10 @@ partial class HighlightFilters
         this.scalingLabelMinDex.AutoSize = true;
         this.scalingLabelMinDex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMinDex.ForeColor = System.Drawing.Color.White;
-        this.scalingLabelMinDex.Location = new System.Drawing.Point(178, 0);
+        this.scalingLabelMinDex.Location = new System.Drawing.Point(215, 0);
+        this.scalingLabelMinDex.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMinDex.Name = "scalingLabelMinDex";
-        this.scalingLabelMinDex.Size = new System.Drawing.Size(37, 16);
+        this.scalingLabelMinDex.Size = new System.Drawing.Size(61, 16);
         this.scalingLabelMinDex.TabIndex = 4;
         this.scalingLabelMinDex.Text = "Dex :";
         // 
@@ -391,7 +402,7 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMinDex.Location = new System.Drawing.Point(218, 0);
+        this.numericUpDownMinDex.Location = new System.Drawing.Point(280, 0);
         this.numericUpDownMinDex.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMinDex.Maximum = new decimal(new int[] {
         9000,
@@ -399,7 +410,7 @@ partial class HighlightFilters
         0,
         0});
         this.numericUpDownMinDex.Name = "numericUpDownMinDex";
-        this.numericUpDownMinDex.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMinDex.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMinDex.TabIndex = 5;
         this.numericUpDownMinDex.Value = new decimal(new int[] {
         9000,
@@ -413,9 +424,10 @@ partial class HighlightFilters
         this.scalingLabelMinInt.AutoSize = true;
         this.scalingLabelMinInt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelMinInt.ForeColor = System.Drawing.Color.White;
-        this.scalingLabelMinInt.Location = new System.Drawing.Point(265, 0);
+        this.scalingLabelMinInt.Location = new System.Drawing.Point(336, 0);
+        this.scalingLabelMinInt.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingLabelMinInt.Name = "scalingLabelMinInt";
-        this.scalingLabelMinInt.Size = new System.Drawing.Size(26, 16);
+        this.scalingLabelMinInt.Size = new System.Drawing.Size(70, 16);
         this.scalingLabelMinInt.TabIndex = 6;
         this.scalingLabelMinInt.Text = "Int :";
         // 
@@ -426,7 +438,7 @@ partial class HighlightFilters
         0,
         0,
         0});
-        this.numericUpDownMinInt.Location = new System.Drawing.Point(294, 0);
+        this.numericUpDownMinInt.Location = new System.Drawing.Point(410, 0);
         this.numericUpDownMinInt.Margin = new System.Windows.Forms.Padding(0);
         this.numericUpDownMinInt.Maximum = new decimal(new int[] {
         9000,
@@ -434,7 +446,7 @@ partial class HighlightFilters
         0,
         0});
         this.numericUpDownMinInt.Name = "numericUpDownMinInt";
-        this.numericUpDownMinInt.Size = new System.Drawing.Size(44, 20);
+        this.numericUpDownMinInt.Size = new System.Drawing.Size(52, 23);
         this.numericUpDownMinInt.TabIndex = 7;
         this.numericUpDownMinInt.Value = new decimal(new int[] {
         9000,
@@ -476,10 +488,11 @@ partial class HighlightFilters
         "Potion",
         "Equipment",
         "Dye"});
-        this.scalingCheckedListBoxTypes.Location = new System.Drawing.Point(3, 101);
+        this.scalingCheckedListBoxTypes.Location = new System.Drawing.Point(4, 94);
+        this.scalingCheckedListBoxTypes.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckedListBoxTypes.MultiColumn = true;
         this.scalingCheckedListBoxTypes.Name = "scalingCheckedListBoxTypes";
-        this.scalingCheckedListBoxTypes.Size = new System.Drawing.Size(489, 150);
+        this.scalingCheckedListBoxTypes.Size = new System.Drawing.Size(631, 173);
         this.scalingCheckedListBoxTypes.TabIndex = 27;
         // 
         // scalingCheckedListBoxRarity
@@ -498,10 +511,11 @@ partial class HighlightFilters
         "Rare",
         "Epic",
         "Legendary"});
-        this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(3, 257);
+        this.scalingCheckedListBoxRarity.Location = new System.Drawing.Point(4, 275);
+        this.scalingCheckedListBoxRarity.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckedListBoxRarity.MultiColumn = true;
         this.scalingCheckedListBoxRarity.Name = "scalingCheckedListBoxRarity";
-        this.scalingCheckedListBoxRarity.Size = new System.Drawing.Size(489, 50);
+        this.scalingCheckedListBoxRarity.Size = new System.Drawing.Size(631, 57);
         this.scalingCheckedListBoxRarity.TabIndex = 28;
         // 
         // scalingCheckedListBoxOrigin
@@ -519,10 +533,11 @@ partial class HighlightFilters
         "Atlantis",
         "Ragnarök",
         "Eternal Embers"});
-        this.scalingCheckedListBoxOrigin.Location = new System.Drawing.Point(3, 313);
+        this.scalingCheckedListBoxOrigin.Location = new System.Drawing.Point(4, 340);
+        this.scalingCheckedListBoxOrigin.Margin = new System.Windows.Forms.Padding(4);
         this.scalingCheckedListBoxOrigin.MultiColumn = true;
         this.scalingCheckedListBoxOrigin.Name = "scalingCheckedListBoxOrigin";
-        this.scalingCheckedListBoxOrigin.Size = new System.Drawing.Size(489, 50);
+        this.scalingCheckedListBoxOrigin.Size = new System.Drawing.Size(631, 57);
         this.scalingCheckedListBoxOrigin.TabIndex = 29;
         // 
         // buttonApply
@@ -538,11 +553,11 @@ partial class HighlightFilters
         this.buttonApply.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.buttonApply.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.buttonApply.Image = ((System.Drawing.Image)(resources.GetObject("buttonApply.Image")));
-        this.buttonApply.Location = new System.Drawing.Point(420, 366);
+        this.buttonApply.Location = new System.Drawing.Point(551, 401);
         this.buttonApply.Margin = new System.Windows.Forms.Padding(0);
         this.buttonApply.Name = "buttonApply";
         this.buttonApply.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.OverBitmap")));
-        this.buttonApply.Size = new System.Drawing.Size(75, 25);
+        this.buttonApply.Size = new System.Drawing.Size(88, 28);
         this.buttonApply.SizeToGraphic = false;
         this.buttonApply.TabIndex = 30;
         this.buttonApply.Text = "Apply";
@@ -563,11 +578,11 @@ partial class HighlightFilters
         this.buttonReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.buttonReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.buttonReset.Image = ((System.Drawing.Image)(resources.GetObject("buttonReset.Image")));
-        this.buttonReset.Location = new System.Drawing.Point(0, 366);
+        this.buttonReset.Location = new System.Drawing.Point(0, 401);
         this.buttonReset.Margin = new System.Windows.Forms.Padding(0);
         this.buttonReset.Name = "buttonReset";
         this.buttonReset.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.OverBitmap")));
-        this.buttonReset.Size = new System.Drawing.Size(75, 25);
+        this.buttonReset.Size = new System.Drawing.Size(88, 28);
         this.buttonReset.SizeToGraphic = false;
         this.buttonReset.TabIndex = 31;
         this.buttonReset.Text = "Reset";
@@ -587,10 +602,10 @@ partial class HighlightFilters
         this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxSetItem);
         this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxHavingSkill);
         this.bufferedFlowLayoutPanelPrefixSuffix.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.bufferedFlowLayoutPanelPrefixSuffix.Location = new System.Drawing.Point(0, 55);
-        this.bufferedFlowLayoutPanelPrefixSuffix.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+        this.bufferedFlowLayoutPanelPrefixSuffix.Location = new System.Drawing.Point(0, 66);
+        this.bufferedFlowLayoutPanelPrefixSuffix.Margin = new System.Windows.Forms.Padding(0, 4, 4, 4);
         this.bufferedFlowLayoutPanelPrefixSuffix.Name = "bufferedFlowLayoutPanelPrefixSuffix";
-        this.bufferedFlowLayoutPanelPrefixSuffix.Size = new System.Drawing.Size(492, 40);
+        this.bufferedFlowLayoutPanelPrefixSuffix.Size = new System.Drawing.Size(635, 20);
         this.bufferedFlowLayoutPanelPrefixSuffix.TabIndex = 32;
         // 
         // scalingCheckBoxHavingPrefix
@@ -598,10 +613,10 @@ partial class HighlightFilters
         this.scalingCheckBoxHavingPrefix.AutoSize = true;
         this.scalingCheckBoxHavingPrefix.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxHavingPrefix.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxHavingPrefix.Location = new System.Drawing.Point(3, 0);
-        this.scalingCheckBoxHavingPrefix.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+        this.scalingCheckBoxHavingPrefix.Location = new System.Drawing.Point(4, 0);
+        this.scalingCheckBoxHavingPrefix.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingCheckBoxHavingPrefix.Name = "scalingCheckBoxHavingPrefix";
-        this.scalingCheckBoxHavingPrefix.Size = new System.Drawing.Size(105, 20);
+        this.scalingCheckBoxHavingPrefix.Size = new System.Drawing.Size(104, 20);
         this.scalingCheckBoxHavingPrefix.TabIndex = 0;
         this.scalingCheckBoxHavingPrefix.Text = "Having Prefix";
         this.scalingCheckBoxHavingPrefix.UseVisualStyleBackColor = true;
@@ -611,8 +626,8 @@ partial class HighlightFilters
         this.scalingCheckBoxHavingSuffix.AutoSize = true;
         this.scalingCheckBoxHavingSuffix.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxHavingSuffix.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxHavingSuffix.Location = new System.Drawing.Point(114, 0);
-        this.scalingCheckBoxHavingSuffix.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+        this.scalingCheckBoxHavingSuffix.Location = new System.Drawing.Point(116, 0);
+        this.scalingCheckBoxHavingSuffix.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingCheckBoxHavingSuffix.Name = "scalingCheckBoxHavingSuffix";
         this.scalingCheckBoxHavingSuffix.Size = new System.Drawing.Size(103, 20);
         this.scalingCheckBoxHavingSuffix.TabIndex = 1;
@@ -624,10 +639,10 @@ partial class HighlightFilters
         this.scalingCheckBoxHavingRelic.AutoSize = true;
         this.scalingCheckBoxHavingRelic.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxHavingRelic.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxHavingRelic.Location = new System.Drawing.Point(223, 0);
-        this.scalingCheckBoxHavingRelic.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+        this.scalingCheckBoxHavingRelic.Location = new System.Drawing.Point(227, 0);
+        this.scalingCheckBoxHavingRelic.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingCheckBoxHavingRelic.Name = "scalingCheckBoxHavingRelic";
-        this.scalingCheckBoxHavingRelic.Size = new System.Drawing.Size(103, 20);
+        this.scalingCheckBoxHavingRelic.Size = new System.Drawing.Size(96, 20);
         this.scalingCheckBoxHavingRelic.TabIndex = 2;
         this.scalingCheckBoxHavingRelic.Text = "Having Relic";
         this.scalingCheckBoxHavingRelic.UseVisualStyleBackColor = true;
@@ -637,10 +652,10 @@ partial class HighlightFilters
         this.scalingCheckBoxHavingCharm.AutoSize = true;
         this.scalingCheckBoxHavingCharm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxHavingCharm.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxHavingCharm.Location = new System.Drawing.Point(332, 0);
-        this.scalingCheckBoxHavingCharm.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+        this.scalingCheckBoxHavingCharm.Location = new System.Drawing.Point(331, 0);
+        this.scalingCheckBoxHavingCharm.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingCheckBoxHavingCharm.Name = "scalingCheckBoxHavingCharm";
-        this.scalingCheckBoxHavingCharm.Size = new System.Drawing.Size(111, 20);
+        this.scalingCheckBoxHavingCharm.Size = new System.Drawing.Size(109, 20);
         this.scalingCheckBoxHavingCharm.TabIndex = 3;
         this.scalingCheckBoxHavingCharm.Text = "Having Charm";
         this.scalingCheckBoxHavingCharm.UseVisualStyleBackColor = true;
@@ -650,8 +665,8 @@ partial class HighlightFilters
         this.scalingCheckBoxSetItem.AutoSize = true;
         this.scalingCheckBoxSetItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxSetItem.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxSetItem.Location = new System.Drawing.Point(3, 20);
-        this.scalingCheckBoxSetItem.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+        this.scalingCheckBoxSetItem.Location = new System.Drawing.Point(448, 0);
+        this.scalingCheckBoxSetItem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingCheckBoxSetItem.Name = "scalingCheckBoxSetItem";
         this.scalingCheckBoxSetItem.Size = new System.Drawing.Size(74, 20);
         this.scalingCheckBoxSetItem.TabIndex = 4;
@@ -663,18 +678,18 @@ partial class HighlightFilters
         this.scalingCheckBoxHavingSkill.AutoSize = true;
         this.scalingCheckBoxHavingSkill.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingCheckBoxHavingSkill.ForeColor = System.Drawing.Color.White;
-        this.scalingCheckBoxHavingSkill.Location = new System.Drawing.Point(83, 20);
-        this.scalingCheckBoxHavingSkill.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+        this.scalingCheckBoxHavingSkill.Location = new System.Drawing.Point(530, 0);
+        this.scalingCheckBoxHavingSkill.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
         this.scalingCheckBoxHavingSkill.Name = "scalingCheckBoxHavingSkill";
-        this.scalingCheckBoxHavingSkill.Size = new System.Drawing.Size(76, 20);
+        this.scalingCheckBoxHavingSkill.Size = new System.Drawing.Size(92, 20);
         this.scalingCheckBoxHavingSkill.TabIndex = 5;
         this.scalingCheckBoxHavingSkill.Text = "Having Skill";
         this.scalingCheckBoxHavingSkill.UseVisualStyleBackColor = true;
         // 
         // HighlightFilters
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.AutoSize = true;
         this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
         this.BackColor = System.Drawing.Color.Transparent;

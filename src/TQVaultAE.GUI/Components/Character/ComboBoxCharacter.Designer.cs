@@ -194,9 +194,9 @@ partial class ComboBoxCharacter
         this.bufferedTableLayoutPanelSkeleton.AutoSize = false;
         this.bufferedTableLayoutPanelSkeleton.BackColor = System.Drawing.Color.Transparent;
         this.bufferedTableLayoutPanelSkeleton.ColumnCount = 3;
-        this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
         this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        this.bufferedTableLayoutPanelSkeleton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
         this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.scalingButtonTools, 2, 0);
         this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.bufferedFlowLayoutPanelContent, 1, 0);
         this.bufferedTableLayoutPanelSkeleton.Controls.Add(this.pictureBoxChar, 0, 0);
@@ -205,7 +205,7 @@ partial class ComboBoxCharacter
         this.bufferedTableLayoutPanelSkeleton.Name = "bufferedTableLayoutPanelSkeleton";
         this.bufferedTableLayoutPanelSkeleton.RowCount = 1;
         this.bufferedTableLayoutPanelSkeleton.RowStyles.Add(new System.Windows.Forms.RowStyle());
-        this.bufferedTableLayoutPanelSkeleton.Size = new System.Drawing.Size(550, 32);
+        this.bufferedTableLayoutPanelSkeleton.Size = new System.Drawing.Size(641, 37);
         this.bufferedTableLayoutPanelSkeleton.TabIndex = 0;
         // 
         // scalingButtonTools
@@ -218,11 +218,11 @@ partial class ComboBoxCharacter
         this.scalingButtonTools.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.scalingButtonTools.Font = new System.Drawing.Font("Microsoft Sans Serif", 5.75F);
         this.scalingButtonTools.ForeColor = System.Drawing.Color.Transparent;
-        this.scalingButtonTools.Location = new System.Drawing.Point(525, 0);
+        this.scalingButtonTools.Location = new System.Drawing.Point(612, 0);
         this.scalingButtonTools.Margin = new System.Windows.Forms.Padding(0);
         this.scalingButtonTools.Name = "scalingButtonTools";
         this.scalingButtonTools.OverBitmap = null;
-        this.scalingButtonTools.Size = new System.Drawing.Size(25, 32);
+        this.scalingButtonTools.Size = new System.Drawing.Size(29, 37);
         this.scalingButtonTools.SizeToGraphic = false;
         this.scalingButtonTools.TabIndex = 1;
         this.scalingButtonTools.UpBitmap = null;
@@ -237,10 +237,10 @@ partial class ComboBoxCharacter
         this.bufferedFlowLayoutPanelContent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
         this.bufferedFlowLayoutPanelContent.Controls.Add(this.scalingLabelCharName);
         this.bufferedFlowLayoutPanelContent.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.bufferedFlowLayoutPanelContent.Location = new System.Drawing.Point(25, 0);
+        this.bufferedFlowLayoutPanelContent.Location = new System.Drawing.Point(29, 0);
         this.bufferedFlowLayoutPanelContent.Margin = new System.Windows.Forms.Padding(0);
         this.bufferedFlowLayoutPanelContent.Name = "bufferedFlowLayoutPanelContent";
-        this.bufferedFlowLayoutPanelContent.Size = new System.Drawing.Size(500, 32);
+        this.bufferedFlowLayoutPanelContent.Size = new System.Drawing.Size(584, 37);
         this.bufferedFlowLayoutPanelContent.TabIndex = 2;
         this.bufferedFlowLayoutPanelContent.Click += new System.EventHandler(this.OpenDropDown_Click);
         // 
@@ -250,10 +250,10 @@ partial class ComboBoxCharacter
         this.scalingLabelCharName.BackColor = System.Drawing.Color.Transparent;
         this.scalingLabelCharName.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
         this.scalingLabelCharName.ForeColor = System.Drawing.Color.Black;
-        this.scalingLabelCharName.Location = new System.Drawing.Point(3, 3);
-        this.scalingLabelCharName.Margin = new System.Windows.Forms.Padding(3);
+        this.scalingLabelCharName.Location = new System.Drawing.Point(4, 4);
+        this.scalingLabelCharName.Margin = new System.Windows.Forms.Padding(4);
         this.scalingLabelCharName.Name = "scalingLabelCharName";
-        this.scalingLabelCharName.Size = new System.Drawing.Size(247, 22);
+        this.scalingLabelCharName.Size = new System.Drawing.Size(288, 26);
         this.scalingLabelCharName.TabIndex = 0;
         this.scalingLabelCharName.Text = "CharacterName, Lvl : 22 (TQ)";
         this.scalingLabelCharName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -264,7 +264,7 @@ partial class ComboBoxCharacter
         this.pictureBoxChar.Location = new System.Drawing.Point(0, 0);
         this.pictureBoxChar.Margin = new System.Windows.Forms.Padding(0);
         this.pictureBoxChar.Name = "pictureBoxChar";
-        this.pictureBoxChar.Size = new System.Drawing.Size(25, 32);
+        this.pictureBoxChar.Size = new System.Drawing.Size(29, 37);
         this.pictureBoxChar.TabIndex = 3;
         this.pictureBoxChar.TabStop = false;
         this.pictureBoxChar.Click += new System.EventHandler(this.OpenDropDown_Click);
@@ -285,14 +285,14 @@ partial class ComboBoxCharacter
         // 
         // ComboBoxCharacter
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.AutoSize = true;
         this.BackColor = System.Drawing.Color.Transparent;
         this.Controls.Add(this.bufferedTableLayoutPanelSkeleton);
         this.Margin = new System.Windows.Forms.Padding(0);
         this.Name = "ComboBoxCharacter";
-        this.Size = new System.Drawing.Size(550, 32);
+        this.Size = new System.Drawing.Size(641, 37);
         this.contextMenuStrip.ResumeLayout(false);
         this.bufferedTableLayoutPanelSkeleton.ResumeLayout(false);
         this.bufferedTableLayoutPanelSkeleton.PerformLayout();

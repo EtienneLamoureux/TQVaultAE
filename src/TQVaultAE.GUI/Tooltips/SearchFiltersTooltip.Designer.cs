@@ -43,18 +43,18 @@
             this.flowLayoutPanelFriendlyNames.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.flowLayoutPanelFriendlyNames.Name = "flowLayoutPanelFriendlyNames";
             this.flowLayoutPanelFriendlyNames.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.flowLayoutPanelFriendlyNames.Size = new System.Drawing.Size(277, 372);
+            this.flowLayoutPanelFriendlyNames.Size = new System.Drawing.Size(242, 349);
             this.flowLayoutPanelFriendlyNames.TabIndex = 0;
             // 
             // SearchFiltersTooltip
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.DarkGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(279, 374);
+            this.ClientSize = new System.Drawing.Size(244, 351);
             this.ControlBox = false;
             this.Controls.Add(this.flowLayoutPanelFriendlyNames);
             this.DoubleBuffered = true;

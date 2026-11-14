@@ -40,20 +40,20 @@ partial class ComboBoxCharacterDropDown
         this.bufferedFlowLayoutPanelVertical.Location = new System.Drawing.Point(0, 0);
         this.bufferedFlowLayoutPanelVertical.Margin = new System.Windows.Forms.Padding(0);
         this.bufferedFlowLayoutPanelVertical.Name = "bufferedFlowLayoutPanelVertical";
-        this.bufferedFlowLayoutPanelVertical.Size = new System.Drawing.Size(200, 100);
+        this.bufferedFlowLayoutPanelVertical.Size = new System.Drawing.Size(234, 116);
         this.bufferedFlowLayoutPanelVertical.TabIndex = 0;
         // 
         // ComboBoxCharacterDropDown
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.AutoScroll = true;
         this.BackColor = System.Drawing.Color.White;
         this.Controls.Add(this.bufferedFlowLayoutPanelVertical);
         this.ForeColor = System.Drawing.Color.Black;
         this.Margin = new System.Windows.Forms.Padding(0);
         this.Name = "ComboBoxCharacterDropDown";
-        this.Size = new System.Drawing.Size(500, 150);
+        this.Size = new System.Drawing.Size(584, 173);
         this.ResumeLayout(false);
         this.PerformLayout();
 

@@ -7,6 +7,7 @@ using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;
@@ -426,6 +427,11 @@ public partial class ItemTooltip : BaseTooltip
 	{
 		var usize = UIService.ItemUnitSize;
 		var wa = Screen.FromControl(this).WorkingArea;
+
+		// Windows Forms scaled the designer padding to the DPI of this window, made out of view on the primary monitor, while
+		// the content is drawn for the monitor of the main window.
+		if (this.Owner is { } owner)
+			this.flowLayoutPanelFriendlyNames.Padding = this.flowLayoutPanelFriendlyNames.Padding.Scaled((float)owner.DeviceDpi / this.DeviceDpi);
 
 		this.FillToolTip();
 
