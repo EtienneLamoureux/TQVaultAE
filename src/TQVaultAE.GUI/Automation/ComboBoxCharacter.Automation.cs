@@ -111,8 +111,8 @@ public partial class ComboBoxCharacter
 	/// <returns>The characters having the tag, and whether each one is archived now.</returns>
 	internal IReadOnlyList<(string Name, bool IsArchived, string Folder)> AutomationSetArchivedByTag(string tag, bool archived)
 	{
-		if (!tag.StartsWith("claude-", StringComparison.OrdinalIgnoreCase))
-			throw new AutomationRefusedException($"'{tag}' is not a test tag: only tags starting with 'claude-' may be used.");
+		if (!Automation.AutomationTestNames.IsTestTag(tag))
+			throw new AutomationRefusedException($"'{tag}' is not a test tag: only tags starting with '{Automation.AutomationTestNames.TagPrefix}' may be used.");
 
 		var tagged = this.Items.OfType<PlayerSave>().Where(ps => ps.Tags.ContainsKey(tag)).ToList();
 		var real = tagged.Where(ps => !Automation.AutomationTestNames.IsTestFile(ps.Name)).Select(ps => ps.Name).ToList();
@@ -184,8 +184,8 @@ public partial class ComboBoxCharacter
 
 		// A tag's entries (its tick, Color, Delete): test tags only.
 		if (chain.Count >= 2 && chain[0] == this.tagsToolStripMenuItem && chain[1].Name?.StartsWith(TAGKEY, StringComparison.Ordinal) == true
-			&& !(chain[1].Text ?? string.Empty).StartsWith("claude-", StringComparison.OrdinalIgnoreCase))
-			return $"'{chain[1].Text}' is not a test tag: only tags starting with 'claude-'.";
+			&& !Automation.AutomationTestNames.IsTestTag(chain[1].Text))
+			return $"'{chain[1].Text}' is not a test tag: only tags starting with '{Automation.AutomationTestNames.TagPrefix}'.";
 
 		// Its tick changes the selected character; the other top-level entries too.
 		bool tagEntry = chain.Count > 2 && chain[0] == this.tagsToolStripMenuItem;

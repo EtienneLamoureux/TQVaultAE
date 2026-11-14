@@ -403,7 +403,6 @@ internal static partial class AutomationTools
 			var combo = form.AutomationCharacterCombo;
 
 			// Test tags only; an empty or invalid name is allowed through to test the refusals.
-			bool isTestName(string? name) => name is not null && name.StartsWith(TestFilePrefix, StringComparison.OrdinalIgnoreCase);
 
 			combo.AutomationRefreshTags();
 
@@ -411,30 +410,30 @@ internal static partial class AutomationTools
 			{
 				case "add":
 				{
-					if (!string.IsNullOrWhiteSpace(text) && !isTestName(text))
-						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
+					if (!string.IsNullOrWhiteSpace(text) && !AutomationTestNames.IsTestTag(text))
+						throw new McpException($"Test tags only: the name must start with '{AutomationTestNames.TagPrefix}'.");
 					combo.AutomationTypeNewTag(text);
 					break;
 				}
 				case "rename":
 				{
-					if (!isTestName(tag))
-						throw new McpException($"Test tags only: 'tag' must start with '{TestFilePrefix}'.");
+					if (!AutomationTestNames.IsTestTag(tag))
+						throw new McpException($"Test tags only: 'tag' must start with '{AutomationTestNames.TagPrefix}'.");
 					combo.AutomationTypeTagRename(tag!, text);
 					break;
 				}
 				case "delete":
 				{
-					if (!isTestName(text))
-						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
+					if (!AutomationTestNames.IsTestTag(text))
+						throw new McpException($"Test tags only: the name must start with '{AutomationTestNames.TagPrefix}'.");
 					ClickCharacterTool(form, combo.AutomationTagDeletePath(text), new QueuedAnswer(DialogResult.OK));
 					break;
 				}
 				case "assign":
 				case "unassign":
 				{
-					if (!isTestName(text))
-						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
+					if (!AutomationTestNames.IsTestTag(text))
+						throw new McpException($"Test tags only: the name must start with '{AutomationTestNames.TagPrefix}'.");
 					if (combo.SelectedItem is not PlayerSave ps || !AutomationTestNames.IsTestFile(ps.Name))
 						throw new McpException($"Select a test character (name starting with {AutomationTestNames.Accepted}) first.");
 					var tagItem = combo.AutomationTagEntry(text);

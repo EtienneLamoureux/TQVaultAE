@@ -269,9 +269,6 @@ internal static partial class AutomationTools
 			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, error });
 		});
 
-	/// <summary>Automation's own test tags (see Safety in AUTOMATION.md).</summary>
-	private const string TestFilePrefix = "claude-";
-
 	/// <summary>Automation creates and changes only test characters and vaults (see <see cref="AutomationTestNames"/>).</summary>
 	private static void RequireTestName(string name)
 	{
