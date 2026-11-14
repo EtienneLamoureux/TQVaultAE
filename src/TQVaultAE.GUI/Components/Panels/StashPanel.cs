@@ -165,9 +165,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.BagSackPanel.MaxSacks = 1;
 		this.BagSackPanel.Anchor = AnchorStyles.None;
 
-		//this.EquipmentBackground = Images.Equipment_bg_new;
-		this.background = this.EquipmentBackground = Images.equipment_bg_and_char;
-		this.StashBackground = Images.caravan_bg;
+		this.background = this.equipmentBackground = Images.equipment_bg_and_char;
+		this.stashBackground = Images.caravan_bg;
 
 		// The sort button of the stash tabs, placed by LayOut. The base panel makes none (it keeps the trash panel's settings).
 		var sortButton = this.NewSortButton(0, true, mirrored: true);
@@ -376,50 +375,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	}
 
 	/// <summary>
-	/// Gets or sets the background image for the equipment panel scaled by the panel size
-	/// </summary>
-	public Bitmap? EquipmentBackground
-	{
-		get
-		{
-			if (UIService.Scale != 1.0F && this.equipmentBackground is not null)
-			{
-				// We need to scale this since we use it to redraw the background.
-				return new Bitmap(
-					this.equipmentBackground,
-					(this.PanelCells.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-					(this.PanelCells.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
-			}
-
-			return this.equipmentBackground;
-		}
-
-		set => this.equipmentBackground = value;
-	}
-
-	/// <summary>
-	/// Gets or sets the bitmap for the stash panel background scaled by the panel size.
-	/// </summary>
-	public Bitmap? StashBackground
-	{
-		get
-		{
-			if (UIService.Scale != 1.0F && this.stashBackground is not null)
-			{
-				// We need to scale this since we use it to redraw the background.
-				return new Bitmap(
-					this.stashBackground,
-					(this.PanelCells.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-					(this.PanelCells.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
-			}
-
-			return this.stashBackground;
-		}
-
-		set => this.stashBackground = value;
-	}
-
-	/// <summary>
 	/// Gets or sets the currently selected bag id
 	/// </summary>
 	public new int CurrentBag
@@ -441,7 +396,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				if (bag is { IsEquipment: true })
 				{
 					this.equipmentPanel.Sack = bag.Sack;
-					this.ReplaceBackground(this.EquipmentBackground);
+					this.ReplaceBackground(this.ScaledBackground(this.equipmentBackground));
 					this.equipmentPanel.Visible = true;
 					this.equipmentPanel.Enabled = true;
 					this.BagSackPanel.Visible = false;
@@ -449,7 +404,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				}
 				else if (bag is not null)
 				{
-					this.ReplaceBackground(this.StashBackground);
+					this.ReplaceBackground(this.ScaledBackground(this.stashBackground));
 					this.BagSackPanel.Sack = bag.Sack;
 					this.BagSackPanel.SackType = SackType.Stash;
 					this.BagSackPanel.ResizeSackPanel(bag.Width, bag.Height);
@@ -579,14 +534,20 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	#region StashPanel Private Methods
 
 	/// <summary>
-	/// The equipment background as wide as the panel: the slots as they are, then the black field with its gold border
-	/// stretched to the right edge, in place of the box the picture has for the old list of player values.
+	/// A new copy of <paramref name="source"/> at the size of the panel's bag at the current scale, which redraws the
+	/// background; the source itself at scale 1.
 	/// </summary>
-	/// <param name="size">The size to draw.</param>
-	/// <param name="pictureWidth">The width the whole picture takes when it is not widened.</param>
+	private Bitmap? ScaledBackground(Bitmap? source)
+		=> UIService.Scale != 1.0F && source is not null
+			? new Bitmap(
+				source,
+				(this.PanelCells.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+				(this.PanelCells.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2))
+			: source;
+
 	/// <summary>
-	/// Shows another background. At a zoom other than 1 the getters make a scaled copy at each tab switch: the copy
-	/// replaced is disposed, the source pictures are kept.
+	/// Shows another background. At a zoom other than 1 it is a scaled copy made at each tab switch
+	/// (<see cref="ScaledBackground"/>): the copy replaced is disposed, the source pictures are kept.
 	/// </summary>
 	private void ReplaceBackground(Bitmap? value)
 	{
@@ -596,6 +557,12 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			old.Dispose();
 	}
 
+	/// <summary>
+	/// The equipment background as wide as the panel: the slots as they are, then the black field with its gold border
+	/// stretched to the right edge, in place of the box the picture has for the old list of player values.
+	/// </summary>
+	/// <param name="size">The size to draw.</param>
+	/// <param name="pictureWidth">The width the whole picture takes when it is not widened.</param>
 	private Bitmap WideEquipmentBackground(Size size, int pictureWidth)
 	{
 		if (this.wideEquipmentBackground is { } made && made.Size == size)
