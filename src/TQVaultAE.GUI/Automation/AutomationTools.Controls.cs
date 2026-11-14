@@ -15,7 +15,7 @@ internal static partial class AutomationTools
 	#region Form controls
 
 	[McpServerTool(Name = "control_values", ReadOnly = true)]
-	[Description("Reads the input controls of an open form or dialog, or of the settings shown in the main window ('Settings'), (check boxes, radio buttons, numeric boxes, combo boxes, text boxes, check group boxes): name, type, enabled, visible and value. Use it to check the rules a dialog applies when another control changes.")]
+	[Description("Reads the input controls of an open form or dialog, or of the settings shown in the main window ('Settings'), (check boxes, radio buttons, numeric boxes, track bars, combo boxes, list boxes, text boxes, check group boxes): name, type, enabled, visible and value. Use it to check the rules a dialog applies when another control changes.")]
 	public static string ControlValues(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("true to also list the labels and their text.")] bool labels = false)
@@ -30,7 +30,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "set_control", Destructive = true)]
-	[Description("Sets the value of a control of an open form or dialog, or of the settings shown in the main window ('Settings'), like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes; the item text or '#index' for combo boxes (any text for an editable one) and list boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
+	[Description("Sets the value of a control of an open form or dialog, or of the settings shown in the main window ('Settings'), like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes and track bars (then Scroll is raised, as after a drag); the item text or '#index' for combo boxes (then SelectionChangeCommitted is raised, as after a pick in the list; any text for an editable one) and list boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Other control types are refused (use click_control or mouse_click). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
 	public static string SetControl(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
 		[Description("Control name, as listed by control_values.")] string control,
@@ -50,6 +50,14 @@ internal static partial class AutomationTools
 					if (n < number.Minimum || n > number.Maximum)
 						throw new McpException($"{n} is out of range {number.Minimum}..{number.Maximum}.");
 					number.Value = n;
+					break;
+				case TrackBar track:
+					// A drag or an arrow key moves the thumb (ValueChanged), then the bar raises Scroll.
+					var position = int.Parse(value, CultureInfo.InvariantCulture);
+					if (position < track.Minimum || position > track.Maximum)
+						throw new McpException($"{position} is out of range {track.Minimum}..{track.Maximum}.");
+					track.Value = position;
+					RaiseProtected(track, "OnScroll");
 					break;
 				case ComboBox combo:
 					int index = -1;
@@ -73,7 +81,11 @@ internal static partial class AutomationTools
 						value = value[1..];
 					if (index < 0 && !int.TryParse(value, out index))
 						throw new McpException($"No item '{value}' in '{c.Name}'. Items: {string.Join(", ", combo.Items.Cast<object>().Select(combo.GetItemText))}");
+					if (index < 0 || index >= combo.Items.Count)
+						throw new McpException($"Index {index} is out of range 0..{combo.Items.Count - 1}.");
+					// A pick in the list changes the selection, then commits it (SelectionChangeCommitted).
 					combo.SelectedIndex = index;
+					RaiseProtected(combo, "OnSelectionChangeCommitted");
 					break;
 				case ListBox list:
 					int row = -1;
@@ -93,15 +105,15 @@ internal static partial class AutomationTools
 				case TextBoxBase text:
 					text.Text = value;
 					// A user types, then leaves the box: some boxes apply their text on Leave or Validated.
-					foreach (var (name, args) in new (string, EventArgs)[] { ("OnValidating", new CancelEventArgs()), ("OnValidated", EventArgs.Empty), ("OnLeave", EventArgs.Empty) })
-						typeof(Control).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(text, [args]);
+					RaiseProtected(text, "OnValidating", new CancelEventArgs());
+					RaiseProtected(text, "OnValidated");
+					RaiseProtected(text, "OnLeave");
 					break;
 				default:
 					var checkedProperty = c.GetType().GetProperty("Checked", typeof(bool));
-					if (checkedProperty?.CanWrite == true)
-						checkedProperty.SetValue(c, bool.Parse(value));
-					else
-						c.Text = value;
+					if (checkedProperty?.CanWrite != true)
+						throw new McpException($"'{c.Name}' is a {c.GetType().Name}: set_control sets check boxes, radio buttons, check group boxes, numeric boxes, track bars, combo boxes, list boxes and text boxes. Use click_control or mouse_click for the others.");
+					checkedProperty.SetValue(c, bool.Parse(value));
 					break;
 			}
 
@@ -220,13 +232,18 @@ internal static partial class AutomationTools
 		}
 	}
 
+	/// <summary>Raises a protected event method of a control (OnScroll, OnLeave...), as its own input handling does.</summary>
+	private static void RaiseProtected(Control c, string method, EventArgs? args = null)
+		=> c.GetType().GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic, [args?.GetType() ?? typeof(EventArgs)])!.Invoke(c, [args ?? EventArgs.Empty]);
+
 	private static bool IsInputControl(Control c)
-		=> c is NumericUpDown or ComboBox or ListBox or TextBoxBase or CheckBox or RadioButton
+		=> c is NumericUpDown or TrackBar or ComboBox or ListBox or TextBoxBase or CheckBox or RadioButton
 		|| c.GetType().GetProperty("Checked", typeof(bool)) is not null;
 
 	private static object? ValueOf(Control c) => c switch
 	{
 		NumericUpDown number => number.Value,
+		TrackBar track => track.Value,
 		ComboBox combo => combo.SelectedItem is not null ? combo.GetItemText(combo.SelectedItem) : combo.DropDownStyle != ComboBoxStyle.DropDownList && combo.Text.Length > 0 ? combo.Text : null,
 		ListBox list => list.SelectedItem is not null ? list.GetItemText(list.SelectedItem) : null,
 		TextBoxBase text => text.Text,
