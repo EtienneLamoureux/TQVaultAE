@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.Security.Cryptography;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
@@ -47,40 +45,7 @@ internal static partial class AutomationTools
 				_ => ItemTooltip.ViewOf(form.Services),
 			});
 
-			List<(Item Item, object Location)> targets;
-			int total;
-			if (!string.IsNullOrWhiteSpace(panel))
-			{
-				var named = ResolveShownPanel(form, panel);
-				var item = named.Panel.AutomationFindItem(new Point(x, y))
-					?? throw new McpException($"No item at ({x}, {y}) on panel '{named.Id}'.");
-				targets = [(item, new { panel = named.Id, x = item.PositionX, y = item.PositionY })];
-				total = 1;
-			}
-			else
-			{
-				var owned = services.ItemDatabaseService.ItemDatabase
-					.OrderBy(r => r.Container, StringComparer.Ordinal)
-					.ThenBy(r => r.SackType)
-					.ThenBy(r => r.SackNumber)
-					.ThenBy(r => r.Item.PositionY)
-					.ThenBy(r => r.Item.PositionX)
-					.ThenBy(r => RecordId.RawOf(r.Item.BaseItemId), StringComparer.Ordinal)
-					.ThenBy(r => r.Item.Seed)
-					.ToList();
-				total = owned.Count;
-				var batch = owned.Skip(Math.Max(skip, 0));
-				if (take > 0)
-					batch = batch.Take(take);
-				targets = batch.Select(r => (r.Item, (object)new
-				{
-					container = r.ContainerName,
-					sackType = r.SackType.ToString(),
-					sack = r.SackNumber,
-					x = r.Item.PositionX,
-					y = r.Item.PositionY,
-				})).ToList();
-			}
+			var (targets, total, skipped) = DumpTargets(form, panel, x, y, skip, take);
 
 			var items = targets.Select(t => new
 			{
@@ -103,7 +68,7 @@ internal static partial class AutomationTools
 			{
 				views = names.ToDictionary(n => n, n => viewOf[n].ToString()),
 				total,
-				skip = string.IsNullOrWhiteSpace(panel) ? Math.Max(skip, 0) : 0,
+				skip = skipped,
 				count = items.Count,
 				items,
 			};
@@ -111,20 +76,18 @@ internal static partial class AutomationTools
 			if (string.IsNullOrWhiteSpace(path))
 				return Serialize(dump);
 
-			var json = JsonSerializer.SerializeToUtf8Bytes(dump, JsonOptions);
-			var full = Path.GetFullPath(path);
-			File.WriteAllBytes(full, json);
+			var file = WriteDump(path, dump);
 			return Serialize(new
 			{
-				path = full,
+				path = file.Path,
 				dump.views,
 				total,
 				dump.skip,
 				count = items.Count,
 				rows = items.Sum(i => i.views.Values.Sum(r => r.Count)),
 				unknownRows = items.Sum(i => i.views.Values.Sum(r => r.Count(row => row.Kind.StartsWith("unknown", StringComparison.Ordinal)))),
-				bytes = json.Length,
-				sha256 = Convert.ToHexString(SHA256.HashData(json)),
+				bytes = file.Bytes,
+				sha256 = file.Sha256,
 			});
 		});
 }

@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.Security.Cryptography;
-using System.Text.Json;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Domain.Entities;
@@ -24,40 +22,7 @@ internal static partial class AutomationTools
 		[Description("Owned items to dump after skip; 0 for all.")] int take = 0)
 		=> AutomationHost.OnUi(form =>
 		{
-			List<(Item Item, object Location)> targets;
-			int total;
-			if (!string.IsNullOrWhiteSpace(panel))
-			{
-				var named = ResolveShownPanel(form, panel);
-				var item = named.Panel.AutomationFindItem(new Point(x, y))
-					?? throw new McpException($"No item at ({x}, {y}) on panel '{named.Id}'.");
-				targets = [(item, new { panel = named.Id, x = item.PositionX, y = item.PositionY })];
-				total = 1;
-			}
-			else
-			{
-				var owned = form.Services.ItemDatabaseService.ItemDatabase
-					.OrderBy(r => r.Container, StringComparer.Ordinal)
-					.ThenBy(r => r.SackType)
-					.ThenBy(r => r.SackNumber)
-					.ThenBy(r => r.Item.PositionY)
-					.ThenBy(r => r.Item.PositionX)
-					.ThenBy(r => RecordId.RawOf(r.Item.BaseItemId), StringComparer.Ordinal)
-					.ThenBy(r => r.Item.Seed)
-					.ToList();
-				total = owned.Count;
-				var batch = owned.Skip(Math.Max(skip, 0));
-				if (take > 0)
-					batch = batch.Take(take);
-				targets = batch.Select(r => (r.Item, (object)new
-				{
-					container = r.ContainerName,
-					sackType = r.SackType.ToString(),
-					sack = r.SackNumber,
-					x = r.Item.PositionX,
-					y = r.Item.PositionY,
-				})).ToList();
-			}
+			var (targets, total, skipped) = DumpTargets(form, panel, x, y, skip, take);
 
 			using var dialog = form.Services.Forms.Create<ItemProperties>();
 			dialog.Opacity = 0;
@@ -95,7 +60,7 @@ internal static partial class AutomationTools
 			var dump = new
 			{
 				total,
-				skip = string.IsNullOrWhiteSpace(panel) ? Math.Max(skip, 0) : 0,
+				skip = skipped,
 				count = items.Count,
 				items,
 			};
@@ -103,17 +68,15 @@ internal static partial class AutomationTools
 			if (string.IsNullOrWhiteSpace(path))
 				return Serialize(dump);
 
-			var json = JsonSerializer.SerializeToUtf8Bytes(dump, JsonOptions);
-			var full = Path.GetFullPath(path);
-			File.WriteAllBytes(full, json);
+			var file = WriteDump(path, dump);
 			return Serialize(new
 			{
-				path = full,
+				path = file.Path,
 				total,
 				dump.skip,
 				count = items.Count,
-				bytes = json.Length,
-				sha256 = Convert.ToHexString(SHA256.HashData(json)),
+				bytes = file.Bytes,
+				sha256 = file.Sha256,
 			});
 		});
 }
