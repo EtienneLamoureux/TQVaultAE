@@ -44,6 +44,20 @@ public partial class ResultsDialog : VaultForm
 
 		this.InitializeComponent();
 
+		// The look of Advanced Search and Item Properties: the main window's marble, the list in a caravan frame, its
+		// headers in gold on black (the system's light headers otherwise).
+		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow);
+		// Room for the marble around the frame, as in Item Properties; under the last row, black like its lists.
+		this.Padding = new Padding(this.Padding.Left + 10, this.Padding.Top + 10, this.Padding.Right + 10, this.Padding.Bottom + 6);
+		this.resultsDataGridView.BackgroundColor = Color.Black;
+		this.resultsDataGridView.BorderStyle = BorderStyle.None;
+		CaravanFrame.FrameAround(this.resultsDataGridView);
+		var headers = this.resultsDataGridView.ColumnHeadersDefaultCellStyle;
+		headers.ForeColor = Color.Gold;
+		headers.SelectionBackColor = headers.BackColor;
+		headers.SelectionForeColor = headers.ForeColor;
+		this.resultsDataGridView.EnableHeadersVisualStyles = false;
+
 		#region Apply custom font
 
 		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
