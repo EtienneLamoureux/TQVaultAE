@@ -75,7 +75,7 @@ public class PlayerService(
 			#region Get the player
 
 			// From the save's own folder: main campaign and custom map characters are listed together.
-			var pf = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerSaveFileName);
+			var pf = this.GamePathResolver.PlayerFileIn(this.PathIO, selectedSave.Folder);
 
 			var resultPC = new PlayerCollection(selectedSave.Name, pf);
 
@@ -166,8 +166,8 @@ public class PlayerService(
 	{
 		// Read again a character read with another map's database, unless it or its stash has changes to save: the
 		// stash is read again with it, and its unsaved changes would be dropped.
-		string playerFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerSaveFileName);
-		string stashFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerStashFileNameB);
+		string playerFile = this.GamePathResolver.PlayerFileIn(this.PathIO, selectedSave.Folder);
+		string stashFile = this.GamePathResolver.StashFileIn(this.PathIO, selectedSave.Folder);
 		bool unsaved = (this.userContext.Players.TryGetLoaded(playerFile, out var loaded) && loaded.IsModified)
 			|| (this.userContext.Stashes.TryGetLoaded(stashFile, out var loadedStash) && loadedStash.IsModified);
 		bool reload = this.GameMapService.LoadedWithOtherMap(selectedSave) && !unsaved;
@@ -251,7 +251,7 @@ public class PlayerService(
 	public void AlterNameInPlayerFileSave(string newname, string saveFolder)
 	{
 		// Alter name in Player file
-		var newPlayerFile = this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerSaveFileName);
+		var newPlayerFile = this.GamePathResolver.PlayerFileIn(this.PathIO, saveFolder);
 		var fileContent = this.FileIO.ReadAllBytes(newPlayerFile);
 		this.TQDataService.ReplaceUnicodeValueAfter(ref fileContent, "myPlayerName", newname);
 		this.FileIO.WriteAllBytes(newPlayerFile, fileContent);
@@ -378,10 +378,10 @@ public class PlayerService(
 	/// </summary>
 	private bool MoveSave(PlayerSave ps, bool archive)
 	{
-		var oldPath = this.PathIO.Combine(ps.Folder, this.GamePathResolver.PlayerSaveFileName);
+		var oldPath = this.GamePathResolver.PlayerFileIn(this.PathIO, ps.Folder);
 		bool moved = archive ? this.GameFileService.Archive(ps) : this.GameFileService.Unarchive(ps);
 		if (moved)
-			this.UpdatePlayerFilePath(oldPath, this.PathIO.Combine(ps.Folder, this.GamePathResolver.PlayerSaveFileName));
+			this.UpdatePlayerFilePath(oldPath, this.GamePathResolver.PlayerFileIn(this.PathIO, ps.Folder));
 
 		return moved;
 	}

@@ -48,7 +48,8 @@ public class StashServiceTests
 			_mockStashProvider.Object,
 			_mockGamePathService.Object,
 			_mockGameFileService.Object,
-			_userSettings
+			_userSettings,
+			new PathIO()
 		);
 	}
 

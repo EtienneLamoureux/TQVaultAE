@@ -55,13 +55,6 @@ public interface IGamePathService
 	bool LocalGitRepositoryGitDirExist { get; }
 
 	/// <summary>
-	/// Parses filename to try to determine the base character name.
-	/// </summary>
-	/// <param name="filename">filename of the character file</param>
-	/// <returns>string containing the character name</returns>
-	string? GetNameFromFile(string filename);
-
-	/// <summary>
 	/// Gets or sets the Immortal Throne game path.
 	/// </summary>
 	string GamePathTQIT { get; set; }
@@ -194,21 +187,6 @@ public interface IGamePathService
 	/// <returns>List of custom maps in a string array</returns>
 	GamePathEntry[] GetCustomMapList();
 	/// <summary>
-	/// Gets the full path to the player character file.
-	/// </summary>
-	/// <param name="characterName">name of the character</param>
-	/// <param name="IsTQIT"><c>true</c> for Immortal Throne file, <c>false</c> otherwise</param>
-	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
-	/// <returns>full path to the character file.</returns>
-	string GetPlayerFile(string characterName, bool IsTQIT, bool isArchive);
-	/// <summary>
-	/// Gets the full path to the player's stash file.
-	/// </summary>
-	/// <param name="characterName">name of the character</param>
-	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
-	/// <returns>full path to the player stash file</returns>
-	string GetPlayerStashFile(string characterName, bool isArchive);
-	/// <summary>
 	/// Gets the file name and path for a vault.
 	/// </summary>
 	/// <param name="vaultName">The name of the vault file.</param>
@@ -232,13 +210,6 @@ public interface IGamePathService
 	string PlayerStashFileNameG { get; }
 	string PlayerSettingsFileName { get; }
 	GameType GameType { get; set; }
-
-	/// <summary>
-	/// Return the vault name from <paramref name="vaultFilePath"/>
-	/// </summary>
-	/// <param name="vaultFilePath"></param>
-	/// <returns>name stripted from path and extension</returns>
-	string? GetVaultNameFromPath(string vaultFilePath);
 
 	/// <summary>
 	/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>

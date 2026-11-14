@@ -17,6 +17,7 @@ public class StashService(
 	IGamePathService gamePathResolver,
 	IGameFileService iGameFileService,
 	UserSettings userSettings,
+	IPathIO pathIO,
 	IGameMapService? gameMapService = null,
 	ICharacterReadOnlyService? characterReadOnlyService = null) : IStashService
 {
@@ -49,6 +50,7 @@ public class StashService(
 	private readonly IGamePathService GamePathResolver = gamePathResolver;
 	private readonly IGameFileService GameFileService = iGameFileService;
 	private readonly UserSettings UserSettings = userSettings;
+	private readonly IPathIO PathIO = pathIO;
 
 	/// <summary>
 	/// Loads a player stash.
@@ -64,7 +66,7 @@ public class StashService(
 			return result;
 
 		// From the save's own folder: main campaign and custom map characters are listed together.
-		result.StashFile = Path.Combine(selectedSave.Folder, GamePathResolver.PlayerStashFileNameB);
+		result.StashFile = this.GamePathResolver.StashFileIn(this.PathIO, selectedSave.Folder);
 
 		Stash addStash(string k)
 		{

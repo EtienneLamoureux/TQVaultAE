@@ -96,7 +96,7 @@ public class CharacterReadOnlyService(
 		}
 	}
 
-	private string PlayerFile(string saveFolder) => this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerSaveFileName);
+	private string PlayerFile(string saveFolder) => this.GamePathResolver.PlayerFileIn(this.PathIO, saveFolder);
 
-	private string StashFile(string saveFolder) => this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerStashFileNameB);
+	private string StashFile(string saveFolder) => this.GamePathResolver.StashFileIn(this.PathIO, saveFolder);
 }

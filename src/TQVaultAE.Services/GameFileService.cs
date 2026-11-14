@@ -135,16 +135,16 @@ public partial class GameFileService(ILogger<GameFileService> log, IGamePathServ
 	public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
 	{
 		var newFolder = this.GetDuplicateCharacterFolder(playerSaveDirectory, newname);
-		var newPlayerFile = this.PathIO.Combine(newFolder, GamePathService.PlayerSaveFileName);
+		var newPlayerFile = this.GamePathService.PlayerFileIn(this.PathIO, newFolder);
 
-		var playerFile = this.PathIO.Combine(playerSaveDirectory, GamePathService.PlayerSaveFileName);
-		var stashFileB = this.PathIO.Combine(playerSaveDirectory, GamePathService.PlayerStashFileNameB);
+		var playerFile = this.GamePathService.PlayerFileIn(this.PathIO, playerSaveDirectory);
+		var stashFileB = this.GamePathService.StashFileIn(this.PathIO, playerSaveDirectory);
 		var stashFileG = this.PathIO.Combine(playerSaveDirectory, GamePathService.PlayerStashFileNameG);
 		var settingsFile = this.PathIO.Combine(playerSaveDirectory, GamePathService.PlayerSettingsFileName);
 
 		DirectoryIO.CreateDirectory(newFolder);
 		this.FileIO.Copy(playerFile, newPlayerFile);
-		if (this.FileIO.Exists(stashFileB)) this.FileIO.Copy(stashFileB, this.PathIO.Combine(newFolder, GamePathService.PlayerStashFileNameB));
+		if (this.FileIO.Exists(stashFileB)) this.FileIO.Copy(stashFileB, this.GamePathService.StashFileIn(this.PathIO, newFolder));
 		if (this.FileIO.Exists(stashFileG)) this.FileIO.Copy(stashFileG, this.PathIO.Combine(newFolder, GamePathService.PlayerStashFileNameG));
 		if (this.FileIO.Exists(settingsFile)) this.FileIO.Copy(settingsFile, this.PathIO.Combine(newFolder, GamePathService.PlayerSettingsFileName));
 
