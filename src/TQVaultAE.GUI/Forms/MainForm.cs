@@ -27,10 +27,8 @@ public partial class MainForm : VaultForm
 {
 	private readonly ILogger Log;
 
-	public ITagService TagService { get; }
-
 	/// <summary>
-	/// Application layer services
+	/// Application layer services, from <see cref="GuiServices"/>
 	/// </summary>
 	private readonly IPlayerService playerService;
 	private readonly IVaultService vaultService;
@@ -72,7 +70,7 @@ public partial class MainForm : VaultForm
 	/// <summary>
 	/// User current data context
 	/// </summary>
-	internal SessionContext userContext;
+	private readonly SessionContext userContext;
 
 	/// <summary>
 	/// Holds the current program version
@@ -109,32 +107,23 @@ public partial class MainForm : VaultForm
 	public MainForm(
 			GuiServices services
 			, ILogger<MainForm> log
-			, SessionContext sessionContext
-			, IPlayerService playerService
-			, IVaultService vaultService
-			, IStashService stashService
-			, ITagService tagService
-			, IItemExchangeService itemExchangeService
-			, ISettingsPersistenceService settingsPersistenceService
 			, CommandLineArgs commandLineArgs
 			, ILoadAllService loadAllService
 			, ISaveOrchestrator saveOrchestrator
-			, IGameMapService gameMapService
 			, MainFormUserControl mainView
 		) : base(services)
 	{
 		this.mainView = mainView;
-		this.userContext = sessionContext;
-		this.playerService = playerService;
-		this.vaultService = vaultService;
-		this.stashService = stashService;
-		this.TagService = tagService;
-		this.itemExchangeService = itemExchangeService;
-		this.settingsPersistenceService = settingsPersistenceService;
+		this.userContext = services.Session;
+		this.playerService = services.PlayerService;
+		this.vaultService = services.VaultService;
+		this.stashService = services.StashService;
+		this.itemExchangeService = services.ItemExchangeService;
+		this.settingsPersistenceService = services.SettingsPersistence;
 		this.commandLineArgs = commandLineArgs;
 		this.loadAllService = loadAllService;
 		this.saveOrchestrator = saveOrchestrator;
-		this.gameMapService = gameMapService;
+		this.gameMapService = services.GameMapService;
 		this.gameMapService.ActiveMapChanged += this.GameMapService_ActiveMapChanged;
 
 		Log = log;
