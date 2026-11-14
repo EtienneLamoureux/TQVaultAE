@@ -57,8 +57,8 @@ internal sealed partial class CharacterEditorUserControl
 	private float GameScale => this.DeviceDpi / 96F;
 
 	/// <summary>
-	/// The game frame with OK and Cancel under it, sized to them; laid at the top left of the control, or in its middle
-	/// when the host gives it a larger area (<see cref="OnLayout"/>).
+	/// The game frame with OK and Cancel under it, sized to them; laid at the top left of the control
+	/// (<see cref="OnLayout"/>).
 	/// </summary>
 	private readonly Panel _content = new() { Name = "CharacterEditorContent", BackColor = Color.Transparent };
 
@@ -70,6 +70,12 @@ internal sealed partial class CharacterEditorUserControl
 	/// one above the other) and the frame beside it fit in the main window at zoom 1, with a margin.
 	/// </summary>
 	private const float ColumnScale = 1.05F;
+
+	/// <summary>
+	/// The space between the control's edges and the content, in pixels at 96 dpi: the one the main content leaves around
+	/// its panels in the same place (<see cref="MainFormUserControl"/>).
+	/// </summary>
+	private const int ContentMargin = 4;
 
 	/// <summary>
 	/// Builds the statistics column (the statistics panel of the game's character window, and under it the side panel
@@ -160,7 +166,7 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		var scale = this.GameScale;
 		var panelScale = scale * ColumnScale;
-		var margin = this.LogicalToDeviceUnits(14);
+		var margin = this.LogicalToDeviceUnits(ContentMargin);
 
 		// The fonts made for the previous DPI are disposed once the new ones are in place.
 		var oldFonts = this._scaleFonts.ToList();
@@ -310,7 +316,7 @@ internal sealed partial class CharacterEditorUserControl
 	/// </summary>
 	private void FitToFrame()
 	{
-		var margin = this.LogicalToDeviceUnits(14);
+		var margin = this.LogicalToDeviceUnits(ContentMargin);
 		var gap = this.LogicalToDeviceUnits(10);
 		var buttonsTop = this._tabs.Bottom + gap;
 		var bottom = Math.Max(this._stats.Bottom, this._side.Bottom);
@@ -450,16 +456,14 @@ internal sealed partial class CharacterEditorUserControl
 	}
 
 	/// <summary>
-	/// The content at the top left of the control; in the middle of a larger area, at its top left when it is smaller,
-	/// scrolled (<see cref="ScrollableControl.AutoScroll"/>).
+	/// The content at the top left of the control, where the main content has its panels; scrolled when the area is
+	/// smaller (<see cref="ScrollableControl.AutoScroll"/>).
 	/// </summary>
 	protected override void OnLayout(LayoutEventArgs e)
 	{
 		base.OnLayout(e);
 
-		var location = new Point(
-			Math.Max(0, (this.ClientSize.Width - this._content.Width) / 2) + this.AutoScrollPosition.X,
-			Math.Max(0, (this.ClientSize.Height - this._content.Height) / 2) + this.AutoScrollPosition.Y);
+		var location = this.AutoScrollPosition;
 		if (this._content.Location != location)
 			this._content.Location = location;
 	}
