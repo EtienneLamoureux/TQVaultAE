@@ -191,7 +191,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 		for (int i = 0; i < Items.Count; i++)
 		{
 			var item = Items[i];
-			if ((item.ToString() ?? string.Empty).ContainsIgnoreCase(search))
+			if ((item is PlayerSave save ? Presentation.ModLinkText.CharacterLabel(save) : item.ToString() ?? string.Empty).ContainsIgnoreCase(search))
 				return i;
 		}
 		return -1;
@@ -363,7 +363,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 
 		if (this.SelectedItem is PlayerSave ps)
 		{
-			this.scalingLabelCharName.Text = ps.ToString();
+			this.scalingLabelCharName.Text = Presentation.ModLinkText.CharacterLabel(ps);
 
 			// Show duplicate feature ?
 			if (this.USettings.AllowCharacterEdit)

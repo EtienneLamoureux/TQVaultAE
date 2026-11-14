@@ -32,7 +32,7 @@ internal static partial class AutomationTools
 					var mod = maps.ModOf(save);
 					return new
 					{
-						label = save.ToString(),
+						label = Presentation.ModLinkText.CharacterLabel(save),
 						folder = save.Folder,
 						isCustom = save.IsCustom,
 						state = mod.State.ToString(),

@@ -1,4 +1,5 @@
 using System.Globalization;
+using TQVaultAE.Application;
 using TQVaultAE.Application.DTOs;
 
 namespace TQVaultAE.Presentation;
@@ -52,6 +53,27 @@ public static class ModLinkText
 		CharacterModState.LinkedModMissing => Resources.CharacterModNotInstalled,
 		_ => Resources.CharacterModNotLinked,
 	};
+
+	/// <summary>
+	/// The label of a custom map character's mod: its linked mod, that this mod is not installed, or that it has none;
+	/// null for a base game character.
+	/// </summary>
+	/// <param name="save">The character, refreshed by <c>IGameMapService.Refresh</c>.</param>
+	public static string? ModLabel(PlayerSave save) => !save.IsCustom ? null : save.ModState switch
+	{
+		CharacterModState.Linked => save.ModName,
+		CharacterModState.LinkedModMissing => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkMissingLabel, save.ModName),
+		CharacterModState.Unlinked => Resources.ModLinkUnlinkedLabel,
+		_ => null,
+	};
+
+	/// <summary>
+	/// A character as the character list shows it: <see cref="PlayerSave.ToString"/>, then the label of its mod in
+	/// brackets for a custom map character.
+	/// </summary>
+	/// <param name="save">The character.</param>
+	public static string CharacterLabel(PlayerSave save)
+		=> ModLabel(save) is { Length: > 0 } label ? $"{save} [{label}]" : save.ToString();
 
 	/// <summary>
 	/// The hint of a suggested mod in the "Modded" menu: "suggested" when it has every mod-only record, else how many,

@@ -1,11 +1,9 @@
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services;
 
@@ -165,12 +163,5 @@ public class GameMapService(
 		save.CustomMap = MapFor(mod);
 		save.ModState = mod.State;
 		save.ModName = mod.Mod?.Name ?? mod.Link?.Mod;
-		save.ModLabel = mod.State switch
-		{
-			CharacterModState.Linked => mod.Mod!.Name,
-			CharacterModState.LinkedModMissing => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkMissingLabel, mod.Link!.Mod),
-			CharacterModState.Unlinked => Resources.ModLinkUnlinkedLabel,
-			_ => null,
-		};
 	}
 }

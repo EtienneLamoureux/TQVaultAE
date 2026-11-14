@@ -58,7 +58,7 @@ public static class LoadMessages
 	/// <param name="character">The character.</param>
 	/// <returns>The messages in the order to show them.</returns>
 	public static IReadOnlyList<LoadMessage> ForPlayerStash(StashLoadResult result, PlayerSave character)
-		=> ForStash(result, $"Character : {character}");
+		=> ForStash(result, $"Character : {ModLinkText.CharacterLabel(character)}");
 
 	/// <summary>
 	/// Gets the messages for the load of the transfer stash.

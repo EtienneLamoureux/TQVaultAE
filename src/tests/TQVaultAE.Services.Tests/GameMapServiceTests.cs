@@ -214,7 +214,7 @@ public class GameMapServiceTests
 	}
 
 	[Fact]
-	public void Refresh_LabelsCustomMapCharactersByTheirMod()
+	public void Refresh_GivesCustomMapCharactersTheStateAndNameOfTheirMod()
 	{
 		var service = this.CreateService();
 		var linked = Save("HeroA", isCustom: true);
@@ -228,15 +228,9 @@ public class GameMapServiceTests
 		foreach (var save in new[] { linked, missing, unlinked, main })
 			service.Refresh(save);
 
-		linked.ModLabel.Should().Be("shadowchampions");
-		missing.ModLabel.Should().Contain("Lilith");
-		unlinked.ModLabel.Should().NotBeNullOrEmpty();
-		main.ModLabel.Should().BeNull();
 		(linked.ModState, linked.ModName).Should().Be((CharacterModState.Linked, "shadowchampions"));
 		(missing.ModState, missing.ModName).Should().Be((CharacterModState.LinkedModMissing, "Lilith"));
 		(unlinked.ModState, unlinked.ModName).Should().Be((CharacterModState.Unlinked, (string?)null));
 		(main.ModState, main.ModName).Should().Be((CharacterModState.BaseGame, (string?)null));
-		linked.ToString().Should().EndWith("[shadowchampions]");
-		main.ToString().Should().NotContain("[");
 	}
 }

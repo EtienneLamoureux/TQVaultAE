@@ -95,12 +95,8 @@ public sealed class PlayerSave : IDisposable
 	public string CustomMapName => string.IsNullOrEmpty(this.CustomMap) ? string.Empty : this.PathIO.GetFileName(this.CustomMap);
 
 	/// <summary>
-	/// For a custom map character, the label of its mod in the character list (its linked mod, or that it has none).
-	/// </summary>
-	public string? ModLabel { get; set; }
-
-	/// <summary>
-	/// How the character relates to the installed mods, set with <see cref="ModLabel"/>.
+	/// How the character relates to the installed mods, set with <see cref="ModName"/>. The UI labels it
+	/// (<c>ModLinkText.CharacterLabel</c> in Presentation).
 	/// </summary>
 	public CharacterModState ModState { get; set; }
 
@@ -160,7 +156,6 @@ public sealed class PlayerSave : IDisposable
 			, !string.IsNullOrWhiteSpace(Info?.Class) && Info?.CurrentLevel is not null ?  " -" : string.Empty
 			, Info?.CurrentLevel is null ? string.Empty : $" {Translate.TranslateXTag("tagMenuImport05")} : {Info.CurrentLevel}"
 			, IsImmortalThrone ? string.Empty : " (TQ)"
-			, IsCustom && !string.IsNullOrEmpty(ModLabel) ? $" [{ModLabel}]" : string.Empty
 		});
 	}
 }

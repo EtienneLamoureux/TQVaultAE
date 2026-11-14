@@ -1,5 +1,8 @@
 using System.Globalization;
 using AwesomeAssertions;
+using Moq;
+using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Presentation;
 
@@ -45,6 +48,34 @@ public class ModLinkTextTests
 		var (shortcut, toolTip) = ModLinkText.MenuHint(suggestion.Matches[1], suggestion);
 		shortcut.Should().Be(F(Resources.ModSuggestedPartialHint, 1, 4));
 		toolTip.Should().Be(ModB.DisplayName + Environment.NewLine + F(Resources.ModSuggestedDetail, 1, 4));
+	}
+
+	private static PlayerSave Save(bool isCustom, CharacterModState state, string? modName)
+	{
+		var pathIO = new Mock<IPathIO>();
+		pathIO.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
+		return new PlayerSave("_Hero", true, false, isCustom, string.Empty, Mock.Of<ITranslationService>(), pathIO.Object)
+		{
+			ModState = state,
+			ModName = modName,
+		};
+	}
+
+	[Fact]
+	public void CharacterLabel_CustomMapCharacter_EndsWithTheLabelOfItsMod()
+	{
+		ModLinkText.CharacterLabel(Save(true, CharacterModState.Linked, "shadowchampions")).Should().Be("Hero [shadowchampions]");
+		ModLinkText.CharacterLabel(Save(true, CharacterModState.LinkedModMissing, "Lilith"))
+			.Should().Be($"Hero [{F(Resources.ModLinkMissingLabel, "Lilith")}]");
+		ModLinkText.CharacterLabel(Save(true, CharacterModState.Unlinked, null)).Should().Be($"Hero [{Resources.ModLinkUnlinkedLabel}]");
+	}
+
+	[Fact]
+	public void CharacterLabel_BaseGameCharacter_HasNoModLabel()
+	{
+		ModLinkText.CharacterLabel(Save(true, CharacterModState.BaseGame, null)).Should().Be("Hero");
+		// A main campaign character never shows a mod, whatever its state says.
+		ModLinkText.CharacterLabel(Save(false, CharacterModState.Linked, "shadowchampions")).Should().Be("Hero");
 	}
 
 	[Theory]
