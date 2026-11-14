@@ -100,14 +100,6 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 
 	#region EquipmentPanel Protected Methods
 
-	/// <summary>
-	/// Override of ScaleControl which supports scaling of the fonts and internal items.
-	/// </summary>
-	/// <param name="factor">SizeF for the scale factor</param>
-	/// <param name="specified">BoundsSpecified value.</param>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-		=> base.ScaleControl(factor, specified);
-
 	/// <summary>The equipment slots and their frames are drawn apart from the cell grid: a drag repaints the whole panel.</summary>
 	protected override bool RepaintsDragAreaOnly => false;
 
