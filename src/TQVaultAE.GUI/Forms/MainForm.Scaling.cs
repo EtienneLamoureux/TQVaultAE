@@ -231,7 +231,6 @@ public partial class MainForm
 		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MaxZoom);
 		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MinZoom);
 
-		this.OriginalFormSize = this.Size;
 
 		this.LastFormSize = this.Size;
 

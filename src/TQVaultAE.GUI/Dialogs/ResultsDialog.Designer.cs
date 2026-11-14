@@ -214,7 +214,6 @@ public partial class ResultsDialog
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.Name = "ResultsDialog";
-        this.OriginalFormSize = new System.Drawing.Size(670, 398);
         this.Padding = new System.Windows.Forms.Padding(8, 28, 8, 18);
         this.ResizeCustomAllowed = true;
         this.ShowIcon = false;

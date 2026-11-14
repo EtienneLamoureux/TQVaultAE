@@ -291,7 +291,6 @@ public partial class VaultForm
 		// changed: fit again once it is applied.
 		this.FitToContent();
 
-		this.OriginalFormSize = TQVaultAE.Application.WindowLayout.Scaled(this.OriginalFormSize, factor);
 		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMaximumSize, factor);
 		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMinimumSize, factor);
 		// The layout made again for the new DPI; during a drag by the title bar, once the drag ends: Windows gives the

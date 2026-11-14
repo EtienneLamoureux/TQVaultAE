@@ -9,7 +9,6 @@ public class FormFilterMouseButtonGlobally : IMessageFilter
 	// Inspired by https://stackoverflow.com/questions/1371810/subscribing-to-mouse-events-of-all-controls-in-form
 
 	internal const int WM_LBUTTONDOWN = 0x0201;
-	internal const int WM_RBUTTONDOWN = 0x0204;
 
 	private readonly VaultForm Form;
 
@@ -31,13 +30,6 @@ public class FormFilterMouseButtonGlobally : IMessageFilter
 				//x = (short)(mouseInfo & 0xFFFF);
 				point = new Point(mouseInfo);
 				this.Form.RaiseGlobalMouseButtonLeft(point);
-				break;
-			case WM_RBUTTONDOWN:
-				mouseInfo = m.LParam.ToInt32();
-				//y = (short)(mouseInfo >> 16);
-				//x = (short)(mouseInfo & 0xFFFF);
-				point = new Point(mouseInfo);
-				this.Form.RaiseGlobalMouseButtonRight(point);
 				break;
 		}
 

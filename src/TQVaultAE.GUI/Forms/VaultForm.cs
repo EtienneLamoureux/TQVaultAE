@@ -220,7 +220,6 @@ public partial class VaultForm : Form, IScalingControl
 		this.sideBorder = Images.BorderSide;
 		this.bottomRightCorner = Images.BorderBottomRightCorner;
 		this.bottomLeftCorner = Images.BorderBottomLeftCorner;
-		this.ShowResizeBorders = false;
 
 		this.TitleTextColor = SystemColors.ControlText;
 
@@ -266,11 +265,6 @@ public partial class VaultForm : Form, IScalingControl
 	}
 
 	/// <summary>
-	/// Gets or sets a value indicating whether or not the resize border boxes are shown.
-	/// </summary>
-	public bool ShowResizeBorders { get; set; }
-
-	/// <summary>
 	/// Gets or sets a value indicating whether the form resizing will be constrained to the original form's width and height ratio.
 	/// </summary>
 	public bool ConstrainToDesignRatio { get; set; }
@@ -284,11 +278,6 @@ public partial class VaultForm : Form, IScalingControl
 	/// Gets or sets the the ratio of height / width before any scaling.
 	/// </summary>
 	public float FormDesignRatio { get; set; }
-
-	/// <summary>
-	/// Gets or sets the size of the form after the initial scaling.
-	/// </summary>
-	public Size OriginalFormSize { get; set; }
 
 	/// <summary>
 	/// Gets or sets the size of the form prior to the current scaling operation.
@@ -324,9 +313,7 @@ public partial class VaultForm : Form, IScalingControl
 	#region Capture Mouse Button Event Globally
 
 	protected internal event EventHandler<Point>? GlobalMouseButtonLeft;
-	protected internal event EventHandler<Point>? GlobalMouseButtonRight;
 	internal void RaiseGlobalMouseButtonLeft(Point pt) => GlobalMouseButtonLeft?.Invoke(this, pt);
-	internal void RaiseGlobalMouseButtonRight(Point pt) => GlobalMouseButtonRight?.Invoke(this, pt);
 
 	#endregion
 
@@ -484,23 +471,6 @@ public partial class VaultForm : Form, IScalingControl
 			e.Graphics.DrawImage(
 				this.bottomLeftCorner,
 				new Rectangle(ClientRectangle.Left, ClientRectangle.Bottom - this.bottomLeftCorner.Height, this.bottomLeftCorner.Width, this.bottomLeftCorner.Height));
-
-			// Show the resize bounding boxes for debugging.
-			if (this.ShowResizeBorders)
-			{
-				// Show Corners
-				e.Graphics.FillRectangle(Brushes.Red, this.upperLeftCorner);
-				e.Graphics.FillRectangle(Brushes.Red, this.upperRightCorner);
-				e.Graphics.FillRectangle(Brushes.Red, this.lowerLeftCorner);
-				e.Graphics.FillRectangle(Brushes.Red, this.lowerRightCorner);
-
-				// Show Sides
-				e.Graphics.FillRectangle(Brushes.Yellow, this.topBorderRect);
-				e.Graphics.FillRectangle(Brushes.Green, this.topResizeRect);
-				e.Graphics.FillRectangle(Brushes.Green, this.bottomBorderRect);
-				e.Graphics.FillRectangle(Brushes.Green, this.leftBorderRect);
-				e.Graphics.FillRectangle(Brushes.Green, this.rightBorderRect);
-			}
 		}
 	}
 
