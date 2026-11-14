@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Domain.Comparison;
 
@@ -61,8 +62,11 @@ public static partial class LowerIsBetterStats
 		"characterJewelryIntelligenceReqReduction",
 	];
 
-	/// <summary>A game format item (<c>{%.1f0}</c>, <c>{0:#0}</c>), a TQ format spec (<c>%+.0f0</c>) or a color tag (<c>{^a}</c>, <c>^a</c>).</summary>
-	[GeneratedRegex(@"\{[^}]*\}|%[+\-]?(?:\.\d)?[sdft]\d|\^\w")]
+	/// <summary>
+	/// A game format item (<c>{%.1f0}</c>, <c>{0:#0}</c>), a TQ format spec (<c>%+.0f0</c>) or a color tag (<c>{^a}</c>,
+	/// <c>^a</c>: <see cref="TextTags.ColorTagPattern"/>, after the format items, which already take the braced form).
+	/// </summary>
+	[GeneratedRegex(@"\{[^}]*\}|%[+\-]?(?:\.\d)?[sdft]\d|" + TextTags.ColorTagPattern)]
 	private static partial Regex FormatRegex();
 
 	/// <summary>
