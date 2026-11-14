@@ -45,6 +45,7 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 		this.DisableMultipleSelection = true;
 		this.DefaultImage = null;
 		this.MouseMove += this.LoadoutMarkMouseMove;
+		this.MouseLeave += (_, _) => this.HideMarkTip();
 	}
 
 	/// <summary>A click on a loadout mark opens its comparison; any other click goes on as in every sack.</summary>

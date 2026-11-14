@@ -1,6 +1,7 @@
 using System.Drawing.Drawing2D;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -16,10 +17,25 @@ public partial class EquipmentPanel
 	private const string DifferentMark = @"MENU\DIFFICULTYLEGENDARYDOWN01.TEX";
 	private const string OneEmptyMark = @"MENU\DIFFICULTYNORMALUP01.TEX";
 
+	// The marks' colours, for the first line of their tool tip.
+	private static readonly Color SameColor = Color.FromArgb(120, 175, 255);
+	private static readonly Color DifferentColor = Color.FromArgb(235, 95, 75);
+	private static readonly Color OneEmptyColor = Color.FromArgb(185, 185, 185);
+	private static readonly Color HintColor = Color.FromArgb(235, 235, 235);
+
 	private Loadout? _comparedLoadout;
 
 	/// <summary>Whether the panel set the hand cursor over a mark (and so puts the default one back).</summary>
 	private bool _handOverMark;
+
+	/// <summary>The mark whose tool tip is shown, if any.</summary>
+	private LoadoutSlotMark? _tipMark;
+
+	/// <summary>
+	/// The game-style tool tip the marks show their state in (the statistics panel's, set by the stash panel); no tool tip
+	/// without it.
+	/// </summary>
+	internal TQVaultAE.GUI.Components.Character.GameTooltip? MarkTooltip { get; set; }
 
 	/// <summary>
 	/// The loadout the worn equipment is compared with, the one chosen in the loadout bar; <see langword="null"/> for no
@@ -130,20 +146,75 @@ public partial class EquipmentPanel
 		if (e.Button != MouseButtons.Left || this.DragInfo.IsActive || this.DragInfo.Compare.IsActive)
 			return false;
 
-		return this.MarkAt(e.Location) is { CanCompare: true } mark && this.ShowLoadoutComparison(mark.Slot);
+		if (this.MarkAt(e.Location) is not { CanCompare: true } mark)
+			return false;
+
+		this.HideMarkTip();
+		return this.ShowLoadoutComparison(mark.Slot);
 	}
 
-	/// <summary>The hand cursor over a mark that opens a comparison.</summary>
+	/// <summary>The hand cursor over a mark that opens a comparison, and the tool tip of the mark under the pointer.</summary>
 	private void LoadoutMarkMouseMove(object? sender, MouseEventArgs e)
 	{
 		if (this.DragInfo.Compare.IsActive)
 			return;
 
-		bool overMark = !this.DragInfo.IsActive && this.MarkAt(e.Location) is { CanCompare: true };
+		var mark = this.DragInfo.IsActive ? null : this.MarkAt(e.Location);
+		this.ShowMarkTip(mark);
+
+		bool overMark = mark is { CanCompare: true };
 		if (overMark == this._handOverMark)
 			return;
 
 		this._handOverMark = overMark;
 		this.Cursor = overMark ? Cursors.Hand : Cursors.Default;
+	}
+
+	/// <summary>
+	/// Shows the tool tip of <paramref name="mark"/> (its state against the loadout, and "Click to compare" when a click
+	/// compares), or hides it for none; kept as it is while the pointer stays on the same mark.
+	/// </summary>
+	private void ShowMarkTip(LoadoutSlotMark? mark)
+	{
+		if (mark == this._tipMark)
+			return;
+
+		this._tipMark = mark;
+		if (this.MarkTooltip is not { } tooltip)
+			return;
+
+		if (mark is not { } shown || this._comparedLoadout is not { } loadout)
+		{
+			tooltip.Hide();
+			return;
+		}
+
+		bool worn = this.ShownSack.Select(item => item == this.DragInfo.Item ? null : item).ElementAtOrDefault(shown.Slot) is not null;
+		var (format, color) = shown.Match switch
+		{
+			LoadoutSlotMatch.Same => (Resources.LoadoutMarkSame, SameColor),
+			LoadoutSlotMatch.Different => (Resources.LoadoutMarkDifferent, DifferentColor),
+			_ when worn => (Resources.LoadoutMarkEmptyInLoadout, OneEmptyColor),
+			_ => (Resources.LoadoutMarkNotWorn, OneEmptyColor),
+		};
+
+		var lines = new List<TQVaultAE.GUI.Components.Character.GameTooltipLine>
+		{
+			new(string.Format(System.Globalization.CultureInfo.CurrentCulture, format, loadout.Name), color, Title: true),
+		};
+		if (shown.CanCompare)
+			lines.Add(new(Resources.LoadoutMarkClickToCompare, HintColor));
+
+		tooltip.Show(this, lines);
+	}
+
+	/// <summary>The pointer left the panel, or a click acted on a mark: no tool tip.</summary>
+	private void HideMarkTip()
+	{
+		if (this._tipMark is null)
+			return;
+
+		this._tipMark = null;
+		this.MarkTooltip?.Hide();
 	}
 }

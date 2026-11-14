@@ -264,6 +264,7 @@ public partial class StashPanel
 				scale,
 				GameTooltipFrame.Load(this.UIService));
 			panel.Tooltip = this._statsTooltip;
+			this.equipmentPanel.MarkTooltip = this._statsTooltip;
 			this._loadoutBar!.TextFont = this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
 			this._loadoutBar.BarScale = scale;
 			this._editButton!.Font = this.FontService.GetFontLight(11F, this.UIService.FontZoom);

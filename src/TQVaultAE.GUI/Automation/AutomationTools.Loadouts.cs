@@ -15,7 +15,7 @@ internal static partial class AutomationTools
 	internal static bool? GameRunningOverride { get; private set; }
 
 	[McpServerTool(Name = "loadouts", Destructive = true)]
-	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy and delete click the entry of the bar's right-click menu — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison dialog of the worn piece and the loadout's (after the call returns; close it with close_dialog('Item Comparison', 'OK')). Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load and update ask when the game runs) and only on test characters (names starting with 'claude-', 'player-test' or 'player-mod'). gameRunning=true/false makes the actions take the game as running or not; null uses the real processes.")]
+	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy and delete click the entry of the bar's right-click menu — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison dialog of the worn piece and the loadout's (after the call returns; close it with close_dialog('Item Comparison', 'OK')). hover (slot) rests the pointer on the mark of a slot through the panel's mouse handling and returns its tool tip (markTooltip: the state against the loadout, then 'Click to compare' when a click compares); hover without slot leaves the panel. Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load and update ask when the game runs) and only on test characters (names starting with 'claude-', 'player-test' or 'player-mod'). gameRunning=true/false makes the actions take the game as running or not; null uses the real processes.")]
 	public static string Loadouts(
 		[Description("select, add, update, rename, copy, delete or load; empty to only read.")] string? action = null,
 		[Description("The loadout (select, and the others instead of the selected one); the new loadout's name for add.")] string? name = null,
@@ -23,7 +23,7 @@ internal static partial class AutomationTools
 		[Description("'list' or 'actions' to read that menu of the bar.")] string? menu = null,
 		[Description("true or false to take the game as running or not for the next actions; omit to keep the current choice.")] bool? gameRunning = null,
 		[Description("true to go back to the real game processes.")] bool realGame = false,
-		[Description("The equipment slot whose mark compare clicks (0 head .. 11 artifact).")] int? slot = null)
+		[Description("The equipment slot whose mark compare clicks or hover rests on (0 head .. 11 artifact).")] int? slot = null)
 		=> AutomationHost.OnUi(form =>
 		{
 			if (gameRunning is not null)
@@ -35,6 +35,18 @@ internal static partial class AutomationTools
 			var player = stash.Player;
 			var bar = stash.LoadoutBar;
 			var equipment = stash.EquipmentPanel;
+
+			// Hovering a mark only shows its tool tip: any character.
+			object? markTooltip = null;
+			if (string.Equals(action?.Trim(), "hover", StringComparison.OrdinalIgnoreCase))
+			{
+				Domain.Actions.LoadoutSlotMark? hovered = slot is { } hoverSlot
+					? equipment.LoadoutMarks.Where(m => m.Slot == hoverSlot).Select(m => (Domain.Actions.LoadoutSlotMark?)m).FirstOrDefault()
+						?? throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).")
+					: null;
+				markTooltip = equipment.AutomationHoverMark(hovered).Select(line => new { text = line.Text, color = ColorTranslator.ToHtml(line.Color) }).ToList();
+				action = null;
+			}
 
 			// Comparing only reads the pieces: any character.
 			if (string.Equals(action?.Trim(), "compare", StringComparison.OrdinalIgnoreCase))
@@ -122,6 +134,7 @@ internal static partial class AutomationTools
 					canCompare = m.CanCompare,
 					bounds = Box(equipment.MarkScreenBounds(m)),
 				}),
+				markTooltip,
 				file = set?.FilePath,
 				fileExists = set is not null && File.Exists(set.FilePath),
 				readFailed = set?.ReadFailed,

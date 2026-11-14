@@ -35,6 +35,9 @@ compares with the loadout's piece for the same slot:
 Click a blue or red mark to open the [item comparison](ITEMCOMPARE.md) of the worn piece (first) and the loadout's
 (second). A grey mark does nothing: there is only one piece.
 
+Rest the pointer on a mark to read its state in a tool tip: the same as, different from, empty in or not worn
+against the loadout chosen (named), then "Click to compare" on a blue or red mark.
+
 The marks sit in the gaps around the slots: beside the weapon, shield, arms and artifact slots, under the others. They
 follow any change of the gear (a piece moved, Load, Update) and of the choice in the box, and show neither for a
 read-only character nor when no loadout is chosen. An item you hold counts as out of its slot.

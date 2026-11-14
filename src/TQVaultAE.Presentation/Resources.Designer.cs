@@ -7626,5 +7626,50 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("LoadoutLoadedReplaced", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same as in loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkSame {
+            get {
+                return ResourceManager.GetString("LoadoutMarkSame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Different from loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkDifferent {
+            get {
+                return ResourceManager.GetString("LoadoutMarkDifferent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty in loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkEmptyInLoadout {
+            get {
+                return ResourceManager.GetString("LoadoutMarkEmptyInLoadout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not worn; in loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkNotWorn {
+            get {
+                return ResourceManager.GetString("LoadoutMarkNotWorn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to compare.
+        /// </summary>
+        public static string LoadoutMarkClickToCompare {
+            get {
+                return ResourceManager.GetString("LoadoutMarkClickToCompare", resourceCulture);
+            }
+        }
     }
 }

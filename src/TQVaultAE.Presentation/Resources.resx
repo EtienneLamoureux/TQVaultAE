@@ -2778,4 +2778,19 @@ Go on?</value>
 	<data name="LoadoutLoadedReplaced" xml:space="preserve">
     <value>Loadout "{0}" worn: {1} piece(s) replaced, {2} copied in.</value>
   </data>
+	<data name="LoadoutMarkSame" xml:space="preserve">
+    <value>Same as in loadout "{0}"</value>
+  </data>
+	<data name="LoadoutMarkDifferent" xml:space="preserve">
+    <value>Different from loadout "{0}"</value>
+  </data>
+	<data name="LoadoutMarkEmptyInLoadout" xml:space="preserve">
+    <value>Empty in loadout "{0}"</value>
+  </data>
+	<data name="LoadoutMarkNotWorn" xml:space="preserve">
+    <value>Not worn; in loadout "{0}"</value>
+  </data>
+	<data name="LoadoutMarkClickToCompare" xml:space="preserve">
+    <value>Click to compare</value>
+  </data>
 </root>

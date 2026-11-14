@@ -2408,4 +2408,19 @@ Continuer ?</value>
 	<data name="LoadoutLoadedReplaced" xml:space="preserve">
     <value>Tenue « {0} » portée : {1} pièce(s) remplacée(s), {2} copiée(s).</value>
   </data>
+	<data name="LoadoutMarkSame" xml:space="preserve">
+    <value>Identique à la tenue « {0} »</value>
+  </data>
+	<data name="LoadoutMarkDifferent" xml:space="preserve">
+    <value>Différent de la tenue « {0} »</value>
+  </data>
+	<data name="LoadoutMarkEmptyInLoadout" xml:space="preserve">
+    <value>Vide dans la tenue « {0} »</value>
+  </data>
+	<data name="LoadoutMarkNotWorn" xml:space="preserve">
+    <value>Non porté ; présent dans la tenue « {0} »</value>
+  </data>
+	<data name="LoadoutMarkClickToCompare" xml:space="preserve">
+    <value>Cliquer pour comparer</value>
+  </data>
 </root>
