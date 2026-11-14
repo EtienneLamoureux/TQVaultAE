@@ -52,8 +52,7 @@ public class ItemStackingService(IItemProvider itemProvider) : IItemStackingServ
 
 		if (itemUnderUs.IsRelicComplete)
 		{
-			float roll = (float)Item.GenerateSeed() / Item.MaxSeed;
-			RecordId? bonusId = this._itemProvider.BonusTableRelicOrArtifact(itemUnderUs)?.PickWeighted(roll);
+			RecordId? bonusId = RelicBonus.Roll(this._itemProvider, itemUnderUs);
 			if (bonusId is not null)
 				itemUnderUs.RelicBonusId = bonusId;
 

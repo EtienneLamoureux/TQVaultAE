@@ -350,11 +350,7 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	private static bool SameMod(string? a, string? b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>Rolls a completion bonus from the bonus table of a relic, charm or artifact.</summary>
-	private RecordId? RollBonus(Item item)
-	{
-		float roll = (float)Item.GenerateSeed() / Item.MaxSeed;
-		return this._itemProvider.BonusTableRelicOrArtifact(item)?.PickWeighted(roll);
-	}
+	private RecordId? RollBonus(Item item) => RelicBonus.Roll(this._itemProvider, item);
 
 	private static void MarkModified(SackCollection sack, Item item)
 	{
