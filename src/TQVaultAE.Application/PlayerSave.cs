@@ -6,8 +6,70 @@ namespace TQVaultAE.Application;
 
 public sealed class PlayerSave : IDisposable
 {
-	public FileSystemWatcher? PlayerSaveWatcher { get; set; }
-	public FileSystemWatcher? PlayerStashWatcher { get; set; }
+	private FileSystemWatcher? _playerSaveWatcher;
+	private FileSystemWatcher? _playerStashWatcher;
+
+	/// <summary>
+	/// Watches the player file for the hot reload; owned by the save, which disposes it, and the one it replaces.
+	/// </summary>
+	public FileSystemWatcher? PlayerSaveWatcher
+	{
+		get => this._playerSaveWatcher;
+		set => Replace(ref this._playerSaveWatcher, value);
+	}
+
+	/// <summary>
+	/// Watches the player stash file for the hot reload; owned by the save, which disposes it, and the one it replaces.
+	/// </summary>
+	public FileSystemWatcher? PlayerStashWatcher
+	{
+		get => this._playerStashWatcher;
+		set => Replace(ref this._playerStashWatcher, value);
+	}
+
+	private static void Replace(ref FileSystemWatcher? field, FileSystemWatcher? value)
+	{
+		if (!ReferenceEquals(field, value))
+			field?.Dispose();
+		field = value;
+	}
+
+	private IEnumerable<FileSystemWatcher> Watchers
+		=> new[] { this._playerSaveWatcher, this._playerStashWatcher }.OfType<FileSystemWatcher>();
+
+	/// <summary>
+	/// Stops the change events of the watched files until disposed, while TQVault moves the save folder; then each
+	/// watcher raises them again if it did before.
+	/// </summary>
+	public IDisposable PauseWatching()
+	{
+		var paused = this.Watchers.Where(w => w.EnableRaisingEvents).ToList();
+		foreach (var watcher in paused)
+			watcher.EnableRaisingEvents = false;
+
+		return new WatchingResumer(paused);
+	}
+
+	private sealed class WatchingResumer(List<FileSystemWatcher> paused) : IDisposable
+	{
+		public void Dispose()
+		{
+			foreach (var watcher in paused)
+				watcher.EnableRaisingEvents = true;
+			paused.Clear();
+		}
+	}
+
+	/// <summary>
+	/// The save folder moved (archived or unarchived): the save and its watchers follow it.
+	/// </summary>
+	public void MovedTo(string folder, bool isArchived)
+	{
+		this.Folder = folder;
+		this.IsArchived = isArchived;
+		foreach (var watcher in this.Watchers)
+			watcher.Path = folder;
+	}
 
 	public readonly Dictionary<string, Color> Tags = [];
 
@@ -86,8 +148,8 @@ public sealed class PlayerSave : IDisposable
 
 	public void Dispose()
 	{
-		if (PlayerSaveWatcher is not null)
-			PlayerSaveWatcher.Dispose();
+		this.PlayerSaveWatcher = null;
+		this.PlayerStashWatcher = null;
 	}
 
 	public override string ToString()

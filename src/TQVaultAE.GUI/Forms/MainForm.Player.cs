@@ -58,7 +58,9 @@ public partial class MainForm
 	/// </summary>
 	private void GetPlayerList()
 	{
-		// Initialize the character combo-box
+		// Initialize the character combo-box; the saves listed before go, with their file watchers.
+		foreach (var listed in this.comboBoxCharacter.Items.OfType<PlayerSave>())
+			listed.Dispose();
 		this.comboBoxCharacter.Items.Clear();
 
 		var characters = this.playerService.GetPlayerSaveList();

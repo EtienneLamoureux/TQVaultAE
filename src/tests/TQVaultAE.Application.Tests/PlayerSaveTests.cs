@@ -95,4 +95,79 @@ public class PlayerSaveTests
 		var act = () => playerSave.Dispose();
 		act.Should().NotThrow();
 	}
+
+	private PlayerSave Save(string folder)
+	{
+		_pathIOMock.Setup(p => p.GetFileName(folder)).Returns("_Hero");
+		return new PlayerSave(folder, true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+	}
+
+	private static FileSystemWatcher Watcher(string folder) => new(folder) { EnableRaisingEvents = true };
+
+	[Fact]
+	public void Dispose_DisposesBothWatchers()
+	{
+		// Arrange
+		var folder = Path.GetTempPath();
+		var save = Save(folder);
+		var player = Watcher(folder);
+		var stash = Watcher(folder);
+		save.PlayerSaveWatcher = player;
+		save.PlayerStashWatcher = stash;
+
+		// Act
+		save.Dispose();
+
+		// Assert: a disposed watcher refuses to start again
+		((Action)(() => player.EnableRaisingEvents = true)).Should().Throw<ObjectDisposedException>();
+		((Action)(() => stash.EnableRaisingEvents = true)).Should().Throw<ObjectDisposedException>("the stash watcher leaked before");
+	}
+
+	[Fact]
+	public void SettingAnotherWatcher_DisposesTheOldOne()
+	{
+		var folder = Path.GetTempPath();
+		var save = Save(folder);
+		var old = Watcher(folder);
+		save.PlayerStashWatcher = old;
+
+		save.PlayerStashWatcher = Watcher(folder);
+
+		((Action)(() => old.EnableRaisingEvents = true)).Should().Throw<ObjectDisposedException>();
+		save.Dispose();
+	}
+
+	[Fact]
+	public void PauseWatching_StopsTheEventsUntilDisposed_AndMovedToFollowsTheFolder()
+	{
+		// Arrange
+		var folder = Path.GetTempPath();
+		var moved = Directory.CreateTempSubdirectory("LotServices").FullName;
+		var save = Save(folder);
+		save.PlayerSaveWatcher = Watcher(folder);
+		save.PlayerStashWatcher = new FileSystemWatcher(folder);
+
+		try
+		{
+			// Act
+			using (save.PauseWatching())
+			{
+				save.PlayerSaveWatcher.EnableRaisingEvents.Should().BeFalse();
+				save.MovedTo(moved, isArchived: true);
+			}
+
+			// Assert: only the watcher that ran runs again, both watch the new folder
+			save.PlayerSaveWatcher.EnableRaisingEvents.Should().BeTrue();
+			save.PlayerStashWatcher.EnableRaisingEvents.Should().BeFalse();
+			save.PlayerSaveWatcher.Path.Should().Be(moved);
+			save.PlayerStashWatcher.Path.Should().Be(moved);
+			save.Folder.Should().Be(moved);
+			save.IsArchived.Should().BeTrue();
+		}
+		finally
+		{
+			save.Dispose();
+			Directory.Delete(moved);
+		}
+	}
 }

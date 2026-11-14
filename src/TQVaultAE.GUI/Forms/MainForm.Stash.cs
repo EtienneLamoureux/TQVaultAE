@@ -133,6 +133,8 @@ public partial class MainForm
 				watcher.Changed += (_, e) => this.SharedStashFile_Changed(e, type, watchedMap);
 				watcher.EnableRaisingEvents = true;
 				this.sharedStashWatchers[file] = watcher;
+				// The form's container disposes it with the form.
+				this.components?.Add(watcher);
 			}
 		}
 	}
