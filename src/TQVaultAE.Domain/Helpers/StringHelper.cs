@@ -143,29 +143,6 @@ public static partial class StringHelper
 		=> text.AsSpan().RemoveSuffix(suffixLength);
 
 	/// <summary>
-	/// Concatenates prefix with a sliced portion of the span.
-	/// </summary>
-	public static string ConcatSlice(ReadOnlySpan<char> prefix, ReadOnlySpan<char> span, int skipPrefixChars)
-	{
-		int suffixLength = span.Length - skipPrefixChars;
-		var result = new char[prefix.Length + suffixLength];
-		prefix.CopyTo(result);
-		span.Slice(skipPrefixChars).CopyTo(result.AsSpan(prefix.Length));
-		return new string(result);
-	}
-
-	/// <summary>
-	/// Concatenates prefix with a sliced portion of the span (with explicit length).
-	/// </summary>
-	public static string ConcatSlice(ReadOnlySpan<char> prefix, ReadOnlySpan<char> span, int skipPrefixChars, int suffixLength)
-	{
-		var result = new char[prefix.Length + suffixLength];
-		prefix.CopyTo(result);
-		span.Slice(skipPrefixChars, suffixLength).CopyTo(result.AsSpan(prefix.Length));
-		return new string(result);
-	}
-
-	/// <summary>
 	/// Indicate if <paramref name="TQText"/> contain a ColorTag only
 	/// </summary>
 	/// <param name="TQText"></param>

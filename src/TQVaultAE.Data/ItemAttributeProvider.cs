@@ -839,9 +839,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetShieldEffectTextTag(string effect)
 	{
-		// Use pooled span to avoid multiple ToUpperInvariant allocations
-		using var upperSpan = SpanHelper.ToUpperSpan(effect);
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "BLOCKRECOVERYTIME"))
+		if (effect.Equals("BLOCKRECOVERYTIME", StringComparison.OrdinalIgnoreCase))
 			return "ShieldBlockRecoveryTime";
 
 		// Replace Defensive with Defense.
@@ -855,16 +853,13 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetDefenseEffectTextTag(string effect)
 	{
-		// Use pooled span to avoid multiple ToUpperInvariant allocations
-		using var upperSpan = SpanHelper.ToUpperSpan(effect);
-
 		// database orphan tag with no substitute => return as is
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "defensiveTotalSpeedChance")
-		    || SpanHelper.EqualsIgnoreCase(upperSpan.Span, "defensiveAbsorption"))
+		if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase)
+		    || effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
 			return effect;
 
 		// Check for specific strings.
-		switch (upperSpan.Span.ToString())
+		switch (effect.ToUpperInvariant())
 		{
 			case "DEFENSIVEPROTECTION":
 				return "DefenseAbsorptionProtection";
@@ -883,7 +878,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Replace DefensiveSlow with Defense
-		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "DEFENSIVESLOW"))
+		if (effect.StartsWith("DEFENSIVESLOW", StringComparison.OrdinalIgnoreCase))
 			return SpanHelper.ConcatWithSlice("Defense", effect.AsSpan(), 13);
 
 		// Otherwise replace Defensive with Defense.
@@ -897,15 +892,12 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetOffensiveEffectTextTag(string effect)
 	{
-		// Use pooled span to avoid multiple ToUpperInvariant allocations
-		using var upperSpan = SpanHelper.ToUpperSpan(effect);
-
 		// Check for a skill and return as-is.
-		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "SKILL"))
+		if (effect.StartsWith("SKILL", StringComparison.OrdinalIgnoreCase))
 			return effect;
 
 		// Check for specific strings
-		switch (upperSpan.Span.ToString())
+		switch (effect.ToUpperInvariant())
 		{
 			case "OFFENSIVEPHYSICAL":
 			case "OFFENSIVEBASEPHYSICAL":
@@ -928,7 +920,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Check for OffensiveBase and replace with Damage.
-		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "OFFENSIVEBASE"))
+		if (effect.StartsWith("OFFENSIVEBASE", StringComparison.OrdinalIgnoreCase))
 			return SpanHelper.ConcatWithSlice("Damage", effect.AsSpan(), 13);
 
 		// Otherwise replace Offensive with Damage.
@@ -942,11 +934,8 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>modified effect text tag</returns>
 	private string GetOffensiveModifierEffectTextTag(string effect)
 	{
-		// Use pooled span to avoid multiple ToUpperInvariant allocations
-		using var upperSpan = SpanHelper.ToUpperSpan(effect);
-
 		// Check for specific strings.
-		switch (upperSpan.Span.ToString())
+		switch (effect.ToUpperInvariant())
 		{
 			case "OFFENSIVEMANABURNRATIOADDER":
 				return "DamageModifierManaBurn";
@@ -962,7 +951,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		}
 
 		// Check for a skill and return as-is.
-		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "SKILL"))
+		if (effect.StartsWith("SKILL", StringComparison.OrdinalIgnoreCase))
 			return effect;
 
 		// Just replace Offensive with DamageModifier and remove trailing modifier.
@@ -1044,26 +1033,23 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		if (_GetSkillEffectTextTagUnchanged.Any(s => s.Equals(effect, StringComparison.OrdinalIgnoreCase)))
 			return effect;
 
-		// Use pooled span to avoid multiple ToUpperInvariant allocations
-		using var upperSpan = SpanHelper.ToUpperSpan(effect);
-
 		// Misspelling
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGEDURATION"))
+		if (effect.Equals("SKILLCHARGEDURATION", StringComparison.OrdinalIgnoreCase))
 			return "SkillChargeDurationMod";
 		// The number of charge levels: "7 Charge Levels" (the game's SkillChargeMax).
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "SKILLCHARGELEVEL"))
+		if (effect.Equals("SKILLCHARGELEVEL", StringComparison.OrdinalIgnoreCase))
 			return "SkillChargeMax";
 		// The chance to pass through enemies, under both of its record names.
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PIERCINGPROJECTILE")
-			|| SpanHelper.EqualsIgnoreCase(upperSpan.Span, "PROJECTILEPIERCING"))
+		if (effect.Equals("PIERCINGPROJECTILE", StringComparison.OrdinalIgnoreCase)
+			|| effect.Equals("PROJECTILEPIERCING", StringComparison.OrdinalIgnoreCase))
 			return "ProjectilePiercingChance";
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "EXPLOSIONRADIUS"))
+		if (effect.Equals("EXPLOSIONRADIUS", StringComparison.OrdinalIgnoreCase))
 			return "ExplosionRadius";
-		if (SpanHelper.EqualsIgnoreCase(upperSpan.Span, "REFRESHTIME"))
+		if (effect.Equals("REFRESHTIME", StringComparison.OrdinalIgnoreCase))
 			return "tagSkillRefreshTime";
 
 		// Strip off Projectile from the text tag.
-		if (SpanHelper.StartsWithIgnoreCase(upperSpan.Span, "PROJECTILE"))
+		if (effect.StartsWith("PROJECTILE", StringComparison.OrdinalIgnoreCase))
 			return SpanHelper.ConcatWithSlice("", effect.AsSpan(), 10);
 
 		// Otherwise strip off Skill from the tag.

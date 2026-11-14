@@ -487,41 +487,6 @@ public class StringHelperTests
 
 	#endregion
 
-	#region ConcatSlice Tests
-
-	[Fact]
-	public void ConcatSlice_WithValidInputs_ConcatenatesCorrectly()
-	{
-		// Arrange
-		var prefix = "Prefix_".AsSpan();
-		var span = "Prefix_Value".AsSpan();
-		int skipPrefixChars = 7;
-
-		// Act
-		var result = StringHelper.ConcatSlice(prefix, span, skipPrefixChars);
-
-		// Assert
-		result.Should().Be("Prefix_Value");
-	}
-
-	[Fact]
-	public void ConcatSlice_WithExplicitSuffix_ConcatenatesCorrectly()
-	{
-		// Arrange
-		var prefix = "A_".AsSpan();
-		var span = "A_B_C".AsSpan();
-		int skipPrefixChars = 2;
-		int suffixLength = 3;
-
-		// Act
-		var result = StringHelper.ConcatSlice(prefix, span, skipPrefixChars, suffixLength);
-
-		// Assert
-		result.Should().Be("A_B_C");
-	}
-
-	#endregion
-
 	#region InsertAfterColorPrefix Tests
 
 	[Fact]
