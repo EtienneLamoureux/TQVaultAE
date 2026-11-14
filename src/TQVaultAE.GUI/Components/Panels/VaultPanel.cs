@@ -25,7 +25,7 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
 /// </summary>
-public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl, IFontRebasing
+public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl, IZoomedFont, ILaysOutChildren, IFontRebasing
 {
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
@@ -497,6 +497,13 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// <summary>The base font changed: fonts a derived panel made itself are made again.</summary>
 	protected virtual void OnFontsRebased()
 	{
+	}
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
 	}
 
 	/// <summary>

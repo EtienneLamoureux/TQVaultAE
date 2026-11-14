@@ -11,8 +11,15 @@ using System.Windows.Forms;
 /// <summary>
 /// TextBox class to support scaling of the fonts.
 /// </summary>
-public class ScalingTextBox : TextBox, IScalingControl
+public class ScalingTextBox : TextBox, IScalingControl, IZoomedFont
 {
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
+	}
+
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.
 	/// </summary>

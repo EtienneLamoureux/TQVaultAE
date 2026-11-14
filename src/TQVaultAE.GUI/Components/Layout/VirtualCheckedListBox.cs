@@ -18,7 +18,7 @@ namespace TQVaultAE.GUI.Components.Layout;
 /// The keyboard moves a focus item drawn with a focus rectangle: Up/Down by one entry, Left/Right by one column,
 /// Page Up/Page Down by the visible entries, Home/End to the ends, and Space toggles its check box.
 /// </remarks>
-public partial class VirtualCheckedListBox : Control, IScalingControl
+public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFont
 {
 	/// <summary>Index returned by <see cref="IndexFromPoint"/> outside any item, as <see cref="ListBox.NoMatches"/>.</summary>
 	public const int NoMatches = ListBox.NoMatches;
@@ -503,6 +503,13 @@ public partial class VirtualCheckedListBox : Control, IScalingControl
 	}
 
 	#endregion
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
+	}
 
 	/// <summary>Scales the font like the other scaling controls.</summary>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)

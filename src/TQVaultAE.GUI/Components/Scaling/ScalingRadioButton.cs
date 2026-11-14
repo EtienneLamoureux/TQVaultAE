@@ -11,8 +11,15 @@ using System.Windows.Forms;
 /// <summary>
 /// RadioButton class to support scaling of the fonts.
 /// </summary>
-public class ScalingRadioButton : RadioButton, IScalingControl
+public class ScalingRadioButton : RadioButton, IScalingControl, IZoomedFont
 {
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
+	}
+
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.
 	/// </summary>

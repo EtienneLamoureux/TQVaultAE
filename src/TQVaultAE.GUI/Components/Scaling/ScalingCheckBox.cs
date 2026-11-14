@@ -15,7 +15,7 @@ using CheckBoxState = System.Windows.Forms.VisualStyles.CheckBoxState;
 /// <summary>
 /// CheckBox class to support scaling of the fonts.
 /// </summary>
-public class ScalingCheckBox : CheckBox, IScalingControl
+public class ScalingCheckBox : CheckBox, IScalingControl, IZoomedFont
 {
 	/// <summary>
 	/// Gets or sets a value indicating whether the text has a drop shadow: a dark copy one pixel lower right, which keeps
@@ -112,6 +112,13 @@ public class ScalingCheckBox : CheckBox, IScalingControl
 
 	/// <summary>Gap between the glyph and the text, as drawn by the system checkbox.</summary>
 	private const int TextGap = 3;
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
+	}
 
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.

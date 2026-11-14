@@ -12,7 +12,7 @@ using TQVaultAE.Config;
 
 namespace TQVaultAE.GUI.Components.Character;
 
-public partial class ComboBoxCharacter : UserControl, IFontRebasing
+public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 {
 	internal const string TAGKEY = "TagItem_";
 
@@ -161,6 +161,14 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 		base.OnDpiChangedAfterParent(e);
 		this.ApplyRowHeight();
 	}
+
+	/// <summary>Nothing to give back: the row is set whole by <see cref="ApplyRowHeight"/>.</summary>
+	void IZoomFit.UndoFit()
+	{
+	}
+
+	/// <summary>The zoom changed the name font: the row height follows it, as after a DPI change.</summary>
+	void IZoomFit.Fit() => this.ApplyRowHeight();
 
 	private void ApplyHeight()
 	{

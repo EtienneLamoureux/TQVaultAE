@@ -13,7 +13,7 @@ using System.Windows.Forms;
 /// <summary>
 /// Label class to support scaling of the fonts.
 /// </summary>
-public class ScalingLabel : Label, IScalingControl
+public class ScalingLabel : Label, IScalingControl, IZoomedFont
 {
 	/// <summary>
 	/// Reverts the basic settings of a control back to the original settings.
@@ -142,6 +142,13 @@ public class ScalingLabel : Label, IScalingControl
 			_ => TextFormatFlags.Top,
 		};
 		return horizontal | vertical;
+	}
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
 	}
 
 	/// <summary>

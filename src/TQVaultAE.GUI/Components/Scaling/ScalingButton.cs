@@ -17,7 +17,7 @@ using TQVaultAE.GUI.Components.Rendering;
 /// <summary>
 /// Button class to support skinning and scaling of the fonts.
 /// </summary>
-public class ScalingButton : Button, IScalingControl, IFontRebasing
+public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 {
 	/// <summary>
 	/// Base Font used for scaling of the text to fit within the bounds of the button.
@@ -241,6 +241,17 @@ public class ScalingButton : Button, IScalingControl, IFontRebasing
 			this.ReleaseScaledImages();
 
 		base.Dispose(disposing);
+	}
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.baseFont ?? this.Font;
+		set
+		{
+			this.baseFont = value;
+			this.Font = value;
+		}
 	}
 
 	/// <summary>

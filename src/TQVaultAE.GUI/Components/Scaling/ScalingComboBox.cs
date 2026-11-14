@@ -11,7 +11,7 @@ using System.Windows.Forms;
 /// <summary>
 /// ComboBox class to support scaling of the fonts.
 /// </summary>
-public class ScalingComboBox : ComboBox, IScalingControl
+public class ScalingComboBox : ComboBox, IScalingControl, IZoomedFont
 {
 	public ScalingComboBox() 
 	{
@@ -55,6 +55,13 @@ public class ScalingComboBox : ComboBox, IScalingControl
 
 		// Draw the focus rectangle if the mouse hovers over an item.
 		e.DrawFocusRectangle();
+	}
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.Font;
+		set => this.Font = value;
 	}
 
 	/// <summary>

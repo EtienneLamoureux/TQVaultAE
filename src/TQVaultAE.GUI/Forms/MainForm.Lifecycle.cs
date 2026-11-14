@@ -328,65 +328,21 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Scales the main form according to the scale factor.
+	/// Gives the main form <paramref name="zoom"/>, then the fonts set in code and the window's size at that zoom.
 	/// </summary>
-	/// <param name="scaleFactor">Float which signifies the scale factor of the form.  This is an absolute from the original size unless useRelativeScaling is set to true.</param>
-	/// <param name="useRelativeScaling">Indicates whether the scale factor is relative.  Used to support a resize operation.</param>
-	protected override void ScaleForm(float scaleFactor, bool useRelativeScaling)
+	/// <param name="zoom">The zoom, an absolute value (1 for the design size).</param>
+	protected override void ScaleForm(float zoom)
 	{
-		base.ScaleForm(scaleFactor, useRelativeScaling);
+		base.ScaleForm(zoom);
 
 		// A link label does not scale its font with the zoom by itself.
 		this.ApplyHighlightLabelFont();
 
-		this.ApplyDesignMargins();
 		this.SizeToZoom();
 
 		this.NotificationText.Text = string.Empty;
 
 		this.Invalidate();
-	}
-
-	/// <summary>
-	/// The margins of the window's controls as built, at <see cref="designMarginScale"/>, kept by
-	/// <see cref="KeepDesignMargins"/>.
-	/// </summary>
-	private readonly List<(Control Control, Padding Margin)> designMargins = [];
-
-	/// <summary>The scale the window was built at, the one of <see cref="designMargins"/>.</summary>
-	private float designMarginScale;
-
-	/// <summary>
-	/// Keeps the margins of the window's controls as built, before the user's zoom is applied.
-	/// </summary>
-	private void KeepDesignMargins()
-	{
-		void Keep(Control.ControlCollection controls)
-		{
-			foreach (Control control in controls)
-			{
-				if (control.Margin != Padding.Empty)
-					this.designMargins.Add((control, control.Margin));
-				Keep(control.Controls);
-			}
-		}
-
-		this.designMarginScale = UIService.Scale;
-		Keep(this.Controls);
-	}
-
-	/// <summary>
-	/// Gives the controls their margins at the current scale. A zoom scales a margin from its value at the zoom before,
-	/// rounded at each step: a 4 px margin came back as 6 px from zoom 0.7, and the rows holding it grew.
-	/// </summary>
-	private void ApplyDesignMargins()
-	{
-		if (this.designMargins.Count == 0)
-			return;
-
-		float factor = UIService.Scale / this.designMarginScale;
-		foreach (var (control, m) in this.designMargins)
-			control.Margin = m.Scaled(factor);
 	}
 
 	/// <summary>The client size of the window at zoom 1 and 96 dpi.</summary>
@@ -395,8 +351,7 @@ public partial class MainForm
 	/// <summary>
 	/// Gives the window in its normal state its size at the current zoom: the design size at the current scale, grown
 	/// where the panels need more room. They are not exactly proportional to the zoom (whole-pixel item cells, margins
-	/// and fonts rounded at each zoom step), and nothing in them may be cut by the border. Setting the size also undoes
-	/// the rounding a relative scaling left in it, so a reset gives back the size of a start at zoom 1.
+	/// and fonts rounded), and nothing in them may be cut by the border.
 	/// </summary>
 	private void SizeToZoom()
 	{
@@ -550,10 +505,10 @@ public partial class MainForm
 	/// </summary>
 	private void ApplyStartupZoom()
 	{
-		this.KeepDesignMargins();
+		this.KeepZoomSnapshot();
 
 		if (this.startupZoom != 1.0F)
-			this.ScaleForm(this.startupZoom, false);
+			this.ScaleForm(this.startupZoom);
 		else
 			this.SizeToZoom();
 

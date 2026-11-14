@@ -27,7 +27,7 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// proportion at every other DPI.
 /// </para>
 /// </remarks>
-public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
+public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing, IZoomFit
 {
 	#region Internal Types
 
@@ -563,14 +563,22 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing
 	/// <summary>The item slots get their full height back before a rescale, so that the scale applies to it.</summary>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
+		this.UndoFit();
+		base.ScaleControl(factor, specified);
+	}
+
+	/// <inheritdoc/>
+	public void Fit() => this.FitHeight();
+
+	/// <summary>The item slots get their full height back (<see cref="FitHeight"/> cuts them again at the next layout).</summary>
+	public void UndoFit()
+	{
 		if (this.slotCut != 0 && Slots is not null)
 		{
 			foreach (var slot in Slots)
 				slot.Picture.Height += this.slotCut;
 			this.slotCut = 0;
 		}
-
-		base.ScaleControl(factor, specified);
 	}
 
 	#endregion

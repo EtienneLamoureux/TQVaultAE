@@ -43,30 +43,28 @@ public partial class VaultForm
 	}
 
 	/// <summary>
-	/// Scales the form according to the scale factor.
+	/// The window's layout at zoom 1, kept by <see cref="KeepZoomSnapshot"/>; null for a window that does not zoom.
 	/// </summary>
-	/// <param name="scaleFactor">Float which signifies the scale factor of the form.  This is an absolute from the original size unless useRelativeScaling is set to true.</param>
-	/// <param name="useRelativeScaling">Indicates whether the scale factor is relative.  Used to support a resize operation.</param>
-	protected virtual void ScaleForm(float scaleFactor, bool useRelativeScaling)
+	private ZoomSnapshot? zoomSnapshot;
+
+	/// <summary>
+	/// Keeps the window's layout at zoom 1, once built: each zoom (<see cref="ScaleForm"/>) is then scaled from it.
+	/// </summary>
+	protected void KeepZoomSnapshot()
+		=> this.zoomSnapshot = ZoomSnapshot.Take(this, UIService.Scale);
+
+	/// <summary>
+	/// Gives the window <paramref name="zoom"/> (the DPI is applied on top of it: UIService.Scale = zoom * DpiScale) and
+	/// saves it. The layout kept at zoom 1 is given back, then scaled once by the zoom: the layout is the same whatever
+	/// the zooms before, and a reset gives back the layout at zoom 1.
+	/// </summary>
+	/// <param name="zoom">The zoom, an absolute value (1 for the design size).</param>
+	protected virtual void ScaleForm(float zoom)
 	{
-		// Support relative resizing of the DB value.
-		// scaleFactor is a zoom: the DPI is applied on top of it (UIService.Scale = zoom * DpiScale).
-		float dpi = UIService.DpiScale;
+		float previous = UIService.Scale;
+		UIService.Scale = zoom * UIService.DpiScale;
 
-		if (useRelativeScaling && scaleFactor != 1.0F)
-		{
-			float newZoom = UIService.Zoom * scaleFactor;
-			if (newZoom > Presentation.Win32.UIService.MaxZoom || newZoom < Presentation.Win32.UIService.MinZoom)
-				return;
-
-			UIService.Scale = newZoom * dpi;
-			using (ZoomScope.Enter())
-				this.Scale(new SizeF(scaleFactor, scaleFactor));
-
-			USettings.Scale = UIService.Zoom;
-			USettings.Save();
-		}
-		else if (scaleFactor == 1.0F)
+		if (zoom == 1.0F)
 		{
 			// Reset the border graphics to the originals.
 			this.topBorder = Images.BorderTop;
@@ -74,33 +72,36 @@ public partial class VaultForm
 			this.sideBorder = Images.BorderSide;
 			this.bottomRightCorner = Images.BorderBottomRightCorner;
 			this.bottomLeftCorner = Images.BorderBottomLeftCorner;
+		}
 
-			UIService.Scale = dpi;
+		// Maximized (or minimized), the window cannot be given its size at zoom 1, and the size Windows restores it to
+		// follows the scaling of its size: it is scaled from the zoom before, as the content until it is restored; the
+		// zoom of the restore gives the content its layout from zoom 1 back.
+		if (this.zoomSnapshot is { } snapshot && this.WindowState == FormWindowState.Normal)
+		{
+			snapshot.Zoom(previous, UIService.Scale, factor =>
+			{
+				// The window at zoom 1 too: the content is scaled as the window holding it; the size before the next
+				// resize is not a resize by the user to keep in the design ratio.
+				if (this.ClientSize != snapshot.ClientSize)
+				{
+					this.LastFormSize = this.SizeFromClientSize(snapshot.ClientSize);
+					this.ClientSize = snapshot.ClientSize;
+				}
 
-			// Use the width since it is usually more drastic of a change.
-			// especially when coming from a small size.
-			var size = new SizeF(
-				(float)NORMAL_FORMWIDTH * dpi / (float)this.Width,
-				(float)NORMAL_FORMWIDTH * dpi / (float)this.Width);
-			using (ZoomScope.Enter())
-				this.Scale(size);
-
-			USettings.Scale = 1.0F;
-			USettings.Save();
+				using (ZoomScope.Enter())
+					this.Scale(new SizeF(factor, factor));
+			});
 		}
 		else
 		{
-			// From the width, as a reset does: the main window may be taller than its design ratio, grown to fit its
-			// content.
-			float scaling = (float)NORMAL_FORMWIDTH * dpi / (float)this.Width * scaleFactor;
-
-			UIService.Scale = scaleFactor * dpi;
+			float factor = UIService.Scale / previous;
 			using (ZoomScope.Enter())
-				this.Scale(new SizeF(scaling, scaling));
-
-			USettings.Scale = UIService.Zoom;
-			USettings.Save();
+				this.Scale(new SizeF(factor, factor));
 		}
+
+		USettings.Scale = UIService.Zoom;
+		USettings.Save();
 
 		RefreshNormalizeBox();
 
@@ -124,7 +125,9 @@ public partial class VaultForm
 			if (e.ResizeDelta == 1.0F)
 				scale = e.ResizeDelta;
 			else
-				scale = UIService.Zoom + e.ResizeDelta;
+				// Without the float noise of the steps added (1.0000001 after zooms out and back in): the layout depends on
+				// the zoom alone, and 2.5000002 pixels rounded to 3 where the zoom itself gives 2.
+				scale = MathF.Round(UIService.Zoom + e.ResizeDelta, 2);
 
 			if (scale < 0.39F || scale > 2.01F)
 				return;
@@ -134,7 +137,7 @@ public partial class VaultForm
 			if (e.ResizeDelta > 0.0F && e.ResizeDelta != 1.0F && scale > this.LargestZoom() + ZoomTolerance)
 				return;
 
-			this.ScaleForm(scale, false);
+			this.ScaleForm(scale);
 		}
 
 		this.LastFormSize = this.Size;
@@ -318,7 +321,13 @@ public partial class VaultForm
 
 			// Set it back to the original size since the Scale() call in ScaleForm() will also resize the form.
 			this.Size = resizeTo;
-			this.ScaleForm(scalingFactor, true);
+
+			// The zoom the new width gives (a factor of 1 resets the zoom); out of the zoom's range, the zoom stays.
+			float zoom = scalingFactor == 1.0F ? 1.0F : UIService.Zoom * scalingFactor;
+			if (zoom > Presentation.Win32.UIService.MaxZoom || zoom < Presentation.Win32.UIService.MinZoom)
+				zoom = UIService.Zoom;
+
+			this.ScaleForm(zoom);
 		}
 
 		this.LastFormSize = this.Size;

@@ -157,8 +157,7 @@ public partial class VaultForm : Form, IScalingControl
 		this.GamePathResolver = this.Services.GamePathService;
 		this.GameFileService = this.Services.GameFileService;
 		this.SoundService = this.Services.SoundService;
-		// Its own copy: the form disposes it, and the service shares its fonts.
-		this.titleFont = (Font)FontService.GetFontLight(9.5F).Clone();
+		this.titleFont = this.TitleFontAt(1.0F);
 		this.Log = this.Services.Logger<VaultForm>();
 		this.TranslationService = this.Services.TranslationService;
 		this.PathIO = this.Services.PathIO;
@@ -376,10 +375,11 @@ public partial class VaultForm : Form, IScalingControl
 	{
 		if (this.DrawCustomBorder)
 		{
-			if (this.titleFont is not null && ZoomScope.IsZooming && factor.Width != 1.0F)
+			// From the zoom, not from the font of the zoom before (12 -> 11.98 pt after a few zooms).
+			if (this.titleFont is not null && ZoomScope.IsZooming)
 			{
 				var previous = this.titleFont;
-				this.titleFont = new Font(previous.FontFamily, previous.SizeInPoints * factor.Width, previous.Style);
+				this.titleFont = this.TitleFontAt(UIService.Zoom);
 				previous.Dispose();
 			}
 		}
@@ -389,6 +389,12 @@ public partial class VaultForm : Form, IScalingControl
 		if (this.DrawCustomBorder)
 			this.CreateBorderRects();
 	}
+
+	/// <summary>
+	/// The caption's font at <paramref name="zoom"/> (points follow the DPI by themselves), the form's own copy: the form
+	/// disposes it, and the service shares its fonts.
+	/// </summary>
+	private Font TitleFontAt(float zoom) => (Font)this.FontService.GetFontLight(9.5F, zoom).Clone();
 
 	internal const int NORMAL_FORMWIDTH = 1350;
 	internal const int NORMAL_FORMHEIGHT = 910;
