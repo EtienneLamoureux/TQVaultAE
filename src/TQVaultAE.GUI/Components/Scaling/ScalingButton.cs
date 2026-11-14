@@ -24,6 +24,9 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	/// </summary>
 	private Font? baseFont;
 
+	/// <summary>The DPI of the last font set from outside (<see cref="OnFontChanged"/>), the DPI of the base font.</summary>
+	private int baseFontDpi;
+
 	/// <summary>
 	/// Set while the button changes its own font to fit its text, so that change is not taken as a new base font.
 	/// </summary>
@@ -261,12 +264,13 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	/// <param name="specified">BoundsSpecified value.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
-		// A DPI scaling (at load, or on a monitor of another DPI): Windows Forms scales the font itself and disposes the
-		// fonts it made for the previous DPI, so no reference to them is kept; the text only fits the new width.
+		// A DPI scaling (at load, or on a monitor of another DPI): Windows Forms scales the font itself, before the
+		// bounds, and that new font is the base font (OnFontChanged). The text fits it once the bounds are scaled
+		// (OnSizeChanged); the font fitted to the old width in between must not become the base font: after
+		// 144 -> 96 -> 144 dpi the buttons kept a smaller text (12 pt became 11 and 10.5).
 		if (!ZoomScope.IsZooming)
 		{
-			this.baseFont = null;
-			this.SetFittedFont(this.GetScaledButtonTextFont(this.Font, Convert.ToInt32((float)this.Width * factor.Width)));
+			this.baseFont ??= this.Font;
 			if (this.Image is not null)
 				this.Image = this.UpBitmap;
 
@@ -415,7 +419,13 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		if (this.fittingFont)
 			return;
 
-		this.baseFont = this.Font;
+		// On a monitor of another DPI, Windows Forms scales the font the button shows, which may be the font fitted to a
+		// long text: the base font is scaled instead, or each move shrank the text again ("Appliquer" 11.5 pt at 144 dpi
+		// became 7.67 at 96, then fitted to 6.67, where "Annuler" got 8).
+		this.baseFont = this.baseFont is { } previous && this.baseFontDpi > 0 && this.baseFontDpi != this.DeviceDpi && !ZoomScope.IsZooming
+			? new Font(previous.FontFamily, previous.Size * this.DeviceDpi / this.baseFontDpi, previous.Style, previous.Unit)
+			: this.Font;
+		this.baseFontDpi = this.DeviceDpi;
 		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
 	}
 
@@ -475,17 +485,21 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		if (font is null)
 			return null;
 
+		// The room left around the text, at the DPI of the monitor (12 px at 144 dpi, 8 at 96): a fixed 12 px left
+		// less room at 96 dpi, where a long text (French "Appliquer") was fitted smaller than its neighbour's.
+		int room = newWidth - this.LogicalToDeviceUnits(8);
+
 		// See if the text can fit on the button and if it does we do not need to do anything.
-		if (TextRenderer.MeasureText(this.Text, font).Width < newWidth - 12)
+		if (TextRenderer.MeasureText(this.Text, font).Width < room)
 			return font;
 
 		float fontSize = font.Size;
 
 		// Measure bolded text just in case the bolding will cause the text to exceed the bounging box.
 		// We do not want the font to change size as we mouse over.
-		while (TextRenderer.MeasureText(this.Text, font).Width >= (newWidth - 12) && fontSize > 0.5F)
+		while (TextRenderer.MeasureText(this.Text, font).Width >= room && fontSize > 0.5F)
 		{
-			fontSize -= 0.5F;
+			fontSize -= 0.25F;
 			// By its family: the game fonts are private, a font made from their name was Microsoft Sans Serif.
 			font = new Font(font.FontFamily, fontSize, font.Style, font.Unit);
 		}
