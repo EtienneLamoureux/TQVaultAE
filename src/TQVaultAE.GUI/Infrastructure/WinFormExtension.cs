@@ -19,6 +19,27 @@ public static class WinFormExtension
 	public static int HorizontalScrollBarHeight(this Control ctrl)
 		=> SystemInformation.GetHorizontalScrollBarHeightForDpi(ctrl.DeviceDpi);
 
+	/// <summary>
+	/// The DPI of the monitor of <paramref name="ctrl"/> over the design DPI (96): 1.25 at 120 DPI. For what is drawn or
+	/// sized in code at the DPI only; Windows Forms scales the designer's controls by itself, and the user's zoom comes on
+	/// top of it where it applies (<see cref="TQVaultAE.Presentation.Win32.Contracts.IUIService.Scale"/>).
+	/// </summary>
+	public static float DpiScale(this Control ctrl) => ctrl.DeviceDpi / 96F;
+
+	/// <summary><paramref name="padding"/> with each side multiplied by <paramref name="factor"/>, rounded to the pixel.</summary>
+	public static Padding Scaled(this Padding padding, float factor)
+	{
+		int Scale(int value) => (int)Math.Round(value * factor);
+		return new Padding(Scale(padding.Left), Scale(padding.Top), Scale(padding.Right), Scale(padding.Bottom));
+	}
+
+	/// <summary>
+	/// <paramref name="padding"/> in design pixels (96 DPI) in pixels of the monitor of <paramref name="ctrl"/>, as
+	/// <see cref="Control.LogicalToDeviceUnits(int)"/> does for a value: Windows Forms does not scale a window's own
+	/// padding when its DPI changes.
+	/// </summary>
+	public static Padding LogicalToDeviceUnits(this Control ctrl, Padding padding) => padding.Scaled(ctrl.DpiScale());
+
 	public static void ProcessAllControls(this Control rootControl, Action<Control> action)
 	{
 		foreach (Control childControl in rootControl.Controls)

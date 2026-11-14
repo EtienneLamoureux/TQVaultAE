@@ -55,7 +55,7 @@ internal sealed partial class CharacterEditorUserControl
 	private int[] _startAttributes = [];
 
 	/// <summary>The size of a game pixel on screen: the frame is drawn at the game's size times the DPI factor.</summary>
-	private float GameScale => this.DeviceDpi / 96F;
+	private float GameScale => this.DpiScale();
 
 	/// <summary>
 	/// The game frame with OK and Cancel under it, sized to them; laid at the top left of the control

@@ -604,11 +604,7 @@ public partial class BagButtonSettings : VaultForm
 	/// design value each time, it cannot drift.
 	/// </summary>
 	private void ApplyBorderPadding()
-	{
-		float factor = this.DeviceDpi / 96F;
-		int Scaled(int value) => (int)Math.Round(value * factor);
-		this.Padding = new Padding(Scaled(BorderPadding.Left), Scaled(BorderPadding.Top), Scaled(BorderPadding.Right), Scaled(BorderPadding.Bottom));
-	}
+		=> this.Padding = this.LogicalToDeviceUnits(BorderPadding);
 
 	protected override void OnDpiChanged(DpiChangedEventArgs e)
 	{

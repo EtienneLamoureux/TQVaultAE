@@ -284,10 +284,9 @@ public partial class VaultForm
 		// changed: fit again once it is applied.
 		this.FitToContent();
 
-		Size Scaled(Size size) => new((int)Math.Round(size.Width * factor), (int)Math.Round(size.Height * factor));
-		this.OriginalFormSize = Scaled(this.OriginalFormSize);
-		this.FormMaximumSize = Scaled(this.FormMaximumSize);
-		this.FormMinimumSize = Scaled(this.FormMinimumSize);
+		this.OriginalFormSize = TQVaultAE.Application.WindowLayout.Scaled(this.OriginalFormSize, factor);
+		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMaximumSize, factor);
+		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMinimumSize, factor);
 		this.LastFormSize = this.Size;
 		this.PlaceButtons();
 	}

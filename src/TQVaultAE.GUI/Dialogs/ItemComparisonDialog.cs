@@ -177,7 +177,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// The scale of the columns, made at each change of the content, in pixels of the dialog's monitor: the user's zoom
 	/// and that monitor's DPI.
 	/// </summary>
-	private float ContentScale => this.UIService.Zoom * this.DeviceDpi / 96F;
+	private float ContentScale => this.UIService.Zoom * this.DpiScale();
 
 	/// <summary>
 	/// The space between the border and the content, at the dialog's DPI: Windows Forms does not scale a window's own

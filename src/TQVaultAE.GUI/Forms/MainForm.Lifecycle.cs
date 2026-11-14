@@ -385,9 +385,8 @@ public partial class MainForm
 			return;
 
 		float factor = UIService.Scale / this.designMarginScale;
-		int Scaled(int value) => (int)Math.Round(value * factor);
 		foreach (var (control, m) in this.designMargins)
-			control.Margin = new Padding(Scaled(m.Left), Scaled(m.Top), Scaled(m.Right), Scaled(m.Bottom));
+			control.Margin = m.Scaled(factor);
 	}
 
 	/// <summary>The client size of the window at zoom 1 and 96 dpi.</summary>
