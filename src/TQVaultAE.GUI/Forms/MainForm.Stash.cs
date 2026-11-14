@@ -13,31 +13,6 @@ namespace TQVaultAE.GUI.Forms;
 public partial class MainForm
 {
 	/// <summary>
-	/// Creates the stash panel
-	/// </summary>
-	private void CreateStashPanel()
-	{
-		// size params are width, height
-		Size panelSize = new Size(17, 16);
-
-		this.stashPanel = new StashPanel(this.DragInfo, panelSize, this.Services);
-
-		// New location in bottom right of the Main Form.
-		// Align to playerPanel
-
-		this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.stashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-		this.stashPanel.EditCharacterClicked += (_, _) => this.ShowCharacterEditorView(this.stashPanel.ShownPlayer);
-		this.stashPanel.OnLoadoutAction += this.LoadoutActionCallback;
-
-		this.flowLayoutPanelRightPanels.Controls.Add(this.stashPanel);
-		this.stashPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.stashPanel.Margin = new Padding(0);
-	}
-
-	/// <summary>
 	/// Loads and shows the transfer and relic vault stashes, unless the selected character is a Titan Quest original one.
 	/// </summary>
 	private void LoadSharedStashes()
@@ -131,8 +106,6 @@ public partial class MainForm
 				watcher.Changed += (_, e) => this.SharedStashFile_Changed(e, type, watchedMap);
 				watcher.EnableRaisingEvents = true;
 				this.sharedStashWatchers[file] = watcher;
-				// The form's container disposes it with the form.
-				this.components?.Add(watcher);
 			}
 		}
 	}

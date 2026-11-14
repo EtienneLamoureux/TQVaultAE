@@ -164,20 +164,7 @@ public partial class MainForm
 		if (this.shownView is not null)
 			return;
 
-		// Force a single line regardless of the delta value.
-		int numberOfTextLinesToMove = ((e.Delta > 0) ? 1 : 0) - ((e.Delta < 0) ? 1 : 0);
-		if (numberOfTextLinesToMove != 0)
-		{
-			int vaultSelection = this.vaultListComboBox.SelectedIndex;
-			vaultSelection -= numberOfTextLinesToMove;
-			if (vaultSelection < 1)
-				vaultSelection = 1;
-
-			if (vaultSelection >= this.vaultListComboBox.Items.Count)
-				vaultSelection = this.vaultListComboBox.Items.Count - 1;
-
-			this.vaultListComboBox.SelectedIndex = vaultSelection;
-		}
+		this.mainView.ScrollVaultList(e.Delta);
 	}
 
 	/// <summary>
@@ -204,7 +191,7 @@ public partial class MainForm
 			, KeyBindAction.Forge);
 
 		// The forge keys only while the forge is shown, and not in a text box, where the key is typed.
-		if (action == KeyBindAction.Forge && (!this.forgePanel.Visible || this.FocusedControl() is TextBoxBase))
+		if (action == KeyBindAction.Forge && (!this.mainView.ForgeShown || this.FocusedControl() is TextBoxBase))
 			action = null;
 
 		if (action is not null)
@@ -232,7 +219,7 @@ public partial class MainForm
 				this.ResizeFormCallback(this, new ResizeEventArgs(1.0F));
 				break;
 			case KeyBindAction.Forge:
-				this.forgePanel.ForgeFromShortcut();
+				this.mainView.ForgeFromShortcut();
 				break;
 			default:
 				return;

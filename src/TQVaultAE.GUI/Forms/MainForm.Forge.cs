@@ -1,46 +1,21 @@
-using TQVaultAE.GUI.Components.Panels;
-using TQVaultAE.GUI.Components;
-
 namespace TQVaultAE.GUI.Forms;
 
 public partial class MainForm
 {
-	private ForgePanel forgePanel = null!; // Created while the form loads.
-
 	/// <summary>The text of the forge button while the forge is closed; the button reads "Show Vault" while it is open.</summary>
 	private string? forgeButtonText;
 
+	/// <summary>The visibility of the toolbar buttons the forge hides, given back when it closes.</summary>
 	private (
 		bool configureButton
 		, bool showVaulButton
 		, bool searchButton
 		, bool saveButton
-		, bool playerPanel
-		, bool stashPanel
-		, bool secondaryVaultPanel
-		, bool flowLayoutPanelRightComboBox
 	) lastVisibility;
-
-	private ForgePanel CreateForgePanel()
-	{
-		forgePanel = new ForgePanel(DragInfo, Services);
-
-		flowLayoutPanelRightPanels.Controls.Add(forgePanel);
-		forgePanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		forgePanel.Visible = false;
-		forgePanel.CancelAction = ForgeActionCanceled;
-		forgePanel.ForgeAction = ForgeActionForged;
-
-		// The forge takes the height of the panels it stands for: the character's bags and the stash under them.
-		forgePanel.HeightLimit = () => this.playerPanel.Height + this.stashPanel.Height - forgePanel.Margin.Vertical;
-		this.playerPanel.SizeChanged += (_, _) => forgePanel.FitHeight();
-		this.stashPanel.SizeChanged += (_, _) => forgePanel.FitHeight();
-		return forgePanel;
-	}
 
 	private void scalingButtonForge_Click(object? sender, EventArgs e)
 	{
-		if (!forgePanel.Visible)
+		if (!this.mainView.ForgeShown)
 		{
 			ForgeShowUI();
 
@@ -60,10 +35,6 @@ public partial class MainForm
 			, showVaulButton: showVaulButton.Visible
 			, searchButton: searchButton.Visible
 			, saveButton: saveButton.Visible
-			, playerPanel: playerPanel.Visible
-			, stashPanel: stashPanel.Visible
-			, secondaryVaultPanel: secondaryVaultPanel.Visible
-			, flowLayoutPanelRightComboBox: flowLayoutPanelRightComboBox.Visible
 		);
 
 		// Hide buttons
@@ -71,31 +42,14 @@ public partial class MainForm
 		showVaulButton.Visible =
 		searchButton.Visible =
 		saveButton.Visible =
-
-		// Hide right panels
-		flowLayoutPanelRightComboBox.Visible =
-		playerPanel.Visible =
-		stashPanel.Visible =
-		secondaryVaultPanel.Visible =
 		false;
 
-		// Show the forge
-		forgePanel.Dock = DockStyle.Left;
-		forgePanel.Visible = true;
-		forgePanel.FitHeight();
+		// Hide the right panels and show the forge
+		this.mainView.ShowForge();
 
 		// The button now leads back to the vaults: it says so.
 		this.forgeButtonText = forgeButton.Text;
 		forgeButton.Text = TQVaultAE.Presentation.Resources.MainFormBtnPanelSelect;
-
-		// Detailed tooltips while the forge is open, as session state: the setting itself is not changed, so closing the
-		// app with the forge open cannot save the forced value.
-		this.userContext.ForceDetailedTooltipView = true;
-	}
-
-	private void ForgeActionForged()
-	{
-		ForgeHideUI();
 	}
 
 	private void ForgeActionCanceled()
@@ -113,17 +67,11 @@ public partial class MainForm
 		showVaulButton.Visible = lastVisibility.showVaulButton;
 		searchButton.Visible = lastVisibility.searchButton;
 		saveButton.Visible = lastVisibility.saveButton;
-		flowLayoutPanelRightComboBox.Visible = lastVisibility.flowLayoutPanelRightComboBox;
-		playerPanel.Visible = lastVisibility.playerPanel;
-		stashPanel.Visible = lastVisibility.stashPanel;
-		secondaryVaultPanel.Visible = lastVisibility.secondaryVaultPanel;
+
 		// Hide the forge
-		forgePanel.Dock = DockStyle.None;
-		forgePanel.Visible = false;
+		this.mainView.HideForge();
 		if (this.forgeButtonText is not null)
 			forgeButton.Text = this.forgeButtonText;
-
-		this.userContext.ForceDetailedTooltipView = false;
 
 		Refresh();
 	}

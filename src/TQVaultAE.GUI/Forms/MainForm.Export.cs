@@ -119,7 +119,7 @@ public partial class MainForm
 		};
 		MenuStyle.Apply(vaultExportContextMenu, FontService, UIService.FontZoom);
 
-		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.MaintainVaultFilesDialog());
+		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.mainView.MaintainVaultFilesDialog());
 
 		// The vault's mod: built when the menu opens, for the vault shown then.
 		vaultExportContextMenu.Items.Add("-");
@@ -364,9 +364,8 @@ public partial class MainForm
 		{
 			var newName = this.itemExchangeService.ImportAsNewVault(importResult, DateTime.Now);
 
-			this.GetVaultList(false);
-			this.vaultListComboBox.SelectedItem = newName;
-			this.LoadVault(newName, false);
+			this.mainView.GetVaultList(false);
+			this.mainView.SelectVault(newName);
 
 			this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccessCreate, newName));
 			this.NotifyDroppedMods(importResult);

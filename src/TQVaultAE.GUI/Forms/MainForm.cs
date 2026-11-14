@@ -65,28 +65,6 @@ public partial class MainForm : VaultForm
 	private bool loadingComplete;
 
 	/// <summary>
-	/// Instance of the player panel control
-	/// </summary>
-	private PlayerPanel playerPanel = null!; // Created while the form loads.
-
-	/// <summary>
-	/// Holds the last sack that had mouse focus
-	/// Used for Automoving
-	/// </summary>
-	private SackCollection? lastSackHighlighted;
-
-	/// <summary>
-	/// Holds the last sack panel that had mouse focus
-	/// Used for Automoving
-	/// /// </summary>
-	private SackPanel? lastSackPanelHighlighted;
-
-	/// <summary>
-	/// Info for the current item being dragged by the mouse
-	/// </summary>
-	private ItemDragInfo DragInfo;
-
-	/// <summary>
 	/// Used for show/hide table panel layout borders during debug
 	/// </summary>
 	private bool DebugLayoutBorderVisible = false;
@@ -97,40 +75,9 @@ public partial class MainForm : VaultForm
 	internal SessionContext userContext;
 
 	/// <summary>
-	/// Instance of the vault panel control
-	/// </summary>
-	private VaultPanel vaultPanel = null!; // Created while the form loads.
-
-	/// <summary>
-	/// Instance of the second vault panel control
-	/// This gets toggled with the player panel
-	/// </summary>
-	private VaultPanel secondaryVaultPanel = null!; // Created while the form loads.
-
-	/// <summary>
-	/// Instance of the stash panel control
-	/// </summary>
-	private StashPanel stashPanel = null!; // Created while the form loads.
-
-	/// <summary>
-	/// Holds that last stash that had focus
-	/// </summary>
-	private Stash? lastStash;
-
-	/// <summary>
-	/// Bag number of the last bag with focus
-	/// </summary>
-	private int lastBag;
-
-	/// <summary>
 	/// Holds the current program version
 	/// </summary>
 	private string currentVersion;
-
-	/// <summary>
-	/// Flag which holds whether we are showing the secondary vault panel or the player panel.
-	/// </summary>
-	private bool showSecondaryVault;
 
 	/// <summary>
 	/// Form for the splash screen.
@@ -241,7 +188,7 @@ Item Debug Level: {ItemDebugLevel}
 		this.MouseWheel += new MouseEventHandler(this.MainFormMouseWheel);
 	}
 
-	[MemberNotNull(nameof(currentVersion), nameof(DragInfo))]
+	[MemberNotNull(nameof(currentVersion))]
 	private void InitForm()
 	{
 		this.Enabled = false;
@@ -287,7 +234,6 @@ Item Debug Level: {ItemDebugLevel}
 		this.searchButton.Text = Resources.MainFormSearchButtonText;
 		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
-		this.DragInfo = new ItemDragInfo(this.UIService);
 #if DEBUG
 		this.DebugLayoutBorderVisible = false;// Set here what you want during debug
 #endif
@@ -303,7 +249,7 @@ Item Debug Level: {ItemDebugLevel}
 		// are listed.
 		this.GameFileService.GitRepositorySetup();
 
-		this.CreatePanels();
+		this.mainView.CreatePanels(this.GetPlayerList);
 
 		SetupVaultExportButton();
 	}

@@ -37,7 +37,7 @@ public partial class MainForm
 		if (this.comboBoxCharacter.SelectedItem == save)
 		{
 			// A selection made before cannot be acted on any more.
-			this.ClearAllItemsSelectedCallback(this, new Models.SackPanelEventArgs(null, null));
+			this.mainView.ClearAllItemsSelected();
 			this.playerPanel.Refresh();
 			this.stashPanel.Refresh();
 		}

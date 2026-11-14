@@ -1,60 +1,32 @@
-using System.Globalization;
-using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.GUI.Components.Panels;
-using TQVaultAE.GUI.Components;
-using TQVaultAE.GUI.Dialogs;
-using TQVaultAE.GUI.Infrastructure;
-using TQVaultAE.Domain.Actions;
-using TQVaultAE.GUI.Models;
-using TQVaultAE.Presentation;
-using TQVaultAE.Services;
+using System.Globalization;
 using TQVaultAE.Application;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.Presentation;
+using TQVaultAE.Services;
 
-namespace TQVaultAE.GUI.Forms;
+namespace TQVaultAE.GUI.Views;
 
-public partial class MainForm
+/// <summary>
+/// The vault lists of the main content: the main vault list with its maintenance entry, and the secondary vault list
+/// shown in place of the character list.
+/// </summary>
+public partial class MainFormUserControl
 {
-	// Uses vaultService from MainForm.cs
+	/// <summary>
+	/// Raised before the vault maintenance dialog opens: the modified files are saved first.
+	/// </summary>
+	internal event EventHandler? SaveRequested;
 
 	/// <summary>
-	/// Creates the vault panel
+	/// The vault selected in the main vault list; null when none is.
 	/// </summary>
-	/// <param name="numBags">Number of bags in the vault panel.</param>
-	private void CreateVaultPanel(int numBags)
-	{
-		this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault, this.Services);
-
-		this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.vaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.vaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-
-		this.tableLayoutPanelMain.Controls.Add(this.vaultPanel, 0, 1);
-		this.vaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.vaultPanel.Margin = new Padding(0);
-	}
-
-	/// <summary>
-	/// Creates the secondary vault panel.  Player panel needs to be created before this.
-	/// </summary>
-	/// <param name="numBags">Number of bags in the secondary vault panel.</param>
-	private void CreateSecondaryVaultPanel(int numBags)
-	{
-		this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault, this.Services);
-
-		this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.secondaryVaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.secondaryVaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-
-		this.flowLayoutPanelRightPanels.Controls.Add(this.secondaryVaultPanel);
-		this.secondaryVaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.secondaryVaultPanel.Margin = new Padding(0);
-	}
-
+	internal string? SelectedVaultName
+		=> this.vaultListComboBox.SelectedItem is not null ? this.vaultListComboBox.SelectedItemText() : null;
 
 	/// <summary>
 	/// The mod a vault is linked to, once the vault is loaded; null otherwise.
@@ -69,13 +41,15 @@ public partial class MainForm
 	/// Gets a list of all available vault files and populates the drop down list.
 	/// </summary>
 	/// <param name="loadVault">Indicates whether the list will also load the last vault selected.</param>
-	private void GetVaultList(bool loadVault)
+	internal void GetVaultList(bool loadVault)
 	{
+		var vaultService = this.Services.VaultService;
+
 		// A vault linked to a mod shows it after its name, like the characters.
 		this.vaultListComboBox.ItemSuffix ??= this.LoadedVaultMod;
 		this.secondaryVaultListComboBox.ItemSuffix ??= this.LoadedVaultMod;
 
-		string[] vaults = this.vaultService.GetVaultList();
+		string[] vaults = vaultService.GetVaultList();
 
 		// There was something already selected so we will save it.
 		string? currentVault = (this.vaultListComboBox.Items.Count > 0) ? this.vaultListComboBox.SelectedItemText() : IVaultService.MainVault;
@@ -88,11 +62,11 @@ public partial class MainForm
 		string? secondaryVault = this.showSecondaryVault && this.secondaryVaultListComboBox.SelectedItem is not null
 			? this.secondaryVaultListComboBox.SelectedItemText()
 			: null;
-		var choices = this.vaultService.BuildVaultChoices(vaults, Resources.MainFormMaintainVault, secondaryVault);
+		var choices = vaultService.BuildVaultChoices(vaults, Resources.MainFormMaintainVault, secondaryVault);
 		this.vaultListComboBox.Items.AddRange(choices.ToArray<object>());
 
 		// The last loaded vault when it is set to load, else the one already selected.
-		currentVault = this.vaultService.ResolveVaultToLoad(currentVault ?? IVaultService.MainVault);
+		currentVault = vaultService.ResolveVaultToLoad(currentVault ?? IVaultService.MainVault);
 
 		if (loadVault)
 		{
@@ -123,7 +97,7 @@ public partial class MainForm
 		// The main list without its maintenance entry and without the vault open in the main panel.
 		var mainVaults = this.vaultListComboBox.Items.Cast<object>().Skip(1).Select(item => item.ToString() ?? string.Empty);
 		string? mainVault = this.vaultListComboBox.SelectedIndex > 0 ? this.vaultListComboBox.SelectedItemText() : null;
-		var choices = this.vaultService.BuildVaultChoices(mainVaults, Resources.MainFormSelectVault, mainVault, alwaysIncludeMainVault: false);
+		var choices = this.Services.VaultService.BuildVaultChoices(mainVaults, Resources.MainFormSelectVault, mainVault, alwaysIncludeMainVault: false);
 		this.secondaryVaultListComboBox.Items.AddRange(choices.ToArray<object>());
 
 		this.secondaryVaultListComboBox.SelectedItem = currentVault;
@@ -133,11 +107,22 @@ public partial class MainForm
 	}
 
 	/// <summary>
+	/// Selects a vault in the main vault list and loads it.
+	/// </summary>
+	internal void SelectVault(string vaultName)
+	{
+		this.vaultListComboBox.SelectedItem = vaultName;
+
+		// Finally load Vault
+		this.LoadVault(vaultName, false);
+	}
+
+	/// <summary>
 	/// Loads a vault file
 	/// </summary>
 	/// <param name="vaultName">Name of the vault</param>
 	/// <param name="secondaryVault">flag indicating whether this selection is for the secondary panel</param>
-	private void LoadVault(string vaultName, bool secondaryVault)
+	internal void LoadVault(string vaultName, bool secondaryVault)
 	{
 		PlayerCollection? vault = null;
 		if (secondaryVault && vaultName == Resources.MainFormSelectVault)
@@ -148,7 +133,7 @@ public partial class MainForm
 		else
 		{
 			// Use service
-			var result = this.vaultService.LoadVault(vaultName);
+			var result = this.Services.VaultService.LoadVault(vaultName);
 
 			// A format error keeps the vault (partly read); any other error leaves no vault to show.
 			if ((result.ArgumentException as Exception ?? result.Error) is { } error)
@@ -168,7 +153,7 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Gets the vaults the main window knows: those of both drop downs and both vault panels,
+	/// Gets the vaults the main content knows: those of both drop downs and both vault panels,
 	/// new vaults not saved yet included (they have no file).
 	/// </summary>
 	internal IEnumerable<string> KnownVaultNames
@@ -181,14 +166,36 @@ public partial class MainForm
 			.Distinct(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
+	/// Moves the selection of the main vault list by one vault per wheel notch, never onto its maintenance entry.
+	/// </summary>
+	/// <param name="delta">The wheel's delta: up selects the vault above.</param>
+	internal void ScrollVaultList(int delta)
+	{
+		// Force a single line regardless of the delta value.
+		int numberOfTextLinesToMove = ((delta > 0) ? 1 : 0) - ((delta < 0) ? 1 : 0);
+		if (numberOfTextLinesToMove != 0)
+		{
+			int vaultSelection = this.vaultListComboBox.SelectedIndex;
+			vaultSelection -= numberOfTextLinesToMove;
+			if (vaultSelection < 1)
+				vaultSelection = 1;
+
+			if (vaultSelection >= this.vaultListComboBox.Items.Count)
+				vaultSelection = this.vaultListComboBox.Items.Count - 1;
+
+			this.vaultListComboBox.SelectedIndex = vaultSelection;
+		}
+	}
+
+	/// <summary>
 	/// Asks before deleting a vault: its name, its items and bags, and whether the file goes to the Recycle Bin.
 	/// No is the default button. "Suppress warnings" skips the question, as for the other deletions.
 	/// </summary>
 	/// <returns>Whether to delete the vault.</returns>
 	private bool ConfirmVaultDelete(string vaultName)
-		=> this.USettings.SuppressWarnings
+		=> this.Services.Settings.SuppressWarnings
 			|| this.Services.MessageBoxes.Confirm(
-				VaultDeleteText.Build(vaultName, this.vaultService.GetDeleteInfo(vaultName)),
+				VaultDeleteText.Build(vaultName, this.Services.VaultService.GetDeleteInfo(vaultName)),
 				Resources.VaultDelete,
 				MessageBoxIcon.Warning,
 				defaultNo: true);
@@ -196,17 +203,18 @@ public partial class MainForm
 	/// <summary>
 	/// Method for the maintain vault files dialog
 	/// </summary>
-	private void MaintainVaultFilesDialog()
+	internal void MaintainVaultFilesDialog()
 	{
+		var vaultService = this.Services.VaultService;
 		try
 		{
 			// Saves all modifications first: the dialog and the delete confirmation are modal, so nothing changes until
 			// the vault is copied, deleted or renamed below.
-			this.SaveAllModifiedFiles();
+			this.SaveRequested?.Invoke(this, EventArgs.Empty);
 
 			using var dlg = this.Services.Forms.Create<VaultMaintenanceDialog>();
 			using (ZoomScope.Enter())
-				dlg.Scale(new SizeF(UIService.Zoom, UIService.Zoom));
+				dlg.Scale(new SizeF(this.Services.UIService.Zoom, this.Services.UIService.Zoom));
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
@@ -243,7 +251,7 @@ public partial class MainForm
 				}
 				else if (dlg.Action == VaultMaintenance.Copy && newName is not null && oldName is not null)
 				{
-					if (this.vaultService.CopyVault(oldName, newName))
+					if (vaultService.CopyVault(oldName, newName))
 					{
 						// Add the new name to the list
 						this.vaultListComboBox.Items.Add(newName);
@@ -258,7 +266,7 @@ public partial class MainForm
 				}
 				else if (dlg.Action == VaultMaintenance.Delete && oldName is not null && deleteConfirmed)
 				{
-					this.vaultService.DeleteVault(oldName);
+					vaultService.DeleteVault(oldName);
 
 					// Remove the deleted file from the list.
 					this.vaultListComboBox.Items.Remove(oldName);
@@ -270,7 +278,7 @@ public partial class MainForm
 				}
 				else if (dlg.Action == VaultMaintenance.Rename && newName is not null && oldName is not null)
 				{
-					if (this.vaultService.RenameVault(oldName, newName))
+					if (vaultService.RenameVault(oldName, newName))
 					{
 						// Get rid of the old name from the list
 						this.vaultListComboBox.Items.Remove(oldName);

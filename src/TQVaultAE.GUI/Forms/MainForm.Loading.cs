@@ -254,10 +254,7 @@ public partial class MainForm
 		if (selection.CharacterKey is not null)
 			this.comboBoxCharacter.SelectedItem = characters.First(ps => ps.Key == selection.CharacterKey);
 
-		this.vaultListComboBox.SelectedItem = selection.VaultName;
-
-		// Finally load Vault
-		this.LoadVault(selection.VaultName, false);
+		this.mainView.SelectVault(selection.VaultName);
 
 		this.splashScreen.UpdateText();
 		this.splashScreen.ShowMainForm = true;

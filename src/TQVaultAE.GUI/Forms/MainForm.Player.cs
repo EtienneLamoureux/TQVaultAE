@@ -58,9 +58,7 @@ public partial class MainForm
 	/// </summary>
 	private void GetPlayerList()
 	{
-		// Initialize the character combo-box; the saves listed before go, with their file watchers.
-		foreach (var listed in this.comboBoxCharacter.Items.OfType<PlayerSave>())
-			listed.Dispose();
+		// Initialize the character combo-box
 		this.comboBoxCharacter.Items.Clear();
 
 		var characters = this.playerService.GetPlayerSaveList();
@@ -156,23 +154,6 @@ public partial class MainForm
 		fw.EnableRaisingEvents = true;
 		fw.EndInit();
 		return fw;
-	}
-
-	/// <summary>
-	/// Creates the player panel
-	/// </summary>
-	private void CreatePlayerPanel()
-	{
-		this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5), this.Services);
-
-		this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.playerPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.playerPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.playerPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-
-		this.flowLayoutPanelRightPanels.Controls.Add(this.playerPanel);
-		this.playerPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.playerPanel.Margin = new Padding(0);
 	}
 
 

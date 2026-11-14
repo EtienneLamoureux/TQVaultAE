@@ -83,7 +83,7 @@ public partial class MainForm
 		SearchResult selectedResult = e.Result;
 		if (selectedResult is null || selectedResult.FriendlyNames is null) return;
 
-		this.ClearAllItemsSelectedCallback(this, new SackPanelEventArgs(null, null));
+		this.mainView.ClearAllItemsSelected();
 
 		var location = SearchResultNavigation.Resolve(selectedResult);
 
@@ -174,11 +174,8 @@ public partial class MainForm
 	/// </summary>
 	private void LeaveSecondaryVault()
 	{
-		if (this.showSecondaryVault)
-		{
-			this.showSecondaryVault = !this.showSecondaryVault;
-			this.UpdateTopPanel();
-		}
+		if (this.mainView.SecondaryVaultShown)
+			this.mainView.ShowSecondaryVault(false);
 	}
 
 

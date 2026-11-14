@@ -10,7 +10,7 @@ public partial class MainForm
 {
 	private void HandleClipboardExport()
 	{
-		var selectedItems = GetActivePanelSelectedItems();
+		var selectedItems = this.mainView.SelectedItems();
 		if (selectedItems is null || selectedItems.Count == 0)
 			return;
 
@@ -45,20 +45,5 @@ public partial class MainForm
 			Log.LogError(ex, "Failed to import items from clipboard");
 			this.UIService.NotifyUser("Invalid clipboard data.");
 		}
-	}
-
-	private IReadOnlyList<Item>? GetActivePanelSelectedItems()
-	{
-		if (this.vaultPanel?.SackPanel?.SelectionActive == true)
-			return this.vaultPanel.SackPanel.GetSelectedItems();
-		if (this.secondaryVaultPanel?.SackPanel?.SelectionActive == true)
-			return this.secondaryVaultPanel.SackPanel.GetSelectedItems();
-		if (this.playerPanel?.SackPanel?.SelectionActive == true)
-			return this.playerPanel.SackPanel.GetSelectedItems();
-		if (this.playerPanel?.BagSackPanel?.SelectionActive == true)
-			return this.playerPanel.BagSackPanel.GetSelectedItems();
-		if (this.stashPanel?.SackPanel?.SelectionActive == true)
-			return this.stashPanel.SackPanel.GetSelectedItems();
-		return null;
 	}
 }

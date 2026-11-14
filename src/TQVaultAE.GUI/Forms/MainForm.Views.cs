@@ -47,15 +47,31 @@ public partial class MainForm
 	private System.Windows.Forms.PictureBox pictureBoxSecondVault => this.mainView.pictureBoxSecondVault;
 	private ScalingComboBox secondaryVaultListComboBox => this.mainView.secondaryVaultListComboBox;
 	private HighlightFilters highlightFilters => this.mainView.highlightFilters;
+	private Models.ItemDragInfo DragInfo => this.mainView.DragInfo;
+	private Components.Panels.VaultPanel vaultPanel => this.mainView.VaultPanel;
+	private Components.Panels.VaultPanel secondaryVaultPanel => this.mainView.SecondaryVaultPanel;
+	private Components.Panels.PlayerPanel playerPanel => this.mainView.PlayerPanel;
+	private Components.Panels.StashPanel stashPanel => this.mainView.StashPanel;
+	private bool showSecondaryVault => this.mainView.SecondaryVaultShown;
 
 	/// <summary>
-	/// The main content's lists drive the window's loading of vaults and characters.
+	/// The vaults the main content knows (the vault maintenance dialog checks new names against them).
+	/// </summary>
+	internal IEnumerable<string> KnownVaultNames => this.mainView.KnownVaultNames;
+
+	/// <summary>
+	/// The window answers the main content's events: its toolbar follows the panels shown, and it shows the character
+	/// editor or saves the files when asked.
 	/// </summary>
 	private void WireMainView()
 	{
-		this.vaultListComboBox.SelectedIndexChanged += this.VaultListComboBoxSelectedIndexChanged;
 		this.comboBoxCharacter.SelectedIndexChanged += this.CharacterComboBoxSelectedIndexChanged;
-		this.secondaryVaultListComboBox.SelectedIndexChanged += this.SecondaryVaultListComboBoxSelectedIndexChanged;
+		this.mainView.SecondaryVaultShownChanged += this.MainView_SecondaryVaultShownChanged;
+		this.mainView.EditCharacterRequested += (_, player) => this.ShowCharacterEditorView(player);
+		this.mainView.LoadoutAction += this.LoadoutActionCallback;
+		this.mainView.ForgeCancelled += (_, _) => this.ForgeActionCanceled();
+		this.mainView.ForgeForged += (_, _) => this.ForgeHideUI();
+		this.mainView.SaveRequested += (_, _) => this.SaveAllModifiedFiles();
 	}
 
 	#endregion
@@ -242,7 +258,7 @@ public partial class MainForm
 		this.SwitchToView(editor, left: () =>
 		{
 			editor.Dispose();
-			this.stashPanel.CharacterEdited();
+			this.mainView.CharacterEdited();
 		});
 
 		this.Log.LogDebug("Character editor shown {Elapsed} ms after the click", watch.ElapsedMilliseconds);
@@ -327,7 +343,7 @@ public partial class MainForm
 		{
 			GamePathResolver.TQVaultSaveFolder = settings.VaultPath;
 			this.vaultService.UpdateVaultPath(settings.VaultPath);
-			this.GetVaultList(true);
+			this.mainView.GetVaultList(true);
 		}
 
 		if (settings.EnableTQVaultSoundsChanged)

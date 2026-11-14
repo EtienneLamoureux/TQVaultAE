@@ -187,9 +187,9 @@ public partial class MainForm
 
 	internal StashPanel? AutomationStashPanel => this.stashPanel;
 
-	internal ForgePanel? AutomationForgePanel => this.forgePanel;
+	internal ForgePanel? AutomationForgePanel => this.mainView.ForgePanel;
 
-	internal bool AutomationForgeShown => this.forgePanel?.Visible == true;
+	internal bool AutomationForgeShown => this.mainView.ForgePanel?.Visible == true;
 
 	/// <summary>Text of the notification bar, which shows the name of the item under the cursor.</summary>
 	internal string AutomationNotificationText => this.NotificationText.Text;
@@ -223,8 +223,7 @@ public partial class MainForm
 			return error;
 
 		this.vaultListComboBox.Items.Add(name);
-		this.vaultListComboBox.SelectedItem = name;
-		this.LoadVault(name, false);
+		this.mainView.SelectVault(name);
 		return VaultMaintenanceError.None;
 	}
 

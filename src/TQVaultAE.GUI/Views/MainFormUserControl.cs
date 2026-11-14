@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -16,11 +17,13 @@ namespace TQVaultAE.GUI.Views;
 /// toolbar, fills the rest of the window with it, and shows another view (the settings) in its place when asked.
 /// </summary>
 /// <remarks>
-/// The panels are built and driven by the main window, which reaches these controls by name
-/// (<see cref="Forms.MainForm"/>); the highlight search is the view's own.
+/// The view builds, wires and drives its panels and lists; the main window asks it what it needs from the window
+/// (zoom, keys, toolbar) and answers its events.
 /// </remarks>
 public partial class MainFormUserControl : UserControl
 {
+	private readonly ILogger Log;
+	private readonly GuiServices Services;
 	private readonly SessionContext userContext;
 	private readonly IHighlightService highlightService;
 	private readonly ITranslationService translationService;
@@ -35,13 +38,18 @@ public partial class MainFormUserControl : UserControl
 	/// <summary>
 	/// Initializes a new instance of the MainFormUserControl class.
 	/// </summary>
-	public MainFormUserControl(GuiServices services, SessionContext sessionContext)
+	public MainFormUserControl(GuiServices services)
 	{
-		this.userContext = sessionContext;
+		this.Services = services;
+		this.Log = services.Logger<MainFormUserControl>();
+		this.userContext = services.Session;
 		this.highlightService = services.HighlightService;
 		this.translationService = services.TranslationService;
 
 		this.InitializeComponent();
+
+		this.vaultListComboBox.SelectedIndexChanged += this.VaultListComboBoxSelectedIndexChanged;
+		this.secondaryVaultListComboBox.SelectedIndexChanged += this.SecondaryVaultListComboBoxSelectedIndexChanged;
 	}
 
 	/// <summary>

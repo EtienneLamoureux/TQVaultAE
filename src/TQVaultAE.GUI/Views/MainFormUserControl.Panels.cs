@@ -1,0 +1,572 @@
+using TQVaultAE.Application;
+using TQVaultAE.Domain.Actions;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components;
+using TQVaultAE.GUI.Components.Panels;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Tooltips;
+
+namespace TQVaultAE.GUI.Views;
+
+/// <summary>
+/// The item panels of the main content: built here, placed in the view's layout, and wired to each other (the selection
+/// stays in one panel, an item moves from one to another).
+/// </summary>
+public partial class MainFormUserControl
+{
+	/// <summary>
+	/// The item held on the cursor, shared by every panel.
+	/// </summary>
+	internal ItemDragInfo DragInfo { get; private set; } = null!; // Created with the panels.
+
+	/// <summary>
+	/// Instance of the vault panel control
+	/// </summary>
+	private VaultPanel vaultPanel = null!; // Created with the panels.
+
+	/// <summary>
+	/// Instance of the second vault panel control
+	/// This gets toggled with the player panel
+	/// </summary>
+	private VaultPanel secondaryVaultPanel = null!; // Created with the panels.
+
+	/// <summary>
+	/// Instance of the player panel control
+	/// </summary>
+	private PlayerPanel playerPanel = null!; // Created with the panels.
+
+	/// <summary>
+	/// Instance of the stash panel control
+	/// </summary>
+	private StashPanel stashPanel = null!; // Created with the panels.
+
+	/// <summary>
+	/// The forge, shown in place of the character's panels.
+	/// </summary>
+	private ForgePanel forgePanel = null!; // Created with the panels.
+
+	/// <summary>The vault panel.</summary>
+	internal VaultPanel VaultPanel => this.vaultPanel;
+
+	/// <summary>The secondary vault panel, shown in place of the player panel.</summary>
+	internal VaultPanel SecondaryVaultPanel => this.secondaryVaultPanel;
+
+	/// <summary>The player panel.</summary>
+	internal PlayerPanel PlayerPanel => this.playerPanel;
+
+	/// <summary>The stash panel.</summary>
+	internal StashPanel StashPanel => this.stashPanel;
+
+	/// <summary>The forge panel.</summary>
+	internal ForgePanel ForgePanel => this.forgePanel;
+
+	/// <summary>
+	/// Holds the last sack that had mouse focus
+	/// Used for Automoving
+	/// </summary>
+	private SackCollection? lastSackHighlighted;
+
+	/// <summary>
+	/// Holds the last sack panel that had mouse focus
+	/// Used for Automoving
+	/// </summary>
+	private SackPanel? lastSackPanelHighlighted;
+
+	/// <summary>
+	/// Holds that last stash that had focus
+	/// </summary>
+	private Stash? lastStash;
+
+	/// <summary>
+	/// Bag number of the last bag with focus
+	/// </summary>
+	private int lastBag;
+
+	/// <summary>
+	/// Flag which holds whether we are showing the secondary vault panel or the player panel.
+	/// </summary>
+	private bool showSecondaryVault;
+
+	/// <summary>Whether the secondary vault panel is shown in place of the player panel.</summary>
+	internal bool SecondaryVaultShown => this.showSecondaryVault;
+
+	/// <summary>Raised when the secondary vault panel is shown in place of the player panel, or the player panel again.</summary>
+	internal event EventHandler? SecondaryVaultShownChanged;
+
+	/// <summary>
+	/// Creates the view's internal panels
+	/// </summary>
+	/// <param name="listCharacters">Fills the character list, once the player panel is built.</param>
+	internal void CreatePanels(Action listCharacters)
+	{
+		this.DragInfo = new ItemDragInfo(this.Services.UIService);
+
+		this.CreatePlayerPanel();
+
+		// Put the secondary vault list on top of the player list drop down
+		// since only one can be shown at a time.
+		this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = false;
+
+		listCharacters();
+
+		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
+		this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
+		this.secondaryVaultPanel.Enabled = false;
+		this.secondaryVaultPanel.Visible = false;
+		this.lastBag = -1;
+
+		this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * this.Services.UIService.Scale));
+
+		// The highlight row is as wide as the vault, and scales with it. Docked to fill its cell, it would set the width
+		// of that auto-sized column itself: a column it had widened (a maximize) would never narrow again.
+		this.tableLayoutPanelHighlight.Width = this.vaultPanel.Width;
+		this.GetVaultList(false);
+
+		// Now we always create the stash panel since everyone can have equipment
+		this.CreateStashPanel();
+		this.stashPanel.CurrentBag = 0; // set to default to the equipment panel
+
+		// Add the Forge
+		this.CreateForgePanel();
+	}
+
+	/// <summary>
+	/// Creates the vault panel
+	/// </summary>
+	/// <param name="numBags">Number of bags in the vault panel.</param>
+	private void CreateVaultPanel(int numBags)
+	{
+		this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault, this.Services);
+
+		this.vaultPanel.DrawAsGroupBox = false;
+
+		this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
+		this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
+		this.vaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		this.vaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+
+		this.tableLayoutPanelMain.Controls.Add(this.vaultPanel, 0, 1);
+		this.vaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+		this.vaultPanel.Margin = new Padding(0);
+	}
+
+	/// <summary>
+	/// Creates the secondary vault panel.  Player panel needs to be created before this.
+	/// </summary>
+	/// <param name="numBags">Number of bags in the secondary vault panel.</param>
+	private void CreateSecondaryVaultPanel(int numBags)
+	{
+		this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault, this.Services);
+		this.secondaryVaultPanel.DrawAsGroupBox = false;
+
+		this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
+		this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
+		this.secondaryVaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		this.secondaryVaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+
+		this.flowLayoutPanelRightPanels.Controls.Add(this.secondaryVaultPanel);
+		this.secondaryVaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+		this.secondaryVaultPanel.Margin = new Padding(0);
+	}
+
+	/// <summary>
+	/// Creates the player panel
+	/// </summary>
+	private void CreatePlayerPanel()
+	{
+		this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5), this.Services);
+
+		this.playerPanel.DrawAsGroupBox = false;
+
+		this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
+		this.playerPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
+		this.playerPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		this.playerPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+
+		this.flowLayoutPanelRightPanels.Controls.Add(this.playerPanel);
+		this.playerPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+		this.playerPanel.Margin = new Padding(0);
+	}
+
+	/// <summary>
+	/// Creates the stash panel
+	/// </summary>
+	private void CreateStashPanel()
+	{
+		// size params are width, height
+		Size panelSize = new Size(17, 16);
+
+		this.stashPanel = new StashPanel(this.DragInfo, panelSize, this.Services);
+
+		// New location in bottom right of the Main Form.
+		// Align to playerPanel
+
+		this.stashPanel.DrawAsGroupBox = false;
+
+		this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
+		this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
+		this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		this.stashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+		this.stashPanel.EditCharacterClicked += (_, _) => this.EditCharacterRequested?.Invoke(this, this.stashPanel.ShownPlayer);
+		this.stashPanel.OnLoadoutAction += (sender, e) => this.LoadoutAction?.Invoke(sender, e);
+
+		this.flowLayoutPanelRightPanels.Controls.Add(this.stashPanel);
+		this.stashPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+		this.stashPanel.Margin = new Padding(0);
+	}
+
+	/// <summary>Raised by the Edit button of the stash panel, with the character it shows.</summary>
+	internal event EventHandler<PlayerCollection>? EditCharacterRequested;
+
+	/// <summary>Raised by the loadout bar of the stash panel.</summary>
+	internal event EventHandler<Components.Character.LoadoutBarEventArgs>? LoadoutAction;
+
+	/// <summary>
+	/// The character edited in the character editor view is shown again: the stash panel shows its new state.
+	/// </summary>
+	internal void CharacterEdited() => this.stashPanel.CharacterEdited();
+
+	/// <summary>
+	/// Used to toggle the upper display between the player panel or another vault.
+	/// </summary>
+	internal void ShowSecondaryVault(bool show)
+	{
+		this.showSecondaryVault = show;
+		this.UpdateTopPanel();
+	}
+
+	/// <summary>
+	/// Used to toggle the upper display between the player panel or another vault.
+	/// </summary>
+	private void UpdateTopPanel()
+	{
+		if (this.showSecondaryVault)
+		{
+			this.playerPanel.Enabled = false;
+			this.playerPanel.Visible = false;
+			this.playerPanel.SackPanel.ClearSelectedItems();
+			this.playerPanel.BagSackPanel.ClearSelectedItems();
+			this.stashPanel.Visible = false;
+			this.stashPanel.Enabled = false;
+			this.secondaryVaultPanel.Enabled = true;
+			this.secondaryVaultPanel.Visible = true;
+			this.SecondaryVaultShownChanged?.Invoke(this, EventArgs.Empty);
+			this.comboBoxCharacter.Enabled = false;
+			this.comboBoxCharacter.Visible = false;
+
+			this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = true;
+
+
+			this.lastStash = this.stashPanel.Stash;
+			this.lastBag = this.stashPanel.CurrentBag;
+			this.stashPanel.Player = null;
+			this.stashPanel.Stash = null;
+			if (this.stashPanel.CurrentBag != BagIdConstants.BAGID_TRANSFERSTASH)
+			{
+				this.stashPanel.SackPanel.ClearSelectedItems();
+				this.stashPanel.CurrentBag = BagIdConstants.BAGID_TRANSFERSTASH;
+			}
+
+			this.vaultPanel.SackPanel.SecondaryVaultShown = true;
+			this.stashPanel.SackPanel.SecondaryVaultShown = true;
+
+			this.secondaryVaultPanel.SackPanel.IsSecondaryVault = true;
+			this.secondaryVaultPanel.SackPanel.SecondaryVaultShown = true;
+			this.GetSecondaryVaultList();
+		}
+		else
+		{
+			this.stashPanel.Visible = true;
+			this.stashPanel.Enabled = true;
+			this.secondaryVaultPanel.Enabled = false;
+			this.secondaryVaultPanel.Visible = false;
+			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
+			this.playerPanel.Enabled = true;
+			this.playerPanel.Visible = true;
+			this.SecondaryVaultShownChanged?.Invoke(this, EventArgs.Empty);
+			this.comboBoxCharacter.Enabled = true;
+			this.comboBoxCharacter.Visible = true;
+
+			this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = false;
+
+			this.stashPanel.Player = this.playerPanel.Player;
+			if (this.lastStash is not null)
+			{
+				this.stashPanel.Stash = this.lastStash;
+				if (this.lastBag != -1 && this.lastBag != this.stashPanel.CurrentBag)
+				{
+					this.stashPanel.CurrentBag = this.lastBag;
+					this.stashPanel.SackPanel.ClearSelectedItems();
+				}
+			}
+
+			this.vaultPanel.SackPanel.SecondaryVaultShown = false;
+			this.stashPanel.SackPanel.SecondaryVaultShown = false;
+			this.secondaryVaultPanel.SackPanel.SecondaryVaultShown = false;
+		}
+	}
+
+	/// <summary>
+	/// Callback for highlighting a new item.
+	/// Updates the text box on the main form.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	private void NewItemHighlightedCallback(object? sender, SackPanelEventArgs e)
+	{
+		Item? item = e.Item;
+		SackCollection? sack = e.Sack;
+		var sackPanel = (SackPanel)sender!;
+		if (item is null)
+		{
+			// Only do something if this sack is the "owner" of the current item highlighted.
+			if (sack == this.lastSackHighlighted)
+			{
+				this.NotificationText.Text = string.Empty;
+
+				// hide the tooltip
+				ItemTooltip.HideTooltip();
+			}
+		}
+		else
+		{
+			var itt = ItemTooltip.ShowTooltip(this.Services, item, sackPanel);
+
+			if (itt.Data is { } data)
+			{
+				this.NotificationText.ForeColor = data.Item.ExtractTextColorOrItemColor(data.BaseItemInfoDescription);
+				this.NotificationText.Text = data.FullNameBagTooltipClean;
+			}
+		}
+
+		this.lastSackHighlighted = sack;
+		this.lastSackPanelHighlighted = sackPanel;
+	}
+
+	/// <summary>
+	/// Used to clear out selections on other panels if the user tries to select across multiple panels.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	private void ItemSelectedCallback(object? sender, SackPanelEventArgs e)
+	{
+		SackPanel? sackPanel = (SackPanel)sender!;
+
+		if (this.playerPanel.SackPanel == sackPanel)
+		{
+			this.playerPanel.BagSackPanel.ClearSelectedItems();
+			this.vaultPanel.SackPanel.ClearSelectedItems();
+			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
+			this.stashPanel.SackPanel.ClearSelectedItems();
+		}
+		else if (this.playerPanel.BagSackPanel == sackPanel)
+		{
+			this.playerPanel.SackPanel.ClearSelectedItems();
+			this.vaultPanel.SackPanel.ClearSelectedItems();
+			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
+			this.stashPanel.SackPanel.ClearSelectedItems();
+		}
+		else if (this.vaultPanel.SackPanel == sackPanel)
+		{
+			this.playerPanel.SackPanel.ClearSelectedItems();
+			this.playerPanel.BagSackPanel.ClearSelectedItems();
+			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
+			this.stashPanel.SackPanel.ClearSelectedItems();
+		}
+		else if (this.secondaryVaultPanel.SackPanel == sackPanel)
+		{
+			this.playerPanel.SackPanel.ClearSelectedItems();
+			this.playerPanel.BagSackPanel.ClearSelectedItems();
+			this.vaultPanel.SackPanel.ClearSelectedItems();
+			this.stashPanel.SackPanel.ClearSelectedItems();
+		}
+		else if (this.stashPanel.SackPanel == sackPanel)
+		{
+			this.playerPanel.SackPanel.ClearSelectedItems();
+			this.playerPanel.BagSackPanel.ClearSelectedItems();
+			this.vaultPanel.SackPanel.ClearSelectedItems();
+			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
+		}
+	}
+
+	/// <summary>
+	/// Used to clear the selection when a bag button is clicked.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	private void ClearAllItemsSelectedCallback(object? sender, SackPanelEventArgs e)
+		=> this.ClearAllItemsSelected();
+
+	/// <summary>
+	/// Clears the selection of every panel.
+	/// </summary>
+	internal void ClearAllItemsSelected()
+	{
+		this.playerPanel.SackPanel.ClearSelectedItems();
+		this.playerPanel.BagSackPanel.ClearSelectedItems();
+		this.vaultPanel.SackPanel.ClearSelectedItems();
+		this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
+		this.stashPanel.SackPanel.ClearSelectedItems();
+	}
+
+	/// <summary>
+	/// The items selected in the panel holding a selection; null when none does.
+	/// </summary>
+	internal IReadOnlyList<Item>? SelectedItems()
+	{
+		if (this.vaultPanel?.SackPanel?.SelectionActive == true)
+			return this.vaultPanel.SackPanel.GetSelectedItems();
+		if (this.secondaryVaultPanel?.SackPanel?.SelectionActive == true)
+			return this.secondaryVaultPanel.SackPanel.GetSelectedItems();
+		if (this.playerPanel?.SackPanel?.SelectionActive == true)
+			return this.playerPanel.SackPanel.GetSelectedItems();
+		if (this.playerPanel?.BagSackPanel?.SelectionActive == true)
+			return this.playerPanel.BagSackPanel.GetSelectedItems();
+		if (this.stashPanel?.SackPanel?.SelectionActive == true)
+			return this.stashPanel.SackPanel.GetSelectedItems();
+		return null;
+	}
+
+	/// <summary>
+	/// Used for sending items between sacks or panels.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	private void AutoMoveItemCallback(object? sender, SackPanelEventArgs e)
+	{
+		SackPanel? sackPanel = (SackPanel)sender!;
+
+		if (!this.DragInfo.IsAutoMoveActive)
+			return;
+
+		if (this.DragInfo.AutoMoveDestination == AutoMoveLocation.Stash)
+		{
+			this.AutoMoveItemToStash();
+			return;
+		}
+
+		this.AutoMoveItemToPanel(sackPanel);
+	}
+
+	/// <summary>
+	/// Resolves the destination panel and sack for auto-move operations.
+	/// </summary>
+	// This is a sack to sack move on the same panel.
+	private (VaultPanel? Panel, SackPanel? SackPanel, int SackNumber) GetAutoMoveDestination(SackPanel sourcePanel)
+	{
+		var sacNumber = this.DragInfo.DestIndex;
+		if (sacNumber > -1)
+		{
+			VaultPanel panel = sourcePanel.SackType == SackType.Vault && sourcePanel.IsSecondaryVault
+				? this.secondaryVaultPanel
+				: sourcePanel.SackType == SackType.Vault
+					? this.vaultPanel
+					: this.playerPanel;
+
+			return (panel, sourcePanel, sacNumber);
+		}
+
+		return this.DragInfo.AutoMoveDestination switch
+		{
+			AutoMoveLocation.Vault => (this.vaultPanel, this.vaultPanel.SackPanel, this.vaultPanel.CurrentBag),
+			AutoMoveLocation.Player => (this.playerPanel, ((PlayerPanel)this.playerPanel).SackPanel, 0),
+			AutoMoveLocation.SecondaryVault => (this.secondaryVaultPanel, this.secondaryVaultPanel.SackPanel, this.secondaryVaultPanel.CurrentBag),
+			_ => (null, null, 0)
+		};
+	}
+
+	/// <summary>
+	/// Handles auto-moving an item to the stash panel.
+	/// </summary>
+	// Special Case for moving to stash.
+	private void AutoMoveItemToStash()
+	{
+		var target = AutoMovePlanner.StashTarget(
+			this.stashPanel.CurrentBag
+			, this.stashPanel.Player is not null
+			, this.stashPanel.TransferStash is not null
+			, this.stashPanel.RelicVaultStash is not null);
+
+		// The equipment is shown: show the transfer stash instead.
+		if (target.Bag != this.stashPanel.CurrentBag)
+			this.stashPanel.CurrentBag = target.Bag;
+
+		if (!target.IsAvailable)
+		{
+			// We have nowhere to send the item so cancel the move.
+			this.DragInfo.Cancel();
+			return;
+		}
+
+		if (this.DragInfo.Item is not { } dragItem)
+			return;
+
+		var stashSackPanel = this.stashPanel.SackPanel;
+		var stashSack = stashSackPanel.ShownSack;
+		// The same place as a drop on the stash: the stash file.
+		var place = stashSackPanel.PlaceHere();
+
+		// No room, an item the relic vault does not take, or a read-only character's stash: the item goes back.
+		if (!this.Services.ItemMovementService.TryPlace(dragItem, stashSack, stashSackPanel.SackSize, place, this.DragInfo.MarkPlaced))
+		{
+			this.DragInfo.Cancel();
+			stashSackPanel.NotifyIfReadOnlyCharacter(stashSack);
+			return;
+		}
+
+		// Out of a vault, an item without a link follows the character's map.
+		this.stashPanel.AdoptVaultMod(stashSack, [dragItem], stashSackPanel.SackSize);
+
+		this.lastSackPanelHighlighted?.Invalidate();
+		this.stashPanel.Refresh();
+		BagButtonTooltip.InvalidateCache(stashSack);
+	}
+
+	/// <summary>
+	/// Handles auto-moving an item to a non-stash panel.
+	/// </summary>
+	private void AutoMoveItemToPanel(SackPanel sourcePanel)
+	{
+		var (destinationPanel, destinationSackPanel, destSackNumber) = this.GetAutoMoveDestination(sourcePanel);
+		var destinationSack = destinationPanel?.Player?.GetSack(destSackNumber);
+
+		if (destinationPanel?.Player is null || destinationSackPanel is null || destinationSack is null)
+		{
+			// We have nowhere to send the item so cancel the move.
+			this.DragInfo.Cancel();
+			return;
+		}
+
+		if (this.DragInfo.Item is not { } dragItem)
+			return;
+
+		int destination = this.GetDestinationIndex(destinationSackPanel, destinationPanel.CurrentBag, destSackNumber);
+		var place = this.Services.ItemMovementService.PlaceIn(destinationPanel.Player, destinationSackPanel.SackType, destination, destinationSack.StashType);
+
+		// We have no space in the sack, or it is a read-only character's, so we cancel.
+		if (!this.Services.ItemMovementService.TryPlace(dragItem, destinationSack, destinationSackPanel.SackSize, place, this.DragInfo.MarkPlaced))
+		{
+			this.DragInfo.Cancel();
+			destinationSackPanel.NotifyIfReadOnlyCharacter(destinationSack);
+			return;
+		}
+
+		// Like a dropped item, it takes the data of its new place (the vault's mod or the base game, or the character's map).
+		destinationPanel.AdoptVaultMod(destinationSack, [dragItem], destinationSackPanel.SackSize);
+
+		sourcePanel.Invalidate();
+		destinationPanel.Refresh();
+		BagButtonTooltip.InvalidateCache(destinationSack, destinationSackPanel.Sack);
+	}
+
+	/// <summary>
+	/// Calculates the destination index accounting for panel type offsets.
+	/// </summary>
+	private int GetDestinationIndex(SackPanel destinationSackPanel, int currentBag, int sackNumber)
+	{
+		if (destinationSackPanel.SackType is SackType.Vault or SackType.Player)
+			return sackNumber;
+
+		return currentBag;
+	}
+}
