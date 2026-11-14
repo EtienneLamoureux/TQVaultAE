@@ -126,11 +126,12 @@ partial class HighlightFilters
         this.flowLayoutPanelMax.Controls.Add(this.scalingLabelMaxInt);
         this.flowLayoutPanelMax.Controls.Add(this.numericUpDownMaxInt);
         this.flowLayoutPanelMax.Location = new System.Drawing.Point(154, 35);
+        this.flowLayoutPanelMax.Dock = System.Windows.Forms.DockStyle.Fill;
         this.flowLayoutPanelMax.Margin = new System.Windows.Forms.Padding(4);
         this.flowLayoutPanelMax.Name = "flowLayoutPanelMax";
         this.flowLayoutPanelMax.Size = new System.Drawing.Size(462, 23);
         this.flowLayoutPanelMax.TabIndex = 25;
-        this.flowLayoutPanelMax.WrapContents = false;
+        this.flowLayoutPanelMax.WrapContents = true;
         // 
         // scalingLabelMaxLvl
         // 
@@ -310,11 +311,12 @@ partial class HighlightFilters
         this.flowLayoutPanelMin.Controls.Add(this.scalingLabelMinInt);
         this.flowLayoutPanelMin.Controls.Add(this.numericUpDownMinInt);
         this.flowLayoutPanelMin.Location = new System.Drawing.Point(154, 4);
+        this.flowLayoutPanelMin.Dock = System.Windows.Forms.DockStyle.Fill;
         this.flowLayoutPanelMin.Margin = new System.Windows.Forms.Padding(4);
         this.flowLayoutPanelMin.Name = "flowLayoutPanelMin";
         this.flowLayoutPanelMin.Size = new System.Drawing.Size(462, 23);
         this.flowLayoutPanelMin.TabIndex = 4;
-        this.flowLayoutPanelMin.WrapContents = false;
+        this.flowLayoutPanelMin.WrapContents = true;
         // 
         // scalingLabelMinLvl
         // 

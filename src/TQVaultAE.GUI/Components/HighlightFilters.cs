@@ -26,8 +26,23 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		DoubleBuffered = true;
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 
-		BackgroundImageLayout = ImageLayout.Stretch;
-		BackgroundImage = Images.caravan_bg;
+		// The frame drawn once at the panel's size (again when it changes), not the picture stretched at each paint.
+		CaravanFrame.ApplyTo(this, this.Padding);
+	}
+
+	/// <summary>
+	/// The panel and its many transparent controls are painted in one pass (<c>WS_EX_COMPOSITED</c>), as the settings
+	/// view: open during a resize of the window, they were drawn again control by control at each zoom step.
+	/// </summary>
+	protected override CreateParams CreateParams
+	{
+		get
+		{
+			const int WS_EX_COMPOSITED = 0x02000000;
+			var parameters = base.CreateParams;
+			parameters.ExStyle |= WS_EX_COMPOSITED;
+			return parameters;
+		}
 	}
 
 	/// <summary>
@@ -106,19 +121,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 			},
 		};
 
-		// Compute item space (ColumnWidth)
-		int maxWidth = list.Select(i =>
-			TextRenderer.MeasureText(
-				i.DisplayName
-				, scalingCheckedListBoxOrigin.Font
-				, scalingCheckedListBoxOrigin.Size
-				, TextFormatFlags.SingleLine
-			).Width
-		).Max();
-		maxWidth += scalingCheckedListBoxOrigin.VerticalScrollBarWidth();// Add this for the size of the checkbox in front of the text
-		scalingCheckedListBoxOrigin.ColumnWidth = maxWidth;
-
 		scalingCheckedListBoxOrigin.Items.AddRange(list);
+		FitColumns(scalingCheckedListBoxOrigin);
 	}
 
 	private void InitType()
@@ -126,19 +130,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		scalingCheckedListBoxTypes.Items.Clear();// Remove design mode items
 		var list = HighlightService.GetTypeOptions();
 
-		// Compute item space (ColumnWidth)
-		int maxWidth = list.Select(i =>
-			TextRenderer.MeasureText(
-				i.DisplayName
-				, scalingCheckedListBoxTypes.Font
-				, scalingCheckedListBoxTypes.Size
-				, TextFormatFlags.SingleLine
-			).Width
-		).Max();
-		maxWidth += scalingCheckedListBoxTypes.VerticalScrollBarWidth();// Add this for the size of the checkbox in front of the text
-		scalingCheckedListBoxTypes.ColumnWidth = maxWidth;
-
 		scalingCheckedListBoxTypes.Items.AddRange([.. list]);
+		FitColumns(scalingCheckedListBoxTypes);
 	}
 
 	private void InitRarity()
@@ -170,19 +163,26 @@ public partial class HighlightFilters : UserControl, IZoomFit
 				DisplayName = TranslationService.Translate(Rarity.Legendary)
 			},
 		};
-		// Compute item space (ColumnWidth)
-		var maxWidth = listRarity.Select(i =>
-			TextRenderer.MeasureText(
-				i.DisplayName
-				, scalingCheckedListBoxRarity.Font
-				, scalingCheckedListBoxRarity.Size
-				, TextFormatFlags.SingleLine
-			).Width
-		).Max();
-		maxWidth += scalingCheckedListBoxRarity.VerticalScrollBarWidth();// Add this for the size of the checkbox in front of the text
-		scalingCheckedListBoxRarity.ColumnWidth = maxWidth;
 
 		scalingCheckedListBoxRarity.Items.AddRange(listRarity);
+		FitColumns(scalingCheckedListBoxRarity);
+	}
+
+	/// <summary>
+	/// Gives <paramref name="list"/> columns as wide as its longest entry in its current font, plus the check box: called
+	/// when it is filled and again at each placement, since a zoom or a DPI change gives it another font (columns kept
+	/// at the width of an earlier font overflowed the list, whose horizontal scroll bar then left room for one row).
+	/// </summary>
+	private static void FitColumns(ScalingCheckedListBox list)
+	{
+		if (list.Items.Count == 0)
+			return;
+
+		int width = list.Items.Cast<object>().Max(item => TextRenderer.MeasureText(
+			list.GetItemText(item), list.Font, list.Size, TextFormatFlags.SingleLine).Width);
+		width += list.VerticalScrollBarWidth();// Room for the check box in front of the text
+		if (list.ColumnWidth != width)
+			list.ColumnWidth = width;
 	}
 
 	internal void ResetAll()
@@ -263,8 +263,93 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		if (parent is null)
 			return;
 
-		var linklocation = parent.PointToClient(_link.PointToScreen(Point.Empty));
-		Location = new Point(linklocation.X, linklocation.Y - Height);
+		// No wider than the link's row (the vault column): the Min and Max rows wrap instead of running over the panels
+		// on the right.
+		if (this._link.Parent is { } row && this.MaximumSize.Width != row.Width)
+		{
+			this.MaximumSize = new Size(row.Width, 0);
+			this.tableLayoutPanelHighlight.MaximumSize = new Size(Math.Max(1, row.Width - this.Padding.Horizontal), 0);
+		}
+
+		// Drawn once, at its place, after the rows are broken (its drawing frozen, its layout not).
+		using (new LayoutBatch(this))
+		{
+			FitColumns(this.scalingCheckedListBoxTypes);
+			FitColumns(this.scalingCheckedListBoxRarity);
+			FitColumns(this.scalingCheckedListBoxOrigin);
+			this.BreakRowsEvenly();
+			var linklocation = parent.PointToClient(_link.PointToScreen(Point.Empty));
+			Location = new Point(linklocation.X, linklocation.Y - Height);
+		}
+	}
+
+	/// <summary>
+	/// Lays the rows of the panel's top out in even columns across its width: a requirement's label stays with its box
+	/// (four columns, or Level and Strength then Dexterity and Intelligence when they do not fit) and the Having check
+	/// boxes take six columns, or three on two lines. The rows wrap first with the designer's spacing to find how many
+	/// lines they need, then each group moves to the start of its column, the columns lined up from line to line.
+	/// </summary>
+	private void BreakRowsEvenly()
+	{
+		var rows = new (FlowLayoutPanel Row, int Group)[]
+		{
+			(this.flowLayoutPanelMin, 2),
+			(this.flowLayoutPanelMax, 2),
+			(this.bufferedFlowLayoutPanelPrefixSuffix, 1),
+		};
+
+		var groupsOf = rows.Select(r => r.Row.Controls.Cast<Control>().Where(c => c.Visible).Chunk(r.Group).ToList()).ToList();
+		for (int r = 0; r < rows.Length; r++)
+		{
+			foreach (Control item in rows[r].Row.Controls)
+				rows[r].Row.SetFlowBreak(item, false);
+			foreach (var group in groupsOf[r])
+				SetLeftMargin(group[0], group[0].Margin.Right);
+		}
+
+		this.PerformLayout();
+
+		for (int r = 0; r < rows.Length; r++)
+		{
+			var row = rows[r].Row;
+			var groups = groupsOf[r];
+			if (groups.Count == 0)
+				continue;
+
+			int lines = groups.SelectMany(g => g).Select(c => c.Top).Distinct().Count();
+			int perLine = (groups.Count + lines - 1) / lines;
+			int column = (row.ClientSize.Width - row.Padding.Horizontal) / perLine;
+			for (int first = 0; first < groups.Count; first += perLine)
+			{
+				var line = groups.Skip(first).Take(perLine).ToList();
+				int x = 0;
+				var lefts = new int[line.Count];
+				for (int k = 0; k < line.Count; k++)
+				{
+					int start = Math.Max(x, k * column);
+					lefts[k] = start - x;
+					x = start + line[k].Sum(c => c.Width + c.Margin.Horizontal);
+				}
+
+				// A line the columns would push past the edge keeps the designer's spacing.
+				if (x <= row.ClientSize.Width - row.Padding.Horizontal)
+				{
+					for (int k = 0; k < line.Count; k++)
+						SetLeftMargin(line[k][0], line[k][0].Margin.Right + lefts[k]);
+				}
+
+				if (first + perLine < groups.Count)
+					row.SetFlowBreak(line[^1][^1], true);
+			}
+		}
+
+		this.PerformLayout();
+
+		static void SetLeftMargin(Control control, int left)
+		{
+			if (control.Margin.Left != left)
+				control.Margin = control.Margin with { Left = left };
+		}
 	}
 
 	private void buttonReset_Click(object? sender, EventArgs e)
