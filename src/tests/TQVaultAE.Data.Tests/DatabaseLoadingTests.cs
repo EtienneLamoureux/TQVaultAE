@@ -423,6 +423,82 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
+	public void LoadResource_ResourceMisplacedInTheExpansionFolder_IsFoundThere()
+	{
+		// The record says Items\..., the archive is Resources\XPack\Items.arc.
+		this.UseAnniversaryEdition();
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "Items.arc"), false));
+		this.AddArcEntry(Path.Combine(GameAE, "Resources", "XPack", "Items.arc"), """EquipmentRing\ring.tex""", [8]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""Items\EquipmentRing\ring.tex""").Should().Equal(8);
+	}
+
+	[Theory]
+	[InlineData(false, null)]
+	[InlineData(true, 9)]
+	public void LoadResource_FallbackToARagnarokArchive_OnlyWhenRagnarokIsInstalled(bool installed, int? expected)
+	{
+		this.UseAnniversaryEdition();
+		this._gamePath.SetupGet(g => g.IsRagnarokInstalled).Returns(installed);
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "Items.arc"), false));
+		this.AddArcEntry(Path.Combine(GameAE, "Resources", "XPack2", "Items.arc"), """EquipmentRing\ring.tex""", [9]);
+		var db = this.CreateDatabase();
+
+		var data = db.LoadResource("""Items\EquipmentRing\ring.tex""");
+
+		if (expected is null)
+			data.Should().BeNull();
+		else
+			data.Should().Equal((byte)expected.Value);
+	}
+
+	[Fact]
+	public void LoadResource_ExpansionResourceInTheBaseGameArchive_IsFoundWithoutItsPrefix()
+	{
+		// The record says XPack\Items\..., the archive is Resources\Items.arc.
+		this.UseAnniversaryEdition();
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "XPack", "Items.arc"), true));
+		this.AddArcEntry(Path.Combine(GameAE, "Resources", "Items.arc"), """Relics\icon.tex""", [10]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""XPack\Items\Relics\icon.tex""").Should().Equal(10);
+	}
+
+	[Fact]
+	public void LoadResource_ExpansionFolderBeforeTheBaseGame_WhenBothHaveTheResource()
+	{
+		this.UseAnniversaryEdition();
+		this._gamePath.SetupGet(g => g.IsEmbersInstalled).Returns(true);
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameAE, "Resources", "Missing.arc"), false));
+		this.AddArcEntry(Path.Combine(GameAE, "Resources", "XPack4", "Items.arc"), """EquipmentRing\ring.tex""", [11]);
+		this.AddArcEntry(Path.Combine(GameAE, "Resources", "Items.arc"), """EquipmentRing\ring.tex""", [12]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""Items\EquipmentRing\ring.tex""").Should().Equal(11);
+	}
+
+	[Fact]
+	public void LoadResource_DiscImmortalThrone_FallsBackToTheTitanQuestFolderForTheBaseGameArchive()
+	{
+		// Separate installs: the resolved archive is in the Immortal Throne folder, the base game one in Titan Quest.
+		this._gamePath.SetupGet(g => g.GamePathTQ).Returns(GameTQ);
+		this._gamePath.SetupGet(g => g.GamePathTQIT).Returns(GameTQIT);
+		this._gamePath.SetupGet(g => g.GamePathAreDifferent).Returns(true);
+		this._gamePath.SetupGet(g => g.GameType).Returns(GameType.TQIT);
+		this._gamePath.Setup(g => g.ResolveArcFileName(It.IsAny<RecordId>()))
+			.Returns((Path.Combine(GameTQIT, "Resources", "Items.arc"), false));
+		this.AddArcEntry(Path.Combine(GameTQ, "Resources", "Items.arc"), """EquipmentRing\ring.tex""", [13]);
+		var db = this.CreateDatabase();
+
+		db.LoadResource("""Items\EquipmentRing\ring.tex""").Should().Equal(13);
+	}
+
+	[Fact]
 	public void LoadResource_MissingArchive_ReturnsNull()
 	{
 		this.UseAnniversaryEdition();
