@@ -281,8 +281,9 @@ public partial class MainForm
 
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		var zoom = UIService.Zoom;
-		// Kept by the scale, the zoom times the DPI: a move to a monitor of another DPI builds them again too.
-		var settings = this.keptSettingsView.Get(this, UIService.Scale, () =>
+		// Kept by the zoom and the DPI: a move to a monitor of another DPI builds them again too. Not by their product, the
+		// scale: built at 120 dpi and zoom 1.2, they were reused at 144 dpi and zoom 1 and scaled a second time by 1.2.
+		var settings = this.keptSettingsView.Get(this, zoom, () =>
 		{
 			var view = new SettingsUserControl(this.Services)
 			{
@@ -297,7 +298,7 @@ public partial class MainForm
 			view.Applied += this.SettingsView_Applied;
 			view.Cancelled += this.SettingsView_Cancelled;
 			return view;
-		}, out bool built);
+		}, out bool built, dpi: this.DeviceDpi);
 
 		settings.ShowSettingsInUse();
 

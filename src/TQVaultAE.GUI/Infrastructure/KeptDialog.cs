@@ -18,6 +18,9 @@ internal sealed class KeptDialog<T> where T : Control
 	/// <summary>The user's zoom <see cref="dialog"/> was built at.</summary>
 	private float zoom;
 
+	/// <summary>The DPI <see cref="dialog"/> was built at, 0 when the caller does not key it by the DPI.</summary>
+	private int dpi;
+
 	/// <summary>Whether the owner disposes the kept dialog when it closes.</summary>
 	private bool disposedWithOwner;
 
@@ -33,9 +36,13 @@ internal sealed class KeptDialog<T> where T : Control
 	/// <param name="create">Builds the dialog, scaled to <paramref name="zoom"/>.</param>
 	/// <param name="built">Whether the dialog was built by this call.</param>
 	/// <param name="replacing">Called with the dialog built at another zoom, before it is disposed.</param>
-	public T Get(Form owner, float zoom, Func<T> create, out bool built, Action<T>? replacing = null)
+	/// <param name="dpi">
+	/// The DPI in use, for a view taken out of the window: put back in a window of another DPI, Windows Forms scales it by
+	/// the ratio of the DPIs on top of its zoom, so it is built again. 0 for a dialog, which follows its own monitor.
+	/// </param>
+	public T Get(Form owner, float zoom, Func<T> create, out bool built, Action<T>? replacing = null, int dpi = 0)
 	{
-		if (this.Current is { } stale && this.zoom != zoom)
+		if (this.Current is { } stale && (this.zoom != zoom || this.dpi != dpi))
 		{
 			replacing?.Invoke(stale);
 			stale.Dispose();
@@ -47,6 +54,7 @@ internal sealed class KeptDialog<T> where T : Control
 		{
 			this.dialog = create();
 			this.zoom = zoom;
+			this.dpi = dpi;
 
 			if (!this.disposedWithOwner)
 			{

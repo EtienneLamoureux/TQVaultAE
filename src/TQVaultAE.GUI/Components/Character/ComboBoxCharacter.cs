@@ -167,8 +167,19 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 	{
 	}
 
-	/// <summary>The zoom changed the name font: the row height follows it, as after a DPI change.</summary>
-	void IZoomFit.Fit() => this.ApplyRowHeight();
+	/// <summary>
+	/// The zoom changed the name font: the row height follows it, as after a DPI change. An open list is placed under the
+	/// combo box again: the zoom gave it back the bounds it had when the layout was kept.
+	/// </summary>
+	void IZoomFit.Fit()
+	{
+		this.ApplyRowHeight();
+		if (this.DropDown is { Visible: true })
+		{
+			this.AdjustLocation();
+			this.DropDown.FitWidth();
+		}
+	}
 
 	private void ApplyHeight()
 	{
