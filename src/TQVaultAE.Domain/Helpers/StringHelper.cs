@@ -14,9 +14,6 @@ public static partial class StringHelper
 
 	public const string TQNewLineTag = @"{^N}";
 
-	public static bool Contains(this string input, string search, StringComparison comparison)
-		=> input.IndexOf(search, comparison) > -1;
-
 	/// <summary>
 	/// Checks if a string contains a substring using ordinal ignore case comparison.
 	/// Optimized overload for high-frequency search operations.
@@ -147,20 +144,11 @@ public static partial class StringHelper
 	/// </summary>
 	/// <param name="TQText"></param>
 	/// <returns></returns>
-	public static bool IsColorTagOnly(this string? TQText) => IsColorTagOnlyExtended(TQText).Value;
+	public static bool IsColorTagOnly(this string? TQText)
+		=> !string.IsNullOrWhiteSpace(TQText) && IsColorTagOnlyRegEx().IsMatch(TQText);
 
 	[GeneratedRegex(@"^" + TQColorHelper.RegExTQTag + @"$")]
-	private static partial Regex IsColorTagOnlyExtendedRegEx();
-	/// <summary>
-	/// Indicate if <paramref name="TQText"/> contain a ColorTag only
-	/// </summary>
-	/// <param name="TQText"></param>
-	/// <returns></returns>
-	public static (bool Value, int Length) IsColorTagOnlyExtended(this string? TQText)
-	{
-		if (string.IsNullOrWhiteSpace(TQText)) return (false, 0);
-		return (IsColorTagOnlyExtendedRegEx().IsMatch(TQText), TQText.Length);
-	}
+	private static partial Regex IsColorTagOnlyRegEx();
 
 
 	[return: NotNullIfNotNull(nameof(TQText))]
@@ -408,7 +396,7 @@ public static partial class StringHelper
 
 	[GeneratedRegex(@"(?i)\{\^N}")]
 	private static partial Regex SplitOnTQNewLineRegEx();
-	public static IEnumerable<string> SplitOnTQNewLine(this string TQText) => SplitOnTQNewLineRegEx().Split(TQText);
+	internal static IEnumerable<string> SplitOnTQNewLine(this string TQText) => SplitOnTQNewLineRegEx().Split(TQText);
 
 	/// <summary>
 	/// Wraps the words in a text description.

@@ -27,12 +27,6 @@ public interface IItemAttributeProvider
 	/// <returns>true if attribute effect in group == effect</returns>
 	bool AttributeGroupIs(Collection<Variable?> attributeList, string effect);
 	/// <summary>
-	/// Gets the attribute group type.
-	/// </summary>
-	/// <param name="attributeList">array of attributes</param>
-	/// <returns>Effect type of the attribute list</returns>
-	ItemAttributesEffectType AttributeGroupType(Collection<Variable?> attributeList);
-	/// <summary>
 	/// Indicates whether an attibute has a particular variable name
 	/// </summary>
 	/// <param name="variable">attribute variable</param>

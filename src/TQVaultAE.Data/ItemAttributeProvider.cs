@@ -777,23 +777,6 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	}
 
 	/// <summary>
-	/// Gets the attribute group type.
-	/// </summary>
-	/// <param name="attributeList">array of attributes</param>
-	/// <returns>Effect type of the attribute list</returns>
-	public ItemAttributesEffectType AttributeGroupType(Collection<Variable?> attributeList) // TODO Not used ?
-	{
-		if (attributeList[0] is not { } variable)
-			return ItemAttributesEffectType.Other;
-
-		ItemAttributesData? data = this.GetAttributeData(variable.Name);
-		if (data is null)
-			return ItemAttributesEffectType.Other;
-
-		return data.EffectType;
-	}
-
-	/// <summary>
 	/// Inidicates whether an attribute group has a particular variable name
 	/// </summary>
 	/// <param name="attributeList">array of attributes</param>

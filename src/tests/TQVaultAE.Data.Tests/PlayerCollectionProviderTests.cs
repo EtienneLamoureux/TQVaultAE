@@ -47,22 +47,6 @@ public class PlayerCollectionProviderTests
 	private PlayerInfo CreateTestPlayerInfo() => new PlayerInfo(_mockPathIO.Object);
 
 	[Fact]
-	public void BeginBlockPattern_IsCorrect()
-	{
-		// Assert - verify the byte pattern for begin_block
-		var expected = new byte[] { 0x0B, 0x00, 0x00, 0x00, 0x62, 0x65, 0x67, 0x69, 0x6E, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
-		_provider.beginBlockPattern.Should().Equal(expected);
-	}
-
-	[Fact]
-	public void EndBlockPattern_IsCorrect()
-	{
-		// Assert - verify the byte pattern for end_block
-		var expected = new byte[] { 0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B };
-		_provider.endBlockPattern.Should().Equal(expected);
-	}
-
-	[Fact]
 	public void CommitPlayerInfo_WithNullPlayerInfo_ReturnsEarly()
 	{
 		// Arrange

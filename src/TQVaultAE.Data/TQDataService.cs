@@ -72,28 +72,6 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 	}
 
 	/// <summary>
-	/// Validates that the next string matches the expected value using span-based parsing.
-	/// Does not throw - returns true if match, false otherwise.
-	/// Advances offset by the string length on match.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="expectedValue">The expected string value</param>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced on match</param>
-	/// <returns>True if the next string matches expectedValue</returns>
-	public bool ValidateNextString(string expectedValue, ReadOnlySpan<byte> data, ref int offset)
-	{
-		var savedOffset = offset;
-		string label = ReadCString(data, ref offset);
-		if (label.Equals(expectedValue, StringComparison.OrdinalIgnoreCase))
-			return true;
-
-		// Restore offset if no match
-		offset = savedOffset;
-		return false;
-	}
-
-	/// <summary>
 	/// Writes a string along with its length to the file.
 	/// </summary>
 	/// <param name="writer">BinaryWriter instance</param>
@@ -132,56 +110,6 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 		string ans = new string(chars);
 
 		return ans;
-	}
-
-	/// <summary>
-	/// Reads a string from the binary stream.
-	/// Expects an integer length value followed by the actual string of the stated length.
-	/// </summary>
-	/// <param name="reader">BinaryReader instance</param>
-	/// <returns>string of data that was read</returns>
-	public string ReadUTF16String(BinaryReader reader)
-	{
-		// first 4 bytes is the string length, followed by the string.
-		int len = reader.ReadInt32();
-		len *= 2;// 2 byte chars
-		var rawData = reader.ReadBytes(len);
-
-		//convert bytes string
-		return EncodingUnicode.GetString(rawData);
-	}
-
-	/// <summary>
-	/// Reads a length-prefixed string from a span using CP1252 encoding.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>The decoded string</returns>
-	public string ReadCString(ReadOnlySpan<byte> data, ref int offset)
-	{
-		int len = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-		offset += sizeof(int);
-		var stringData = data.Slice(offset, len);
-		offset += len;
-		return Encoding1252.GetString(stringData);
-	}
-
-	/// <summary>
-	/// Reads a length-prefixed UTF-16 string from a span.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>The decoded string</returns>
-	public string ReadUTF16String(ReadOnlySpan<byte> data, ref int offset)
-	{
-		int charCount = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-		offset += sizeof(int);
-		int byteCount = charCount * 2;
-		var stringData = data.Slice(offset, byteCount);
-		offset += byteCount;
-		return Encoding.Unicode.GetString(stringData);
 	}
 
 	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0)

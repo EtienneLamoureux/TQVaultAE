@@ -314,20 +314,6 @@ public class StringHelperTests
 		result.Should().Be(expected);
 	}
 
-	[Fact]
-	public void IsColorTagOnlyExtended_ReturnsValueAndLength()
-	{
-		// Arrange
-		var input = "{^R}";
-
-		// Act
-		var result = input.IsColorTagOnlyExtended();
-
-		// Assert
-		result.Value.Should().BeTrue();
-		result.Length.Should().Be(input.Length);
-	}
-
 	#endregion
 
 	#region HasColorPrefix Tests

@@ -57,24 +57,4 @@ public interface ITQDataService
 	/// Return value for "endBlock" tag
 	/// </summary>
 	public int EndBlockValue { get; }
-
-	/// <summary>
-	/// Reads a length-prefixed string from a span using CP1252 encoding.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>The decoded string</returns>
-	string ReadCString(ReadOnlySpan<byte> data, ref int offset);
-
-	/// <summary>
-	/// Validates that the next string matches the expected value using span-based parsing.
-	/// Does not throw - returns true if match, false otherwise.
-	/// Advances offset by the string length on match.
-	/// </summary>
-	/// <param name="expectedValue">The expected string value</param>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced on match</param>
-	/// <returns>True if the next string matches expectedValue</returns>
-	bool ValidateNextString(string expectedValue, ReadOnlySpan<byte> data, ref int offset);
 }

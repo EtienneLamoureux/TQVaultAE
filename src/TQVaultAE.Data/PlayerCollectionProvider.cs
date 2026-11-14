@@ -30,12 +30,12 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// <summary>
 	/// array holding the byte pattern for the beginning of a block in the player file.
 	/// </summary>
-	public byte[] beginBlockPattern = [0x0B, 0x00, 0x00, 0x00, 0x62, 0x65, 0x67, 0x69, 0x6E, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B];
+	private static ReadOnlySpan<byte> BeginBlockPattern => [0x0B, 0x00, 0x00, 0x00, 0x62, 0x65, 0x67, 0x69, 0x6E, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B];
 
 	/// <summary>
 	/// array holding the byte pattern for the end of a block in the player file.
 	/// </summary>
-	public byte[] endBlockPattern = [0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B];
+	private static ReadOnlySpan<byte> EndBlockPattern => [0x09, 0x00, 0x00, 0x00, 0x65, 0x6E, 0x64, 0x5F, 0x62, 0x6C, 0x6F, 0x63, 0x6B];
 
 	public void CommitPlayerInfo(PlayerCollection pc, PlayerInfo playerInfo)
 	{
@@ -398,8 +398,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// <returns>Returns the index of the first char indicating the block delimiter or -1 if none is found.</returns>
 	public int FindNextBlockDelim(ReadOnlySpan<byte> data, int start)
 	{
-		ReadOnlySpan<byte> beginSpan = beginBlockPattern;
-		ReadOnlySpan<byte> endSpan = endBlockPattern;
+		ReadOnlySpan<byte> beginSpan = BeginBlockPattern;
+		ReadOnlySpan<byte> endSpan = EndBlockPattern;
 
 		int beginMatch = 0;
 		int endMatch = 0;
@@ -462,11 +462,11 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 
 			while ((!foundItems || !foundEquipment) && (currentOffset = FindNextBlockDelim(pc, currentOffset)) != -1)
 			{
-				if (pc.rawData[currentOffset] == beginBlockPattern[0])
+				if (pc.rawData[currentOffset] == BeginBlockPattern[0])
 				{
 					// begin block
 					++blockNestLevel;
-					currentOffset += beginBlockPattern.Length;
+					currentOffset += BeginBlockPattern.Length;
 
 					// skip past the 4 bytes of noise after begin_block
 					currentOffset += 4;
@@ -484,12 +484,12 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					if (blockName.Equals("BEGIN_BLOCK", StringComparison.Ordinal))
 					{
 						blockName = "(NONAME)";
-						currentOffset -= beginBlockPattern.Length;
+						currentOffset -= BeginBlockPattern.Length;
 					}
 					else if (blockName.Equals("END_BLOCK", StringComparison.Ordinal))
 					{
 						blockName = "(NONAME)";
-						currentOffset -= endBlockPattern.Length;
+						currentOffset -= EndBlockPattern.Length;
 					}
 					else if (blockName.Equals("ITEMPOSITIONSSAVEDASGRIDCOORDS", StringComparison.Ordinal))
 					{
@@ -511,7 +511,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				{
 					// end block
 					--blockNestLevel;
-					currentOffset += endBlockPattern.Length;
+					currentOffset += EndBlockPattern.Length;
 				}
 			}
 
