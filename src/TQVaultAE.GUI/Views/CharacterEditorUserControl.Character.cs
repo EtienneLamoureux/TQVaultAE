@@ -6,6 +6,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
 
@@ -22,7 +23,7 @@ internal sealed partial class CharacterEditorUserControl
 	private GameTabControl _tabs = null!;
 	private CharacterStatsPanel _stats = null!;
 	private CharacterSidePanel _side = null!;
-	private readonly List<Font> _ownedFonts = [];
+	private readonly List<Font> _scaleFonts = [];
 
 	/// <summary>The font of the editors on the side panel, in pixels at the editor's DPI.</summary>
 	private Font _editorFont = null!;
@@ -77,26 +78,14 @@ internal sealed partial class CharacterEditorUserControl
 	/// </summary>
 	private void InitStatisticsColumn()
 	{
-		var scale = this.GameScale;
-		var margin = this.LogicalToDeviceUnits(14);
 		this.Controls.Add(this._content);
 
-		var panelScale = scale * ColumnScale;
 		this._stats = new CharacterStatsPanel(this.UIService)
 		{
 			KeyBinds = this.Services.KeyBinds,
 			Name = "CharacterStatsPanel",
-			PanelScale = panelScale,
 			View = this.CharacterView,
-			NameFont = this.FontService.GetFontLight(20F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
-			ClassFont = this.FontService.GetFontLight(16F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
-			TextFont = this.FontService.GetFontLight(15F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
-			TitleFont = this.FontService.GetFontLight(16F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel),
-			TabFont = this.FontService.GetFontLight(15F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel),
-			NumberFont = this.OwnedFont(new Font("Arial", 13F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel)),
-			ResistanceFont = this.OwnedFont(new Font("Arial", 14F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel)),
 		};
-		this._stats.Tooltip = this.SkillTooltipWindow();
 
 		// The attribute boxes stay the model of the attributes (their events count the points); the panel shows them.
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
@@ -107,54 +96,42 @@ internal sealed partial class CharacterEditorUserControl
 		this._side = new CharacterSidePanel(this.UIService)
 		{
 			Name = "CharacterSidePanel",
-			PanelScale = panelScale,
 			View = this.SideView,
-			TextFont = this._stats.TextFont,
-			TitleFont = this._stats.TitleFont,
-			NumberFont = this._stats.NumberFont,
 		};
-
-		// The column at the top left: the statistics panel, its tabs level with the mastery tabs, and under its gold bar
-		// the side panel, as wide as the statistics panel's frame, whose statistics options come first.
-		this._stats.Location = new Point(margin, margin);
-		this._side.Location = new Point(margin, this._stats.Bottom + (int)Math.Round(10 * scale));
 
 		this._content.Controls.Add(this._stats);
 		this._content.Controls.Add(this._side);
 
-		// The frame of the mastery pages right of the column, its tabs level with the top of the column.
-		this._tabs = new GameTabControl
-		{
-			Name = "EditorTabs",
-			FrameScale = scale,
-			Location = new Point(this._stats.Right + (int)Math.Round(16 * scale), margin),
-			TabFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
-		};
+		// The frame of the mastery pages right of the column.
+		this._tabs = new GameTabControl { Name = "EditorTabs" };
 		this._content.Controls.Add(this._tabs);
 
-		var editorFont = this._editorFont = this.OwnedFont(new Font("Arial", 12F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
 		var editors = this.LevelingEditors;
 		for (int row = 0; row < editors.Length; row++)
 		{
 			var editor = editors[row];
-			this.PlaceSideEditor(editor, this._side.EditorRow(row), editorFont);
+			var editorRow = row;
+			this.AddSideEditor(editor, () => this._side.EditorRow(editorRow));
 
 			// A disabled box ignores its colours: it is hidden and the panel writes its value, as the game writes numbers.
 			editor.EnabledChanged += (_, _) => this.ShowLevelingEditor(editor);
 			editor.TextChanged += (_, _) => this._side.Invalidate();
-			this.ShowLevelingEditor(editor);
 		}
 
 		this._statsDifficulty = new ComboBox { Name = "StatsDifficultyComboBox", DropDownStyle = ComboBoxStyle.DropDownList, FlatStyle = FlatStyle.Flat };
 		for (int difficulty = 0; difficulty < 3; difficulty++)
 			this._statsDifficulty.Items.Add(this.TranslationService.TranslateDifficulty(difficulty) ?? difficulty.ToString(CultureInfo.CurrentCulture));
 		this._statsDifficulty.SelectedIndex = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked);
-		this.PlaceSideEditor(this._statsDifficulty, this._side.StatisticsRow(0), editorFont);
+		this.AddSideEditor(this._statsDifficulty, () => this._side.StatisticsRow(0));
 		this._statsDifficulty.SelectedIndexChanged += (_, _) => this.InvalidateStats();
 
 		this._includeBuffs = new CheckBox { Name = "StatsIncludeBuffsCheckBox" };
-		this.PlaceSideEditor(this._includeBuffs, this._side.StatisticsRow(1), editorFont);
+		this.AddSideEditor(this._includeBuffs, () => this._side.StatisticsRow(1));
 		this._includeBuffs.CheckedChanged += (_, _) => this.InvalidateStats();
+
+		this.LayOutColumn();
+		foreach (var editor in editors)
+			this.ShowLevelingEditor(editor);
 
 		this._statsToolTip.SetToolTip(this._statsDifficulty, Resources.CEStatisticsDifficultyToolTip);
 		this._statsToolTip.SetToolTip(this._includeBuffs, Resources.CEIncludeBuffsToolTip);
@@ -166,31 +143,83 @@ internal sealed partial class CharacterEditorUserControl
 
 		this.Disposed += (_, _) =>
 		{
-			foreach (var font in this._ownedFonts)
+			foreach (var font in this._scaleFonts)
 				font.Dispose();
+			this._skillTooltip?.Dispose();
+			this._medallion?.Image?.Dispose();
 			this._statsToolTip.Dispose();
 			this._headerToolTip.Dispose();
 		};
 	}
 
-	/// <summary>Puts an editor on the side panel, at its row, in the panel's colours.</summary>
-	private void PlaceSideEditor(Control editor, Rectangle bounds, Font font)
+	/// <summary>
+	/// Sizes and places the statistics column and the frame at the editor's DPI, with their fonts and the skill tool tip:
+	/// when the editor is built, and again when it moves to a monitor of another DPI (<see cref="FollowDpi"/>).
+	/// </summary>
+	private void LayOutColumn()
+	{
+		var scale = this.GameScale;
+		var panelScale = scale * ColumnScale;
+		var margin = this.LogicalToDeviceUnits(14);
+
+		// The fonts made for the previous DPI are disposed once the new ones are in place.
+		var oldFonts = this._scaleFonts.ToList();
+		this._scaleFonts.Clear();
+
+		this._stats.PanelScale = panelScale;
+		this._stats.NameFont = this.FontService.GetFontLight(20F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel);
+		this._stats.ClassFont = this.FontService.GetFontLight(16F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel);
+		this._stats.TextFont = this.FontService.GetFontLight(15F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel);
+		this._stats.TitleFont = this.FontService.GetFontLight(16F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel);
+		this._stats.TabFont = this.FontService.GetFontLight(15F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel);
+		this._stats.NumberFont = this.ScaleFont(new Font("Arial", 13F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
+		this._stats.ResistanceFont = this.ScaleFont(new Font("Arial", 14F * panelScale, FontStyle.Regular, GraphicsUnit.Pixel));
+
+		this._side.PanelScale = panelScale;
+		this._side.TextFont = this._stats.TextFont;
+		this._side.TitleFont = this._stats.TitleFont;
+		this._side.NumberFont = this._stats.NumberFont;
+
+		// The column at the top left: the statistics panel, its tabs level with the mastery tabs, and under its gold bar
+		// the side panel, as wide as the statistics panel's frame, whose statistics options come first.
+		this._stats.Location = new Point(margin, margin);
+		this._side.Location = new Point(margin, this._stats.Bottom + (int)Math.Round(10 * scale));
+
+		// The frame of the mastery pages right of the column, its tabs level with the top of the column.
+		this._tabs.FrameScale = scale;
+		this._tabs.Location = new Point(this._stats.Right + (int)Math.Round(16 * scale), margin);
+		this._tabs.TabFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
+
+		this._editorFont = this.ScaleFont(new Font("Arial", 12F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
+		foreach (var (editor, row) in this._sideEditorRows)
+			this.PlaceSideEditor(editor, row(), this._editorFont);
+
+		this.ScaleSkillTooltip();
+		this._laidOutDpi = this.DeviceDpi;
+
+		foreach (var font in oldFonts)
+			font.Dispose();
+	}
+
+	/// <summary>The DPI the editor was laid out at by <see cref="LayOutColumn"/>.</summary>
+	private int _laidOutDpi;
+
+	/// <summary>The row of each editor of the side panel, read again at each DPI.</summary>
+	private readonly Dictionary<Control, Func<Rectangle>> _sideEditorRows = [];
+
+	/// <summary>Puts an editor on the side panel, in the panel's colours; <see cref="LayOutColumn"/> places it at its row.</summary>
+	private void AddSideEditor(Control editor, Func<Rectangle> row)
 	{
 		editor.Parent = this._side;
-		editor.Bounds = bounds;
-		editor.Font = font;
 		editor.BackColor = Color.FromArgb(24, 24, 24);
 		editor.ForeColor = Color.White;
 		this._side.Editors.Add(editor);
+		this._sideEditorRows[editor] = row;
 		if (editor is CheckBox check)
 		{
 			check.Text = string.Empty;
 			check.BackColor = Color.Black;
 			check.AutoSize = true;
-
-			// At the right end of its row, where the game writes numbers, the label before it taking the rest; on the row's
-			// bottom, clear of a drop-down list above it, a little higher than its row.
-			check.Location = new Point(bounds.Right - check.Width, bounds.Bottom - check.Height);
 		}
 		else if (editor is ComboBox combo)
 		{
@@ -198,15 +227,32 @@ internal sealed partial class CharacterEditorUserControl
 			combo.FlatStyle = FlatStyle.Flat;
 			combo.DrawMode = DrawMode.OwnerDrawFixed;
 			combo.DrawItem += DrawSideComboItem;
-			FitComboHeight(combo, bounds.Height);
 		}
 
-		this._sideEditorBounds[editor] = (editor.Bounds, bounds.Height);
 		editor.VisibleChanged += (_, _) =>
 		{
 			if (this._loaded && editor.Visible && this.IsHandleCreated)
 				this.BeginInvoke(this.RestoreSideEditors);
 		};
+	}
+
+	/// <summary>Places an editor of the side panel at its row, in its font.</summary>
+	private void PlaceSideEditor(Control editor, Rectangle bounds, Font font)
+	{
+		editor.Bounds = bounds;
+		editor.Font = font;
+		if (editor is CheckBox check)
+		{
+			// At the right end of its row, where the game writes numbers, the label before it taking the rest; on the row's
+			// bottom, clear of a drop-down list above it, a little higher than its row.
+			check.Location = new Point(bounds.Right - check.Width, bounds.Bottom - check.Height);
+		}
+		else if (editor is ComboBox combo)
+		{
+			FitComboHeight(combo, bounds.Height);
+		}
+
+		this._sideEditorBounds[editor] = (editor.Bounds, bounds.Height);
 	}
 
 	/// <summary>
@@ -241,10 +287,13 @@ internal sealed partial class CharacterEditorUserControl
 		}
 	}
 
-	/// <summary>A font the dialog made itself, disposed with it (never one of the font service's, which are shared).</summary>
-	private Font OwnedFont(Font font)
+	/// <summary>
+	/// A font the editor made itself for its DPI, disposed with it or at the next DPI (never one of the font service's,
+	/// which are shared).
+	/// </summary>
+	private Font ScaleFont(Font font)
 	{
-		this._ownedFonts.Add(font);
+		this._scaleFonts.Add(font);
 		return font;
 	}
 
@@ -292,6 +341,15 @@ internal sealed partial class CharacterEditorUserControl
 	/// </summary>
 	private void AddMedallion(Rectangle area)
 	{
+		// Laid out again at another DPI: the medallion of the previous one goes.
+		if (this._medallion is { } old)
+		{
+			this._medallion = null;
+			var oldImage = old.Image;
+			old.Dispose();
+			oldImage?.Dispose();
+		}
+
 		var medallion = Images.tqmedallion;
 		if (area.Width < medallion.Width / 2 || area.Height < medallion.Height / 2)
 		{
@@ -301,7 +359,7 @@ internal sealed partial class CharacterEditorUserControl
 
 		var zoom = Math.Min(2F * this.GameScale, Math.Min(area.Width / (float)medallion.Width, area.Height / (float)medallion.Height));
 		var size = new Size((int)Math.Round(medallion.Width * zoom), (int)Math.Round(medallion.Height * zoom));
-		this._content.Controls.Add(new PictureBox
+		this._medallion = new PictureBox
 		{
 			Name = "CharacterMedallion",
 			Image = medallion,
@@ -309,9 +367,12 @@ internal sealed partial class CharacterEditorUserControl
 			BackColor = Color.Transparent,
 			Size = size,
 			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
-		});
-		this.Disposed += (_, _) => medallion.Dispose();
+		};
+		this._content.Controls.Add(this._medallion);
 	}
+
+	/// <summary>TQVault's medallion under the frame, when there is room for it.</summary>
+	private PictureBox? _medallion;
 
 	/// <summary>
 	/// The side panel's editors are put back once shown. The editor is built hidden, and an editor that cannot be changed
@@ -327,15 +388,45 @@ internal sealed partial class CharacterEditorUserControl
 	}
 
 	/// <summary>
-	/// Moved to a monitor of another DPI while shown, the editor keeps its size (<see cref="ScaleControl"/>), but Windows
-	/// Forms scales the place and font of each editor: the side panel's editors are put back once it is done, or their
-	/// text no longer fitted their boxes.
+	/// Moved to a monitor of another DPI while shown, the editor follows it, its edits kept: Windows Forms scales the
+	/// controls of the designer (reset buttons, OK, Cancel, the mastery lists) and their fonts
+	/// (<see cref="ScaleControl"/>); once it is done, the drawn parts are laid out again (<see cref="FollowDpi"/>).
 	/// </summary>
 	protected override void OnDpiChangedAfterParent(EventArgs e)
 	{
 		base.OnDpiChangedAfterParent(e);
 		if (this._loaded && this.IsHandleCreated)
-			this.BeginInvoke(this.RestoreSideEditors);
+			this.BeginInvoke(this.FollowDpi);
+	}
+
+	/// <summary>
+	/// Lays the statistics column, the frame, the skill panes and the buttons under the frame out again at the editor's
+	/// DPI, if it changed, then puts the side panel's editors back at their place: Windows Forms scaled their place and
+	/// font too, and their text no longer fitted their boxes. Only the look changes: the editors keep their values.
+	/// </summary>
+	private void FollowDpi()
+	{
+		if (this.IsDisposed)
+			return;
+
+		if (this.DeviceDpi != this._laidOutDpi)
+		{
+			using (new LayoutBatch(this, this, this._content))
+			{
+				foreach (var tab in this._skillTabs)
+				{
+					tab.Pane.PaneScale = this.GameScale;
+					this.SizeSkillHeader(tab.Mastery, tab.Level);
+				}
+
+				this.LayOutColumn();
+				this.FitToFrame();
+			}
+
+			this.Invalidate(true);
+		}
+
+		this.RestoreSideEditors();
 	}
 
 	/// <summary>Puts each editor of the side panel back at its place, in its font.</summary>

@@ -72,9 +72,10 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		var font = this.FontService.GetFontLight(11F);
 
-		var mastery = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = this.LogicalToDeviceUnits(170), Name = $"SkillsMastery{slot + 1}ComboBox", Font = font };
+		var mastery = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Name = $"SkillsMastery{slot + 1}ComboBox", Font = font };
 		mastery.Items.AddRange([.. choices]);
-		var level = new NumericUpDown { Minimum = 0, Maximum = 40, Width = this.LogicalToDeviceUnits(55), Name = $"SkillsMastery{slot + 1}LevelUpDown", Font = font };
+		var level = new NumericUpDown { Minimum = 0, Maximum = 40, Name = $"SkillsMastery{slot + 1}LevelUpDown", Font = font };
+		this.SizeSkillHeader(mastery, level);
 
 		// The mastery and its level go on the marble strip right of the tabs, as the game's Undo button.
 		var header = new FlowLayoutPanel { AutoSize = true, WrapContents = false, BackColor = Color.Transparent, Name = $"SkillsMastery{slot + 1}Header" };
@@ -85,7 +86,7 @@ internal sealed partial class CharacterEditorUserControl
 		{
 			KeyBinds = this.Services.KeyBinds,
 			Name = $"SkillsMastery{slot + 1}Pane",
-			PaneScale = this.DeviceDpi / 96F,
+			PaneScale = this.GameScale,
 			Translate = tag => this.TranslationService.TranslateOr(tag, tag),
 			NumberFont = this.FontService.GetFontLight(12F, FontStyle.Regular, GraphicsUnit.Pixel),
 			TextFont = this.FontService.GetFontLight(15F, FontStyle.Regular, GraphicsUnit.Pixel),
@@ -103,13 +104,23 @@ internal sealed partial class CharacterEditorUserControl
 		var tab = new SkillTab { Slot = slot, PageIndex = pageIndex, Mastery = mastery, Level = level, Pane = pane };
 		pane.SkillView = skill => this.SkillView(tab, skill);
 		pane.ToolTipLines = skill => this.SkillToolTip(tab, skill);
-		pane.Tooltip = this.SkillTooltipWindow();
+		pane.Tooltip = this._skillTooltip;
 
 		mastery.SelectedIndexChanged += (_, _) => this.SkillMastery_Changed(tab);
 		level.ValueChanged += (_, _) => this.SkillMasteryLevel_Changed(tab);
 		pane.ButtonClicked += (_, click) => this.SkillPane_ButtonClicked(tab, click);
 
 		return tab;
+	}
+
+	/// <summary>
+	/// The widths of a page's mastery list and level box at the editor's DPI: when built, and again at another DPI
+	/// (<see cref="FollowDpi"/>), as Windows Forms did not scale the boxes of a page hidden during a move.
+	/// </summary>
+	private void SizeSkillHeader(ComboBox mastery, NumericUpDown level)
+	{
+		mastery.Width = this.LogicalToDeviceUnits(170);
+		level.Width = this.LogicalToDeviceUnits(55);
 	}
 
 	/// <summary>What the pane shows of a skill: its level, the levels of the equipped items, its border.</summary>
@@ -129,21 +140,25 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The game-style tool tip of the skill panes, shared by the pages.</summary>
 	private GameTooltip? _skillTooltip;
 
-	private GameTooltip SkillTooltipWindow()
+	/// <summary>
+	/// Makes the skill tool tip at the editor's DPI and gives it to the statistics panel and the skill panes; the one of
+	/// the previous DPI is disposed.
+	/// </summary>
+	private void ScaleSkillTooltip()
 	{
-		if (this._skillTooltip is null)
-		{
-			var scale = this.DeviceDpi / 96F;
-			this._skillTooltip = new GameTooltip(
-				this.FontService.GetFontLight(17F * scale, FontStyle.Bold, GraphicsUnit.Pixel),
-				this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
-				scale,
-				GameTooltipFrame.Load(this.UIService));
-			var tooltip = this._skillTooltip;
-			this.Disposed += (_, _) => tooltip.Dispose();
-		}
+		var old = this._skillTooltip;
+		var scale = this.GameScale;
+		var tooltip = this._skillTooltip = new GameTooltip(
+			this.FontService.GetFontLight(17F * scale, FontStyle.Bold, GraphicsUnit.Pixel),
+			this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
+			scale,
+			GameTooltipFrame.Load(this.UIService));
 
-		return this._skillTooltip;
+		this._stats.Tooltip = tooltip;
+		foreach (var tab in this._skillTabs)
+			tab.Pane.Tooltip = tooltip;
+
+		old?.Dispose();
 	}
 
 	/// <summary>Builds the skill tool tips; the dialog only gives the colours.</summary>

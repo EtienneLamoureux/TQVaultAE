@@ -11,6 +11,7 @@ using System;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
+using TQVaultAE.GUI.Components.Scaling;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -136,18 +137,18 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 	protected override Point ScrollToControl(Control activeControl) => this.DisplayRectangle.Location;
 
 	/// <summary>
-	/// Once built, the editor keeps its size: its game frame is drawn at the DPI it was built for, which scaling its
-	/// controls would not change (a zoom of the main window, or a move to a monitor of another DPI, while it is shown).
-	/// It is built for one opening, so the next one takes the new scale.
+	/// The editor is drawn at the game's size times the DPI, whatever the main window's zoom: once built, a zoom leaves
+	/// it as it is. A move to a monitor of another DPI scales it, as Windows Forms scales any window: the controls of the
+	/// designer and their fonts here, the drawn parts laid out again afterwards (<see cref="OnDpiChangedAfterParent"/>).
 	/// </summary>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
-		if (!this._loaded)
+		if (!this._loaded || !ZoomScope.IsZooming)
 			base.ScaleControl(factor, specified);
 	}
 
 	/// <inheritdoc cref="ScaleControl"/>
-	protected override bool ScaleChildren => !this._loaded;
+	protected override bool ScaleChildren => !this._loaded || !ZoomScope.IsZooming;
 
 
 	/// <summary>
