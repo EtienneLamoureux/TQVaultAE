@@ -87,14 +87,7 @@ internal static partial class AutomationTools
 			var value = ParseSlot(slot);
 			RequireDrag(form);
 			ReleaseCursor(VirtualCursor.Target as SackPanel);
-			try
-			{
-				forge.AutomationDrop(value);
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			forge.AutomationDrop(value);
 
 			// An accepted drop returns the item to its sack: the cursor goes back to the real mouse.
 			if (!form.AutomationDragInfo.IsActive)
@@ -131,14 +124,7 @@ internal static partial class AutomationTools
 			var sounds = RecordingSoundService.LastSequence;
 			var messages = forge.AutomationMessages.Count;
 
-			try
-			{
-				forge.AutomationForge();
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			forge.AutomationForge();
 
 			var status = System.Text.Json.JsonDocument.Parse(ForgeStatus(form, sounds, messages)).RootElement;
 			return Serialize(new
@@ -257,16 +243,7 @@ internal static partial class AutomationTools
 			var forge = RequireForge(form);
 			var sounds = RecordingSoundService.LastSequence;
 			var messages = forge.AutomationMessages.Count;
-
-			try
-			{
-				action(form, forge);
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
-
+			action(form, forge);
 			return ForgeStatus(form, sounds, messages);
 		});
 

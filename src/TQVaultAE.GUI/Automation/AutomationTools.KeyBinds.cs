@@ -84,32 +84,25 @@ internal static partial class AutomationTools
 				dialog.AutomationDefaults();
 
 			string? keyTarget = null;
-			try
+			if (!string.IsNullOrWhiteSpace(action))
 			{
-				if (!string.IsNullOrWhiteSpace(action))
-				{
-					if (!Enum.TryParse<KeyBindAction>(action, ignoreCase: true, out var value))
-						throw new McpException($"Unknown action '{action}'. Actions: {string.Join(", ", Enum.GetNames<KeyBindAction>())}");
+				if (!Enum.TryParse<KeyBindAction>(action, ignoreCase: true, out var value))
+					throw new McpException($"Unknown action '{action}'. Actions: {string.Join(", ", Enum.GetNames<KeyBindAction>())}");
 
-					var parsed = KeyGesture.None;
-					if (!string.IsNullOrWhiteSpace(gesture) && !KeyGesture.TryParse(gesture, out parsed))
-						throw new McpException($"Unreadable gesture '{gesture}'.");
+				var parsed = KeyGesture.None;
+				if (!string.IsNullOrWhiteSpace(gesture) && !KeyGesture.TryParse(gesture, out parsed))
+					throw new McpException($"Unreadable gesture '{gesture}'.");
 
-					if (click)
-						dialog.AutomationClickCell(value, slot, KeyBindInput.ToKeys(new KeyGesture("A", parsed.Modifiers)) & Keys.Modifiers, right ? MouseButtons.Right : MouseButtons.Left);
-					else
-						dialog.AutomationRebind(value, slot, parsed);
-				}
-
-				if (!string.IsNullOrWhiteSpace(key))
-				{
-					var target = dialog.AutomationPressKey(ParseKey(key));
-					keyTarget = $"{target.GetType().Name} {target.Name}".TrimEnd();
-				}
+				if (click)
+					dialog.AutomationClickCell(value, slot, KeyBindInput.ToKeys(new KeyGesture("A", parsed.Modifiers)) & Keys.Modifiers, right ? MouseButtons.Right : MouseButtons.Left);
+				else
+					dialog.AutomationRebind(value, slot, parsed);
 			}
-			catch (InvalidOperationException ex)
+
+			if (!string.IsNullOrWhiteSpace(key))
 			{
-				throw new McpException(ex.Message);
+				var target = dialog.AutomationPressKey(ParseKey(key));
+				keyTarget = $"{target.GetType().Name} {target.Name}".TrimEnd();
 			}
 
 			var (rows, status, okEnabled, armed) = dialog.AutomationState();

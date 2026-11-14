@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.Application;
+using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Panels;
 
 namespace TQVaultAE.GUI.Components.Character;
@@ -30,7 +31,7 @@ public partial class ComboBoxCharacter
 	{
 		var tagItem = this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
 			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
-			?? throw new InvalidOperationException($"No tag '{tag}' in the menu.");
+			?? throw new AutomationRefusedException($"No tag '{tag}' in the menu.");
 		var delete = tagItem.DropDownItems.OfType<ToolStripMenuItem>().First(i => i.Name?.StartsWith("tagDeleteItem", StringComparison.Ordinal) ?? false);
 		return [this.tagsToolStripMenuItem, tagItem, delete];
 	}
@@ -84,17 +85,17 @@ public partial class ComboBoxCharacter
 	internal IReadOnlyList<(string Name, bool IsArchived, string Folder)> AutomationSetArchivedByTag(string tag, bool archived)
 	{
 		if (!tag.StartsWith("claude-", StringComparison.OrdinalIgnoreCase))
-			throw new InvalidOperationException($"'{tag}' is not a test tag: only tags starting with 'claude-' may be used.");
+			throw new AutomationRefusedException($"'{tag}' is not a test tag: only tags starting with 'claude-' may be used.");
 
 		var tagged = this.Items.OfType<PlayerSave>().Where(ps => ps.Tags.ContainsKey(tag)).ToList();
 		var real = tagged.Where(ps => !Automation.AutomationTestNames.IsTestFile(ps.Name)).Select(ps => ps.Name).ToList();
 		if (real.Count != 0)
-			throw new InvalidOperationException($"The tag '{tag}' is on characters that are not test characters: {string.Join(", ", real)}.");
+			throw new AutomationRefusedException($"The tag '{tag}' is on characters that are not test characters: {string.Join(", ", real)}.");
 
 		this.RefreshMenuTagList();
 		var tagItem = this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
 			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
-			?? throw new InvalidOperationException($"No tag '{tag}' in the menu.");
+			?? throw new AutomationRefusedException($"No tag '{tag}' in the menu.");
 		var entryPrefix = archived ? "tagArchiveAllItem" : "tagUnArchiveAllItem";
 		var entry = tagItem.DropDownItems.OfType<ToolStripMenuItem>().First(i => i.Name?.StartsWith(entryPrefix, StringComparison.Ordinal) ?? false);
 		entry.PerformClick();
@@ -117,7 +118,7 @@ public partial class ComboBoxCharacter
 		if (!string.IsNullOrEmpty(name))
 		{
 			var item = this.DropDown.Items.FirstOrDefault(i => i.Item is PlayerSave ps && string.Equals(ps.Name, name, StringComparison.OrdinalIgnoreCase))
-				?? throw new InvalidOperationException($"No character '{name}' in the list.");
+				?? throw new AutomationRefusedException($"No character '{name}' in the list.");
 			this.DropDown.ScrollControlIntoView(item);
 		}
 

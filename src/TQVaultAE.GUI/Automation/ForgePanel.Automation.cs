@@ -1,5 +1,6 @@
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Forge;
+using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.Presentation;
@@ -101,7 +102,7 @@ public partial class ForgePanel
 		// click goes to its picture with mouse messages.
 		var picture = this.SlotOf(slot).Picture;
 		if (!picture.Visible)
-			throw new InvalidOperationException($"The {slot} slot is hidden in this mode: a user could not click it.");
+			throw new AutomationRefusedException($"The {slot} slot is hidden in this mode: a user could not click it.");
 		var center = Automation.AutomationInput.Center(picture);
 		Automation.VirtualCursor.Set(picture, center);
 		Automation.AutomationInput.SendMouse(picture, center, MouseButtons.Left, 1);
@@ -138,7 +139,7 @@ public partial class ForgePanel
 	private static void Press(Control button, EventHandler click)
 	{
 		if (!button.Enabled || !button.Visible)
-			throw new InvalidOperationException($"'{button.Text}' is greyed or hidden: a user could not press it.");
+			throw new AutomationRefusedException($"'{button.Text}' is greyed or hidden: a user could not press it.");
 		click(button, EventArgs.Empty);
 	}
 }

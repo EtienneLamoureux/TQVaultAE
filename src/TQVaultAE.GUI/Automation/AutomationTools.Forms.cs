@@ -202,15 +202,8 @@ internal static partial class AutomationTools
 		{
 			var container = AutomationPanels.Resolve(form, panel).Container
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
-			try
-			{
-				var (entries, clicked) = container.AutomationBagMenu(bag, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
-				return Serialize(new { panel, bag, currentBag = container.ShownBag(), entries, clicked, icons = container.AutomationBagIcons });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			var (entries, clicked) = container.AutomationBagMenu(bag, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			return Serialize(new { panel, bag, currentBag = container.ShownBag(), entries, clicked, icons = container.AutomationBagIcons });
 		});
 
 	[McpServerTool(Name = "sort_menu", Destructive = true)]
@@ -222,15 +215,8 @@ internal static partial class AutomationTools
 		{
 			var named = AutomationPanels.Resolve(form, panel);
 			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
-			try
-			{
-				var (entries, clicked) = container.AutomationSortMenu(named.Panel, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
-				return Serialize(new { panel, entries, clicked, sort = SortChoices(form, container, named.Panel) });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			var (entries, clicked) = container.AutomationSortMenu(named.Panel, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			return Serialize(new { panel, entries, clicked, sort = SortChoices(form, container, named.Panel) });
 		});
 
 	[McpServerTool(Name = "sort_click", Destructive = true)]
@@ -241,16 +227,9 @@ internal static partial class AutomationTools
 		{
 			var named = AutomationPanels.Resolve(form, panel);
 			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
-			try
-			{
-				var sort = SortChoices(form, container, named.Panel);
-				container.AutomationSortClickLater(named.Panel);
-				return Serialize(new { panel, queued = true, sort });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			var sort = SortChoices(form, container, named.Panel);
+			container.AutomationSortClickLater(named.Panel);
+			return Serialize(new { panel, queued = true, sort });
 		});
 
 	/// <summary>
@@ -277,15 +256,8 @@ internal static partial class AutomationTools
 		[Description("Entry to click, texts separated by ' > '; empty to only read the menu.")] string? path = null)
 		=> AutomationHost.OnUi(form =>
 		{
-			try
-			{
-				var (entries, clicked) = form.AutomationVaultMenu(path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
-				return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, entries, clicked });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			var (entries, clicked) = form.AutomationVaultMenu(path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, entries, clicked });
 		});
 
 	[McpServerTool(Name = "bag_settings_pick_icon", Destructive = true)]
@@ -297,14 +269,7 @@ internal static partial class AutomationTools
 		{
 			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
 				?? throw new McpException("The bag button settings are not open.");
-			try
-			{
-				return Serialize(new { picked = dialog.AutomationPickIcon(tab, index) });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			return Serialize(new { picked = dialog.AutomationPickIcon(tab, index) });
 		});
 
 	[McpServerTool(Name = "bag_settings_hover_icon", Destructive = true)]
@@ -316,14 +281,7 @@ internal static partial class AutomationTools
 		{
 			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
 				?? throw new McpException("The bag button settings are not open.");
-			try
-			{
-				return Serialize(new { hovered = dialog.AutomationHoverIcon(tab, index) });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			return Serialize(new { hovered = dialog.AutomationHoverIcon(tab, index) });
 		});
 
 	[McpServerTool(Name = "bag_settings_drag_icon", Destructive = true)]
@@ -336,14 +294,7 @@ internal static partial class AutomationTools
 		{
 			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
 				?? throw new McpException("The bag button settings are not open.");
-			try
-			{
-				return Serialize(new { dragged = dialog.AutomationDragIcon(tab, index, target), target });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			return Serialize(new { dragged = dialog.AutomationDragIcon(tab, index, target), target });
 		});
 
 	[McpServerTool(Name = "open_bag_settings", Destructive = true)]
@@ -356,14 +307,7 @@ internal static partial class AutomationTools
 		{
 			var container = AutomationPanels.Resolve(form, panel).Container
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
-			try
-			{
-				return container.AutomationChangeIcon(bag ?? container.ShownBag());
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			return container.AutomationChangeIcon(bag ?? container.ShownBag());
 		});
 
 		// Let the dialog load (its icons come from the icon service, already loading in the background).
@@ -493,11 +437,7 @@ internal static partial class AutomationTools
 			"maximize" => FormWindowState.Maximized,
 			_ => throw new McpException($"Unknown state '{state}': minimize, restore or maximize."),
 		};
-		AutomationHost.OnUi(main =>
-		{
-			main.WindowState = target;
-			return 0;
-		});
+		AutomationHost.OnUi(main => { main.WindowState = target; });
 
 		// The resize handlers run on posted messages.
 		await Task.Delay(500);
@@ -539,7 +479,6 @@ internal static partial class AutomationTools
 		{
 			// Without the size: Location would send the old size too, over the one the DPI change gives.
 			NativeWindows.MoveTo(Target(main).Handle, x, y);
-			return 0;
 		});
 
 		// The DPI change comes as a posted window message.

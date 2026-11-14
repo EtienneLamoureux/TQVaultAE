@@ -229,16 +229,7 @@ internal static partial class AutomationTools
 		if (string.Equals(answers.Trim(), "clear", StringComparison.OrdinalIgnoreCase))
 			AutomationHost.ClearDialogAnswers();
 		else
-		{
-			try
-			{
-				AutomationHost.QueueDialogAnswers(answers.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(QueuedAnswer.Parse).ToList());
-			}
-			catch (ArgumentException ex)
-			{
-				throw new McpException(ex.Message);
-			}
-		}
+			AutomationHost.QueueDialogAnswers(answers.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(QueuedAnswer.Parse).ToList());
 
 		return DialogAnswers();
 	}
@@ -327,44 +318,37 @@ internal static partial class AutomationTools
 	public static string CharacterReadOnly([Description("true to click 'Read-only' first; false to only read.")] bool toggle = false)
 		=> AutomationHost.OnUi(form =>
 		{
-			try
+			var combo = form.AutomationCharacterCombo;
+			bool? checkedBefore = null;
+			if (toggle)
 			{
-				var combo = form.AutomationCharacterCombo;
-				bool? checkedBefore = null;
-				if (toggle)
-				{
-					checkedBefore = combo.AutomationReadOnlyChecked;
-					RunMenu(form, "characterTools", null, _ => [combo.AutomationReadOnlyEntry], now: true);
-				}
-
-				if (combo.SelectedItem is not PlayerSave ps)
-					throw new McpException("No character is selected.");
-
-				var service = form.Services.CharacterReadOnlyService;
-				combo.AutomationOpenDropDown(ps.Name);
-				bool badge = combo.AutomationShowsReadOnlyBadge(ps);
-				var player = form.AutomationCurrentPlayer;
-				return Serialize(new
-				{
-					name = ps.Name,
-					checkedBefore,
-					menuChecked = combo.AutomationReadOnlyChecked,
-					saveIsReadOnly = ps.IsReadOnly,
-					badge,
-					playerIsReadOnly = player?.IsReadOnly,
-					// The distinct states of its bags and equipment: one value when they all agree.
-					sacksReadOnly = player?.Append(player.EquipmentSack!).OfType<TQVaultAE.Domain.Entities.SackCollection>().Select(s => s.IsReadOnly).Distinct().ToList(),
-					filesReadOnly = service.IsReadOnly(ps.Folder),
-					files = service.OwnedFiles(ps.Folder)
-						.Where(form.Services.FileIO.Exists)
-						.Select(f => new { file = Path.GetFileName(f), readOnly = form.Services.FileIO.IsReadOnly(f) }),
-					notification = form.AutomationNotificationText,
-				});
+				checkedBefore = combo.AutomationReadOnlyChecked;
+				RunMenu(form, "characterTools", null, _ => [combo.AutomationReadOnlyEntry], now: true);
 			}
-			catch (InvalidOperationException ex)
+
+			if (combo.SelectedItem is not PlayerSave ps)
+				throw new McpException("No character is selected.");
+
+			var service = form.Services.CharacterReadOnlyService;
+			combo.AutomationOpenDropDown(ps.Name);
+			bool badge = combo.AutomationShowsReadOnlyBadge(ps);
+			var player = form.AutomationCurrentPlayer;
+			return Serialize(new
 			{
-				throw new McpException(ex.Message);
-			}
+				name = ps.Name,
+				checkedBefore,
+				menuChecked = combo.AutomationReadOnlyChecked,
+				saveIsReadOnly = ps.IsReadOnly,
+				badge,
+				playerIsReadOnly = player?.IsReadOnly,
+				// The distinct states of its bags and equipment: one value when they all agree.
+				sacksReadOnly = player?.Append(player.EquipmentSack!).OfType<TQVaultAE.Domain.Entities.SackCollection>().Select(s => s.IsReadOnly).Distinct().ToList(),
+				filesReadOnly = service.IsReadOnly(ps.Folder),
+				files = service.OwnedFiles(ps.Folder)
+					.Where(form.Services.FileIO.Exists)
+					.Select(f => new { file = Path.GetFileName(f), readOnly = form.Services.FileIO.IsReadOnly(f) }),
+				notification = form.AutomationNotificationText,
+			});
 		});
 
 	[McpServerTool(Name = "character_list", Destructive = true)]
@@ -378,14 +362,7 @@ internal static partial class AutomationTools
 				form.AutomationCharacterCombo.RefreshItems();
 			if (!string.IsNullOrWhiteSpace(pick))
 			{
-				try
-				{
-					form.AutomationCharacterCombo.AutomationPick(pick.Trim());
-				}
-				catch (InvalidOperationException ex)
-				{
-					throw new McpException(ex.Message);
-				}
+				form.AutomationCharacterCombo.AutomationPick(pick.Trim());
 			}
 
 			var combo = form.AutomationCharacterCombo;
@@ -401,16 +378,9 @@ internal static partial class AutomationTools
 		[Description("true to archive, false to unarchive.")] bool archived)
 		=> AutomationHost.OnUi(form =>
 		{
-			try
-			{
-				var characters = form.AutomationCharacterCombo.AutomationSetArchivedByTag(tag, archived)
-					.Select(c => new { name = c.Name, isArchived = c.IsArchived, folder = c.Folder });
-				return Serialize(new { tag, characters });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			var characters = form.AutomationCharacterCombo.AutomationSetArchivedByTag(tag, archived)
+				.Select(c => new { name = c.Name, isArchived = c.IsArchived, folder = c.Folder });
+			return Serialize(new { tag, characters });
 		});
 
 	[McpServerTool(Name = "open_character_editor", Destructive = true)]
@@ -468,14 +438,7 @@ internal static partial class AutomationTools
 				{
 					if (!isTestName(text))
 						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
-					try
-					{
-						ClickCharacterTool(form, combo.AutomationTagDeletePath(text), new QueuedAnswer(DialogResult.OK));
-					}
-					catch (InvalidOperationException ex)
-					{
-						throw new McpException(ex.Message);
-					}
+					ClickCharacterTool(form, combo.AutomationTagDeletePath(text), new QueuedAnswer(DialogResult.OK));
 					break;
 				}
 				case "assign":

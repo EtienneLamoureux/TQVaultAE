@@ -24,7 +24,7 @@ public partial class VaultPanel
 	internal (IReadOnlyList<AutomationMenuEntry> Entries, string? Clicked) AutomationBagMenu(int bag, IReadOnlyList<string>? path)
 	{
 		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+			throw new AutomationRefusedException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
 
 		this.contextMenu.Items.Clear();
 		var button = this.BagButtons[bag];
@@ -52,7 +52,7 @@ public partial class VaultPanel
 	internal string AutomationChangeIcon(int bag)
 	{
 		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+			throw new AutomationRefusedException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
 
 		this.contextMenu.Items.Clear();
 		var button = this.BagButtons[bag];
@@ -61,7 +61,7 @@ public partial class VaultPanel
 		if (entry is null)
 		{
 			this.contextMenu.Close();
-			throw new InvalidOperationException("This bag has no 'Change icon' entry: only the vault bags' menu has it.");
+			throw new AutomationRefusedException("This bag has no 'Change icon' entry: only the vault bags' menu has it.");
 		}
 
 		return AutomationMenus.ClickLater(this, [entry]);
@@ -76,7 +76,7 @@ public partial class VaultPanel
 	internal bool AutomationExportTab(int bag, string path)
 	{
 		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+			throw new AutomationRefusedException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
 
 		this.contextMenu.Items.Clear();
 		var button = this.BagButtons[bag];
@@ -85,7 +85,7 @@ public partial class VaultPanel
 		bool hasFile = exportTab?.DropDownItems.OfType<ToolStripItem>().Any(i => i.Text == Resources.PlayerPanelMenuExportTabFile && i.Enabled) == true;
 		this.contextMenu.Close();
 		if (!hasFile)
-			throw new InvalidOperationException("This bag's menu has no 'Export tab > File' entry: only the vault bags holding items have it.");
+			throw new AutomationRefusedException("This bag's menu has no 'Export tab > File' entry: only the vault bags holding items have it.");
 
 		return this.ExportTabToFile(path);
 	}
@@ -97,8 +97,8 @@ public partial class VaultPanel
 	private AutoSortButton SortButtonOf(SackPanel target)
 	{
 		var button = this.AutoSortButtons.FirstOrDefault(b => ReferenceEquals(this.SortTarget(b), target))
-			?? throw new InvalidOperationException("This panel has no sort button.");
-		return button.Visible ? button : throw new InvalidOperationException("The sort button of this panel is hidden.");
+			?? throw new AutomationRefusedException("This panel has no sort button.");
+		return button.Visible ? button : throw new AutomationRefusedException("The sort button of this panel is hidden.");
 	}
 
 	/// <summary>

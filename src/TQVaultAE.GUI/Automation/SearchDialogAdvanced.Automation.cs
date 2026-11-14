@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Models.Search;
 
 namespace TQVaultAE.GUI.Dialogs;
@@ -96,7 +97,7 @@ public partial class SearchDialogAdvanced
 				this.scalingLabelProgress_MouseLeave(this.scalingLabelProgress, EventArgs.Empty);
 				return true;
 			default:
-				throw new ArgumentException($"Unknown tool tip '{kind}': filters, results or none.", nameof(kind));
+				throw new AutomationRefusedException($"Unknown tool tip '{kind}': filters, results or none.");
 		}
 	}
 }

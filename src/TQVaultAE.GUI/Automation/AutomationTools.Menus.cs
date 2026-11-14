@@ -59,10 +59,6 @@ internal static partial class AutomationTools
 			clicking = true;
 			return (entries, AutomationMenus.ClickLater(main, chain));
 		}
-		catch (InvalidOperationException ex)
-		{
-			throw new McpException(ex.Message);
-		}
 		finally
 		{
 			if (!clicking && menu.Visible)

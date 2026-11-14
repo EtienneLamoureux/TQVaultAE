@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Reflection;
+using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Icons;
 
 namespace TQVaultAE.GUI.Dialogs;
@@ -52,7 +53,7 @@ public partial class BagButtonSettings
 	{
 		var (key, grid) = this.GridByCategory.FirstOrDefault(kv => kv.Key.ToString().StartsWith(category, StringComparison.OrdinalIgnoreCase));
 		if (grid is null)
-			throw new InvalidOperationException($"No grid '{category}'. Grids: {string.Join(", ", this.GridByCategory.Keys)}");
+			throw new AutomationRefusedException($"No grid '{category}'. Grids: {string.Join(", ", this.GridByCategory.Keys)}");
 		return (key.ToString(), grid);
 	}
 
@@ -61,7 +62,7 @@ public partial class BagButtonSettings
 		var (key, grid) = this.AutomationGrid(category);
 		var cells = (List<IconGrid.Cell>)ShownCells.GetValue(grid)!;
 		if (index < 0 || index >= cells.Count)
-			throw new InvalidOperationException($"Icon {index} out of range 0..{cells.Count - 1} in {key}.");
+			throw new AutomationRefusedException($"Icon {index} out of range 0..{cells.Count - 1} in {key}.");
 		return (grid, cells[index]);
 	}
 
@@ -81,10 +82,10 @@ public partial class BagButtonSettings
 			"off" => this.groupBoxOffBitmap,
 			"over" => this.groupBoxOverBitmap,
 			"simple" => this.groupBoxSimpleImage,
-			_ => throw new InvalidOperationException("target must be on, off, over or simple."),
+			_ => throw new AutomationRefusedException("target must be on, off, over or simple."),
 		};
 		if (!box.Visible)
-			throw new InvalidOperationException($"The '{target}' picture box is hidden in this mode (Simple or Detailed): a user could not drop on it.");
+			throw new AutomationRefusedException($"The '{target}' picture box is hidden in this mode (Simple or Detailed): a user could not drop on it.");
 
 		var (grid, cell) = this.AutomationCell(category, index);
 		var bounds = grid.BoundsOf(cell);

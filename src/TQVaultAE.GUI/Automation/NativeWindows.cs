@@ -241,7 +241,7 @@ internal static partial class NativeWindows
 			try
 			{
 				if (!PrintWindow(top.Handle, hdc, PW_RENDERFULLCONTENT))
-					throw new InvalidOperationException("PrintWindow failed.");
+					throw new AutomationRefusedException("PrintWindow failed.");
 			}
 			finally
 			{

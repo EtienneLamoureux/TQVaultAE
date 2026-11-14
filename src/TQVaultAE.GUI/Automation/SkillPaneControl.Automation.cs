@@ -1,6 +1,7 @@
 using System.Drawing;
 using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Automation;
 
 namespace TQVaultAE.GUI.Components.Character;
 
@@ -59,12 +60,12 @@ internal sealed partial class SkillPaneControl
 		Point center;
 		if (skill is null)
 		{
-			var art = this.Tree?.Pane ?? throw new InvalidOperationException("The pane shows no mastery.");
+			var art = this.Tree?.Pane ?? throw new AutomationRefusedException("The pane shows no mastery.");
 			center = new Point(art.MasteryButtonX + SkillPaneLayout.MasteryButtonSize / 2, art.MasteryButtonY + SkillPaneLayout.MasteryButtonSize / 2);
 		}
 		else
 		{
-			var button = skill.Button ?? throw new InvalidOperationException($"'{skill.Id}' has no button.");
+			var button = skill.Button ?? throw new AutomationRefusedException($"'{skill.Id}' has no button.");
 			center = new Point(button.X + SkillPaneLayout.ButtonSize / 2, button.Y + SkillPaneLayout.ButtonSize / 2);
 		}
 

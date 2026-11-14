@@ -234,7 +234,8 @@ internal static class AutomationHost
 	private static CultureInfo? _culture;
 
 	/// <summary>
-	/// Runs <paramref name="action"/> on the UI thread and returns its result.
+	/// Runs <paramref name="action"/> on the UI thread and returns its result. A refusal of the app's automation code
+	/// (<see cref="AutomationRefusedException"/>) reaches the client as a tool error with its message.
 	/// </summary>
 	public static T OnUi<T>(Func<MainForm, T> action)
 	{
@@ -242,22 +243,37 @@ internal static class AutomationHost
 		if (form is null || form.IsDisposed || !form.IsHandleCreated)
 			throw new McpException("The TQVault main window is not ready yet. Use list_windows / close_dialog to answer startup dialogs.");
 
-		if (!form.InvokeRequired)
-			return action(form);
-
-		// Control.Invoke runs the delegate in the caller's ExecutionContext, and the culture flows with it: without
-		// this, forms and texts made by a tool would take the request thread's culture instead of the UI language.
-		return (T)form.Invoke(() =>
+		try
 		{
-			if (_uiCulture is not null && _culture is not null)
-			{
-				CultureInfo.CurrentUICulture = _uiCulture;
-				CultureInfo.CurrentCulture = _culture;
-			}
+			if (!form.InvokeRequired)
+				return action(form);
 
-			return action(form);
-		})!;
+			// Control.Invoke runs the delegate in the caller's ExecutionContext, and the culture flows with it: without
+			// this, forms and texts made by a tool would take the request thread's culture instead of the UI language.
+			return (T)form.Invoke(() =>
+			{
+				if (_uiCulture is not null && _culture is not null)
+				{
+					CultureInfo.CurrentUICulture = _uiCulture;
+					CultureInfo.CurrentCulture = _culture;
+				}
+
+				return action(form);
+			})!;
+		}
+		catch (AutomationRefusedException ex)
+		{
+			throw new McpException(ex.Message, ex);
+		}
 	}
+
+	/// <summary>Runs <paramref name="action"/> on the UI thread, like <see cref="OnUi{T}(Func{MainForm, T})"/>.</summary>
+	public static void OnUi(Action<MainForm> action)
+		=> OnUi(form =>
+		{
+			action(form);
+			return 0;
+		});
 
 	private static async Task StartServerAsync(int port)
 	{

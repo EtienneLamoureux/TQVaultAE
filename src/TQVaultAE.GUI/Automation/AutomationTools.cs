@@ -51,7 +51,6 @@ internal static partial class AutomationTools
 					if (form.IsHandleCreated)
 						forms[form.Handle] = (form.GetType().Name, form.Modal);
 				}
-				return 0;
 			});
 		}
 
@@ -500,10 +499,6 @@ internal static partial class AutomationTools
 			{
 				clicked = named.Panel.AutomationClickContextMenu(cell, path.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
 			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
 			finally
 			{
 				ReleaseCursor(named.Panel);
@@ -548,14 +543,7 @@ internal static partial class AutomationTools
 		{
 			var container = AutomationPanels.Resolve(form, panel).Container
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
-			try
-			{
-				return Serialize(new { panel, bag, exported = container.AutomationExportTab(bag, path), path });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			return Serialize(new { panel, bag, exported = container.AutomationExportTab(bag, path), path });
 		});
 
 	[McpServerTool(Name = "press_key", Destructive = true)]
@@ -778,27 +766,20 @@ internal static partial class AutomationTools
 		var path = open?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
 		var (png, size) = AutomationHost.OnUi(form =>
 		{
-			try
-			{
-				using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)
-					? form.AutomationRenderVaultMenu(path)
-					: string.Equals(target, "characterTools", StringComparison.OrdinalIgnoreCase)
-					? form.AutomationCharacterCombo.AutomationRenderMenu(path)
-					: target.EndsWith(".sort", StringComparison.OrdinalIgnoreCase)
-					? RenderSortMenu(form, target[..^".sort".Length])
-					: BagMenuTarget(target) is var (bagPanel, bag)
-					? RenderBagMenu(form, bagPanel, bag, path)
-					: target.StartsWith("loadouts", StringComparison.OrdinalIgnoreCase)
-					? RenderLoadoutMenu(form, target)
-					: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
-				using var stream = new MemoryStream();
-				bitmap.Save(stream, ImageFormat.Png);
-				return (stream.ToArray(), bitmap.Size);
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)
+				? form.AutomationRenderVaultMenu(path)
+				: string.Equals(target, "characterTools", StringComparison.OrdinalIgnoreCase)
+				? form.AutomationCharacterCombo.AutomationRenderMenu(path)
+				: target.EndsWith(".sort", StringComparison.OrdinalIgnoreCase)
+				? RenderSortMenu(form, target[..^".sort".Length])
+				: BagMenuTarget(target) is var (bagPanel, bag)
+				? RenderBagMenu(form, bagPanel, bag, path)
+				: target.StartsWith("loadouts", StringComparison.OrdinalIgnoreCase)
+				? RenderLoadoutMenu(form, target)
+				: AutomationPanels.Resolve(form, target).Panel.AutomationRenderContextMenu(new Point(x, y), path);
+			using var stream = new MemoryStream();
+			bitmap.Save(stream, ImageFormat.Png);
+			return (stream.ToArray(), bitmap.Size);
 		});
 
 		var file = Path.Combine(Path.GetTempPath(), $"tqvault-menu-{target}-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
@@ -813,7 +794,7 @@ internal static partial class AutomationTools
 	/// <summary>The loadout bar's right-click menu ('loadouts') or drop-down list ('loadouts.list'), drawn as it opens.</summary>
 	private static Bitmap RenderLoadoutMenu(MainForm form, string target)
 	{
-		var bar = form.AutomationStashPanel?.LoadoutBar ?? throw new InvalidOperationException("The loadout bar is not built yet: show the Equipment tab first.");
+		var bar = form.AutomationStashPanel?.LoadoutBar ?? throw new AutomationRefusedException("The loadout bar is not built yet: show the Equipment tab first.");
 		var menu = target.EndsWith(".list", StringComparison.OrdinalIgnoreCase) ? bar.ListMenu : bar.ActionMenu;
 		menu.Show(bar, new Point(0, bar.Height));
 		return AutomationMenus.Render(menu, []);
@@ -838,7 +819,7 @@ internal static partial class AutomationTools
 	private static Bitmap RenderSortMenu(MainForm form, string panel)
 	{
 		var named = AutomationPanels.Resolve(form, panel);
-		var container = named.Container ?? throw new InvalidOperationException($"Panel '{panel}' has no sort button.");
+		var container = named.Container ?? throw new AutomationRefusedException($"Panel '{panel}' has no sort button.");
 		return container.AutomationRenderSortMenu(named.Panel);
 	}
 

@@ -84,9 +84,9 @@ internal static class AutomationMenus
 		{
 			var entry = items.FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
 				?? items.FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true)
-				?? throw new InvalidOperationException($"No entry '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
+				?? throw new AutomationRefusedException($"No entry '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
 			if (chain.Count < path.Count - 1 && !entry.Enabled)
-				throw new InvalidOperationException($"'{entry.Text}' is disabled: a user could not open it.");
+				throw new AutomationRefusedException($"'{entry.Text}' is disabled: a user could not open it.");
 			chain.Add(entry);
 			items = entry is ToolStripMenuItem { HasDropDownItems: true } sub
 				? Opened(sub).DropDownItems.Cast<ToolStripItem>().Where(i => i.Available).ToList()
@@ -104,14 +104,14 @@ internal static class AutomationMenus
 	internal static IReadOnlyList<ToolStripItem> Clickable(IReadOnlyList<ToolStripItem> chain)
 	{
 		if (chain.Count == 0)
-			throw new InvalidOperationException("Empty menu path.");
+			throw new AutomationRefusedException("Empty menu path.");
 		if (chain.FirstOrDefault(i => !i.Available) is { } hidden)
-			throw new InvalidOperationException($"'{hidden.Text}' is hidden: a user could not click it.");
+			throw new AutomationRefusedException($"'{hidden.Text}' is hidden: a user could not click it.");
 		var last = chain[^1];
 		if (!last.Enabled)
-			throw new InvalidOperationException($"'{last.Text}' is disabled: a user could not click it.");
+			throw new AutomationRefusedException($"'{last.Text}' is disabled: a user could not click it.");
 		if (last is ToolStripMenuItem { HasDropDownItems: true } parent)
-			throw new InvalidOperationException($"'{last.Text}' opens a sub menu: add one of its entries to the path ({string.Join(" | ", parent.DropDownItems.Cast<ToolStripItem>().Where(i => i.Available).Select(i => i.Text))}).");
+			throw new AutomationRefusedException($"'{last.Text}' opens a sub menu: add one of its entries to the path ({string.Join(" | ", parent.DropDownItems.Cast<ToolStripItem>().Where(i => i.Available).Select(i => i.Text))}).");
 		return chain;
 	}
 
@@ -137,7 +137,7 @@ internal static class AutomationMenus
 				var entry = items.FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
 					?? items.FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true);
 				if (entry is not ToolStripMenuItem { HasDropDownItems: true } parent)
-					throw new InvalidOperationException($"No sub menu '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
+					throw new AutomationRefusedException($"No sub menu '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
 
 				// The entry whose sub menu is open is drawn selected, as under the user's mouse.
 				parent.Select();

@@ -3,6 +3,8 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using ModelContextProtocol;
+
 namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
@@ -15,7 +17,7 @@ internal readonly record struct QueuedAnswer(DialogResult Result, string? Text =
 	public const string TextPrefix = "text:";
 
 	/// <summary>Reads one answer: a button name (OK, Cancel, Yes, No, Abort, Retry, Ignore) or <c>text:</c> and the text.</summary>
-	/// <exception cref="ArgumentException">Not a known answer.</exception>
+	/// <exception cref="McpException">Not a known answer.</exception>
 	public static QueuedAnswer Parse(string answer)
 	{
 		if (answer.StartsWith(TextPrefix, StringComparison.OrdinalIgnoreCase))
@@ -23,7 +25,7 @@ internal readonly record struct QueuedAnswer(DialogResult Result, string? Text =
 
 		return Enum.TryParse<DialogResult>(answer, true, out var result) && result != DialogResult.None && !int.TryParse(answer, out _)
 			? new QueuedAnswer(result)
-			: throw new ArgumentException($"Unknown answer '{answer}'. Use OK, Cancel, Yes, No, Abort, Retry, Ignore or text:<text>.");
+			: throw new McpException($"Unknown answer '{answer}'. Use OK, Cancel, Yes, No, Abort, Retry, Ignore or text:<text>.");
 	}
 
 	/// <inheritdoc/>

@@ -41,7 +41,7 @@ internal sealed partial class KeyBindsDialog
 	internal void AutomationRebind(KeyBindAction action, int slot, KeyGesture gesture)
 	{
 		if (!this.cells.ContainsKey((action, slot)))
-			throw new InvalidOperationException($"No slot {slot} for {action}.");
+			throw new AutomationRefusedException($"No slot {slot} for {action}.");
 
 		if (this.armed != (action, slot))
 			this.AutomationClickCell(action, slot, Keys.None);
@@ -56,7 +56,7 @@ internal sealed partial class KeyBindsDialog
 		{
 			var keys = KeyBindInput.ToKeys(gesture);
 			if (keys == Keys.None)
-				throw new InvalidOperationException($"'{gesture}' is not a key.");
+				throw new AutomationRefusedException($"'{gesture}' is not a key.");
 			AutomationInput.SendKey(this, keys);
 		}
 	}
@@ -65,7 +65,7 @@ internal sealed partial class KeyBindsDialog
 	internal void AutomationClickCell(KeyBindAction action, int slot, Keys modifiers, MouseButtons button = MouseButtons.Left)
 	{
 		if (!this.cells.TryGetValue((action, slot), out var cell))
-			throw new InvalidOperationException($"No slot {slot} for {action}.");
+			throw new AutomationRefusedException($"No slot {slot} for {action}.");
 
 		AutomationInput.SendClick(cell, AutomationInput.Center(cell), button, modifiers);
 	}
