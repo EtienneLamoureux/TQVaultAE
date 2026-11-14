@@ -13,6 +13,7 @@ public class CharacterPanelLayoutTests
 	[InlineData(58, 13.5, 0, 71)] // A character's strength in the game: truncated, not rounded
 	[InlineData(50, 5.75, 0, 55)]
 	[InlineData(10, -20, 0, 0)]
+	[InlineData(100, 0, 15, 115)] // 100 × 1.15 is 114.999... in floating point: the formula keeps it whole
 	public void AttributeTotal_AddsFlatBonusesThenPercentages_Truncated(int baseValue, double flat, double percent, int expected)
 		=> CharacterPanelLayout.AttributeTotal(baseValue, flat, percent).Should().Be(expected);
 

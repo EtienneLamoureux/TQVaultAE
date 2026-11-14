@@ -191,7 +191,15 @@ public static class CharacterStatsCalculator
 
 	/// <summary>A character attribute: (base + flat) × (1 + % / 100), not under 0.</summary>
 	public static double Total(double baseValue, AttributeSum sum, string field)
-		=> Math.Max(0, (baseValue + sum[field]) * (1 + sum[field + "Modifier"] / 100));
+		=> Attribute(baseValue, sum[field], sum[field + "Modifier"]);
+
+	/// <summary>
+	/// A character attribute from its base value and bonuses: (base + flat) × (100 + %) / 100, not under 0. Written
+	/// "× (100 + %) / 100" so that a whole result stays whole before <see cref="CharacterPanelLayout.AttributeTotal"/>
+	/// truncates it (100 × 1.15 is 114.999...).
+	/// </summary>
+	public static double Attribute(double baseValue, double flatBonus, double percentBonus)
+		=> Math.Max(0, (baseValue + flatBonus) * (100 + percentBonus) / 100);
 
 	/// <summary>A skill attribute: flat × (1 + % / 100).</summary>
 	private static double Scaled(AttributeSum sum, string field)

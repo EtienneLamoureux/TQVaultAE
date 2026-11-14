@@ -35,7 +35,7 @@ public static partial class CharacterPanelLayout
 	/// bonuses, truncated (58 + 13.5 strength shows 71 in the game).
 	/// </summary>
 	public static int AttributeTotal(int baseValue, double flatBonus, double percentBonus)
-		=> (int)Math.Max(0, (baseValue + flatBonus) * (100 + percentBonus) / 100);
+		=> (int)CharacterStatsCalculator.Attribute(baseValue, flatBonus, percentBonus);
 
 	/// <summary>
 	/// The elapsed time line, <c>tagCTimeNumber</c> ("{%d0}:{%d1}:{%d2}"): days, hours and minutes of play, as
