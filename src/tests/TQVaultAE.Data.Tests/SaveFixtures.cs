@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -98,6 +99,32 @@ internal sealed class SaveFixtures : IDisposable
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		File.WriteAllBytes(path, chr);
 		return this.LoadPlayer(path);
+	}
+
+	/// <summary>
+	/// Clears the seed of each item record written as a copy of a potion stack (<c>pointX</c> = -1):
+	/// the game saves a stack as one record per potion and TQVault gives the copies new seeds.
+	/// </summary>
+	public static byte[] WithoutSeedsOfStackCopies(byte[] chr)
+	{
+		ReadOnlySpan<byte> seedTag = [4, 0, 0, 0, (byte)'s', (byte)'e', (byte)'e', (byte)'d'];
+		ReadOnlySpan<byte> pointXTag = [6, 0, 0, 0, (byte)'p', (byte)'o', (byte)'i', (byte)'n', (byte)'t', (byte)'X'];
+		var data = (byte[])chr.Clone();
+		int offset = 0;
+		int found;
+		while ((found = data.AsSpan(offset).IndexOf(seedTag)) >= 0)
+		{
+			int seed = offset + found + seedTag.Length;
+			// The record's pointX comes before the next record's seed (relic names can make it far).
+			int nextSeed = data.AsSpan(seed).IndexOf(seedTag);
+			int pointX = data.AsSpan(seed, nextSeed < 0 ? data.Length - seed : nextSeed).IndexOf(pointXTag);
+			if (pointX >= 0 && BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(seed + pointX + pointXTag.Length)) == -1)
+				data.AsSpan(seed, 4).Clear();
+
+			offset = seed + 4;
+		}
+
+		return data;
 	}
 
 	public void Dispose()

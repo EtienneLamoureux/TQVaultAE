@@ -38,30 +38,6 @@ public sealed class SaveRoundTripTests : IDisposable
 
 	#region Player.chr
 
-	/// <summary>
-	/// Clears the seed of each item record written as a copy of a potion stack (<c>pointX</c> = -1):
-	/// the game saves a stack as one record per potion and TQVault gives the copies new seeds.
-	/// </summary>
-	private static byte[] WithoutSeedsOfStackCopies(byte[] chr)
-	{
-		ReadOnlySpan<byte> seedTag = [4, 0, 0, 0, (byte)'s', (byte)'e', (byte)'e', (byte)'d'];
-		ReadOnlySpan<byte> pointXTag = [6, 0, 0, 0, (byte)'p', (byte)'o', (byte)'i', (byte)'n', (byte)'t', (byte)'X'];
-		var data = (byte[])chr.Clone();
-		int offset = 0;
-		int found;
-		while ((found = data.AsSpan(offset).IndexOf(seedTag)) >= 0)
-		{
-			int seed = offset + found + seedTag.Length;
-			int pointX = data.AsSpan(seed, Math.Min(200, data.Length - seed)).IndexOf(pointXTag);
-			if (pointX >= 0 && BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(seed + pointX + pointXTag.Length)) == -1)
-				data.AsSpan(seed, 4).Clear();
-
-			offset = seed + 4;
-		}
-
-		return data;
-	}
-
 	[Fact]
 	public void Save_UnchangedCharacter_WritesTheGameFileBackExceptSeedsOfPotionStackCopies()
 	{
@@ -73,7 +49,7 @@ public sealed class SaveRoundTripTests : IDisposable
 
 		var written = File.ReadAllBytes(path);
 		written.Length.Should().Be(original.Length);
-		WithoutSeedsOfStackCopies(written).Should().Equal(WithoutSeedsOfStackCopies(original));
+		SaveFixtures.WithoutSeedsOfStackCopies(written).Should().Equal(SaveFixtures.WithoutSeedsOfStackCopies(original));
 		written.Should().NotEqual(original, "the copies of a potion stack get new seeds, as the test relies on to find them");
 	}
 
