@@ -87,8 +87,8 @@ public partial class ResultsDialog
         this.columnLevel});
         this.resultsDataGridView.GridColor = System.Drawing.Color.Khaki;
         this.resultsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.resultsDataGridView.Location = new System.Drawing.Point(10, 35);
-        this.resultsDataGridView.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+        this.resultsDataGridView.Location = new System.Drawing.Point(8, 28);
+        this.resultsDataGridView.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
         this.resultsDataGridView.MultiSelect = false;
         this.resultsDataGridView.Name = "resultsDataGridView";
         this.resultsDataGridView.ReadOnly = true;
@@ -97,7 +97,7 @@ public partial class ResultsDialog
         this.resultsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
         this.resultsDataGridView.ShowCellToolTips = false;
         this.resultsDataGridView.ShowEditingIcon = false;
-        this.resultsDataGridView.Size = new System.Drawing.Size(1026, 564);
+        this.resultsDataGridView.Size = new System.Drawing.Size(821, 451);
         this.resultsDataGridView.TabIndex = 1;
 		this.resultsDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewCellClick);
 		this.resultsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResultsDataGridViewCellDoubleClick);
@@ -201,21 +201,21 @@ public partial class ResultsDialog
         // 
         // ResultsDialog
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+        this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
-        this.ClientSize = new System.Drawing.Size(1046, 621);
+        this.ClientSize = new System.Drawing.Size(837, 497);
         this.Controls.Add(this.resultsDataGridView);
         this.DrawCustomBorder = true;
         this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+        this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.Name = "ResultsDialog";
-        this.OriginalFormSize = new System.Drawing.Size(837, 497);
-        this.Padding = new System.Windows.Forms.Padding(10, 35, 10, 22);
+        this.OriginalFormSize = new System.Drawing.Size(670, 398);
+        this.Padding = new System.Windows.Forms.Padding(8, 28, 8, 18);
         this.ResizeCustomAllowed = true;
         this.ShowIcon = false;
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
