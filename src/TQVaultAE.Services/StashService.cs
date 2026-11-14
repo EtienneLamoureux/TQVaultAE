@@ -94,20 +94,19 @@ public class StashService(
 			return stash;
 		}
 
-		Stash updateStash(string k, Stash oldValue)
-		{
-			// no logic with oldValue
-			// The reloaded items replace those of the old file in the search.
-			this.ItemDatabaseService.RemoveContainerFromDatabase(k);
-			return addStash(k);
-		}
-
-		result.Stash = fromFileWatcher
-			? userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
-			: userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
+		result.Stash = this.userContext.Stashes.LoadOrReload(result.StashFile, addStash, fromFileWatcher, this.ItemDatabaseService);
 
 		return result;
 	}
+
+	/// <summary>
+	/// What tells the transfer stash and the relic vault apart: their name, their file and their stash type.
+	/// </summary>
+	private sealed record SharedStashKind(StashType Type, string Name, Func<string> ActiveMapFile, Func<string, string> FileOfMap);
+
+	private SharedStashKind KindOf(StashType type) => type == StashType.TransferStash
+		? new(StashType.TransferStash, Resources.GlobalTransferStash, () => this.GamePathResolver.TransferStashFileFullPath, this.GamePathResolver.TransferStashFileFullPathFor)
+		: new(StashType.RelicVaultStash, Resources.GlobalRelicVaultStash, () => this.GamePathResolver.RelicVaultStashFileFullPath, this.GamePathResolver.RelicVaultStashFileFullPathFor);
 
 	/// <summary>
 	/// Loads the transfer stash for immortal throne.
@@ -115,15 +114,29 @@ public class StashService(
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
 	public StashLoadResult LoadTransferStash(bool fromFileWatcher = false, string? mapFolder = null)
+		=> this.LoadSharedStash(this.KindOf(StashType.TransferStash), fromFileWatcher, mapFolder);
+
+	/// <summary>
+	/// Loads the relic vault stash.
+	/// </summary>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result.</returns>
+	public StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false, string? mapFolder = null)
+		=> this.LoadSharedStash(this.KindOf(StashType.RelicVaultStash), fromFileWatcher, mapFolder);
+
+	/// <summary>
+	/// Loads a stash shared by the characters of a map: the active one's unless <paramref name="mapFolder"/> is given.
+	/// </summary>
+	private StashLoadResult LoadSharedStash(SharedStashKind kind, bool fromFileWatcher, string? mapFolder)
 	{
 		var result = new StashLoadResult();
 
 		string map = this.MapOrActive(mapFolder);
-		result.StashFile = mapFolder is null ? GamePathResolver.TransferStashFileFullPath : GamePathResolver.TransferStashFileFullPathFor(map);
+		result.StashFile = mapFolder is null ? kind.ActiveMapFile() : kind.FileOfMap(map);
 
 		Stash addStash(string k)
 		{
-			var stash = new Stash(Resources.GlobalTransferStash, result.StashFile);
+			var stash = new Stash(kind.Name, k);
 			try
 			{
 				// Read with the map whose file it is; its items inherit that map.
@@ -132,30 +145,20 @@ public class StashService(
 
 				Inherit(stash, this.GameMapService?.ModNameOfMap(map));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
-					stash.Sack.StashType = StashType.TransferStash;
+					stash.Sack.StashType = kind.Type;
 
-				// Add transfer stash items to the search database
-				this.ItemDatabaseService.IndexStash(stash, k, this.SharedStashName(Resources.GlobalTransferStash, map), StashType.TransferStash);
+				// Add the stash items to the search database
+				this.ItemDatabaseService.IndexStash(stash, k, this.SharedStashName(kind.Name, map), kind.Type);
 			}
 			catch (ArgumentException argumentException)
 			{
 				stash.ArgumentException = argumentException;
 			}
+
 			return stash;
 		}
 
-		Stash updateStash(string k, Stash oldValue)
-		{
-			// The reloaded items replace those of the old file in the search.
-			this.ItemDatabaseService.RemoveContainerFromDatabase(k);
-			return addStash(k);
-		}
-
-		var resultStash = fromFileWatcher
-			? userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
-			: userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
-
-		result.Stash = resultStash;
+		result.Stash = this.userContext.Stashes.LoadOrReload(result.StashFile, addStash, fromFileWatcher, this.ItemDatabaseService);
 		result.Stash.IsImmortalThrone = true;
 
 		return result;
@@ -179,77 +182,20 @@ public class StashService(
 	public StashLoadResult? LoadRelicVaultStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false)
 		=> HasStashes(selectedSave) ? this.LoadRelicVaultStash(fromFileWatcher) : null;
 
-	/// <summary>
-	/// Loads the relic vault stash.
-	/// </summary>
-	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
-	/// <returns>Stash load result.</returns>
-	public StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false, string? mapFolder = null)
-	{
-		var result = new StashLoadResult();
-
-		string map = this.MapOrActive(mapFolder);
-		result.StashFile = mapFolder is null ? GamePathResolver.RelicVaultStashFileFullPath : GamePathResolver.RelicVaultStashFileFullPathFor(map);
-
-		Stash addStash(string k)
-		{
-			var stash = new Stash(Resources.GlobalRelicVaultStash, k);
-
-			try
-			{
-				// Read with the map whose file it is; its items inherit that map.
-				using (this.ReadWithMap(map))
-					stash.StashFound = StashProvider.LoadFile(stash);
-
-				Inherit(stash, this.GameMapService?.ModNameOfMap(map));
-				if ((stash.StashFound ?? false) && stash.Sack is not null)
-					stash.Sack.StashType = StashType.RelicVaultStash;
-
-				// Add relic vault stash items to the search database
-				this.ItemDatabaseService.IndexStash(stash, k, this.SharedStashName(Resources.GlobalRelicVaultStash, map), StashType.RelicVaultStash);
-			}
-			catch (ArgumentException argumentException)
-			{
-				stash.ArgumentException = argumentException;
-			}
-
-			return stash;
-		}
-
-		Stash updateStash(string k, Stash oldValue)
-		{
-			// The reloaded items replace those of the old file in the search.
-			this.ItemDatabaseService.RemoveContainerFromDatabase(k);
-			return addStash(k);
-		}
-
-		// Get the relic vault stash
-		var resultStash = fromFileWatcher
-			? userContext.Stashes.AddOrUpdateAtomic(result.StashFile, addStash, updateStash)
-			: userContext.Stashes.GetOrAddAtomic(result.StashFile, addStash);
-
-		result.Stash = resultStash;
-		result.Stash.IsImmortalThrone = true;
-
-		return result;
-	}
-
 	/// <inheritdoc/>
 	public string SharedStashFile(StashType type, string mapFolder)
-		=> type == StashType.TransferStash
-			? this.GamePathResolver.TransferStashFileFullPathFor(mapFolder)
-			: this.GamePathResolver.RelicVaultStashFileFullPathFor(mapFolder);
+		=> this.KindOf(type).FileOfMap(mapFolder);
 
 	/// <inheritdoc/>
 	public StashLoadResult? ReloadSharedStash(StashType type, string mapFolder)
 	{
+		var kind = this.KindOf(type);
+
 		// A file the session never read has nothing to refresh: it is read when first shown.
-		if (!this.userContext.Stashes.ContainsKey(this.SharedStashFile(type, mapFolder)))
+		if (!this.userContext.Stashes.ContainsKey(kind.FileOfMap(mapFolder)))
 			return null;
 
-		return type == StashType.TransferStash
-			? this.LoadTransferStash(true, mapFolder)
-			: this.LoadRelicVaultStash(true, mapFolder);
+		return this.LoadSharedStash(kind, true, mapFolder);
 	}
 
 	/// <inheritdoc/>

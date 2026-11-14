@@ -119,19 +119,7 @@ public class PlayerService(
 				return resultPC;
 			}
 
-			PlayerCollection updateFactory(string k, PlayerCollection oldValue)
-			{
-				// No check on oldValue
-				// The reloaded items replace those of the old file in the search.
-				this.ItemDatabaseService.RemoveContainerFromDatabase(k);
-				return addFactory(k);
-			}
-
-			var resultPlayer = fromFileWatcher
-				? this.userContext.Players.AddOrUpdateAtomic(result.PlayerFile, addFactory, updateFactory)
-				: this.userContext.Players.GetOrAddAtomic(result.PlayerFile, addFactory);
-
-			result.Player = resultPlayer;
+			result.Player = this.userContext.Players.LoadOrReload(result.PlayerFile, addFactory, fromFileWatcher, this.ItemDatabaseService);
 
 			this.TagService.LoadTags(selectedSave);
 
