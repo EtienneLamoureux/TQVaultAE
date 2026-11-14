@@ -15,7 +15,6 @@ public class GameFileServiceTests
 {
 	private readonly Mock<ILogger<GameFileService>> _mockLogger;
 	private readonly Mock<IGamePathService> _mockGamePathService;
-	private readonly Mock<IUserNotifier> _mockUserNotifier;
 	private readonly Mock<IFileIO> _mockFileIO;
 	private readonly Mock<IPathIO> _mockPathIO;
 	private readonly Mock<IDirectoryIO> _mockDirectoryIO;
@@ -26,7 +25,6 @@ public class GameFileServiceTests
 	{
 		_mockLogger = new Mock<ILogger<GameFileService>>();
 		_mockGamePathService = new Mock<IGamePathService>();
-		_mockUserNotifier = new Mock<IUserNotifier>();
 		_mockFileIO = new Mock<IFileIO>();
 		_mockPathIO = new Mock<IPathIO>();
 		_mockDirectoryIO = new Mock<IDirectoryIO>();
@@ -42,7 +40,6 @@ public class GameFileServiceTests
 		_gameFileService = new GameFileService(
 			_mockLogger.Object,
 			_mockGamePathService.Object,
-			_mockUserNotifier.Object,
 			_mockFileIO.Object,
 			_mockPathIO.Object,
 			_mockDirectoryIO.Object,
@@ -267,7 +264,7 @@ public class GameFileServiceTests
 	}
 
 	[Fact]
-	public void ToggleArchive_WhenMoveFails_ThrowsToTheCaller_AndLeavesTheSave_WithoutAMessageBox()
+	public void ToggleArchive_WhenMoveFails_ThrowsToTheCaller_AndLeavesTheSave()
 	{
 		// Arrange
 		var playerSave = CreateTestPlayerSave();
@@ -284,7 +281,6 @@ public class GameFileServiceTests
 		act.Should().Throw<IOException>();
 		playerSave.IsArchived.Should().BeFalse();
 		playerSave.Folder.Should().Be(oldFolder);
-		_mockUserNotifier.Verify(x => x.ShowError(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<ShowMessageButtons>()), Times.Never);
 	}
 
 	#endregion

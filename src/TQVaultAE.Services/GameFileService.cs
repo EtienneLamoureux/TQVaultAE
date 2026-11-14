@@ -1,11 +1,10 @@
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Presentation;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Helpers;
-using System.ComponentModel;
 using System.IO.Compression;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Services.GitBackup;
 
 namespace TQVaultAE.Services;
@@ -13,34 +12,33 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// IGameFileService implementation
 /// </summary>
-public class GameFileService(ILogger<GameFileService> log, IGamePathService iGamePathService, IUserNotifier userNotifier, IFileIO fileIO, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings userSettings) : IGameFileService
+public class GameFileService(ILogger<GameFileService> log, IGamePathService iGamePathService, IFileIO fileIO, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings userSettings) : IGameFileService
 {
 	private readonly ILogger Log = log;
 	private readonly IGamePathService GamePathService = iGamePathService;
-	private readonly IUserNotifier UserNotifier = userNotifier;
 	private readonly IFileIO FileIO = fileIO;
 	private readonly IPathIO PathIO = pathIO;
 	private readonly IDirectoryIO DirectoryIO = directoryIO;
 
 	private readonly UserSettings UserSettings = userSettings;
 
-	public void GitRepositorySetup()
+	public GitBackupError? GitRepositorySetup()
 	{
 		if (!this.UserSettings.GitBackupEnabled)
-			return;
+			return null;
 
 		var sync = this.CreateGitBackupSync();
-		this.RunGitBackup(sync.IsCloned ? Resources.GitUnableToPull : Resources.GitUnableToClone, sync.Synchronize);
+		return this.RunGitBackup(sync.IsCloned ? GitBackupStep.Pull : GitBackupStep.Clone, sync.Synchronize);
 	}
 
-	public bool GitAddCommitTagAndPush()
+	public GitPushResult GitAddCommitTagAndPush()
 	{
 		if (!this.UserSettings.GitBackupEnabled || !GamePathService.LocalGitRepositoryGitDirExist)
-			return false;
+			return new(false);
 
 		var pushed = false;
-		this.RunGitBackup(Resources.GitUnableToPush, () => pushed = this.CreateGitBackupSync().CommitAndPush());
-		return pushed;
+		var error = this.RunGitBackup(GitBackupStep.Push, () => pushed = this.CreateGitBackupSync().CommitAndPush());
+		return new(pushed, error);
 	}
 
 	/// <summary>
@@ -71,31 +69,29 @@ public class GameFileService(ILogger<GameFileService> log, IGamePathService iGam
 	}
 
 	/// <summary>
-	/// Runs a git backup step and shows what went wrong, so that a backup problem never stops the app.
+	/// Runs a git backup step and returns what went wrong, so that a backup problem never stops the app.
 	/// </summary>
-	/// <param name="defaultMessage">Format of the message, with the repository URL as argument, when the failing step is not known.</param>
-	private void RunGitBackup(string defaultMessage, Action step)
+	/// <param name="defaultStep">The step reported when the failing git command is not known.</param>
+	/// <returns>The step that failed, or null.</returns>
+	private GitBackupError? RunGitBackup(GitBackupStep defaultStep, Action step)
 	{
 		var repoUrl = this.UserSettings.GitBackupRepository;
 		try
 		{
 			step();
+			return null;
 		}
 		catch (Exception ex)
 		{
-			var format = ex switch
+			var failed = ex switch
 			{
-				GitCommandException { Command: "clone" } => Resources.GitUnableToClone,
-				GitCommandException { Command: "fetch" } => Resources.GitUnableToFetch,
-				GitCommandException { Command: "push" } => Resources.GitUnableToPush,
-				_ => defaultMessage,
+				GitCommandException { Command: "clone" } => GitBackupStep.Clone,
+				GitCommandException { Command: "fetch" } => GitBackupStep.Fetch,
+				GitCommandException { Command: "push" } => GitBackupStep.Push,
+				_ => defaultStep,
 			};
-			var detail = ex is Win32Exception
-				? $"git: {ex.Message}" // git is not installed, or not on the PATH.
-				: ex.Message;
-			var errMess = string.Format(format, repoUrl) + Environment.NewLine + detail;
-			this.Log.LogError(ex, "{Message}", errMess);
-			this.UserNotifier.ShowError(errMess, Buttons: ShowMessageButtons.OK);
+			this.Log.LogError(ex, "Git backup: {Step} of {Repository} failed", failed, repoUrl);
+			return new GitBackupError(failed, repoUrl, ex);
 		}
 	}
 

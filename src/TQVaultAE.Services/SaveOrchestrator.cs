@@ -49,9 +49,9 @@ public class SaveOrchestrator(
 			configChanged = this._settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom);
 
 		// After the files, so the commit holds them.
-		bool gitPushed = request.GitBackup
-			&& this._userSettings.GitBackupEnabled
-			&& this._gameFileService.GitAddCommitTagAndPush();
+		var git = request.GitBackup && this._userSettings.GitBackupEnabled
+			? this._gameFileService.GitAddCommitTagAndPush()
+			: null;
 
 		return new SaveResult
 		{
@@ -60,7 +60,8 @@ public class SaveOrchestrator(
 			StashesSaved = stashesSaved,
 			Errors = errors,
 			ConfigChanged = configChanged,
-			GitPushed = gitPushed,
+			GitPushed = git?.Pushed ?? false,
+			GitError = git?.Error,
 		};
 	}
 

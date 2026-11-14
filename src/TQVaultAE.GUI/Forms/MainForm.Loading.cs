@@ -75,10 +75,22 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Shows the time of the last save when a character, vault or stash was saved.
+	/// Tells the user that a git backup step failed, when one did.
+	/// </summary>
+	private void ShowGitBackupError(GitBackupError? error)
+	{
+		if (error is not null)
+			this.UIService.ShowError(GitBackupText.Message(error), Buttons: ShowMessageButtons.OK);
+	}
+
+	/// <summary>
+	/// Tells the user that the git backup failed, then shows the time of the last save when a character, vault or
+	/// stash was saved.
 	/// </summary>
 	private void ShowSavedNotification(SaveResult result)
 	{
+		this.ShowGitBackupError(result.GitError);
+
 		if (!result.AnythingSaved)
 			return;
 

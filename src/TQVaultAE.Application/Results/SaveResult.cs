@@ -95,4 +95,9 @@ public sealed class SaveResult
 	/// Gets whether the git backup was committed and pushed.
 	/// </summary>
 	public bool GitPushed { get; init; }
+
+	/// <summary>
+	/// Gets the git backup step that failed, for the UI to tell the user, or null.
+	/// </summary>
+	public GitBackupError? GitError { get; init; }
 }

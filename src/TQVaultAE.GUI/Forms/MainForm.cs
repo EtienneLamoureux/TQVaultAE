@@ -218,7 +218,7 @@ Item Debug Level: {ItemDebugLevel}
 
 		// Sync the git backup before the panels list the characters and vaults, so the ones a clone or pull brings
 		// are listed.
-		this.GameFileService.GitRepositorySetup();
+		this.ShowGitBackupError(this.GameFileService.GitRepositorySetup());
 
 		this.mainView.CreatePanels(this.GetPlayerList());
 	}

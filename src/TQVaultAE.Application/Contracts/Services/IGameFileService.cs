@@ -5,12 +5,13 @@ public interface IGameFileService
 	/// <summary>
 	/// Init the local git repository.
 	/// </summary>
-	void GitRepositorySetup();
+	/// <returns>The step that failed, for the UI to tell the user, or null.</returns>
+	Results.GitBackupError? GitRepositorySetup();
 	/// <summary>
 	/// add, commit, tag and push the git repo.
 	/// </summary>
-	/// <returns><c>true</c> if a change has been pushed</returns>
-	bool GitAddCommitTagAndPush();
+	/// <returns>Whether a change has been pushed, and the step that failed, for the UI to tell the user.</returns>
+	Results.GitPushResult GitAddCommitTagAndPush();
 	/// <summary>
 	/// Backs up the file to the backup folder.
 	/// </summary>

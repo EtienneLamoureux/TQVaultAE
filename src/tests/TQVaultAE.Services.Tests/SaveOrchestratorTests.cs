@@ -57,7 +57,7 @@ public class SaveOrchestratorTests
 		this._gameFileService
 			.Setup(g => g.GitAddCommitTagAndPush())
 			.Callback(() => this._calls.Add("git"))
-			.Returns(true);
+			.Returns(new GitPushResult(true));
 
 		this._orchestrator = new SaveOrchestrator(
 			this._playerService.Object
@@ -159,6 +159,18 @@ public class SaveOrchestratorTests
 
 		this._gameFileService.Verify(g => g.GitAddCommitTagAndPush(), Times.Never);
 		result.GitPushed.Should().BeFalse();
+	}
+
+	[Fact]
+	public void Save_GitPushFails_ReportsTheFailedStepForTheUI()
+	{
+		var error = new GitBackupError(GitBackupStep.Fetch, "https://example.com/vaults.git", new InvalidOperationException("rejected"));
+		this._gameFileService.Setup(g => g.GitAddCommitTagAndPush()).Returns(new GitPushResult(false, error));
+
+		var result = this._orchestrator.Save(new SaveRequest(true, Configuration, true), NeverAsked);
+
+		result.GitPushed.Should().BeFalse();
+		result.GitError.Should().BeSameAs(error);
 	}
 
 	[Fact]
