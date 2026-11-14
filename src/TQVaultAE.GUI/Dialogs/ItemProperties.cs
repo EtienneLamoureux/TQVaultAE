@@ -96,24 +96,11 @@ internal sealed partial class ItemProperties : VaultForm
 
 		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
-
-		// The user's zoom, as the other dialogs get it; Windows Forms adds the DPI when the dialog loads.
-		float zoom = this.UIService.Zoom;
-		using (ZoomScope.Enter())
-			this.Scale(new SizeF(zoom, zoom));
 	}
 
-	/// <summary>
-	/// Override of ScaleControl which grows the dialog's font with the zoom: the group captions and the property lines
-	/// use it.
-	/// </summary>
-	/// <param name="factor">SizeF for the scale factor</param>
-	/// <param name="specified">BoundsSpecified value.</param>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-	{
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-		base.ScaleControl(factor, specified);
-	}
+	/// <summary>Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>).</summary>
+	protected internal override bool FollowsUserZoom => true;
+
 
 	/// <summary>
 	/// Dialog load methond

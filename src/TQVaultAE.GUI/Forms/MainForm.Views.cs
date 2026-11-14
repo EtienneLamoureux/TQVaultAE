@@ -278,8 +278,7 @@ public partial class MainForm
 				Visible = false,
 			};
 			// Windows Forms scaled it to the DPI: only the zoom is left.
-			using (ZoomScope.Enter())
-				view.Scale(new SizeF(zoom, zoom));
+			view.ApplyUserZoom(zoom);
 			view.Applied += this.SettingsView_Applied;
 			view.Cancelled += this.SettingsView_Cancelled;
 			return view;

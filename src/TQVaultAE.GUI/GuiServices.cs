@@ -229,7 +229,19 @@ public sealed class FormFactory
 	/// <summary>The main window, owner of the item and bag tooltips.</summary>
 	public MainForm MainForm => this._provider.GetRequiredService<MainForm>();
 
-	/// <summary>Creates (or, for singletons, returns) the form <typeparamref name="TForm"/>.</summary>
+	/// <summary>
+	/// Creates (or, for singletons, returns) the form <typeparamref name="TForm"/>. A new dialog designed at zoom 1 is
+	/// scaled here to the user's zoom (<see cref="VaultForm.ApplyUserZoom"/>): the one place the dialogs get it.
+	/// </summary>
 	public TForm Create<TForm>() where TForm : Form
-		=> this._provider.GetRequiredService<TForm>();
+		=> (TForm)this.Create(typeof(TForm));
+
+	/// <summary><see cref="Create{TForm}"/> for a form type known at run time (the automation's open_form).</summary>
+	public Form Create(Type formType)
+	{
+		var form = (Form)this._provider.GetRequiredService(formType);
+		if (form is VaultForm { FollowsUserZoom: true } dialog)
+			dialog.ApplyUserZoom();
+		return form;
+	}
 }

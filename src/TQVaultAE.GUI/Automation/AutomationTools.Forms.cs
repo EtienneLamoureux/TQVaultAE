@@ -91,7 +91,8 @@ internal static partial class AutomationTools
 			var type = FormTypes().FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase))
 				?? throw new McpException($"Unknown form '{name}'. Forms: {string.Join(", ", FormTypes().Select(t => t.Name))}");
 
-			var form = (Form)Program.ServiceProvider.GetRequiredService(type);
+			// As the app makes it (FormFactory), so a dialog designed at zoom 1 gets the user's zoom.
+			var form = Program.ServiceProvider.GetRequiredService<FormFactory>().Create(type);
 
 			// A transient registration returns a new instance on each call.
 			var other = (Form)Program.ServiceProvider.GetRequiredService(type);

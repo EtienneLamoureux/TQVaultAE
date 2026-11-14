@@ -40,6 +40,60 @@ public partial class VaultForm
 	}
 
 	/// <summary>
+	/// Whether the dialog is scaled to the user's zoom when <see cref="FormFactory.Create{TForm}"/> makes it
+	/// (<see cref="ApplyUserZoom"/>): the dialogs laid out in the designer at zoom 1. A dialog laid out in code is laid out
+	/// at the zoom instead (<see cref="UserZoomForLayout"/>); the main window zooms by steps (<see cref="ScaleForm"/>).
+	/// </summary>
+	protected internal virtual bool FollowsUserZoom => false;
+
+	/// <summary>The user's zoom the dialog was scaled or laid out at; 1 at its design size.</summary>
+	public float ScaledZoom { get; private set; } = 1.0F;
+
+	/// <summary>Set while <see cref="ApplyUserZoom"/> scales the dialog: its font grows with it (<see cref="ScaleControl"/>).</summary>
+	private bool applyingUserZoom;
+
+	/// <summary>
+	/// Scales a dialog designed at zoom 1 to the user's zoom, once, before it is shown; Windows Forms adds the monitor's DPI
+	/// when it loads. The dialog's font grows with it, for the controls that have no font of their own; the scaling
+	/// controls grow theirs. Called by <see cref="FormFactory.Create{TForm}"/> for the dialogs that
+	/// <see cref="FollowsUserZoom"/>, then <see cref="OnUserZoomApplied"/> lets the dialog fit what depends on the new sizes.
+	/// </summary>
+	public void ApplyUserZoom()
+	{
+		float zoom = this.UIService.Zoom;
+		if (zoom == this.ScaledZoom)
+			return;
+		if (this.ScaledZoom != 1.0F)
+			throw new InvalidOperationException("A dialog is scaled to the user's zoom once, from its design size.");
+
+		this.applyingUserZoom = true;
+		try
+		{
+			using (ZoomScope.Enter())
+				this.Scale(new SizeF(zoom, zoom));
+		}
+		finally
+		{
+			this.applyingUserZoom = false;
+		}
+
+		this.ScaledZoom = zoom;
+		this.OnUserZoomApplied();
+	}
+
+	/// <summary>The dialog was scaled to the user's zoom (<see cref="ApplyUserZoom"/>): it fits what depends on its new sizes.</summary>
+	protected virtual void OnUserZoomApplied()
+	{
+	}
+
+	/// <summary>
+	/// The user's zoom a dialog laid out in code builds its controls at (fonts, sizes, gaps); recorded as the dialog's
+	/// <see cref="ScaledZoom"/>, as if <see cref="ApplyUserZoom"/> had scaled it.
+	/// </summary>
+	protected float UserZoomForLayout()
+		=> this.ScaledZoom = this.UIService.Zoom;
+
+	/// <summary>
 	/// The window's layout at zoom 1, kept by <see cref="KeepZoomSnapshot"/>; null for a window that does not zoom.
 	/// </summary>
 	private ZoomSnapshot? zoomSnapshot;

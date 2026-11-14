@@ -503,42 +503,25 @@ public partial class SearchDialogAdvanced : VaultForm
 	}
 
 	/// <summary>
-	/// The user's zoom the dialog is scaled to. It is kept between openings while the zoom may change: the main window
-	/// then makes a new one, since scaling it back and forth would drift by rounding (margins and positions); the new one
-	/// restores the user's state of the old one (<see cref="SearchDialogState"/>).
+	/// Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>). It is kept between
+	/// openings while the zoom may change: the main window then makes a new one, since scaling it back and forth would
+	/// drift by rounding (margins and positions); the new one restores the user's state of the old one
+	/// (<see cref="SearchDialogState"/>).
 	/// </summary>
-	public float ScaledZoom { get; private set; } = 1.0F;
+	protected internal override bool FollowsUserZoom => true;
 
 	/// <summary>
-	/// Scales the new dialog to the user's <paramref name="zoom"/>, as the other dialogs are when they open; the category
-	/// lists are sized again from their new fonts and the dialog kept on the screen.
+	/// Scaled to the user's zoom: the category lists are sized again from their new fonts and the dialog kept on the
+	/// screen.
 	/// </summary>
-	public void ApplyZoom(float zoom)
+	protected override void OnUserZoomApplied()
 	{
-		if (zoom == this.ScaledZoom)
-			return;
-		if (this.ScaledZoom != 1.0F)
-			throw new InvalidOperationException("The search dialog is scaled once, from its design size.");
-
-		using (ZoomScope.Enter())
-			this.Scale(new SizeF(zoom, zoom));
-		this.ScaledZoom = zoom;
-
 		this.AdjustCheckBoxesWidth();
 		this.AdjustCheckBoxesHeight();
 		var screen = Screen.FromControl(this.Owner ?? this).WorkingArea;
 		this.Size = new Size(Math.Min(this.Width, screen.Width), Math.Min(this.Height, screen.Height));
 		this.FitCategoriesHeight();
 		this.LastFormSize = this.Size;
-	}
-
-	/// <summary>
-	/// Override of ScaleControl which supports font scaling: the controls without a font of their own follow the dialog's.
-	/// </summary>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-	{
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-		base.ScaleControl(factor, specified);
 	}
 
 	/// <summary>

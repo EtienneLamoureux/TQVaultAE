@@ -65,7 +65,7 @@ internal sealed class ModLinkDialog : VaultForm
 		this.MessageBoxes = this.Services.MessageBoxes;
 
 		// Sizes at zoom 1 and 96 dpi: the zoom is applied here, the DPI by Windows Forms (AutoScaleMode.Dpi).
-		float zoom = this.UIService.Zoom;
+		float zoom = this.UserZoomForLayout();
 		int Zoomed(int value) => (int)Math.Round(value * zoom);
 		int width = Zoomed(ContentWidth);
 

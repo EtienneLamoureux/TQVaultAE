@@ -279,16 +279,8 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.PerformLayout();
 	}
 
-	/// <summary>
-	/// Override of ScaleControl which supports font scaling.
-	/// </summary>
-	/// <param name="factor">SizeF for the scale factor</param>
-	/// <param name="specified">BoundsSpecified value.</param>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-	{
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-		base.ScaleControl(factor, specified);
-	}
+	/// <summary>Designed at zoom 1: scaled to the user's zoom when built, its font growing with it.</summary>
+	protected override bool FollowsUserZoom => true;
 
 	/// <summary>
 	/// The settings and their many transparent controls are painted in one pass (<c>WS_EX_COMPOSITED</c>): shown in

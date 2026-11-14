@@ -36,7 +36,7 @@ internal sealed class InputDialog : VaultForm
 	{
 		this.Owner = instance;
 
-		float zoom = this.UIService.Zoom;
+		float zoom = this.UserZoomForLayout();
 		int Zoomed(int value) => (int)Math.Round(value * zoom);
 		int width = Zoomed(ContentWidth);
 		var font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);

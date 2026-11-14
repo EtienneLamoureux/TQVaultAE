@@ -123,16 +123,9 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 	/// <summary>Gets the target vault string.</summary>
 	public string? Target => this.target;
 
-	/// <summary>
-	/// The zoom grows the form's font with the controls.
-	/// </summary>
-	/// <param name="factor">SizeF for the scale factor</param>
-	/// <param name="specified">BoundsSpecified value.</param>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-	{
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-		base.ScaleControl(factor, specified);
-	}
+	/// <summary>Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>).</summary>
+	protected internal override bool FollowsUserZoom => true;
+
 
 	/// <summary>
 	/// Converts the invalid character array to printable array.

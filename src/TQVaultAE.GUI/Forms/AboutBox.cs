@@ -186,15 +186,7 @@ internal sealed partial class AboutBox : VaultForm
 
 	#endregion Assembly Attribute Accessors
 
-	/// <summary>
-	/// Override of ScaleControl which grows the dialog's font with the zoom. The logo follows its box by itself
-	/// (<see cref="PictureBoxSizeMode.Zoom"/>).
-	/// </summary>
-	/// <param name="factor">SizeF for the scale factor</param>
-	/// <param name="specified">BoundsSpecified value.</param>
-	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-	{
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-		base.ScaleControl(factor, specified);
-	}
+	/// <summary>Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>).</summary>
+	protected internal override bool FollowsUserZoom => true;
+
 }

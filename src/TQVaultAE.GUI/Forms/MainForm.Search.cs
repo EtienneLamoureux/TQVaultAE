@@ -42,7 +42,6 @@ public partial class MainForm
 		var searchDialog = this.keptSearchDialog.Get(this, zoom, () =>
 		{
 			var dialog = this.Services.Forms.Create<SearchDialogAdvanced>();
-			dialog.ApplyZoom(zoom);
 			dialog.RestoreWhenBuilt(keptState);
 			return dialog;
 		}, out bool built, stale => keptState = stale.ClosedState);

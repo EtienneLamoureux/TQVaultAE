@@ -230,8 +230,6 @@ public partial class MainFormUserControl
 			this.SaveRequested?.Invoke(this, EventArgs.Empty);
 
 			using var dlg = this.Services.Forms.Create<VaultMaintenanceDialog>();
-			using (ZoomScope.Enter())
-				dlg.Scale(new SizeF(this.Services.UIService.Zoom, this.Services.UIService.Zoom));
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{

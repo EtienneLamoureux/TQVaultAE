@@ -275,6 +275,10 @@ public partial class VaultForm : Form, IScalingControl
 	/// <param name="specified">BoundsSpecified enum.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
+		// The user's zoom of a dialog grows its font: the controls without a font of their own follow it.
+		if (this.applyingUserZoom)
+			this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+
 		if (this.DrawCustomBorder)
 		{
 			// From the zoom, not from the font of the zoom before (12 -> 11.98 pt after a few zooms).

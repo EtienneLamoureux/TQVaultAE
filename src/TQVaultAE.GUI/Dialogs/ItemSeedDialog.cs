@@ -42,7 +42,7 @@ internal sealed class ItemSeedDialog : VaultForm
 	{
 		this.Owner = instance;
 
-		float zoom = this.UIService.Zoom;
+		float zoom = this.UserZoomForLayout();
 		int Zoomed(int value) => (int)Math.Round(value * zoom);
 		var font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);
 

@@ -256,9 +256,6 @@ public partial class MainForm
 	private void AboutButtonClick(object? sender, EventArgs e)
 	{
 		AboutBox dlg = this.Services.Forms.Create<AboutBox>();
-		// Windows Forms scaled the dialog to the DPI: only the zoom is left.
-		using (ZoomScope.Enter())
-			dlg.Scale(new SizeF(UIService.Zoom, UIService.Zoom));
 		dlg.ShowDialog();
 	}
 
