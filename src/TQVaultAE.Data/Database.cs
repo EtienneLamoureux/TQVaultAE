@@ -486,25 +486,24 @@ public partial class Database : IDatabase
 				var records = new List<(RecordId brokenTable, RecordId prefixTable, RecordId suffixTable, List<RecordId> lootNames)>();
 
 				// Read loot names
-				switch (r.Value.RecordType)
+				if (r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
 				{
-					case RCLASS_LOOTITEMTABLE_FIXEDWEIGHT:
-						foreach (var variable in rec)
+					foreach (var variable in rec)
+					{
+						if (variable.Name.StartsWith("lootName", noCase))
 						{
-							if (variable.Name.StartsWith("lootName", noCase))
-							{
-								var lootName = variable.GetString(0);
+							var lootName = variable.GetString(0);
 
-								if (!string.IsNullOrWhiteSpace(lootName))
-									lootNames.Add(lootName);
-							}
+							if (!string.IsNullOrWhiteSpace(lootName))
+								lootNames.Add(lootName);
 						}
-						break;
-					default: // LootItemTable_DynWeight
-						var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
-						if (itemNames?.Any() ?? false)
-							lootNames.AddRange(itemNames.Select(ina => ina.ToRecordId()));
-						break;
+					}
+				}
+				else // LootItemTable_DynWeight
+				{
+					var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
+					if (itemNames?.Any() ?? false)
+						lootNames.AddRange(itemNames.Select(ina => ina.ToRecordId()));
 				}
 
 				// Read loot tables

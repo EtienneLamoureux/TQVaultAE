@@ -365,6 +365,23 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
+	public void GetItemAffixTableMap_FixedWeightClassInAnotherCase_StillReadsItsLootNames()
+	{
+		// The class filter ignores case: the class test that picks lootName<N> over itemNames must too.
+		this.UseAnniversaryEdition();
+		var arz = Path.Combine(GameAE, "Database", "database.arz");
+		var table = this.AddRecord(arz, """records\loot\table_c.dbr""", "lootitemtable_fixedweight");
+		table.Set(Str("lootName1", """records\item\sword.dbr"""));
+		table.Set(Str("prefixRandomizerName1", """records\affix\prefix1.dbr"""));
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should()
+			.Equal(new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty));
+	}
+
+	[Fact]
 	public void GetItemAffixTableMap_DynamicWeightLootTable_MapsItsItemNames()
 	{
 		this.UseAnniversaryEdition();
