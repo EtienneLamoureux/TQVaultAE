@@ -50,6 +50,9 @@ internal static partial class AutomationTools
 				font = $"{c.Font.Name} {c.Font.SizeInPoints:0.##}pt",
 				visible = c.Visible,
 				enabled = c.Enabled,
+				autoScale = c is ContainerControl container && container.AutoScaleMode != AutoScaleMode.Inherit
+					? $"{container.AutoScaleMode} {container.AutoScaleDimensions.Width:0.##}x{container.AutoScaleDimensions.Height:0.##} -> {container.CurrentAutoScaleDimensions.Width:0.##}x{container.CurrentAutoScaleDimensions.Height:0.##}"
+					: null,
 				controls = level < depth && c.Controls.Count > 0
 					? c.Controls.Cast<Control>().Select(child => Describe(child, level + 1)).ToList()
 					: null,
