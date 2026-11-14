@@ -114,6 +114,21 @@ internal static partial class AutomationTools
 	public static string SearchDialogState()
 		=> AutomationHost.OnUi(_ => Serialize(OpenSearchDialog().AutomationState()));
 
+	[McpServerTool(Name = "search_tooltip", Destructive = true)]
+	[Description("Shows a tool tip of the open Advanced Search dialog as resting the pointer on its label does, through the label's own handler: 'filters' for the selected filters (label scalingLabelFiltersSelected; select some first with check_list_items), 'results' for the results found (label scalingLabelProgress), 'none' hides them. Capture it with capture('tooltip').")]
+	public static string SearchTooltip([Description("filters, results or none.")] string kind)
+		=> AutomationHost.OnUi(_ =>
+		{
+			try
+			{
+				return Serialize(new { kind, shown = OpenSearchDialog().AutomationShowTooltip(kind) });
+			}
+			catch (ArgumentException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "search_dialog_scroll", Destructive = true)]
 	[Description("Scrolls the open Advanced Search dialog like its scroll bars: the categories area to x, y (pixels from the top left), and/or a category list to its first shown column. Returns the dialog state as search_dialog_state does.")]
 	public static string SearchDialogScroll(

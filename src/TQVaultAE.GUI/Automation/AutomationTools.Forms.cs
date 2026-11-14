@@ -293,6 +293,25 @@ internal static partial class AutomationTools
 			}
 		});
 
+	[McpServerTool(Name = "bag_settings_hover_icon", Destructive = true)]
+	[Description("In the open bag button settings dialog, rests the pointer on an icon of a tab's grid through the grid's hover handler: the magnifier (control iconMagnifier) shows the icon enlarged below it, with its name and size. Capture it with capture('Bag Button Settings'); omit index to hide it.")]
+	public static string BagSettingsHoverIcon(
+		[Description("Tab: Skills, Relics, Artifacts, Jewellery, Scrolls, Potions, Buttons, Misc, Helmets, Shields, Armbands, Greaves.")] string tab,
+		[Description("Zero-based icon index in that grid; omit to leave the grid.")] int? index = null)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
+				?? throw new McpException("The bag button settings are not open.");
+			try
+			{
+				return Serialize(new { hovered = dialog.AutomationHoverIcon(tab, index) });
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
+		});
+
 	[McpServerTool(Name = "open_bag_settings", Destructive = true)]
 	[Description("Opens the bag button settings (icon and label picker) for the current bag of a panel, like its 'Change icon' context menu entry. The dialog is modal: capture it with capture('Bag Button Settings') and close it with close_dialog('Bag Button Settings', 'Cancel'). The game icons load in the background after startup, so 'iconsLoaded' may be false right after launch.")]
 	public static async Task<string> OpenBagSettings(
