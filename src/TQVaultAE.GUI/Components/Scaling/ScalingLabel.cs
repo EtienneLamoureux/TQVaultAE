@@ -16,30 +16,6 @@ using System.Windows.Forms;
 public class ScalingLabel : Label, IScalingControl, IZoomedFont
 {
 	/// <summary>
-	/// Reverts the basic settings of a control back to the original settings.
-	/// </summary>
-	/// <param name="location">New Location of the control</param>
-	/// <param name="size">New Size of the control</param>
-	/// <param name="textColor">Color for the label</param>
-	public void Revert(Point location, Size size, Color textColor)
-	{
-		this.Font = new Font("Microsoft Sans Serif", 8.25F);
-		this.Location = location;
-		this.Size = size;
-		this.ForeColor = textColor;
-	}
-
-	/// <summary>
-	/// Reverts the basic settings of a control back to the original settings.
-	/// </summary>
-	/// <param name="location">New Location of the control</param>
-	/// <param name="size">New Size of the control</param>
-	public void Revert(Point location, Size size)
-	{
-		this.Revert(location, size, SystemColors.ControlText);
-	}
-
-	/// <summary>
 	/// Gets or sets a value indicating whether the text has a drop shadow: a dark copy one pixel lower right, which keeps
 	/// light text readable over a textured background.
 	/// </summary>

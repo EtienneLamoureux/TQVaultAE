@@ -197,26 +197,6 @@ public partial class EquipmentPanel
 	}
 
 	/// <summary>
-	/// Finds the bottom right corner of a weapon within the weapon slot
-	/// Used for drawing text in weapon panel
-	/// </summary>
-	/// <param name="x">x cell coordinate of the weapon</param>
-	/// <param name="y">y cell coordinate of the weapon</param>
-	/// <param name="width">width of the weapon</param>
-	/// <param name="height">height of the weapon</param>
-	/// <returns>Point containing the bottom right corner of the weapon</returns>
-	private Point WeaponBottomLeft(int x, int y, int width, int height)
-	{
-		Point val = new Point();
-		int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.ItemUnitSize) / 2;
-		int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.ItemUnitSize) / 2;
-		val.X = Convert.ToInt32(BorderWidth) + (x * UIService.ItemUnitSize) + offsetX;
-		val.Y = Convert.ToInt32(BorderWidth) + ((y + 1) * UIService.ItemUnitSize) + offsetY - 1;
-
-		return val;
-	}
-
-	/// <summary>
 	/// Used find the screen coordinates of an equipment slot
 	/// </summary>
 	/// <param name="slot">equipment or weapon slot we are interested in</param>

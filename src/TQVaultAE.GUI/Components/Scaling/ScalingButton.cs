@@ -141,20 +141,6 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	public Bitmap UpBitmap { get; set; }
 
 	/// <summary>
-	/// Reverts the basic settings of a control back to the original settings.
-	/// </summary>
-	/// <param name="location">New Location of the control</param>
-	/// <param name="size">New Size of the control</param>
-	public void Revert(Point location, Size size)
-	{
-		this.Font = new Font("Microsoft Sans Serif", 8.25F);
-		this.Location = location;
-		this.Size = size;
-		this.ForeColor = SystemColors.ControlText;
-		this.UseCustomGraphic = false;
-	}
-
-	/// <summary>
 	/// Handles the ScalingButton Paint Event.
 	/// </summary>
 	/// <param name="pevent">PaintEventArgs data</param>

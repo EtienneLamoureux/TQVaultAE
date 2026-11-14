@@ -213,24 +213,6 @@ public partial class SackPanel : Panel, IScalingControl
 	}
 
 	/// <summary>
-	/// Redraws the grid for a specified area.
-	/// Used to refresh the screen display
-	/// </summary>
-	/// <param name="graphics">graphics instance</param>
-	/// <param name="redrawRectangle">Rectangle containing the screen coordinated which will be redrawn</param>
-	protected void RedrawGrid(Graphics graphics, Rectangle redrawRectangle)
-	{
-		if (this.DisableGrid || graphics is null)
-			return;
-
-		for (int x = redrawRectangle.X; x < redrawRectangle.Right; x += UIService.ItemUnitSize)
-			graphics.DrawLine(this.gridPen, new Point(x, redrawRectangle.Y), new Point(x, redrawRectangle.Bottom - 1));
-
-		for (int y = redrawRectangle.Y; y < redrawRectangle.Bottom; y += UIService.ItemUnitSize)
-			graphics.DrawLine(this.gridPen, new Point(redrawRectangle.X, y), new Point(redrawRectangle.Right - 1, y));
-	}
-
-	/// <summary>
 	/// Draws an item on the screen at the specified coordinates without background shading.
 	/// </summary>
 	/// <param name="graphics">graphics instance</param>
