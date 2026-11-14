@@ -409,15 +409,8 @@ public partial class VaultPanel
 
 			if (this.Services.VaultService.CopyBag(this.ShownPlayer, this.CurrentBag, destinationIndex))
 			{
-				if (this.CurrentBag != destinationIndex)
-				{
-					// turn off the current bag and turn on the new bag
-					this.BagButtons[this.CurrentBag].IsOn = false;
-					this.BagButtons[destinationIndex].IsOn = true;
-					this.CurrentBag = destinationIndex;
-					this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.CurrentBag + this.BagPanelOffset);
-					this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
-				}
+				// The setter turns the buttons off and on and shows the bag.
+				this.CurrentBag = destinationIndex;
 			}
 		}
 	}
@@ -435,15 +428,8 @@ public partial class VaultPanel
 			int destinationIndex = GetDestinationSackIndex(item);
 			if (this.Services.VaultService.MoveBag(this.ShownPlayer, this.CurrentBag, destinationIndex))
 			{
-				if (this.CurrentBag != destinationIndex)
-				{
-					// turn off the current bag and turn on the new bag
-					this.BagButtons[this.CurrentBag].IsOn = false;
-					this.BagButtons[destinationIndex].IsOn = true;
-					this.CurrentBag = destinationIndex;
-					this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.CurrentBag + this.BagPanelOffset);
-					this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
-				}
+				// The setter turns the buttons off and on and shows the bag.
+				this.CurrentBag = destinationIndex;
 
 				ApplyCustomButtonIcons();
 				Refresh();
@@ -471,12 +457,8 @@ public partial class VaultPanel
 			SackPanel dstSackPanel = this.BagSackPanel;
 			if (dstSackPanel.MergeSack(destinationIndex))
 			{
-				// turn off the current bag and turn on the new bag
-				this.BagButtons[this.CurrentBag].IsOn = false;
-				this.BagButtons[destinationIndex].IsOn = true;
+				// The setter turns the buttons off and on and shows the bag.
 				this.CurrentBag = destinationIndex;
-				this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.CurrentBag + this.BagPanelOffset);
-				this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 			}
 		}
 	}

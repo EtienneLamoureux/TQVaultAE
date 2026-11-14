@@ -68,13 +68,9 @@ public partial class VaultPanel
 		int bagID = b.ButtonNumber;
 		if (bagID != this.CurrentBag)
 		{
-			// turn off the current bag and turn on the new bag
-			this.BagButtons[this.CurrentBag].IsOn = false;
-			this.BagButtons[bagID].IsOn = true;
+			// The setter turns the buttons off and on and shows the bag.
 			this.CurrentBag = bagID;
 			this.BagSackPanel.ClearSelectedItems();
-			this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.CurrentBag + this.BagPanelOffset);
-			this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 		}
 
 		if (e.Button == MouseButtons.Right)

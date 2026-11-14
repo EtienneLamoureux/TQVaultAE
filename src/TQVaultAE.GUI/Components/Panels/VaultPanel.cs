@@ -338,7 +338,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 				this.BagButtons[value].IsOn = true;
 				this.currentBag = value;
 				this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.currentBag + this.BagPanelOffset);
-				this.BagSackPanel.CurrentSack = this.currentBag;
+				this.BagSackPanel.CurrentSack = this.currentBag + this.BagPanelOffset;
 
 				if (this.Vault is not null && this.IsSecondaryVaultPanel is bool secondary)
 					this.Services.VaultService.RememberSelectedBag(this.Vault, secondary, this.currentBag);
@@ -455,6 +455,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 			if (numberOfBags > 0)
 			{
 				this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
+				this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
 			}
 			else
 			{
