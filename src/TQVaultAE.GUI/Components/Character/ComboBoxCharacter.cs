@@ -163,13 +163,8 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 		this.ApplyRowHeight();
 	}
 
-	/// <summary>Nothing to give back: the row is set whole by <see cref="ApplyRowHeight"/>.</summary>
-	void IZoomFit.UndoFit()
-	{
-	}
-
 	/// <summary>
-	/// The zoom changed the name font: the row height follows it, as after a DPI change. An open list is placed under the
+	/// Nothing to give back before a zoom (the row is set whole by <see cref="ApplyRowHeight"/>). The zoom changed the name font: the row height follows it, as after a DPI change. An open list is placed under the
 	/// combo box again: the zoom gave it back the bounds it had when the layout was kept.
 	/// </summary>
 	void IZoomFit.Fit()

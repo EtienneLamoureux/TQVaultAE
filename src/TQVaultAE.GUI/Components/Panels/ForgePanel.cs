@@ -563,15 +563,18 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing, I
 	/// <summary>The item slots get their full height back before a rescale, so that the scale applies to it.</summary>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
-		this.UndoFit();
+		this.UndoSlotCut();
 		base.ScaleControl(factor, specified);
 	}
 
 	/// <inheritdoc/>
-	public void Fit() => this.FitHeight();
+	void IZoomFit.Fit() => this.FitHeight();
+
+	/// <inheritdoc/>
+	void IZoomFit.UndoFit() => this.UndoSlotCut();
 
 	/// <summary>The item slots get their full height back (<see cref="FitHeight"/> cuts them again at the next layout).</summary>
-	public void UndoFit()
+	private void UndoSlotCut()
 	{
 		if (this.slotCut != 0 && Slots is not null)
 		{

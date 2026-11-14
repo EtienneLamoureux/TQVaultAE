@@ -13,13 +13,6 @@ using System.Windows.Forms;
 /// </summary>
 public class ScalingRadioButton : RadioButton, IScalingControl, IZoomedFont
 {
-	/// <inheritdoc/>
-	Font IZoomedFont.ZoomedFont
-	{
-		get => this.Font;
-		set => this.Font = value;
-	}
-
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.
 	/// </summary>

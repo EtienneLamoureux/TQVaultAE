@@ -9,8 +9,12 @@ namespace TQVaultAE.GUI.Components.Scaling;
 /// </summary>
 internal interface IZoomedFont
 {
-	/// <summary>Gets or sets the font the zoom grows.</summary>
-	Font ZoomedFont { get; set; }
+	/// <summary>Gets or sets the font the zoom grows: by default the control's font.</summary>
+	Font ZoomedFont
+	{
+		get => ((Control)this).Font;
+		set => ((Control)this).Font = value;
+	}
 }
 
 /// <summary>
@@ -27,8 +31,13 @@ internal interface ILaysOutChildren
 /// </summary>
 internal interface IZoomFit
 {
-	/// <summary>Gives back what the fit took, before the layout is kept or given back.</summary>
-	void UndoFit();
+	/// <summary>
+	/// Gives back what the fit took, before the layout is kept or given back. By default nothing: a control that only
+	/// places itself or sets a size whole at each fit has nothing to give back.
+	/// </summary>
+	void UndoFit()
+	{
+	}
 
 	/// <summary>Fits again, once the window is scaled and laid out.</summary>
 	void Fit();
@@ -311,24 +320,20 @@ internal sealed class ZoomSnapshot
 	}
 
 	private static void UndoFits(Control control)
-	{
-		foreach (Control inner in control.Controls)
-		{
-			if (inner is IZoomFit fit)
-				fit.UndoFit();
-			if (inner is not ILaysOutChildren)
-				UndoFits(inner);
-		}
-	}
+		=> ForEachFit(control, fit => fit.UndoFit());
 
 	private static void Fits(Control control)
+		=> ForEachFit(control, fit => fit.Fit());
+
+	/// <summary>Runs <paramref name="action"/> on each control that fits itself, down to the controls that lay out their children.</summary>
+	private static void ForEachFit(Control control, Action<IZoomFit> action)
 	{
 		foreach (Control inner in control.Controls)
 		{
 			if (inner is IZoomFit fit)
-				fit.Fit();
+				action(fit);
 			if (inner is not ILaysOutChildren)
-				Fits(inner);
+				ForEachFit(inner, action);
 		}
 	}
 }

@@ -503,13 +503,6 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 
 	#endregion
 
-	/// <inheritdoc/>
-	Font IZoomedFont.ZoomedFont
-	{
-		get => this.Font;
-		set => this.Font = value;
-	}
-
 	/// <summary>Scales the font like the other scaling controls.</summary>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{

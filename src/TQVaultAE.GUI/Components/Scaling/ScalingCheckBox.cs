@@ -109,13 +109,6 @@ public class ScalingCheckBox : CheckBox, IScalingControl, IZoomedFont
 		}
 	}
 
-	/// <inheritdoc/>
-	Font IZoomedFont.ZoomedFont
-	{
-		get => this.Font;
-		set => this.Font = value;
-	}
-
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.
 	/// </summary>

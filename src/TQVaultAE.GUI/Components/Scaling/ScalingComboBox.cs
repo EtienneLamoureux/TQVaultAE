@@ -57,13 +57,6 @@ public class ScalingComboBox : ComboBox, IScalingControl, IZoomedFont
 		e.DrawFocusRectangle();
 	}
 
-	/// <inheritdoc/>
-	Font IZoomedFont.ZoomedFont
-	{
-		get => this.Font;
-		set => this.Font = value;
-	}
-
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.
 	/// </summary>

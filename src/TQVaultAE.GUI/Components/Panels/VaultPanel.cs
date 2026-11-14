@@ -444,13 +444,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	{
 	}
 
-	/// <inheritdoc/>
-	Font IZoomedFont.ZoomedFont
-	{
-		get => this.Font;
-		set => this.Font = value;
-	}
-
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling. The panel's size and the controls it built itself come from
 	/// the scale (<see cref="LayOut"/>), not from their sizes before: Windows Forms does not scale them.

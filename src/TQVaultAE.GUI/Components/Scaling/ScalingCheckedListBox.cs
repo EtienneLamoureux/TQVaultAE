@@ -4,28 +4,10 @@ using System.Drawing;
 using System.Windows.Forms;
 
 /// <summary>
-/// ComboBox class to support scaling of the fonts.
+/// CheckedListBox class to support scaling of the fonts.
 /// </summary>
 public class ScalingCheckedListBox : System.Windows.Forms.CheckedListBox, IScalingControl, IZoomedFont
 {
-	public ScalingCheckedListBox() 
-	{
-		InitializeComponent();
-	}
-
-	private void InitializeComponent()
-	{
-		//this.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-	}
-
-
-	/// <inheritdoc/>
-	Font IZoomedFont.ZoomedFont
-	{
-		get => this.Font;
-		set => this.Font = value;
-	}
-
 	/// <summary>
 	/// Override of ScaleControl which supports font scaling.
 	/// </summary>
