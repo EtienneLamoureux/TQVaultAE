@@ -25,9 +25,9 @@ public class ArcFile
 	public IArcArchive? Archive { get; set; }
 
 	/// <summary>
-	/// Dictionary of the directory entries.
+	/// Entries of the archive's directory, keyed by their name.
 	/// </summary>
-	public Dictionary<RecordId, ArcDirEntry> DirectoryEntries = [];
+	public Dictionary<RecordId, ArcEntry> DirectoryEntries = [];
 
 	/// <summary>
 	/// Ordered keys for the directoryEntries dictionary.

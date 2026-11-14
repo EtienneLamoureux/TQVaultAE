@@ -106,11 +106,7 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 		if (firstPathDelim != -1)
 			dataId = dataId.Normalized.Substring(firstPathDelim + 1);
 
-		ArcDirEntry directoryEntry;
-
-		if (file.DirectoryEntries.TryGetValue(dataId, out ArcDirEntry? value))
-			directoryEntry = value;
-		else
+		if (!file.DirectoryEntries.TryGetValue(dataId, out ArcEntry? directoryEntry))
 		{
 			if (USettings.ARCFileDebugLevel > 1)
 				Log.LogDebug("Error - {DataId} not found.", dataId);
@@ -118,7 +114,7 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 			return null;
 		}
 
-		byte[] data = file.Archive!.ReadAll(directoryEntry.Entry!);
+		byte[] data = file.Archive!.ReadAll(directoryEntry);
 
 		if (USettings.ARCFileDebugLevel > 0)
 			Log.LogDebug("Exiting ARCFile.GetData()");
@@ -141,16 +137,16 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 			if (!file.FileHasBeenRead)
 				this.ReadARCToC(file);
 
-			foreach (ArcDirEntry dirEntry in file.DirectoryEntries.Values)
+			foreach (ArcEntry dirEntry in file.DirectoryEntries.Values)
 			{
 				RecordId dataID = string.Concat(
 					this.PathIO.GetFileNameWithoutExtension(file.FileName), "\\"
-					, dirEntry.FileName.Raw
+					, dirEntry.Name
 				);
 
 				if (USettings.ARCFileDebugLevel > 1)
 				{
-					Log.LogDebug("Directory Filename = {DirEntryFileName}", dirEntry.FileName);
+					Log.LogDebug("Directory Filename = {DirEntryFileName}", dirEntry.Name);
 					Log.LogDebug("dataID = {DataID}", dataID);
 				}
 
@@ -162,7 +158,7 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 				if (!filename.EndsWith('\\'))
 					filename = string.Concat(filename, "\\");
 
-				filename = string.Concat(filename, dirEntry.FileName);
+				filename = string.Concat(filename, dirEntry.Name);
 
 				// If there is a sub directory in the arc file then we need to create it.
 				var dirName = PathIO.GetDirectoryName(filename);
@@ -220,19 +216,9 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 		file.Archive?.Dispose();
 		file.Archive = archive;
 
-		var entries = new Dictionary<RecordId, ArcDirEntry>(archive.Entries.Count);
+		var entries = new Dictionary<RecordId, ArcEntry>(archive.Entries.Count);
 		foreach (var entry in archive.Entries)
-		{
-			var dirEntry = new ArcDirEntry
-			{
-				FileName = entry.Name,
-				StorageType = entry.StorageType,
-				CompressedSize = entry.CompressedSize,
-				RealSize = entry.Size,
-				Entry = entry,
-			};
-			entries.TryAdd(dirEntry.FileName, dirEntry);
-		}
+			entries.TryAdd(entry.Name, entry);
 
 		file.DirectoryEntries = entries;
 

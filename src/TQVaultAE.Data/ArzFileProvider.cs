@@ -24,19 +24,9 @@ public class ArzFileProvider(ILogger<ArzFileProvider> log) : IArzFileProvider
 			file.Database?.Dispose();
 			file.Database = database;
 
-			file.RecordInfo = new Dictionary<RecordId, RecordInfo>(database.Records.Count);
+			file.RecordInfo = new Dictionary<RecordId, ArzRecordInfo>(database.Records.Count);
 			foreach (var entry in database.Records)
-			{
-				var info = new RecordInfo
-				{
-					ID = entry.Id,
-					RecordType = entry.Class,
-					Offset = entry.Offset,
-					CompressedSize = entry.CompressedSize,
-					Entry = entry,
-				};
-				file.RecordInfo.TryAdd(info.ID, info);
-			}
+				file.RecordInfo.TryAdd(entry.Id, entry);
 		}
 		catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException)
 		{
@@ -77,24 +67,24 @@ public class ArzFileProvider(ILogger<ArzFileProvider> log) : IArzFileProvider
 	/// Values keep the historical TQVault representation: booleans as Int32, strings trimmed.
 	/// </remarks>
 	/// <exception cref="ArgumentException">The record cannot be decoded.</exception>
-	private DBRecordCollection Decode(ArzFile file, RecordInfo info)
+	private DBRecordCollection Decode(ArzFile file, ArzRecordInfo info)
 	{
-		if (file.Database is null || info.Entry is null)
+		if (file.Database is null)
 			throw new InvalidOperationException($"{file.FileName} has not been read.");
 
 		ArzRecord record;
 		try
 		{
-			record = file.Database.Read(info.Entry);
+			record = file.Database.Read(info);
 		}
 		catch (InvalidDataException ex)
 		{
-			var error = new ArgumentException($"Error while parsing arz record {info.ID} of {file.FileName}", ex);
-			this.Log.LogError(ex, "Failed to parse record {Record} of {ArzFile}", info.ID, file.FileName);
+			var error = new ArgumentException($"Error while parsing arz record {info.Id} of {file.FileName}", ex);
+			this.Log.LogError(ex, "Failed to parse record {Record} of {ArzFile}", info.Id, file.FileName);
 			throw error;
 		}
 
-		var result = new DBRecordCollection(info.ID, info.RecordType, record.Variables.Count);
+		var result = new DBRecordCollection(info.Id, info.Class, record.Variables.Count);
 		foreach (var source in record.Variables)
 		{
 			if (source.Values.Length == 0)

@@ -390,7 +390,7 @@ public partial class Database : IDatabase
 		var lootRandomizerTableList = this.ArzFilesByPriority()
 		.SelectMany(db =>
 			db.ArzFile.RecordInfo.Where(r =>
-				r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
+				r.Value.Class.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
 				&& !r.Key.IsOld // Remove old loot table
 			).Select(ri => (RecordInfo: ri, db.Priority))
 		)
@@ -423,7 +423,7 @@ public partial class Database : IDatabase
 		// Load all available loot randomizer
 		var lootRandomizerList = this.ArzFilesByPriority()
 		.SelectMany(db =>
-			db.ArzFile.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
+			db.ArzFile.RecordInfo.Where(r => r.Value.Class.Equals(RCLASS_LOOTRANDOMIZER, noCase))
 			.Select(ri => (RecordInfo: ri, db.Priority))
 		)
 		.Select(r =>
@@ -474,8 +474,8 @@ public partial class Database : IDatabase
 		var data = this.ArzFilesByPriority()
 			.SelectMany(db => db.ArzFile.RecordInfo
 				.Where(r =>
-					r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase)
-					|| r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_DYNWEIGHT, noCase)
+					r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase)
+					|| r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_DYNWEIGHT, noCase)
 				)
 			)
 			.Select(r =>
@@ -486,7 +486,7 @@ public partial class Database : IDatabase
 				var records = new List<(RecordId brokenTable, RecordId prefixTable, RecordId suffixTable, List<RecordId> lootNames)>();
 
 				// Read loot names
-				if (r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
+				if (r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
 				{
 					foreach (var variable in rec)
 					{

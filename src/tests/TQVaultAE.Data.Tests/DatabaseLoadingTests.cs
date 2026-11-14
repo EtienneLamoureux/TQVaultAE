@@ -61,7 +61,7 @@ public class DatabaseLoadingTests
 			{
 				this._arzRead.Add(arz.FileName);
 				foreach (var (_, record) in this._arzRecords.Where(r => r.Key.Arz == arz.FileName))
-					arz.RecordInfo[record.Id] = new RecordInfo { ID = record.Id, RecordType = record.RecordType };
+					arz.RecordInfo[record.Id] = new ArzRecordInfo(0, record.Id.Raw, record.RecordType, 0, 0, default);
 			});
 		this._arzProvider.Setup(a => a.GetItem(It.IsAny<ArzFile>(), It.IsAny<RecordId>()))
 			.Returns<ArzFile, RecordId>((arz, id) => this._arzRecords.TryGetValue((arz.FileName, id.Normalized), out var r) ? r : null);

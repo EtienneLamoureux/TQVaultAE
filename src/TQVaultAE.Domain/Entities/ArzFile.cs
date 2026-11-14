@@ -25,9 +25,9 @@ public class ArzFile
 	public IArzDatabase? Database { get; set; }
 
 	/// <summary>
-	/// RecordInfo keyed by their ID
+	/// Record table entries (class, place in the file) keyed by their ID: available without decompressing the records.
 	/// </summary>
-	public Dictionary<RecordId, RecordInfo> RecordInfo = [];
+	public Dictionary<RecordId, ArzRecordInfo> RecordInfo = [];
 
 	/// <summary>
 	/// Ordered keys for the recordInfo Dictionary

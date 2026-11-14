@@ -48,7 +48,7 @@ public sealed class ArzFileProviderTests : IDisposable
 
 		file.Count.Should().Be(2);
 		var info = file.RecordInfo[RecordId.Create(@"RECORDS\ITEM\RING01.DBR")];
-		info.RecordType.Should().Be("ArmorJewelry_Ring");
+		info.Class.Should().Be("ArmorJewelry_Ring");
 		file.RecordInfo.Should().ContainKey(RecordId.Create(@"records\item\amulet01.dbr"), "'/' and '\\' are the same record path");
 	}
 
