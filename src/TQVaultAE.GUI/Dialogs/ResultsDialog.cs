@@ -86,7 +86,6 @@ public partial class ResultsDialog : VaultForm
 		this.FormDesignRatio = 0.0F;
 
 		this.OriginalFormSize = this.Size;
-		this.OriginalFormScale = 1.0F;
 		this.LastFormSize = this.Size;
 	}
 

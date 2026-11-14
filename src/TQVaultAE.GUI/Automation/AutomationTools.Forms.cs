@@ -427,6 +427,12 @@ internal static partial class AutomationTools
 				windowRect = NativeWindowRect(main.Handle),
 				maxClientSize = new { main.AutomationZoomLimit.MaxClientSize.Width, main.AutomationZoomLimit.MaxClientSize.Height },
 				largestZoom = main.AutomationZoomLimit.LargestZoom,
+				// The window sizes a resize by the user is kept between.
+				resizeBounds = new
+				{
+					minimum = new { main.FormMinimumSize.Width, main.FormMinimumSize.Height },
+					maximum = new { main.FormMaximumSize.Width, main.FormMaximumSize.Height },
+				},
 			});
 		});
 

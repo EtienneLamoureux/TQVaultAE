@@ -514,13 +514,13 @@ public partial class MainForm
 
 		this.Log.LogDebug("Zoom {Zoom} at {Dpi} times the design DPI: scale {Scale}", UIService.Zoom, UIService.DpiScale, UIService.Scale);
 
-		this.FormMaximumSize = new Size(this.Width * 2, this.Height * 2);
-		this.FormMinimumSize = new Size(
-			Convert.ToInt32((float)this.Width * 0.4F),
-			Convert.ToInt32((float)this.Height * 0.4F));
+		// The bounds of the user's resizing: the window at its design size at the largest and the smallest zoom, not from
+		// its size at the zoom it opens at (a start at zoom 0.5 allowed a window only as large as zoom 1).
+		var designWindow = this.SizeFromClientSize(TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.DpiScale));
+		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MaxZoom);
+		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MinZoom);
 
 		this.OriginalFormSize = this.Size;
-		this.OriginalFormScale = USettings.Scale;
 
 		this.LastFormSize = this.Size;
 

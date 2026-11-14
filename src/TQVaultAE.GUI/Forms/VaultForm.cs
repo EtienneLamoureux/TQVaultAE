@@ -281,11 +281,6 @@ public partial class VaultForm : Form, IScalingControl
 	public bool ScaleOnResize { get; set; }
 
 	/// <summary>
-	/// Gets or sets the original scale for resetting the form scaling.
-	/// </summary>
-	public float OriginalFormScale { get; set; }
-
-	/// <summary>
 	/// Gets or sets the the ratio of height / width before any scaling.
 	/// </summary>
 	public float FormDesignRatio { get; set; }
