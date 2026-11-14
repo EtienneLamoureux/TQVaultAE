@@ -661,7 +661,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "hover_bag", Destructive = true)]
-	[Description("Shows the tooltip of a bag button (the summary of the bag's items), like resting the pointer on it; capture it with capture('tooltip'). hide=true closes it.")]
+	[Description("Shows the tooltips of a bag button like resting the pointer on it: the summary of the bag's items and, for a bag with a custom label, the label above the button. Returns each tooltip shown with its size and the font of its text. Capture the summary with capture('tooltip'), the label with capture('tooltip:BagButtonLabelTooltip'). hide=true closes them.")]
 	public static string HoverBag(
 		[Description("Panel id: vault, secondaryVault, playerBag, stash.")] string panel,
 		[Description("Zero-based bag button index.")] int bag,

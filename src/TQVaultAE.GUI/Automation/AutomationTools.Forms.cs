@@ -229,7 +229,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "sort_click", Destructive = true)]
-	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in this button's sort_menu (each click alternates rows and columns), merging relic and charm shards first when the 'Merge relic shards when sorting' setting is on. The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with list_items. Returns the order used.")]
+	[Description("Left-clicks the sort button of a panel like the user: sorts the shown bag with the order picked in this button's sort_menu (each click alternates rows and columns), merging relic and charm shards first when the 'Merge relic shards when sorting' setting is on. The click runs after this call returns (a sort that does not fit shows a message, see dialog_answers): read the result with get_state(panel). Returns the order used.")]
 	public static string SortClick(
 		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory), playerBag or stash (the shown transfer, storage or relic tab; refused on the equipment tab, where the button is hidden).")] string panel)
 		=> AutomationHost.OnUi(form =>

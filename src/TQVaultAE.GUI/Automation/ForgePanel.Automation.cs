@@ -127,9 +127,18 @@ public partial class ForgePanel
 	/// <summary>Leaves a slot, like its MouseLeave: hides the item tooltip.</summary>
 	internal void AutomationHoverEnd(ForgeSlot slot) => this.pictureBox_MouseLeave(this.SlotOf(slot).Picture, EventArgs.Empty);
 
-	internal void AutomationReset() => this.scalingButtonReset_Click(this.ResetButton, EventArgs.Empty);
+	internal void AutomationReset() => Press(this.ResetButton, this.scalingButtonReset_Click);
 
-	internal void AutomationForge() => this.ForgeButton_Click(this.ForgeButton, EventArgs.Empty);
+	internal void AutomationForge() => Press(this.ForgeButton, this.ForgeButton_Click);
 
-	internal void AutomationCancel() => this.CancelButton_Click(this.CancelButton, EventArgs.Empty);
+	internal void AutomationCancel() => Press(this.CancelButton, this.CancelButton_Click);
+
+	/// <summary>Raises a button's click handler as its click does, refused while the button is greyed or hidden.</summary>
+	/// <exception cref="InvalidOperationException">A user could not press it.</exception>
+	private static void Press(Control button, EventHandler click)
+	{
+		if (!button.Enabled || !button.Visible)
+			throw new InvalidOperationException($"'{button.Text}' is greyed or hidden: a user could not press it.");
+		click(button, EventArgs.Empty);
+	}
 }
