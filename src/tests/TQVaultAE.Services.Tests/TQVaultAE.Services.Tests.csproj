@@ -4,6 +4,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+		<!-- Some tests check how Presentation labels what the services return (search results). -->
+		<ProjectReference Include="..\..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

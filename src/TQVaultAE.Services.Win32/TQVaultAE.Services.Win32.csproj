@@ -20,7 +20,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
-		<ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Presentation.Win32\TQVaultAE.Presentation.Win32.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
 	</ItemGroup>

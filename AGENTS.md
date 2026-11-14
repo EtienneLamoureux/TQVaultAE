@@ -123,11 +123,22 @@ dotnet test --project src/tests/TQVaultAE.Services.Tests --no-build
 ## Architecture
 
 ### Layer Dependencies
+The project references, each project with the ones it references (`src/*/*.csproj`):
 ```
-GUI → Presentation → Services → Domain → Data
-     ↓
-Application (DTOs, Results, Search)
+GUI                → all the projects below
+Services.Win32     → Services, Presentation.Win32 (font loading only, no text)
+Presentation.Win32 → Presentation
+Services           → Data, Application, Config, Domain
+Presentation       → Application, Config, Domain
+Data               → Application, Config, Domain
+Application        → Domain     (DTOs, Results, Search, service contracts)
+Config             → Domain
+Domain             → GameFiles
+DbCli              → GameFiles
 ```
+Services and Presentation do not reference each other. Services builds no UI text: it returns keys, enums or neutral
+data (Application types), and the GUI or Presentation turns them into translated text (for example
+`ModLinkText.CharacterLabel`, `SharedStashText.Localize`, `GitBackupText.Message`).
 
 ### Projects
 | Project | Framework | Purpose |
