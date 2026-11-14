@@ -54,6 +54,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		// drawn like the captions over the frames.
 		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow, this.tableLayoutPanelContent, this.tableLayoutPanelBottom);
 		CaravanLook.OutlineText(this);
+		this.CenterHeaderRows();
 
 		this.MinimizeBox = false;
 		this.NormalizeBox = false;
@@ -237,6 +238,33 @@ public partial class SearchDialogAdvanced : VaultForm
 		});
 
 		this.VisibleChanged += this.SearchDialogVisibleChanged;
+	}
+
+	/// <summary>
+	/// Centres the labels, boxes, check boxes and buttons of the rows above the categories in their row's height, so
+	/// that their texts sit on one line at every font size and DPI: the designer put the boxes at the top of the row and
+	/// the labels a fixed 7 pixels lower.
+	/// </summary>
+	private void CenterHeaderRows()
+	{
+		foreach (var row in new Control[] {
+			this.flowLayoutPanelSearchTerm, this.flowLayoutPanelQueries, this.flowLayoutPanelMisc, this.flowLayoutPanelMin, this.flowLayoutPanelMax })
+		{
+			foreach (Control control in row.Controls)
+			{
+				control.Anchor = AnchorStyles.None;
+				control.Margin = new Padding(control.Margin.Left, 3, control.Margin.Right, 3);
+			}
+		}
+
+		// The rows laid in the cells of a table: centred in the cell's height too, side by side.
+		foreach (var control in new Control[] {
+			this.flowLayoutPanelSearchTerm, this.flowLayoutPanelQueries,
+			this.scalingCheckBoxMinReq, this.flowLayoutPanelMin, this.scalingCheckBoxMaxReq, this.flowLayoutPanelMax })
+		{
+			var horizontal = control.Anchor & (AnchorStyles.Left | AnchorStyles.Right);
+			control.Anchor = horizontal == AnchorStyles.None ? AnchorStyles.Left : horizontal;
+		}
 	}
 
 	private void SetSearchBoxVisibility(bool isVisible)
