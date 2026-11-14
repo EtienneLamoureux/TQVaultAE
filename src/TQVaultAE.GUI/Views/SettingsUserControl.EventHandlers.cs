@@ -110,13 +110,13 @@ internal partial class SettingsUserControl
 				this.FontService.Reload();
 		}
 
-		this.Applied?.Invoke(this, EventArgs.Empty);
+		this.RaiseApplied();
 	}
 
 	/// <summary>
 	/// Handler for clicking the Cancel button: the host leaves the settings, the edits are dropped.
 	/// </summary>
-	private void CancelButtonClick(object? sender, EventArgs e) => this.Cancelled?.Invoke(this, EventArgs.Empty);
+	private void CancelButtonClick(object? sender, EventArgs e) => this.RaiseCancelled();
 
 	/// <summary>
 	/// Handler for clicking the allow item editing check box

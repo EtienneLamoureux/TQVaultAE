@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 /// window (it is built for that character only), and leaves it on <see cref="Applied"/> (OK, the edits applied to the
 /// character in memory) or <see cref="Cancelled"/> (Cancel, the edits dropped).
 /// </summary>
-internal sealed partial class CharacterEditorUserControl : UserControl, IMainWindowView
+internal sealed partial class CharacterEditorUserControl : MainWindowView, IMainWindowView
 {
 	private struct DifficultData
 	{
@@ -45,14 +45,13 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 	private PlayerInfo Info => this.PlayerCollection.PlayerInfo
 		?? throw new InvalidOperationException("The character has no player info.");
 
-	/// <summary>OK was pressed and the edits applied to the character, in memory (the Save button writes them).</summary>
-	public event EventHandler? Applied;
-
-	/// <summary>Cancel was pressed: the edits are dropped.</summary>
-	public event EventHandler? Cancelled;
+	// Applied: OK was pressed and the edits applied to the character, in memory (the Save button writes them).
 
 	/// <summary>The Cancel button, which a host may press for Escape.</summary>
 	public IButtonControl CancelButton => this.cancel;
+
+	/// <summary>Escape presses Cancel.</summary>
+	protected override IButtonControl EscapeButton => this.cancel;
 
 	/// <summary>
 	/// Initializes a new instance of the CharacterEditorUserControl class.
@@ -116,19 +115,6 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 		Convert.ToInt32(this.intelligenceUpDown.Value),
 		Convert.ToInt32(this.dexterityUpDown.Value));
 
-	/// <summary>
-	/// Escape presses Cancel, as in a dialog: once the focused control left it (an open drop-down list closes first).
-	/// </summary>
-	protected override bool ProcessDialogKey(Keys keyData)
-	{
-		if (keyData == Keys.Escape)
-		{
-			this.cancel.PerformClick();
-			return true;
-		}
-
-		return base.ProcessDialogKey(keyData);
-	}
 
 	/// <summary>
 	/// Scrolled (an area smaller than the editor), the editor stays where the user put it when a control takes the
@@ -156,7 +142,7 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
-	private void CancelButton_Click(object? sender, EventArgs e) => this.Cancelled?.Invoke(this, EventArgs.Empty);
+	private void CancelButton_Click(object? sender, EventArgs e) => this.RaiseCancelled();
 
 	/// <summary>
 	/// OK button handler
@@ -190,7 +176,7 @@ internal sealed partial class CharacterEditorUserControl : UserControl, IMainWin
 
 			this.Services.CharacterEditService.Apply(PlayerCollection, request);
 
-			this.Applied?.Invoke(this, EventArgs.Empty);
+			this.RaiseApplied();
 		}
 		catch (Exception ex)
 		{

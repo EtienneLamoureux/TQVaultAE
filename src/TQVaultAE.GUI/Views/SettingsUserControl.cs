@@ -30,7 +30,7 @@ namespace TQVaultAE.GUI.Views;
 /// Sized to its content (<see cref="Control.AutoSize"/>) by default; given an area by its host instead (AutoSize off), it
 /// lays its content in the middle, with scroll bars when the area is smaller (<see cref="ScrollableControl.AutoScroll"/>).
 /// </remarks>
-internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
+internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowView
 {
 	#region Properties & Fields
 
@@ -97,16 +97,11 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 	/// </summary>
 	public RestartReason RestartReason => this.editor.RestartReason;
 
-	/// <summary>
-	/// OK was pressed and the settings checked: the edits, if any, are in <see cref="UserSettings"/> (not saved to the
-	/// file yet) and the change flags tell what changed.
-	/// </summary>
-	public event EventHandler? Applied;
+	// Applied: OK was pressed and the settings checked: the edits, if any, are in UserSettings (not saved to the file
+	// yet) and the change flags tell what changed. Cancelled: the edits are dropped at the next ShowSettingsInUse.
 
-	/// <summary>
-	/// Cancel or Escape was pressed: the edits are dropped at the next <see cref="ShowSettingsInUse"/>.
-	/// </summary>
-	public event EventHandler? Cancelled;
+	/// <summary>Escape presses Cancel.</summary>
+	protected override IButtonControl EscapeButton => this.cancelButton;
 
 	private static readonly Dictionary<string, string> PasteBinExpirationOptions = new()
 	{
@@ -310,19 +305,6 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 		}
 	}
 
-	/// <summary>
-	/// Escape presses Cancel, as in a dialog: once the focused control left it (an open drop-down list closes first).
-	/// </summary>
-	protected override bool ProcessDialogKey(Keys keyData)
-	{
-		if (keyData == Keys.Escape)
-		{
-			this.cancelButton.PerformClick();
-			return true;
-		}
-
-		return base.ProcessDialogKey(keyData);
-	}
 
 	/// <summary>
 	/// In an area given by the host, the settings sit in its middle; at its top left when it is smaller, scrolled.
