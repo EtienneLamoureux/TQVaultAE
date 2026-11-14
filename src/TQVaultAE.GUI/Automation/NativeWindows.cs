@@ -36,7 +36,7 @@ internal static partial class NativeWindows
 	/// <summary>The window class of the standard Win32 dialogs (message box, task dialog, common dialog).</summary>
 	public const string DialogClass = "#32770";
 
-	public sealed record NativeWindow(IntPtr Handle, string Title, string ClassName, bool Visible, bool Enabled, IntPtr Owner)
+	public sealed record NativeWindow(IntPtr Handle, string Title, string ClassName, bool Enabled)
 	{
 		/// <summary>
 		/// Gets a value indicating whether this is a standard Win32 dialog (message box, task dialog, common dialog).
@@ -133,7 +133,7 @@ internal static partial class NativeWindows
 	private static string Normalize(string text) => text.Replace("&", string.Empty).Trim();
 
 	private static NativeWindow Describe(IntPtr hwnd)
-		=> new(hwnd, GetText(hwnd), GetClass(hwnd), IsWindowVisible(hwnd), IsWindowEnabled(hwnd), GetWindow(hwnd, GW_OWNER));
+		=> new(hwnd, GetText(hwnd), GetClass(hwnd), IsWindowEnabled(hwnd));
 
 	/// <summary>The title or text of a window.</summary>
 	public static string GetText(IntPtr hwnd)
@@ -150,8 +150,6 @@ internal static partial class NativeWindows
 		int length = GetClassName(hwnd, buffer, buffer.Length);
 		return new string(buffer, 0, length);
 	}
-
-	private const uint GW_OWNER = 4;
 
 	private const uint SWP_NOSIZE = 0x0001;
 	private const uint SWP_NOZORDER = 0x0004;
@@ -184,9 +182,6 @@ internal static partial class NativeWindows
 	[LibraryImport("user32.dll")]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool IsWindowEnabled(IntPtr hWnd);
-
-	[LibraryImport("user32.dll")]
-	private static partial IntPtr GetWindow(IntPtr hWnd, uint uCmd);
 
 	[LibraryImport("user32.dll")]
 	private static partial IntPtr GetParent(IntPtr hWnd);

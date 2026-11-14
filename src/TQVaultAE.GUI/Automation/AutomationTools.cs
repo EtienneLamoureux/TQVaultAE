@@ -358,7 +358,7 @@ internal static partial class AutomationTools
 			if (drag.IsActive)
 				throw new McpException("An item is already being dragged. Use drop_item or cancel_drag first.");
 
-			EnsureWritable(form, named.Panel, "pick up");
+			EnsureWritable(named.Panel, "pick up");
 
 			var cell = new Point(x, y);
 			var item = named.Panel.AutomationFindItem(cell)
@@ -396,7 +396,7 @@ internal static partial class AutomationTools
 		{
 			var named = ResolveShownPanel(form, panel);
 			var drag = RequireDrag(form);
-			EnsureWritable(form, named.Panel, "drop into");
+			EnsureWritable(named.Panel, "drop into");
 
 			var dropped = drag.Item;
 			var cursor = DragCursorFor(form, named.Panel, new Point(x, y));
@@ -811,7 +811,7 @@ internal static partial class AutomationTools
 	/// Respects the PlayerReadonly setting, which the equipment panel enforces for real mouse clicks too. A read-only
 	/// character's sack is left to the panel's own rules, which refuse and tell the user (the notification).
 	/// </summary>
-	private static void EnsureWritable(MainForm form, SackPanel panel, string action)
+	private static void EnsureWritable(SackPanel panel, string action)
 	{
 		if (panel.ItemsReadOnly && panel.Sack is not { IsReadOnly: true })
 			throw new McpException($"Cannot {action} the equipment panel: the PlayerReadonly setting is on.");
