@@ -46,12 +46,7 @@ internal static partial class AutomationTools
 
 			try
 			{
-				if (alignRows is { } align)
-					((CheckBox)dialog.Controls.Find("alignRowsCheckBox", true).Single()).Checked = align;
-				if (hideUnchanged is { } hide)
-					((CheckBox)dialog.Controls.Find("hideUnchangedCheckBox", true).Single()).Checked = hide;
-				if (showSources is { } sources)
-					((CheckBox)dialog.Controls.Find("showSourcesCheckBox", true).Single()).Checked = sources;
+				dialog.AutomationSetOptions(alignRows, hideUnchanged, showSources);
 
 				var table = dialog.Controls.Find("comparisonTable", true).Single();
 				var toggled = new List<string>();

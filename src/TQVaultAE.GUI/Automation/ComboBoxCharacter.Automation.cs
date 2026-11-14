@@ -26,12 +26,39 @@ public partial class ComboBoxCharacter
 	/// <summary>The "Mod link..." entry of the tools menu.</summary>
 	internal ToolStripMenuItem AutomationModLinkEntry => this.modLinkToolStripMenuItem;
 
+	/// <summary>Builds the tag entries of the tools menu again, as opening the menu does.</summary>
+	internal void AutomationRefreshTags() => this.RefreshMenuTagList();
+
+	/// <summary>The entry of <paramref name="tag"/> under Tags in the tools menu, as last built (not another entry of that text).</summary>
+	internal ToolStripMenuItem AutomationTagEntry(string tag)
+		=> this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
+			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
+			?? throw new AutomationRefusedException($"No tag '{tag}' in the menu.");
+
+	/// <summary>Types <paramref name="text"/> into the new tag box and presses Enter there, after the calling tool returns.</summary>
+	internal void AutomationTypeNewTag(string text)
+		=> this.AutomationPressEnter(this.toolStripTextBoxAdd, text, this.ToolStripTextBoxAdd_KeyDown);
+
+	/// <summary>Types <paramref name="text"/> into the rename box of <paramref name="tag"/> and presses Enter there, after the calling tool returns.</summary>
+	internal void AutomationTypeTagRename(string tag, string text)
+	{
+		var box = this.AutomationTagEntry(tag).DropDownItems.OfType<ToolStripMenuItem>()
+			.SelectMany(i => i.DropDownItems.OfType<ToolStripTextBox>())
+			.First();
+		this.AutomationPressEnter(box, text, this.TagRenameTextBoxItem_KeyDown);
+	}
+
+	/// <summary>Puts <paramref name="text"/> in <paramref name="box"/>, then posts Enter to its key handler, as typing does.</summary>
+	private void AutomationPressEnter(ToolStripTextBox box, string text, KeyEventHandler handler)
+	{
+		box.Text = text;
+		this.BeginInvoke(() => handler(box, new KeyEventArgs(Keys.Enter)));
+	}
+
 	/// <summary>The entries down to the Delete entry of a tag in the tools menu (Tags, the tag, Delete), as last built.</summary>
 	internal IReadOnlyList<ToolStripItem> AutomationTagDeletePath(string tag)
 	{
-		var tagItem = this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
-			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
-			?? throw new AutomationRefusedException($"No tag '{tag}' in the menu.");
+		var tagItem = this.AutomationTagEntry(tag);
 		var delete = tagItem.DropDownItems.OfType<ToolStripMenuItem>().First(i => i.Name?.StartsWith("tagDeleteItem", StringComparison.Ordinal) ?? false);
 		return [this.tagsToolStripMenuItem, tagItem, delete];
 	}
@@ -93,9 +120,7 @@ public partial class ComboBoxCharacter
 			throw new AutomationRefusedException($"The tag '{tag}' is on characters that are not test characters: {string.Join(", ", real)}.");
 
 		this.RefreshMenuTagList();
-		var tagItem = this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
-			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
-			?? throw new AutomationRefusedException($"No tag '{tag}' in the menu.");
+		var tagItem = this.AutomationTagEntry(tag);
 		var entryPrefix = archived ? "tagArchiveAllItem" : "tagUnArchiveAllItem";
 		var entry = tagItem.DropDownItems.OfType<ToolStripMenuItem>().First(i => i.Name?.StartsWith(entryPrefix, StringComparison.Ordinal) ?? false);
 		entry.PerformClick();

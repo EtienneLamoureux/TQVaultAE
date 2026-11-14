@@ -75,11 +75,7 @@ internal static partial class AutomationTools
 				switch (c)
 				{
 					case VirtualCheckedListBox virtualList:
-						if (virtualList.GetItemChecked(index) != check)
-						{
-							virtualList.SetItemChecked(index, check);
-							RaiseEvent(virtualList, nameof(VirtualCheckedListBox.SelectedValueChanged));
-						}
+						virtualList.AutomationSetChecked(index, check);
 						break;
 					case CheckedListBox checkedList:
 						checkedList.SetItemChecked(index, check);
@@ -179,12 +175,6 @@ internal static partial class AutomationTools
 			.ToList(),
 		_ => [],
 	};
-
-	private static void RaiseEvent(object target, string eventName)
-	{
-		var field = target.GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
-		(field?.GetValue(target) as EventHandler)?.Invoke(target, EventArgs.Empty);
-	}
 
 	private static void Invoke(Control target, string method, EventArgs args)
 		=> typeof(DataGridView).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic, [args.GetType()])!.Invoke(target, [args]);

@@ -415,13 +415,11 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var combo = form.AutomationCharacterCombo;
-			var comboType = typeof(ComboBoxCharacter);
-			const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
 
 			// Test tags only; an empty or invalid name is allowed through to test the refusals.
 			bool isTestName(string? name) => name is not null && name.StartsWith(TestFilePrefix, StringComparison.OrdinalIgnoreCase);
 
-			comboType.GetMethod("RefreshMenuTagList", Private)!.Invoke(combo, null);
+			combo.AutomationRefreshTags();
 
 			switch (box.ToLowerInvariant())
 			{
@@ -429,21 +427,14 @@ internal static partial class AutomationTools
 				{
 					if (!string.IsNullOrWhiteSpace(text) && !isTestName(text))
 						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
-					var textBox = (ToolStripTextBox)comboType.GetField("toolStripTextBoxAdd", Private)!.GetValue(combo)!;
-					PressEnter(form, combo, comboType.GetMethod("ToolStripTextBoxAdd_KeyDown", Private)!, textBox, text);
+					combo.AutomationTypeNewTag(text);
 					break;
 				}
 				case "rename":
 				{
 					if (!isTestName(tag))
 						throw new McpException($"Test tags only: 'tag' must start with '{TestFilePrefix}'.");
-					var tags = (ToolStripMenuItem)comboType.GetField("tagsToolStripMenuItem", Private)!.GetValue(combo)!;
-					var tagItem = tags.DropDownItems.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text == tag)
-						?? throw new McpException($"No tag '{tag}' in the menu.");
-					var textBox = tagItem.DropDownItems.OfType<ToolStripMenuItem>()
-						.SelectMany(i => i.DropDownItems.OfType<ToolStripTextBox>())
-						.First();
-					PressEnter(form, combo, comboType.GetMethod("TagRenameTextBoxItem_KeyDown", Private)!, textBox, text);
+					combo.AutomationTypeTagRename(tag!, text);
 					break;
 				}
 				case "delete":
@@ -460,10 +451,7 @@ internal static partial class AutomationTools
 						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
 					if (combo.SelectedItem is not PlayerSave ps || !AutomationTestNames.IsTestFile(ps.Name))
 						throw new McpException($"Select a test character (name starting with {AutomationTestNames.Accepted}) first.");
-					var tags = (ToolStripMenuItem)comboType.GetField("tagsToolStripMenuItem", Private)!.GetValue(combo)!;
-					var tagItem = tags.DropDownItems.OfType<ToolStripMenuItem>()
-						.FirstOrDefault(i => i.Text == text && (i.Name?.StartsWith(ComboBoxCharacter.TAGKEY, StringComparison.Ordinal) ?? false))
-						?? throw new McpException($"No tag '{text}' in the menu.");
+					var tagItem = combo.AutomationTagEntry(text);
 					// Like a click on the tag entry: its CheckedChanged handler assigns or unassigns the tag.
 					// The menu was just rebuilt unticked, so tick it first to be able to untick it.
 					tagItem.Checked = true;
@@ -496,12 +484,6 @@ internal static partial class AutomationTools
 	/// Types <paramref name="text"/> in a menu text box and raises its Enter key handler after this call returns,
 	/// since a refusal opens a modal error box.
 	/// </summary>
-	private static void PressEnter(Form form, object owner, MethodInfo handler, ToolStripTextBox textBox, string text)
-	{
-		textBox.Text = text;
-		form.BeginInvoke(() => handler.Invoke(owner, [textBox, new KeyEventArgs(Keys.Enter)]));
-	}
-
 	#endregion
 
 	#region Player information panel

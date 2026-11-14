@@ -5,6 +5,13 @@ namespace TQVaultAE.GUI.Components.Layout;
 
 public partial class VirtualCheckedListBox
 {
+	/// <summary>Checks or unchecks an entry like a user (<see cref="ToggleItem"/>), so <see cref="SelectedValueChanged"/> follows; nothing when it already is.</summary>
+	internal void AutomationSetChecked(int index, bool check)
+	{
+		if (this.GetItemChecked(index) != check)
+			this.ToggleItem(index);
+	}
+
 	/// <summary>Keyboard focus and scroll position, as drawn.</summary>
 	internal object AutomationState()
 	{

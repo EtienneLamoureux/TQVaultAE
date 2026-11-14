@@ -22,6 +22,9 @@ public partial class StashPanel
 	/// <summary>Gets the Edit button under the statistics panel; null before the first character is shown.</summary>
 	internal Button? AutomationEditButton => this._editButton;
 
+	/// <summary>Runs the Edit button's click handler, which shows the character editor in place of the main content.</summary>
+	internal void AutomationClickEdit() => this.EditButton_Click(this, EventArgs.Empty);
+
 	/// <summary>Gets the background drawn now: a source picture at zoom 1, else a scaled copy made at the tab switch.</summary>
 	internal System.Drawing.Bitmap? AutomationBackground => this.background;
 

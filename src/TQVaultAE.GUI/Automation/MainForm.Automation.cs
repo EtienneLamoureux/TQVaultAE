@@ -242,10 +242,5 @@ public partial class MainForm
 	/// Shows the character editor in place of the main content like the Edit button of the stash panel (its click
 	/// handler), before the calling tool returns.
 	/// </summary>
-	internal void AutomationOpenCharacterEditor()
-	{
-		var edit = typeof(StashPanel).GetMethod("EditButton_Click", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-			?? throw new InvalidOperationException("StashPanel.EditButton_Click not found");
-		edit.Invoke(this.stashPanel, [this.stashPanel, EventArgs.Empty]);
-	}
+	internal void AutomationOpenCharacterEditor() => this.stashPanel.AutomationClickEdit();
 }
