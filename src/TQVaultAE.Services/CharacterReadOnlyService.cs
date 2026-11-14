@@ -22,13 +22,9 @@ public class CharacterReadOnlyService(
 
 	/// <inheritdoc/>
 	public IReadOnlyList<string> OwnedFiles(string saveFolder)
-		=> [
-			this.PlayerFile(saveFolder),
-			this.StashFile(saveFolder),
-			this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerStashFileNameG),
-			this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName),
-			this.PathIO.Combine(saveFolder, ILoadoutService.FileName),
-		];
+		=> [.. this.GamePathResolver.CharacterFiles()
+			.Where(file => file.WrittenByTQVault)
+			.Select(file => file.In(this.PathIO, saveFolder))];
 
 	/// <inheritdoc/>
 	public bool IsReadOnly(string saveFolder)

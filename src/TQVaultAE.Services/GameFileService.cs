@@ -135,22 +135,16 @@ public class GameFileService(ILogger<GameFileService> log, IGamePathService iGam
 	public string DuplicateCharacterFiles(string playerSaveDirectory, string newname)
 	{
 		var newFolder = this.GetDuplicateCharacterFolder(playerSaveDirectory, newname);
-		var newPlayerFile = this.GamePathService.PlayerFileIn(this.PathIO, newFolder);
-
-		var playerFile = this.GamePathService.PlayerFileIn(this.PathIO, playerSaveDirectory);
-		var stashFileB = this.GamePathService.StashFileIn(this.PathIO, playerSaveDirectory);
-		var stashFileG = this.PathIO.Combine(playerSaveDirectory, GamePathService.PlayerStashFileNameG);
-		var settingsFile = this.PathIO.Combine(playerSaveDirectory, GamePathService.PlayerSettingsFileName);
-
 		DirectoryIO.CreateDirectory(newFolder);
-		this.FileIO.Copy(playerFile, newPlayerFile);
-		if (this.FileIO.Exists(stashFileB)) this.FileIO.Copy(stashFileB, this.GamePathService.StashFileIn(this.PathIO, newFolder));
-		if (this.FileIO.Exists(stashFileG)) this.FileIO.Copy(stashFileG, this.PathIO.Combine(newFolder, GamePathService.PlayerStashFileNameG));
-		if (this.FileIO.Exists(settingsFile)) this.FileIO.Copy(settingsFile, this.PathIO.Combine(newFolder, GamePathService.PlayerSettingsFileName));
 
-		// The loadouts are the character's: the duplicate starts with the same ones (copies of the pieces, like its gear).
-		var loadoutsFile = this.PathIO.Combine(playerSaveDirectory, ILoadoutService.FileName);
-		if (this.FileIO.Exists(loadoutsFile)) this.FileIO.Copy(loadoutsFile, this.PathIO.Combine(newFolder, ILoadoutService.FileName));
+		// Every file of the character that exists: its stash, its loadouts (copies of the pieces, like its gear) and its
+		// mod link, so the copy plays with the same mod. The player file is copied even if missing, which fails.
+		foreach (var file in this.GamePathService.CharacterFiles())
+		{
+			var source = file.In(this.PathIO, playerSaveDirectory);
+			if (file.Name == this.GamePathService.PlayerSaveFileName || this.FileIO.Exists(source))
+				this.FileIO.Copy(source, file.In(this.PathIO, newFolder));
+		}
 
 		// Copy Progression directory
 		var sourceProgressionDir = this.PathIO.Combine(playerSaveDirectory, "Levels_World_World01.map");

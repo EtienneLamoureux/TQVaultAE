@@ -13,7 +13,8 @@ public interface ICharacterReadOnlyService
 {
 	/// <summary>
 	/// The files TQVault writes for the character of <paramref name="saveFolder"/>, existing or not: the character file
-	/// (<c>Player.chr</c>), its stash (<c>winsys.dxb</c> and <c>winsys.dxg</c>) and the mod link file.
+	/// (<c>Player.chr</c>), its stash (<c>winsys.dxb</c> and <c>winsys.dxg</c>), the mod link file and the loadouts
+	/// (<see cref="SaveFolderFiles.CharacterFiles"/>).
 	/// </summary>
 	IReadOnlyList<string> OwnedFiles(string saveFolder);
 
