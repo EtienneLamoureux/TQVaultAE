@@ -82,7 +82,7 @@ Two options, right under the statistics, change what is counted:
 | Option | Effect |
 |---|---|
 | **Difficulty** | The difficulty played: Epic and Legendary lower the resistances |
-| **Include buffs** | Counts the auras and buffs of the skills as if they were active; else only the passive skills count |
+| **Include buffs** | Counts the auras and buffs of the skills as if they were active; else only the passive skills count. What a skill casts on monsters (an attack's freeze, an aura that weakens the monsters around) never counts |
 
 ## Mastery pages
 
