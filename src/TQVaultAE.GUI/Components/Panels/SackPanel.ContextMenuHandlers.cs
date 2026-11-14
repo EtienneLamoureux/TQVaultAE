@@ -305,106 +305,60 @@ public partial class SackPanel
 		this.OnShownItemsChanged();
 	}
 
-	private void RemoveSuffixItemClicked(object? sender, EventArgs e)
+	/// <summary>
+	/// Runs <paramref name="edit"/> on the item under the context menu; when it changed the item, its cached texts go and
+	/// its sack is told.
+	/// </summary>
+	private void EditFocusedItem(Func<Item, bool> edit)
 	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is not null)
-		{
-			this.Services.ItemEditService.RemoveSuffix(this.ShownSack, focusedItem);
+		if (this.FindItem(this.contextMenuCellWithFocus) is Item focusedItem && edit(focusedItem))
 			this.ItemChangedInPlace(focusedItem);
-		}
 	}
+
+	private void RemoveSuffixItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item =>
+		{
+			this.Services.ItemEditService.RemoveSuffix(this.ShownSack, item);
+			return true;
+		});
 
 	private void RemovePrefixItemClicked(object? sender, EventArgs e)
-	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is not null)
+		=> this.EditFocusedItem(item =>
 		{
-			this.Services.ItemEditService.RemovePrefix(this.ShownSack, focusedItem);
-			this.ItemChangedInPlace(focusedItem);
-		}
-	}
+			this.Services.ItemEditService.RemovePrefix(this.ShownSack, item);
+			return true;
+		});
 
 	/// <summary>
-	/// Handler for changing suffix from the context menu
+	/// Handler for changing suffix from the context menu: the entry's name is the new suffix.
 	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
 	private void ChangeSuffixItemClicked(object? sender, EventArgs e)
-	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is not null)
-		{
-			ToolStripMenuItem? menuItem = sender as ToolStripMenuItem;
-			if (menuItem is not null
-				&& this.Services.ItemEditService.ChangeSuffix(this.ShownSack, focusedItem, menuItem.Name.ToRecordId()))
-			{
-				this.ItemChangedInPlace(focusedItem);
-			}
-		}
-	}
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangeSuffix(this.ShownSack, item, menuItem.Name.ToRecordId()));
 
 	/// <summary>
-	/// Handler for changing Prefix from the context menu
+	/// Handler for changing prefix from the context menu: the entry's name is the new prefix.
 	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
 	private void ChangePrefixItemClicked(object? sender, EventArgs e)
-	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is not null)
-		{
-			ToolStripMenuItem? menuItem = sender as ToolStripMenuItem;
-			if (menuItem is not null
-				&& this.Services.ItemEditService.ChangePrefix(this.ShownSack, focusedItem, menuItem.Name.ToRecordId()))
-			{
-				this.ItemChangedInPlace(focusedItem);
-			}
-		}
-	}
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangePrefix(this.ShownSack, item, menuItem.Name.ToRecordId()));
 
 	/// <summary>
 	/// Handler for selecting Change Bonus from the context menu
-	/// Changes a socketed item's completion bonus.
+	/// Changes a socketed item's completion bonus: the entry's tag tells whether it is the first relic's.
 	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
 	private void ChangeSocketedBonusItemClicked(object? sender, EventArgs e)
-	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is not null)
-		{
-			ToolStripMenuItem? menuItem = sender as ToolStripMenuItem;
-
-			var isRelic1 = (menuItem?.Tag as bool?) ?? false;
-
-			if (menuItem is not null
-				&& this.Services.ItemEditService.ChangeCompletionBonus(this.ShownSack, focusedItem, menuItem.Name.ToRecordId(), secondRelic: !isRelic1))
-			{
-				this.ItemChangedInPlace(focusedItem);
-			}
-		}
-	}
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangeCompletionBonus(
+				this.ShownSack, item, menuItem.Name.ToRecordId(), secondRelic: !((menuItem.Tag as bool?) ?? false)));
 
 	/// <summary>
 	/// Handler for selecting Change Bonus from the context menu
 	/// Changes an item's completion bonus.
 	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
 	private void ChangeBonusItemClicked(object? sender, EventArgs e)
-	{
-		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
-		if (focusedItem is not null)
-		{
-			ToolStripMenuItem? item = (ToolStripMenuItem)sender!;
-			if (item is not null
-				&& this.Services.ItemEditService.ChangeCompletionBonus(this.ShownSack, focusedItem, item.Name.ToRecordId()))
-			{
-				this.ItemChangedInPlace(focusedItem);
-			}
-		}
-	}
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangeCompletionBonus(this.ShownSack, item, menuItem.Name.ToRecordId()));
 
 	/// <summary>
 	/// Runs Copy, Duplicate or Delete on the item under the cursor alone, for the context menu and the keys
