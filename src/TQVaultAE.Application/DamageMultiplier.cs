@@ -47,14 +47,8 @@ public static class DamageMultiplier
 		if (used.Count != 1)
 			return null;
 
-		double At(double damage) => GameEquation.Evaluate(equation, new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
-		{
-			[damageVariable] = damage,
-			["strengthDV"] = strength,
-			["dexterityDV"] = dexterity,
-			["intelligenceDV"] = intelligence,
-			["characterLevelDV"] = level,
-		});
+		double At(double damage)
+			=> GameEquation.Evaluate(equation, GameEquation.DamageVariables(damageVariable, damage, strength, dexterity, intelligence, level));
 
 		var value = At(1) - At(0);
 		return value > 0 ? new GlobalMultiplier(value, used[0].Attribute) : null;
@@ -71,15 +65,12 @@ public static class DamageMultiplier
 	/// <param name="attribute">The attribute's value.</param>
 	public static double Slope(string equation, string damageVariable, string attributeVariable, double attribute)
 	{
-		double At(double damage) => GameEquation.Evaluate(equation, new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
+		double At(double damage)
 		{
-			[damageVariable] = damage,
-			["strengthDV"] = 0,
-			["dexterityDV"] = 0,
-			["intelligenceDV"] = 0,
-			["characterLevelDV"] = 0,
-			[attributeVariable] = attribute,
-		});
+			var variables = GameEquation.DamageVariables(damageVariable, damage, 0, 0, 0, 0);
+			variables[attributeVariable] = attribute;
+			return GameEquation.Evaluate(equation, variables);
+		}
 
 		return At(1) - At(0);
 	}

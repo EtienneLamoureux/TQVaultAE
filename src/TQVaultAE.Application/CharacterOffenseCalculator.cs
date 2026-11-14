@@ -127,14 +127,8 @@ public static class CharacterOffenseCalculator
 		double elemental = modifiers[ElementalModifier];
 		double Scale(double value, double percent) => Math.Max(0, value * (1 + percent / 100));
 		double Equation(string name, double value, string variable)
-			=> value <= 0 ? 0 : GameEquation.Evaluate(balance.DamageEquation(name), new Dictionary<string, double>
-			{
-				[variable] = value,
-				["strengthDV"] = input.Strength,
-				["dexterityDV"] = input.Dexterity,
-				["intelligenceDV"] = input.Intelligence,
-				["characterLevelDV"] = input.Level,
-			});
+			=> value <= 0 ? 0 : GameEquation.Evaluate(balance.DamageEquation(name),
+				GameEquation.DamageVariables(variable, value, input.Strength, input.Dexterity, input.Intelligence, input.Level));
 
 		double damage = 0;
 

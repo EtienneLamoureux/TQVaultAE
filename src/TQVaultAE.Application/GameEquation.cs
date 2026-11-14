@@ -28,6 +28,21 @@ public static partial class GameEquation
 		return expression.Eval<double>();
 	}
 
+	/// <summary>
+	/// The variables of a damage equation (<c>combatequations.dbr</c>): its damage variable and the character's
+	/// attributes and level.
+	/// </summary>
+	/// <param name="damageVariable">The damage variable, such as <c>physicalDamageDV</c>.</param>
+	public static Dictionary<string, double> DamageVariables(string damageVariable, double damage, double strength, double dexterity, double intelligence, double level)
+		=> new(StringComparer.OrdinalIgnoreCase)
+		{
+			[damageVariable] = damage,
+			["strengthDV"] = strength,
+			["dexterityDV"] = dexterity,
+			["intelligenceDV"] = intelligence,
+			["characterLevelDV"] = level,
+		};
+
 	/// <summary>A value as the evaluator reads it: always with a decimal point, so that divisions are not integer ones.</summary>
 	private static string Number(double value)
 	{
