@@ -59,8 +59,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(_ =>
 		{
 			var target = FindOpenForm(form);
-			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
+			var c = FindControl(target, control);
 			if (!c.Enabled || !c.Visible)
 				throw new McpException($"'{c.Name}' is disabled or hidden: a user could not click it.");
 
@@ -104,7 +103,7 @@ internal static partial class AutomationTools
 		[Description("Keys separated by '|', for example 'down|down|space|end'.")] string keys)
 		=> AutomationHost.OnUi(_ =>
 		{
-			var list = FindVirtualList(form, control);
+			var list = FindVirtualList(FindOpenForm(form), control);
 			if (!list.Enabled || !list.Visible)
 				throw new McpException($"'{list.Name}' is disabled or hidden: a user could not reach it.");
 
@@ -133,13 +132,12 @@ internal static partial class AutomationTools
 		[Description("true to add the text width comparison.")] bool widths = false)
 		=> AutomationHost.OnUi(_ =>
 		{
-			var list = FindVirtualList(form, control);
+			var list = FindVirtualList(FindOpenForm(form), control);
 			return Serialize(new { state = list.AutomationState(), widths = widths ? list.AutomationTextWidths() : null });
 		});
 
-	private static VirtualCheckedListBox FindVirtualList(string form, string control)
+	private static VirtualCheckedListBox FindVirtualList(Control target, string control)
 	{
-		var target = FindOpenForm(form);
 		var lists = AllControls(target).OfType<VirtualCheckedListBox>().ToList();
 		return lists.FirstOrDefault(c => string.Equals(c.Name, control, StringComparison.OrdinalIgnoreCase))
 			?? throw new McpException($"No check box list '{control}' in '{target.Text}'. Lists: {string.Join(", ", lists.Select(c => c.Name))}");
@@ -156,10 +154,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(main =>
 		{
 			var target = FindOpenForm(form);
-			var grids = AllControls(target).OfType<DataGridView>().Where(g => string.IsNullOrEmpty(control) || string.Equals(g.Name, control, StringComparison.OrdinalIgnoreCase)).ToList();
-			if (grids.Count != 1)
-				throw new McpException($"{grids.Count} grids match in '{target.Text}': {string.Join(", ", AllControls(target).OfType<DataGridView>().Select(g => g.Name))}");
-			var grid = grids[0];
+			var grid = FindGrid(target, control);
 			if (row < 0 || row >= grid.Rows.Count || column < 0 || column >= grid.Columns.Count)
 				throw new McpException($"Row {row} / column {column} out of range ({grid.Rows.Count} rows, {grid.Columns.Count} columns).");
 

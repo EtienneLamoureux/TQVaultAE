@@ -38,8 +38,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(_ =>
 		{
 			var target = FindOpenForm(form);
-			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No control '{control}' in '{target.Text}'. Use control_values.");
+			var c = FindControl(target, control, " Use control_values.");
 			if (!c.Enabled)
 				throw new McpException($"'{c.Name}' is disabled: a user could not change it.");
 
@@ -129,9 +128,8 @@ internal static partial class AutomationTools
 		[Description("Button name, as listed by control_values or control_tree.")] string control)
 		=> AutomationHost.OnUi(main =>
 		{
-			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
-			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
+			var target = FormOrMain(main, form);
+			var c = FindControl(target, control);
 			if (c is not IButtonControl and not ButtonBase)
 				throw new McpException($"'{c.Name}' is a {c.GetType().Name}, not a button.");
 			if (!c.Enabled || !c.Visible)
@@ -164,9 +162,8 @@ internal static partial class AutomationTools
 			if (clicks is not (1 or 2))
 				throw new McpException("clicks must be 1 or 2.");
 
-			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
-			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
+			var target = FormOrMain(main, form);
+			var c = FindControl(target, control);
 
 			// The deepest visible child under the point, as Windows finds the window that gets the mouse.
 			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
@@ -186,9 +183,8 @@ internal static partial class AutomationTools
 		[Description("Modifier keys held: ctrl, shift or ctrl+shift; empty for none.")] string? modifiers = null)
 		=> AutomationHost.OnUi(main =>
 		{
-			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
-			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
+			var target = FormOrMain(main, form);
+			var c = FindControl(target, control);
 			if (notches == 0)
 				throw new McpException("notches must not be 0.");
 
@@ -256,6 +252,22 @@ internal static partial class AutomationTools
 			&& (f.Text.Contains(form, StringComparison.OrdinalIgnoreCase) || string.Equals(f.GetType().Name, form, StringComparison.OrdinalIgnoreCase)))
 		?? AutomationHost.MainForm?.AutomationShownView(form)
 		?? throw new McpException($"No open form '{form}'. Open forms: {string.Join(", ", System.Windows.Forms.Application.OpenForms.Cast<Form>().Where(f => f.Visible).Select(f => $"'{f.Text}' ({f.GetType().Name})"))}; view shown in the main window: {AutomationHost.MainForm?.AutomationShownViewName}");
+
+	/// <summary>The main window when <paramref name="form"/> is empty, else <see cref="FindOpenForm"/>.</summary>
+	private static Control FormOrMain(Forms.MainForm main, string? form)
+		=> string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
+
+	/// <summary>The control of <paramref name="target"/> named <paramref name="name"/> (ignoring case), at any depth.</summary>
+	/// <param name="hint">Added to the error message.</param>
+	private static Control FindControl(Control target, string name, string? hint = null)
+		=> AllControls(target).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase))
+			?? throw new McpException($"No control '{name}' in '{target.Text}'.{hint}");
+
+	/// <summary>The shown dialog of type <typeparamref name="T"/>; <paramref name="what"/> names it in the error message.</summary>
+	private static T OpenDialog<T>(string what)
+		where T : Form
+		=> System.Windows.Forms.Application.OpenForms.OfType<T>().FirstOrDefault(f => f.Visible)
+			?? throw new McpException($"The {what} is not open.");
 
 	private static IEnumerable<Control> AllControls(Control parent)
 	{

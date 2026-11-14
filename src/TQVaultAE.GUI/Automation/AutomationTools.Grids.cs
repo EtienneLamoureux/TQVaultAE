@@ -67,9 +67,18 @@ internal static partial class AutomationTools
 			return Serialize(new { grid = view.Name, edited = new { row = rowIndex, column = columnIndex, value } });
 		});
 
-	private static DataGridView FindGrid(Control form, string grid)
-		=> AllControls(form).OfType<DataGridView>().FirstOrDefault(g => string.Equals(g.Name, grid, StringComparison.OrdinalIgnoreCase))
-			?? throw new McpException($"No grid '{grid}' in '{form.Text}'. Grids: {string.Join(", ", AllControls(form).OfType<DataGridView>().Select(g => g.Name))}");
+	/// <summary>The grid of <paramref name="form"/> named <paramref name="grid"/>; with no name, its only grid.</summary>
+	private static DataGridView FindGrid(Control form, string? grid)
+	{
+		var grids = AllControls(form).OfType<DataGridView>().ToList();
+		if (string.IsNullOrEmpty(grid))
+			return grids.Count == 1 ? grids[0]
+				: grids.Count == 0 ? throw new McpException($"No grid in '{form.Text}'.")
+				: throw new McpException($"{grids.Count} grids in '{form.Text}': name one of {string.Join(", ", grids.Select(g => g.Name))}.");
+
+		return grids.FirstOrDefault(g => string.Equals(g.Name, grid, StringComparison.OrdinalIgnoreCase))
+			?? throw new McpException($"No grid '{grid}' in '{form.Text}'. Grids: {string.Join(", ", grids.Select(g => g.Name))}");
+	}
 
 	private static object DescribeGrid(Control form, DataGridView grid) => new
 	{

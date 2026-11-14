@@ -77,8 +77,7 @@ internal static partial class AutomationTools
 		[Description("A key pressed in the dialog after the rest, like 'escape' or 'ctrl+alt+c'; empty for none.")] string key = "")
 		=> AutomationHost.OnUi(form =>
 		{
-			var dialog = System.Windows.Forms.Application.OpenForms.OfType<KeyBindsDialog>().FirstOrDefault(f => f.Visible)
-				?? throw new McpException("The key binds dialog is not open.");
+			var dialog = OpenDialog<KeyBindsDialog>("key binds dialog");
 
 			if (defaults)
 				dialog.AutomationDefaults();

@@ -136,7 +136,7 @@ internal static partial class AutomationTools
 
 		if (target.Equals("systemMenu", StringComparison.OrdinalIgnoreCase))
 		{
-			var owner = string.IsNullOrEmpty(form) ? main : FindOpenForm(form) as VaultForm
+			var owner = FormOrMain(main, form) as VaultForm
 				?? throw new McpException($"'{form}' is not a TQVault form with its own title bar.");
 			var menu = owner.AutomationOpenSystemMenu() ?? throw new McpException($"'{owner.Text}' has Windows' own title bar: its menu is not TQVault's.");
 			return (menu, chain => menu.Items.IndexOf(chain[^1]) is 1 or 2

@@ -45,11 +45,7 @@ internal static partial class AutomationTools
 		[Description("Maximum depth below the form (default 3).")] int depth = 3)
 		=> AutomationHost.OnUi(main =>
 		{
-			Control target = string.IsNullOrEmpty(form)
-				? main
-				: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Visible && f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
-					?? main.AutomationShownView(form)
-					?? throw new McpException($"No open form has '{form}' in its title.");
+			var target = FormOrMain(main, form);
 
 			object Describe(Control c, int level) => new
 			{
@@ -267,8 +263,7 @@ internal static partial class AutomationTools
 		[Description("Zero-based icon index in that grid.")] int index = 0)
 		=> AutomationHost.OnUi(_ =>
 		{
-			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
-				?? throw new McpException("The bag button settings are not open.");
+			var dialog = OpenDialog<Dialogs.BagButtonSettings>("bag button settings");
 			return Serialize(new { picked = dialog.AutomationPickIcon(tab, index) });
 		});
 
@@ -279,8 +274,7 @@ internal static partial class AutomationTools
 		[Description("Zero-based icon index in that grid; omit to leave the grid.")] int? index = null)
 		=> AutomationHost.OnUi(_ =>
 		{
-			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
-				?? throw new McpException("The bag button settings are not open.");
+			var dialog = OpenDialog<Dialogs.BagButtonSettings>("bag button settings");
 			return Serialize(new { hovered = dialog.AutomationHoverIcon(tab, index) });
 		});
 
@@ -292,8 +286,7 @@ internal static partial class AutomationTools
 		[Description("on, off, over or simple.")] string target)
 		=> AutomationHost.OnUi(_ =>
 		{
-			var dialog = System.Windows.Forms.Application.OpenForms.OfType<Dialogs.BagButtonSettings>().FirstOrDefault(f => f.Visible)
-				?? throw new McpException("The bag button settings are not open.");
+			var dialog = OpenDialog<Dialogs.BagButtonSettings>("bag button settings");
 			return Serialize(new { dragged = dialog.AutomationDragIcon(tab, index, target), target });
 		});
 
@@ -470,10 +463,12 @@ internal static partial class AutomationTools
 		[Description("Top of the window in virtual screen pixels.")] int y,
 		[Description("Part of the form title (case-insensitive); empty for the main window.")] string form = "")
 	{
-		Form Target(Form main) => string.IsNullOrEmpty(form)
-			? main
-			: System.Windows.Forms.Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.Visible && f.Text.Contains(form, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No open form has '{form}' in its title.");
+		// A view shown in the main window (the settings) moves with the main window.
+		Form Target(Forms.MainForm main)
+		{
+			var target = FormOrMain(main, form);
+			return target as Form ?? target.FindForm() ?? main;
+		}
 
 		AutomationHost.OnUi(main =>
 		{

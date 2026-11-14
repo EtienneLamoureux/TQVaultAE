@@ -137,10 +137,7 @@ internal static partial class AutomationTools
 			}
 			if (!string.IsNullOrEmpty(list))
 			{
-				var target = AllControls(dialog).OfType<Components.Layout.VirtualCheckedListBox>()
-					.FirstOrDefault(c => string.Equals(c.Name, list, StringComparison.OrdinalIgnoreCase))
-					?? throw new McpException($"No category list '{list}'.");
-				target.FirstColumn = firstColumn;
+				FindVirtualList(dialog, list).FirstColumn = firstColumn;
 			}
 			return Serialize(dialog.AutomationState());
 		});
