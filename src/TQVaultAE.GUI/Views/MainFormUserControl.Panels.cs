@@ -160,8 +160,6 @@ public partial class MainFormUserControl
 	/// <param name="place">Adds the panel to its container.</param>
 	private void WirePanel(VaultPanel panel, Action<Control> place)
 	{
-		panel.DrawAsGroupBox = false;
-
 		panel.OnNewItemHighlighted += this.NewItemHighlightedCallback;
 		panel.OnAutoMoveItem += this.AutoMoveItemCallback;
 		panel.OnItemSelected += this.ItemSelectedCallback;
