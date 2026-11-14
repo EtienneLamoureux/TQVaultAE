@@ -115,12 +115,50 @@ internal static partial class AutomationInput
 	/// <c>WM_CONTEXTMENU</c> Windows sends after it with that point on the screen: the control shows its
 	/// <see cref="Control.ContextMenuStrip"/> as for a user, its <c>Opening</c> event and <c>SourceControl</c> included.
 	/// </summary>
-	public static void SendContextClick(Control target, Point client)
+	public static void SendContextClick(Control target, Point client) => SendMouse(target, client, MouseButtons.Right, 1);
+
+	/// <summary>
+	/// Sends what Windows sends for a click at a client point of <paramref name="target"/>: a move, then the button down
+	/// and up; for a double click a second down as <c>WM_*BUTTONDBLCLK</c> and up; for the right button, then the
+	/// <c>WM_CONTEXTMENU</c> with the point on the screen.
+	/// </summary>
+	public static void SendMouse(Control target, Point client, MouseButtons button, int clicks)
 	{
-		const int WM_CONTEXTMENU = 0x007B;
-		SendClick(target, client, MouseButtons.Right, Keys.None);
+		const int WM_MOUSEMOVE = 0x0200, WM_LBUTTONDBLCLK = 0x0203, WM_RBUTTONDBLCLK = 0x0206, WM_CONTEXTMENU = 0x007B;
+		bool right = button == MouseButtons.Right;
+		var (down, up, doubleClick, flag) = right
+			? (WM_RBUTTONDOWN, WM_RBUTTONUP, WM_RBUTTONDBLCLK, MK_RBUTTON)
+			: (WM_LBUTTONDOWN, WM_LBUTTONUP, WM_LBUTTONDBLCLK, MK_LBUTTON);
+		nint position = (client.Y << 16) | (client.X & 0xFFFF);
+		nint handle = target.Handle;
+		SendMessage(handle, WM_MOUSEMOVE, 0, position);
+		SendMessage(handle, down, flag, position);
+		SendMessage(handle, up, 0, position);
+		if (clicks >= 2 && !target.IsDisposed)
+		{
+			SendMessage(handle, doubleClick, flag, position);
+			SendMessage(handle, up, 0, position);
+		}
+
+		if (right && !target.IsDisposed)
+		{
+			var screen = target.PointToScreen(client);
+			SendMessage(handle, WM_CONTEXTMENU, handle, (screen.Y << 16) | (screen.X & 0xFFFF));
+		}
+	}
+
+	/// <summary>
+	/// Turns the mouse wheel over a client point of <paramref name="target"/> (<c>WM_MOUSEWHEEL</c>, the point on the
+	/// screen): positive notches away from the user (up), negative towards. The modifiers are held as for
+	/// <see cref="SendClick"/>; an unhandled wheel goes on to the parent windows, as for the user.
+	/// </summary>
+	public static void SendWheel(Control target, Point client, int notches, Keys modifiers)
+	{
+		const int WM_MOUSEWHEEL = 0x020A, WHEEL_DELTA = 120;
+		using var held = HoldModifiers(modifiers);
+		int keyFlags = (modifiers.HasFlag(Keys.Control) ? MK_CONTROL : 0) | (modifiers.HasFlag(Keys.Shift) ? MK_SHIFT : 0);
 		var screen = target.PointToScreen(client);
-		SendMessage(target.Handle, WM_CONTEXTMENU, target.Handle, (screen.Y << 16) | (screen.X & 0xFFFF));
+		SendMessage(target.Handle, WM_MOUSEWHEEL, ((notches * WHEEL_DELTA) << 16) | keyFlags, (screen.Y << 16) | (screen.X & 0xFFFF));
 	}
 
 	public static Point Center(Control control) => new(control.Width / 2, control.Height / 2);

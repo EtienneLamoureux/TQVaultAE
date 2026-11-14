@@ -145,37 +145,81 @@ internal static partial class AutomationTools
 
 
 	[McpServerTool(Name = "mouse_click", Destructive = true)]
-	[Description("Clicks a point of a control with mouse messages (WM_MOUSEMOVE, WM_LBUTTONDOWN, WM_LBUTTONUP) sent to the window under that point, unlike click_control, which raises OnClick: the control's own mouse handling, hit testing and repaint run as for a user's click. x and y are in the control's client coordinates (bounds from control_tree); the messages go to the deepest visible child at that point, e.g. the check box in the caption of a check group box (control 'detectGamePathsCheckBox', on its glyph or its text). The click runs after this call returns: read the result with control_values or capture.")]
+	[Description("Clicks a point of a control with mouse messages sent to the window under that point, as Windows sends them (WM_MOUSEMOVE, button down, button up; a double click adds WM_*BUTTONDBLCLK and up; the right button ends with WM_CONTEXTMENU, so a control's own context menu opens), unlike click_control, which raises OnClick: the control's own mouse handling, hit testing and repaint run as for a user's click. x and y are in the control's client coordinates (bounds from control_tree); the messages go to the deepest visible child at that point, e.g. the check box in the caption of a check group box (control 'detectGamePathsCheckBox', on its glyph or its text), the loadout bar ('loadoutBar': [+] and Load at the bounds loadouts reports), a link label, the character editor's tabs. The click runs after this call returns: read the result with control_values, list_windows or capture.")]
 	public static string MouseClick(
 		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
 		[Description("Control name, as listed by control_tree.")] string control,
 		[Description("X in the control's client coordinates.")] int x,
-		[Description("Y in the control's client coordinates.")] int y)
+		[Description("Y in the control's client coordinates.")] int y,
+		[Description("left or right.")] string button = "left",
+		[Description("1 for a click, 2 for a double click.")] int clicks = 1)
 		=> AutomationHost.OnUi(main =>
 		{
+			var mouseButton = button.Trim().ToLowerInvariant() switch
+			{
+				"left" => MouseButtons.Left,
+				"right" => MouseButtons.Right,
+				_ => throw new McpException("button must be left or right."),
+			};
+			if (clicks is not (1 or 2))
+				throw new McpException("clicks must be 1 or 2.");
+
 			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
 			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
 				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
 
 			// The deepest visible child under the point, as Windows finds the window that gets the mouse.
-			var point = new Point(x, y);
-			var hit = c;
-			while (hit.GetChildAtPoint(point, GetChildAtPointSkip.Invisible) is { } child)
+			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
+
+			main.BeginInvoke(() => AutomationInput.SendMouse(hit, point, mouseButton, clicks));
+			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point = new { point.X, point.Y }, button = mouseButton.ToString(), clicks });
+		});
+
+	[McpServerTool(Name = "mouse_wheel", Destructive = true)]
+	[Description("Turns the mouse wheel over a point of a control: WM_MOUSEWHEEL sent to the deepest visible window under that point, as Windows does for the window under the cursor; a window that does not use the wheel passes it to its parents, as for the user. notches > 0 turns it away from the user (scrolls up), < 0 towards (down). modifiers ('ctrl', 'shift', 'ctrl+shift') are held during the message. Runs before this call returns, which then gives the receiver and the scroll position of each scrollable control from the receiver up to the form (AutoScroll panels: x and y; list boxes: topIndex; visible scroll bar children: value), to read the effect. Works headless: the search dialog's lists, the bag settings' icon grids, the character list.")]
+	public static string MouseWheel(
+		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
+		[Description("Control name, as listed by control_tree.")] string control,
+		[Description("X in the control's client coordinates.")] int x,
+		[Description("Y in the control's client coordinates.")] int y,
+		[Description("Wheel notches: positive up (away from the user), negative down.")] int notches,
+		[Description("Modifier keys held: ctrl, shift or ctrl+shift; empty for none.")] string? modifiers = null)
+		=> AutomationHost.OnUi(main =>
+		{
+			Control target = string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
+			var c = AllControls(target).FirstOrDefault(x => string.Equals(x.Name, control, StringComparison.OrdinalIgnoreCase))
+				?? throw new McpException($"No control '{control}' in '{target.Text}'.");
+			if (notches == 0)
+				throw new McpException("notches must not be 0.");
+
+			var held = Keys.None;
+			foreach (var part in (modifiers ?? string.Empty).Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
 			{
-				point = new Point(point.X - child.Left, point.Y - child.Top);
-				hit = child;
+				held |= part.ToLowerInvariant() switch
+				{
+					"ctrl" or "control" => Keys.Control,
+					"shift" => Keys.Shift,
+					_ => throw new McpException($"Unknown modifier '{part}': ctrl or shift."),
+				};
 			}
 
-			const int WM_MOUSEMOVE = 0x0200, WM_LBUTTONDOWN = 0x0201, WM_LBUTTONUP = 0x0202, MK_LBUTTON = 0x0001;
-			var position = (IntPtr)((point.Y << 16) | (point.X & 0xFFFF));
-			var handle = hit.Handle;
-			main.BeginInvoke(() =>
+			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
+			AutomationInput.SendWheel(hit, point, notches, held);
+
+			var scroll = new List<object>();
+			for (Control? up = hit; up is not null; up = up.Parent)
 			{
-				NativeWindows.Send(handle, WM_MOUSEMOVE, IntPtr.Zero, position);
-				NativeWindows.Send(handle, WM_LBUTTONDOWN, MK_LBUTTON, position);
-				NativeWindows.Send(handle, WM_LBUTTONUP, IntPtr.Zero, position);
-			});
-			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point = new { point.X, point.Y } });
+				if (up is ScrollableControl { AutoScroll: true } scrollable)
+					scroll.Add(new { control = up.Name, type = up.GetType().Name, x = -scrollable.AutoScrollPosition.X, y = -scrollable.AutoScrollPosition.Y });
+				else if (up is ListBox list)
+					scroll.Add(new { control = up.Name, type = up.GetType().Name, topIndex = list.TopIndex });
+
+				// A control drawing its own content with a scroll bar child (the bag settings' icon grids).
+				foreach (var bar in up.Controls.OfType<ScrollBar>().Where(b => b.Visible))
+					scroll.Add(new { control = up.Name, type = up.GetType().Name, scrollBar = bar.GetType().Name, value = bar.Value, maximum = bar.Maximum });
+			}
+
+			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point = new { point.X, point.Y }, notches, scroll });
 		});
 
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
