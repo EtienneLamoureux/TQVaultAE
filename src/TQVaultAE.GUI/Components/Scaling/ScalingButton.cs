@@ -475,7 +475,8 @@ public class ScalingButton : Button, IScalingControl, IFontRebasing
 		while (TextRenderer.MeasureText(this.Text, font).Width >= (newWidth - 12) && fontSize > 0.5F)
 		{
 			fontSize -= 0.5F;
-			font = new Font(font.Name, fontSize, font.Style, font.Unit);
+			// By its family: the game fonts are private, a font made from their name was Microsoft Sans Serif.
+			font = new Font(font.FontFamily, fontSize, font.Style, font.Unit);
 		}
 
 		return font;
