@@ -3,8 +3,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Security;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
-namespace TQVaultAE.Logs;
+namespace TQVaultAE.GUI.Infrastructure;
 
 /// <summary>
 /// Format an exception in a human readable string format.
@@ -20,7 +21,7 @@ public class TextExceptionFormatter
 	private static readonly List<string> IgnoredProperties = ["Source", "Message", "HelpLink", "InnerException", "StackTrace"];
 
 	/// <summary>
-	/// Ctrs
+	/// Creates a formatter for <paramref name="exception"/>.
 	/// </summary>
 	/// <param name="exception"></param>
 	public TextExceptionFormatter(Exception exception)
@@ -30,7 +31,7 @@ public class TextExceptionFormatter
 	}
 
 	/// <summary>
-	/// Formattage
+	/// Formats the exception.
 	/// </summary>
 	/// <returns></returns>
 	public string Format()
@@ -219,7 +220,7 @@ public class TextExceptionFormatter
 	}
 
 	/// <summary>
-	/// Référence vers l'exception serialisée
+	/// The formatted exception.
 	/// </summary>
 	public Exception Exception
 	{
@@ -295,4 +296,28 @@ Exception :
 	}
 
 	#endregion
+}
+
+/// <summary>
+/// Formats an exception for the log and the error boxes.
+/// </summary>
+public static class ILogExtension
+{
+	/// <summary>
+	/// Formats the exception only (<see cref="TextExceptionFormatter"/>); a failure of the formatter gives a short
+	/// message instead.
+	/// </summary>
+	public static string FormatException(this ILogger Log, Exception ex)
+	{
+		string mess = string.Empty;
+		try
+		{
+			mess = new TextExceptionFormatter(ex).Format();
+		}
+		catch (Exception)
+		{
+			mess = $@"TextExceptionFormatter().Format() failed for error ""{ex.Message}"" !";
+		}
+		return mess;
+	}
 }

@@ -77,7 +77,6 @@ The workflow requires a Personal Access Token to push commits and create tags on
 | TQVaultAE.Presentation | .NET 10.0 | src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj |
 | TQVaultAE.Data | .NET 10.0 | src/TQVaultAE.Data/TQVaultAE.Data.csproj |
 | TQVaultAE.Config | .NET 10.0 | src/TQVaultAE.Config/TQVaultAE.Config.csproj |
-| TQVaultAE.Logs | .NET 10.0 | src/TQVaultAE.Logs/TQVaultAE.Logs.csproj |
 | TQVaultAE.Services.Win32 | .NET 10.0 Windows | src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj |
 
 ### Test Projects
@@ -92,7 +91,6 @@ The workflow requires a Personal Access Token to push commits and create tags on
 | TQVaultAE.Services.Git.Tests | src/tests/TQVaultAE.Services.Git.Tests/TQVaultAE.Services.Git.Tests.csproj |
 | TQVaultAE.Presentation.Tests | src/tests/TQVaultAE.Presentation.Tests/TQVaultAE.Presentation.Tests.csproj |
 | TQVaultAE.DbCli.Tests | src/tests/TQVaultAE.DbCli.Tests/TQVaultAE.DbCli.Tests.csproj |
-| TQVaultAE.Logs.Tests | src/tests/TQVaultAE.Logs.Tests/TQVaultAE.Logs.Tests.csproj |
 | TQVaultAE.Tests.Win32 | src/tests/TQVaultAE.Tests.Win32/TQVaultAE.Tests.Win32.csproj |
 
 ## Why This Build Strategy?

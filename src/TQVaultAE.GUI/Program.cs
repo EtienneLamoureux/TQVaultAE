@@ -13,7 +13,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Forms;
-using TQVaultAE.Logs;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;

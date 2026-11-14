@@ -32,8 +32,7 @@ Windows-only projects. To check a change, run the test projects of the layers it
 | TQVaultAE.Services | TQVaultAE.Services.Tests (and TQVaultAE.Services.Git.Tests for `GitBackup`, slow: real git, about 3 min) |
 | TQVaultAE.Presentation | TQVaultAE.Presentation.Tests |
 | TQVaultAE.DbCli | TQVaultAE.DbCli.Tests |
-| TQVaultAE.Logs | TQVaultAE.Logs.Tests |
-| TQVaultAE.Presentation.Win32, TQVaultAE.Services.Win32, ARZExplorer, TQSaveFilesExplorer | TQVaultAE.Tests.Win32 |
+| TQVaultAE.Presentation.Win32, TQVaultAE.Services.Win32, ARZExplorer, TQSaveFilesExplorer, the GUI's exception formatter (`GUI/Infrastructure/TextExceptionFormatter.cs`) | TQVaultAE.Tests.Win32 |
 
 The test projects share their settings through `src/tests/TestProject.props`. A lower layer's change can break the tests of
 the layers above it: run the whole solution before a commit that changes a shared API.
@@ -142,7 +141,7 @@ Application (DTOs, Results, Search)
 | TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | `System.Drawing` bitmaps, fonts, icons, tooltip image cache, UI images (`Images`) |
 | TQVaultAE.GameFiles | .NET 10.0 | Game file readers (`.arz`, `.arc`, text), shared by Data and `tqdb` |
 | TQVaultAE.DbCli | .NET 10.0 | `tqdb` command line |
-| TQVaultAE.<Layer>.Tests | .NET 10.0 | Unit tests, one project per layer (Domain, Application, Config, Data, Services, Presentation, DbCli, Logs) |
+| TQVaultAE.<Layer>.Tests | .NET 10.0 | Unit tests, one project per layer (Domain, Application, Config, Data, Services, Presentation, DbCli) |
 | TQVaultAE.Tests.Win32 | .NET 10.0 Windows | Unit tests of the Windows-only projects |
 
 Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other Windows-only APIs in the `*.Win32` projects and the GUI, so the other projects stay cross-platform.

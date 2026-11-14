@@ -9,7 +9,6 @@ using TQVaultAE.Services;
 using System.ComponentModel;
 using TQVaultAE.Application;
 using TQVaultAE.GUI.Components.Scaling;
-using TQVaultAE.Logs;
 
 namespace TQVaultAE.GUI.Forms;
 

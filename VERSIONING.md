@@ -145,7 +145,6 @@ Expected output (single source of truth for all projects):
 (Get-Item "src\TQVaultAE.Presentation\bin\Release\net10.0\TQVaultAE.Presentation.dll").VersionInfo.FileVersion
 (Get-Item "src\TQVaultAE.Data\bin\Release\net10.0\TQVaultAE.Data.dll").VersionInfo.FileVersion
 (Get-Item "src\TQVaultAE.Config\bin\Release\net10.0\TQVaultAE.Config.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Logs\bin\Release\net10.0\TQVaultAE.Logs.dll").VersionInfo.FileVersion
 (Get-Item "src\TQVaultAE.GameFiles\bin\Release\net10.0\TQVaultAE.GameFiles.dll").VersionInfo.FileVersion
 
 # Check compiled DLLs (.NET 10.0 Windows)

@@ -1,6 +1,6 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Logs;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI;

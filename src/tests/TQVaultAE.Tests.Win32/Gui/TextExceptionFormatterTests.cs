@@ -1,8 +1,8 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Logs;
+using TQVaultAE.GUI.Infrastructure;
 
-namespace TQVaultAE.Tests.Logs;
+namespace TQVaultAE.Tests.Win32.Gui;
 
 /// <summary>
 /// Unit tests for TextExceptionFormatter class
