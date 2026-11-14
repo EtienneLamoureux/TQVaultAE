@@ -13,6 +13,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Layout;
 using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32;
 
 namespace TQVaultAE.GUI.Components.Panels;
@@ -172,27 +173,11 @@ public partial class StashPanel
 			Visible = false,
 		};
 
-		var editButton = new ScalingButton()
-		{
-			BackColor = Color.Transparent,
-			DialogResult = DialogResult.OK,
-			DownBitmap = Images.MainButtonDown,
-			FlatStyle = FlatStyle.Flat,
-			ForeColor = Theme.ButtonText,
-			Image = Images.MainButtonUp,
-			Name = "editButton",
-			OverBitmap = Images.MainButtonOver,
-			SizeToGraphic = false,
-			Text = Resources.CharacterEditBtn,
-			UpBitmap = Images.MainButtonUp,
-			UseCustomGraphic = true,
-			UseVisualStyleBackColor = false,
-			Padding = new Padding(10, 0, 10, 0),
-			Visible = false,
-		};
-		editButton.FlatAppearance.BorderSize = 0;
-		editButton.FlatAppearance.MouseDownBackColor = Theme.TransparentButton;
-		editButton.FlatAppearance.MouseOverBackColor = Theme.TransparentButton;
+		// The gold button of the dialogs; its font and bounds follow the scale in LayoutStatsPanel.
+		var editButton = CaravanDialog.Button(this.FontService, this.UIService.FontZoom, "editButton", Resources.CharacterEditBtn);
+		editButton.DialogResult = DialogResult.OK;
+		editButton.Padding = new Padding(10, 0, 10, 0);
+		editButton.Visible = false;
 		editButton.Click += EditButton_Click;
 		this._editButton = editButton;
 
