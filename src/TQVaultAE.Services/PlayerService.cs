@@ -172,8 +172,8 @@ public class PlayerService(
 		// stash is read again with it, and its unsaved changes would be dropped.
 		string playerFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerSaveFileName);
 		string stashFile = this.PathIO.Combine(selectedSave.Folder, this.GamePathResolver.PlayerStashFileNameB);
-		bool unsaved = (this.userContext.Players.TryGetValue(playerFile, out var loaded) && loaded.IsValueCreated && loaded.Value.IsModified)
-			|| (this.userContext.Stashes.TryGetValue(stashFile, out var loadedStash) && loadedStash.IsValueCreated && loadedStash.Value.IsModified);
+		bool unsaved = (this.userContext.Players.TryGetLoaded(playerFile, out var loaded) && loaded.IsModified)
+			|| (this.userContext.Stashes.TryGetLoaded(stashFile, out var loadedStash) && loadedStash.IsModified);
 		bool reload = this.GameMapService.LoadedWithOtherMap(selectedSave) && !unsaved;
 
 		var player = this.LoadPlayer(selectedSave, reload);
@@ -191,9 +191,8 @@ public class PlayerService(
 
 	/// <inheritdoc/>
 	public IReadOnlyList<(string File, PlayerCollection Player)> GetModifiedPlayers()
-		=> [.. this.userContext.Players
-			.Where(kvp => kvp.Value.IsValueCreated)
-			.Select(kvp => (File: kvp.Key, Player: kvp.Value.Value))
+		=> [.. this.userContext.Players.LoadedEntries()
+			.Select(kvp => (File: kvp.Key, Player: kvp.Value))
 			.Where(p => p.Player is not null && p.Player.IsModified && !this.SkipReadOnly(p.Player.IsReadOnly, p.File))];
 
 	/// <summary>

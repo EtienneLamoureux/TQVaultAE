@@ -35,4 +35,36 @@ public class LazyConcurrentDictionaryTests
 
 		cache.GetOrAddAtomic("vault", _ => "second").Should().Be("first");
 	}
+
+	[Fact]
+	public void LoadedEntries_LeavesOutAndDoesNotReadTheEntriesNotReadYet()
+	{
+		// Arrange: one file read, one added but never read
+		var cache = new LazyConcurrentDictionary<string, string>();
+		cache.GetOrAddAtomic("read", _ => "value");
+		bool pendingRead = false;
+		cache.TryAdd("pending", new Lazy<string>(() => { pendingRead = true; return "late"; }));
+
+		// Act
+		var loaded = cache.LoadedEntries().ToList();
+
+		// Assert: listing the files to save must not load the others
+		loaded.Should().ContainSingle().Which.Should().Be(new KeyValuePair<string, string>("read", "value"));
+		pendingRead.Should().BeFalse();
+	}
+
+	[Fact]
+	public void TryGetLoaded_EntryNotReadYet_ReturnsFalseWithoutReadingIt()
+	{
+		var cache = new LazyConcurrentDictionary<string, string>();
+		bool read = false;
+		cache.TryAdd("pending", new Lazy<string>(() => { read = true; return "late"; }));
+		cache.GetOrAddAtomic("read", _ => "value");
+
+		cache.TryGetLoaded("pending", out _).Should().BeFalse();
+		read.Should().BeFalse();
+		cache.TryGetLoaded("read", out var value).Should().BeTrue();
+		value.Should().Be("value");
+		cache.TryGetLoaded("missing", out _).Should().BeFalse();
+	}
 }

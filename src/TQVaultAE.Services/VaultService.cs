@@ -85,9 +85,8 @@ public class VaultService(
 
 	/// <inheritdoc/>
 	public IReadOnlyList<(string File, PlayerCollection Vault)> GetModifiedVaults()
-		=> [.. this.userContext.Vaults
-			.Where(kvp => kvp.Value.IsValueCreated)
-			.Select(kvp => (File: kvp.Key, Vault: kvp.Value.Value))
+		=> [.. this.userContext.Vaults.LoadedEntries()
+			.Select(kvp => (File: kvp.Key, Vault: kvp.Value))
 			.Where(v => v.Vault is not null && v.Vault.IsModified)];
 
 	/// <inheritdoc/>

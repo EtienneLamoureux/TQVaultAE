@@ -54,8 +54,8 @@ public class CharacterReadOnlyService(
 	/// <inheritdoc/>
 	public ReadOnlyChangeResult SetReadOnly(PlayerSave save, bool makeReadOnly)
 	{
-		var player = this.Loaded(this.UserContext.Players, this.PlayerFile(save.Folder));
-		var stash = this.Loaded(this.UserContext.Stashes, this.StashFile(save.Folder));
+		var player = this.UserContext.Players.TryGetLoaded(this.PlayerFile(save.Folder), out var p) ? p : null;
+		var stash = this.UserContext.Stashes.TryGetLoaded(this.StashFile(save.Folder), out var s) ? s : null;
 
 		if (makeReadOnly && ((player?.IsModified ?? false) || (stash?.IsModified ?? false)))
 			return new ReadOnlyChangeResult(ReadOnlyChange.UnsavedChanges, this.IsReadOnly(save.Folder));
@@ -99,8 +99,4 @@ public class CharacterReadOnlyService(
 	private string PlayerFile(string saveFolder) => this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerSaveFileName);
 
 	private string StashFile(string saveFolder) => this.PathIO.Combine(saveFolder, this.GamePathResolver.PlayerStashFileNameB);
-
-	/// <summary>The value of a file already read in the session, or null.</summary>
-	private T? Loaded<T>(Domain.Helpers.LazyConcurrentDictionary<string, T> files, string file) where T : class
-		=> files.TryGetValue(file, out var entry) && entry.IsValueCreated ? entry.Value : null;
 }

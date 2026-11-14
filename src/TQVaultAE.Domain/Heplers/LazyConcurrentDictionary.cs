@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace TQVaultAE.Domain.Helpers;
@@ -75,6 +76,29 @@ public class LazyConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<TKey,
 		);
 		IncrementVersion();
 		return this.ValueOrEvict(key, lazyResult);
+	}
+
+	/// <summary>
+	/// The entries whose value is already created, with that value. Entries not read yet, being read or whose factory
+	/// failed are left out, and none is read.
+	/// </summary>
+	public IEnumerable<KeyValuePair<TKey, TValue>> LoadedEntries()
+		=> this.Where(entry => entry.Value.IsValueCreated)
+			.Select(entry => new KeyValuePair<TKey, TValue>(entry.Key, entry.Value.Value));
+
+	/// <summary>
+	/// Gets the value of <paramref name="key"/> when it is already created, without reading it.
+	/// </summary>
+	public bool TryGetLoaded(TKey key, [MaybeNullWhen(false)] out TValue value)
+	{
+		if (this.TryGetValue(key, out var entry) && entry.IsValueCreated)
+		{
+			value = entry.Value;
+			return true;
+		}
+
+		value = default;
+		return false;
 	}
 
 	public new void Clear()
