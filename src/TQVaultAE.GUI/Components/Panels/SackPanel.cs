@@ -243,7 +243,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 
 		this.gridPen = new Pen(Color.FromArgb(142, 140, 129));
 
-		this.numberFont = new Font("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
+		this.numberFont = this.NumberFont();
 		this.numberBrush = new SolidBrush(Color.White);
 		this.numberFormat = new StringFormat();
 		this.numberFormat.Alignment = StringAlignment.Far; // right-justify
@@ -598,6 +598,9 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// </summary>
 	private Font MenuFont() => this.FontService.GetFont(9.0F * UIService.FontZoom);
 
+	/// <summary>The font of the stack quantities drawn over the items, at the current scale; owned by the panel.</summary>
+	private Font NumberFont() => new("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
+
 	/// <summary>
 	/// Override of ScaleControl which supports scaling of the fonts and internal items.
 	/// </summary>
@@ -606,7 +609,9 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
 		this.borderPen.Width = Math.Max((4.0F * UIService.Scale), 1.0F);
-		this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.Scale, GraphicsUnit.Pixel);
+		var previousNumberFont = this.numberFont;
+		this.numberFont = this.NumberFont();
+		previousNumberFont.Dispose();
 		this.CustomContextMenu.Font = this.MenuFont();
 
 		this.Size = new Size(

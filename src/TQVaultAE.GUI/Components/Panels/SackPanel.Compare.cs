@@ -95,6 +95,9 @@ public partial class SackPanel
 			this._compareSubscribed = false;
 		}
 
+		if (disposing)
+			this.numberFont.Dispose();
+
 		base.Dispose(disposing);
 	}
 }
