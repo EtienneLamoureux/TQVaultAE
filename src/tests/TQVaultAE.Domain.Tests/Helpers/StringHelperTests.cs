@@ -279,6 +279,22 @@ public class StringHelperTests
 
 	#endregion
 
+	#region RecordFileName Tests
+
+	[Theory]
+	[InlineData("""RECORDS\ITEM\LOOTMAGICALAFFIXES\RING.DBR""", "RING.DBR", "RING")]
+	[InlineData("records/item/ring.dbr", "ring.dbr", "ring")]
+	[InlineData("""Mixed/Case\Ring_01.dbr""", "Ring_01.dbr", "Ring_01")]
+	[InlineData("ring", "ring", "ring")]
+	[InlineData("", "", "")]
+	public void RecordFileName_BothSeparators_ReturnsTheLastSegment(string path, string expected, string expectedWithoutExtension)
+	{
+		path.RecordFileName().Should().Be(expected);
+		path.RecordFileNameWithoutExtension().Should().Be(expectedWithoutExtension);
+	}
+
+	#endregion
+
 	#region NormalizeRecordPath Tests
 
 	[Theory]

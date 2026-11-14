@@ -223,7 +223,7 @@ public static partial class StringHelper
 	public static string? PrettyFileName(this string? TQPath)
 	{
 		if (TQPath is null) return null;
-		var filename = Path.GetFileNameWithoutExtension(TQPath).Replace('_', ' ');
+		var filename = TQPath.RecordFileNameWithoutExtension().Replace('_', ' ');
 		filename = PrettyFileNameRegExNumber().Replace(filename, "(${number})");// Enclose Numbers
 
 		var filenameSplit1 = PrettyFileNameRegExTitleCaseStart()
@@ -270,6 +270,25 @@ public static partial class StringHelper
 			.JoinString(" ");// Put it back together
 
 		return filename;
+	}
+
+	static readonly char[] RecordPathSeparators = ['\\', '/'];
+
+	/// <summary>
+	/// The last segment of a record path, split on <c>\</c> and <c>/</c> on every platform
+	/// (<see cref="Path.GetFileName(string)"/> splits on <c>\</c> only on Windows, and record ids use <c>\</c>).
+	/// </summary>
+	public static string RecordFileName(this string recordPath)
+		=> recordPath[(recordPath.LastIndexOfAny(RecordPathSeparators) + 1)..];
+
+	/// <summary>
+	/// <see cref="RecordFileName"/> without its extension.
+	/// </summary>
+	public static string RecordFileNameWithoutExtension(this string recordPath)
+	{
+		var name = recordPath.RecordFileName();
+		int dot = name.LastIndexOf('.');
+		return dot < 0 ? name : name[..dot];
 	}
 
 	/// <summary>

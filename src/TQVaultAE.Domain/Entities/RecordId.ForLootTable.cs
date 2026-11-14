@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Domain.Entities;
+﻿using TQVaultAE.Domain.Helpers;
+
+namespace TQVaultAE.Domain.Entities;
 
 public partial class RecordId
 {
@@ -86,7 +88,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsTablesWeapon is null)
-				_IsTablesWeapon = this.Normalized.Contains(@"\TABLESWEAPON") || Path.GetFileName(this.Normalized).StartsWith(@"TABLE_WEAPON", StringComparison.Ordinal);
+				_IsTablesWeapon = this.Normalized.Contains(@"\TABLESWEAPON") || this.Normalized.RecordFileName().StartsWith(@"TABLE_WEAPON", StringComparison.Ordinal);
 			return _IsTablesWeapon.Value;
 		}
 	}
@@ -122,7 +124,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsTablesShields is null)
-				_IsTablesShields = this.Normalized.Contains(@"\TABLESSHIELD") || Path.GetFileName(this.Normalized).StartsWith(@"TABLE_SHIELD", StringComparison.Ordinal);
+				_IsTablesShields = this.Normalized.Contains(@"\TABLESSHIELD") || this.Normalized.RecordFileName().StartsWith(@"TABLE_SHIELD", StringComparison.Ordinal);
 			return _IsTablesShields.Value;
 		}
 	}
@@ -158,7 +160,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsTablesArmor is null)
-				_IsTablesArmor = this.Normalized.Contains(@"\TABLESARMOR") || Path.GetFileName(this.Normalized).StartsWith(@"TABLE_ARMOR", StringComparison.Ordinal);
+				_IsTablesArmor = this.Normalized.Contains(@"\TABLESARMOR") || this.Normalized.RecordFileName().StartsWith(@"TABLE_ARMOR", StringComparison.Ordinal);
 			return _IsTablesArmor.Value;
 		}
 	}
@@ -179,7 +181,7 @@ public partial class RecordId
 			if (!IsLootMagicalAffixes) return GearType.Undefined;
 
 			if (_LootTableGearType is null)
-				_LootTableGearType = Path.GetFileName(this.Normalized) switch
+				_LootTableGearType = this.Normalized.RecordFileName() switch
 				{
 					var x when x.StartsWith(@"ARMSMAGE", StringComparison.Ordinal) || x.StartsWith(@"ARMMAGE", StringComparison.Ordinal) => GearType.Arm | GearType.ForMage,
 					var x when x.StartsWith(@"ARMSMELEE", StringComparison.Ordinal) || x.StartsWith(@"ARMMELEE", StringComparison.Ordinal) => GearType.Arm | GearType.ForMelee,
