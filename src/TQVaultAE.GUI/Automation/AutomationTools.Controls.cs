@@ -323,16 +323,31 @@ internal static partial class AutomationTools
 			}
 		});
 
-	[McpServerTool(Name = "character_list", ReadOnly = true)]
-	[Description("Opens the character list and reads it as drawn: 'header', the text of the selected character's box, and per entry its name, class, level, masteries, mod and the badges shown (Archived, Read-only, Modded and the link state). A linked character's class and masteries are its mod's names whatever character is selected. With refresh=true the entries are described again first, as after a tag change, with whatever map is active. The list is left open.")]
-	public static string CharacterList([Description("true to describe the entries again before reading them.")] bool refresh = false)
+	[McpServerTool(Name = "character_list", Destructive = true)]
+	[Description("Opens the character list and reads it as drawn: 'header', the text of the selected character's box, and per entry its name, class, level, masteries, mod and the badges shown (Archived, Read-only, Modded and the link state). A linked character's class and masteries are its mod's names whatever character is selected. With refresh=true the entries are described again first, as after a tag change, with whatever map is active. With pick (a character name), first clicks its entry like the user, with mouse messages: the list scrolls to it, the click selects the character (loading it) and closes the list; picking the selected one leaves the list open, as for the user. Otherwise the list is left open.")]
+	public static string CharacterList(
+		[Description("true to describe the entries again before reading them.")] bool refresh = false,
+		[Description("The name of a character to click in the list (as in get_state 'characters', before the comma); empty to only read.")] string? pick = null)
 		=> AutomationHost.OnUi(form =>
 		{
 			if (refresh)
 				form.AutomationCharacterCombo.RefreshItems();
+			if (!string.IsNullOrWhiteSpace(pick))
+			{
+				try
+				{
+					form.AutomationCharacterCombo.AutomationPick(pick.Trim());
+				}
+				catch (InvalidOperationException ex)
+				{
+					throw new McpException(ex.Message);
+				}
+			}
 
-			var (header, entries) = form.AutomationCharacterCombo.AutomationEntries();
-			return Serialize(new { header, entries });
+			var combo = form.AutomationCharacterCombo;
+			bool open = combo.AutomationDropDownOpen;
+			var (header, entries) = combo.AutomationEntries();
+			return Serialize(new { header, selected = form.AutomationSelectedCharacter, characterFile = form.AutomationCurrentPlayerFile, listOpen = open, entries });
 		});
 
 	[McpServerTool(Name = "tag_archive_all", Destructive = true)]

@@ -125,6 +125,22 @@ internal static partial class AutomationInput
 
 	public static Point Center(Control control) => new(control.Width / 2, control.Height / 2);
 
+	/// <summary>
+	/// The deepest visible child of <paramref name="control"/> under a client point, as Windows finds the window that gets
+	/// the mouse, with the point in its client coordinates.
+	/// </summary>
+	public static (Control Hit, Point Point) ChildAt(Control control, Point client)
+	{
+		var hit = control;
+		while (hit.GetChildAtPoint(client, GetChildAtPointSkip.Invisible) is { } child)
+		{
+			client = new Point(client.X - child.Left, client.Y - child.Top);
+			hit = child;
+		}
+
+		return (hit, client);
+	}
+
 	/// <summary>One key message as the message loop handles it: pre-processing, translation, then the window procedure.</summary>
 	private static void Dispatch(Control target, int message, nint wParam, nint lParam)
 	{

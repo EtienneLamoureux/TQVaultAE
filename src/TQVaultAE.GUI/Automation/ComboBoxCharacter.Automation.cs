@@ -55,6 +55,23 @@ public partial class ComboBoxCharacter
 		return (this.scalingLabelCharName.Text, [.. this.DropDown.Items.Select(item => item.AutomationTexts)]);
 	}
 
+	/// <summary>
+	/// Opens the character list scrolled to <paramref name="name"/> and clicks the middle of its entry with mouse messages
+	/// sent to the window under that point (a label of the entry), whose Click selects the character and closes the list.
+	/// </summary>
+	/// <returns>The entry's character.</returns>
+	internal PlayerSave AutomationPick(string name)
+	{
+		this.AutomationOpenDropDown(name);
+		var entry = this.DropDown.Items.First(i => i.Item is PlayerSave ps && string.Equals(ps.Name, name, StringComparison.OrdinalIgnoreCase));
+		var (hit, point) = Automation.AutomationInput.ChildAt(entry, Automation.AutomationInput.Center(entry));
+		Automation.AutomationInput.SendClick(hit, point, MouseButtons.Left, Keys.None);
+		return (PlayerSave)entry.Item!;
+	}
+
+	/// <summary>Whether the character list is open.</summary>
+	internal bool AutomationDropDownOpen => this.DropDown.Visible;
+
 	/// <summary>Whether the drop-down entry of a character shows its "Read-only" badge.</summary>
 	internal bool AutomationShowsReadOnlyBadge(PlayerSave save)
 		=> this.DropDown.Items.FirstOrDefault(i => i.Item == save)?.AutomationShowsReadOnlyBadge ?? false;
