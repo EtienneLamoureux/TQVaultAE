@@ -200,6 +200,24 @@ public partial class MainFormUserControl
 				defaultNo: true);
 
 	/// <summary>
+	/// Adds a vault the maintenance made (new, copied or renamed) at the end of the list, selects it and loads it. A new
+	/// vault has no file until it is saved, so the list cannot be read again from the files here.
+	/// </summary>
+	private void AddSelectAndLoadVault(string name)
+	{
+		this.vaultListComboBox.Items.Add(name);
+		this.vaultListComboBox.SelectedItem = name;
+		this.LoadVault(name, false);
+	}
+
+	/// <summary>Selects again the vault the panel shows, after the list's selection was not followed.</summary>
+	private void RestoreVaultSelection()
+	{
+		if (this.vaultPanel.Player is not null)
+			this.vaultListComboBox.SelectedItem = this.vaultPanel.Player.PlayerName;
+	}
+
+	/// <summary>
 	/// Method for the maintain vault files dialog
 	/// </summary>
 	internal void MaintainVaultFilesDialog()
@@ -238,28 +256,14 @@ public partial class MainFormUserControl
 				// Create a new vault?
 				if (dlg.Action == VaultMaintenance.New && newName is not null)
 				{
-					// Add the name to the list
-					this.vaultListComboBox.Items.Add(newName);
-
-					// Select it
-					this.vaultListComboBox.SelectedItem = newName;
-
-					// Load it
-					this.LoadVault(newName, false);
+					this.AddSelectAndLoadVault(newName);
 					handled = true;
 				}
 				else if (dlg.Action == VaultMaintenance.Copy && newName is not null && oldName is not null)
 				{
 					if (vaultService.CopyVault(oldName, newName))
 					{
-						// Add the new name to the list
-						this.vaultListComboBox.Items.Add(newName);
-
-						// Select the new name
-						this.vaultListComboBox.SelectedItem = newName;
-
-						// Load the new file.
-						this.LoadVault(newName, false);
+						this.AddSelectAndLoadVault(newName);
 						handled = true;
 					}
 				}
@@ -287,35 +291,16 @@ public partial class MainFormUserControl
 						if (newName == IVaultService.MainVault)
 							this.vaultListComboBox.Items.Remove(newName);
 
-						// Add the new name to the list
-						this.vaultListComboBox.Items.Add(newName);
-
-						// Select the new name
-						this.vaultListComboBox.SelectedItem = newName;
-
-						// Load the new file.
-						this.LoadVault(newName, false);
+						this.AddSelectAndLoadVault(newName);
 						handled = true;
 					}
 				}
 
 				if ((newName is null && oldName is null) || !handled)
-				{
-					// put the vault back to what it was
-					if (this.vaultPanel.Player is not null)
-					{
-						this.vaultListComboBox.SelectedItem = this.vaultPanel.Player.PlayerName;
-					}
-				}
+					this.RestoreVaultSelection();
 			}
 			else
-			{
-				// put the vault back to what it was
-				if (this.vaultPanel.Player is not null)
-				{
-					this.vaultListComboBox.SelectedItem = this.vaultPanel.Player.PlayerName;
-				}
-			}
+				this.RestoreVaultSelection();
 		}
 		catch (IOException exception)
 		{
@@ -355,12 +340,7 @@ public partial class MainFormUserControl
 		{
 			Log.LogError(exception, "Failed to load the vault {Vault}", this.vaultListComboBox.SelectedItemText());
 			this.Services.MessageBoxes.ShowException(exception, icon: MessageBoxIcon.None);
-
-			// put the vault back to what it was
-			if (this.vaultPanel.Player is not null)
-			{
-				this.vaultListComboBox.SelectedItem = this.vaultPanel.Player.PlayerName;
-			}
+			this.RestoreVaultSelection();
 		}
 	}
 
