@@ -82,7 +82,10 @@ internal sealed partial class ItemProperties : VaultForm
 		// title over the frame's top edge, its lines in their game colours on the black.
 		int space = CaravanFrame.Border + CaravanFrame.CharacterWidth(this.labelItemName.Font);
 		CaravanFrame.ApplyTo(this.labelItemName, new Padding(space, 0, space, 0));
-		CaravanLook.Apply(this);
+		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow);
+		// The check box over the marble in gold, outlined like the group titles over the frames.
+		this.checkBoxFilterExtraInfo.ForeColor = Color.Gold;
+		CaravanLook.OutlineText(this);
 
 		foreach (var (_, grid, column) in this.sectionControls)
 		{
