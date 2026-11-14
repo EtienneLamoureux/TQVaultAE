@@ -10,18 +10,6 @@ namespace TQVaultAE.Presentation;
 public static class PlayerInfoText
 {
 	/// <summary>
-	/// The masteries of a character for the character drop down: their translated names joined by " + ", in the order
-	/// of the skill window's panes (<see cref="Domain.Entities.Masteries"/>).
-	/// </summary>
-	/// <param name="masteries">The character's masteries (<see cref="ICharacterEditService.GetMasteries"/>).</param>
-	/// <param name="translations">Translates the name tags.</param>
-	/// <returns>An empty text when the character has no mastery.</returns>
-	public static string MasteryNames(IEnumerable<Domain.Entities.MasteryTree> masteries, ITranslationService translations)
-		=> string.Join(" + ", masteries
-			.OrderBy(tree => tree.Mastery)
-			.Select(tree => translations.TranslateXTag(tree.NameTag)));
-
-	/// <summary>
 	/// A line of the character editor's mastery list: the mastery name, and its skills and points, each in the singular
 	/// or the plural ("Storm", "4 skills, 1 point").
 	/// </summary>

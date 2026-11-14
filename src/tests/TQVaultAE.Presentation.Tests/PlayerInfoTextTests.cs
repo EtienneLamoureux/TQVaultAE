@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using EnumsNET;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
@@ -97,25 +96,6 @@ public class PlayerInfoTextTests
 
 		lines.Keys.Take(3).Should().Equal(Resources.CurrentLevel, Resources.Class, Resources.Masteries);
 	}
-
-	[Fact]
-	public void MasteryNames_JoinsTheTranslatedNamesInThePaneOrder()
-	{
-		// Chosen Earth first: the drop down still lists Defense first. A mod's own mastery in the Earth pane is named
-		// by its tree.
-		var earth = new MasteryTree(Masteries.Earth, """records\skills\lifegiving\lifegiving_mastery.dbr""".ToRecordId(), "tagLifegiving", "", "", 40, []);
-		var defense = new MasteryTree(Masteries.Defensive, Masteries.Defensive.AsString(EnumFormat.Description)!.ToRecordId(), "tagDefense", "", "", 40, []);
-		this._translations.Setup(x => x.TranslateXTag("tagLifegiving", false, false, false)).Returns("Lifegiving Mastery");
-		this._translations.Setup(x => x.TranslateXTag("tagDefense", false, false, false)).Returns("Defense Mastery");
-
-		var names = PlayerInfoText.MasteryNames([earth, defense], this._translations.Object);
-
-		names.Should().Be("Defense Mastery + Lifegiving Mastery");
-	}
-
-	[Fact]
-	public void MasteryNames_NoMastery_IsEmpty()
-		=> PlayerInfoText.MasteryNames([], this._translations.Object).Should().BeEmpty();
 
 	private static readonly MasteryTree Storm = new(Masteries.Storm, """Records\Skills\Storm\StormMastery.dbr""".ToRecordId(), "tagStorm", "", "", 40, []);
 

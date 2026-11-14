@@ -8,7 +8,6 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Config;
 using TQVaultAE.Application.Results;
-using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Services;
 
@@ -145,7 +144,7 @@ public class PlayerService(
 		{
 			string className = info.Class is { } tag ? this.TranslationService.TranslateXTag(tag, true, true) : string.Empty;
 			save.ClassLabel = info.Class is null ? null : (info.Class, className);
-			return new CharacterLabels(className, PlayerInfoText.MasteryNames(this.CharacterEditService.GetMasteries(info), this.TranslationService));
+			return new CharacterLabels(className, CharacterLabels.JoinMasteryNames(this.CharacterEditService.GetMasteries(info), this.TranslationService));
 		}
 	}
 
