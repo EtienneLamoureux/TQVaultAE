@@ -24,6 +24,9 @@ internal sealed partial class CharacterEditorUserControl
 	private CharacterSidePanel _side = null!;
 	private readonly List<Font> _ownedFonts = [];
 
+	/// <summary>The font of the editors on the side panel, in pixels at the editor's DPI.</summary>
+	private Font _editorFont = null!;
+
 	/// <summary>The difficulty the statistics are computed for, Normal to Legendary.</summary>
 	private ComboBox _statsDifficulty = null!;
 
@@ -129,7 +132,7 @@ internal sealed partial class CharacterEditorUserControl
 		};
 		this._content.Controls.Add(this._tabs);
 
-		var editorFont = this.OwnedFont(new Font("Arial", 12F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
+		var editorFont = this._editorFont = this.OwnedFont(new Font("Arial", 12F * panelScale, FontStyle.Bold, GraphicsUnit.Pixel));
 		var editors = this.LevelingEditors;
 		for (int row = 0; row < editors.Length; row++)
 		{
@@ -184,6 +187,10 @@ internal sealed partial class CharacterEditorUserControl
 			check.Text = string.Empty;
 			check.BackColor = Color.Black;
 			check.AutoSize = true;
+
+			// At the right end of its row, where the game writes numbers, the label before it taking the rest; on the row's
+			// bottom, clear of a drop-down list above it, a little higher than its row.
+			check.Location = new Point(bounds.Right - check.Width, bounds.Bottom - check.Height);
 		}
 		else if (editor is ComboBox combo)
 		{
@@ -191,8 +198,29 @@ internal sealed partial class CharacterEditorUserControl
 			combo.FlatStyle = FlatStyle.Flat;
 			combo.DrawMode = DrawMode.OwnerDrawFixed;
 			combo.DrawItem += DrawSideComboItem;
+			FitComboHeight(combo, bounds.Height);
 		}
+
+		this._sideEditorBounds[editor] = (editor.Bounds, bounds.Height);
+		editor.VisibleChanged += (_, _) =>
+		{
+			if (this._loaded && editor.Visible && this.IsHandleCreated)
+				this.BeginInvoke(this.RestoreSideEditors);
+		};
 	}
+
+	/// <summary>
+	/// A drop-down list as high as its row: its height follows its font, and a few pixels more covered the check box of
+	/// the next row.
+	/// </summary>
+	private static void FitComboHeight(ComboBox combo, int height)
+	{
+		// The box is its item's height plus its border (3 pixels above and under); 2 pixels over the row keep the text whole.
+		combo.ItemHeight = Math.Max(1, height - 4);
+	}
+
+	/// <summary>Where each editor of the side panel goes, in pixels at the editor's DPI.</summary>
+	private readonly Dictionary<Control, (Rectangle Bounds, int RowHeight)> _sideEditorBounds = [];
 
 	/// <summary>Draws an entry of a side panel drop-down, and its box, in the panel's colours.</summary>
 	private static void DrawSideComboItem(object? sender, DrawItemEventArgs e)
@@ -283,6 +311,51 @@ internal sealed partial class CharacterEditorUserControl
 			Location = new Point(area.X + (area.Width - size.Width) / 2, area.Y + (area.Height - size.Height) / 2),
 		});
 		this.Disposed += (_, _) => medallion.Dispose();
+	}
+
+	/// <summary>
+	/// The side panel's editors are put back once shown. The editor is built hidden, and an editor that cannot be changed
+	/// stays hidden until it can: their windows are made when they show, and Windows Forms then scales their place and
+	/// font by the monitor's DPI over the system's, though both are already in pixels at the editor's DPI (on a monitor
+	/// whose DPI is not the system's, their text was too small and the level box went up on the title).
+	/// </summary>
+	protected override void OnVisibleChanged(EventArgs e)
+	{
+		base.OnVisibleChanged(e);
+		if (this._loaded && this.Visible)
+			this.RestoreSideEditors();
+	}
+
+	/// <summary>
+	/// Moved to a monitor of another DPI while shown, the editor keeps its size (<see cref="ScaleControl"/>), but Windows
+	/// Forms scales the place and font of each editor: the side panel's editors are put back once it is done, or their
+	/// text no longer fitted their boxes.
+	/// </summary>
+	protected override void OnDpiChangedAfterParent(EventArgs e)
+	{
+		base.OnDpiChangedAfterParent(e);
+		if (this._loaded && this.IsHandleCreated)
+			this.BeginInvoke(this.RestoreSideEditors);
+	}
+
+	/// <summary>Puts each editor of the side panel back at its place, in its font.</summary>
+	private void RestoreSideEditors()
+	{
+		if (this.IsDisposed)
+			return;
+
+		foreach (var (editor, (bounds, rowHeight)) in this._sideEditorBounds)
+		{
+			if (!ReferenceEquals(editor.Font, this._editorFont))
+			{
+				editor.Font = this._editorFont;
+				if (editor is ComboBox combo)
+					FitComboHeight(combo, rowHeight);
+			}
+
+			if (editor.Bounds != bounds)
+				editor.Bounds = bounds;
+		}
 	}
 
 	/// <summary>

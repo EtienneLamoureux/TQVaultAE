@@ -151,17 +151,12 @@ internal sealed partial class CharacterSidePanel : Control
 
 		this.DrawText(g, view.StatisticsTitle, this.TitleFont, Color.White, new Rectangle(15, StatisticsTop, 228, 18), StringAlignment.Near);
 		for (int i = 0; i < view.StatisticsLabels.Count; i++)
-			this.DrawText(g, view.StatisticsLabels[i], this.TextFont, Grey, new Rectangle(15, RowTop(StatisticsTop, i), 125, 16), StringAlignment.Near);
+			this.DrawRow(g, view.StatisticsLabels[i], string.Empty, RowTop(StatisticsTop, i));
 
 		this.Bar(g, LevelingTop - 8);
 		this.DrawText(g, view.LevelingTitle, this.TitleFont, Color.White, new Rectangle(15, LevelingTop, 228, 18), StringAlignment.Near);
 		for (int i = 0; i < view.LevelingLabels.Count; i++)
-		{
-			int y = RowTop(LevelingTop, i);
-			this.DrawText(g, view.LevelingLabels[i], this.TextFont, Grey, new Rectangle(15, y, 125, 16), StringAlignment.Near);
-			if (i < view.LevelingValues.Count)
-				this.DrawText(g, view.LevelingValues[i], this.NumberFont, Color.White, new Rectangle(140, y, 103, 16), StringAlignment.Far);
-		}
+			this.DrawRow(g, view.LevelingLabels[i], i < view.LevelingValues.Count ? view.LevelingValues[i] : string.Empty, RowTop(LevelingTop, i));
 
 		this.Bar(g, MasteriesTop - 8);
 		this.DrawText(g, view.MasteriesTitle, this.TitleFont, Color.White, new Rectangle(15, MasteriesTop, 228, 18), StringAlignment.Near);
@@ -172,6 +167,30 @@ internal sealed partial class CharacterSidePanel : Control
 			this.DrawText(g, view.Masteries[i].Name, this.TextFont, Grey, new Rectangle(15, y, 228, 16), StringAlignment.Near);
 			this.DrawText(g, view.Masteries[i].Value, this.TextFont, Color.White, new Rectangle(30, y + 18, 213, 16), StringAlignment.Near);
 		}
+	}
+
+	/// <summary>
+	/// A row: its label, and its value right-aligned where the game writes numbers. The label takes the width up to the
+	/// value or to the editor shown on the row, whichever comes first: a long label ("Points de compétence") was cut at
+	/// the editors' column although only a short number or a check box follows it.
+	/// </summary>
+	private void DrawRow(Graphics g, string label, string value, int y)
+	{
+		const int right = 243;
+		var labelRight = right;
+		if (!string.IsNullOrEmpty(value) && (this.NumberFont ?? this.Font) is { } number)
+		{
+			var valueWidth = (int)Math.Ceiling(g.MeasureString(value, number).Width / this._panelScale) + 4;
+			this.DrawText(g, value, number, Color.White, new Rectangle(right - valueWidth, y, valueWidth, 16), StringAlignment.Far);
+			labelRight = right - valueWidth;
+		}
+
+		var row = this.ScaledRect(new Rectangle(0, y, PanelWidth, 16));
+		foreach (var editor in this.Editors)
+			if (editor.Visible && editor.Top + editor.Height / 2 is var middle && middle >= row.Top && middle < row.Bottom)
+				labelRight = Math.Min(labelRight, (int)(editor.Left / this._panelScale) - 4);
+
+		this.DrawText(g, label, this.TextFont, Grey, new Rectangle(15, y, Math.Max(0, labelRight - 15), 16), StringAlignment.Near);
 	}
 
 	private void Bar(Graphics g, int y)
