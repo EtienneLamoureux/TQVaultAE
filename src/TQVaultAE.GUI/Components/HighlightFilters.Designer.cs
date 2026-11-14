@@ -131,7 +131,7 @@ partial class HighlightFilters
         this.flowLayoutPanelMax.Name = "flowLayoutPanelMax";
         this.flowLayoutPanelMax.Size = new System.Drawing.Size(462, 23);
         this.flowLayoutPanelMax.TabIndex = 25;
-        this.flowLayoutPanelMax.WrapContents = true;
+        this.flowLayoutPanelMax.WrapContents = false;
         // 
         // scalingLabelMaxLvl
         // 
@@ -316,7 +316,7 @@ partial class HighlightFilters
         this.flowLayoutPanelMin.Name = "flowLayoutPanelMin";
         this.flowLayoutPanelMin.Size = new System.Drawing.Size(462, 23);
         this.flowLayoutPanelMin.TabIndex = 4;
-        this.flowLayoutPanelMin.WrapContents = true;
+        this.flowLayoutPanelMin.WrapContents = false;
         // 
         // scalingLabelMinLvl
         // 

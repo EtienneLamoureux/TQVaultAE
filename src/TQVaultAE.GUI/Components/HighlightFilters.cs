@@ -183,6 +183,14 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		width += list.VerticalScrollBarWidth();// Room for the check box in front of the text
 		if (list.ColumnWidth != width)
 			list.ColumnWidth = width;
+
+		// High enough for the rows its columns need: the zoom scales its height and the font sets its item height, which
+		// can leave room for one row only, the entries then in a single row with a horizontal scroll bar.
+		int columns = Math.Max(1, list.ClientSize.Width / Math.Max(1, list.ColumnWidth));
+		int rows = (list.Items.Count + columns - 1) / columns;
+		int height = (rows * list.ItemHeight) + (list.Height - list.ClientSize.Height);
+		if (list.Height < height)
+			list.Height = height;
 	}
 
 	internal void ResetAll()
@@ -229,8 +237,22 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		set
 		{
 			_link = value;
+
+			// The link moves without a zoom (a resize that keeps the zoom step) and after the panel is shown (the view laid
+			// out again for a DPI changed while the panel was hidden): the open panel follows it after each layout of the
+			// view holding both, which also covers the containers between the view and the link.
+			if (this.Parent is { } view)
+				view.Layout += LinkMoved;
+
 			AdjustLocation();
 		}
+	}
+
+	/// <summary>Places the open panel over its link again; its rows are laid out again only when its width changes.</summary>
+	private void LinkMoved(object? sender, EventArgs e)
+	{
+		if (this.Visible)
+			this.AdjustLocation(relayout: false);
 	}
 
 	/// <summary>
@@ -256,19 +278,29 @@ public partial class HighlightFilters : UserControl, IZoomFit
 			this.AdjustLocation();
 	}
 
-	private void AdjustLocation()
+	/// <summary>
+	/// Places the panel over its link, no wider than the link's row; with <paramref name="relayout"/> (a zoom, a DPI
+	/// change, an opening) or when that width changed, its rows and lists are laid out again first.
+	/// </summary>
+	private void AdjustLocation(bool relayout = true)
 	{
 		// Adjust location: over the link, in the view holding both.
 		var parent = Parent;
 		if (parent is null)
 			return;
 
-		// No wider than the link's row (the vault column): the Min and Max rows wrap instead of running over the panels
-		// on the right.
+		// No wider than the link's row (the vault column) instead of running over the panels on the right.
 		if (this._link.Parent is { } row && this.MaximumSize.Width != row.Width)
 		{
 			this.MaximumSize = new Size(row.Width, 0);
 			this.tableLayoutPanelHighlight.MaximumSize = new Size(Math.Max(1, row.Width - this.Padding.Horizontal), 0);
+			relayout = true;
+		}
+
+		if (!relayout)
+		{
+			this.PlaceOverLink(parent);
+			return;
 		}
 
 		// Drawn once, at its place, after the rows are broken (its drawing frozen, its layout not).
@@ -277,79 +309,139 @@ public partial class HighlightFilters : UserControl, IZoomFit
 			FitColumns(this.scalingCheckedListBoxTypes);
 			FitColumns(this.scalingCheckedListBoxRarity);
 			FitColumns(this.scalingCheckedListBoxOrigin);
-			this.BreakRowsEvenly();
-			var linklocation = parent.PointToClient(_link.PointToScreen(Point.Empty));
-			Location = new Point(linklocation.X, linklocation.Y - Height);
+			this.SpreadRequirementRows();
+			this.BreakHavingRow();
+			this.PlaceOverLink(parent);
 		}
 	}
 
-	/// <summary>
-	/// Lays the rows of the panel's top out in even columns across its width: a requirement's label stays with its box
-	/// (four columns, or Level and Strength then Dexterity and Intelligence when they do not fit) and the Having check
-	/// boxes take six columns, or three on two lines. The rows wrap first with the designer's spacing to find how many
-	/// lines they need, then each group moves to the start of its column, the columns lined up from line to line.
-	/// </summary>
-	private void BreakRowsEvenly()
+	/// <summary>Above the link, but never above the top of the view: a panel taller than the room covers the link instead.</summary>
+	private void PlaceOverLink(Control parent)
 	{
-		var rows = new (FlowLayoutPanel Row, int Group)[]
+		var linklocation = parent.PointToClient(_link.PointToScreen(Point.Empty));
+		var location = new Point(linklocation.X, Math.Max(0, linklocation.Y - Height));
+		if (Location != location)
+			Location = location;
+	}
+
+	/// <summary>
+	/// Keeps each requirement row (Level, Strength, Dexterity, Intelligence) on one line, from the left of its cell to
+	/// its right edge: the space left is shared between the four label and box pairs; when the line is too long, the
+	/// boxes give the room, down to four digits and their arrows.
+	/// </summary>
+	private void SpreadRequirementRows()
+	{
+		// Each label close to its box, the first one at the left of the row: the gaps between the pairs take the rest.
+		var rows = new[] { this.flowLayoutPanelMin, this.flowLayoutPanelMax };
+		foreach (var row in rows)
 		{
-			(this.flowLayoutPanelMin, 2),
-			(this.flowLayoutPanelMax, 2),
-			(this.bufferedFlowLayoutPanelPrefixSuffix, 1),
-		};
-
-		var groupsOf = rows.Select(r => r.Row.Controls.Cast<Control>().Where(c => c.Visible).Chunk(r.Group).ToList()).ToList();
-		for (int r = 0; r < rows.Length; r++)
-		{
-			foreach (Control item in rows[r].Row.Controls)
-				rows[r].Row.SetFlowBreak(item, false);
-			foreach (var group in groupsOf[r])
-				SetLeftMargin(group[0], group[0].Margin.Right);
-		}
-
-		this.PerformLayout();
-
-		for (int r = 0; r < rows.Length; r++)
-		{
-			var row = rows[r].Row;
-			var groups = groupsOf[r];
-			if (groups.Count == 0)
-				continue;
-
-			int lines = groups.SelectMany(g => g).Select(c => c.Top).Distinct().Count();
-			int perLine = (groups.Count + lines - 1) / lines;
-			int column = (row.ClientSize.Width - row.Padding.Horizontal) / perLine;
-			for (int first = 0; first < groups.Count; first += perLine)
+			foreach (var pair in Pairs(row))
 			{
-				var line = groups.Skip(first).Take(perLine).ToList();
-				int x = 0;
-				var lefts = new int[line.Count];
-				for (int k = 0; k < line.Count; k++)
-				{
-					int start = Math.Max(x, k * column);
-					lefts[k] = start - x;
-					x = start + line[k].Sum(c => c.Width + c.Margin.Horizontal);
-				}
-
-				// A line the columns would push past the edge keeps the designer's spacing.
-				if (x <= row.ClientSize.Width - row.Padding.Horizontal)
-				{
-					for (int k = 0; k < line.Count; k++)
-						SetLeftMargin(line[k][0], line[k][0].Margin.Right + lefts[k]);
-				}
-
-				if (first + perLine < groups.Count)
-					row.SetFlowBreak(line[^1][^1], true);
+				var close = pair[0].Margin with { Left = 0, Right = pair[0].LogicalToDeviceUnits(3) };
+				if (pair[0].Margin != close)
+					pair[0].Margin = close;
 			}
 		}
 
 		this.PerformLayout();
 
-		static void SetLeftMargin(Control control, int left)
+		foreach (var row in rows)
 		{
-			if (control.Margin.Left != left)
-				control.Margin = control.Margin with { Left = left };
+			var pairs = Pairs(row);
+			var items = pairs.SelectMany(p => p).ToList();
+			int width = row.ClientSize.Width - row.Padding.Horizontal;
+			int Needed() => items.Sum(c => c.Width + c.Margin.Horizontal);
+
+			// The boxes give the room the line lacks, shared between those that can still shrink.
+			var boxes = items.OfType<NumericUpDown>().ToList();
+			for (int excess = Needed() - width; excess > 0;)
+			{
+				var shrinkable = boxes.Where(b => b.Width > SmallestWidth(b)).ToList();
+				if (shrinkable.Count == 0)
+					break;
+
+				int each = (excess + shrinkable.Count - 1) / shrinkable.Count;
+				foreach (var box in shrinkable)
+				{
+					int before = box.Width;
+					box.Width = Math.Max(SmallestWidth(box), box.Width - Math.Min(each, excess));
+					excess -= before - box.Width;
+				}
+			}
+
+			int gap = pairs.Count > 1 ? Math.Max(0, width - Needed()) / (pairs.Count - 1) : 0;
+			for (int k = 1; k < pairs.Count; k++)
+				SetLeftMargin(pairs[k][0], gap);
 		}
+
+		this.PerformLayout();
+
+		static List<Control[]> Pairs(FlowLayoutPanel row) => row.Controls.Cast<Control>().Where(c => c.Visible).Chunk(2).ToList();
+
+		// The width that still shows the box's largest value (4 digits for 9000, 3 for a level) and its arrows.
+		static int SmallestWidth(NumericUpDown box)
+		{
+			var digits = new string('0', ((long)box.Maximum).ToString(System.Globalization.CultureInfo.InvariantCulture).Length);
+			int arrows = box.Controls.Cast<Control>().FirstOrDefault(c => c is not TextBoxBase)?.Width ?? box.LogicalToDeviceUnits(16);
+			return TextRenderer.MeasureText(digits, box.Font, Size.Empty, TextFormatFlags.NoPadding).Width + arrows + box.LogicalToDeviceUnits(6);
+		}
+	}
+
+	/// <summary>
+	/// Lays the Having check boxes out in even columns across the panel: six on one line, or three on two lines when they
+	/// do not fit. They wrap first with the designer's spacing to find how many lines they need, then each moves to the
+	/// start of its column, the columns lined up from line to line.
+	/// </summary>
+	private void BreakHavingRow()
+	{
+		var row = this.bufferedFlowLayoutPanelPrefixSuffix;
+		var items = row.Controls.Cast<Control>().Where(c => c.Visible).ToList();
+		if (items.Count == 0)
+			return;
+
+		foreach (var item in items)
+		{
+			row.SetFlowBreak(item, false);
+			SetLeftMargin(item, item.Margin.Right);
+		}
+
+		this.PerformLayout();
+
+		int lines = items.Select(c => c.Top).Distinct().Count();
+		int perLine = (items.Count + lines - 1) / lines;
+		int room = row.ClientSize.Width - row.Padding.Horizontal;
+		int column = room / perLine;
+		for (int first = 0; first < items.Count; first += perLine)
+		{
+			var line = items.Skip(first).Take(perLine).ToList();
+			int x = 0;
+			var lefts = new int[line.Count];
+			for (int k = 0; k < line.Count; k++)
+			{
+				int start = Math.Max(x, k * column);
+				lefts[k] = start - x;
+				x = start + line[k].Width + line[k].Margin.Horizontal;
+			}
+
+			// A line the columns would push past the edge keeps the designer's spacing.
+			if (x <= room)
+			{
+				for (int k = 0; k < line.Count; k++)
+					SetLeftMargin(line[k], line[k].Margin.Right + lefts[k]);
+			}
+
+			if (first + perLine < items.Count)
+				row.SetFlowBreak(line[^1], true);
+		}
+
+		this.PerformLayout();
+	}
+
+	/// <summary>Sets the left margin of <paramref name="control"/>, the space before it in its row.</summary>
+	private static void SetLeftMargin(Control control, int left)
+	{
+		if (control.Margin.Left != left)
+			control.Margin = control.Margin with { Left = left };
 	}
 
 	private void buttonReset_Click(object? sender, EventArgs e)
