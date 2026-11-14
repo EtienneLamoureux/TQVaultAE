@@ -59,8 +59,7 @@ public partial class MainForm
 		// Display errors
 		foreach (var error in result.Errors)
 		{
-			string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, error.File, error.Error.Message);
-			this.Services.MessageBoxes.Inform(msg, Resources.GlobalError, MessageBoxIcon.Error);
+			this.Services.MessageBoxes.Inform(LoadMessages.ReadFailure(error.File, error.Error.Message), Resources.GlobalError, MessageBoxIcon.Error);
 		}
 	}
 

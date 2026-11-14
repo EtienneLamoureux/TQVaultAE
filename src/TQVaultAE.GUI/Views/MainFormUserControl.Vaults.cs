@@ -138,8 +138,7 @@ public partial class MainFormUserControl
 			// A format error keeps the vault (partly read); any other error leaves no vault to show.
 			if ((result.ArgumentException as Exception ?? result.Error) is { } error)
 			{
-				string msg = string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, result.Filename, error.Message);
-				this.Services.MessageBoxes.Inform(msg, Resources.GlobalError, MessageBoxIcon.Error);
+				this.Services.MessageBoxes.Inform(LoadMessages.ReadFailure(result.Filename, error.Message), Resources.GlobalError, MessageBoxIcon.Error);
 			}
 
 			vault = result.Vault;

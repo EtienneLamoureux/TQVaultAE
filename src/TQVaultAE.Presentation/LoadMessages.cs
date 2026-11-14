@@ -85,9 +85,15 @@ public static class LoadMessages
 	public static string ReadError(string? file, Exception exception)
 		=> string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, file, exception.ToString());
 
+	/// <summary>
+	/// Gets the message shown when a file is read with an error (a format error, or a failed read).
+	/// </summary>
+	/// <param name="file">The file.</param>
+	/// <param name="error">The error's message.</param>
+	/// <returns>The message text.</returns>
+	public static string ReadFailure(string? file, string error)
+		=> string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, file, error);
+
 	private static LoadMessage ParseError(string? file, ArgumentException error)
-		=> new(
-			string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, file, error.Message)
-			, Resources.GlobalError
-			, true);
+		=> new(ReadFailure(file, error.Message), Resources.GlobalError, true);
 }
