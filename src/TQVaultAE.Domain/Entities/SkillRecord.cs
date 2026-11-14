@@ -1,25 +1,10 @@
 ﻿using System.Buffers.Binary;
-using System.Text;
+using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Domain.Entities;
 
 public class SkillRecord
 {
-	/// <summary>
-	/// Lazy-initialized CP1252 encoding for Titan Quest file parsing.
-	/// Encoding.RegisterProvider is idempotent - safe to call multiple times.
-	/// </summary>
-	private static readonly Lazy<Encoding> _encoding1252 = new(static () =>
-	{
-		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-		return Encoding.GetEncoding(1252);
-	});
-
-	/// <summary>
-	/// Gets the CP1252 (Windows-1252) encoding used for TQ file parsing.
-	/// </summary>
-	internal static Encoding Encoding1252 => _encoding1252.Value;
-
 	public string skillName { get; set; } = string.Empty;
 	public int skillLevel { get; set; }
 	public int skillEnabled { get; set; }
@@ -113,7 +98,7 @@ public class SkillRecord
 
 	private static void WriteString(ref Span<byte> span, ref int offset, string value)
 	{
-		var bytes = Encoding1252.GetBytes(value);
+		var bytes = TextEncodings.Cp1252.GetBytes(value);
 		bytes.AsSpan().CopyTo(span.Slice(offset));
 		offset += bytes.Length;
 	}
