@@ -387,14 +387,9 @@ public partial class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, DBRecordCollection> ReadAllLootRandomizerTable()
 	{
 		// Load all available loot randomizer table
-		var lootRandomizerTableList = new[] {
-			(Priority: 0, ArzFile: this.ArzFileMod),
-			(Priority: 1, ArzFile: this.ArzFileIT is not null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null),
-			(Priority: 2, ArzFile: this.ArzFile)
-		}
-		.Where(db => db.ArzFile is not null)
+		var lootRandomizerTableList = this.ArzFilesByPriority()
 		.SelectMany(db =>
-			db.ArzFile!.RecordInfo.Where(r =>
+			db.ArzFile.RecordInfo.Where(r =>
 				r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
 				&& !r.Key.IsOld // Remove old loot table
 			).Select(ri => (RecordInfo: ri, db.Priority))
@@ -426,14 +421,9 @@ public partial class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, LootRandomizerItem> ReadAllLootRandomizer()
 	{
 		// Load all available loot randomizer
-		var lootRandomizerList = new[] {
-			(Priority: 0, ArzFile: this.ArzFileMod),
-			(Priority: 1, ArzFile: this.ArzFileIT is not null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null),
-			(Priority: 2, ArzFile: this.ArzFile)
-		}
-		.Where(db => db.ArzFile is not null)
+		var lootRandomizerList = this.ArzFilesByPriority()
 		.SelectMany(db =>
-			db.ArzFile!.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
+			db.ArzFile.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
 			.Select(ri => (RecordInfo: ri, db.Priority))
 		)
 		.Select(r =>
@@ -481,14 +471,8 @@ public partial class Database : IDatabase
 	private void BuildItemAffixTableMap()
 	{
 		// Load all available loot table
-		var data = new[]
-			{
-				this.ArzFileMod,
-				this.ArzFileIT is not null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null,
-				this.ArzFile
-			}
-			.Where(db => db is not null)
-			.SelectMany(db => db!.RecordInfo
+		var data = this.ArzFilesByPriority()
+			.SelectMany(db => db.ArzFile.RecordInfo
 				.Where(r =>
 					r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase)
 					|| r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_DYNWEIGHT, noCase)
@@ -524,74 +508,18 @@ public partial class Database : IDatabase
 				}
 
 				// Read loot tables
-				Dictionary<string, (RecordId brokenRandomizerName, RecordId prefixRandomizerName, RecordId suffixRandomizerName)> dico = [];
-				foreach (var variable in rec)
-				{
-					var varname = "brokenRandomizerName";
-					if (variable.Name.StartsWith(varname, noCase))
-					{
-						var brokenTable = variable.GetString(0);
-						if (!string.IsNullOrWhiteSpace(brokenTable))
-						{
-							var num = variable.Name.Substring(varname.Length);
-
-							if (dico.TryGetValue(num, out var val))
-							{// ValueTuple are not ref
-								val.brokenRandomizerName = brokenTable;
-								dico[num] = val;
-							}
-							else
-								dico.Add(num, (brokenTable, RecordId.Empty, RecordId.Empty));
-						}
-						continue;
-					}
-
-					varname = "prefixRandomizerName";
-					if (variable.Name.StartsWith(varname, noCase))
-					{
-						var prefixTable = variable.GetString(0);
-						if (!string.IsNullOrWhiteSpace(prefixTable))
-						{
-							var num = variable.Name.Substring(varname.Length);
-
-							if (dico.TryGetValue(num, out var val))
-							{// ValueTuple are not ref
-								val.prefixRandomizerName = prefixTable;
-								dico[num] = val;
-							}
-							else
-								dico.Add(num, (RecordId.Empty, prefixTable, RecordId.Empty));
-						}
-						continue;
-					}
-
-					varname = "suffixRandomizerName";
-					if (variable.Name.StartsWith(varname, noCase))
-					{
-						var suffixTable = variable.GetString(0);
-						if (!string.IsNullOrWhiteSpace(suffixTable))
-						{
-							var num = variable.Name.Substring(varname.Length);
-
-							if (dico.TryGetValue(num, out var val))
-							{// ValueTuple are not ref
-								val.suffixRandomizerName = suffixTable;
-								dico[num] = val;
-							}
-							else
-								dico.Add(num, (RecordId.Empty, RecordId.Empty, suffixTable));
-						}
-					}
-				}
+				var tables = rec.GroupNumberedVariables(
+					variable => !string.IsNullOrWhiteSpace(variable.GetString(0))
+					, "brokenRandomizerName", "prefixRandomizerName", "suffixRandomizerName");
 
 				// Avoid useless records
-				if (lootNames.Count > 0 && dico.Count > 0)
+				if (lootNames.Count > 0 && tables.Count > 0)
 				{
-					records.AddRange(dico.Select(kv =>
+					records.AddRange(tables.Values.Select(table =>
 						(
-							kv.Value.brokenRandomizerName,
-							kv.Value.prefixRandomizerName,
-							kv.Value.suffixRandomizerName,
+							TableOf(table[0]),
+							TableOf(table[1]),
+							TableOf(table[2]),
 							lootNames
 						)
 					));
@@ -628,6 +556,25 @@ public partial class Database : IDatabase
 	#endregion
 
 	/// <summary>
+	/// The loaded databases, the one whose records win first: the custom map, Immortal Throne when it is a separate
+	/// file, the base game.
+	/// </summary>
+	private IEnumerable<(int Priority, ArzFile ArzFile)> ArzFilesByPriority()
+	{
+		if (this.ArzFileMod is not null)
+			yield return (0, this.ArzFileMod);
+
+		if (this.ArzFileIT is not null && this.ArzFileIT != this.ArzFile)
+			yield return (1, this.ArzFileIT);
+
+		if (this.ArzFile is not null)
+			yield return (2, this.ArzFile);
+	}
+
+	/// <summary>The affix table a loot table variable names, empty when the variable is absent.</summary>
+	private static RecordId TableOf(Variable? variable) => variable is null ? RecordId.Empty : variable.GetString(0);
+
+	/// <summary>
 	/// Gets a DBRecord for the specified item ID string.
 	/// </summary>
 	/// <remarks>
@@ -641,29 +588,15 @@ public partial class Database : IDatabase
 	{
 		var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key =>
 		{
-
-			if (this.ArzFileMod is not null)
+			// Custom Map records have highest precedence, then IT records over TQ ones.
+			foreach (var (_, arzFile) in this.ArzFilesByPriority())
 			{
-				DBRecordCollection? recordMod = arzProv.GetItem(this.ArzFileMod, key);
-				if (recordMod is not null)
-				{
-					// Custom Map records have highest precedence.
-					return recordMod;
-				}
+				DBRecordCollection? record = arzProv.GetItem(arzFile, key);
+				if (record is not null)
+					return record;
 			}
 
-			if (this.ArzFileIT is not null)
-			{
-				// see if it's in IT ARZ file
-				DBRecordCollection? recordIT = arzProv.GetItem(this.ArzFileIT, key);
-				if (recordIT is not null)
-				{
-					// IT file takes precedence over TQ.
-					return recordIT;
-				}
-			}
-
-			return this.ArzFile is null ? null : arzProv.GetItem(this.ArzFile, key);
+			return null;
 		});
 
 		return cachedDBRecordCollection;

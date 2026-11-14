@@ -136,6 +136,33 @@ public class DBRecordCollection : IEnumerable<Variable>
 		return ansArray;
 	}
 
+	/// <summary>
+	/// Groups numbered variables by their number: <c>randomizerName3</c> and <c>randomizerWeight3</c> for the prefixes
+	/// <c>randomizerName</c> and <c>randomizerWeight</c> (case ignored). Slot <c>i</c> of a group holds the variable of
+	/// <c>prefixes[i]</c>, null when the record has none. Variables that <paramref name="include"/> rejects are left
+	/// out, and the groups keep the order in which each number first has a variable.
+	/// </summary>
+	/// <param name="include">Which variables count.</param>
+	/// <param name="prefixes">Names of the numbered variables, without their number.</param>
+	/// <returns>The groups, keyed by the number (the end of the variable names).</returns>
+	public Dictionary<string, Variable?[]> GroupNumberedVariables(Func<Variable, bool> include, params string[] prefixes)
+	{
+		var groups = new Dictionary<string, Variable?[]>();
+		foreach (var variable in this)
+		{
+			int slot = Array.FindIndex(prefixes, prefix => variable.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+			if (slot < 0 || !include(variable))
+				continue;
+
+			var number = variable.Name.Substring(prefixes[slot].Length);
+			if (!groups.TryGetValue(number, out var group))
+				groups.Add(number, group = new Variable?[prefixes.Length]);
+
+			group[slot] = variable;
+		}
+
+		return groups;
+	}
 
 	KeyValuePair<string, Variable>[]? _RelevantVars;
 	/// <summary>

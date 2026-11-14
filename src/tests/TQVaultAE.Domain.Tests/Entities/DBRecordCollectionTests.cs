@@ -91,4 +91,27 @@ public class DBRecordCollectionTests
 		// Assert
 		count.Should().Be(2);
 	}
+
+	[Fact]
+	public void GroupNumberedVariables_GroupsByNumberInFirstAppearanceOrder_AndSkipsRejectedVariables()
+	{
+		var record = new DBRecordCollection(RecordId.Create("test/table"), "table");
+		Variable Add(string name, int value)
+		{
+			var variable = new Variable(name, VariableDataType.Integer, 1) { [0] = value };
+			record.Set(variable);
+			return variable;
+		}
+		var weight2 = Add("randomizerWeight2", 5);
+		var name1 = Add("RandomizerName1", 1);
+		Add("randomizerName2", 0);
+		var weight1 = Add("randomizerWeight1", 7);
+		Add("otherVariable3", 1);
+
+		var groups = record.GroupNumberedVariables(v => v.GetInt32(0) != 0, "randomizerName", "randomizerWeight");
+
+		groups.Keys.Should().Equal("2", "1");
+		groups["2"].Should().Equal(null, weight2);
+		groups["1"].Should().Equal(name1, weight1);
+	}
 }

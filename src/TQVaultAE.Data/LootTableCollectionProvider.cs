@@ -105,59 +105,24 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 
 		#region Build Table
 
-		Dictionary<string, (RecordId AffixId, float Weight)> dico = [];
-		string number, randomizerName = "randomizerName", randomizerWeight = "randomizerWeight", affixId;
-		foreach (var variable in records)
-		{
-
-			switch (variable.Name)
-			{
-				case var name when name.StartsWith(randomizerName, noCase):
-					number = name.Substring(randomizerName.Length);
-					affixId = variable.GetString(0);
-					if (!string.IsNullOrWhiteSpace(affixId))
-					{
-						var recid = affixId.ToRecordId();
-						if (dico.TryGetValue(number, out var val))
-						{
-							val.AffixId = recid;
-							dico[number] = val;
-						}
-						else dico.Add(number, (recid, 0F));
-					}
-					break;
-				case var name when name.StartsWith(randomizerWeight, noCase):
-					number = name.Substring(randomizerWeight.Length);
-
-					// Make sure the value is an integer or float
-					float value = -1.0F;
-
-					if (variable.DataType == VariableDataType.Integer)
-						value = (float)variable.GetInt32(0);
-					else if (variable.DataType == VariableDataType.Float)
-						value = variable.GetSingle(0);
-
-					if (dico.TryGetValue(number, out var valBis))
-					{
-						valBis.Weight = value;
-						dico[number] = valBis;
-					}
-					else dico.Add(number, (RecordId.Empty, value));
-
-					break;
-			}
-		}
+		const string randomizerName = "randomizerName", randomizerWeight = "randomizerWeight";
+		var entries = records.GroupNumberedVariables(
+			variable => !variable.Name.StartsWith(randomizerName, noCase) || !string.IsNullOrWhiteSpace(variable.GetString(0))
+			, randomizerName, randomizerWeight);
 
 		// Iterate the query to build the new unweighted table.
-		foreach (var kvp in dico.Where(k => !(k.Value.Weight <= 0 || k.Value.AffixId.IsEmpty)))
+		foreach (var entry in entries.Values)
 		{
-			var affix = kvp.Value.AffixId;
+			var affix = entry[0] is { } name ? name.GetString(0).ToRecordId() : RecordId.Empty;
+			float weight = entry[1] is { } weightVariable ? WeightOf(weightVariable) : 0F;
+			if (weight <= 0 || affix.IsEmpty)
+				continue;
 
 			// Check for a double entry in the table.
 			if (Data.TryGetValue(affix, out var val))// DISTINCT
 			{
 				// for a double entry just add the chance.
-				val.Weight += kvp.Value.Weight;
+				val.Weight += weight;
 				Data[affix] = val;
 				continue;
 			}
@@ -172,13 +137,21 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 				lootrandom = LootRandomizerItem.Default(affix) with { Unknown = true };
 			}
 
-			Data.Add(affix, (kvp.Value.Weight, lootrandom));
+			Data.Add(affix, (weight, lootrandom));
 		}
 
 		#endregion
 
 		return Data;
 	}
+
+	/// <summary>The weight of a table entry: its integer or float value, -1 for any other type.</summary>
+	private static float WeightOf(Variable variable) => variable.DataType switch
+	{
+		VariableDataType.Integer => variable.GetInt32(0),
+		VariableDataType.Float => variable.GetSingle(0),
+		_ => -1.0F,
+	};
 
 	/// <summary>
 	/// Builds the table from the database using the passed table Id.
