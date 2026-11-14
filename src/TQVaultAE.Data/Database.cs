@@ -734,22 +734,11 @@ public partial class Database : IDatabase
 	/// </summary>
 	private byte[]? ReadResource(RecordId key)
 	{
-		var resourceIdSplited = key.Normalized.Split('\\', StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
-
 		// not a proper resourceID.
-		if (resourceIdSplited.Length == 1)
+		if (key.TokensRaw.Count == 1)
 			return null;
 
-		// First we need to figure out the correct file to
-		// open, by grabbing it off the front of the resourceID
-
-		string arcFile; bool isDLC = false;
-		string rootFolder;
 		byte[]? arcFileData = null;
-		string arcFileBase = resourceIdSplited.First();
-
-		if (USettings.DatabaseDebugLevel > 1)
-			Log.LogDebug("arcFileBase = {ArcFileBase}", arcFileBase);
 
 		// Added by VillageIdiot
 		// Check's mod folder for's image resource.
@@ -765,107 +754,64 @@ public partial class Database : IDatabase
 		}
 
 		// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
-		if (arcFileData is null)
+		if (arcFileData is not null)
+			return arcFileData;
+
+		var (arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
+		RecordId entry = key;
+		if (isDLC)
 		{
-			// See if this guy is from Immortal Throne expansion pack.
-			if (USettings.DatabaseDebugLevel > 1)
-				Log.LogDebug("Checking IT Resources.");
+			// not a proper resourceID.
+			if (key.TokensRaw.Count == 2)
+				return null;
 
-			(arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
-			if (isDLC)
-			{
-				// not a proper resourceID.
-				if (resourceIdSplited.Length == 2)
-					return null;
-
-				arcFileBase = resourceIdSplited[1];
-				key = resourceIdSplited.Skip(1).JoinString("\\");
-			}
-
-			if (this.FileIO.Exists(arcFile))
-				arcFileData = this.ReadARCFile(arcFile, key);
-
-			if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
-				Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+			entry = GameArchives.WithoutExpansionFolder(key);
 		}
 
-		#region Fallback
+		arcFileData = this.ReadARCFileIfExists(arcFile, entry);
+
+		if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
+			Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", entry, arcFile);
 
 		// Added by VillageIdiot
-		// Maybe the arc file is in the XPack folder even though the record does not state it.
-		// Also could be that it says xpack in the record but the file is in the root.
-		if (arcFileData is null)
+		// Maybe the arc file is in an expansion folder even though the record does not state it.
+		// Also could be that it says xpack in the record but the file is in the base game folder.
+		foreach (var segments in GameArchives.ArcFileFallbackSegments(key))
 		{
-			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack");
-			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
+			if (arcFileData is not null)
+				break;
 
-			if (this.FileIO.Exists(arcFile))
-				arcFileData = this.ReadARCFile(arcFile, key);
+			bool baseGame = segments.Length == 2;
+			if (!baseGame && !this.IsExpansionFolderInstalled(segments[1]))
+				continue;
 
-			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
+			arcFile = this.PathIO.Combine([baseGame ? GamePathResolver.GamePathTQ : GamePathResolver.GamePathTQIT, .. segments]);
+			arcFileData = this.ReadARCFileIfExists(arcFile, entry);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null && !baseGame)
+				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", entry, arcFile);
 		}
 
-		// Now, let's check if the item is in Ragnarok DLC
-		if (arcFileData is null && GamePathResolver.IsRagnarokInstalled)
-		{
-			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack2");
-			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-			if (this.FileIO.Exists(arcFile))
-				arcFileData = this.ReadARCFile(arcFile, key);
-
-			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-		}
-
-		if (arcFileData is null && GamePathResolver.IsAtlantisInstalled)
-		{
-			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack3");
-			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-			if (this.FileIO.Exists(arcFile))
-				arcFileData = this.ReadARCFile(arcFile, key);
-
-			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-		}
-
-		if (arcFileData is null && GamePathResolver.IsEmbersInstalled)
-		{
-			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack4");
-			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-			if (this.FileIO.Exists(arcFile))
-				arcFileData = this.ReadARCFile(arcFile, key);
-
-			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-		}
-
-		if (arcFileData is null)
-		{
-			// We are either vanilla TQ or have not found our resource yet.
-			// from the original TQ folder
-			if (USettings.DatabaseDebugLevel > 1)
-				Log.LogDebug("Checking TQ Resources.");
-
-			rootFolder = GamePathResolver.GamePathTQ;
-			rootFolder = this.PathIO.Combine(rootFolder, "Resources");
-
-			arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-			if (this.FileIO.Exists(arcFile))
-				arcFileData = this.ReadARCFile(arcFile, key);
-
-			if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
-				Log.LogError(@"Resource unknown ""{resourceId}""", key);
-		}
-
-		#endregion
+		if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
+			Log.LogError(@"Resource unknown ""{resourceId}""", entry);
 
 		return arcFileData;
 	}
+
+	/// <summary>
+	/// Whether the expansion of a <c>Resources\XPackN</c> folder is installed (Immortal Throne always is).
+	/// </summary>
+	private bool IsExpansionFolderInstalled(string folder) => folder switch
+	{
+		"XPack" => true,
+		"XPack2" => GamePathResolver.IsRagnarokInstalled,
+		"XPack3" => GamePathResolver.IsAtlantisInstalled,
+		"XPack4" => GamePathResolver.IsEmbersInstalled,
+		_ => false,
+	};
+
+	private byte[]? ReadARCFileIfExists(string arcFile, RecordId dataId)
+		=> this.FileIO.Exists(arcFile) ? this.ReadARCFile(arcFile, dataId) : null;
 
 
 	#endregion Database Public Methods
@@ -1127,7 +1073,7 @@ public partial class Database : IDatabase
 		byte[]? data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0] + ".arc"), resourceId);
 
 		if (data is null && GameArchives.IsExpansionResource(resourceId) && tokens.Count > 2)
-			data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0], tokens[1] + ".arc"), tokens.Skip(1).JoinString("\\"));
+			data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0], tokens[1] + ".arc"), GameArchives.WithoutExpansionFolder(resourceId));
 
 		if (data is null)
 		{

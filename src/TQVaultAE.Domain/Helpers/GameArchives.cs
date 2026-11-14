@@ -56,21 +56,34 @@ public static class GameArchives
 		var first = ArcFileOf(resourceId);
 		yield return first;
 
-		var name = resourceId.TokensRaw[IsExpansionResource(resourceId) ? 1 : 0] + ".arc";
-		string[] fallbacks =
-		[
-			string.Join('\\', ResourcesFolder, "XPack", name),
-			string.Join('\\', ResourcesFolder, "XPack2", name),
-			string.Join('\\', ResourcesFolder, "XPack3", name),
-			string.Join('\\', ResourcesFolder, "XPack4", name),
-			string.Join('\\', ResourcesFolder, name),
-		];
-		foreach (var fallback in fallbacks)
+		foreach (var segments in ArcFileFallbackSegments(resourceId))
 		{
+			var fallback = string.Join('\\', segments);
 			if (!string.Equals(fallback, first, StringComparison.OrdinalIgnoreCase))
 				yield return fallback;
 		}
 	}
+
+	/// <summary>
+	/// Folders and file name of the archives TQVault's resource loader tries after <see cref="ArcFileSegments"/>, in
+	/// order: the archive of the same name in <c>Resources\XPack</c>, <c>XPack2</c>, <c>XPack3</c>, <c>XPack4</c>, then
+	/// in <c>Resources</c> (the only two-segment one, which belongs to the base game folder).
+	/// </summary>
+	public static IEnumerable<string[]> ArcFileFallbackSegments(RecordId resourceId)
+	{
+		var name = resourceId.TokensRaw[IsExpansionResource(resourceId) ? 1 : 0] + ".arc";
+		yield return [ResourcesFolder, "XPack", name];
+		yield return [ResourcesFolder, "XPack2", name];
+		yield return [ResourcesFolder, "XPack3", name];
+		yield return [ResourcesFolder, "XPack4", name];
+		yield return [ResourcesFolder, name];
+	}
+
+	/// <summary>
+	/// The id of a resource inside its archive folder: <c>Items\x.tex</c> for <c>XPack\Items\x.tex</c>.
+	/// </summary>
+	public static RecordId WithoutExpansionFolder(RecordId resourceId)
+		=> string.Join('\\', resourceId.TokensRaw.Skip(1));
 
 	/// <summary>
 	/// The resource is in an expansion folder (<c>XPack\Items\x.tex</c>): its entry in the ARC file starts after the
