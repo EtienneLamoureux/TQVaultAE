@@ -50,6 +50,9 @@ public partial class StashPanel
 	private readonly List<Font> _statsFonts = [];
 	private float _statsScale;
 
+	/// <summary>The Edit button's size at 96 dpi and zoom 1, that of the main window's menu buttons.</summary>
+	private static readonly Size EditButtonDesignSize = new(137, 30);
+
 	/// <summary>The loadouts of the character, under the gold bar, the whole width of the statistics panel.</summary>
 	private LoadoutBar? _loadoutBar;
 
@@ -163,13 +166,11 @@ public partial class StashPanel
 			Image = Images.MainButtonUp,
 			Name = "editButton",
 			OverBitmap = Images.MainButtonOver,
-			Size = new Size(137, 30),
 			SizeToGraphic = false,
 			Text = Resources.CharacterEditBtn,
 			UpBitmap = Images.MainButtonUp,
 			UseCustomGraphic = true,
 			UseVisualStyleBackColor = false,
-			Font = FontService.GetFontLight(11F),
 			Padding = new Padding(10, 0, 10, 0),
 			Visible = false,
 		};
@@ -244,6 +245,7 @@ public partial class StashPanel
 			panel.Tooltip = this._statsTooltip;
 			this._loadoutBar!.TextFont = this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
 			this._loadoutBar.BarScale = scale;
+			this._editButton!.Font = this.FontService.GetFontLight(11F, this.UIService.FontZoom);
 			foreach (var font in old)
 				font.Dispose();
 		}
@@ -258,10 +260,13 @@ public partial class StashPanel
 		if (this._loadoutBar!.Bounds != barBounds)
 			this._loadoutBar.Bounds = barBounds;
 
+		// Sized from its design at the scale, as the panels are: built in code, it was 137 x 30 whatever the DPI and zoom.
 		var button = this._editButton!;
-		var buttonAt = new Point(location.X, barBounds.Bottom + gap);
-		if (button.Location != buttonAt)
-			button.Location = buttonAt;
+		var buttonBounds = new Rectangle(
+			new Point(location.X, barBounds.Bottom + gap),
+			TQVaultAE.Application.WindowLayout.Scaled(EditButtonDesignSize, scale));
+		if (button.Bounds != buttonBounds)
+			button.Bounds = buttonBounds;
 	}
 
 	/// <summary>What the statistics panel shows of the character, from its save: nothing can be changed here.</summary>
