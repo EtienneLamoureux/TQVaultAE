@@ -336,7 +336,7 @@ public partial class MainForm
 	{
 		if (this.LayOutFromSnapshot(UIService.Scale))
 		{
-			this.ApplyHighlightLabelFont();
+			this.ApplyHighlightFonts();
 			this.SizeToZoom();
 			this.Invalidate(true);
 		}
@@ -351,8 +351,8 @@ public partial class MainForm
 	{
 		base.ScaleForm(zoomStep);
 
-		// A link label does not scale its font with the zoom by itself.
-		this.ApplyHighlightLabelFont();
+		// The highlight link and the filters panel's non-zooming controls do not scale their fonts by themselves.
+		this.ApplyHighlightFonts();
 
 		this.SizeToZoom();
 
@@ -394,9 +394,12 @@ public partial class MainForm
 		this.PlaceButtons();
 	}
 
-	/// <summary>The highlight label's font at the current zoom.</summary>
-	private void ApplyHighlightLabelFont()
-		=> this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
+	/// <summary>The fonts of the highlight link and of its filters panel at the current zoom.</summary>
+	private void ApplyHighlightFonts()
+	{
+		this.scalingLabelHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
+		this.highlightFilters.ApplyFonts(FontService, UIService.FontZoom);
+	}
 
 	/// <summary>
 	/// The main content, and its panels' table, fill the window inside its border at each layout (startup, zoom,

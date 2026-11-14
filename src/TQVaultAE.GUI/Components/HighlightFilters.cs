@@ -17,7 +17,6 @@ public partial class HighlightFilters : UserControl, IZoomFit
 	private LinkLabel _link = null!;
 	public SessionContext UserContext { get; internal set; } = null!;
 	public ITranslationService TranslationService { get; internal set; } = null!;
-	public IFontService FontService { get; internal set; } = null!;
 	public IHighlightService HighlightService { get; internal set; } = null!;
 
 	public HighlightFilters()
@@ -31,10 +30,19 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		BackgroundImage = Images.caravan_bg;
 	}
 
+	/// <summary>
+	/// Gives every control of the panel the game font at <paramref name="fontZoom"/>. Called with the window's other fonts
+	/// before the zoom 1 layout is kept, then after each zoom and DPI change: set only at the first opening, the fonts
+	/// were missing from the kept layout and the next zoom (a resize of the window) gave the designer's fonts back.
+	/// </summary>
+	internal void ApplyFonts(IFontService fontService, float fontZoom)
+	{
+		var font = fontService.GetFontLight(10F, fontZoom);
+		this.ProcessAllControls(c => c.Font = font);
+	}
+
 	internal void InitializeFilters()
 	{
-		this.ProcessAllControls(c => c.Font = FontService.GetFontLight(10F));
-
 		toolTip.SetToolTip(numericUpDownMinDex, Resources.HighlightFiltersZeroToIgnore);
 		toolTip.SetToolTip(numericUpDownMinInt, Resources.HighlightFiltersZeroToIgnore);
 		toolTip.SetToolTip(numericUpDownMinLvl, Resources.HighlightFiltersZeroToIgnore);

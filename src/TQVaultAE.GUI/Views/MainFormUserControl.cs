@@ -24,7 +24,6 @@ public partial class MainFormUserControl : UserControl
 	private readonly SessionContext userContext;
 	private readonly IHighlightService highlightService;
 	private readonly ITranslationService translationService;
-	private readonly IFontService fontService;
 
 #if DEBUG
 	// For Design Mode
@@ -41,7 +40,6 @@ public partial class MainFormUserControl : UserControl
 		this.userContext = sessionContext;
 		this.highlightService = services.HighlightService;
 		this.translationService = services.TranslationService;
-		this.fontService = services.FontService;
 
 		this.InitializeComponent();
 	}
@@ -102,7 +100,6 @@ public partial class MainFormUserControl : UserControl
 		{ // First time
 			highlightFilters.UserContext = userContext;
 			highlightFilters.TranslationService = translationService;
-			highlightFilters.FontService = fontService;
 			highlightFilters.HighlightService = highlightService;
 			highlightFilters.ResetAll();
 			highlightFilters.InitializeFilters();

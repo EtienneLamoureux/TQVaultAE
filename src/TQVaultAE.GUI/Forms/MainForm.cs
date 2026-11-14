@@ -220,7 +220,7 @@ public partial class MainForm : VaultForm
 		this.searchButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		this.saveButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
 		this.forgeButton.Font = FontService.GetFontLight(12F, UIService.FontZoom);
-		this.ApplyHighlightLabelFont();
+		this.ApplyHighlightFonts();
 		this.scalingTextBoxHighlight.Font = FontService.GetFontLight(10F, UIService.FontZoom);
 
 		#endregion
