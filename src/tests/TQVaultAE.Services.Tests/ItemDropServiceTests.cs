@@ -30,7 +30,8 @@ public class ItemDropServiceTests
 			new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object)
 			, new ItemStackingService(new Mock<IItemProvider>().Object)
 			, this._itemDatabaseService.Object
-			, this._playerService.Object);
+			, this._playerService.Object
+			, new UserSettings());
 	}
 
 	#region Helpers

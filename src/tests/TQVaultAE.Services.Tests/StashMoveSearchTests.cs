@@ -68,7 +68,8 @@ public sealed class StashMoveSearchTests : IDisposable
 
 		this._stashService = new StashService(
 			new Mock<ILogger<StashService>>().Object, session, this._database, stashProvider.Object
-			, gamePaths.Object, new Mock<IGameFileService>().Object, new UserSettings(), new PathIO());
+			, gamePaths.Object, new Mock<IGameFileService>().Object, new UserSettings(), new PathIO()
+			, new Mock<IGameMapService>().Object, new Mock<ICharacterReadOnlyService>().Object);
 
 		this._playerService = new PlayerService(
 			new Mock<ILogger<PlayerService>>().Object, session, this._database, playerProvider.Object, this._stashService
@@ -76,7 +77,8 @@ public sealed class StashMoveSearchTests : IDisposable
 			, new Mock<ITQDataService>().Object, new Mock<ITagService>().Object, new Mock<IFileIO>().Object
 			, new PathIO(), new UserSettings(), new Mock<IDirectoryIO>().Object
 			, new Mock<IItemProvider>().Object, new Mock<IGameMapService>().Object
-			, new Mock<ICharacterStatsService>().Object, new Mock<ICharacterEditService>().Object);
+			, new Mock<ICharacterStatsService>().Object, new Mock<ICharacterEditService>().Object
+			, new Mock<ICharacterReadOnlyService>().Object, new Mock<ILoadoutService>().Object);
 
 		var pathIO = new Mock<IPathIO>();
 		pathIO.Setup(x => x.GetFileName("""C:\Saves\_HeroB""")).Returns("_HeroB");

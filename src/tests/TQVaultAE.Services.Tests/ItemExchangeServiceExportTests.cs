@@ -33,7 +33,7 @@ public class ItemExchangeServiceExportTests
 	public ItemExchangeServiceExportTests()
 	{
 		this._pasteBin.Setup(p => p.UploadAsync(It.IsAny<string>(), It.IsAny<string?>())).ReturnsAsync(PasteUrl);
-		this._service = new ItemExchangeService(
+		this._service = ItemExchangeServices.Create(
 			this._jsonOptions
 			, this._pasteBin.Object
 			, itemProvider: this._itemProvider.Object

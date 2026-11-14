@@ -8,14 +8,14 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// The item edits offered by the sack context menu: affixes, completion bonuses, relics, seed, copies.
 /// </summary>
-public class ItemEditService(IDatabase database, IItemProvider itemProvider, IItemModService? itemMods = null) : IItemEditService
+public class ItemEditService(IDatabase database, IItemProvider itemProvider, IItemModService itemMods) : IItemEditService
 {
 	/// <summary>Shards given by the "complete relic" entry; the item caps it to its completion level.</summary>
 	private const int CompleteRelicNumber = 10;
 
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
-	private readonly IItemModService? _itemMods = itemMods;
+	private readonly IItemModService _itemMods = itemMods;
 
 	/// <summary>The database of the item's mod for the current thread, until disposed.</summary>
 	private IDisposable ModScope(Item item) => this._itemMods.ScopeOrNone(item);

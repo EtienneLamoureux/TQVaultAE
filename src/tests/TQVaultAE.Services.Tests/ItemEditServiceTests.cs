@@ -22,7 +22,7 @@ public class ItemEditServiceTests
 
 	public ItemEditServiceTests()
 	{
-		this._service = new ItemEditService(this._database.Object, this._itemProvider.Object);
+		this._service = new ItemEditService(this._database.Object, this._itemProvider.Object, Mock.Of<IItemModService>());
 	}
 
 	#region Helpers

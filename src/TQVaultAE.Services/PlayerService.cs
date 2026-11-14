@@ -31,12 +31,12 @@ public class PlayerService(
 	, IGameMapService gameMapService
 	, ICharacterStatsService characterStatsService
 	, ICharacterEditService characterEditService
-	, ICharacterReadOnlyService? characterReadOnlyService = null
-	, ILoadoutService? loadoutService = null
+	, ICharacterReadOnlyService characterReadOnlyService
+	, ILoadoutService loadoutService
 ) : IPlayerService
 {
-	private readonly ILoadoutService? LoadoutService = loadoutService;
-	private readonly ICharacterReadOnlyService? CharacterReadOnly = characterReadOnlyService;
+	private readonly ILoadoutService LoadoutService = loadoutService;
+	private readonly ICharacterReadOnlyService CharacterReadOnly = characterReadOnlyService;
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
 	private readonly IItemDatabaseService ItemDatabaseService = itemDatabaseService;
@@ -99,7 +99,7 @@ public class PlayerService(
 						item.InheritMod(characterMod);
 
 					// Once the sacks exist: a read-only character marks them all.
-					resultPC.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(selectedSave.Folder) ?? false;
+					resultPC.IsReadOnly = this.CharacterReadOnly.IsReadOnly(selectedSave.Folder);
 					selectedSave.IsReadOnly = resultPC.IsReadOnly;
 
 					selectedSave.Info = resultPC.PlayerInfo;
@@ -110,7 +110,7 @@ public class PlayerService(
 					this.ItemDatabaseService.IndexPlayer(resultPC, k, selectedSave.Name);
 
 					// Its loadouts, read with its map like its items.
-					this.LoadoutService?.Read(selectedSave.Folder, selectedSave.Name, characterMod);
+					this.LoadoutService.Read(selectedSave.Folder, selectedSave.Name, characterMod);
 				}
 				catch (ArgumentException argumentException)
 				{
@@ -230,7 +230,7 @@ public class PlayerService(
 				// The mod comes with the list too: its label and the map it is loaded with.
 				this.GameMapService.Refresh(ps);
 				// And its read-only state, shown in the list.
-				ps.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(ps.Folder) ?? false;
+				ps.IsReadOnly = this.CharacterReadOnly.IsReadOnly(ps.Folder);
 				return ps;
 			})
 			.ToArray();
@@ -277,7 +277,7 @@ public class PlayerService(
 			newFolder = this.GameFileService.DuplicateCharacterFiles(source.Folder, newName);
 
 			// The copy of a read-only character starts writable: its name is written below, and it is a new character.
-			this.CharacterReadOnly?.ClearReadOnly(newFolder);
+			this.CharacterReadOnly.ClearReadOnly(newFolder);
 			this.AlterNameInPlayerFileSave(newName, newFolder);
 			return CharacterDuplicateResult.Succeeded(newFolder);
 		}

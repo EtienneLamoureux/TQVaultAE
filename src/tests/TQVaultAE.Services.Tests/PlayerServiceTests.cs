@@ -100,7 +100,9 @@ public class PlayerServiceTests
 			_mockItemProvider.Object,
 			_mockGameMapService.Object,
 			_mockStats.Object,
-			_mockCharacterEdit.Object
+			_mockCharacterEdit.Object,
+			Mock.Of<ICharacterReadOnlyService>(),
+			Mock.Of<ILoadoutService>()
 		);
 	}
 

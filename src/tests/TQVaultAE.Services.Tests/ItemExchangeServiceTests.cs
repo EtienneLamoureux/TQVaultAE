@@ -25,7 +25,7 @@ public class ItemExchangeServiceTests
 			WriteIndented = true
 		};
 
-		_service = new ItemExchangeService(_jsonOptions);
+		_service = ItemExchangeServices.Create(_jsonOptions);
 	}
 
 	[Fact]
@@ -442,7 +442,7 @@ public class ItemExchangeServiceTests
 		// Arrange: shadowchampions is installed here, Lilith is not
 		var mods = new Mock<IItemModService>();
 		mods.Setup(m => m.Find("shadowchampions")).Returns(new InstalledMod("shadowchampions", @"c:\mods\shadowchampions", ModSource.SteamWorkshop));
-		var service = new ItemExchangeService(_jsonOptions, itemModService: mods.Object);
+		var service = ItemExchangeServices.Create(_jsonOptions, itemModService: mods.Object);
 		var sack = new SackCollection { SackType = SackType.Vault };
 		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr", Mod = "Lilith", ModOrigin = ModOrigin.Inherited });
 		sack.AddItem(new Item { BaseItemId = "records/lilith/sword.dbr", Mod = "Lilith", ModOrigin = ModOrigin.Own });
@@ -470,7 +470,7 @@ public class ItemExchangeServiceTests
 		var target = new SackCollection { SackType = SackType.Vault };
 
 		var movement = new Mock<IItemMovementService>();
-		var service = new ItemExchangeService(_jsonOptions, itemMovementService: movement.Object);
+		var service = ItemExchangeServices.Create(_jsonOptions, itemMovementService: movement.Object);
 		var result = service.ImportFromJson(json);
 		service.PlaceImportedItems(target, result, 18, 20, targetMod);
 
@@ -521,7 +521,7 @@ public class ItemExchangeServiceTests
 	[Fact]
 	public void ImportFromJson_ModNotInstalled_NamesItWithoutItsSource()
 	{
-		var service = new ItemExchangeService(_jsonOptions, itemModService: new Mock<IItemModService>().Object);
+		var service = ItemExchangeServices.Create(_jsonOptions, itemModService: new Mock<IItemModService>().Object);
 		var item = new Item { BaseItemId = "records/lilith/sword.dbr", Mod = "Lilith|workshop:890319896", ModOrigin = ModOrigin.Own };
 
 		var result = service.ImportFromJson(service.SerializeItem(item));

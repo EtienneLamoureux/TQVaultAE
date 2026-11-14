@@ -283,7 +283,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 			, Mock.Of<IPlayerCollectionProvider>(), Mock.Of<IStashService>(), Mock.Of<IGameFileService>(), this._gamePath.Object
 			, Mock.Of<ITranslationService>(), Mock.Of<ITQDataService>(), Mock.Of<ITagService>(), this._fileIO, new PathIO()
 			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IGameMapService>()
-			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>());
+			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>(), Mock.Of<ICharacterReadOnlyService>(), Mock.Of<ILoadoutService>());
 
 		service.GetModifiedPlayers().Should().BeEmpty();
 
@@ -298,7 +298,8 @@ public sealed class CharacterReadOnlyTests : IDisposable
 		stash.Sack!.IsModified = true;
 		stash.IsReadOnly = true;
 		var service = new StashService(new Mock<ILogger<StashService>>().Object, this._session, Mock.Of<IItemDatabaseService>()
-			, Mock.Of<IStashProvider>(), this._gamePath.Object, Mock.Of<IGameFileService>(), new UserSettings(), new PathIO());
+			, Mock.Of<IStashProvider>(), this._gamePath.Object, Mock.Of<IGameFileService>(), new UserSettings(), new PathIO()
+			, Mock.Of<IGameMapService>(), Mock.Of<ICharacterReadOnlyService>());
 
 		service.GetModifiedStashes().Should().BeEmpty();
 
@@ -325,7 +326,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 			, Mock.Of<IPlayerCollectionProvider>(), Mock.Of<IStashService>(), gameFiles.Object, this._gamePath.Object
 			, Mock.Of<ITranslationService>(), Mock.Of<ITQDataService>(), Mock.Of<ITagService>(), this._fileIO, new PathIO()
 			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IGameMapService>()
-			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>(), characterReadOnlyService: this._service);
+			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>(), characterReadOnlyService: this._service, loadoutService: Mock.Of<ILoadoutService>());
 
 		var result = service.DuplicateCharacter(this.Save(), "HeroB");
 

@@ -8,8 +8,8 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Services;
 
 /// <inheritdoc/>
-public class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService>? log = null
-	, IItemModService? itemMods = null) : ICharacterStatsService, IGameDataCache
+public class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService> log
+	, IItemModService itemMods) : ICharacterStatsService, IGameDataCache
 {
 	private const string BuffSkillName = "buffSkillName";
 	private const string GameEngine = """records\xpack\game\gameengine.dbr""";
@@ -19,10 +19,10 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 
 	private readonly IDatabase _database = database;
 	private readonly IItemProvider _itemProvider = itemProvider;
-	private readonly ILogger? _log = log;
+	private readonly ILogger _log = log;
 
-	/// <summary>Reads a granted skill in the map of the item granting it; null in tests that do not need it.</summary>
-	private readonly IItemModService? _itemMods = itemMods;
+	/// <summary>Reads a granted skill in the map of the item granting it.</summary>
+	private readonly IItemModService _itemMods = itemMods;
 	private const string FemalePlayerTemplate = """records\xpack\creatures\pc\femalepc01.dbr""";
 
 	private const string AnimationTableName = "charAnimationTableName";
@@ -176,12 +176,12 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 	private void WarnIfMissing(DBRecordCollection? record, string id, string consequence)
 	{
 		if (record is null)
-			this._log?.LogWarning("Game data: record {Record} not found, {Consequence}: the character window may be wrong for this map", id, consequence);
+			this._log.LogWarning("Game data: record {Record} not found, {Consequence}: the character window may be wrong for this map", id, consequence);
 	}
 
 	/// <summary>Logs a value of the character window taken from the original game because the game data lacks it.</summary>
 	private void WarnFallback(string? recordId, string name, object fallback)
-		=> this._log?.LogWarning("Game data: {Field} not found in {Record}, the original game's value is used ({Fallback}): the character window may be wrong for this map"
+		=> this._log.LogWarning("Game data: {Field} not found in {Record}, the original game's value is used ({Fallback}): the character window may be wrong for this map"
 			, name, recordId ?? "(no record)", fallback);
 
 	/// <inheritdoc/>

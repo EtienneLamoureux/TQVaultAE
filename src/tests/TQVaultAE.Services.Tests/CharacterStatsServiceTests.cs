@@ -54,7 +54,7 @@ public class CharacterStatsServiceTests
 				return sum;
 			});
 
-		this._service = new CharacterStatsService(this._database.Object, this._items.Object);
+		this._service = new CharacterStatsService(this._database.Object, this._items.Object, Mock.Of<ILogger<CharacterStatsService>>(), Mock.Of<IItemModService>());
 	}
 
 	private DBRecordCollection Class(RecordId id, string recordClass)
@@ -181,7 +181,7 @@ public class CharacterStatsServiceTests
 		var combat = Class("""Records\Game\CombatEquations.dbr""".ToRecordId(), "");
 		combat.Set(Text("offensiveAbilityEquation", "offensiveAbilityDV * 2"));
 		var log = new ListLogger();
-		var service = new CharacterStatsService(this._database.Object, this._items.Object, log);
+		var service = new CharacterStatsService(this._database.Object, this._items.Object, log, Mock.Of<IItemModService>());
 
 		// Act
 		var balance = service.GetGameBalance();
@@ -376,7 +376,7 @@ public class CharacterStatsServiceTests
 		ring.Mod = "ModA";
 		ring.ModOrigin = ModOrigin.Own;
 		this._items.Setup(p => p.GetGrantedSkillLevels(ring)).Returns([(modSkill, 3)]);
-		var service = new CharacterStatsService(this._database.Object, this._items.Object, itemMods: itemMods.Object);
+		var service = new CharacterStatsService(this._database.Object, this._items.Object, Mock.Of<ILogger<CharacterStatsService>>(), itemMods.Object);
 
 		var result = service.GetItemSkillAttributes([ring], useAlternate: false, includeBuffs: false);
 

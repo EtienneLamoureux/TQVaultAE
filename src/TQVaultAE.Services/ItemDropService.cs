@@ -15,14 +15,14 @@ public class ItemDropService(
 	, IItemStackingService itemStackingService
 	, IItemDatabaseService itemDatabaseService
 	, IPlayerService playerService
-	, UserSettings? userSettings = null
+	, UserSettings userSettings
 ) : IItemDropService
 {
 	private readonly IItemMovementService _itemMovementService = itemMovementService;
 	private readonly IItemStackingService _itemStackingService = itemStackingService;
 	private readonly IItemDatabaseService _itemDatabaseService = itemDatabaseService;
 	private readonly IPlayerService _playerService = playerService;
-	private readonly UserSettings? _userSettings = userSettings;
+	private readonly UserSettings _userSettings = userSettings;
 
 	/// <inheritdoc/>
 	public DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag)
@@ -30,7 +30,7 @@ public class ItemDropService(
 		if (sack.IsReadOnly)
 			return DropDecision.ReadOnly;
 
-		if (ItemActionRules.IsReadOnly(panelSackType, this._userSettings?.PlayerReadonly ?? false))
+		if (ItemActionRules.IsReadOnly(panelSackType, this._userSettings.PlayerReadonly))
 			return DropDecision.Refused;
 
 		if (!this._itemMovementService.IsItemValidForStashType(dragItem, sack.StashType))

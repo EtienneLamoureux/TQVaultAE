@@ -18,15 +18,15 @@ public class StashService(
 	IGameFileService iGameFileService,
 	UserSettings userSettings,
 	IPathIO pathIO,
-	IGameMapService? gameMapService = null,
-	ICharacterReadOnlyService? characterReadOnlyService = null) : IStashService
+	IGameMapService gameMapService,
+	ICharacterReadOnlyService characterReadOnlyService) : IStashService
 {
-	private readonly IGameMapService? GameMapService = gameMapService;
-	private readonly ICharacterReadOnlyService? CharacterReadOnly = characterReadOnlyService;
+	private readonly IGameMapService GameMapService = gameMapService;
+	private readonly ICharacterReadOnlyService CharacterReadOnly = characterReadOnlyService;
 
 	/// <summary>Reads with a custom map's database (empty for the base game) until disposed.</summary>
 	private IDisposable ReadWithMap(string? mapFolder)
-		=> this.GameMapService?.ReadWithMap(mapFolder) ?? NoScope.Instance;
+		=> this.GameMapService.ReadWithMap(mapFolder);
 
 	/// <summary>The items of a stash just read inherit its map.</summary>
 	private static void Inherit(Stash stash, string? mod)
@@ -37,11 +37,11 @@ public class StashService(
 
 	/// <summary>A shared stash's name in the search: a mod's names its mod, as each map has its own.</summary>
 	private string SharedStashName(string name, string map)
-		=> this.GameMapService?.ModNameOfMap(map) is { } mod ? $"{name} [{ModIdentity.NameOf(mod)}]" : name;
+		=> this.GameMapService.ModNameOfMap(map) is { } mod ? $"{name} [{ModIdentity.NameOf(mod)}]" : name;
 
 	/// <summary>The map whose shared stash files are read: the given one, else the active one.</summary>
 	private string MapOrActive(string? mapFolder)
-		=> mapFolder ?? this.GameMapService?.ActiveMap ?? string.Empty;
+		=> mapFolder ?? this.GameMapService.ActiveMap ?? string.Empty;
 
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
@@ -74,15 +74,15 @@ public class StashService(
 			try
 			{
 				// Read with the character's own map; its items inherit that map.
-				using (this.GameMapService?.ReadWith(selectedSave) ?? NoScope.Instance)
+				using (this.GameMapService.ReadWith(selectedSave))
 					stash.StashFound = StashProvider.LoadFile(stash);
 
-				Inherit(stash, this.GameMapService?.ModNameFor(selectedSave));
+				Inherit(stash, this.GameMapService.ModNameFor(selectedSave));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = StashType.PlayerStash;
 
 				// The stash of a read-only character is read-only with it.
-				stash.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(selectedSave.Folder) ?? false;
+				stash.IsReadOnly = this.CharacterReadOnly.IsReadOnly(selectedSave.Folder);
 
 				// Add stash items to the search database
 				this.ItemDatabaseService.IndexStash(stash, k, selectedSave.Name, StashType.PlayerStash);
@@ -143,7 +143,7 @@ public class StashService(
 				using (this.ReadWithMap(map))
 					stash.StashFound = StashProvider.LoadFile(stash);
 
-				Inherit(stash, this.GameMapService?.ModNameOfMap(map));
+				Inherit(stash, this.GameMapService.ModNameOfMap(map));
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = kind.Type;
 

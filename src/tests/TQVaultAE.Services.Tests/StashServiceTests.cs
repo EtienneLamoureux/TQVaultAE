@@ -49,7 +49,9 @@ public class StashServiceTests
 			_mockGamePathService.Object,
 			_mockGameFileService.Object,
 			_userSettings,
-			new PathIO()
+			new PathIO(),
+			Mock.Of<IGameMapService>(),
+			Mock.Of<ICharacterReadOnlyService>()
 		);
 	}
 

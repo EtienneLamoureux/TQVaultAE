@@ -33,7 +33,7 @@ public class ItemExchangeServiceImportTests
 	public ItemExchangeServiceImportTests()
 	{
 		var movement = new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object);
-		this._service = new ItemExchangeService(
+		this._service = ItemExchangeServices.Create(
 			this._jsonOptions
 			, this._pasteBin.Object
 			, itemMovementService: movement
@@ -257,7 +257,7 @@ public class ItemExchangeServiceImportTests
 		itemProvider.Setup(p => p.GetFriendlyNames(item, null, true))
 			.Returns(new TQVaultAE.Domain.Results.ToFriendlyNameResult(item) { BaseItemInfoDescription = itemName });
 		this._pasteBin.Setup(p => p.UploadAsync(It.IsAny<string>(), It.IsAny<string?>())).ReturnsAsync("https://pastebin.com/x");
-		var service = new ItemExchangeService(this._jsonOptions, this._pasteBin.Object, itemProvider: itemProvider.Object);
+		var service = ItemExchangeServices.Create(this._jsonOptions, this._pasteBin.Object, itemProvider: itemProvider.Object);
 
 		var url = await service.ExportItemToPasteBinAsync(item);
 

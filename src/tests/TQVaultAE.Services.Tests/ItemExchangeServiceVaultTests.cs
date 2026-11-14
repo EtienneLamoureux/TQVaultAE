@@ -30,7 +30,7 @@ public class ItemExchangeServiceVaultTests
 
 		_mockVaultService = new Mock<IVaultService>();
 		_mockUserNotifier = new Mock<IUserNotifier>();
-		_service = new ItemExchangeService(_jsonOptions);
+		_service = ItemExchangeServices.Create(_jsonOptions);
 	}
 
 	[Fact]

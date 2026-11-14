@@ -13,13 +13,13 @@ namespace TQVaultAE.Services;
 
 public class ItemExchangeService(
 	JsonSerializerOptions jsonOptions
-	, IPasteBinService pasteBinService = null!
-	, UserSettings userSettings = null!
-	, IItemProvider itemProvider = null!
-	, IItemMovementService itemMovementService = null!
-	, IFileIO fileIO = null!
-	, IVaultService vaultService = null!
-	, IItemModService? itemModService = null
+	, IPasteBinService pasteBinService
+	, UserSettings userSettings
+	, IItemProvider itemProvider
+	, IItemMovementService itemMovementService
+	, IFileIO fileIO
+	, IVaultService vaultService
+	, IItemModService itemModService
 ) : IItemExchangeService
 {
 	private readonly JsonSerializerOptions _jsonOptions = jsonOptions;
@@ -29,7 +29,7 @@ public class ItemExchangeService(
 	private readonly IItemMovementService _itemMovementService = itemMovementService;
 	private readonly IFileIO _fileIO = fileIO;
 	private readonly IVaultService _vaultService = vaultService;
-	private readonly IItemModService? _itemModService = itemModService;
+	private readonly IItemModService _itemModService = itemModService;
 
 	/// <summary>The file name offered when a vault tab is exported to a file.</summary>
 	public const string TabExportFileName = "tab_export.json";
@@ -48,7 +48,7 @@ public class ItemExchangeService(
 		if (string.IsNullOrWhiteSpace(mod))
 			return null;
 
-		if (this._itemModService is null || this._itemModService.Find(mod) is not null)
+		if (this._itemModService.Find(mod) is not null)
 			return mod;
 
 		// The user knows a mod by its name.
@@ -166,7 +166,7 @@ public class ItemExchangeService(
 							return ImportResult.Failed("Failed to deserialize item data.");
 
 						var item = this.DropMissingMod(dto.ToItem(), dropped);
-						_itemProvider?.GetDBData(item);
+						_itemProvider.GetDBData(item);
 						return ImportResult.Succeeded(item);
 					}
 
@@ -193,7 +193,7 @@ public class ItemExchangeService(
 								item.InVault = true;
 							}
 
-							_itemProvider?.GetDBData(item);
+							_itemProvider.GetDBData(item);
 							items.Add(item);
 						}
 
@@ -211,7 +211,7 @@ public class ItemExchangeService(
 						.Select(dto =>
 						{
 							var item = this.DropMissingMod(dto.ToItem(), dropped);
-							_itemProvider?.GetDBData(item);
+							_itemProvider.GetDBData(item);
 							return item;
 						})
 						.ToList();
@@ -238,7 +238,7 @@ public class ItemExchangeService(
 								var item = this.DropMissingMod(itemDto.ToItem(), dropped);
 								item.InVault = true;
 								item.InheritMod(vaultMod);
-								_itemProvider?.GetDBData(item);
+								_itemProvider.GetDBData(item);
 								itemList.Add(item);
 							}
 
@@ -293,7 +293,7 @@ public class ItemExchangeService(
 				{
 					item.Mod = vault.Mod;
 					item.ModOrigin = ModOrigin.Inherited;
-					this._itemProvider?.GetDBData(item);
+					this._itemProvider.GetDBData(item);
 				}
 
 				sack.AddItem(item);
@@ -317,7 +317,7 @@ public class ItemExchangeService(
 		}
 
 		// The search lists the vault's new content, not the items it replaced.
-		this._vaultService?.ReindexVault(vault);
+		this._vaultService.ReindexVault(vault);
 	}
 
 	public bool IsPasteBinUrl(string text)
@@ -329,13 +329,10 @@ public class ItemExchangeService(
 	}
 
 	public bool HasPasteBinApiKey
-		=> !string.IsNullOrWhiteSpace(_userSettings?.PasteBinApiKey);
+		=> !string.IsNullOrWhiteSpace(_userSettings.PasteBinApiKey);
 
 	public async Task<string> ExportToPasteBinAsync(string json, string? pasteName = null)
 	{
-		if (_pasteBinService is null)
-			throw new InvalidOperationException("PasteBin service is not configured.");
-
 		return await _pasteBinService.UploadAsync(json, pasteName);
 	}
 
@@ -343,16 +340,13 @@ public class ItemExchangeService(
 	public Task<string> ExportItemToPasteBinAsync(Item item)
 	{
 		var json = this.SerializeItem(item);
-		var friendlyName = this._itemProvider?.GetFriendlyNames(item).FullNameClean;
+		var friendlyName = this._itemProvider.GetFriendlyNames(item).FullNameClean;
 		var pasteName = string.IsNullOrWhiteSpace(friendlyName) ? null : friendlyName;
 		return this.ExportToPasteBinAsync(json, pasteName);
 	}
 
 	public async Task<string> ImportFromPasteBinAsync(string pasteUrl)
 	{
-		if (_pasteBinService is null)
-			throw new InvalidOperationException("PasteBin service is not configured.");
-
 		var payload = await _pasteBinService.FetchPasteAsync(pasteUrl);
 		return payload;
 	}
