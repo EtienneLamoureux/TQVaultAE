@@ -110,6 +110,19 @@ internal static partial class AutomationInput
 	}
 
 	/// <summary>The center of <paramref name="control"/> in its client coordinates.</summary>
+	/// <summary>
+	/// Right-clicks <paramref name="target"/> at a client point (button down and up), then sends the
+	/// <c>WM_CONTEXTMENU</c> Windows sends after it with that point on the screen: the control shows its
+	/// <see cref="Control.ContextMenuStrip"/> as for a user, its <c>Opening</c> event and <c>SourceControl</c> included.
+	/// </summary>
+	public static void SendContextClick(Control target, Point client)
+	{
+		const int WM_CONTEXTMENU = 0x007B;
+		SendClick(target, client, MouseButtons.Right, Keys.None);
+		var screen = target.PointToScreen(client);
+		SendMessage(target.Handle, WM_CONTEXTMENU, target.Handle, (screen.Y << 16) | (screen.X & 0xFFFF));
+	}
+
 	public static Point Center(Control control) => new(control.Width / 2, control.Height / 2);
 
 	/// <summary>One key message as the message loop handles it: pre-processing, translation, then the window procedure.</summary>

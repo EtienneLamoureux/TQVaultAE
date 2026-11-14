@@ -85,6 +85,25 @@ public class InputDialog : Form
 		this.PerformLayout();
 	}
 
+#if DEBUG
+	/// <summary>Automation answers the dialog like a user: types the queued text and clicks OK, or clicks Cancel.</summary>
+	protected override void OnShown(EventArgs e)
+	{
+		base.OnShown(e);
+		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeInputAnswer(this.Text, out var text))
+		{
+			if (text is null)
+			{
+				this.cancelButton.PerformClick();
+				return;
+			}
+
+			this.textBox.Text = text;
+			this.okButton.PerformClick();
+		}
+	}
+#endif
+
 	private void OkButton_Click(object? sender, EventArgs e)
 	{
 		this.DialogResult = DialogResult.OK;

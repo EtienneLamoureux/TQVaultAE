@@ -126,14 +126,13 @@ public partial class MainForm
 		return change.IsSuccess;
 	}
 
-	/// <summary>Records the worn equipment as a new loadout.</summary>
-	/// <param name="name">The name; asked when null.</param>
-	internal bool AddLoadout(string? name = null)
+	/// <summary>Records the worn equipment as a new loadout, under the name asked.</summary>
+	private bool AddLoadout()
 	{
 		if (this.ChangeableLoadouts() is not var (player, loadouts))
 			return false;
 
-		name ??= this.AskLoadoutName(loadouts, string.Empty);
+		var name = this.AskLoadoutName(loadouts, string.Empty);
 		if (name is null)
 			return false;
 
@@ -143,7 +142,7 @@ public partial class MainForm
 
 	/// <summary>Records the worn equipment over a loadout, once confirmed.</summary>
 	/// <param name="name">The loadout.</param>
-	internal bool UpdateLoadout(string name)
+	private bool UpdateLoadout(string name)
 	{
 		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;
@@ -156,30 +155,28 @@ public partial class MainForm
 		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Update(loadouts, loadout.Name, player), loadout.Name);
 	}
 
-	/// <summary>Renames a loadout.</summary>
+	/// <summary>Renames a loadout, to the name asked.</summary>
 	/// <param name="name">The loadout.</param>
-	/// <param name="newName">The new name; asked when null.</param>
-	internal bool RenameLoadout(string name, string? newName = null)
+	private bool RenameLoadout(string name)
 	{
 		if (this.ChangeableLoadouts() is not var (_, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;
 
-		newName ??= this.AskLoadoutName(loadouts, loadout.Name, loadout.Name);
+		var newName = this.AskLoadoutName(loadouts, loadout.Name, loadout.Name);
 		if (newName is null)
 			return false;
 
 		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Rename(loadouts, loadout.Name, newName), newName.Trim(), newName);
 	}
 
-	/// <summary>Copies a loadout under a new name.</summary>
+	/// <summary>Copies a loadout under the name asked.</summary>
 	/// <param name="name">The loadout.</param>
-	/// <param name="newName">The copy's name; asked when null.</param>
-	internal bool CopyLoadout(string name, string? newName = null)
+	private bool CopyLoadout(string name)
 	{
 		if (this.ChangeableLoadouts() is not var (_, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;
 
-		newName ??= this.AskLoadoutName(loadouts, loadout.Name);
+		var newName = this.AskLoadoutName(loadouts, loadout.Name);
 		if (newName is null)
 			return false;
 
@@ -192,7 +189,7 @@ public partial class MainForm
 	/// first when the game runs.
 	/// </summary>
 	/// <param name="name">The loadout.</param>
-	internal bool LoadLoadout(string name)
+	private bool LoadLoadout(string name)
 	{
 		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;
@@ -278,7 +275,7 @@ public partial class MainForm
 
 	/// <summary>Deletes a loadout, once confirmed.</summary>
 	/// <param name="name">The loadout.</param>
-	internal bool DeleteLoadout(string name)
+	private bool DeleteLoadout(string name)
 	{
 		if (this.ChangeableLoadouts() is not var (_, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;

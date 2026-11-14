@@ -205,7 +205,8 @@ public sealed class LoadoutBar : Control
 		}
 	}
 
-	private bool CanAct(LoadoutBarAction action) => action switch
+	/// <summary>Whether the bar offers an action now (its menu entry enabled, its button raising it).</summary>
+	internal bool CanAct(LoadoutBarAction action) => action switch
 	{
 		LoadoutBarAction.Select => this.Names.Count > 0,
 		LoadoutBarAction.Add => this.CanChange,
@@ -225,16 +226,6 @@ public sealed class LoadoutBar : Control
 		}
 
 		this.ActionRequested?.Invoke(this, new LoadoutBarEventArgs(action, name));
-	}
-
-	/// <summary>Asks for an action as the user would (for the automation): refused when the bar does not offer it.</summary>
-	internal bool Perform(LoadoutBarAction action, string? name = null)
-	{
-		if (!this.CanAct(action))
-			return false;
-
-		this.Raise(action, action == LoadoutBarAction.Select ? name : action == LoadoutBarAction.Add ? null : this.Selected);
-		return true;
 	}
 
 	private void FillListMenu()

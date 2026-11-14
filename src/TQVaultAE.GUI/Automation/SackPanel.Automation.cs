@@ -25,6 +25,7 @@ internal static class AutomationMenus
 	/// <remarks>A sub menu raises its opening event first, as when the user opens it: some fill their entries then.</remarks>
 	internal static IReadOnlyList<AutomationMenuEntry> Describe(ToolStripItemCollection items)
 		=> items.Cast<ToolStripItem>()
+			.Where(i => i.Available)
 			.Select(i => new AutomationMenuEntry(
 				i is ToolStripSeparator ? "-" : i.Text ?? string.Empty
 				, i is ToolStripMenuItem { HasDropDownItems: true } menu ? Describe(Opened(menu).DropDownItems) : null
@@ -49,27 +50,69 @@ internal static class AutomationMenus
 	/// </summary>
 	/// <returns>The text of the entry to be clicked.</returns>
 	internal static string ClickLater(Control owner, ToolStrip menu, IReadOnlyList<string> path)
+		=> ClickLater(owner, Resolve(menu, path));
+
+	/// <summary>
+	/// Clicks the last entry of <paramref name="chain"/> (from <see cref="Resolve"/>) once the calling tool has returned,
+	/// through <paramref name="owner"/>'s message loop, then closes the menu if the click left it open.
+	/// </summary>
+	/// <returns>The text of the entry to be clicked.</returns>
+	internal static string ClickLater(Control owner, IReadOnlyList<ToolStripItem> chain)
 	{
-		ToolStripItemCollection items = menu.Items;
-		ToolStripItem? entry = null;
+		var clicked = chain[^1];
+		var menu = chain[0].Owner as ToolStripDropDown;
+		owner.BeginInvoke(() =>
+		{
+			clicked.PerformClick();
+			if (menu is { IsDisposed: false, Visible: true })
+				menu.Close();
+		});
+		return clicked.Text ?? string.Empty;
+	}
+
+	/// <summary>
+	/// Finds the entries along <paramref name="path"/>, a path of texts (exact text first, else the first containing it),
+	/// among the entries a user sees (hidden ones are skipped); the sub menus raise their opening event on the way, as
+	/// when the user opens them. The last one must be enabled and not open a sub menu.
+	/// </summary>
+	/// <returns>The entries, from the top level to the one to click.</returns>
+	internal static IReadOnlyList<ToolStripItem> Resolve(ToolStrip menu, IReadOnlyList<string> path)
+	{
+		var chain = new List<ToolStripItem>();
+		IEnumerable<ToolStripItem> items = menu.Items.Cast<ToolStripItem>().Where(i => i.Available).ToList();
 		foreach (var text in path)
 		{
-			entry = items.Cast<ToolStripItem>().FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
-				?? items.Cast<ToolStripItem>().FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true)
-				?? throw new InvalidOperationException($"No entry '{text}'. Entries: {string.Join(" | ", items.Cast<ToolStripItem>().Select(i => i.Text))}");
-			items = (entry as ToolStripMenuItem)?.DropDownItems ?? new ToolStripItemCollection(menu, []);
+			var entry = items.FirstOrDefault(i => string.Equals(i.Text, text, StringComparison.OrdinalIgnoreCase))
+				?? items.FirstOrDefault(i => i.Text?.Contains(text, StringComparison.OrdinalIgnoreCase) == true)
+				?? throw new InvalidOperationException($"No entry '{text}'. Entries: {string.Join(" | ", items.Select(i => i.Text))}");
+			if (chain.Count < path.Count - 1 && !entry.Enabled)
+				throw new InvalidOperationException($"'{entry.Text}' is disabled: a user could not open it.");
+			chain.Add(entry);
+			items = entry is ToolStripMenuItem { HasDropDownItems: true } sub
+				? Opened(sub).DropDownItems.Cast<ToolStripItem>().Where(i => i.Available).ToList()
+				: [];
 		}
 
-		if (entry is null)
-			throw new InvalidOperationException("Empty menu path.");
-		if (!entry.Enabled)
-			throw new InvalidOperationException($"'{entry.Text}' is disabled: a user could not click it.");
-		if (entry is ToolStripMenuItem { HasDropDownItems: true } parent)
-			throw new InvalidOperationException($"'{entry.Text}' opens a sub menu: add one of its entries to the path ({string.Join(" | ", parent.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text))}).");
+		return Clickable(chain);
+	}
 
-		var clicked = entry;
-		owner.BeginInvoke(clicked.PerformClick);
-		return clicked.Text ?? string.Empty;
+	/// <summary>
+	/// Checks that a user could click the last entry of <paramref name="chain"/>: every entry shown and the ones above
+	/// enabled, the last one enabled and not opening a sub menu.
+	/// </summary>
+	/// <returns><paramref name="chain"/>.</returns>
+	internal static IReadOnlyList<ToolStripItem> Clickable(IReadOnlyList<ToolStripItem> chain)
+	{
+		if (chain.Count == 0)
+			throw new InvalidOperationException("Empty menu path.");
+		if (chain.FirstOrDefault(i => !i.Available) is { } hidden)
+			throw new InvalidOperationException($"'{hidden.Text}' is hidden: a user could not click it.");
+		var last = chain[^1];
+		if (!last.Enabled)
+			throw new InvalidOperationException($"'{last.Text}' is disabled: a user could not click it.");
+		if (last is ToolStripMenuItem { HasDropDownItems: true } parent)
+			throw new InvalidOperationException($"'{last.Text}' opens a sub menu: add one of its entries to the path ({string.Join(" | ", parent.DropDownItems.Cast<ToolStripItem>().Where(i => i.Available).Select(i => i.Text))}).");
+		return chain;
 	}
 
 	/// <summary>

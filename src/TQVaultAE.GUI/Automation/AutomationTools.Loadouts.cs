@@ -3,6 +3,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Components.Panels;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -14,7 +15,7 @@ internal static partial class AutomationTools
 	internal static bool? GameRunningOverride { get; private set; }
 
 	[McpServerTool(Name = "loadouts", Destructive = true)]
-	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the bar: select (name), add (name), update, rename (newName), copy (newName), delete, load — on the selected loadout unless name is given; compare (slot) clicks the mark of a slot, which opens the Item Comparison dialog of the worn piece and the loadout's (after the call returns; close it with close_dialog('Item Comparison', 'OK')); add, rename and copy take the name instead of the name dialog. Actions that change something run after the call returns (queue the answers of their boxes first: update and delete confirm, load and update ask when the game runs) and only on test characters (names starting with 'claude-', 'player-test' or 'player-mod'). gameRunning=true/false makes the actions take the game as running or not; null uses the real processes.")]
+	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy and delete click the entry of the bar's right-click menu — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison dialog of the worn piece and the loadout's (after the call returns; close it with close_dialog('Item Comparison', 'OK')). Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load and update ask when the game runs) and only on test characters (names starting with 'claude-', 'player-test' or 'player-mod'). gameRunning=true/false makes the actions take the game as running or not; null uses the real processes.")]
 	public static string Loadouts(
 		[Description("select, add, update, rename, copy, delete or load; empty to only read.")] string? action = null,
 		[Description("The loadout (select, and the others instead of the selected one); the new loadout's name for add.")] string? name = null,
@@ -59,34 +60,16 @@ internal static partial class AutomationTools
 				if (bar is null)
 					throw new McpException("The loadout bar is not built yet: show the Equipment tab first.");
 
-				string target = name ?? bar.Selected ?? string.Empty;
-				switch (action.Trim().ToLowerInvariant())
-				{
-					case "select":
-						if (!bar.Perform(LoadoutBarAction.Select, name))
-							throw new McpException("Nothing to select.");
-						break;
-					case "add":
-						form.BeginInvoke(() => form.AddLoadout(name));
-						break;
-					case "update":
-						form.BeginInvoke(() => form.UpdateLoadout(target));
-						break;
-					case "rename":
-						form.BeginInvoke(() => form.RenameLoadout(target, newName));
-						break;
-					case "copy":
-						form.BeginInvoke(() => form.CopyLoadout(target, newName));
-						break;
-					case "delete":
-						form.BeginInvoke(() => form.DeleteLoadout(target));
-						break;
-					case "load":
-						form.BeginInvoke(() => form.LoadLoadout(target));
-						break;
-					default:
-						throw new McpException($"Unknown action '{action}'.");
-				}
+				if (!bar.Visible)
+					throw new McpException("The loadout bar is hidden: show the Equipment tab first.");
+				if (!Enum.TryParse<LoadoutBarAction>(action.Trim(), true, out var barAction) || int.TryParse(action, out _))
+					throw new McpException($"Unknown action '{action}'.");
+
+				// Another loadout than the selected one: picked in the bar's list first, as the user does.
+				if (name is not null && (barAction == LoadoutBarAction.Select || (barAction != LoadoutBarAction.Add && name != bar.Selected)))
+					PickLoadout(bar, name);
+				if (barAction != LoadoutBarAction.Select)
+					LoadoutBarAct(form, bar, barAction, barAction == LoadoutBarAction.Add ? name : newName);
 			}
 
 			object? menuEntries = null;
@@ -161,6 +144,50 @@ internal static partial class AutomationTools
 		});
 
 	private static int[] Box(Rectangle r) => [r.X, r.Y, r.Width, r.Height];
+
+	/// <summary>Selects a loadout like the user: a click on the bar's name box opens its list, then a click on the name.</summary>
+	private static void PickLoadout(LoadoutBar bar, string name)
+	{
+		var field = bar.FieldBounds;
+		AutomationInput.SendClick(bar, new Point(field.X + (field.Width / 2), field.Y + (field.Height / 2)), MouseButtons.Left, Keys.None);
+		try
+		{
+			var entry = bar.ListMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => string.Equals(i.Tag as string, name, StringComparison.OrdinalIgnoreCase))
+				?? throw new McpException($"No loadout '{name}'. Loadouts: {string.Join(", ", bar.Names)}");
+			entry.PerformClick();
+		}
+		finally
+		{
+			bar.ListMenu.Close();
+		}
+	}
+
+	/// <summary>
+	/// Does an action on the selected loadout like the user, after the calling tool has returned (it may open the name
+	/// dialog or a confirmation): Add and Load by a click on their button, the others by their entry of the bar's
+	/// right-click menu. <paramref name="typed"/> is queued first as the name dialog's answer.
+	/// </summary>
+	private static void LoadoutBarAct(Forms.MainForm form, LoadoutBar bar, LoadoutBarAction action, string? typed)
+	{
+		if (!bar.CanAct(action))
+			throw new McpException(action == LoadoutBarAction.Load && bar.LoadLocked is { } locked
+				? $"Load is greyed: {locked}"
+				: $"{action} is greyed: a user could not do it (no loadout selected, or the character cannot change).");
+		if (typed is not null)
+			AutomationHost.QueueDialogAnswerFirst(new QueuedAnswer(DialogResult.OK, typed));
+
+		if (action is LoadoutBarAction.Add or LoadoutBarAction.Load)
+		{
+			var button = action == LoadoutBarAction.Add ? bar.AddBounds : bar.LoadBounds;
+			var center = new Point(button.X + (button.Width / 2), button.Y + (button.Height / 2));
+			form.BeginInvoke(() => AutomationInput.SendClick(bar, center, MouseButtons.Left, Keys.None));
+			return;
+		}
+
+		AutomationInput.SendContextClick(bar, new Point(bar.FieldBounds.Width / 2, bar.Height / 2));
+		var entry = bar.ActionMenu.Items.OfType<ToolStripMenuItem>().First(i => i.Tag is LoadoutBarAction tagged && tagged == action);
+		AutomationMenus.ClickLater(form, [entry]);
+	}
 
 	#endregion
 }

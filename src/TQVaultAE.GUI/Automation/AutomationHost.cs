@@ -51,17 +51,37 @@ internal static class AutomationHost
 	public static MainForm? MainForm => _mainForm;
 
 
-	private static readonly System.Collections.Concurrent.ConcurrentQueue<DialogResult> _dialogAnswers = new();
+	private static readonly System.Collections.Concurrent.ConcurrentQueue<QueuedAnswer> _dialogAnswers = new();
 	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogAnswered = new();
 	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogUnanswered = new();
 
 	/// <summary>
 	/// Queues answers for the next message boxes shown through the message box service.
 	/// </summary>
-	public static void QueueDialogAnswers(IEnumerable<DialogResult> answers)
+	public static void QueueDialogAnswers(IEnumerable<QueuedAnswer> answers)
 	{
 		foreach (var answer in answers)
 			_dialogAnswers.Enqueue(answer);
+	}
+
+	/// <summary>Puts an answer before the ones already queued: the answer of the dialog a tool is about to open.</summary>
+	public static void QueueDialogAnswerFirst(QueuedAnswer answer)
+	{
+		var rest = _dialogAnswers.ToList();
+		_dialogAnswers.Clear();
+		_dialogAnswers.Enqueue(answer);
+		foreach (var queued in rest)
+			_dialogAnswers.Enqueue(queued);
+	}
+
+	/// <summary>Takes back the first queued answer equal to <paramref name="answer"/> (a click refused after queueing it).</summary>
+	public static void WithdrawDialogAnswer(QueuedAnswer answer)
+	{
+		var rest = _dialogAnswers.ToList();
+		rest.Remove(answer);
+		_dialogAnswers.Clear();
+		foreach (var queued in rest)
+			_dialogAnswers.Enqueue(queued);
 	}
 
 	/// <summary>Removes the answers not used yet and the record of the answered boxes.</summary>
@@ -74,7 +94,7 @@ internal static class AutomationHost
 	}
 
 	/// <summary>Gets the answers not used yet.</summary>
-	public static IReadOnlyList<DialogResult> PendingDialogAnswers => [.. _dialogAnswers];
+	public static IReadOnlyList<QueuedAnswer> PendingDialogAnswers => [.. _dialogAnswers];
 
 	/// <summary>Gets the boxes answered from the queue, oldest first.</summary>
 	public static IReadOnlyList<string> AnsweredDialogs => [.. _dialogAnswered];
@@ -94,8 +114,9 @@ internal static class AutomationHost
 	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer, DialogResult? headlessAnswer = null)
 	{
 		var shortMessage = message.Length > 120 ? message[..120] + "..." : message;
-		if (_dialogAnswers.TryPeek(out var next) && ButtonsOf(buttons).Contains(next) && _dialogAnswers.TryDequeue(out answer))
+		if (_dialogAnswers.TryPeek(out var next) && next.Text is null && ButtonsOf(buttons).Contains(next.Result) && _dialogAnswers.TryDequeue(out _))
 		{
+			answer = next.Result;
 			_dialogAnswered.Enqueue($"{caption}: {shortMessage} -> {answer}");
 			return true;
 		}
@@ -107,6 +128,29 @@ internal static class AutomationHost
 		answer = headlessAnswer ?? HeadlessAnswer(buttons);
 		_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {caption} ({buttons}): {shortMessage} -> {answer}");
 		_log?.LogWarning("Headless: message box \"{Caption}\" ({Buttons}) had no queued answer, took {Answer}: {Message}", caption, buttons, answer, message);
+		return true;
+	}
+
+	/// <summary>
+	/// Takes the next queued answer for a text input dialog (<see cref="Dialogs.InputDialog"/>) when it is a text
+	/// (typed, then OK) or Cancel; any other answer stays for the message boxes. The dialog stays shown otherwise, also in
+	/// headless mode, where close_dialog or set_control and click_control answer it.
+	/// </summary>
+	/// <param name="title">The dialog's title, for the record.</param>
+	/// <param name="text">The text to type; null for Cancel.</param>
+	/// <returns>Whether the dialog is answered from the queue.</returns>
+	public static bool TryTakeInputAnswer(string title, out string? text)
+	{
+		text = null;
+		if (!_dialogAnswers.TryPeek(out var next) || (next.Text is null && next.Result != DialogResult.Cancel) || !_dialogAnswers.TryDequeue(out _))
+		{
+			if (Headless.Enabled)
+				_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {title} (text input): no queued text, left open");
+			return false;
+		}
+
+		text = next.Text;
+		_dialogAnswered.Enqueue($"{title} (text input) -> {next}");
 		return true;
 	}
 

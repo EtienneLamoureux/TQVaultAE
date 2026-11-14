@@ -167,19 +167,21 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
-	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'clear' empties the queue and the record. Covers every message box, the startup notices included, and the vault import dialog (Yes replaces the vault, No imports it as a new vault, Cancel cancels). In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers.")]
-	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No', or 'clear'.")] string answers)
+	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'text:<name>' answers the next text input dialog (the name asked by Duplicate Character and the loadout actions): the dialog opens, the text is typed and its OK button clicked, so its own checks run (Cancel cancels it; no comma in the text). 'clear' empties the queue and the record. Covers every message box, the startup notices included, and the vault import dialog (Yes replaces the vault, No imports it as a new vault, Cancel cancels). In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers; a text input dialog without one stays open (close_dialog, or set_control and click_control).")]
+	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No' or 'text:claude-set1,OK', or 'clear'.")] string answers)
 	{
 		if (string.Equals(answers.Trim(), "clear", StringComparison.OrdinalIgnoreCase))
 			AutomationHost.ClearDialogAnswers();
 		else
 		{
-			var parsed = answers.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-				.Select(a => Enum.TryParse<DialogResult>(a, true, out var r) && r != DialogResult.None
-					? r
-					: throw new McpException($"Unknown answer '{a}'. Use OK, Cancel, Yes, No, Abort, Retry or Ignore."))
-				.ToList();
-			AutomationHost.QueueDialogAnswers(parsed);
+			try
+			{
+				AutomationHost.QueueDialogAnswers(answers.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(QueuedAnswer.Parse).ToList());
+			}
+			catch (ArgumentException ex)
+			{
+				throw new McpException(ex.Message);
+			}
 		}
 
 		return DialogAnswers();
