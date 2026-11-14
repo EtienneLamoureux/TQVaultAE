@@ -379,7 +379,7 @@ public partial class VaultForm : Form, IScalingControl
 			if (this.titleFont is not null && ZoomScope.IsZooming && factor.Width != 1.0F)
 			{
 				var previous = this.titleFont;
-				this.titleFont = new Font(previous.Name, previous.SizeInPoints * factor.Width);
+				this.titleFont = new Font(previous.FontFamily, previous.SizeInPoints * factor.Width, previous.Style);
 				previous.Dispose();
 			}
 		}
