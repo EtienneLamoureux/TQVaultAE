@@ -192,6 +192,13 @@ public class UserSettings
 	public SortSettings Sort { get; set; } = new();
 
 	/// <summary>
+	/// The choices of the loadouts: <c>&lt;Loadout ReplaceWorn="0" /&gt;</c>. Missing, the defaults apply (the worn pieces
+	/// a loadout does not use are stored in the vault).
+	/// </summary>
+	[XmlElement(ElementName = nameof(Loadout))]
+	public LoadoutSettings Loadout { get; set; } = new();
+
+	/// <summary>
 	/// The key and mouse bindings changed by the user: <c>&lt;KeyBinds ItemDuplicateClick="Ctrl+Click" /&gt;</c>.
 	/// Missing or empty, every action has its default.
 	/// </summary>

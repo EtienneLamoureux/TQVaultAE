@@ -12,9 +12,55 @@ public partial class LoadoutService
 	/// <inheritdoc/>
 	public LoadoutLoadResult Load(LoadoutSet loadouts, string name, PlayerCollection player, SackCollection bag, Size bagSize, ContainerPlace bagPlace)
 	{
+		if (bag.IsReadOnly)
+			return new LoadoutLoadResult(LoadoutLoadOutcome.Refused);
+
+		// Only the pieces that leave the equipment need room; the whole load is refused without it. Then they go in the
+		// bag at the spots the room check found (same order, same search).
+		return this.Wear(loadouts, name, player, leaving => this.HasRoom(bag, bagSize, leaving), (loadout, leaving) =>
+		{
+			foreach (var item in leaving)
+			{
+				if (!this.ItemMovementService.TryPlace(item, bag, bagSize, bagPlace))
+					this.Log.LogError("Loadout {Name}: no room for {Item} after the room check", loadout.Name, item.BaseItemId);
+			}
+
+			return new LoadoutLoadResult(LoadoutLoadOutcome.Loaded) { Stored = leaving };
+		});
+	}
+
+	/// <inheritdoc/>
+	public LoadoutLoadResult LoadReplacing(LoadoutSet loadouts, string name, PlayerCollection player)
+		=> this.Wear(loadouts, name, player, _ => true, (_, leaving) =>
+		{
+			foreach (var item in leaving)
+				this.ItemDatabaseService.RemoveItemFromDatabase(item);
+
+			return new LoadoutLoadResult(LoadoutLoadOutcome.Loaded) { Replaced = leaving };
+		});
+
+	/// <inheritdoc/>
+	public IReadOnlyList<Item> TakenOff(LoadoutSet loadouts, string name, PlayerCollection player)
+	{
+		if (loadouts.Find(name) is not { } loadout || player.EquipmentSack is not { } equipment)
+			return [];
+
+		var worn = equipment.ToList();
+		return [.. LoadoutPlan.Make(worn, loadout.Pieces).LeavingSlots.Select(slot => worn[slot])];
+	}
+
+	/// <summary>
+	/// Wears a loadout (see <see cref="Load"/>), the worn pieces it does not use given to <paramref name="takeOff"/>
+	/// once out of the equipment.
+	/// </summary>
+	/// <param name="canTakeOff">Whether the pieces leaving can go: else nothing changes (<see cref="LoadoutLoadOutcome.NoRoom"/>).</param>
+	/// <param name="takeOff">What becomes of them; its result gets the counts.</param>
+	private LoadoutLoadResult Wear(LoadoutSet loadouts, string name, PlayerCollection player,
+		Func<List<Item>, bool> canTakeOff, Func<Loadout, List<Item>, LoadoutLoadResult> takeOff)
+	{
 		if (loadouts.Find(name) is not { } loadout
 			|| player.EquipmentSack is not { } equipment
-			|| player.IsReadOnly || equipment.IsReadOnly || bag.IsReadOnly)
+			|| player.IsReadOnly || equipment.IsReadOnly)
 			return new LoadoutLoadResult(LoadoutLoadOutcome.Refused);
 
 		var worn = equipment.ToList();
@@ -22,9 +68,8 @@ public partial class LoadoutService
 		if (plan.ChangesNothing && player.UseAlternate == loadout.UseAlternate)
 			return new LoadoutLoadResult(LoadoutLoadOutcome.AlreadyWorn);
 
-		// Only the pieces that leave the equipment need room; the whole load is refused without it.
 		var leaving = plan.LeavingSlots.Select(slot => worn[slot]).ToList();
-		if (!this.HasRoom(bag, bagSize, leaving))
+		if (!canTakeOff(leaving))
 			return new LoadoutLoadResult(LoadoutLoadOutcome.NoRoom, ToBag: leaving.Count);
 
 		var next = plan.Steps.Select(step => step.Action switch
@@ -54,19 +99,14 @@ public partial class LoadoutService
 				this.ItemDatabaseService.AddItemToDatabase(item, equipmentPlace.Path, equipmentPlace.Name, equipmentPlace.SackNumber, SackType.Equipment);
 		}
 
-		// The pieces taken off, in the bag at the spots the room check found (same order, same search).
-		foreach (var item in leaving)
-		{
-			if (!this.ItemMovementService.TryPlace(item, bag, bagSize, bagPlace))
-				this.Log.LogError("Loadout {Name}: no room for {Item} after the room check", loadout.Name, item.BaseItemId);
-		}
+		var taken = takeOff(loadout, leaving);
 
 		player.UseAlternate = loadout.UseAlternate;
 		equipment.IsModified = true;
 
-		this.Log.LogInformation("Loadout {Name} worn by {Character}: {Stored} piece(s) stored, {Moved} moved, {Copied} copied in",
-			loadout.Name, loadouts.CharacterName, leaving.Count, plan.MoveCount, plan.CopyCount);
-		return new LoadoutLoadResult(LoadoutLoadOutcome.Loaded, leaving.Count, plan.MoveCount, plan.CopyCount) { Stored = leaving };
+		this.Log.LogInformation("Loadout {Name} worn by {Character}: {Stored} piece(s) stored, {Replaced} replaced, {Moved} moved, {Copied} copied in",
+			loadout.Name, loadouts.CharacterName, taken.Stored.Count, taken.Replaced.Count, plan.MoveCount, plan.CopyCount);
+		return taken with { ToBag = taken.Stored.Count, Moved = plan.MoveCount, Copied = plan.CopyCount };
 	}
 
 	/// <summary>

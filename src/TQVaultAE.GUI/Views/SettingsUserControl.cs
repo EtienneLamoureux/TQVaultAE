@@ -210,6 +210,7 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 		this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
 		this.groupBoxTooltipEnhanced.Text = Resources.SettingTooltipEnhanced;
 		this.groupBoxStackable.Text = Resources.SettingsStackable;
+		this.groupBoxLoadout.Text = Resources.LoadoutTitle;
 		this.scalingCheckBoxTooltipDetailedView.Text = Resources.SettingTooltipDetailedView;
 		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipDetailedView, Resources.SettingTooltipDetailedViewTT);
 		this.scalingCheckBoxTooltipInGameRolls.Text = Resources.SettingTooltipShowInGameRolls;
@@ -238,6 +239,8 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 		this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, Resources.SettingsDisableAutoStackingTT);
 		this.scalingCheckBoxMergeRelicsOnSort.Text = Resources.SettingsMergeRelicsOnSort;
 		this.toolTip.SetToolTip(this.scalingCheckBoxMergeRelicsOnSort, Resources.SettingsMergeRelicsOnSortTT);
+		this.scalingCheckBoxLoadoutReplaceWorn.Text = Resources.SettingsLoadoutReplaceWorn;
+		this.toolTip.SetToolTip(this.scalingCheckBoxLoadoutReplaceWorn, Resources.SettingsLoadoutReplaceWornTT);
 
 		this.checkGroupBoxAllowCheats.Text = Resources.SettingsAllowCheats;
 		this.scalingCheckBoxDisableLegacyBackup.Text = Resources.SettingsDisableLegacyBackup;
@@ -421,6 +424,7 @@ internal sealed partial class SettingsUserControl : UserControl, IMainWindowView
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = values.EnableEpicLegendaryAffixes;
 		this.scalingCheckBoxDisableAutoStacking.Checked = values.DisableAutoStacking;
 		this.scalingCheckBoxMergeRelicsOnSort.Checked = values.MergeRelicsOnSort;
+		this.scalingCheckBoxLoadoutReplaceWorn.Checked = values.LoadoutReplaceWorn;
 		this.checkGroupBoxAllowCheats.Checked = values.AllowCheats;
 		this.checkGroupBoxGitBackup.Checked = values.GitBackupEnabled;
 		this.scalingCheckBoxDisableLegacyBackup.Checked = values.DisableLegacyBackup;

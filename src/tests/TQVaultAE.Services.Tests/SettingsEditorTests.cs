@@ -284,6 +284,20 @@ public class SettingsEditorTests
 	}
 
 	[Fact]
+	public void LoadoutReplaceWorn_ReadAndWrittenToTheLoadoutElement()
+	{
+		var settings = NewSettings();
+		var editor = NewEditor(settings);
+
+		editor.Current.LoadoutReplaceWorn.Should().BeFalse();
+		editor.Current.LoadoutReplaceWorn = true;
+		editor.ApplyTo(settings);
+
+		settings.Loadout.ReplaceWorn.Should().BeTrue();
+		NewEditor(settings).Current.LoadoutReplaceWorn.Should().BeTrue();
+	}
+
+	[Fact]
 	public void MergeRelicsOnSort_WrittenToTheSortElement_KeepsTheSortOrder()
 	{
 		// The order is picked in the sort button's menu, not in the dialog: OK must not reset it.

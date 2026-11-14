@@ -72,4 +72,7 @@ public sealed record LoadoutLoadResult(LoadoutLoadOutcome Outcome, int ToBag = 0
 {
 	/// <summary>The pieces stored in the bag.</summary>
 	public IReadOnlyList<Domain.Entities.Item> Stored { get; init; } = [];
+
+	/// <summary>The pieces taken off and deleted (<see cref="Contracts.Services.ILoadoutService.LoadReplacing"/>).</summary>
+	public IReadOnlyList<Domain.Entities.Item> Replaced { get; init; } = [];
 }

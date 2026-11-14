@@ -60,6 +60,7 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(double) => -0.123456789012345 - i,
 				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true, ShowSources = true },
 				var t when t == typeof(SortSettings) => SortWithOwnOrders(),
+				var t when t == typeof(LoadoutSettings) => new LoadoutSettings { ReplaceWorn = true },
 				var t when t == typeof(KeyBindSettings) => KeyBinds(("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "")),
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
 			};
@@ -152,6 +153,31 @@ public sealed class UserSettingsTests : IDisposable
 
 		read.VaultPath.Should().Be("""D:\Vaults""");
 		File.ReadAllText(this._xmlPath).Should().NotContain("Garbage");
+	}
+
+	#endregion
+
+	#region Loadouts
+
+	[Fact]
+	public void Loadout_Missing_WornPiecesStored()
+		=> UserSettings.ParseSettings("""<UserSettings><SkipTitle>1</SkipTitle></UserSettings>""").Loadout.ReplaceWorn.Should().BeFalse();
+
+	[Theory]
+	[InlineData("ReplaceWorn='1'", true)]
+	[InlineData("ReplaceWorn='0'", false)]
+	[InlineData("ReplaceWorn='maybe'", false)]
+	public void Loadout_AttributeParsed_UnknownKeepsTheDefault(string attributes, bool replaceWorn)
+		=> UserSettings.ParseSettings($"""<UserSettings><Loadout {attributes} /></UserSettings>""").Loadout.ReplaceWorn.Should().Be(replaceWorn);
+
+	[Fact]
+	public void Loadout_SaveThenRead_OneElementWithAZeroOneAttribute()
+	{
+		new UserSettings { Loadout = new LoadoutSettings { ReplaceWorn = true } }.Save(this._xmlPath);
+
+		var element = XDocument.Load(this._xmlPath).Root!.Elements("Loadout").Should().ContainSingle().Subject;
+		element.Attribute("ReplaceWorn")!.Value.Should().Be("1");
+		UserSettings.Read(this._xmlPath).Loadout.ReplaceWorn.Should().BeTrue();
 	}
 
 	#endregion

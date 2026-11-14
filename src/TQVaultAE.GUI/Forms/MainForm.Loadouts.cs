@@ -188,7 +188,8 @@ public partial class MainForm
 
 	/// <summary>
 	/// Wears a loadout: the pieces taken off go to the bag shown in the vault panel; without room for all of them, nothing
-	/// changes and the user is told. Asks first when the game runs.
+	/// changes and the user is told. With the setting to replace them, they are deleted instead, once confirmed. Asks
+	/// first when the game runs.
 	/// </summary>
 	/// <param name="name">The loadout.</param>
 	internal bool LoadLoadout(string name)
@@ -201,6 +202,9 @@ public partial class MainForm
 			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
 			return false;
 		}
+
+		if (this.Services.Settings.Loadout.ReplaceWorn)
+			return this.LoadLoadoutReplacing(player, loadouts, loadout.Name);
 
 		int bagNumber = this.vaultPanel.CurrentBag;
 		if (this.vaultPanel.Player is not { } vault || vault.GetSack(bagNumber) is not { } bag)
@@ -235,6 +239,40 @@ public partial class MainForm
 		this.vaultPanel.Refresh();
 		this.stashPanel.EquipmentReplaced();
 		this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoaded, loadout.Name, result.ToBag, bagNumber + 1, vault.PlayerName, result.Copied));
+		return true;
+	}
+
+	/// <summary>
+	/// Wears a loadout deleting the worn pieces it does not use: they are listed and confirmed first, unless the
+	/// confirmation messages are bypassed.
+	/// </summary>
+	private bool LoadLoadoutReplacing(PlayerCollection player, LoadoutSet loadouts, string name)
+	{
+		var takenOff = this.Services.Loadouts.TakenOff(loadouts, name, player);
+		if (takenOff.Count > 0 && !this.Services.Settings.SuppressWarnings)
+		{
+			var pieces = string.Join(Environment.NewLine, takenOff.Select(item => this.Services.ItemProvider.GetFriendlyNames(item).FullNameClean));
+			if (!this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutReplaceConfirm, name, pieces), Resources.LoadoutTitle, MessageBoxIcon.Warning, defaultNo: true))
+				return false;
+		}
+
+		if (!this.GoOnThoughGameRuns())
+			return false;
+
+		this.PutBackHeldItem();
+		var result = this.Services.Loadouts.LoadReplacing(loadouts, name, player);
+		switch (result.Outcome)
+		{
+			case LoadoutLoadOutcome.AlreadyWorn:
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, name));
+				return false;
+			case LoadoutLoadOutcome.Refused or LoadoutLoadOutcome.NoRoom:
+				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
+				return false;
+		}
+
+		this.stashPanel.EquipmentReplaced();
+		this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoadedReplaced, name, result.Replaced.Count, result.Copied));
 		return true;
 	}
 

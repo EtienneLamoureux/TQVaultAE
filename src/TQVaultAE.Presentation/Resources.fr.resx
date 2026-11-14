@@ -2390,4 +2390,22 @@ Quitter l'éditeur sans appliquer les changements ?</value>
 	<data name="LoadoutEquipmentLocked" xml:space="preserve">
     <value>Le réglage « {0} » est activé : l'équipement ne peut pas changer.</value>
   </data>
+	<data name="SettingsLoadoutReplaceWorn" xml:space="preserve">
+    <value>Remplacer les pièces portées au lieu de les ranger dans le coffre</value>
+  </data>
+	<data name="SettingsLoadoutReplaceWornTT" xml:space="preserve">
+    <value>Porter une tenue retire les pièces portées qu'elle n'utilise pas et les supprime, au lieu de les ranger dans le sac du coffre affiché.
+Une tenue garde des copies de ses pièces : cela évite d'accumuler des doublons.
+TQVault liste les pièces et demande d'abord, sauf si « Ignorer les messages de confirmation » est coché.</value>
+  </data>
+	<data name="LoadoutReplaceConfirm" xml:space="preserve">
+    <value>Porter « {0} » supprime ces pièces portées :
+
+{1}
+
+Continuer ?</value>
+  </data>
+	<data name="LoadoutLoadedReplaced" xml:space="preserve">
+    <value>Tenue « {0} » portée : {1} pièce(s) remplacée(s), {2} copiée(s).</value>
+  </data>
 </root>

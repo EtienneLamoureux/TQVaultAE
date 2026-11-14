@@ -7590,5 +7590,41 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("LoadoutEquipmentLocked", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace the worn pieces instead of storing them in the vault.
+        /// </summary>
+        public static string SettingsLoadoutReplaceWorn {
+            get {
+                return ResourceManager.GetString("SettingsLoadoutReplaceWorn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading a loadout takes off the worn pieces it does not use and deletes them, instead of storing them in the vault bag shown.[rest of string was truncated].
+        /// </summary>
+        public static string SettingsLoadoutReplaceWornTT {
+            get {
+                return ResourceManager.GetString("SettingsLoadoutReplaceWornTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading "{0}" deletes these worn pieces:[rest of string was truncated].
+        /// </summary>
+        public static string LoadoutReplaceConfirm {
+            get {
+                return ResourceManager.GetString("LoadoutReplaceConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout "{0}" worn: {1} piece(s) replaced, {2} copied in..
+        /// </summary>
+        public static string LoadoutLoadedReplaced {
+            get {
+                return ResourceManager.GetString("LoadoutLoadedReplaced", resourceCulture);
+            }
+        }
     }
 }

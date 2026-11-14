@@ -79,4 +79,22 @@ public interface ILoadoutService
 	/// <param name="bagSize">Its size in cells.</param>
 	/// <param name="bagPlace">Its place, given to the pieces stored (the search follows them).</param>
 	LoadoutLoadResult Load(LoadoutSet loadouts, string name, PlayerCollection player, Domain.Entities.SackCollection bag, System.Drawing.Size bagSize, Domain.Entities.ContainerPlace bagPlace);
+
+	/// <summary>
+	/// Wears a loadout as <see cref="Load"/> does, but the worn pieces the loadout does not use are deleted instead of
+	/// stored (a loadout keeps copies: this saves piling up duplicates). They leave the search too.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="name">The loadout.</param>
+	/// <param name="player">The character.</param>
+	LoadoutLoadResult LoadReplacing(LoadoutSet loadouts, string name, PlayerCollection player);
+
+	/// <summary>
+	/// The worn pieces a load of the loadout would take off, in slot order (none when the loadout or the equipment is
+	/// missing): what <see cref="LoadReplacing"/> deletes, to show before it.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="name">The loadout.</param>
+	/// <param name="player">The character.</param>
+	IReadOnlyList<Domain.Entities.Item> TakenOff(LoadoutSet loadouts, string name, PlayerCollection player);
 }

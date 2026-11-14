@@ -46,6 +46,7 @@ public sealed record SettingsValues
 	/// Sorting a bag also stacks the shards of the same relic or charm (<c>&lt;Sort MergeRelics="..." /&gt;</c>).
 	/// </summary>
 	public bool MergeRelicsOnSort { get; set; }
+	public bool LoadoutReplaceWorn { get; set; }
 
 	public bool AllowCheats { get; set; }
 	public bool GitBackupEnabled { get; set; }
@@ -105,6 +106,7 @@ public sealed record SettingsValues
 			EnableEpicLegendaryAffixes = settings.EnableEpicLegendaryAffixes,
 			DisableAutoStacking = settings.DisableAutoStacking,
 			MergeRelicsOnSort = settings.Sort?.MergeRelics ?? false,
+			LoadoutReplaceWorn = settings.Loadout?.ReplaceWorn ?? false,
 			AllowCheats = settings.AllowCheats,
 			GitBackupEnabled = settings.GitBackupEnabled,
 			GitBackupRepository = settings.GitBackupRepository ?? string.Empty,
@@ -151,6 +153,8 @@ public sealed record SettingsValues
 		settings.DisableAutoStacking = this.DisableAutoStacking;
 		settings.Sort ??= new SortSettings();
 		settings.Sort.MergeRelics = this.MergeRelicsOnSort;
+		settings.Loadout ??= new LoadoutSettings();
+		settings.Loadout.ReplaceWorn = this.LoadoutReplaceWorn;
 		settings.AllowCheats = this.AllowCheats;
 		settings.GitBackupEnabled = this.GitBackupEnabled;
 		settings.DisableLegacyBackup = this.DisableLegacyBackup;

@@ -81,6 +81,45 @@ public sealed partial class LoadoutServiceTests
 	}
 
 	[Fact]
+	public void LoadReplacing_DeletesTheWornPiecesTheLoadoutDoesNotUse_AndTheyLeaveTheSearch()
+	{
+		var helm = Piece("helm", 1);
+		var wornTorso = Piece("torso", 3);
+		var wornRing = Piece("ring", 5);
+		var set = this.WithLoadout("A", false, (0, helm), (2, Piece("torso", 4)));
+		var player = Worn(false, (0, helm), (2, wornTorso), (EquipmentRules.Ring1Slot, wornRing));
+
+		var result = this._service.LoadReplacing(set, "A", player);
+
+		result.Outcome.Should().Be(LoadoutLoadOutcome.Loaded);
+		result.Replaced.Should().Equal(wornTorso, wornRing);
+		result.Stored.Should().BeEmpty();
+		result.ToBag.Should().Be(0);
+		result.Copied.Should().Be(1);
+		var equipment = player.EquipmentSack!;
+		equipment.GetItem(0).Should().BeSameAs(helm);
+		equipment.GetItem(2).Seed.Should().Be(4);
+		ItemKey.IsEmptyItem(equipment.GetItem(EquipmentRules.Ring1Slot)).Should().BeTrue();
+		equipment.Should().NotContain(wornTorso).And.NotContain(wornRing);
+		this._database.Verify(d => d.RemoveItemFromDatabase(wornTorso), Times.Once);
+		this._database.Verify(d => d.RemoveItemFromDatabase(wornRing), Times.Once);
+	}
+
+	[Fact]
+	public void TakenOff_ListsTheWornPiecesALoadWouldTakeOff_InSlotOrder()
+	{
+		var helm = Piece("helm", 1);
+		var wornTorso = Piece("torso", 3);
+		var wornRing = Piece("ring", 5);
+		var set = this.WithLoadout("A", false, (0, helm), (2, Piece("torso", 4)));
+		var player = Worn(false, (EquipmentRules.Ring1Slot, wornRing), (0, helm), (2, wornTorso));
+
+		this._service.TakenOff(set, "A", player).Should().Equal(wornTorso, wornRing);
+		this._service.TakenOff(set, "Missing", player).Should().BeEmpty();
+		player.EquipmentSack!.IsModified.Should().BeFalse("listing changes nothing");
+	}
+
+	[Fact]
 	public void Load_RingsAndWeaponSetsSwapped_MovesThePiecesWithoutCopyNorBag()
 	{
 		var ringA = Piece("ringa", 1);

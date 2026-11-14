@@ -338,6 +338,9 @@ internal partial class SettingsUserControl
 	private void scalingCheckBoxMergeRelicsOnSort_CheckedChanged(object? sender, EventArgs e)
 		=> this.editor.Current.MergeRelicsOnSort = this.scalingCheckBoxMergeRelicsOnSort.Checked;
 
+	private void scalingCheckBoxLoadoutReplaceWorn_CheckedChanged(object? sender, EventArgs e)
+		=> this.editor.Current.LoadoutReplaceWorn = this.scalingCheckBoxLoadoutReplaceWorn.Checked;
+
 	private void checkGroupBoxCheats_CheckedChanged(object? sender, EventArgs e)
 	{
 		// Turning the cheats off turns off character editing, item editing and item copying.

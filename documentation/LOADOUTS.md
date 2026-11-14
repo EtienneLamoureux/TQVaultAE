@@ -28,6 +28,9 @@ button of the character editor, when it shows, is on the line below):
 - The pieces you wear that the loadout does not use are taken off and stored in the **vault bag shown** in the vault
   panel. Only these pieces need room. Without room for all of them, nothing changes and the status line says so: show
   another bag, or make room, and load again.
+- With the setting **Replace the worn pieces instead of storing them in the vault** (Settings, group **Loadouts**),
+  these pieces are deleted instead: no vault is needed. Since a loadout keeps copies, this saves piling up duplicates.
+  TQVault lists the pieces and asks first, unless **Bypass Confirmation Messages** is on.
 - The loadout's weapon set is put in hand.
 - No requirement is checked: like the game, a piece you cannot use yet stays in its slot without its bonuses.
 - Save as usual to write the character and the vault.

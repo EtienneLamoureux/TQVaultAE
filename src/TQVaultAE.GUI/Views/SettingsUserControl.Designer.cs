@@ -185,6 +185,8 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelTooltipEnhanced = new BufferedFlowLayoutPanel();
 		groupBoxStackable = new GroupBox();
 		bufferedFlowLayoutPanelStackable = new BufferedFlowLayoutPanel();
+		groupBoxLoadout = new GroupBox();
+		bufferedFlowLayoutPanelLoadout = new BufferedFlowLayoutPanel();
 		scalingCheckBoxTooltipDetailedView = new ScalingCheckBox();
 		scalingCheckBoxTooltipInGameRolls = new ScalingCheckBox();
 		scalingCheckBoxTooltipValueRanges = new ScalingCheckBox();
@@ -196,6 +198,7 @@ internal partial class SettingsUserControl
 		scalingCheckBoxEnableEpicLegendaryAffixes = new ScalingCheckBox();
 		scalingCheckBoxDisableAutoStacking = new ScalingCheckBox();
 		scalingCheckBoxMergeRelicsOnSort = new ScalingCheckBox();
+		scalingCheckBoxLoadoutReplaceWorn = new ScalingCheckBox();
 		checkGroupBoxGitBackup = new CheckGroupBox();
 		bufferedFlowLayoutPanelGitBackup = new BufferedFlowLayoutPanel();
 		scalingCheckBoxDisableLegacyBackup = new ScalingCheckBox();
@@ -258,6 +261,8 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelTooltipEnhanced.SuspendLayout();
 		groupBoxStackable.SuspendLayout();
 		bufferedFlowLayoutPanelStackable.SuspendLayout();
+		groupBoxLoadout.SuspendLayout();
+		bufferedFlowLayoutPanelLoadout.SuspendLayout();
 		groupBoxGfxAndAudio.SuspendLayout();
 		bufferedFlowLayoutPanelGfxAndAudio.SuspendLayout();
 		detectLanguageCheckBox.SuspendLayout();
@@ -562,6 +567,26 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelStackable.Name = "bufferedFlowLayoutPanelStackable";
 		bufferedFlowLayoutPanelStackable.TabIndex = 0;
 		//
+		// groupBoxLoadout
+		//
+		groupBoxLoadout.AutoSize = true;
+		groupBoxLoadout.Controls.Add(bufferedFlowLayoutPanelLoadout);
+		groupBoxLoadout.ForeColor = Color.Gold;
+		groupBoxLoadout.Name = "groupBoxLoadout";
+		groupBoxLoadout.TabIndex = 59;
+		groupBoxLoadout.TabStop = false;
+		groupBoxLoadout.Text = "Loadouts";
+		//
+		// bufferedFlowLayoutPanelLoadout
+		//
+		bufferedFlowLayoutPanelLoadout.AutoSize = true;
+		bufferedFlowLayoutPanelLoadout.Controls.Add(scalingCheckBoxLoadoutReplaceWorn);
+		bufferedFlowLayoutPanelLoadout.Dock = DockStyle.Fill;
+		bufferedFlowLayoutPanelLoadout.FlowDirection = FlowDirection.TopDown;
+		bufferedFlowLayoutPanelLoadout.Location = new Point(3, 20);
+		bufferedFlowLayoutPanelLoadout.Name = "bufferedFlowLayoutPanelLoadout";
+		bufferedFlowLayoutPanelLoadout.TabIndex = 0;
+		//
 		// scalingCheckBoxTooltipDetailedView
 		//
 		scalingCheckBoxTooltipDetailedView.AutoSize = true;
@@ -716,6 +741,17 @@ internal partial class SettingsUserControl
 		scalingCheckBoxMergeRelicsOnSort.Text = "Merge relic shards when sorting";
 		scalingCheckBoxMergeRelicsOnSort.UseVisualStyleBackColor = true;
 		scalingCheckBoxMergeRelicsOnSort.CheckedChanged += scalingCheckBoxMergeRelicsOnSort_CheckedChanged;
+		//
+		// scalingCheckBoxLoadoutReplaceWorn
+		//
+		scalingCheckBoxLoadoutReplaceWorn.AutoSize = true;
+		scalingCheckBoxLoadoutReplaceWorn.Font = new Font("Microsoft Sans Serif", 11.25F);
+		scalingCheckBoxLoadoutReplaceWorn.ForeColor = Color.White;
+		scalingCheckBoxLoadoutReplaceWorn.Name = "scalingCheckBoxLoadoutReplaceWorn";
+		scalingCheckBoxLoadoutReplaceWorn.TabIndex = 0;
+		scalingCheckBoxLoadoutReplaceWorn.Text = "Replace the worn pieces instead of storing them in the vault";
+		scalingCheckBoxLoadoutReplaceWorn.UseVisualStyleBackColor = true;
+		scalingCheckBoxLoadoutReplaceWorn.CheckedChanged += scalingCheckBoxLoadoutReplaceWorn_CheckedChanged;
 		// 
 		// checkGroupBoxGitBackup
 		// 
@@ -1333,6 +1369,7 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(detectLanguageCheckBox);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(checkGroupBoxGitBackup);
 		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(groupBoxStackable);
+		bufferedFlowLayoutPanelSkeletonLeft.Controls.Add(groupBoxLoadout);
 		bufferedFlowLayoutPanelSkeletonLeft.Dock = DockStyle.Fill;
 		bufferedFlowLayoutPanelSkeletonLeft.FlowDirection = FlowDirection.TopDown;
 		bufferedFlowLayoutPanelSkeletonLeft.Location = new Point(3, 3);
@@ -1420,6 +1457,10 @@ internal partial class SettingsUserControl
 		groupBoxStackable.PerformLayout();
 		bufferedFlowLayoutPanelStackable.ResumeLayout(false);
 		bufferedFlowLayoutPanelStackable.PerformLayout();
+		groupBoxLoadout.ResumeLayout(false);
+		groupBoxLoadout.PerformLayout();
+		bufferedFlowLayoutPanelLoadout.ResumeLayout(false);
+		bufferedFlowLayoutPanelLoadout.PerformLayout();
 		groupBoxGfxAndAudio.ResumeLayout(false);
 		groupBoxGfxAndAudio.PerformLayout();
 		bufferedFlowLayoutPanelGfxAndAudio.ResumeLayout(false);
@@ -1483,6 +1524,9 @@ internal partial class SettingsUserControl
 	private ScalingCheckBox scalingCheckBoxEnableEpicLegendaryAffixes;
 	private ScalingCheckBox scalingCheckBoxDisableAutoStacking;
 	private ScalingCheckBox scalingCheckBoxMergeRelicsOnSort;
+	private System.Windows.Forms.GroupBox groupBoxLoadout;
+	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelLoadout;
+	private ScalingCheckBox scalingCheckBoxLoadoutReplaceWorn;
 	private TQVaultAE.GUI.Components.CheckGroupBox checkGroupBoxGitBackup;
 	private ScalingCheckBox scalingCheckBoxDisableLegacyBackup;
 	private ScalingTextBox scalingTextBoxGitRepository;

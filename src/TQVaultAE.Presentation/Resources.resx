@@ -2760,4 +2760,22 @@ Leave the editor without applying the changes?</value>
 	<data name="LoadoutEquipmentLocked" xml:space="preserve">
     <value>The setting "{0}" is on: the equipment cannot change.</value>
   </data>
+	<data name="SettingsLoadoutReplaceWorn" xml:space="preserve">
+    <value>Replace the worn pieces instead of storing them in the vault</value>
+  </data>
+	<data name="SettingsLoadoutReplaceWornTT" xml:space="preserve">
+    <value>Loading a loadout takes off the worn pieces it does not use and deletes them, instead of storing them in the vault bag shown.
+A loadout keeps copies of its pieces: this saves piling up duplicates.
+TQVault lists the pieces and asks first, unless "Bypass Confirmation Messages" is on.</value>
+  </data>
+	<data name="LoadoutReplaceConfirm" xml:space="preserve">
+    <value>Loading "{0}" deletes these worn pieces:
+
+{1}
+
+Go on?</value>
+  </data>
+	<data name="LoadoutLoadedReplaced" xml:space="preserve">
+    <value>Loadout "{0}" worn: {1} piece(s) replaced, {2} copied in.</value>
+  </data>
 </root>
