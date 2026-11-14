@@ -227,6 +227,7 @@ internal sealed partial class CharacterEditorUserControl
 			check.Text = string.Empty;
 			check.BackColor = Color.Black;
 			check.AutoSize = true;
+			check.SizeChanged += (_, _) => this.AlignCheckBox(check);
 		}
 		else if (editor is ComboBox combo)
 		{
@@ -244,22 +245,31 @@ internal sealed partial class CharacterEditorUserControl
 	}
 
 	/// <summary>Places an editor of the side panel at its row, in its font.</summary>
-	private void PlaceSideEditor(Control editor, Rectangle bounds, Font font)
+	private void PlaceSideEditor(Control editor, Rectangle row, Font font)
 	{
-		editor.Bounds = bounds;
+		editor.Bounds = row;
 		editor.Font = font;
-		if (editor is CheckBox check)
-		{
-			// At the right end of its row, where the game writes numbers, the label before it taking the rest; on the row's
-			// bottom, clear of a drop-down list above it, a little higher than its row.
-			check.Location = new Point(bounds.Right - check.Width, bounds.Bottom - check.Height);
-		}
-		else if (editor is ComboBox combo)
-		{
-			FitComboHeight(combo, bounds.Height);
-		}
+		if (editor is ComboBox combo)
+			FitComboHeight(combo, row.Height);
 
-		this._sideEditorBounds[editor] = (editor.Bounds, bounds.Height);
+		this._sideEditorBounds[editor] = (editor.Bounds, row);
+		if (editor is CheckBox check)
+			this.AlignCheckBox(check);
+	}
+
+	/// <summary>
+	/// Puts a check box of the side panel at the right end of its row, where the game writes numbers, the label before it
+	/// taking the rest; on the row's bottom, clear of a drop-down list above it. Done again each time its size changes:
+	/// before its window exists it measures itself at the system DPI, and takes its size at the editor's DPI afterwards.
+	/// </summary>
+	private void AlignCheckBox(CheckBox check)
+	{
+		if (!this._sideEditorBounds.TryGetValue(check, out var place))
+			return;
+
+		var bounds = new Rectangle(place.Row.Right - check.Width, place.Row.Bottom - check.Height, check.Width, check.Height);
+		this._sideEditorBounds[check] = (bounds, place.Row);
+		check.Location = bounds.Location;
 	}
 
 	/// <summary>
@@ -273,7 +283,7 @@ internal sealed partial class CharacterEditorUserControl
 	}
 
 	/// <summary>Where each editor of the side panel goes, in pixels at the editor's DPI.</summary>
-	private readonly Dictionary<Control, (Rectangle Bounds, int RowHeight)> _sideEditorBounds = [];
+	private readonly Dictionary<Control, (Rectangle Bounds, Rectangle Row)> _sideEditorBounds = [];
 
 	/// <summary>Draws an entry of a side panel drop-down, and its box, in the panel's colours.</summary>
 	private static void DrawSideComboItem(object? sender, DrawItemEventArgs e)
@@ -472,13 +482,13 @@ internal sealed partial class CharacterEditorUserControl
 		if (this.IsDisposed)
 			return;
 
-		foreach (var (editor, (bounds, rowHeight)) in this._sideEditorBounds)
+		foreach (var (editor, (bounds, row)) in this._sideEditorBounds.ToList())
 		{
 			if (!ReferenceEquals(editor.Font, this._editorFont))
 			{
 				editor.Font = this._editorFont;
 				if (editor is ComboBox combo)
-					FitComboHeight(combo, rowHeight);
+					FitComboHeight(combo, row.Height);
 			}
 
 			if (editor.Bounds != bounds)
