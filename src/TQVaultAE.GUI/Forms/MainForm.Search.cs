@@ -66,7 +66,7 @@ public partial class MainForm
 
 		// Display a dialog with the results.
 		ResultsDialog dlg = this.Services.Forms.Create<ResultsDialog>();
-		dlg.ResultChanged += new ResultsDialog.EventHandler<ResultChangedEventArgs>(this.SelectResult);
+		dlg.ResultChanged += this.SelectResult;
 		dlg.ResultsList.Clear();
 		dlg.ResultsList.AddRange(results);
 		dlg.SearchString = searchString ?? string.Empty;

@@ -185,28 +185,25 @@ public partial class SearchDialogAdvanced : VaultForm
 		#endregion
 
 		// Mapping between nav button & content component
-		if (NavMap is null)
-		{
-			NavMap = [
-				(this.scalingButtonMenuAttribute, this.flowLayoutPanelItemAttributes),
-				(this.scalingButtonMenuBaseAttribute, this.flowLayoutPanelBaseAttributes),
-				(this.scalingButtonMenuCharacters, this.flowLayoutPanelCharacters),
-				(this.scalingButtonMenuPrefixAttribute, this.flowLayoutPanelPrefixAttributes),
-				(this.scalingButtonMenuPrefixName, this.flowLayoutPanelPrefixName),
-				(this.scalingButtonMenuRarity, this.flowLayoutPanelRarity),
-				(this.scalingButtonMenuStyle, this.flowLayoutPanelStyle),
-				(this.scalingButtonMenuSuffixAttribute, this.flowLayoutPanelSuffixAttributes),
-				(this.scalingButtonMenuSuffixName, this.flowLayoutPanelSuffixName),
-				(this.scalingButtonMenuType, this.flowLayoutPanelItemType),
-				(this.scalingButtonMenuVaults, this.flowLayoutPanelInVaults),
-				(this.scalingButtonMenuWithCharm, this.flowLayoutPanelWithCharm),
-				(this.scalingButtonMenuWithRelic, this.flowLayoutPanelWithRelic),
-				(this.scalingButtonMenuQuality, this.flowLayoutPanelQuality),
-				(this.scalingButtonMenuOrigin, this.flowLayoutPanelOrigin),
-				(this.scalingButtonMenuSetItems, this.flowLayoutPanelSetItems),
-				(this.scalingButtonMenuSkills, this.flowLayoutPanelSkills),
-			];
-		}
+		NavMap = [
+			(this.scalingButtonMenuAttribute, this.flowLayoutPanelItemAttributes),
+			(this.scalingButtonMenuBaseAttribute, this.flowLayoutPanelBaseAttributes),
+			(this.scalingButtonMenuCharacters, this.flowLayoutPanelCharacters),
+			(this.scalingButtonMenuPrefixAttribute, this.flowLayoutPanelPrefixAttributes),
+			(this.scalingButtonMenuPrefixName, this.flowLayoutPanelPrefixName),
+			(this.scalingButtonMenuRarity, this.flowLayoutPanelRarity),
+			(this.scalingButtonMenuStyle, this.flowLayoutPanelStyle),
+			(this.scalingButtonMenuSuffixAttribute, this.flowLayoutPanelSuffixAttributes),
+			(this.scalingButtonMenuSuffixName, this.flowLayoutPanelSuffixName),
+			(this.scalingButtonMenuType, this.flowLayoutPanelItemType),
+			(this.scalingButtonMenuVaults, this.flowLayoutPanelInVaults),
+			(this.scalingButtonMenuWithCharm, this.flowLayoutPanelWithCharm),
+			(this.scalingButtonMenuWithRelic, this.flowLayoutPanelWithRelic),
+			(this.scalingButtonMenuQuality, this.flowLayoutPanelQuality),
+			(this.scalingButtonMenuOrigin, this.flowLayoutPanelOrigin),
+			(this.scalingButtonMenuSetItems, this.flowLayoutPanelSetItems),
+			(this.scalingButtonMenuSkills, this.flowLayoutPanelSkills),
+		];
 
 		// Keep reference of base Up & Down button image
 		this.ButtonImageUp = this.scalingButtonMenuAttribute.UpBitmap;
@@ -612,9 +609,8 @@ public partial class SearchDialogAdvanced : VaultForm
 		if (this.CachedCheckedListBoxes.Count == 0)
 			return;
 
-		var maxElement = (int)this.numericUpDownMaxElement.Value;
 		foreach (var lb in this.CachedCheckedListBoxes)
-			lb.AdjustToMaxTextWidth(maxElement);
+			lb.AdjustToMaxTextWidth();
 	}
 
 	#region Populate

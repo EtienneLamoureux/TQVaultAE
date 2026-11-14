@@ -87,14 +87,6 @@ public partial class ResultsDialog : VaultForm
 	}
 
 	/// <summary>
-	/// Event Handler for the ResultChanged event.
-	/// </summary>
-	/// <typeparam name="ResultChangedEventArgs">ResultChangedEventArgs type</typeparam>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">ResultChangedEventArgs data</param>
-	public delegate void EventHandler<ResultChangedEventArgs>(object? sender, ResultChangedEventArgs e);
-
-	/// <summary>
 	/// Event for changing to a different highlighted result.
 	/// </summary>
 	public event EventHandler<ResultChangedEventArgs>? ResultChanged;
