@@ -18,6 +18,10 @@ public partial class ComboBoxCharacterDropDown : UserControl
 	}
 
 	private void ComboBox_Resize(object? sender, EventArgs e)
+		=> this.FitWidth();
+
+	/// <summary>The width of the combo box, its items as wide as the room left by the scroll bar.</summary>
+	internal void FitWidth()
 	{
 		this.Width = ComboBox.Width;
 		ResizeAllItems();

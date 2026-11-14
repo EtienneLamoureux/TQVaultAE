@@ -424,14 +424,15 @@ public partial class BagButtonSettings : VaultForm
 		if (picName.Length > 0)
 			picName = picName[0] + picName[1..].ToLowerInvariant();// Titlecase
 
-		var loc = this.PointToClient(screenLocation);
-		this.iconMagnifier.Location = new Point(loc.X, loc.Y + iconHeight);// Locate below icon
-
 		this.iconMagnifier.pictureBox.Image = cell.Bitmap;
 		this.iconMagnifier.scalingLabelFilename.Text = picName;
 		this.iconMagnifier.scalingLabelSize.Text = string.Format("{0} x {1}", cell.Bitmap.Width, cell.Bitmap.Height);
 
+		// Placed once shown: the first show after a move to a monitor of another DPI scales the bounds the hidden magnifier
+		// got for the previous DPI.
 		this.iconMagnifier.Visible = true;
+		var loc = this.PointToClient(screenLocation);
+		this.iconMagnifier.Location = new Point(loc.X, loc.Y + iconHeight);// Locate below icon
 	}
 
 	#endregion

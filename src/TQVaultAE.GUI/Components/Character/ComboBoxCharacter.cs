@@ -549,6 +549,10 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing
 	{
 		this.DropDown.SendToBack();
 		this.DropDown.Visible = true;
+		// Placed and sized once shown: the first show after a move to a monitor of another DPI scales the bounds the hidden
+		// list got for the previous DPI.
+		this.AdjustLocation();
+		this.DropDown.FitWidth();
 		this.DropDown.BringToFront();
 
 		// Scroll to selected control

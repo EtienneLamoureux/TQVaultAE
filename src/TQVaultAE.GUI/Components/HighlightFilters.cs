@@ -225,6 +225,17 @@ public partial class HighlightFilters : UserControl
 		}
 	}
 
+	/// <summary>
+	/// Placed again once shown: the first show after a move to a monitor of another DPI scales the bounds the hidden panel
+	/// got for the previous DPI, which would move it away from the link.
+	/// </summary>
+	protected override void OnVisibleChanged(EventArgs e)
+	{
+		base.OnVisibleChanged(e);
+		if (this.Visible && this._link is not null)
+			this.AdjustLocation();
+	}
+
 	private void AdjustLocation()
 	{
 		// Adjust location: over the link, in the view holding both.
