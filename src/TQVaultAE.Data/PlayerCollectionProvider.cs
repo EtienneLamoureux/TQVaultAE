@@ -117,26 +117,9 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			var end_block = TQData.ReadIntAfter(pc.rawData, "end_block", max.nextOffset);
 			var masteriesAllowed = TQData.ReadIntAfter(pc.rawData, "masteriesAllowed", max.nextOffset);// Boundary bottom
 
-			// Split file using Span-based slicing (single allocation)
+			// Replace the skill lines, from after "max" up to the "masteriesAllowed" key (its length included)
 			var section = pc.PlayerInfo.SkillRecordList.SelectMany(s => s.ToBinary(secondblock.valueAsInt, end_block.valueAsInt)).ToArray();
-			int startLen = max.nextOffset;
-			int endLen = pc.rawData.Length - (masteriesAllowed.indexOf - 4);
-			int totalLen = startLen + section.Length + endLen;
-			var result = new byte[totalLen];
-			var resultSpan = result.AsSpan();
-
-		// startfile
-		pc.rawData.AsSpan(0, startLen).CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(startLen);
-
-		// section
-		section.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(section.Length);
-
-		// endfile
-		pc.rawData.AsSpan(masteriesAllowed.indexOf - 4).CopyTo(resultSpan);
-
-		pc.rawData = result;
+			pc.rawData = SaveBytes.Splice(pc.rawData, max.nextOffset, masteriesAllowed.indexOf - 4, section);
 
 			// Adjust "max" value (need to find new offsets)
 			firstblock = TQData.ReadIntAfter(pc.rawData, "begin_block");
@@ -247,38 +230,16 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		var equipmentBlockEnd = TQData.BinaryFindEndBlockOf(pc.rawData, "useAlternate");
 		var equipmentBlockEndOffset = equipmentBlockEnd.nextOffset;
 
-		// Build result using Span-based splicing (single allocation)
-		int totalLen = itemBlockStartOffset + rawItemData.Length + (equipmentBlockStartOffset - itemBlockEndOffset) + rawEquipmentData.Length + (pc.rawData.Length - equipmentBlockEndOffset);
-		var result = new byte[totalLen];
-		var resultSpan = result.AsSpan();
+		// The equipment block first: it comes after the item block, whose offsets stay valid.
+		var result = SaveBytes.Splice(pc.rawData, equipmentBlockStartOffset, equipmentBlockEndOffset, rawEquipmentData);
 
-		// Beginning of the file
-		pc.rawData.AsSpan(0, itemBlockStartOffset).CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(itemBlockStartOffset);
-
-		// New item segment
-		rawItemData.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(rawItemData.Length);
-
-		// In between segment
-		int betweenLen = equipmentBlockStartOffset - itemBlockEndOffset;
-		pc.rawData.AsSpan(itemBlockEndOffset, betweenLen).CopyTo(resultSpan);
-
-		// It ends with the useAlternate value: written only when the weapon set in hand changed (a loadout loaded), so an
-		// unchanged file keeps its bytes.
-		bool savedAlternate = BitConverter.ToInt32(pc.rawData, equipmentBlockStartOffset - sizeof(int)) != 0;
+		// The useAlternate value just before the equipment block: written only when the weapon set in hand changed (a
+		// loadout loaded), so an unchanged file keeps its bytes.
+		bool savedAlternate = BitConverter.ToInt32(result, equipmentBlockStartOffset - sizeof(int)) != 0;
 		if (savedAlternate != pc.UseAlternate)
-			BitConverter.TryWriteBytes(resultSpan.Slice(betweenLen - sizeof(int), sizeof(int)), pc.UseAlternate ? 1 : 0);
-		resultSpan = resultSpan.Slice(betweenLen);
+			BitConverter.TryWriteBytes(result.AsSpan(equipmentBlockStartOffset - sizeof(int), sizeof(int)), pc.UseAlternate ? 1 : 0);
 
-		// New equipment segment
-		rawEquipmentData.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(rawEquipmentData.Length);
-
-		// End of file
-		pc.rawData.AsSpan(equipmentBlockEndOffset).CopyTo(resultSpan);
-
-		return result;
+		return SaveBytes.Splice(result, itemBlockStartOffset, itemBlockEndOffset, rawItemData);
 	}
 
 
@@ -718,48 +679,24 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// Encodes the live item data into raw binary format
 	/// </summary>
 	/// <returns>byte array holding the converted binary data</returns>
-	private byte[] EncodeItemData(PlayerCollection pc)
+	private byte[] EncodeItemData(PlayerCollection pc) => SaveBytes.Encode(writer =>
 	{
-		int dataLength;
-		byte[] data;
+		TQData.WriteCString(writer, "numberOfSacks");
+		writer.Write(pc.numberOfSacks);
 
-		// Encode the item data into a memory stream
-		using (MemoryStream writeStream = new MemoryStream(2048))
+		TQData.WriteCString(writer, "currentlyFocusedSackNumber");
+		writer.Write(pc.currentlyFocusedSackNumber);
+
+		TQData.WriteCString(writer, "currentlySelectedSackNumber");
+		writer.Write(pc.currentlySelectedSackNumber);
+
+		ArgumentNullException.ThrowIfNull(pc.Sacks);
+		for (int i = 0; i < pc.numberOfSacks; ++i)
 		{
-			using (BinaryWriter writer = new BinaryWriter(writeStream))
-			{
-				TQData.WriteCString(writer, "numberOfSacks");
-				writer.Write(pc.numberOfSacks);
-
-				TQData.WriteCString(writer, "currentlyFocusedSackNumber");
-				writer.Write(pc.currentlyFocusedSackNumber);
-
-				TQData.WriteCString(writer, "currentlySelectedSackNumber");
-				writer.Write(pc.currentlySelectedSackNumber);
-
-				ArgumentNullException.ThrowIfNull(pc.Sacks);
-				for (int i = 0; i < pc.numberOfSacks; ++i)
-				{
-					// SackType should already be set at pc point
-					SackCollectionProvider.Encode(pc.Sacks[i], writer);
-				}
-
-				dataLength = (int)writeStream.Length;
-			}
-
-			// now just return the buffer we wrote to.
-			data = writeStream.GetBuffer();
+			// SackType should already be set at pc point
+			SackCollectionProvider.Encode(pc.Sacks[i], writer);
 		}
-
-		// The problem is that ans() may be bigger than the amount of data in it.
-		// We need to resize the array
-		if (dataLength == data.Length)
-			return data;
-
-		byte[] realData = new byte[dataLength];
-		Array.Copy(data, realData, dataLength);
-		return realData;
-	}
+	});
 
 	/// <summary>
 	/// Parses the item block
@@ -809,41 +746,17 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// Encodes the live equipment data into raw binary
 	/// </summary>
 	/// <returns>byte array holding the converted binary data</returns>
-	private byte[] EncodeEquipmentData(PlayerCollection pc)
+	private byte[] EncodeEquipmentData(PlayerCollection pc) => SaveBytes.Encode(writer =>
 	{
-		int dataLength;
-		byte[] data;
-
-		// Encode the item data into a memory stream
-		using (MemoryStream writeStream = new MemoryStream(2048))
+		if (pc.IsImmortalThrone)
 		{
-			using (BinaryWriter writer = new BinaryWriter(writeStream))
-			{
-				if (pc.IsImmortalThrone)
-				{
-					TQData.WriteCString(writer, "equipmentCtrlIOStreamVersion");
-					writer.Write(pc.equipmentCtrlIOStreamVersion);
-				}
-
-				ArgumentNullException.ThrowIfNull(pc.EquipmentSack);
-				SackCollectionProvider.Encode(pc.EquipmentSack, writer);
-
-				dataLength = (int)writeStream.Length;
-			}
-
-			// now just return the buffer we wrote to.
-			data = writeStream.GetBuffer();
+			TQData.WriteCString(writer, "equipmentCtrlIOStreamVersion");
+			writer.Write(pc.equipmentCtrlIOStreamVersion);
 		}
 
-		// The problem is that ans() may be bigger than the amount of data in it.
-		// We need to resize the array
-		if (dataLength == data.Length)
-			return data;
-
-		byte[] realData = new byte[dataLength];
-		Array.Copy(data, realData, dataLength);
-		return realData;
-	}
+		ArgumentNullException.ThrowIfNull(pc.EquipmentSack);
+		SackCollectionProvider.Encode(pc.EquipmentSack, writer);
+	});
 
 
 	/// <summary>

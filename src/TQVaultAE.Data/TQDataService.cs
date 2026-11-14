@@ -289,30 +289,13 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 		var found = ReadCStringAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf == -1) return false;
 
-		// Remove CString value using Span-based slicing
-		var keyBytes = Encoding1252.GetBytes(keyToLookFor);
-		int startLen = found.indexOf - sizeof(int);
-		int endLen = playerFileContent.Length - found.nextOffset;
-		int totalLen = startLen + sizeof(int) + keyBytes.Length + sizeof(int) + endLen;
-		var result = new byte[totalLen];
-		var resultSpan = result.AsSpan();
-
-		// start content
-		playerFileContent.AsSpan(0, startLen).CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(startLen);
-		// KeyLen
-		BitConverter.GetBytes(keyToLookFor.Length).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// Key
-		keyBytes.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(keyBytes.Length);
-		// ValueLen (set to 0 to remove)
-		BitConverter.GetBytes(0).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// end content
-		playerFileContent.AsSpan(found.nextOffset).CopyTo(resultSpan);
-
-		playerFileContent = result;
+		// The key, then an empty value (length 0)
+		var keyAndValue = SaveBytes.Encode(writer =>
+		{
+			WriteKey(writer, keyToLookFor);
+			writer.Write(0);
+		}, 64);
+		playerFileContent = SaveBytes.Splice(playerFileContent, found.indexOf - sizeof(int), found.nextOffset, keyAndValue);
 		return true;
 	}
 
@@ -321,34 +304,23 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 		var found = ReadUnicodeStringAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf == -1) return false;
 
-		// Replace Unicode String value using Span-based slicing
-		var keyBytes = Encoding1252.GetBytes(keyToLookFor);
-		var valueBytes = EncodingUnicode.GetBytes(replacement);
-		int startLen = found.indexOf - sizeof(int);
-		int endLen = playerFileContent.Length - found.nextOffset;
-		int totalLen = startLen + sizeof(int) + keyBytes.Length + sizeof(int) + valueBytes.Length + endLen;
-		var result = new byte[totalLen];
-		var resultSpan = result.AsSpan();
-
-		// start content
-		playerFileContent.AsSpan(0, startLen).CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(startLen);
-		// KeyLen
-		BitConverter.GetBytes(keyToLookFor.Length).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// Key
-		keyBytes.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(keyBytes.Length);
-		// ValueLen
-		BitConverter.GetBytes(replacement.Length).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// Value
-		valueBytes.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(valueBytes.Length);
-		// end content
-		playerFileContent.AsSpan(found.nextOffset).CopyTo(resultSpan);
-
-		playerFileContent = result;
+		// The key, then the value: its length in characters and its UTF-16 bytes
+		var keyAndValue = SaveBytes.Encode(writer =>
+		{
+			WriteKey(writer, keyToLookFor);
+			writer.Write(replacement.Length);
+			writer.Write(EncodingUnicode.GetBytes(replacement));
+		}, 64);
+		playerFileContent = SaveBytes.Splice(playerFileContent, found.indexOf - sizeof(int), found.nextOffset, keyAndValue);
 		return true;
+	}
+
+	/// <summary>
+	/// A key as the value splices write it: its length in characters, then its CP1252 bytes.
+	/// </summary>
+	private static void WriteKey(BinaryWriter writer, string key)
+	{
+		writer.Write(key.Length);
+		writer.Write(Encoding1252.GetBytes(key));
 	}
 }

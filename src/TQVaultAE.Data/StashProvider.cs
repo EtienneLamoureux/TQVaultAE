@@ -105,56 +105,33 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 	/// Converts the live data back into the raw binary data format
 	/// </summary>
 	/// <returns>byte array holding the raw data</returns>
-	public byte[] Encode(Stash sta)
+	public byte[] Encode(Stash sta) => SaveBytes.Encode(writer =>
 	{
-		int dataLength;
-		byte[] data;
+		// Write zero into the checksum value
+		writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
 
-		// Encode the item data into a memory stream
-		using (MemoryStream writeStream = new MemoryStream(2048))
-		{
-			using (BinaryWriter writer = new BinaryWriter(writeStream))
-			{
-				// Write zero into the checksum value
-				writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
+		TQData.WriteCString(writer, "begin_block");
+		writer.Write(sta.beginBlockCrap);
 
-				TQData.WriteCString(writer, "begin_block");
-				writer.Write(sta.beginBlockCrap);
+		TQData.WriteCString(writer, "stashVersion");
+		writer.Write(sta.stashVersion);
 
-				TQData.WriteCString(writer, "stashVersion");
-				writer.Write(sta.stashVersion);
+		TQData.WriteCString(writer, "fName");
 
-				TQData.WriteCString(writer, "fName");
+		// Changed to raw data to support extended characters
+		writer.Write(sta.name.Length);
+		writer.Write(sta.name);
 
-				// Changed to raw data to support extended characters
-				writer.Write(sta.name.Length);
-				writer.Write(sta.name);
+		TQData.WriteCString(writer, "sackWidth");
+		writer.Write(sta.Width);
 
-				TQData.WriteCString(writer, "sackWidth");
-				writer.Write(sta.Width);
+		TQData.WriteCString(writer, "sackHeight");
+		writer.Write(sta.Height);
 
-				TQData.WriteCString(writer, "sackHeight");
-				writer.Write(sta.Height);
-
-				// SackType should already be set at sta point
-				ArgumentNullException.ThrowIfNull(sta.Sack);
-				SackCollectionProvider.Encode(sta.Sack, writer);
-				dataLength = (int)writeStream.Length;
-			}
-
-			// now just return the buffer we wrote to.
-			data = writeStream.GetBuffer();
-		}
-
-		// The problem is that data[] may be bigger than the amount of data in it.
-		// We need to resize the array
-		if (dataLength == data.Length)
-			return data;
-
-		byte[] realData = new byte[dataLength];
-		Array.Copy(data, realData, dataLength);
-		return realData;
-	}
+		// SackType should already be set at sta point
+		ArgumentNullException.ThrowIfNull(sta.Sack);
+		SackCollectionProvider.Encode(sta.Sack, writer);
+	});
 
 	/// <summary>
 	/// Loads a stash file
