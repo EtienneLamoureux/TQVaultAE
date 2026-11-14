@@ -109,8 +109,8 @@ public partial class MainFormUserControl
 
 		this.ListCharacters(characters);
 
-		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
-		this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
+		this.vaultPanel = this.CreateVaultPanel(AutoMoveLocation.Vault, panel => this.tableLayoutPanelMain.Controls.Add(panel, 0, 1));
+		this.secondaryVaultPanel = this.CreateVaultPanel(AutoMoveLocation.SecondaryVault, this.flowLayoutPanelRightPanels.Controls.Add);
 		this.secondaryVaultPanel.Enabled = false;
 		this.secondaryVaultPanel.Visible = false;
 		this.lastBag = -1;
@@ -133,42 +133,15 @@ public partial class MainFormUserControl
 	}
 
 	/// <summary>
-	/// Creates the vault panel
+	/// Creates a vault panel of 12 bags.
 	/// </summary>
-	/// <param name="numBags">Number of bags in the vault panel.</param>
-	private void CreateVaultPanel(int numBags)
+	/// <param name="location">Where its items go on an automatic move: the vault or the secondary vault.</param>
+	/// <param name="place">Adds the panel to its container.</param>
+	private VaultPanel CreateVaultPanel(AutoMoveLocation location, Action<Control> place)
 	{
-		this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault, this.Services);
-
-		this.vaultPanel.DrawAsGroupBox = false;
-
-		this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.vaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.vaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-
-		this.tableLayoutPanelMain.Controls.Add(this.vaultPanel, 0, 1);
-		this.vaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.vaultPanel.Margin = new Padding(0);
-	}
-
-	/// <summary>
-	/// Creates the secondary vault panel.  Player panel needs to be created before this.
-	/// </summary>
-	/// <param name="numBags">Number of bags in the secondary vault panel.</param>
-	private void CreateSecondaryVaultPanel(int numBags)
-	{
-		this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault, this.Services);
-		this.secondaryVaultPanel.DrawAsGroupBox = false;
-
-		this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.secondaryVaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.secondaryVaultPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-
-		this.flowLayoutPanelRightPanels.Controls.Add(this.secondaryVaultPanel);
-		this.secondaryVaultPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.secondaryVaultPanel.Margin = new Padding(0);
+		var panel = new VaultPanel(this.DragInfo, 12, new Size(18, 20), 1, location, this.Services);
+		this.WirePanel(panel, place);
+		return panel;
 	}
 
 	/// <summary>
@@ -177,17 +150,46 @@ public partial class MainFormUserControl
 	private void CreatePlayerPanel()
 	{
 		this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5), this.Services);
+		this.WirePanel(this.playerPanel, this.flowLayoutPanelRightPanels.Controls.Add);
+	}
 
-		this.playerPanel.DrawAsGroupBox = false;
+	/// <summary>
+	/// Wires an item panel to the others (highlight, automatic move, one selection at a time) and places it.
+	/// </summary>
+	/// <param name="panel">The panel.</param>
+	/// <param name="place">Adds the panel to its container.</param>
+	private void WirePanel(VaultPanel panel, Action<Control> place)
+	{
+		panel.DrawAsGroupBox = false;
 
-		this.playerPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.playerPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.playerPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.playerPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+		panel.OnNewItemHighlighted += this.NewItemHighlightedCallback;
+		panel.OnAutoMoveItem += this.AutoMoveItemCallback;
+		panel.OnItemSelected += this.ItemSelectedCallback;
+		panel.OnClearAllItemsSelected += this.ClearAllItemsSelectedCallback;
 
-		this.flowLayoutPanelRightPanels.Controls.Add(this.playerPanel);
-		this.playerPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.playerPanel.Margin = new Padding(0);
+		place(panel);
+		panel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+		panel.Margin = new Padding(0);
+	}
+
+	/// <summary>
+	/// The sack panels shown by the item panels, read each time: the stash panel's changes with its bag.
+	/// </summary>
+	private IEnumerable<SackPanel> AllSackPanels
+	{
+		get
+		{
+			if (this.vaultPanel?.SackPanel is { } vault)
+				yield return vault;
+			if (this.secondaryVaultPanel?.SackPanel is { } secondaryVault)
+				yield return secondaryVault;
+			if (this.playerPanel?.SackPanel is { } player)
+				yield return player;
+			if (this.playerPanel?.BagSackPanel is { } playerBag)
+				yield return playerBag;
+			if (this.stashPanel?.SackPanel is { } stash)
+				yield return stash;
+		}
 	}
 
 	/// <summary>
@@ -202,19 +204,10 @@ public partial class MainFormUserControl
 
 		// New location in bottom right of the Main Form.
 		// Align to playerPanel
-
-		this.stashPanel.DrawAsGroupBox = false;
-
-		this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.stashPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
 		this.stashPanel.EditCharacterClicked += (_, _) => this.EditCharacterRequested?.Invoke(this, this.stashPanel.ShownPlayer);
 		this.stashPanel.OnLoadoutAction += this.LoadoutActionCallback;
 
-		this.flowLayoutPanelRightPanels.Controls.Add(this.stashPanel);
-		this.stashPanel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-		this.stashPanel.Margin = new Padding(0);
+		this.WirePanel(this.stashPanel, this.flowLayoutPanelRightPanels.Controls.Add);
 	}
 
 	/// <summary>Raised by the Edit button of the stash panel, with the character it shows.</summary>
@@ -349,43 +342,12 @@ public partial class MainFormUserControl
 	/// <param name="e">SackPanelEventArgs data</param>
 	private void ItemSelectedCallback(object? sender, SackPanelEventArgs e)
 	{
-		SackPanel? sackPanel = (SackPanel)sender!;
+		var panels = this.AllSackPanels.ToList();
+		if (sender is not SackPanel sackPanel || !panels.Contains(sackPanel))
+			return;
 
-		if (this.playerPanel.SackPanel == sackPanel)
-		{
-			this.playerPanel.BagSackPanel.ClearSelectedItems();
-			this.vaultPanel.SackPanel.ClearSelectedItems();
-			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-			this.stashPanel.SackPanel.ClearSelectedItems();
-		}
-		else if (this.playerPanel.BagSackPanel == sackPanel)
-		{
-			this.playerPanel.SackPanel.ClearSelectedItems();
-			this.vaultPanel.SackPanel.ClearSelectedItems();
-			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-			this.stashPanel.SackPanel.ClearSelectedItems();
-		}
-		else if (this.vaultPanel.SackPanel == sackPanel)
-		{
-			this.playerPanel.SackPanel.ClearSelectedItems();
-			this.playerPanel.BagSackPanel.ClearSelectedItems();
-			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-			this.stashPanel.SackPanel.ClearSelectedItems();
-		}
-		else if (this.secondaryVaultPanel.SackPanel == sackPanel)
-		{
-			this.playerPanel.SackPanel.ClearSelectedItems();
-			this.playerPanel.BagSackPanel.ClearSelectedItems();
-			this.vaultPanel.SackPanel.ClearSelectedItems();
-			this.stashPanel.SackPanel.ClearSelectedItems();
-		}
-		else if (this.stashPanel.SackPanel == sackPanel)
-		{
-			this.playerPanel.SackPanel.ClearSelectedItems();
-			this.playerPanel.BagSackPanel.ClearSelectedItems();
-			this.vaultPanel.SackPanel.ClearSelectedItems();
-			this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-		}
+		foreach (var panel in panels.Where(panel => panel != sackPanel))
+			panel.ClearSelectedItems();
 	}
 
 	/// <summary>
@@ -401,30 +363,15 @@ public partial class MainFormUserControl
 	/// </summary>
 	internal void ClearAllItemsSelected()
 	{
-		this.playerPanel.SackPanel.ClearSelectedItems();
-		this.playerPanel.BagSackPanel.ClearSelectedItems();
-		this.vaultPanel.SackPanel.ClearSelectedItems();
-		this.secondaryVaultPanel.SackPanel.ClearSelectedItems();
-		this.stashPanel.SackPanel.ClearSelectedItems();
+		foreach (var panel in this.AllSackPanels)
+			panel.ClearSelectedItems();
 	}
 
 	/// <summary>
 	/// The items selected in the panel holding a selection; null when none does.
 	/// </summary>
 	internal IReadOnlyList<Item>? SelectedItems()
-	{
-		if (this.vaultPanel?.SackPanel?.SelectionActive == true)
-			return this.vaultPanel.SackPanel.GetSelectedItems();
-		if (this.secondaryVaultPanel?.SackPanel?.SelectionActive == true)
-			return this.secondaryVaultPanel.SackPanel.GetSelectedItems();
-		if (this.playerPanel?.SackPanel?.SelectionActive == true)
-			return this.playerPanel.SackPanel.GetSelectedItems();
-		if (this.playerPanel?.BagSackPanel?.SelectionActive == true)
-			return this.playerPanel.BagSackPanel.GetSelectedItems();
-		if (this.stashPanel?.SackPanel?.SelectionActive == true)
-			return this.stashPanel.SackPanel.GetSelectedItems();
-		return null;
-	}
+		=> this.AllSackPanels.FirstOrDefault(panel => panel.SelectionActive)?.GetSelectedItems();
 
 	/// <summary>
 	/// Used for sending items between sacks or panels.
