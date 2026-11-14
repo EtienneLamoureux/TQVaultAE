@@ -78,6 +78,9 @@ public class PlayerPanel : VaultPanel
 		get => (this.mainSackPanel is not null) ? this.mainSackPanel : this.BagSackPanel;
 	}
 
+	/// <summary>The summary tool tips of the character's bags are always shown.</summary>
+	protected override bool ShowsBagSummary(int bag) => true;
+
 	/// <summary>
 	/// Creates a new Autosort button
 	/// </summary>

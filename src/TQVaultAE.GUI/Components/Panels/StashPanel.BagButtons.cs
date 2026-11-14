@@ -72,13 +72,14 @@ public partial class StashPanel
 	}
 
 	/// <summary>
-	/// Gets the tooltip for a sack.  Summarizes the items within the sack
+	/// Gives the button the stash bag it summarizes.
 	/// </summary>
 	/// <param name="button">button the mouse is over.  Corresponds to a sack</param>
-	/// <returns>string to be displayed in the tooltip</returns>
-	private void GetSackToolTip(BagButtonBase button)
+	/// <returns>Whether the summary of this stash bag is shown: the user can turn it off per bag.</returns>
+	private bool GetSackToolTip(BagButtonBase button)
 	{
 		button.Sack = this.GetBagSack(button.ButtonNumber);
+		return !this.USettings.IsStashTooltipDisabled(button.ButtonNumber);
 	}
 
 	private void contextMenuStrip_ItemClicked(object? sender, ToolStripItemClickedEventArgs e)

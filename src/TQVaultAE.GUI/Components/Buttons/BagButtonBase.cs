@@ -15,11 +15,11 @@ using TQVaultAE.Presentation.Win32.Contracts;
 namespace TQVaultAE.GUI.Components.Buttons;
 
 /// <summary>
-/// Delegate for displaying a tooltip with the bag's contents.
+/// Delegate for displaying a tooltip with the bag's contents: gives the button its sack.
 /// </summary>
 /// <param name="button">instance of this BagButton</param>
-/// <returns>String containing the bag's contents</returns>
-public delegate void GetToolTip(BagButtonBase button);
+/// <returns>Whether the panel shows the summary tool tip of this bag (the user can turn it off per bag).</returns>
+public delegate bool GetToolTip(BagButtonBase button);
 
 /// <summary>
 /// Provides base class for creating and managing sack bag buttons.
@@ -220,25 +220,8 @@ public class BagButtonBase : Panel
 	{
 		BagButtonLabelTooltip.ShowTooltip(this.Services, this);
 
-		if (this.getToolTip is not null)
-		{
-			// Disable Tooltip bag
-			var panel = this.getToolTip.Target as Panel;
-			this.getToolTip(this);
-
-			if (panel is StashPanel)
-			{
-				if (!this.USettings.IsStashTooltipDisabled(this.ButtonNumber))
-					BagButtonTooltip.ShowTooltip(this.Services, this);
-			}
-			else if (
-				(panel is VaultPanel vp && vp.Vault is not null && !vp.Vault.DisabledTooltipBagId.Contains(this.ButtonNumber)) // Vault Only
-				|| panel is PlayerPanel || panel is SackPanel // Others
-			)
-			{
-				BagButtonTooltip.ShowTooltip(this.Services, this);
-			}
-		}
+		if (this.getToolTip is not null && this.getToolTip(this))
+			BagButtonTooltip.ShowTooltip(this.Services, this);
 
 		this.IsOver = true;
 		Refresh();

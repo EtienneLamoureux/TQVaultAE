@@ -362,20 +362,22 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
-	/// Gets the tooltip for the sack contents.
+	/// Gives the button the sack it summarizes.
 	/// </summary>
 	/// <param name="button">Button number of the sack</param>
-	/// <returns>string listing the sack's contents.</returns>
-	private void GetSackToolTip(BagButtonBase button)
+	/// <returns>Whether the summary of this bag is shown (<see cref="ShowsBagSummary"/>).</returns>
+	private bool GetSackToolTip(BagButtonBase button)
 	{
-		// Get the list of items 
 		SackCollection? sack = this.ShownPlayer.GetSack(button.ButtonNumber + this.BagPanelOffset);
+		if (sack is not null)
+			button.Sack = sack;// Init prop for Tooltip
 
-		if (sack is null)
-		{
-			return;
-		}
-
-		button.Sack = sack;// Init prop for Tooltip
+		return this.ShowsBagSummary(button.ButtonNumber);
 	}
+
+	/// <summary>
+	/// Whether the summary tool tip of a bag is shown: for a vault, unless the user turned it off for that bag.
+	/// </summary>
+	protected virtual bool ShowsBagSummary(int bag)
+		=> this.Vault is { } vault && !vault.DisabledTooltipBagId.Contains(bag);
 }
