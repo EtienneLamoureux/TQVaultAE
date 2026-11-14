@@ -560,7 +560,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		if (String.IsNullOrEmpty(attribute))
 			return null;
 
-		return attributeDictionary.TryGetValue(attribute.ToUpperInvariant(), out var value) ? value : null;
+		return attributeDictionary.TryGetValue(attribute, out var value) ? value : null;
 	}
 
 	[GeneratedRegex(@"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)")]
@@ -1046,223 +1046,67 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <returns>hash table of attributes</returns>
 	private Dictionary<string, ItemAttributesData> InitializeAttributeDictionary()
 	{
-		attributeDictionary = [];
+		// Attribute names are looked up whatever their case.
+		attributeDictionary = new(StringComparer.OrdinalIgnoreCase);
 
 		// Add all the attributes to the dictionary
-		int subOrder = 0;
-		foreach (string otherEffect in otherEffects)
-		{
-			attributeDictionary.Add(otherEffect.ToUpperInvariant()
-				, new ItemAttributesData(ItemAttributesEffectType.Other, otherEffect, otherEffect, string.Empty, subOrder)
-			);
-			++subOrder;
-		}
-
+		AddEach(otherEffects, ItemAttributesEffectType.Other);
 		// Added by VillageIdiot
-		subOrder = 0;
-		foreach (string shieldEffect in shieldEffects)
-		{
-			string normalizedEffect = shieldEffect.ToUpperInvariant();
-			attributeDictionary.Add(
-				normalizedEffect
-				, new ItemAttributesData(ItemAttributesEffectType.ShieldEffect, shieldEffect, shieldEffect, "Min", subOrder)
-			);
-			attributeDictionary.Add(
-				string.Concat(normalizedEffect, "CHANCE"),
-				new ItemAttributesData(ItemAttributesEffectType.ShieldEffect, shieldEffect, shieldEffect, "Chance", subOrder)
-			);
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string characterEffect in characterEffects)
-		{
-			string normalizedEffect = characterEffect.ToUpperInvariant();
-			attributeDictionary.Add(normalizedEffect
-				, new ItemAttributesData(ItemAttributesEffectType.Character, characterEffect, characterEffect, "Min", subOrder)
-			);
-			attributeDictionary.Add(
-				string.Concat(normalizedEffect, "CHANCE")
-				, new ItemAttributesData(ItemAttributesEffectType.Character, characterEffect, characterEffect, "Chance", subOrder)
-			);
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string defenseEffect in defenseEffects)
-		{
-			string normalizedEffect = defenseEffect.ToUpperInvariant();
-			attributeDictionary.Add(normalizedEffect
-				, new ItemAttributesData(ItemAttributesEffectType.Defense, defenseEffect, defenseEffect, "Min", subOrder)
-			);
-			attributeDictionary.Add(
-				string.Concat(normalizedEffect, "CHANCE")
-				, new ItemAttributesData(ItemAttributesEffectType.Defense, defenseEffect, defenseEffect, "Chance", subOrder)
-			);
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string offensiveEffect in offensiveEffects)
-		{
-			foreach (string offensiveEffectVariable in offensiveEffectVariables)
-			{
-				attributeDictionary.Add(
-					string.Concat(offensiveEffect.ToUpperInvariant(), offensiveEffectVariable.ToUpperInvariant())
-					, new ItemAttributesData(ItemAttributesEffectType.Offense
-						, string.Concat(offensiveEffect, offensiveEffectVariable), offensiveEffect, offensiveEffectVariable, subOrder
-					)
-				);
-			}
-
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string offensiveModifierEffect in offensiveModifierEffects)
-		{
-			string normalizedEffect = offensiveModifierEffect.ToUpperInvariant();
-			attributeDictionary.Add(
-				normalizedEffect
-				, new ItemAttributesData(ItemAttributesEffectType.OffenseModifier, offensiveModifierEffect, offensiveModifierEffect, "Min", subOrder)
-			);
-			attributeDictionary.Add(
-				string.Concat(normalizedEffect, "CHANCE")
-				, new ItemAttributesData(ItemAttributesEffectType.OffenseModifier, offensiveModifierEffect, offensiveModifierEffect, "Chance", subOrder)
-			);
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string offensiveSlowEffect in offensiveSlowEffects)
-		{
-			foreach (string offensiveSlowEffectVariable in offensiveSlowEffectVariables)
-			{
-				attributeDictionary.Add(
-					string.Concat(offensiveSlowEffect.ToUpperInvariant(), offensiveSlowEffectVariable.ToUpperInvariant())
-					, new ItemAttributesData(ItemAttributesEffectType.OffenseSlow
-						, string.Concat(offensiveSlowEffect, offensiveSlowEffectVariable), offensiveSlowEffect, offensiveSlowEffectVariable, subOrder
-					)
-				);
-			}
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string offensiveSlowModifierEffect in offensiveSlowModifierEffects)
-		{
-			foreach (string offensiveSlowModifierEffectVariable in offensiveSlowModifierEffectVariables)
-			{
-				attributeDictionary.Add(
-					string.Concat(offensiveSlowModifierEffect.ToUpperInvariant(), offensiveSlowModifierEffectVariable.ToUpperInvariant())
-					, new ItemAttributesData(ItemAttributesEffectType.OffenseSlowModifier
-						, string.Concat(offensiveSlowModifierEffect, offensiveSlowModifierEffectVariable), offensiveSlowModifierEffect, offensiveSlowModifierEffectVariable, subOrder
-					)
-				);
-			}
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string retaliationEffect in retaliationEffects)
-		{
-			foreach (string retaliationEffectVariable in retaliationEffectVariables)
-			{
-				attributeDictionary.Add(
-					string.Concat(retaliationEffect.ToUpperInvariant(), retaliationEffectVariable.ToUpperInvariant())
-					, new ItemAttributesData(ItemAttributesEffectType.Retaliation
-						, string.Concat(retaliationEffect, retaliationEffectVariable), retaliationEffect, retaliationEffectVariable, subOrder
-					)
-				);
-			}
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string retaliationModifierEffect in retaliationModifierEffects)
-		{
-			string normalizedEffect = retaliationModifierEffect.ToUpperInvariant();
-			attributeDictionary.Add(
-				normalizedEffect
-				, new ItemAttributesData(ItemAttributesEffectType.RetaliationModifier
-					, retaliationModifierEffect, retaliationModifierEffect, "Min", subOrder
-				)
-			);
-			attributeDictionary.Add(
-				string.Concat(normalizedEffect, "CHANCE")
-				, new ItemAttributesData(ItemAttributesEffectType.RetaliationModifier
-					, retaliationModifierEffect, retaliationModifierEffect, "Chance", subOrder
-				)
-			);
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string retaliationSlowEffect in retaliationSlowEffects)
-		{
-			foreach (string retaliationSlowEffectVariable in retaliationSlowEffectVariables)
-			{
-				attributeDictionary.Add(
-					string.Concat(retaliationSlowEffect.ToUpperInvariant(), retaliationSlowEffectVariable.ToUpperInvariant())
-					, new ItemAttributesData(ItemAttributesEffectType.RetaliationSlow
-						, string.Concat(retaliationSlowEffect, retaliationSlowEffectVariable), retaliationSlowEffect, retaliationSlowEffectVariable, subOrder
-					)
-				);
-			}
-			++subOrder;
-		}
-
-		subOrder = 0;
-		foreach (string retaliationSlowModifierEffect in retaliationSlowModifierEffects)
-		{
-			foreach (string retaliationSlowModifierEffectVariable in retaliationSlowModifierEffectVariables)
-			{
-				attributeDictionary.Add(
-					string.Concat(retaliationSlowModifierEffect.ToUpperInvariant(), retaliationSlowModifierEffectVariable.ToUpperInvariant())
-					, new ItemAttributesData(ItemAttributesEffectType.RetaliationSlowModifier
-						, string.Concat(retaliationSlowModifierEffect, retaliationSlowModifierEffectVariable), retaliationSlowModifierEffect, retaliationSlowModifierEffectVariable, subOrder
-					)
-				);
-			}
-			++subOrder;
-		}
-
+		AddMinAndChance(shieldEffects, ItemAttributesEffectType.ShieldEffect);
+		AddMinAndChance(characterEffects, ItemAttributesEffectType.Character);
+		AddMinAndChance(defenseEffects, ItemAttributesEffectType.Defense);
+		AddWithVariables(offensiveEffects, offensiveEffectVariables, ItemAttributesEffectType.Offense);
+		AddMinAndChance(offensiveModifierEffects, ItemAttributesEffectType.OffenseModifier);
+		AddWithVariables(offensiveSlowEffects, offensiveSlowEffectVariables, ItemAttributesEffectType.OffenseSlow);
+		AddWithVariables(offensiveSlowModifierEffects, offensiveSlowModifierEffectVariables, ItemAttributesEffectType.OffenseSlowModifier);
+		AddWithVariables(retaliationEffects, retaliationEffectVariables, ItemAttributesEffectType.Retaliation);
+		AddMinAndChance(retaliationModifierEffects, ItemAttributesEffectType.RetaliationModifier);
+		AddWithVariables(retaliationSlowEffects, retaliationSlowEffectVariables, ItemAttributesEffectType.RetaliationSlow);
+		AddWithVariables(retaliationSlowModifierEffects, retaliationSlowModifierEffectVariables, ItemAttributesEffectType.RetaliationSlowModifier);
 		// Added by VillageIdiot
-		subOrder = 0;
-		foreach (string damageQualifierEffect in damageQualifierEffects)
-		{
-			attributeDictionary.Add(
-				damageQualifierEffect.ToUpperInvariant()
-				, new ItemAttributesData(ItemAttributesEffectType.DamageQualifierEffect
-					, damageQualifierEffect, damageQualifierEffect, string.Empty, subOrder
-				)
-			);
-			++subOrder;
-		}
-
-		// Added by VillageIdiot
-		subOrder = 0;
-		foreach (string reagent in reagents)
-		{
-			attributeDictionary.Add(
-				reagent.ToUpperInvariant()
-				, new ItemAttributesData(ItemAttributesEffectType.Reagent, reagent, reagent, string.Empty, subOrder)
-			);
-			++subOrder;
-		}
-
-		// Added by VillageIdiot
-		subOrder = 0;
-		foreach (string skillEffect in skillEffects)
-		{
-			attributeDictionary.Add(
-				skillEffect.ToUpperInvariant()
-				, new ItemAttributesData(ItemAttributesEffectType.SkillEffect, skillEffect, skillEffect, string.Empty, subOrder)
-			);
-			++subOrder;
-		}
+		AddEach(damageQualifierEffects, ItemAttributesEffectType.DamageQualifierEffect);
+		AddEach(reagents, ItemAttributesEffectType.Reagent);
+		AddEach(skillEffects, ItemAttributesEffectType.SkillEffect);
 
 		return attributeDictionary;
+
+		// Each effect under its own name; the sub order is its place in its list.
+		void AddEach(IEnumerable<string> effects, ItemAttributesEffectType type)
+		{
+			int subOrder = 0;
+			foreach (string effect in effects)
+				attributeDictionary.Add(effect, new ItemAttributesData(type, effect, effect, string.Empty, subOrder++));
+		}
+
+		// Each effect as its Min value, and with "Chance" appended as its Chance value.
+		void AddMinAndChance(IEnumerable<string> effects, ItemAttributesEffectType type)
+		{
+			int subOrder = 0;
+			foreach (string effect in effects)
+			{
+				attributeDictionary.Add(effect, new ItemAttributesData(type, effect, effect, "Min", subOrder));
+				attributeDictionary.Add(string.Concat(effect, "Chance"), new ItemAttributesData(type, effect, effect, "Chance", subOrder));
+				++subOrder;
+			}
+		}
+
+		// Each effect followed by each of its variables (Min, Max, Chance...), the effect's place as the sub order.
+		void AddWithVariables(IEnumerable<string> effects, IEnumerable<string> variables, ItemAttributesEffectType type)
+		{
+			int subOrder = 0;
+			foreach (string effect in effects)
+			{
+				foreach (string variable in variables)
+				{
+					attributeDictionary.Add(
+						string.Concat(effect, variable)
+						, new ItemAttributesData(type, string.Concat(effect, variable), effect, variable, subOrder)
+					);
+				}
+
+				++subOrder;
+			}
+		}
 	}
 
 	#endregion ItemAttributes Private Methods

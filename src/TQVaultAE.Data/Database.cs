@@ -50,7 +50,7 @@ public partial class Database : IDatabase
 	/// <summary>
 	/// Dictionary of all text database entries
 	/// </summary>
-	protected readonly ConcurrentDictionary<string, string> textDB = new();
+	protected readonly ConcurrentDictionary<string, string> textDB = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// Dictionary of all associated arc files in the database.
@@ -324,7 +324,7 @@ public partial class Database : IDatabase
 	/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
 	/// <returns>Returns localized string, empty string if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 	public string GetFriendlyName(string tagId)
-		=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text : string.Empty;
+		=> this.textDB.TryGetValue(tagId, out var text) ? text : string.Empty;
 
 	/// <summary>
 	/// Gets the formatted string for the variable attribute.
@@ -1223,7 +1223,7 @@ public partial class Database : IDatabase
 				label = match.Groups["Label"].Value.Trim();
 
 			// A tag already in the db is replaced: the last file loaded wins.
-			this.textDB[tag.ToUpperInvariant()] = label;
+			this.textDB[tag] = label;
 		}
 
 		if (USettings.DatabaseDebugLevel > 0)

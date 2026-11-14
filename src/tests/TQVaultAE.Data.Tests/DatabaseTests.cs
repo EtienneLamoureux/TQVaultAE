@@ -129,11 +129,11 @@ public class DatabaseTests
 	}
 
 	[Fact]
-	public void GetFriendlyName_WithNullTag_ThrowsNullReferenceException()
+	public void GetFriendlyName_WithNullTag_ThrowsArgumentNullException()
 	{
-		// Act & Assert - Database.GetFriendlyName calls tagId.ToUpperInvariant() which throws on null
+		// Act & Assert - the text dictionary rejects a null key
 		var action = () => _database.GetFriendlyName(null!);
-		action.Should().Throw<NullReferenceException>();
+		action.Should().Throw<ArgumentNullException>();
 	}
 
 	[Fact]
