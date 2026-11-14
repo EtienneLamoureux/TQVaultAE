@@ -57,7 +57,12 @@ public class DatabaseLoadingTests
 				return this._arcEntries.TryGetValue((arc.FileName.ToUpperInvariant(), entry.ToUpperInvariant()), out var data) ? data : null;
 			});
 		this._arzProvider.Setup(a => a.Read(It.IsAny<ArzFile>()))
-			.Callback<ArzFile>(arz => this._arzRead.Add(arz.FileName));
+			.Callback<ArzFile>(arz =>
+			{
+				this._arzRead.Add(arz.FileName);
+				foreach (var (_, record) in this._arzRecords.Where(r => r.Key.Arz == arz.FileName))
+					arz.RecordInfo[record.Id] = new RecordInfo { ID = record.Id, RecordType = record.RecordType };
+			});
 		this._arzProvider.Setup(a => a.GetItem(It.IsAny<ArzFile>(), It.IsAny<RecordId>()))
 			.Returns<ArzFile, RecordId>((arz, id) => this._arzRecords.TryGetValue((arz.FileName, id.Normalized), out var r) ? r : null);
 
@@ -119,9 +124,9 @@ public class DatabaseLoadingTests
 		this._looseFiles[file] = data;
 	}
 
-	private DBRecordCollection AddRecord(string arzFile, string id)
+	private DBRecordCollection AddRecord(string arzFile, string id, string recordType = "test")
 	{
-		var record = new DBRecordCollection(id, "test");
+		var record = new DBRecordCollection(id, recordType);
 		this._arzRecords[(arzFile, ((RecordId)id).Normalized)] = record;
 		return record;
 	}
@@ -317,6 +322,66 @@ public class DatabaseLoadingTests
 
 		db.GetFriendlyName("tagBase").Should().Be("Base text from TQ");
 		db.GetFriendlyName("tagIT").Should().Be("Immortal Throne text");
+	}
+
+	#endregion
+
+	#region Affix tables
+
+	private static Variable Str(string name, string value)
+	{
+		var variable = new Variable(name, VariableDataType.StringVar, 1);
+		variable[0] = value;
+		return variable;
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_FixedWeightLootTable_MapsEachLootNameToTheNumberedAffixTables()
+	{
+		this.UseAnniversaryEdition();
+		var arz = Path.Combine(GameAE, "Database", "database.arz");
+		var table = this.AddRecord(arz, """records\loot\table_a.dbr""", "LootItemTable_FixedWeight");
+		table.Set(Str("lootName1", """records\item\sword.dbr"""));
+		table.Set(Str("lootName2", """records\item\axe.dbr"""));
+		table.Set(Str("lootName3", ""));
+		table.Set(Str("brokenRandomizerName1", ""));
+		table.Set(Str("prefixRandomizerName2", """records\affix\prefix2.dbr"""));
+		table.Set(Str("prefixRandomizerName1", """records\affix\prefix1.dbr"""));
+		table.Set(Str("suffixRandomizerName1", """records\affix\suffix1.dbr"""));
+		table.Set(Str("brokenRandomizerName3", """records\affix\broken3.dbr"""));
+		table.Set(Str("suffixRandomizerName4", " "));
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		var expected = new[]
+		{
+			new AffixTableMapItem(RecordId.Empty, """records\affix\prefix2.dbr""", RecordId.Empty),
+			new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", """records\affix\suffix1.dbr"""),
+			new AffixTableMapItem("""records\affix\broken3.dbr""", RecordId.Empty, RecordId.Empty),
+		};
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().Equal(expected);
+		db.GetItemAffixTableMap("""records\item\axe.dbr""").Should().Equal(expected);
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_DynamicWeightLootTable_MapsItsItemNames()
+	{
+		this.UseAnniversaryEdition();
+		var arz = Path.Combine(GameAE, "Database", "database.arz");
+		var table = this.AddRecord(arz, """records\loot\table_b.dbr""", "LootItemTable_DynWeight");
+		var itemNames = new Variable("itemNames", VariableDataType.StringVar, 2);
+		itemNames[0] = """records\item\ring.dbr""";
+		itemNames[1] = """records\item\amulet.dbr""";
+		table.Set(itemNames);
+		table.Set(Str("prefixRandomizerName1", """records\affix\prefix1.dbr"""));
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		var expected = new[] { new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty) };
+		db.GetItemAffixTableMap("""records\item\ring.dbr""").Should().Equal(expected);
+		db.GetItemAffixTableMap("""records\item\amulet.dbr""").Should().Equal(expected);
 	}
 
 	#endregion
