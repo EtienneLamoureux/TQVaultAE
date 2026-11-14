@@ -166,6 +166,8 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 		// Item Properties' look: the marble behind the toolbar, the columns and the button, the toolbar's text shadowed.
 		CaravanLook.Apply(this, this._scroll, this._table, this._toolbar, this._buttons);
+		// The toolbar check boxes over the marble in gold, outlined like the group titles over the frames.
+		CaravanLook.OutlineText(this);
 
 		this.ResizeCustomAllowed = true;
 		this.DrawCustomBorder = true;
@@ -230,7 +232,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		{
 			AutoSize = true,
 			Checked = isChecked,
-			ForeColor = Color.White,
+			ForeColor = Color.Gold,
 			BackColor = Color.Transparent,
 			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.UIService.Zoom),
 			Margin = new Padding((int)Math.Round(4 * this.ContentScale), 0, (int)Math.Round(12 * this.ContentScale), 0),
