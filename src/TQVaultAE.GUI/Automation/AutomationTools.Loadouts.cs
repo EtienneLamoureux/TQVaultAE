@@ -14,14 +14,15 @@ internal static partial class AutomationTools
 	internal static bool? GameRunningOverride { get; private set; }
 
 	[McpServerTool(Name = "loadouts", Destructive = true)]
-	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). With action, first does it like the bar: select (name), add (name), update, rename (newName), copy (newName), delete, load — on the selected loadout unless name is given; add, rename and copy take the name instead of the name dialog. Actions that change something run after the call returns (queue the answers of their boxes first: update and delete confirm, load and update ask when the game runs) and only on test characters (names starting with 'claude-', 'player-test' or 'player-mod'). gameRunning=true/false makes the actions take the game as running or not; null uses the real processes.")]
+	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the bar: select (name), add (name), update, rename (newName), copy (newName), delete, load — on the selected loadout unless name is given; compare (slot) clicks the mark of a slot, which opens the Item Comparison dialog of the worn piece and the loadout's (after the call returns; close it with close_dialog('Item Comparison', 'OK')); add, rename and copy take the name instead of the name dialog. Actions that change something run after the call returns (queue the answers of their boxes first: update and delete confirm, load and update ask when the game runs) and only on test characters (names starting with 'claude-', 'player-test' or 'player-mod'). gameRunning=true/false makes the actions take the game as running or not; null uses the real processes.")]
 	public static string Loadouts(
 		[Description("select, add, update, rename, copy, delete or load; empty to only read.")] string? action = null,
 		[Description("The loadout (select, and the others instead of the selected one); the new loadout's name for add.")] string? name = null,
 		[Description("The new name for rename and copy.")] string? newName = null,
 		[Description("'list' or 'actions' to read that menu of the bar.")] string? menu = null,
 		[Description("true or false to take the game as running or not for the next actions; omit to keep the current choice.")] bool? gameRunning = null,
-		[Description("true to go back to the real game processes.")] bool realGame = false)
+		[Description("true to go back to the real game processes.")] bool realGame = false,
+		[Description("The equipment slot whose mark compare clicks (0 head .. 11 artifact).")] int? slot = null)
 		=> AutomationHost.OnUi(form =>
 		{
 			if (gameRunning is not null)
@@ -32,6 +33,22 @@ internal static partial class AutomationTools
 			var stash = form.AutomationStashPanel ?? throw new McpException("No stash panel.");
 			var player = stash.Player;
 			var bar = stash.LoadoutBar;
+			var equipment = stash.EquipmentPanel;
+
+			// Comparing only reads the pieces: any character.
+			if (string.Equals(action?.Trim(), "compare", StringComparison.OrdinalIgnoreCase))
+			{
+				// A user cannot click the panel while a modal dialog is open (a comparison already shown, a box).
+				if (System.Windows.Forms.Application.OpenForms.OfType<Form>().Any(f => f.Modal))
+					throw new McpException("A modal dialog is open: close it first.");
+				if (slot is not { } markSlot || equipment.LoadoutMarks.Where(m => m.Slot == markSlot).Select(m => (Domain.Actions.LoadoutSlotMark?)m).FirstOrDefault() is not { } mark)
+					throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).");
+				// Through the panel's own click handler, at the middle of the mark.
+				var bounds = equipment.MarkScreenBounds(mark);
+				var center = new Point(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
+				equipment.AutomationMouseDown(center, MouseButtons.Left);
+				action = null;
+			}
 
 			if (!string.IsNullOrWhiteSpace(action))
 			{
@@ -114,6 +131,14 @@ internal static partial class AutomationTools
 					stashClient = Box(stash.ClientRectangle),
 				},
 				menu = menuEntries,
+				equipmentPanel = Box(equipment.Bounds),
+				marks = equipment.LoadoutMarks.Select(m => new
+				{
+					slot = m.Slot,
+					match = m.Match.ToString(),
+					canCompare = m.CanCompare,
+					bounds = Box(equipment.MarkScreenBounds(m)),
+				}),
 				file = set?.FilePath,
 				fileExists = set is not null && File.Exists(set.FilePath),
 				readFailed = set?.ReadFailed,

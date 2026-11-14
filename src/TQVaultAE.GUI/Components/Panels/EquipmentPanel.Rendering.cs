@@ -227,6 +227,8 @@ public partial class EquipmentPanel
 					this.DrawItem(e.Graphics, item);
 			}
 		}
+
+		this.PaintLoadoutMarks(e.Graphics);
 	}
 
 	/// <summary>

@@ -64,7 +64,7 @@ public partial class SackPanel
 	}
 
 	/// <summary>Opens the item comparison of <paramref name="first"/> and <paramref name="second"/>.</summary>
-	private void ShowComparison(Item first, Item second)
+	private protected void ShowComparison(Item first, Item second)
 	{
 		using var dlg = this.Services.Forms.Create<ItemComparisonDialog>();
 		dlg.First = first;

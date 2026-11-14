@@ -44,6 +44,16 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 		this.DisableBorder = true;
 		this.DisableMultipleSelection = true;
 		this.DefaultImage = null;
+		this.MouseMove += this.LoadoutMarkMouseMove;
+	}
+
+	/// <summary>A click on a loadout mark opens its comparison; any other click goes on as in every sack.</summary>
+	protected override void MouseDownCallback(object? sender, MouseEventArgs e)
+	{
+		if (this.Sack is not null && this.LoadoutMarkMouseDown(e))
+			return;
+
+		base.MouseDownCallback(sender, e);
 	}
 
 	#region EquipmentPanel Properties

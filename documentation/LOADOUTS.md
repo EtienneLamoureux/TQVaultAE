@@ -19,6 +19,26 @@ button of the character editor, when it shows, is on the line below):
 - A right click on the bar gives every action: **Load**, **Update with the gear worn now** (asks first), **Rename**,
   **Copy** (the same pieces under another name), **Delete** (asks first) and **Add**.
 
+## Comparing with the chosen loadout
+
+While a loadout is chosen in the box, a small button beside each equipment slot tells how the piece you wear there
+compares with the loadout's piece for the same slot:
+
+![The marks beside the equipment slots](loadouts/loadout_marks.png)
+
+- **Blue**: the same piece (exactly, as **Load** sees it: same item, affixes, relics or charms, seed). Load keeps it.
+- **Red**: two different pieces. Rings or weapon sets worn the other way round count as different here: the marks
+  compare slot by slot.
+- **Grey**: one side is empty (nothing worn, or nothing in the loadout for that slot).
+- No mark when both are empty.
+
+Click a blue or red mark to open the [item comparison](ITEMCOMPARE.md) of the worn piece (first) and the loadout's
+(second). A grey mark does nothing: there is only one piece.
+
+The marks sit in the gaps around the slots: beside the weapon, shield, arms and artifact slots, under the others. They
+follow any change of the gear (a piece moved, Load, Update) and of the choice in the box, and show neither for a
+read-only character nor when no loadout is chosen. An item you hold counts as out of its slot.
+
 ## What Load does
 
 - A piece you wear that is **exactly** the loadout's (same item, same affixes, same relics or charms with the same

@@ -80,6 +80,8 @@ public partial class StashPanel
 				this._editButton.Visible = false;
 			if (this._loadoutBar is not null)
 				this._loadoutBar.Visible = false;
+			// No bar shown, no loadout to compare with (another character may come without its statistics).
+			this.equipmentPanel.ComparedLoadout = null;
 			this._statsTooltip?.Hide();
 			return;
 		}
@@ -141,6 +143,20 @@ public partial class StashPanel
 			? string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly)
 			: null;
 		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly, loadLocked);
+		this.CompareWithSelectedLoadout();
+	}
+
+	/// <summary>
+	/// The marks beside the equipment slots compare the worn pieces with the loadout selected in the bar; none without
+	/// one, or when the loadouts cannot change (a read-only character, a file that could not be read).
+	/// </summary>
+	private void CompareWithSelectedLoadout()
+	{
+		Loadout? loadout = null;
+		if (this._loadoutBar is { CanChange: true, Selected: { } name } && this.Player is { } player)
+			loadout = this.Services.Loadouts.Find(System.IO.Path.GetDirectoryName(player.PlayerFile) ?? string.Empty)?.Find(name);
+
+		this.equipmentPanel.ComparedLoadout = loadout;
 	}
 
 	private CharacterStatsPanel EnsureStatsPanel()
@@ -181,7 +197,12 @@ public partial class StashPanel
 		this._editButton = editButton;
 
 		this._loadoutBar = new LoadoutBar(this.UIService) { Name = "loadoutBar", Visible = false };
-		this._loadoutBar.ActionRequested += (_, e) => this.OnLoadoutAction?.Invoke(this, e);
+		this._loadoutBar.ActionRequested += (_, e) =>
+		{
+			if (e.Action == LoadoutBarAction.Select)
+				this.CompareWithSelectedLoadout();
+			this.OnLoadoutAction?.Invoke(this, e);
+		};
 
 		this.Controls.Add(this._statsPanel);
 		this.Controls.Add(editButton);

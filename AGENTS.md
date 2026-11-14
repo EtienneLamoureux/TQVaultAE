@@ -197,7 +197,7 @@ Loadouts (saved equipment sets, `documentation/LOADOUTS.md`):
 
 | Purpose | Tools |
 |---|---|
-| Loadout bar | `loadouts(action?, name?, newName?, menu?, gameRunning?)` reads the bar, its menus, the loadouts file and each loadout's pieces (identical to the worn one or not); actions `select`, `add`, `update`, `rename`, `copy`, `delete`, `load` on test characters, `gameRunning` stands for the game process; `select_search_result` gives a loadout result's `loadout` |
+| Loadout bar | `loadouts(action?, name?, newName?, menu?, gameRunning?, slot?)` reads the bar, its menus, the loadouts file and each loadout's pieces (identical to the worn one or not) and the `marks` beside the equipment slots; actions `select`, `add`, `update`, `rename`, `copy`, `delete`, `load` on test characters, `compare` (`slot`) clicks a mark (opens Item Comparison), `gameRunning` stands for the game process; `select_search_result` gives a loadout result's `loadout` |
 
 Rules:
 - Nothing blocks saves: work only in your own test files, vaults `claude-vault1`, `claude-vault2`, ... and characters `claude-character1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
