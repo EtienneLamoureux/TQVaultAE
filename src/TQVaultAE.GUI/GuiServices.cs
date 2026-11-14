@@ -216,7 +216,8 @@ public sealed class GuiServices
 /// Creates the forms registered in the container: the only GUI code allowed to resolve from it.
 /// </summary>
 /// <remarks>
-/// Dialogs are transient (a new instance per call); <see cref="MainForm"/> is the application singleton.
+/// Dialogs are transient (a new instance per call), disposed by their caller; <see cref="MainForm"/> and
+/// <see cref="BagButtonSettings"/> (its icon grids are filled once) are singletons, never disposed by a caller.
 /// </remarks>
 public sealed class FormFactory
 {
