@@ -71,6 +71,7 @@ public sealed class LoadoutBar : Control
 	private static readonly Color Grey = Color.FromArgb(190, 190, 190);
 
 	private readonly IUIService _uiService;
+	private readonly IFontService _fontService;
 	private readonly Bitmap _box = Images.CharacterNumberBox;
 	private readonly ToolTip _toolTip = new();
 
@@ -80,9 +81,10 @@ public sealed class LoadoutBar : Control
 	private Part _pressed;
 	private float _scale = 1F;
 
-	public LoadoutBar(IUIService uiService)
+	public LoadoutBar(IUIService uiService, IFontService fontService)
 	{
 		this._uiService = uiService;
+		this._fontService = fontService;
 		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
 		this.BackColor = Color.Black;
 		this.ForeColor = Color.White;
@@ -261,7 +263,8 @@ public sealed class LoadoutBar : Control
 		]);
 	}
 
-	private Font MenuFont() => this.Parent?.Font ?? this.Font;
+	/// <summary>The menu font of every menu, at the zoom of now: the menus are filled at each opening.</summary>
+	private Font MenuFont() => MenuStyle.MenuFont(this._fontService, this._uiService.FontZoom);
 
 	private Part PartAt(Point point)
 		=> this.LoadBounds.Contains(point) ? Part.Load

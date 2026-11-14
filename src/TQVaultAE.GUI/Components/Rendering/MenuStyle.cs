@@ -1,3 +1,5 @@
+using TQVaultAE.Presentation.Win32.Contracts;
+
 namespace TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
@@ -5,6 +7,19 @@ namespace TQVaultAE.GUI.Components.Rendering;
 /// </summary>
 internal static class MenuStyle
 {
+	/// <summary>The font of the menus: the game font at 9 points, grown by <paramref name="fontZoom"/>.</summary>
+	public static Font MenuFont(IFontService fonts, float fontZoom) => fonts.GetFont(9.0F * fontZoom);
+
+	/// <summary>
+	/// Gives a menu the TQVault look of every menu: the renderer and colours of <see cref="CustomProfessionalRenderer"/>
+	/// (the selected entry in black) and the menu font at the zoom.
+	/// </summary>
+	public static void Apply(ToolStrip menu, IFontService fonts, float fontZoom)
+	{
+		CustomProfessionalRenderer.Apply(menu);
+		menu.Font = MenuFont(fonts, fontZoom);
+	}
+
 	/// <summary>
 	/// Gives <paramref name="item"/> the background, font and text color of <paramref name="owner"/>, the menu it goes in.
 	/// The font is set on the entry itself, not inherited: <see cref="Scaling.FontRebaser"/> walks the entries to rebase it.

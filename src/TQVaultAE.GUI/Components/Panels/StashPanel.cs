@@ -24,6 +24,7 @@ using TQVaultAE.GUI.Models;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
+using TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
 /// Class for handling the stash panel ui functions
@@ -181,7 +182,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		#endregion
 
-		this.buttonContextMenuStrip.Font = FontService.GetFont(9.0F * UIService.FontZoom);
+		MenuStyle.Apply(this.buttonContextMenuStrip, this.FontService, UIService.FontZoom);
 
 		this.toolStripMenuItemEnableTooltip.Text = Resources.PlayerPanelMenuEnableTooltip;
 		this.toolStripMenuItemDisableTooltip.Text = Resources.PlayerPanelMenuDisableTooltip;
@@ -629,8 +630,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.buttonContextMenuStrip.Size = new System.Drawing.Size(151, 48);
 		this.buttonContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.buttonContextMenuStrip_Opening);
 		this.buttonContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip_ItemClicked);
-		this.buttonContextMenuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-		this.buttonContextMenuStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
 		this.buttonContextMenuStrip.Opacity = 0.8D;
 		this.buttonContextMenuStrip.ShowImageMargin = false;
 		// 

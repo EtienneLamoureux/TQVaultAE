@@ -115,17 +115,21 @@ public partial class MainForm
 
 		vaultExportContextMenu = new ContextMenuStrip
 		{
-			BackColor = Theme.Background,
-			ForeColor = Theme.MenuText,
 			ShowImageMargin = false
 		};
+		MenuStyle.Apply(vaultExportContextMenu, FontService, UIService.FontZoom);
 
 		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.MaintainVaultFilesDialog());
 
 		// The vault's mod: built when the menu opens, for the vault shown then.
 		vaultExportContextMenu.Items.Add("-");
 		vaultModMenuIndex = vaultExportContextMenu.Items.Count;
-		vaultExportContextMenu.Opening += (s, e) => this.PrepareVaultMenu();
+		vaultExportContextMenu.Opening += (s, e) =>
+		{
+			// The font at the zoom of now (the menu is built once), before the mod sub menu copies it.
+			vaultExportContextMenu.Font = MenuStyle.MenuFont(FontService, UIService.FontZoom);
+			this.PrepareVaultMenu();
+		};
 
 		vaultExportContextMenu.Items.Add("-");
 		vaultExportContextMenu.Items.Add(Resources.PlayerPanelMenuExportTabFile, null, ExportVaultToFileClicked);

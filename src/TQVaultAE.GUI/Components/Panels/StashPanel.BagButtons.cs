@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 using TQVaultAE.Presentation;
+using TQVaultAE.GUI.Components.Rendering;
 
 public partial class StashPanel
 {
@@ -95,6 +96,9 @@ public partial class StashPanel
 
 	private void buttonContextMenuStrip_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
 	{
+		// The font at the zoom of now: the menu is built once.
+		this.buttonContextMenuStrip.Font = MenuStyle.MenuFont(this.FontService, UIService.FontZoom);
+
 		void SetMenuItemDisableTooltip(bool disabled)
 		{
 			if (disabled)

@@ -19,6 +19,7 @@ using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Presentation;
+using TQVaultAE.GUI.Components.Rendering;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
@@ -83,8 +84,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		// 
 		// contextMenu
 		// 
-		this.contextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-		this.contextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
 		this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
 		this.contextMenu.Name = "contextMenu";
 		this.contextMenu.Opacity = 0.8D;
@@ -157,7 +156,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 			this.BagSackPanel.SackType = SackType.Vault;
 		}
 
-		this.contextMenu.Font = FontService.GetFont(9.0F * UIService.FontZoom);
+		MenuStyle.Apply(this.contextMenu, this.FontService, UIService.FontZoom);
 
 		this.PropertyChanged += new PropertyChangedEventHandler(this.PropertyChangedCallback);
 
@@ -449,7 +448,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// <param name="specified">BoundsSpecified value.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
-		this.contextMenu.Font = FontService.GetFont(9.0F * UIService.FontZoom);
+		this.contextMenu.Font = MenuStyle.MenuFont(this.FontService, UIService.FontZoom);
 		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
 
 		base.ScaleControl(factor, specified);

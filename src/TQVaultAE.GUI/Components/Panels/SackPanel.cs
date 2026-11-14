@@ -162,9 +162,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		// 
 		// CustomContextMenu
 		// 
-		this.CustomContextMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
-		this.CustomContextMenu.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.CustomContextMenu.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
 		this.CustomContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
 		this.CustomContextMenu.Name = "CustomContextMenu";
 		this.CustomContextMenu.Opacity = 0.8D;
@@ -245,8 +242,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		this.Size = this.SizeFor(this.SackSize);
 		this.BackColor = Theme.Background;
 
-		CustomProfessionalRenderer.Apply(this.CustomContextMenu);
-		this.CustomContextMenu.Font = this.MenuFont();
+		MenuStyle.Apply(this.CustomContextMenu, this.FontService, UIService.FontZoom);
 
 		this.CustomContextMenuAffixUnknown = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLQUEST01.TEX");
 		this.CustomContextMenuAffixUntranslated = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLAREAOFINTEREST01.TEX");
@@ -577,12 +573,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	void IFontRebasing.RebaseFonts(IFontService fontService)
 		=> FontRebaser.RebaseMenu(this.CustomContextMenu, fontService);
 
-	/// <summary>
-	/// The font of the context menu, at the zoom: the game font of the font service. The zoom made it again from its
-	/// name, which gave the game font's light face: the whole menu looked thinner after a zoom.
-	/// </summary>
-	private Font MenuFont() => this.FontService.GetFont(9.0F * UIService.FontZoom);
-
 	/// <summary>The font of the stack quantities drawn over the items, at the current scale; owned by the panel.</summary>
 	private Font NumberFont() => new("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
 
@@ -605,7 +595,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		var previousNumberFont = this.numberFont;
 		this.numberFont = this.NumberFont();
 		previousNumberFont.Dispose();
-		this.CustomContextMenu.Font = this.MenuFont();
+		this.CustomContextMenu.Font = MenuStyle.MenuFont(this.FontService, UIService.FontZoom);
 
 		var size = this.SizeFor(this.SackSize);
 		if (this.Size != size)

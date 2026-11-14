@@ -177,7 +177,7 @@ public partial class StashPanel
 		editButton.Click += EditButton_Click;
 		this._editButton = editButton;
 
-		this._loadoutBar = new LoadoutBar(this.UIService) { Name = "loadoutBar", Visible = false };
+		this._loadoutBar = new LoadoutBar(this.UIService, this.FontService) { Name = "loadoutBar", Visible = false };
 		this._loadoutBar.ActionRequested += (_, e) =>
 		{
 			if (e.Action == LoadoutBarAction.Select)
