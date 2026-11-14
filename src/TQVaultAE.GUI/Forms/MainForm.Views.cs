@@ -237,6 +237,14 @@ public partial class MainForm
 	private readonly KeptDialog<SettingsUserControl> keptSettingsView = new();
 
 	/// <summary>
+	/// Handler for clicking the configure button: shows the settings in place of the main content, or leaves them as
+	/// their Cancel does, asking first when they were changed.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ConfigureButtonClick(object? sender, EventArgs e) => this.ToggleSettingsView();
+
+	/// <summary>
 	/// The toolbar's Settings button: shows the settings, or leaves them; from another view, leaves it first, asking when
 	/// it holds edits.
 	/// </summary>

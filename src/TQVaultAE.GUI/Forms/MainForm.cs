@@ -249,23 +249,4 @@ Item Debug Level: {ItemDebugLevel}
 	{
 		this.mainView.ShowNotification(message, color);
 	}
-
-	private void AdjustMenuButtonVisibility()
-	{
-		this.forgeButton.Visible = USettings.AllowItemEdit;
-		this.saveButton.Visible = USettings.EnableHotReload;
-		// Get last position
-		var flowctr = this.flowLayoutPanelMenuButtons.Controls;
-		var lastctr = flowctr[flowctr.Count - 1];
-		var lastidx = flowctr.GetChildIndex(lastctr);
-		// Force "Exit" button in last position
-		flowctr.SetChildIndex(this.exitButton, lastidx + 1);
-	}
-
-
-
-
-	private void saveButton_Click(object? sender, EventArgs e) => this.SaveAllModifiedFiles();
-
-
 }

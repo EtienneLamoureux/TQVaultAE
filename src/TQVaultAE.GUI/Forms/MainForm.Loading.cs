@@ -250,33 +250,4 @@ public partial class MainForm
 	}
 
 	#endregion
-
-	#region Settings Dialog
-
-	/// <summary>
-	/// Updates configuration settings
-	/// </summary>
-	private void SaveConfiguration()
-	{
-		var configuration = this.CurrentSessionConfiguration();
-		this.settingsPersistenceService.SaveConfiguration(configuration.VaultName, configuration.CharacterName, configuration.Zoom);
-	}
-
-	/// <summary>
-	/// Gets the state of the session to store in the user settings: shown vault, selected character, zoom.
-	/// </summary>
-	private SessionConfiguration CurrentSessionConfiguration()
-	{
-		return new SessionConfiguration(this.mainView.SelectedVaultName, this.mainView.SelectedCharacterKey, this.NominalZoom);
-	}
-
-	/// <summary>
-	/// Handler for clicking the configure button: shows the settings in place of the main content, or leaves them as
-	/// their Cancel does, asking first when they were changed.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void ConfigureButtonClick(object? sender, EventArgs e) => this.ToggleSettingsView();
-
-	#endregion
 }
