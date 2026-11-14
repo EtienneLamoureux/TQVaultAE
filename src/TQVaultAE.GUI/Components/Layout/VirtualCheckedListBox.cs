@@ -2,6 +2,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms.VisualStyles;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 
 namespace TQVaultAE.GUI.Components.Layout;
@@ -101,7 +102,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 
 	/// <summary>Height of one row.</summary>
 	[Browsable(false)]
-	public int ItemHeight => Math.Max(this.Font.Height, CheckBoxGlyph.Height) + 2;
+	public int ItemHeight => Math.Max(this.Font.Height, CheckBoxGlyph.RendererSize.Height) + 2;
 
 	public int GetItemHeight(int index) => this.ItemHeight;
 
@@ -226,13 +227,11 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 
 	#region Layout
 
-	private static Size CheckBoxGlyph => new(13, 13);
-
 	/// <summary>Space between the check box and the text: a third of the font height, so it follows the zoom.</summary>
 	private int GlyphTextGap => Math.Max(4, this.Font.Height / 3);
 
 	/// <summary>Where the item text starts, from the left of its column: the check box and the space after it.</summary>
-	public int TextLeft => 1 + CheckBoxGlyph.Width + this.GlyphTextGap;
+	public int TextLeft => 1 + CheckBoxGlyph.RendererSize.Width + this.GlyphTextGap;
 
 	private int ScrollBarHeight => this._scroll.Visible ? this._scroll.Height : 0;
 
@@ -341,7 +340,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 		int rows = this.RowsPerColumn;
 		int first = this.FirstColumn * rows;
 		int last = Math.Min(this._items.Count, (this.FirstColumn + this.VisibleColumns + 1) * rows);
-		var glyph = CheckBoxGlyph;
+		var glyph = CheckBoxGlyph.RendererSize;
 		var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding;
 
 		for (int i = first; i < last; i++)

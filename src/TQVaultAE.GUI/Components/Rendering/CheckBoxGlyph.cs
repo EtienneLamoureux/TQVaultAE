@@ -30,6 +30,21 @@ internal static partial class CheckBoxGlyph
 		return box.Padding.Left + glyph + TextGap;
 	}
 
+	/// <summary>
+	/// Gets the size <see cref="CheckBoxRenderer"/> draws the glyph at: the theme's glyph at the system DPI, whatever the
+	/// DPI of the monitor (20 px at a system DPI of 144). The code that draws its own check boxes with the renderer lays
+	/// its rows and text out from this size.
+	/// </summary>
+	public static Size RendererSize => rendererSize ??= MeasureRendererSize();
+
+	private static Size? rendererSize;
+
+	private static Size MeasureRendererSize()
+	{
+		using var graphics = Graphics.FromHwnd(IntPtr.Zero);
+		return CheckBoxRenderer.GetGlyphSize(graphics, CheckBoxState.UncheckedNormal);
+	}
+
 	[LibraryImport("user32.dll")]
 	private static partial uint GetDpiForSystem();
 }
