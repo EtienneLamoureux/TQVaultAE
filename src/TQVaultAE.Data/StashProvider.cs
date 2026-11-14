@@ -110,11 +110,9 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		// Write zero into the checksum value
 		writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
 
-		TQData.WriteCString(writer, "begin_block");
-		writer.Write(sta.beginBlockCrap);
+		TQData.WriteKeyInt(writer, "begin_block", sta.beginBlockCrap);
 
-		TQData.WriteCString(writer, "stashVersion");
-		writer.Write(sta.stashVersion);
+		TQData.WriteKeyInt(writer, "stashVersion", sta.stashVersion);
 
 		TQData.WriteCString(writer, "fName");
 
@@ -122,11 +120,9 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		writer.Write(sta.name.Length);
 		writer.Write(sta.name);
 
-		TQData.WriteCString(writer, "sackWidth");
-		writer.Write(sta.Width);
+		TQData.WriteKeyInt(writer, "sackWidth", sta.Width);
 
-		TQData.WriteCString(writer, "sackHeight");
-		writer.Write(sta.Height);
+		TQData.WriteKeyInt(writer, "sackHeight", sta.Height);
 
 		// SackType should already be set at sta point
 		ArgumentNullException.ThrowIfNull(sta.Sack);
@@ -245,11 +241,9 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		reader.BaseStream.Seek(fileOffset, SeekOrigin.Begin);
 		reader.ReadInt32();
 
-		TQData.ValidateNextString("begin_block", reader);
-		sta.beginBlockCrap = reader.ReadInt32();
+		sta.beginBlockCrap = TQData.ReadKeyInt(reader, "begin_block");
 
-		TQData.ValidateNextString("stashVersion", reader);
-		sta.stashVersion = reader.ReadInt32();
+		sta.stashVersion = TQData.ReadKeyInt(reader, "stashVersion");
 
 		TQData.ValidateNextString("fName", reader);
 
@@ -257,11 +251,9 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		int stringLength = reader.ReadInt32();
 		sta.name = reader.ReadBytes(stringLength);
 
-		TQData.ValidateNextString("sackWidth", reader);
-		sta.Width = reader.ReadInt32();
+		sta.Width = TQData.ReadKeyInt(reader, "sackWidth");
 
-		TQData.ValidateNextString("sackHeight", reader);
-		sta.Height = reader.ReadInt32();
+		sta.Height = TQData.ReadKeyInt(reader, "sackHeight");
 
 		sta.numberOfSacks = 1;
 		sta.Sack = new SackCollection();

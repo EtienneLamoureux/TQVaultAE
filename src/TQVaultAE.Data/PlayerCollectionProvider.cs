@@ -681,14 +681,11 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// <returns>byte array holding the converted binary data</returns>
 	private byte[] EncodeItemData(PlayerCollection pc) => SaveBytes.Encode(writer =>
 	{
-		TQData.WriteCString(writer, "numberOfSacks");
-		writer.Write(pc.numberOfSacks);
+		TQData.WriteKeyInt(writer, "numberOfSacks", pc.numberOfSacks);
 
-		TQData.WriteCString(writer, "currentlyFocusedSackNumber");
-		writer.Write(pc.currentlyFocusedSackNumber);
+		TQData.WriteKeyInt(writer, "currentlyFocusedSackNumber", pc.currentlyFocusedSackNumber);
 
-		TQData.WriteCString(writer, "currentlySelectedSackNumber");
-		writer.Write(pc.currentlySelectedSackNumber);
+		TQData.WriteKeyInt(writer, "currentlySelectedSackNumber", pc.currentlySelectedSackNumber);
 
 		ArgumentNullException.ThrowIfNull(pc.Sacks);
 		for (int i = 0; i < pc.numberOfSacks; ++i)
@@ -711,14 +708,11 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 
 			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 
-			TQData.ValidateNextString("numberOfSacks", reader);
-			pc.numberOfSacks = reader.ReadInt32();
+			pc.numberOfSacks = TQData.ReadKeyInt(reader, "numberOfSacks");
 
-			TQData.ValidateNextString("currentlyFocusedSackNumber", reader);
-			pc.currentlyFocusedSackNumber = reader.ReadInt32();
+			pc.currentlyFocusedSackNumber = TQData.ReadKeyInt(reader, "currentlyFocusedSackNumber");
 
-			TQData.ValidateNextString("currentlySelectedSackNumber", reader);
-			pc.currentlySelectedSackNumber = reader.ReadInt32();
+			pc.currentlySelectedSackNumber = TQData.ReadKeyInt(reader, "currentlySelectedSackNumber");
 
 			pc.Sacks = new SackCollection[pc.numberOfSacks];
 
@@ -750,8 +744,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	{
 		if (pc.IsImmortalThrone)
 		{
-			TQData.WriteCString(writer, "equipmentCtrlIOStreamVersion");
-			writer.Write(pc.equipmentCtrlIOStreamVersion);
+			TQData.WriteKeyInt(writer, "equipmentCtrlIOStreamVersion", pc.equipmentCtrlIOStreamVersion);
 		}
 
 		ArgumentNullException.ThrowIfNull(pc.EquipmentSack);
@@ -774,8 +767,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 
 			if (pc.IsImmortalThrone)
 			{
-				TQData.ValidateNextString("equipmentCtrlIOStreamVersion", reader);
-				pc.equipmentCtrlIOStreamVersion = reader.ReadInt32();
+				pc.equipmentCtrlIOStreamVersion = TQData.ReadKeyInt(reader, "equipmentCtrlIOStreamVersion");
 			}
 
 			pc.EquipmentSack = new SackCollection();
