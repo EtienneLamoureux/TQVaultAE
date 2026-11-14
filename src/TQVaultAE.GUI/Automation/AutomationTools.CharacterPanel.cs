@@ -82,12 +82,7 @@ internal static partial class AutomationTools
 			if (index is < 0 or > 4)
 				throw new McpException($"Unknown attribute '{attribute}': {string.Join(", ", names)}.");
 
-			var step = button.ToLowerInvariant() switch
-			{
-				"left" => 1,
-				"right" => -1,
-				_ => throw new McpException($"Unknown button '{button}': 'left' or 'right'."),
-			};
+			var step = ParseButton(button) == MouseButtons.Left ? 1 : -1;
 			if (!panel.AutomationClick(index, step, ClickModifiers(modifiers, shift)))
 				throw new McpException("No + button there: the panel shows none while no attribute point is left.");
 

@@ -176,12 +176,7 @@ internal static partial class AutomationTools
 			var selection = main.AutomationDragInfo.Compare;
 			var before = new { active = selection.IsActive, first = selection.First is { } f ? DescribeItem(f, null) : null };
 			var item = named.Panel.AutomationFindItem(new Point(x, y));
-			var mouse = button.ToLowerInvariant() switch
-			{
-				"left" => MouseButtons.Left,
-				"right" => MouseButtons.Right,
-				_ => throw new McpException($"Unknown button '{button}'. Use 'left' or 'right'."),
-			};
+			var mouse = ParseButton(button);
 
 			named.Panel.AutomationMouseDown(named.Panel.AutomationCellCenter(new Point(x, y)), mouse);
 			named.Panel.AutomationCloseContextMenu();

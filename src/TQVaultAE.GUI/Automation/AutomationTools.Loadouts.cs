@@ -74,8 +74,7 @@ internal static partial class AutomationTools
 
 				if (!bar.Visible)
 					throw new McpException("The loadout bar is hidden: show the Equipment tab first.");
-				if (!Enum.TryParse<LoadoutBarAction>(action.Trim(), true, out var barAction) || int.TryParse(action, out _))
-					throw new McpException($"Unknown action '{action}'.");
+				var barAction = ParseEnum<LoadoutBarAction>(action, "action");
 
 				// Another loadout than the selected one: picked in the bar's list first, as the user does.
 				if (name is not null && (barAction == LoadoutBarAction.Select || (barAction != LoadoutBarAction.Add && name != bar.Selected)))

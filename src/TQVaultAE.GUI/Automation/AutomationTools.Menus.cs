@@ -18,7 +18,7 @@ internal static partial class AutomationTools
 		[Description("For systemMenu: part of the title or the type name of the form; empty for the main window.")] string? form = null)
 		=> AutomationHost.OnUi(main =>
 		{
-			var steps = path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
+			var steps = MenuPath(path);
 			var (entries, clicked) = RunMenu(main, target, form, steps.Length == 0 ? null : menu => AutomationMenus.Resolve(menu, steps));
 			return Serialize(new { target, entries, clicked });
 		});

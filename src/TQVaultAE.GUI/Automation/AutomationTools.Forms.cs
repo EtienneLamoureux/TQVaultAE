@@ -198,7 +198,7 @@ internal static partial class AutomationTools
 		{
 			var container = AutomationPanels.Resolve(form, panel).Container
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
-			var (entries, clicked) = container.AutomationBagMenu(bag, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			var (entries, clicked) = container.AutomationBagMenu(bag, MenuPath(path));
 			return Serialize(new { panel, bag, currentBag = container.ShownBag(), entries, clicked, icons = container.AutomationBagIcons });
 		});
 
@@ -211,7 +211,7 @@ internal static partial class AutomationTools
 		{
 			var named = AutomationPanels.Resolve(form, panel);
 			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
-			var (entries, clicked) = container.AutomationSortMenu(named.Panel, path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			var (entries, clicked) = container.AutomationSortMenu(named.Panel, MenuPath(path));
 			return Serialize(new { panel, entries, clicked, sort = SortChoices(form, container, named.Panel) });
 		});
 
@@ -252,7 +252,7 @@ internal static partial class AutomationTools
 		[Description("Entry to click, texts separated by ' > '; empty to only read the menu.")] string? path = null)
 		=> AutomationHost.OnUi(form =>
 		{
-			var (entries, clicked) = form.AutomationVaultMenu(path?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+			var (entries, clicked) = form.AutomationVaultMenu(MenuPath(path));
 			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, entries, clicked });
 		});
 

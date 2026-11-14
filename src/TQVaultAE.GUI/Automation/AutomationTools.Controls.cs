@@ -153,12 +153,7 @@ internal static partial class AutomationTools
 		[Description("1 for a click, 2 for a double click.")] int clicks = 1)
 		=> AutomationHost.OnUi(main =>
 		{
-			var mouseButton = button.Trim().ToLowerInvariant() switch
-			{
-				"left" => MouseButtons.Left,
-				"right" => MouseButtons.Right,
-				_ => throw new McpException("button must be left or right."),
-			};
+			var mouseButton = ParseButton(button);
 			if (clicks is not (1 or 2))
 				throw new McpException("clicks must be 1 or 2.");
 
@@ -188,16 +183,7 @@ internal static partial class AutomationTools
 			if (notches == 0)
 				throw new McpException("notches must not be 0.");
 
-			var held = Keys.None;
-			foreach (var part in (modifiers ?? string.Empty).Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-			{
-				held |= part.ToLowerInvariant() switch
-				{
-					"ctrl" or "control" => Keys.Control,
-					"shift" => Keys.Shift,
-					_ => throw new McpException($"Unknown modifier '{part}': ctrl or shift."),
-				};
-			}
+			var held = ClickModifiers(modifiers);
 
 			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
 			AutomationInput.SendWheel(hit, point, notches, held);

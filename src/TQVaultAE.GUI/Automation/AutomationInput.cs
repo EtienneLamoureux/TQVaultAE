@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using TQVaultAE.Application.KeyBinds;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -39,6 +40,12 @@ internal static partial class AutomationInput
 
 	/// <summary>The control that has the keyboard focus in this application, if any.</summary>
 	public static Control? FocusedControl() => Control.FromChildHandle(GetFocus());
+
+	/// <summary>The Windows Forms modifier keys of the key bind modifiers <paramref name="modifiers"/>.</summary>
+	public static Keys ModifierKeys(KeyModifiers modifiers)
+		=> (modifiers.HasFlag(KeyModifiers.Ctrl) ? Keys.Control : Keys.None)
+		| (modifiers.HasFlag(KeyModifiers.Shift) ? Keys.Shift : Keys.None)
+		| (modifiers.HasFlag(KeyModifiers.Alt) ? Keys.Alt : Keys.None);
 
 	/// <summary>
 	/// Holds exactly <paramref name="modifiers"/> (Ctrl, Shift, Alt) in the UI thread's keyboard state until disposed.

@@ -491,7 +491,7 @@ internal static partial class AutomationTools
 			string clicked;
 			try
 			{
-				clicked = named.Panel.AutomationClickContextMenu(cell, path.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+				clicked = named.Panel.AutomationClickContextMenu(cell, MenuPath(path));
 			}
 			finally
 			{
@@ -577,7 +577,7 @@ internal static partial class AutomationTools
 			if (form.AutomationDragInfo.IsActive)
 				throw new McpException("An item is being dragged. Use cancel_drag first.");
 
-			var held = string.IsNullOrWhiteSpace(modifiers) ? Keys.None : ParseKey(modifiers) & Keys.Modifiers;
+			var held = ClickModifiers(modifiers);
 			var item = named.Panel.AutomationFindItem(new Point(x, y));
 			named.Panel.AutomationModifierClick(new Point(x, y), held);
 			var drag = form.AutomationDragInfo;
@@ -607,7 +607,7 @@ internal static partial class AutomationTools
 			if (form.AutomationDragInfo.IsActive)
 				throw new McpException("An item is being dragged. Use cancel_drag first.");
 
-			var held = string.IsNullOrWhiteSpace(modifiers) ? Keys.None : ParseKey(modifiers) & Keys.Modifiers;
+			var held = ClickModifiers(modifiers);
 			named.Panel.AutomationDragSelect(new Point(x1, y1), new Point(x2, y2), held);
 			var drag = form.AutomationDragInfo;
 			return Serialize(new
@@ -731,7 +731,7 @@ internal static partial class AutomationTools
 		[Description("Cell row, for a panel.")] int y = 0,
 		[Description("Sub menus to open, texts separated by ' > '; empty for the menu alone.")] string? open = null)
 	{
-		var path = open?.Split('>', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
+		var path = MenuPath(open);
 		var png = AutomationHost.OnUi(form =>
 		{
 			using var bitmap = string.Equals(target, "vaultTools", StringComparison.OrdinalIgnoreCase)

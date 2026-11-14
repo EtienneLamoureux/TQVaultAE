@@ -13,36 +13,6 @@ namespace TQVaultAE.GUI.Automation;
 /// </summary>
 internal static partial class AutomationTools
 {
-	/// <summary>
-	/// Reads a key for <c>press_key</c> and <c>click_cell</c>: one character (<c>c</c>, <c>5</c>), a name
-	/// (<c>backspace</c>, <c>esc</c>) or a gesture with modifiers (<c>ctrl+alt+d</c>, <c>alt</c>).
-	/// </summary>
-	private static Keys ParseKey(string text)
-	{
-		var trimmed = text.Trim();
-		var normalized = trimmed.ToUpperInvariant() switch
-		{
-			"BACKSPACE" => "Back",
-			"ESC" => "Escape",
-			"DEL" => "Delete",
-			var t when t.Length == 1 && char.IsAsciiDigit(t[0]) => "D" + t,
-			_ => trimmed,
-		};
-
-		if (!KeyGesture.TryParse(normalized, out var gesture))
-			throw new McpException($"Unknown key '{text}'. Use a character, a key name or a gesture like 'ctrl+alt+d'.");
-
-		if (gesture.IsModifiersOnly)
-			return KeyBindInput.ToKeys(new KeyGesture("A", gesture.Modifiers)) & Keys.Modifiers;
-
-		var keys = KeyBindInput.ToKeys(gesture);
-		return keys == Keys.None ? throw new McpException($"'{text}' is not a key Windows Forms knows.") : keys;
-	}
-
-	/// <summary>The modifiers of a click tool: <paramref name="modifiers"/> ('ctrl+alt', empty for none), Shift added by <paramref name="shift"/>.</summary>
-	private static Keys ClickModifiers(string modifiers, bool shift)
-		=> (string.IsNullOrWhiteSpace(modifiers) ? Keys.None : ParseKey(modifiers) & Keys.Modifiers) | (shift ? Keys.Shift : Keys.None);
-
 	[McpServerTool(Name = "key_binds", ReadOnly = true)]
 	[Description("Returns the key and mouse bindings in use (every action with its gestures, the fixed ones marked), the changes saved in UserConfig.xml (<KeyBinds .../>) and the conflicts.")]
 	public static string KeyBinds()
@@ -85,15 +55,14 @@ internal static partial class AutomationTools
 			string? keyTarget = null;
 			if (!string.IsNullOrWhiteSpace(action))
 			{
-				if (!Enum.TryParse<KeyBindAction>(action, ignoreCase: true, out var value))
-					throw new McpException($"Unknown action '{action}'. Actions: {string.Join(", ", Enum.GetNames<KeyBindAction>())}");
+				var value = ParseEnum<KeyBindAction>(action, "action");
 
 				var parsed = KeyGesture.None;
 				if (!string.IsNullOrWhiteSpace(gesture) && !KeyGesture.TryParse(gesture, out parsed))
 					throw new McpException($"Unreadable gesture '{gesture}'.");
 
 				if (click)
-					dialog.AutomationClickCell(value, slot, KeyBindInput.ToKeys(new KeyGesture("A", parsed.Modifiers)) & Keys.Modifiers, right ? MouseButtons.Right : MouseButtons.Left);
+					dialog.AutomationClickCell(value, slot, AutomationInput.ModifierKeys(parsed.Modifiers), right ? MouseButtons.Right : MouseButtons.Left);
 				else
 					dialog.AutomationRebind(value, slot, parsed);
 			}

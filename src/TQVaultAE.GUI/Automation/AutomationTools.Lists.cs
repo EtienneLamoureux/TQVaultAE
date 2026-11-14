@@ -103,15 +103,7 @@ internal static partial class AutomationTools
 			if (!list.Enabled || !list.Visible)
 				throw new McpException($"'{list.Name}' is disabled or hidden: a user could not reach it.");
 
-			var parsed = keys.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
-				.Select(k => k.ToLowerInvariant() switch
-				{
-					"pageup" or "pgup" => Keys.PageUp,
-					"pagedown" or "pgdn" => Keys.PageDown,
-					_ when Enum.TryParse<Keys>(k, ignoreCase: true, out var key) => key,
-					_ => throw new McpException($"Unknown key '{k}'."),
-				})
-				.ToList();
+			var parsed = keys.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(ParseKey).ToList();
 
 			list.FindForm()?.Activate();
 			list.Focus();

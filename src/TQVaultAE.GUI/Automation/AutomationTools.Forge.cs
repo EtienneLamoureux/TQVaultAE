@@ -36,8 +36,7 @@ internal static partial class AutomationTools
 	public static string ForgeSetMode([Description("Game, Strict, Relax or God.")] string mode)
 		=> OnForge((form, forge) =>
 		{
-			if (!Enum.TryParse<ForgeMode>(mode, true, out var value))
-				throw new McpException($"Unknown mode '{mode}'. Modes: {string.Join(", ", Enum.GetNames<ForgeMode>())}");
+			var value = ParseEnum<ForgeMode>(mode, "mode");
 			forge.AutomationSetMode(value);
 		});
 
@@ -47,8 +46,7 @@ internal static partial class AutomationTools
 	{
 		var (json, png) = AutomationHost.OnUi(form =>
 		{
-			if (!Enum.TryParse<ForgeMode>(mode, true, out var value))
-				throw new McpException($"Unknown mode '{mode}'. Modes: {string.Join(", ", Enum.GetNames<ForgeMode>())}");
+			var value = ParseEnum<ForgeMode>(mode, "mode");
 			var forge = form.AutomationForgePanel ?? throw new McpException("The forge is not created yet. Use forge_show first.");
 			var (card, image) = forge.AutomationModeCard(value) ?? throw new McpException("The mode cards are not set yet.");
 			using (image)
@@ -81,7 +79,7 @@ internal static partial class AutomationTools
 	public static string ForgeDrop([Description("Base, Prefix, Suffix, Relic1 or Relic2.")] string slot)
 		=> OnForge((form, forge) =>
 		{
-			var value = ParseSlot(slot);
+			var value = ParseEnum<ForgeSlot>(slot, "slot");
 			RequireDrag(form);
 			ReleaseCursor(VirtualCursor.Target as SackPanel);
 			forge.AutomationDrop(value);
@@ -98,9 +96,8 @@ internal static partial class AutomationTools
 		[Description("Base, Prefix, Suffix, Relic1 or Relic2.")] string part)
 		=> OnForge((form, forge) =>
 		{
-			var slotValue = ParseSlot(slot);
-			if (!Enum.TryParse<ForgePart>(part, true, out var partValue))
-				throw new McpException($"Unknown part '{part}'. Parts: {string.Join(", ", Enum.GetNames<ForgePart>())}");
+			var slotValue = ParseEnum<ForgeSlot>(slot, "slot");
+			var partValue = ParseEnum<ForgePart>(part, "part");
 			if (forge.AutomationMode != ForgeMode.God)
 				throw new McpException("Parts can only be chosen in God mode. Use forge_set_mode first.");
 			if (!forge.AutomationSelectPart(slotValue, partValue))
@@ -156,7 +153,7 @@ internal static partial class AutomationTools
 		var (json, png) = AutomationHost.OnUi(form =>
 		{
 			var forge = RequireForge(form);
-			var value = ParseSlot(slot);
+			var value = ParseEnum<ForgeSlot>(slot, "slot");
 			if (hide)
 			{
 				forge.AutomationHoverEnd(value);
@@ -234,11 +231,6 @@ internal static partial class AutomationTools
 			throw new McpException("The forge is not shown. Use forge_show first.");
 		return forge;
 	}
-
-	private static ForgeSlot ParseSlot(string slot)
-		=> Enum.TryParse<ForgeSlot>(slot, true, out var value)
-			? value
-			: throw new McpException($"Unknown slot '{slot}'. Slots: {string.Join(", ", Enum.GetNames<ForgeSlot>())}");
 
 	/// <param name="soundsSince">Sounds recorded after this sequence number are reported as 'sounds'.</param>
 	/// <param name="messagesFrom">Messages from this index on are reported as 'newMessages'.</param>

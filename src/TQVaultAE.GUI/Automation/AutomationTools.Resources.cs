@@ -48,7 +48,7 @@ internal static partial class AutomationTools
 		var database = Program.ServiceProvider.GetRequiredService<IDatabase>();
 		var faults = TQVaultAE.Data.Database.ResourceFaults;
 		faults.TryRemove(resourceId, out _);
-		switch (mode)
+		switch (mode.Trim().ToLowerInvariant())
 		{
 			case "missing":
 				faults[resourceId] = null;

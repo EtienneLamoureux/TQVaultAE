@@ -51,7 +51,7 @@ internal sealed partial class KeyBindsDialog
 		if (gesture.IsNone)
 			this.buttonClear.PerformClick();
 		else if (gesture.IsClick)
-			this.AutomationClickCell(action, slot, KeyBindInput.ToKeys(new KeyGesture("A", gesture.Modifiers)) & Keys.Modifiers);
+			this.AutomationClickCell(action, slot, AutomationInput.ModifierKeys(gesture.Modifiers));
 		else
 		{
 			var keys = KeyBindInput.ToKeys(gesture);

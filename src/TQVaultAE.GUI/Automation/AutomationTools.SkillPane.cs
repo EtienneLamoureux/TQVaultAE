@@ -42,12 +42,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(_ =>
 		{
 			var pane = ShowSkillPane(slot);
-			var step = button.ToLowerInvariant() switch
-			{
-				"left" => 1,
-				"right" => -1,
-				_ => throw new McpException($"Unknown button '{button}': 'left' or 'right'."),
-			};
+			var step = ParseButton(button) == MouseButtons.Left ? 1 : -1;
 
 			MasterySkill? target = null;
 			if (!string.Equals(skill, "mastery", StringComparison.OrdinalIgnoreCase))
