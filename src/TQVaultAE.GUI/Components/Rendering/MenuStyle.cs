@@ -18,4 +18,35 @@ internal static class MenuStyle
 		item.ForeColor = owner.ForeColor;
 		return item;
 	}
+
+	/// <summary>
+	/// An export sub menu for <paramref name="owner"/>, with its clipboard, file and PasteBin entries. Without a PasteBin
+	/// API key the PasteBin entry is disabled, or left out with <paramref name="hidePasteBinWithoutKey"/>.
+	/// </summary>
+	public static ToolStripMenuItem ExportSubMenu(
+		ToolStrip owner,
+		string text,
+		(string Text, EventHandler OnClick) clipboard,
+		(string Text, EventHandler OnClick) file,
+		(string Text, EventHandler OnClick) pasteBin,
+		bool hasPasteBinKey,
+		bool hidePasteBinWithoutKey = false)
+	{
+		var menu = new ToolStripMenuItem(text)
+		{
+			DisplayStyle = ToolStripItemDisplayStyle.Text,
+		}.StyledLike(owner);
+
+		menu.DropDownItems.Add(new ToolStripMenuItem(clipboard.Text, null, clipboard.OnClick).StyledLike(owner));
+		menu.DropDownItems.Add(new ToolStripMenuItem(file.Text, null, file.OnClick).StyledLike(owner));
+		if (hasPasteBinKey || !hidePasteBinWithoutKey)
+		{
+			menu.DropDownItems.Add(new ToolStripMenuItem(pasteBin.Text, null, pasteBin.OnClick)
+			{
+				Enabled = hasPasteBinKey,
+			}.StyledLike(owner));
+		}
+
+		return menu;
+	}
 }

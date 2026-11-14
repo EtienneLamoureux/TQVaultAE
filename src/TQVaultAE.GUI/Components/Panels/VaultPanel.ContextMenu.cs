@@ -70,33 +70,13 @@ public partial class VaultPanel
 	}
 
 	private void AddExportTabSubMenu()
-	{
-		var hasApiKey = this.ExchangeService?.HasPasteBinApiKey == true;
-
-		var clipboardItem = new ToolStripMenuItem(
-			Resources.PlayerPanelMenuExportTabClipboard, null,
-			this.ExportTabToClipboardClicked).StyledLike(this.contextMenu);
-
-		var fileItem = new ToolStripMenuItem(
-			Resources.PlayerPanelMenuExportTabFile, null,
-			this.ExportTabToFileClicked).StyledLike(this.contextMenu);
-
-		var pasteBinItem = new ToolStripMenuItem(
-			Resources.PlayerPanelMenuExportTabPasteBin, null,
-			this.ExportTabToPasteBinClicked)
-		{
-			Enabled = hasApiKey
-		}.StyledLike(this.contextMenu);
-
-		var exportTabMenu = new ToolStripMenuItem(
-			Resources.PlayerPanelMenuExportTab, null,
-			clipboardItem, fileItem, pasteBinItem)
-		{
-			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		}.StyledLike(this.contextMenu);
-
-		this.contextMenu.Items.Add(exportTabMenu);
-	}
+		=> this.contextMenu.Items.Add(MenuStyle.ExportSubMenu(
+			this.contextMenu,
+			Resources.PlayerPanelMenuExportTab,
+			(Resources.PlayerPanelMenuExportTabClipboard, this.ExportTabToClipboardClicked),
+			(Resources.PlayerPanelMenuExportTabFile, this.ExportTabToFileClicked),
+			(Resources.PlayerPanelMenuExportTabPasteBin, this.ExportTabToPasteBinClicked),
+			this.ExchangeService?.HasPasteBinApiKey == true));
 
 	private void ExportTabToClipboardClicked(object? sender, EventArgs e)
 	{

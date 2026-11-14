@@ -64,49 +64,20 @@ public partial class SackPanel
 	
 	private void AddExportMenuItems(Item? focusedItem, bool singleSelectionFocused)
 	{
-		if (focusedItem is not null && (this.selectedItems is null || singleSelectionFocused))
-		{
-			var hasApiKey = this.ExchangeService?.HasPasteBinApiKey == true;
+		bool single = focusedItem is not null && (this.selectedItems is null || singleSelectionFocused);
+		bool several = this.selectedItems is not null && !singleSelectionFocused;
+		if (!single && !several)
+			return;
 
-			var exportClipboardItem = new ToolStripMenuItem(Resources.SackPanelMenuExportClipboard, null, ExportItemToClipboardClicked).StyledLike(this.CustomContextMenu);
-
-			var exportFileItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemFile, null, ExportItemToFileClicked).StyledLike(this.CustomContextMenu);
-
-			var exportPasteBinItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemPasteBin, null)
-			{
-				Enabled = hasApiKey
-			}.StyledLike(this.CustomContextMenu);
-			exportPasteBinItem.Click += ExportItemToPasteBinClicked;
-
-			var exportItemMenu = new ToolStripMenuItem(Resources.SackPanelMenuExportItem, null, exportClipboardItem, exportFileItem, exportPasteBinItem)
-			{
-				DisplayStyle = ToolStripItemDisplayStyle.Text,
-			}.StyledLike(this.CustomContextMenu);
-
-			this.CustomContextMenu.Items.Add(exportItemMenu);
-		}
-
-		if (this.selectedItems is not null && !singleSelectionFocused)
-		{
-			var exportItemMenu = new ToolStripMenuItem(Resources.SackPanelMenuExportItem)
-			{
-				DisplayStyle = ToolStripItemDisplayStyle.Text,
-			}.StyledLike(this.CustomContextMenu);
-
-			var exportClipboardItem = new ToolStripMenuItem(Resources.SackPanelMenuExportClipboard, null, ExportItemToClipboardClicked).StyledLike(this.CustomContextMenu);
-			exportItemMenu.DropDownItems.Add(exportClipboardItem);
-
-			var exportFileItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemFile, null, ExportItemToFileClicked).StyledLike(this.CustomContextMenu);
-			exportItemMenu.DropDownItems.Add(exportFileItem);
-
-			if (this.ExchangeService?.HasPasteBinApiKey == true)
-			{
-				var exportPasteBinItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemPasteBin, null, ExportItemToPasteBinClicked).StyledLike(this.CustomContextMenu);
-				exportItemMenu.DropDownItems.Add(exportPasteBinItem);
-			}
-
-			this.CustomContextMenu.Items.Add(exportItemMenu);
-		}
+		// The PasteBin entry of a single item is disabled without an API key, the one of a selection left out.
+		this.CustomContextMenu.Items.Add(MenuStyle.ExportSubMenu(
+			this.CustomContextMenu,
+			Resources.SackPanelMenuExportItem,
+			(Resources.SackPanelMenuExportClipboard, this.ExportItemToClipboardClicked),
+			(Resources.SackPanelMenuExportItemFile, this.ExportItemToFileClicked),
+			(Resources.SackPanelMenuExportItemPasteBin, this.ExportItemToPasteBinClicked),
+			this.ExchangeService?.HasPasteBinApiKey == true,
+			hidePasteBinWithoutKey: several));
 	}
 	
 	/// <summary>
