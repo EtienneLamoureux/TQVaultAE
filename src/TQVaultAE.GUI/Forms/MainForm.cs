@@ -92,19 +92,9 @@ public partial class MainForm : VaultForm
 	private bool DebugLayoutBorderVisible = false;
 
 	/// <summary>
-	/// Holds the coordinates of the last drag item
-	/// </summary>
-	private Point lastDragPoint;
-
-	/// <summary>
 	/// User current data context
 	/// </summary>
 	internal SessionContext userContext;
-
-	/// <summary>
-	/// Highlight search service
-	/// </summary>
-	private IHighlightService HighlightService;
 
 	/// <summary>
 	/// Instance of the vault panel control
@@ -188,7 +178,6 @@ public partial class MainForm : VaultForm
 	{
 		this.mainView = mainView;
 		this.userContext = sessionContext;
-		this.HighlightService = services.HighlightService;
 		this.playerService = playerService;
 		this.vaultService = vaultService;
 		this.stashService = stashService;
@@ -298,7 +287,6 @@ Item Debug Level: {ItemDebugLevel}
 		this.searchButton.Text = Resources.MainFormSearchButtonText;
 		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
-		this.lastDragPoint.X = -1;
 		this.DragInfo = new ItemDragInfo(this.UIService);
 #if DEBUG
 		this.DebugLayoutBorderVisible = false;// Set here what you want during debug
@@ -362,8 +350,6 @@ Item Debug Level: {ItemDebugLevel}
 
 
 
-
-	private void duplicateButton_Click(object? sender, EventArgs e) => DuplicateCharacter();
 
 	private void saveButton_Click(object? sender, EventArgs e) => this.SaveAllModifiedFiles();
 

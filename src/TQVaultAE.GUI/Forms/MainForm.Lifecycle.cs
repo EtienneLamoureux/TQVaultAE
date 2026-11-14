@@ -141,18 +141,6 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Handler for key presses on the main form
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">KeyPressEventArgs data</param>
-	private void MainFormKeyPress(object? sender, KeyPressEventArgs e)
-	{
-		// Don't handle this here since we handle key presses within each component.
-		////if (e.KeyChar != (char)27)
-		////e.Handled = true;
-	}
-
-	/// <summary>
 	/// Handler for showing the main form.
 	/// Used to switch focus to the search text box.
 	/// </summary>

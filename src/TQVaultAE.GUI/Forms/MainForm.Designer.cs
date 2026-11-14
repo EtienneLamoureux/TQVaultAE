@@ -334,7 +334,6 @@ public partial class MainForm
         this.Shown += new System.EventHandler(this.MainFormShown);
         this.ResizeEnd += new System.EventHandler(this.ResizeEndCallback);
         this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainFormKeyDown);
-        this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainFormKeyPress);
         this.Resize += new System.EventHandler(this.ResizeBeginCallback);
         this.Controls.SetChildIndex(this.titleLabel, 0);
         this.Controls.SetChildIndex(this.aboutButton, 0);
