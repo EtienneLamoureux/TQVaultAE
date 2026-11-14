@@ -69,11 +69,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	private int currentBag;
 
 	/// <summary>
-	/// Maximum size of the panel.  Uses the initial constructor size.
-	/// </summary>
-	private Size maxPanelSize;
-
-	/// <summary>
 	/// Equipment Panel instance
 	/// </summary>
 	private EquipmentPanel equipmentPanel;
@@ -166,13 +161,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		this.Text = Resources.StashPanelText;
 		this.NoPlayerString = Resources.StashPanelText;
-		this.Size = new Size(
-			(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + BorderPad
-				+ Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * UIService.Scale),
-			(panelSize.Height * UIService.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.Scale) + BorderPad);
 		this.Paint += new PaintEventHandler(this.PaintCallback);
 
-		this.BagSackPanel.SetLocation(new Point(BorderPad, this.Size.Height - (this.BagSackPanel.Size.Height + BorderPad)));
 		this.BagSackPanel.MaxSacks = 1;
 		this.BagSackPanel.Anchor = AnchorStyles.None;
 
@@ -184,30 +174,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		if (UIService.FontZoom != 1.0F)
 			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.FontZoom, this.Font.Style);
 
-		// Now that the buttons are set we can move the panel
-		this.BagSackPanel.SetLocation(new Point(
-			BorderPad,
-			this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + UIService.HalfUnitSize));
-
-		int offsetX = (panelSize.Width - this.equipmentPanel.SackSize.Width) * UIService.HalfUnitSize;
-		if (offsetX < 0)
-			offsetX = 0;
-
-		int offsetY = (panelSize.Height - this.equipmentPanel.SackSize.Height) * UIService.HalfUnitSize;
-		if (offsetY < 0)
-			offsetY = 0;
-
-		this.equipmentPanel.SetLocation(new Point(
-			offsetX,
-			this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + offsetY));
-
-		this.maxPanelSize = panelSize;
-
-		// The sort button of the stash tabs: upright, against the right edge of the golden frame, level with its top, as a
-		// vault's sort button stands against its bag; mirrored, so that its edge is the one against the frame. The base panel makes none (it keeps the trash panel's settings).
+		// The sort button of the stash tabs, placed by LayOut. The base panel makes none (it keeps the trash panel's settings).
 		var sortButton = this.NewSortButton(0, true, mirrored: true);
-		var frame = this.GetBackgroundRect();
-		sortButton.Location = new Point(frame.Right, frame.Top);
 		this.AutoSortButtons.Add(sortButton);
 		this.Controls.Add(sortButton);
 
@@ -229,7 +197,61 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		foreach (var bag in this.BagButtons)
 			bag.ContextMenuStrip = this.buttonContextMenuStrip;
+
+		this.LayOut();
 	}
+
+	/// <summary>
+	/// Where the shown stash bag stands in the panel, in half cells from the left and from the bottom of the tabs: its
+	/// centering in the largest bag (<see cref="StashBag.CenteringMargin"/>).
+	/// </summary>
+	private Point sackMargin = new(0, 1);
+
+	/// <summary>
+	/// Sizes the panel and places, from the current scale: the tabs in a row at the top, the bag shown centered under
+	/// them (<see cref="sackMargin"/>), the equipment, the sort button against the right edge of the golden frame, level
+	/// with its top, and the statistics panel once made.
+	/// </summary>
+	protected internal override void LayOut()
+	{
+		// Called by the base constructor, before the equipment exists: the constructor lays it out once it does.
+		if (this.equipmentPanel is null)
+			return;
+
+		var cells = this.PanelCells;
+		this.BagSackPanel.FollowScale();
+		this.equipmentPanel.FollowScale();
+		this.Size = new Size(
+			(cells.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + BorderPad
+				+ Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * UIService.Scale),
+			(cells.Height * UIService.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.Scale) + BorderPad);
+
+		// The tabs above the largest bag where a vault panel 56 high above its bag puts its bag buttons.
+		var largest = this.BagSackPanel.SizeFor(cells);
+		int borders = largest.Height - (cells.Height * UIService.ItemUnitSize);
+		this.PlaceBagButtons(new Point(BorderPad, Convert.ToInt32(56.0F * UIService.Scale) - borders), largest.Width, this.BagButtons.Count);
+		int tabsBottom = this.BagButtons[0].Bottom;
+
+		this.PlaceStashSack();
+
+		int offsetX = Math.Max(0, (cells.Width - this.equipmentPanel.SackSize.Width) * UIService.HalfUnitSize);
+		int offsetY = Math.Max(0, (cells.Height - this.equipmentPanel.SackSize.Height) * UIService.HalfUnitSize);
+		this.equipmentPanel.Location = new Point(offsetX, tabsBottom + offsetY);
+
+		var sortButton = this.AutoSortButtons[0];
+		sortButton.FollowScale();
+		var frame = this.GetBackgroundRect();
+		sortButton.Location = new Point(frame.Right, frame.Top);
+
+		if (this._statsPanel is { } stats)
+			this.LayoutStatsPanel(stats);
+	}
+
+	/// <summary>Places the shown stash bag under the tabs, at <see cref="sackMargin"/>.</summary>
+	private void PlaceStashSack()
+		=> this.BagSackPanel.Location = new Point(
+			BorderPad + (this.sackMargin.X * UIService.HalfUnitSize),
+			this.BagButtons[0].Bottom + (this.sackMargin.Y * UIService.HalfUnitSize));
 
 	/// <summary>
 	/// Gets or sets the player instance
@@ -370,8 +392,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				// We need to scale this since we use it to redraw the background.
 				return new Bitmap(
 					this.equipmentBackground,
-					(this.maxPanelSize.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-					(this.maxPanelSize.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
+					(this.PanelCells.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+					(this.PanelCells.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
 			}
 
 			return this.equipmentBackground;
@@ -392,8 +414,8 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				// We need to scale this since we use it to redraw the background.
 				return new Bitmap(
 					this.stashBackground,
-					(this.maxPanelSize.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
-					(this.maxPanelSize.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
+					(this.PanelCells.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+					(this.PanelCells.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2));
 			}
 
 			return this.stashBackground;
@@ -420,9 +442,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				this.BagButtons[this.currentBag].IsOn = false;
 				this.BagButtons[bagID].IsOn = true;
 				this.currentBag = bagID;
-				BagButtonBase button = this.BagButtons[this.currentBag];
-				int buttonOffsetY = button.Location.Y + button.Size.Height;
-
 				StashBag? bag = this.Services.StashService.GetBag(this.currentBag, this.Player, this.transferStash, this.stash, this.relicVaultStash);
 				if (bag is { IsEquipment: true })
 				{
@@ -440,11 +459,10 @@ public partial class StashPanel : VaultPanel, IScalingControl
 					this.BagSackPanel.SackType = SackType.Stash;
 					this.BagSackPanel.ResizeSackPanel(bag.Width, bag.Height);
 
-					// Center the sack in the panel. SetLocation, so a zoom keeps the centering (ScaleControl places the sack from that origin).
-					var (marginX, marginY) = bag.CenteringMargin(this.maxPanelSize.Width, this.maxPanelSize.Height);
-					this.BagSackPanel.SetLocation(new Point(
-						BorderPad + (marginX * UIService.HalfUnitSize),
-						buttonOffsetY + (marginY * UIService.HalfUnitSize)));
+					// Center the sack in the panel; kept, so a zoom keeps the centering (LayOut).
+					var (marginX, marginY) = bag.CenteringMargin(this.PanelCells.Width, this.PanelCells.Height);
+					this.sackMargin = new Point(marginX, marginY);
+					this.PlaceStashSack();
 					this.equipmentPanel.Visible = false;
 					this.equipmentPanel.Enabled = false;
 					this.BagSackPanel.Visible = true;

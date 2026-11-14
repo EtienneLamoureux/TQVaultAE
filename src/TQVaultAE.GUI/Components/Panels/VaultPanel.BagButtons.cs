@@ -48,7 +48,7 @@ public partial class VaultPanel
 	{
 		for (int i = 0; i < numberOfBags; ++i)
 		{
-			this.BagButtons.Insert(i, this.CreateBagButton(i, numberOfBags));
+			this.BagButtons.Insert(i, this.CreateBagButton(i));
 			this.Controls.Add(this.BagButtons[i]);
 		}
 	}
@@ -306,10 +306,7 @@ public partial class VaultPanel
 	/// <returns>A new AutoSortButton instance</returns>
 	protected virtual AutoSortButton CreateAutoSortButton(int buttonNumber)
 	{
-		AutoSortButton button = this.NewSortButton(buttonNumber, true);
-		button.Location = new Point(this.BagSackPanel.Location.X - button.Width, this.BagSackPanel.Location.Y);
-
-		return button;
+		return this.NewSortButton(buttonNumber, true);
 	}
 
 	/// <summary>
@@ -326,38 +323,58 @@ public partial class VaultPanel
 		return button;
 	}
 
-	/// <summary>
-	/// Gets the scale factor for a particular button
-	/// </summary>
-	/// <param name="maxWidth">unscaled size of the button</param>
-	/// <param name="numberOfBags">total number of bags to scale</param>
-	/// <returns>scale factor float</returns>
-	protected virtual float GetBagButtonScale(float maxWidth, int numberOfBags)
-		=> ((float)this.BagSackPanel.Width / maxWidth) / (float)numberOfBags;
+	/// <summary>The size of the picture of the panel's bag buttons, at design size.</summary>
+	protected virtual Size BagButtonPicture => BagPictureSize;
 
-	/// <summary>
-	/// Creates a new bag button
-	/// </summary>
-	/// <param name="bagNumber">Bag number that we are creating</param>
-	/// <param name="numberOfBags">total number of buttons to create</param>
-	/// <returns>Instance of the new BagButton</returns>
-	private BagButton CreateBagButton(int bagNumber, int numberOfBags)
+	/// <summary>The size of the bag picture, read once: the resources make a new bitmap at each read.</summary>
+	private static readonly Size BagPictureSize = PictureSize(Images.inventorybagup01);
+
+	/// <summary>The size of <paramref name="picture"/>, a bitmap read from the resources for it, then disposed.</summary>
+	protected static Size PictureSize(Bitmap picture)
 	{
-		BagButton button = new BagButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Services);
+		using (picture)
+			return picture.Size;
+	}
 
-		float buttonWidth = (float)Images.inventorybagup01.Width;
-		float buttonHeight = (float)Images.inventorybagup01.Height;
+	/// <summary>
+	/// The size of a bag button whose picture is drawn at <paramref name="scale"/> times its size: bag pictures keep
+	/// their shape.
+	/// </summary>
+	protected virtual Size BagButtonSize(float scale, Size picture)
+		=> new((int)Math.Round(scale * (float)picture.Width), (int)Math.Round(scale * (float)picture.Height));
+
+	/// <summary>
+	/// Sizes the bag buttons and places them in a row above a sack at <paramref name="sackLocation"/>: the sack's width
+	/// is shared in <paramref name="slots"/> equal slots, a button centered in each.
+	/// </summary>
+	protected void PlaceBagButtons(Point sackLocation, int sackWidth, int slots)
+	{
+		Size picture = this.BagButtonPicture;
 		float pad = 2.0F;
-		float slotWidth = buttonWidth + (2.0F * pad);
+		float slotWidth = (float)picture.Width + (2.0F * pad);
 
-		// we need to scale down the bag size depending on the # we have
-		float scale = this.GetBagButtonScale(slotWidth, numberOfBags);
+		// The pictures are drawn smaller as there are more bags.
+		float scale = ((float)sackWidth / slotWidth) / (float)slots;
 		float bagSlotWidth = scale * slotWidth;
 
-		button.Size = new Size((int)Math.Round(scale * buttonWidth), (int)Math.Round(scale * buttonHeight));
-		float offset = (bagSlotWidth * bagNumber) + ((bagSlotWidth - button.Width) / 2.0F);
+		int index = 0;
+		foreach (BagButtonBase button in this.BagButtons)
+		{
+			button.Size = this.BagButtonSize(scale, picture);
+			float offset = (bagSlotWidth * index) + ((bagSlotWidth - button.Width) / 2.0F);
+			button.Location = new Point(sackLocation.X + (int)Math.Round(offset), sackLocation.Y - button.Height);
+			index++;
+		}
+	}
 
-		button.Location = new Point(this.BagSackPanel.Location.X + (int)Math.Round(offset), this.BagSackPanel.Location.Y - button.Height);
+	/// <summary>
+	/// Creates a new bag button, placed by <see cref="LayOut"/>.
+	/// </summary>
+	/// <param name="bagNumber">Bag number that we are creating</param>
+	/// <returns>Instance of the new BagButton</returns>
+	private BagButton CreateBagButton(int bagNumber)
+	{
+		BagButton button = new BagButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Services);
 
 		int bagLabelNumber = bagNumber - this.BagPanelOffset + 1;
 		button.ButtonText = bagLabelNumber.ToString(CultureInfo.CurrentCulture);

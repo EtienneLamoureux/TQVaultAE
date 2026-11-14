@@ -144,12 +144,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 
 	private System.ComponentModel.IContainer components;
 
-	/// <summary>
-	/// Holds the original location of the panel.
-	/// Used for scaling.
-	/// </summary>
-	private Point originalLocation;
-
 	#endregion
 
 #pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
@@ -248,9 +242,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		this.numberFormat = new StringFormat();
 		this.numberFormat.Alignment = StringAlignment.Far; // right-justify
 
-		this.Size = new Size(
-			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackWidth),
-			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
+		this.Size = this.SizeFor(this.SackSize);
 		this.BackColor = Theme.Background;
 
 		CustomProfessionalRenderer.Apply(this.CustomContextMenu);
@@ -551,25 +543,18 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	public void ResizeSackPanel(int sackWidth, int sackHeight)
 	{
 		this.SackSize = new Size(sackWidth, sackHeight);
-		this.Size = new Size(
-			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackWidth),
-			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * sackHeight));
+		this.Size = this.SizeFor(this.SackSize);
 		this.Invalidate();
 	}
 
 	/// <summary>
-	/// Sets the original location of the panel.
-	/// Used to handle moving the panel on scaling.
+	/// The size in pixels of a sack of <paramref name="cells"/> at the current scale: whole-pixel cells inside a border
+	/// on each side.
 	/// </summary>
-	/// <param name="location">Point holding the location of the panel.</param>
-	public void SetLocation(Point location)
+	internal Size SizeFor(Size cells)
 	{
-		this.Location = location;
-
-		// Set the unscaled origin.
-		this.originalLocation = new Point(
-			Convert.ToInt32((float)location.X / UIService.Scale),
-			Convert.ToInt32((float)location.Y / UIService.Scale));
+		int border = Convert.ToInt32(this.BorderWidth) * 2;
+		return new Size(border + (UIService.ItemUnitSize * cells.Width), border + (UIService.ItemUnitSize * cells.Height));
 	}
 
 	/// <summary>
@@ -602,49 +587,29 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	private Font NumberFont() => new("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
 
 	/// <summary>
-	/// Override of ScaleControl which supports scaling of the fonts and internal items.
+	/// Override of ScaleControl: the sack takes its border, fonts and size from the current scale
+	/// (<see cref="FollowScale"/>), never from its size before. The panel holding it places it.
 	/// </summary>
 	/// <param name="factor">SizeF for the scale factor</param>
 	/// <param name="specified">BoundsSpecified value.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+		=> this.FollowScale();
+
+	/// <summary>
+	/// Gives the sack its border, fonts and size at the current scale. Called by the panel holding it before it places
+	/// it (<see cref="VaultPanel.LayOut"/>).
+	/// </summary>
+	internal void FollowScale()
 	{
-		this.borderPen.Width = Math.Max((4.0F * UIService.Scale), 1.0F);
+		this.borderPen.Width = this.BorderWidth;
 		var previousNumberFont = this.numberFont;
 		this.numberFont = this.NumberFont();
 		previousNumberFont.Dispose();
 		this.CustomContextMenu.Font = this.MenuFont();
 
-		this.Size = new Size(
-			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Width),
-			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Height));
-
-		this.Location = new Point(
-			Convert.ToInt32((float)this.originalLocation.X * UIService.Scale),
-			Convert.ToInt32((float)this.originalLocation.Y * UIService.Scale));
-
-		// The cells are whole pixels at every zoom while the panel holding the sack is sized in proportion to the zoom:
-		// the panel grows to keep the sack whole.
-		if (ZoomScope.IsZooming)
-			(this.Parent as VaultPanel)?.Contain(this);
-	}
-
-	/// <summary>The sack's size in design pixels.</summary>
-	private DesignSize designSize;
-
-	/// <summary>
-	/// How much larger the sack is than its size in proportion to the scale: its cells are whole pixels.
-	/// </summary>
-	internal Size ZoomExcess
-		=> this.designSize.IsEmpty ? Size.Empty : this.Size - this.designSize.At(UIService.Scale);
-
-	/// <inheritdoc/>
-	protected override void OnSizeChanged(EventArgs e)
-	{
-		base.OnSizeChanged(e);
-
-		// The panel's construction sizes it before the services are set.
-		if (this.UIService is not null)
-			this.designSize.Keep(this.Size, UIService.Scale);
+		var size = this.SizeFor(this.SackSize);
+		if (this.Size != size)
+			this.Size = size;
 	}
 
 	/// <summary>

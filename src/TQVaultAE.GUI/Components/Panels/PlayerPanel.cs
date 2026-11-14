@@ -42,17 +42,11 @@ public class PlayerPanel : VaultPanel
 		this.Text = Resources.PlayerPanelNoPlayer;
 		this.NoPlayerString = Resources.PlayerPanelNoPlayer;
 
-		this.Size = new Size(
-			((panel1Size.Width + panel2Size.Width) * UIService.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.Scale),
-			(Math.Max(panel1Size.Height, panel2Size.Height) * UIService.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.Scale));
 		this.TabStop = false;
 		this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.FontZoom, this.Font.Style);
 
-		int borderPad = Convert.ToInt32(2.0F * UIService.Scale);
-
 		this.BagPanelOffset = 1; // bag panel starts with bag #1
 		this.mainSackPanel = new SackPanel(panel1Size.Width, panel1Size.Height, this.DragInfo, AutoMoveLocation.Player, services);
-		this.mainSackPanel.SetLocation(new Point(borderPad, this.Size.Height - this.mainSackPanel.Size.Height - borderPad));
 		this.mainSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.mainSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 		this.mainSackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
@@ -62,38 +56,8 @@ public class PlayerPanel : VaultPanel
 		this.mainSackPanel.SackType = SackType.Player;
 		this.mainSackPanel.IsMainPlayerPanel = true;
 
-		this.BagSackPanel.SetLocation(new Point(this.mainSackPanel.Right + borderPad, this.Size.Height - this.BagSackPanel.Size.Height - borderPad));
 		this.BagSackPanel.IsPlayerBagPanel = true;
-
-		// Recalculate the button sizing and placement since we moved the BagSackPanel.
-		if (this.BagButtons is not null && this.BagButtons.Count > 0)
-		{
-			float buttonWidth = (float)Images.inventorybagup01.Width;
-			float buttonHeight = (float)Images.inventorybagup01.Height;
-			float pad = 2.0F;
-			float slotWidth = buttonWidth + (2.0F * pad);
-
-			// we need to scale down the bag size depending on the # we have
-			// but keep room for the autosort button so the buttons only use half of the panel size.
-			float scale = this.GetBagButtonScale(slotWidth, (this.BagButtons.Count * 2));
-			float bagSlotWidth = scale * slotWidth;
-
-			int index = 0;
-			foreach (BagButtonBase button in this.BagButtons)
-			{
-				button.Size = new Size((int)Math.Round(scale * buttonWidth), (int)Math.Round(scale * buttonHeight));
-				float offset = (bagSlotWidth * index) + ((bagSlotWidth - button.Width) / 2.0F);
-
-				button.Location = new Point(this.BagSackPanel.Location.X + (int)Math.Round(offset), this.BagSackPanel.Location.Y - button.Height);
-				index++;
-			}
-		}
-
-		// Move the autosort buttons to their place since the panels got moved.
-		AutoSortButtons[0].Location = new Point(this.mainSackPanel.Location.X, this.mainSackPanel.Location.Y - AutoSortButtons[0].Height);
-		AutoSortButtons[1].Location = new Point(
-			this.BagSackPanel.Location.X + this.BagSackPanel.Width - AutoSortButtons[1].Width,
-			this.BagSackPanel.Location.Y - AutoSortButtons[1].Height);
+		this.LayOut();
 
 		this.BagSackPanel.SackType = SackType.Player;
 	}
@@ -136,15 +100,37 @@ public class PlayerPanel : VaultPanel
 	/// <returns>A new AutoSortButton instance</returns>
 	protected override AutoSortButton CreateAutoSortButton(int buttonNumber)
 	{
-		AutoSortButton button = this.NewSortButton(buttonNumber, false);
+		return this.NewSortButton(buttonNumber, false);
+	}
 
-		// Temporary location since we will be moving the panel later.
-		// This is called from the base constructor.
-		button.Location = new Point(
-			this.BagSackPanel.Location.X + this.BagSackPanel.Width - button.Width,
-			this.BagSackPanel.Location.Y - button.Height);
+	/// <summary>
+	/// Sizes the panel and places its two sacks side by side, the bag buttons above the bags on the left half of the bags'
+	/// width (the sort button keeps the right end), a sort button above the right end of each sack.
+	/// </summary>
+	protected internal override void LayOut()
+	{
+		// Called by the base constructor, before the main sack exists: the constructor lays it out once it does.
+		if (this.mainSackPanel is null)
+			return;
 
-		return button;
+		var main = this.mainSackPanel;
+		var bags = this.BagSackPanel;
+		main.FollowScale();
+		bags.FollowScale();
+		this.Size = new Size(
+			((main.SackSize.Width + this.PanelCells.Width) * UIService.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.Scale),
+			(Math.Max(main.SackSize.Height, this.PanelCells.Height) * UIService.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.Scale));
+
+		int borderPad = Convert.ToInt32(2.0F * UIService.Scale);
+		main.Location = new Point(borderPad, this.Height - main.Height - borderPad);
+		bags.Location = new Point(main.Right + borderPad, this.Height - bags.Height - borderPad);
+
+		this.PlaceBagButtons(bags.Location, bags.Width, this.BagButtons.Count * 2);
+
+		foreach (var button in this.AutoSortButtons)
+			button.FollowScale();
+		this.AutoSortButtons[0].Location = new Point(main.Left, main.Top - this.AutoSortButtons[0].Height);
+		this.AutoSortButtons[1].Location = new Point(bags.Right - this.AutoSortButtons[1].Width, bags.Top - this.AutoSortButtons[1].Height);
 	}
 
 	/// <summary>

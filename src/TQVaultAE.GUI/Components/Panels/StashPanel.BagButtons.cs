@@ -30,26 +30,10 @@ public partial class StashPanel
 	/// Creates a new stash button
 	/// </summary>
 	/// <param name="bagNumber">The bag number for button that is being created.</param>
-	/// <param name="numberOfBags">The total number of bags which is used for scaling.</param>
-	/// <returns>The new StashButton that is created.</returns>
-	protected StashButton CreateBagButton(int bagNumber, int numberOfBags)
+	/// <returns>The new StashButton that is created, placed by <see cref="LayOut"/>.</returns>
+	protected StashButton CreateBagButton(int bagNumber)
 	{
 		StashButton button = new StashButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Services);
-
-		float buttonWidth = (float)Images.StashTabUp.Width;
-		float buttonHeight = (float)Images.StashTabUp.Height;
-		float pad = 2.0F;
-		float slotWidth = buttonWidth + (2.0F * pad);
-
-		// we need to scale down the button size depending on the # we have
-		float scale = this.GetBagButtonScale(slotWidth, numberOfBags);
-		float bagSlotWidth = scale * slotWidth;
-
-		// We are using tabs so only scale horizontally
-		button.Size = new Size((int)Math.Round(scale * buttonWidth), Convert.ToInt32(buttonHeight * UIService.Scale));
-		float offset = (bagSlotWidth * bagNumber) + ((bagSlotWidth - button.Width) / 2.0F);
-
-		button.Location = new Point(this.SackPanel.Location.X + (int)Math.Round(offset), this.SackPanel.Location.Y - button.Height);
 		button.Visible = false;
 		button.MouseDown += new MouseEventHandler(this.BagButtonClick);
 
@@ -57,6 +41,16 @@ public partial class StashPanel
 
 		return button;
 	}
+
+	/// <inheritdoc/>
+	protected override Size BagButtonPicture => TabPictureSize;
+
+	/// <summary>The size of the tab picture, read once: the resources make a new bitmap at each read.</summary>
+	private static readonly Size TabPictureSize = PictureSize(Images.StashTabUp);
+
+	/// <summary>Tabs are only made narrower as there are more of them: their height follows the scale alone.</summary>
+	protected override Size BagButtonSize(float scale, Size picture)
+		=> new((int)Math.Round(scale * (float)picture.Width), Convert.ToInt32((float)picture.Height * UIService.Scale));
 
 	/// <summary>
 	/// Creates all of the stash buttons.
@@ -67,7 +61,7 @@ public partial class StashPanel
 	{
 		for (int i = 0; i < numberOfBags; ++i)
 		{
-			this.BagButtons.Insert(i, this.CreateBagButton(i, numberOfBags));
+			this.BagButtons.Insert(i, this.CreateBagButton(i));
 			this.Controls.Add(this.BagButtons[i]);
 		}
 	}

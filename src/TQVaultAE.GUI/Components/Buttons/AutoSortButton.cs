@@ -84,10 +84,16 @@ public class AutoSortButton : BagButtonBase
 			this.OverBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
 		}
 
-		// Scale the button to the size of the graphic.
-		this.Height = Convert.ToInt32((float)this.OffBitmap.Height * UIService.Scale);
-		this.Width = Convert.ToInt32((float)this.OffBitmap.Width * UIService.Scale);
+		this.FollowScale();
 	}
+
+	/// <summary>
+	/// Gives the button the size of its picture at the current scale; the panel holding it places it.
+	/// </summary>
+	public void FollowScale()
+		=> this.Size = new Size(
+			Convert.ToInt32((float)this.OffBitmap!.Width * UIService.Scale),
+			Convert.ToInt32((float)this.OffBitmap.Height * UIService.Scale));
 
 	/// <summary>
 	/// Handler for clicking the mouse button

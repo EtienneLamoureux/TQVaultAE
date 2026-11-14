@@ -125,16 +125,8 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.NoPlayerString = Resources.PlayerPanelNoVault;
 		this.DrawAsGroupBox = false;
 
-		// Setup the offset to make room for the autosort button
-		int autosortOffset = 0;
-		if (numberOfAutosortButtons > 0)
-		{
-			autosortOffset = Convert.ToInt32(27.0F * UIService.Scale);
-		}
-
-		this.Size = new Size(
-			(panelSize.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + autosortOffset + BorderPad,
-			(panelSize.Height * UIService.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.Scale) + BorderPad);
+		this.PanelCells = panelSize;
+		this.hasSortRoom = numberOfAutosortButtons > 0;
 
 		this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.FontZoom, this.Font.Style);
 
@@ -142,7 +134,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation, this.Services);
 		this.BagSackPanel.ContainerMod = () => this.Vault?.Mod;
 		this.BagSackPanel.HoldsVault = () => this.Vault is not null;
-		this.BagSackPanel.SetLocation(new Point(autosortOffset + BorderPad, this.Size.Height - (this.BagSackPanel.Size.Height + BorderPad)));
 		this.BagSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.BagSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 		this.BagSackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
@@ -178,6 +169,38 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 
 		// to avoid flickering use double buffer and to force control to use OnPaint
 		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+		this.LayOut();
+	}
+
+	/// <summary>The size in cells of the panel's bag, as built.</summary>
+	protected Size PanelCells { get; }
+
+	/// <summary>Whether the panel keeps room on the left of its bag for its sort button.</summary>
+	private readonly bool hasSortRoom;
+
+	/// <summary>
+	/// Sizes the panel and places the controls it built itself (sacks, bag and sort buttons) from the current scale and
+	/// item cell size, never from their sizes before: the panel is the same after any zoom and DPI history as built at
+	/// that scale. Called when built and each time the panel is scaled (<see cref="ScaleControl"/>).
+	/// </summary>
+	protected internal virtual void LayOut()
+	{
+		int sortRoom = this.hasSortRoom ? Convert.ToInt32(27.0F * UIService.Scale) : 0;
+
+		this.BagSackPanel.FollowScale();
+		this.Size = new Size(
+			(this.PanelCells.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + sortRoom + BorderPad,
+			(this.PanelCells.Height * UIService.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.Scale) + BorderPad);
+		this.BagSackPanel.Location = new Point(sortRoom + BorderPad, this.Height - (this.BagSackPanel.Height + BorderPad));
+
+		this.PlaceBagButtons(this.BagSackPanel.Location, this.BagSackPanel.Width, this.BagButtons.Count);
+
+		foreach (var button in this.AutoSortButtons)
+		{
+			button.FollowScale();
+			button.Location = new Point(this.BagSackPanel.Left - button.Width, this.BagSackPanel.Top);
+		}
 	}
 
 	/// <summary>
@@ -191,24 +214,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// Gets the scaled border pad.
 	/// </summary>
 	public int BorderPad => Convert.ToInt32(2.0F * UIService.Scale);
-
-	/// <summary>
-	/// After a zoom, grows the panel by what <paramref name="sack"/> came out larger than its size at the zoom, so the
-	/// sack stays whole inside it.
-	/// </summary>
-	internal void Contain(SackPanel sack)
-	{
-		if (this.designSize.IsEmpty)
-			return;
-
-		var scaled = this.designSize.At(UIService.Scale);
-		var excess = sack.ZoomExcess;
-		var size = new Size(
-			Math.Max(this.Width, scaled.Width + Math.Max(0, excess.Width)),
-			Math.Max(this.Height, scaled.Height + Math.Max(0, excess.Height)));
-		if (size != this.Size)
-			this.Size = size;
-	}
 
 	/// <summary>
 	/// Gets the bagbuttons array
@@ -495,7 +500,8 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	}
 
 	/// <summary>
-	/// Override of ScaleControl which supports font scaling.
+	/// Override of ScaleControl which supports font scaling. The panel's size and the controls it built itself come from
+	/// the scale (<see cref="LayOut"/>), not from their sizes before: Windows Forms does not scale them.
 	/// </summary>
 	/// <param name="factor">SizeF for the scale factor</param>
 	/// <param name="specified">BoundsSpecified value.</param>
@@ -505,25 +511,14 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
 
 		base.ScaleControl(factor, specified);
-
-		// From the scale, not from the size at the zoom before. The sacks, scaled next, make it grow where their
-		// whole-pixel cells need it (Contain).
-		if (ZoomScope.IsZooming && !this.designSize.IsEmpty)
-			this.Size = this.designSize.At(UIService.Scale);
+		this.LayOut();
 	}
 
-	/// <summary>The panel's size in design pixels.</summary>
-	private DesignSize designSize;
-
-	/// <inheritdoc/>
-	protected override void OnSizeChanged(EventArgs e)
-	{
-		base.OnSizeChanged(e);
-
-		// The base panel's construction sizes it before the services are set.
-		if (this.UIService is not null)
-			this.designSize.Keep(this.Size, UIService.Scale);
-	}
+	/// <summary>
+	/// The panel lays out its children itself (<see cref="LayOut"/>): scaled by Windows Forms from their sizes before,
+	/// each zoom rounded them again and they drifted (sort buttons, bag buttons, statistics panel).
+	/// </summary>
+	protected override bool ScaleChildren => false;
 
 	/// <summary>
 	/// New Item Highlighted Callback
