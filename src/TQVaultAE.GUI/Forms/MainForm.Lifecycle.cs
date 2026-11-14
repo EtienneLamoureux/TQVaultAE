@@ -17,24 +17,6 @@ public partial class MainForm
 	#region Mainform Events
 
 	/// <summary>
-	/// Handler for the ResizeEnd event.  Used to scale the internal controls after the window has been resized.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	protected override void ResizeEndCallback(object? sender, EventArgs e)
-		// That override Look dumb but needed by Visual Studio WInform Designer
-		=> base.ResizeEndCallback(sender, e);
-
-	/// <summary>
-	/// Handler for the Resize event.  Used for handling the maximize and minimize functions.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	protected override void ResizeBeginCallback(object? sender, EventArgs e)
-		// That override Look dumb but needed by Visual Studio WInform Designer
-		=> base.ResizeBeginCallback(sender, e);
-
-	/// <summary>
 	/// Handler for closing the main form
 	/// </summary>
 	/// <param name="sender">sender object</param>

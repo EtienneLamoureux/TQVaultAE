@@ -193,6 +193,11 @@ Item Debug Level: {ItemDebugLevel}
 		this.Hide();
 
 		this.InitializeComponent();
+
+		// Maximize, restore and minimize raise no ResizeBegin: the window reads its state change, and keeps a resize in
+		// its design ratio, at each Resize (VaultForm wires ResizeBegin and ResizeEnd).
+		this.Resize += this.ResizeBeginCallback;
+
 		this.WireMainView();
 
 		this.mainView.Initialize();

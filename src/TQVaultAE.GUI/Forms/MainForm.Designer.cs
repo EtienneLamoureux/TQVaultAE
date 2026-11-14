@@ -332,9 +332,7 @@ public partial class MainForm
         this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
         this.Load += new System.EventHandler(this.MainFormLoad);
         this.Shown += new System.EventHandler(this.MainFormShown);
-        this.ResizeEnd += new System.EventHandler(this.ResizeEndCallback);
         this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainFormKeyDown);
-        this.Resize += new System.EventHandler(this.ResizeBeginCallback);
         this.Controls.SetChildIndex(this.titleLabel, 0);
         this.Controls.SetChildIndex(this.aboutButton, 0);
         this.Controls.SetChildIndex(this.mainView, 0);
