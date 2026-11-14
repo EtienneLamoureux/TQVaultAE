@@ -23,9 +23,6 @@ public partial class FoundResultsTooltip : BaseTooltip
 	public Control AnchorControl { get; private set; }
 	public IEnumerable<SearchResult> ResultsToDisplay { get; private set; } = [];
 
-	// to avoid Mainform lost focus with this.TopMost = false
-	protected override bool ShowWithoutActivation => true;
-
 #if DEBUG
 	// For Design Mode
 #pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
@@ -33,7 +30,7 @@ public partial class FoundResultsTooltip : BaseTooltip
 #pragma warning restore CS8618
 #endif
 
-	private FoundResultsTooltip(SearchDialogAdvanced instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService, Control anchorControl) : base(itemProvider, fontService, uiService, translationService)
+	private FoundResultsTooltip(SearchDialogAdvanced instance, GuiServices services, Control anchorControl) : base(services)
 	{
 		InitializeComponent();
 
@@ -86,10 +83,7 @@ public partial class FoundResultsTooltip : BaseTooltip
 			HideTooltip();
 			newTT = new FoundResultsTooltip(
 				(SearchDialogAdvanced)anchorControl.FindForm()!
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
+				, services
 				, anchorControl
 			)
 			{

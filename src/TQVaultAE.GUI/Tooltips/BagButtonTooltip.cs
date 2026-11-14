@@ -13,7 +13,8 @@ namespace TQVaultAE.GUI.Tooltips;
 
 public partial class BagButtonTooltip : BaseTooltip
 {
-	private static Dictionary<BagButtonBase, BagButtonTooltip> ItemTooltipOpened = [];
+	/// <summary>The tool tip shown, if any: one at a time.</summary>
+	private static BagButtonTooltip? _Current;
 	/// <summary>Rendered sack summaries, up to 16 MB.</summary>
 	private static readonly TooltipImageCache<(SackCollection Sack, float Scale), object?> ToImage = new(16L << 20);
 
@@ -30,11 +31,11 @@ public partial class BagButtonTooltip : BaseTooltip
 #pragma warning restore CS8618
 #endif
 
-	private BagButtonTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService) : base(itemProvider, fontService, uiService, translationService)
+	private BagButtonTooltip(GuiServices services) : base(services)
 	{
 		InitializeComponent();
 
-		this.Owner = instance;
+		this.Owner = services.Forms.MainForm;
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -46,9 +47,6 @@ public partial class BagButtonTooltip : BaseTooltip
 		this.Location = new Point(0, this.CurrentWorkingArea.Height);
 	}
 
-	// to avoid Mainform lost focus with this.TopMost = false
-	protected override bool ShowWithoutActivation => true;
-	
 	public static void InvalidateCache(params SackCollection?[] sack)
 	{
 		var sacks = sack.OfType<SackCollection>().ToArray();
@@ -64,39 +62,22 @@ public partial class BagButtonTooltip : BaseTooltip
 	public static void HideTooltip()
 	{
 		lock (ToImage)
-		{
-			// Hidden ones too: a tool tip left in the list made the next one on the same key throw.
-			foreach (var form in ItemTooltipOpened.Values.ToList())
-			{
-				form.Close();
-				form.Dispose();
-			}
-
-			ItemTooltipOpened.Clear();
-		}
+			_Current = CloseAndDispose(_Current);
 	}
 
 	public static BagButtonTooltip? ShowTooltip(GuiServices services, BagButtonBase button)
 	{
-		BagButtonTooltip _Current;
 		if (button?.Sack is null) return null;
 		lock (ToImage)
 		{
 			HideTooltip();
-			_Current = new BagButtonTooltip(
-				services.Forms.MainForm
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
-			)
+			_Current = new BagButtonTooltip(services)
 			{
 				ButtonSack = button
 			};
-			ItemTooltipOpened.Add(button, _Current);
 			_Current.Show();
+			return _Current;
 		}
-		return _Current;
 	}
 
 

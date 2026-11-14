@@ -1,5 +1,4 @@
-﻿﻿using TQVaultAE.Application.Contracts.Providers;
-using TQVaultAE.Application.Contracts.Services;
+﻿﻿using TQVaultAE.Application;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Forms;
@@ -59,8 +58,8 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 			this.scalingLabel.Font = font;
 			this.scalingLabel.Text = _Label;
 
-			var frame = Scaled(DesignSize, this.UIService.Scale);
-			var margin = Scaled(DesignTextMargin, this.UIService.Scale);
+			var frame = WindowLayout.Scaled(DesignSize, this.UIService.Scale);
+			var margin = WindowLayout.Scaled(DesignTextMargin, this.UIService.Scale);
 			var text = TextRenderer.MeasureText(this._Label, font, Size.Empty, TextFormatFlags.SingleLine);
 			this.ClientSize = new Size(
 				Math.Max(frame.Width, text.Width + margin.Width),
@@ -79,15 +78,9 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 #pragma warning restore CS8618
 #endif
 
-	private BagButtonLabelTooltip(
-		MainForm instance
-		, IItemProvider itemProvider
-		, IFontService fontService
-		, IUIService uiService
-		, ITranslationService translationService
-	) : base(itemProvider, fontService, uiService, translationService)
+	private BagButtonLabelTooltip(GuiServices services) : base(services)
 	{
-		this.Owner = instance;
+		this.Owner = services.Forms.MainForm;
 
 		InitializeComponent();
 
@@ -97,9 +90,6 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 		this.bgimg = this.UIService.LoadBitmap(@"INGAMEUI\HEALTHMANAOVERLAY01_NEW.TEX");
 		this.BackgroundImage = bgimg;
 	}
-
-	// to avoid Mainform lost focus with this.TopMost = false
-	protected override bool ShowWithoutActivation => true;
 
 	public static void HideTooltip()
 	{
@@ -125,13 +115,7 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 		{
 			HideTooltip();
 			if (_Current is null)
-				_Current = new BagButtonLabelTooltip(
-					services.Forms.MainForm
-					, services.ItemProvider
-					, services.FontService
-					, services.UIService
-					, services.TranslationService
-				);
+				_Current = new BagButtonLabelTooltip(services);
 
 			_Current.Label = label;
 			_Current.AnchorControl = anchorControl;

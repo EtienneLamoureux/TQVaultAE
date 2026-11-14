@@ -17,7 +17,8 @@ namespace TQVaultAE.GUI.Tooltips;
 
 public partial class ItemTooltip : BaseTooltip
 {
-	private static Dictionary<Item, ItemTooltip> ItemTooltipOpened = [];
+	/// <summary>The tool tip shown, if any: one at a time.</summary>
+	private static ItemTooltip? _Current;
 	/// <summary>Rendered item tooltips and their text, up to 48 MB.</summary>
 	private static readonly TooltipImageCache<TooltipKey, ToFriendlyNameResult> ToImage = new(48L << 20);
 
@@ -50,13 +51,13 @@ public partial class ItemTooltip : BaseTooltip
 #pragma warning restore CS8618
 #endif
 
-	private ItemTooltip(MainForm instance, IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService, Item focusedItem) : base(itemProvider, fontService, uiService, translationService)
+	private ItemTooltip(GuiServices services, Item focusedItem) : base(services)
 	{
 		InitializeComponent();
 
 		this.FocusedItem = focusedItem;
 
-		this.Owner = instance;
+		this.Owner = services.Forms.MainForm;
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -74,9 +75,6 @@ public partial class ItemTooltip : BaseTooltip
 		var existing = items.OfType<Item>().ToArray();
 		ToImage.RemoveWhere(k => existing.Contains(k.Item));
 	}
-
-	// to avoid Mainform lost focus with this.TopMost = false
-	protected override bool ShowWithoutActivation => true;
 
 	/// <summary>
 	/// The mouse goes through the tooltip. A tooltip wider than the room beside the item covers the cursor:
@@ -96,120 +94,42 @@ public partial class ItemTooltip : BaseTooltip
 	public static void HideTooltip()
 	{
 		lock (ToImage)
-		{
-			// Hidden ones too: a tool tip left in the list made the next one on the same key throw.
-			foreach (var form in ItemTooltipOpened.Values.ToList())
-			{
-				form.Close();
-				form.Dispose();
-			}
-
-			ItemTooltipOpened.Clear();
-		}
+			_Current = CloseAndDispose(_Current);
 	}
 
 	#region Factory
 
-	public static ItemTooltip ShowTooltip(
-		GuiServices services
-		, Item focusedItem
-		, SackPanel sackPanel
-		, bool? enableDetailedTooltipView = null
-	)
-	{
-		ItemTooltip _Current;
-		lock (ToImage)
-		{
-			HideTooltip();
-				
-			var userSettings = services.Settings;
+	/// <summary>Shows the tool tip of an item of a sack panel, beside the item.</summary>
+	public static ItemTooltip ShowTooltip(GuiServices services, Item focusedItem, SackPanel sackPanel, bool? enableDetailedTooltipView = null)
+		=> Show(services, focusedItem, enableDetailedTooltipView, tooltip => tooltip.SackPanel = sackPanel);
 
-			_Current = new ItemTooltip(
-				services.Forms.MainForm
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
-				, focusedItem)
-			{
-				SackPanel = sackPanel,
-				View = ViewOf(services, enableDetailedTooltipView),
-				ShowInGameValues = userSettings.ShowInGameValues,
-				ItemDatabase = services.ItemDatabaseService,
-				ItemModService = services.ItemModService,
-			};
-			ItemTooltipOpened.Add(focusedItem, _Current);
-			_Current.Show();
-		}
-		return _Current;
-	}
+	/// <summary>Shows the tool tip of a search result, beside the results dialog.</summary>
+	public static ItemTooltip ShowTooltip(GuiServices services, Item focusedItem, ResultsDialog resultsDialog, bool? enableDetailedTooltipView = null)
+		=> Show(services, focusedItem, enableDetailedTooltipView, tooltip => tooltip.ResultsDialog = resultsDialog);
 
-	public static ItemTooltip ShowTooltip(
-		GuiServices services
-		, Item focusedItem
-		, ResultsDialog resultsDialog
-		, bool? enableDetailedTooltipView = null
-	)
+	/// <summary>Shows the tool tip of an item in a picture box (the forge), beside the picture.</summary>
+	public static ItemTooltip ShowTooltip(GuiServices services, Item focusedItem, PictureBox picBox, bool? enableDetailedTooltipView = null)
+		=> Show(services, focusedItem, enableDetailedTooltipView, tooltip => tooltip.PictureBox = picBox);
+
+	/// <summary>Closes the tool tip shown and shows a new one, placed next to what <paramref name="setAnchor"/> sets.</summary>
+	private static ItemTooltip Show(GuiServices services, Item focusedItem, bool? enableDetailedTooltipView, Action<ItemTooltip> setAnchor)
 	{
-		ItemTooltip _Current;
 		lock (ToImage)
 		{
 			HideTooltip();
 
-			var userSettings = services.Settings;
-
-			_Current = new ItemTooltip(
-				services.Forms.MainForm
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
-				, focusedItem)
+			var tooltip = new ItemTooltip(services, focusedItem)
 			{
-				ResultsDialog = resultsDialog,
 				View = ViewOf(services, enableDetailedTooltipView),
-				ShowInGameValues = userSettings.ShowInGameValues,
+				ShowInGameValues = services.Settings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
 				ItemModService = services.ItemModService,
 			};
-			ItemTooltipOpened.Add(focusedItem, _Current);
-			_Current.Show();
+			setAnchor(tooltip);
+			_Current = tooltip;
+			tooltip.Show();
+			return tooltip;
 		}
-		return _Current;
-	}
-
-	public static ItemTooltip ShowTooltip(
-		GuiServices services
-		, Item focusedItem
-		, PictureBox picBox
-		, bool? enableDetailedTooltipView = null
-	)
-	{
-		ItemTooltip _Current;
-		lock (ToImage)
-		{
-			HideTooltip();
-
-			var userSettings = services.Settings;
-
-			_Current = new ItemTooltip(
-				services.Forms.MainForm
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
-				, focusedItem)
-			{
-				PictureBox = picBox,
-				View = ViewOf(services, enableDetailedTooltipView),
-				ShowInGameValues = userSettings.ShowInGameValues,
-				ItemDatabase = services.ItemDatabaseService,
-				ItemModService = services.ItemModService,
-			};
-			ItemTooltipOpened.Add(focusedItem, _Current);
-			_Current.Show();
-		}
-		return _Current;
 	}
 
 	#endregion

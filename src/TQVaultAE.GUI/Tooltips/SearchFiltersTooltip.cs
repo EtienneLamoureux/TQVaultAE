@@ -31,14 +31,7 @@ public partial class SearchFiltersTooltip : BaseTooltip
 #pragma warning restore CS8618
 #endif
 
-	private SearchFiltersTooltip(
-		SearchDialogAdvanced instance
-		, IItemProvider itemProvider
-		, IFontService fontService
-		, IUIService uiService
-		, ITranslationService translationService
-		, Control anchorControl
-	) : base(itemProvider, fontService, uiService, translationService)
+	private SearchFiltersTooltip(SearchDialogAdvanced instance, GuiServices services, Control anchorControl) : base(services)
 	{
 		this.Owner = instance;
 		this.AnchorControl = anchorControl;
@@ -54,9 +47,6 @@ public partial class SearchFiltersTooltip : BaseTooltip
 		// Fill it outside of screen to avoid flickering
 		this.Location = new Point(0, this.CurrentWorkingArea.Height);
 	}
-
-	// to avoid Mainform lost focus with this.TopMost = false
-	protected override bool ShowWithoutActivation => true;
 
 	public static void HideTooltip()
 	{
@@ -80,10 +70,7 @@ public partial class SearchFiltersTooltip : BaseTooltip
 			HideTooltip();
 			newTT = new SearchFiltersTooltip(
 				(SearchDialogAdvanced)anchorControl.FindForm()!
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
+				, services
 				, anchorControl
 			)
 			{

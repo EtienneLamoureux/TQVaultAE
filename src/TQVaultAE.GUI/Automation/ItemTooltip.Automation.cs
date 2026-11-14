@@ -24,13 +24,7 @@ public partial class ItemTooltip
 		var recorder = new ItemTooltipRecorder();
 		try
 		{
-			using var tooltip = new ItemTooltip(
-				services.Forms.MainForm
-				, services.ItemProvider
-				, services.FontService
-				, services.UIService
-				, services.TranslationService
-				, item)
+			using var tooltip = new ItemTooltip(services, item)
 			{
 				View = view,
 				ShowInGameValues = inGameValues,

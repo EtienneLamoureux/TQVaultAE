@@ -28,17 +28,31 @@ public class BaseTooltip : Form
 #pragma warning restore CS8618
 #endif
 
-	public BaseTooltip(IItemProvider itemProvider, IFontService fontService, IUIService uiService, ITranslationService translationService)
+	public BaseTooltip(GuiServices services)
 	{
-		this.ItemProvider = itemProvider;
-		this.FontService = fontService;
-		this.UIService = uiService;
-		this.TranslationService = translationService;
+		this.ItemProvider = services.ItemProvider;
+		this.FontService = services.FontService;
+		this.UIService = services.UIService;
+		this.TranslationService = services.TranslationService;
 	}
 
-	/// <summary>A size given at zoom 1 and 96 dpi, in pixels at <paramref name="scale"/>.</summary>
-	internal static Size Scaled(Size design, float scale)
-		=> new((int)Math.Round(design.Width * scale), (int)Math.Round(design.Height * scale));
+	/// <summary>Shown without taking the focus, so the window under it keeps it (TopMost stays false).</summary>
+	protected override bool ShowWithoutActivation => true;
+
+	/// <summary>
+	/// Closes and disposes <paramref name="tooltip"/>, shown or hidden, for a tool tip class that makes a new window at each
+	/// show; returns null to clear the field that held it.
+	/// </summary>
+	protected static T? CloseAndDispose<T>(T? tooltip) where T : BaseTooltip
+	{
+		if (tooltip is not null)
+		{
+			tooltip.Close();
+			tooltip.Dispose();
+		}
+
+		return null;
+	}
 
 	/// <summary>Copy of a cached image shown by this tooltip; owned by the tooltip.</summary>
 	private Bitmap? _shownImage;
