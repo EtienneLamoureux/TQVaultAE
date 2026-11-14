@@ -152,10 +152,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash, services);
 		this.Controls.Add(this.equipmentPanel);
-		this.equipmentPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.equipmentPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.equipmentPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.equipmentPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+		this.ForwardEvents(this.equipmentPanel);
 		this.equipmentPanel.OnEquipmentChanged += new EventHandler<SackPanelEventArgs>(this.EquipmentChangedCallback);
 		this.BagSackPanel.ShownStash = () => this.ShownStash;
 

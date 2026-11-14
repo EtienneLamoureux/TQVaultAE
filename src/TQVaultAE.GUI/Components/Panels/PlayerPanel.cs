@@ -45,10 +45,7 @@ public class PlayerPanel : VaultPanel
 
 		this.BagPanelOffset = 1; // bag panel starts with bag #1
 		this.mainSackPanel = new SackPanel(panel1Size.Width, panel1Size.Height, this.DragInfo, AutoMoveLocation.Player, services);
-		this.mainSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.mainSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.mainSackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
-		this.mainSackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		this.ForwardEvents(this.mainSackPanel);
 		this.Controls.Add(this.mainSackPanel);
 		this.mainSackPanel.MaxSacks = 1;
 		this.mainSackPanel.SackType = SackType.Player;

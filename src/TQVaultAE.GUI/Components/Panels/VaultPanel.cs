@@ -131,10 +131,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation, this.Services);
 		this.BagSackPanel.ContainerMod = () => this.Vault?.Mod;
 		this.BagSackPanel.HoldsVault = () => this.Vault is not null;
-		this.BagSackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
-		this.BagSackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
-		this.BagSackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
-		this.BagSackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+		this.ForwardEvents(this.BagSackPanel);
 		this.Controls.Add(this.BagSackPanel);
 		this.BagSackPanel.IsPlayerBagPanel = false;
 		this.BagSackPanel.MaxSacks = numberOfBags;
@@ -464,6 +461,17 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// each zoom rounded them again and they drifted (sort buttons, bag buttons, statistics panel).
 	/// </summary>
 	protected override bool ScaleChildren => false;
+
+	/// <summary>
+	/// Passes on the highlight, auto move and selection events of a sack panel this panel holds.
+	/// </summary>
+	protected void ForwardEvents(SackPanel sackPanel)
+	{
+		sackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
+		sackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
+		sackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		sackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+	}
 
 	/// <summary>
 	/// New Item Highlighted Callback
