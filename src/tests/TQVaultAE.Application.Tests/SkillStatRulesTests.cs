@@ -30,6 +30,20 @@ public class SkillStatRulesTests
 	public void RoleOf_RecordClass_TellsWhenTheSkillCounts(string recordClass, SkillStatRole expected)
 		=> SkillStatRules.RoleOf(recordClass).Should().Be(expected);
 
+	/// <summary>Skill and buff record classes of the game's skills (Storm, Nature, Spirit, Hunting, Neidan, Rune masteries).</summary>
+	[Theory]
+	[InlineData("Skill_AttackBuffRadius", "SkillBuff_DebufFreeze", SkillStatRole.None)] // Freezing Blast: -100% physical on what it hits
+	[InlineData("Skill_AttackBuffRadius", "SkillBuff_Debuf", SkillStatRole.None)] // Study Prey, Consequences
+	[InlineData("Skill_AttackBuffRadius", "SkillBuff_Contageous", SkillStatRole.None)] // Earthbind
+	[InlineData("Skill_AttackBuff", "SkillBuff_Contageous", SkillStatRole.None)] // Plague
+	[InlineData("Skill_AttackBuffRadius", "SkillBuff_Passive", SkillStatRole.None)] // an attack's buff goes on its targets
+	[InlineData("Skill_BuffRadiusToggled", "SkillBuff_Debuf", SkillStatRole.None)] // Deathchill Aura: on the monsters around
+	[InlineData("Skill_BuffRadiusToggled", "SkillBuff_Passive", SkillStatRole.Buff)] // Heart of Oak
+	[InlineData("Skill_BuffOther", "SkillBuff_PassiveShield", SkillStatRole.Buff)] // Elemental Shielding
+	[InlineData("Skill_BuffSelfToggled", null, SkillStatRole.Buff)] // Storm Nimbus: its bonuses in its own record
+	public void RoleOf_WithTheBuffItCasts_WhatGoesOnMonstersNeverCounts(string recordClass, string? buffRecordClass, SkillStatRole expected)
+		=> SkillStatRules.RoleOf(recordClass, buffRecordClass).Should().Be(expected);
+
 	[Theory]
 	[InlineData(SkillStatRole.Passive, SkillStatRole.Passive)]
 	[InlineData(SkillStatRole.Buff, SkillStatRole.Buff)]

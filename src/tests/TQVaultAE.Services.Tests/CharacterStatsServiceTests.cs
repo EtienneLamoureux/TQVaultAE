@@ -99,6 +99,54 @@ public class CharacterStatsServiceTests
 	}
 
 	[Fact]
+	public void GetSkillAttributes_WithBuffs_LeavesOutWhatTheSkillsCastOnMonsters()
+	{
+		// Arrange: an attack casting a freeze on what it hits (Freezing Blast) with its modifier, an aura whose buff is a
+		// debuff of the monsters around (Deathchill Aura), and an aura on the character for comparison.
+		var blast = """Records\Skills\Storm\FreezingBlast.dbr""".ToRecordId();
+		var blastBuff = """Records\Skills\Storm\FreezingBlastBuff.dbr""".ToRecordId();
+		var hypothermia = """Records\Skills\Storm\FreezingBlast_Hypothermia.dbr""".ToRecordId();
+		var chill = """Records\Skills\Spirit\DeathChillAura.dbr""".ToRecordId();
+		var chillBuff = """Records\Skills\Spirit\DeathChillAuraBuff.dbr""".ToRecordId();
+		Class(blast, "Skill_AttackBuffRadius").Set(Text("buffSkillName", blastBuff.Raw));
+		Class(blastBuff, "SkillBuff_DebufFreeze");
+		Class(hypothermia, "Skill_Modifier");
+		Class(chill, "Skill_BuffRadiusToggled").Set(Text("buffSkillName", chillBuff.Raw));
+		Class(chillBuff, "SkillBuff_Debuf");
+		Class(AuraBuff, "SkillBuff_Passive");
+		var tree = new MasteryTree(Masteries.Storm, DefenseMastery, "tagStorm", "", "", 40,
+		[
+			new MasterySkill(blast, "", "", "", 10, 1, null),
+			new MasterySkill(hypothermia, "", "", "", 10, 2, blast),
+			new MasterySkill(chill, "", "", "", 10, 1, null),
+			new MasterySkill(Aura, "", "", "", 10, 1, null),
+		]);
+
+		// Act
+		var sum = this._service.GetSkillAttributes([Skill(blast, 1), Skill(hypothermia, 2), Skill(chill, 3), Skill(Aura, 4)], [], [tree], includeBuffs: true);
+
+		// Assert
+		sum.Values.Should().BeEquivalentTo(new Dictionary<string, double> { [AuraBuff.Raw] = 4 },
+			"the freeze, its modifier and the debuff aura go on monsters; the aura on the character counts");
+	}
+
+	[Fact]
+	public void GetItemSkillAttributes_WithBuffs_LeavesOutAnAuraThatWeakensTheMonsters()
+	{
+		// An artifact's aura lowering the physical resistance of the monsters around (Abdicate).
+		var abdicate = """Records\XPack4\Skills\Artifact Skills\Abdicate.dbr""".ToRecordId();
+		var abdicateBuff = """Records\XPack4\Skills\Artifact Skills\AbdicateBuff.dbr""".ToRecordId();
+		Class(abdicate, "Skill_BuffRadiusToggled").Set(Text("buffSkillName", abdicateBuff.Raw));
+		Class(abdicateBuff, "SkillBuff_Debuf");
+		var artifact = Weapon("ItemArtifact", 0, x: 5);
+		this._items.Setup(p => p.GetGrantedSkillLevels(artifact)).Returns([(abdicate, 1)]);
+
+		var sum = this._service.GetItemSkillAttributes([artifact], useAlternate: false, includeBuffs: true);
+
+		sum.Values.Should().BeEmpty();
+	}
+
+	[Fact]
 	public void GetGameBalance_ReadsCapsPenaltiesAndEquationsFromTheRecordsTheEngineNames()
 	{
 		var engine = Class("""records\xpack\game\gameengine.dbr""".ToRecordId(), "");

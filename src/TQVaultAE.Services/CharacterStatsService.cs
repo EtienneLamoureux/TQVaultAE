@@ -68,7 +68,7 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 		{
 			var record = this._database.GetRecordFromFile(id);
 			records[id] = record;
-			roles[id] = SkillStatRules.RoleOf(record?.RecordType);
+			roles[id] = this.RoleOf(record);
 		}
 
 		var sum = new AttributeSum();
@@ -106,12 +106,20 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 			var record = this._database.GetRecordFromFile(id);
 
 			// A granted skill modifies nothing of the character's: a modifier never counts.
-			var role = SkillStatRules.Resolve(SkillStatRules.RoleOf(record?.RecordType), null);
+			var role = SkillStatRules.Resolve(this.RoleOf(record), null);
 			if (SkillStatRules.Counts(role, includeBuffs))
 				sum.Add(this.SkillRecordAttributes(id, record, level));
 		}
 
 		return sum;
+	}
+
+	/// <summary>The role of a skill from its record and the record of the buff it casts (<c>buffSkillName</c>).</summary>
+	private SkillStatRole RoleOf(DBRecordCollection? record)
+	{
+		var buff = record?.GetString(BuffSkillName, 0);
+		var buffClass = string.IsNullOrEmpty(buff) ? null : this._database.GetRecordFromFile(buff.ToRecordId())?.RecordType;
+		return SkillStatRules.RoleOf(record?.RecordType, buffClass);
 	}
 
 	/// <summary>The bonuses of a skill at a level: a buff skill keeps them in the buff it casts (<c>buffSkillName</c>).</summary>

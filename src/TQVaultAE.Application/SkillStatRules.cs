@@ -23,10 +23,24 @@ public enum SkillStatRole
 /// </summary>
 public static class SkillStatRules
 {
-	/// <summary>The role of a skill from the class of its record.</summary>
-	public static SkillStatRole RoleOf(string? recordClass)
+	/// <summary>
+	/// The role of a skill from the class of its record and, for a skill that casts a buff (<c>buffSkillName</c>), the
+	/// class of that buff's record. What goes on monsters never counts: an attack's buff (Freezing Blast casts on what it
+	/// hits a buff of -100% physical resistance), and a buff whose record is a debuff (an aura that weakens the monsters
+	/// around, a contagion).
+	/// </summary>
+	/// <param name="recordClass">The class of the skill's record.</param>
+	/// <param name="buffRecordClass">The class of the record of the buff it casts, or <see langword="null"/> when it casts none.</param>
+	public static SkillStatRole RoleOf(string? recordClass, string? buffRecordClass = null)
 	{
 		if (string.IsNullOrEmpty(recordClass))
+			return SkillStatRole.None;
+
+		// Skill_AttackBuff, Skill_AttackBuffRadius...: the buff goes on the targets of the attack.
+		if (recordClass.StartsWith("Skill_Attack", StringComparison.OrdinalIgnoreCase))
+			return SkillStatRole.None;
+
+		if (IsMonsterBuff(buffRecordClass))
 			return SkillStatRole.None;
 
 		if (recordClass.Equals("Skill_Passive", StringComparison.OrdinalIgnoreCase)
@@ -48,6 +62,15 @@ public static class SkillStatRules
 
 		return SkillStatRole.None;
 	}
+
+	/// <summary>
+	/// Tells whether a buff record goes on monsters: the debuffs (<c>SkillBuff_Debuf</c>, <c>SkillBuff_DebufFreeze</c>,
+	/// <c>SkillBuff_DebufTrap</c>...) and the contagions (<c>SkillBuff_Contageous</c>, spread from monster to monster).
+	/// </summary>
+	public static bool IsMonsterBuff(string? buffRecordClass)
+		=> !string.IsNullOrEmpty(buffRecordClass)
+			&& (buffRecordClass.StartsWith("SkillBuff_Debuf", StringComparison.OrdinalIgnoreCase)
+				|| buffRecordClass.StartsWith("SkillBuff_Contageous", StringComparison.OrdinalIgnoreCase));
 
 	/// <summary>
 	/// The role a modifier takes from the skill it modifies: the parent's, or none when the parent is unknown or does
