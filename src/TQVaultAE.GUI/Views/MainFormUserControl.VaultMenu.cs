@@ -121,7 +121,7 @@ public partial class MainFormUserControl
 		{
 			ShowImageMargin = false
 		};
-		MenuStyle.Apply(vaultExportContextMenu, FontService, UIService.FontZoom);
+		MenuStyle.Apply(vaultExportContextMenu, this.Services.FontService, this.Services.UIService.FontZoom);
 
 		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.MaintainVaultFilesDialog());
 
@@ -131,7 +131,7 @@ public partial class MainFormUserControl
 		vaultExportContextMenu.Opening += (s, e) =>
 		{
 			// The font at the zoom of now (the menu is built once), before the mod sub menu copies it.
-			vaultExportContextMenu.Font = MenuStyle.MenuFont(FontService, UIService.FontZoom);
+			vaultExportContextMenu.Font = MenuStyle.MenuFont(this.Services.FontService, this.Services.UIService.FontZoom);
 			this.PrepareVaultMenu();
 		};
 
