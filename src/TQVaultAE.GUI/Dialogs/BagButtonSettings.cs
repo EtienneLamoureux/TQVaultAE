@@ -193,6 +193,18 @@ public partial class BagButtonSettings : VaultForm
 			grid.MouseMove += this.Grid_MouseMove;
 			grid.MouseUp += this.Grid_MouseUp;
 		}
+
+		// The icons of the grids as large as the selected pictures, whatever the DPI and the zoom made of the boxes.
+		this.pictureBoxOff.SizeChanged += (_, _) => this.FitGridIcons();
+		this.FitGridIcons();
+	}
+
+	/// <summary>Gives the icons of every grid the size of the selected pictures' boxes.</summary>
+	private void FitGridIcons()
+	{
+		int size = this.pictureBoxOff.Height;
+		foreach (var grid in this.GridByCategory.Values)
+			grid.IconSize = size;
 	}
 
 	private void ApplySelectedBagPath()
@@ -464,7 +476,7 @@ public partial class BagButtonSettings : VaultForm
 
 		// The dragged picture is the mouse cursor: Windows moves it, nothing is repainted.
 		this.DraggedCell = cell;
-		float scale = (float)IconGrid.IconSize / Math.Max(cell.Bitmap.Width, cell.Bitmap.Height);
+		float scale = (float)grid.IconSize / Math.Max(cell.Bitmap.Width, cell.Bitmap.Height);
 		this.DragCursor = ItemDragCursor.Create(cell.Bitmap, scale);
 		if (this.DragCursor is not null)
 			Cursor.Current = grid.Cursor = this.DragCursor.Cursor;

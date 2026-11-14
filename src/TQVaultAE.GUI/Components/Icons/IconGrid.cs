@@ -21,13 +21,40 @@ public class IconGrid : Control
 		public Bitmap Bitmap => this.Info.BitmapOf(this.Id);
 	}
 
-	/// <summary>Size of a drawn icon, border included, as the former picture boxes.</summary>
-	public const int IconSize = 32;
+	/// <summary>Size of a drawn icon, border included, at 96 DPI, as the former picture boxes.</summary>
+	private const int DefaultIconSize = 32;
 
-	/// <summary>Space around each icon, as the former picture box margins.</summary>
-	private const int Spacing = 3;
+	/// <summary>Space around each icon at <see cref="DefaultIconSize"/>, as the former picture box margins.</summary>
+	private const int DefaultSpacing = 3;
 
-	private const int Pitch = IconSize + 2 * Spacing;
+	private int _iconSize = DefaultIconSize;
+
+	/// <summary>
+	/// Size of a drawn icon in pixels, border included. The space around each icon follows it, in the proportion of the
+	/// former picture box margins.
+	/// </summary>
+	[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+	public int IconSize
+	{
+		get => this._iconSize;
+		set
+		{
+			value = Math.Max(3, value);
+			if (value == this._iconSize)
+				return;
+
+			this._iconSize = value;
+			this.ClearThumbnails();
+			this.SetHover(-1);
+			this.UpdateScroll();
+			this.Invalidate();
+		}
+	}
+
+	/// <summary>Space around each icon.</summary>
+	private int Spacing => Math.Max(1, (int)Math.Round(this._iconSize * (float)DefaultSpacing / DefaultIconSize));
+
+	private int Pitch => this._iconSize + 2 * this.Spacing;
 
 	private static readonly Color BorderColor = Color.FromArgb(10, 8, 6);
 	private static readonly Color HoverColor = Color.Gold;
@@ -164,7 +191,7 @@ public class IconGrid : Control
 		if (this._thumbnails.TryGetValue(bitmap, out var thumbnail))
 			return thumbnail;
 
-		const int inner = IconSize - 2;// inside the border
+		int inner = this._iconSize - 2;// inside the border
 		float ratio = Math.Min((float)inner / bitmap.Width, (float)inner / bitmap.Height);
 		int width = Math.Max(1, (int)Math.Round(bitmap.Width * ratio));
 		int height = Math.Max(1, (int)Math.Round(bitmap.Height * ratio));
@@ -247,11 +274,15 @@ public class IconGrid : Control
 	protected override void Dispose(bool disposing)
 	{
 		if (disposing)
-		{
-			foreach (var thumbnail in this._thumbnails.Values)
-				thumbnail.Dispose();
-			this._thumbnails.Clear();
-		}
+			this.ClearThumbnails();
 		base.Dispose(disposing);
+	}
+
+	/// <summary>Drops the thumbnails made for the previous <see cref="IconSize"/>.</summary>
+	private void ClearThumbnails()
+	{
+		foreach (var thumbnail in this._thumbnails.Values)
+			thumbnail.Dispose();
+		this._thumbnails.Clear();
 	}
 }
