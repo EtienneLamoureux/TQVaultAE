@@ -250,17 +250,9 @@ internal sealed class ModLinkDialog : VaultForm
 	/// </summary>
 	private void SuggestMod()
 	{
-		var cursor = this.Cursor;
-		this.Cursor = Cursors.WaitCursor;
 		ModSuggestion suggestion;
-		try
-		{
+		using (new WaitCursor(this))
 			suggestion = this.ModLinkService.Suggest(this._save!.Folder);
-		}
-		finally
-		{
-			this.Cursor = cursor;
-		}
 
 		// Its line shows from the first suggestion on: before, it would leave an empty band over the buttons.
 		this.labelSuggestion.Text = ModLinkText.Suggestion(suggestion);

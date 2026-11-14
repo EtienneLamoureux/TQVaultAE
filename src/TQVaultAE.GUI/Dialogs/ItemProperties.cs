@@ -266,8 +266,7 @@ internal sealed partial class ItemProperties : VaultForm
 	/// <param name="e">EventArgs data</param>
 	private void CheckBox1_CheckedChanged(object? sender, EventArgs e)
 	{
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
-		this.LoadProperties();
-		System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default;
+		using (new WaitCursor(this))
+			this.LoadProperties();
 	}
 }
