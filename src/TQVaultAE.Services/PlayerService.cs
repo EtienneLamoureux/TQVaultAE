@@ -326,12 +326,6 @@ public class PlayerService(
 	}
 
 	/// <inheritdoc/>
-	public bool Archive(PlayerSave ps) => this.MoveSave(ps, archive: true);
-
-	/// <inheritdoc/>
-	public bool Unarchive(PlayerSave ps) => this.MoveSave(ps, archive: false);
-
-	/// <inheritdoc/>
 	public ArchiveChangeResult SetArchived(IEnumerable<PlayerSave> saves, bool archive, string? tag)
 	{
 		// Pick the saves first: moving one changes its IsArchived.
@@ -341,37 +335,35 @@ public class PlayerService(
 
 		List<PlayerSave> changed = [];
 		List<PlayerSave> failed = [];
+		Exception? firstError = null;
 		foreach (var ps in toMove)
 		{
-			bool moved;
 			try
 			{
-				moved = this.MoveSave(ps, archive);
+				this.MoveSave(ps, archive);
+				changed.Add(ps);
 			}
 			catch (Exception ex)
 			{
 				this.Log.LogError(ex, "Failed to {Action} the character {Name}", archive ? "archive" : "unarchive", ps.Name);
-				moved = false;
+				firstError ??= ex;
+				failed.Add(ps);
 			}
-
-			(moved ? changed : failed).Add(ps);
 		}
 
-		return new ArchiveChangeResult(changed, failed);
+		return new ArchiveChangeResult(changed, failed, firstError);
 	}
 
 	/// <summary>
 	/// Archives or unarchives a save, then moves the loaded player from its old file path to the new one, so the player
 	/// is found, saved and reloaded at its new place.
 	/// </summary>
-	private bool MoveSave(PlayerSave ps, bool archive)
+	/// <exception cref="IOException">The folder could not be moved: nothing changed.</exception>
+	private void MoveSave(PlayerSave ps, bool archive)
 	{
 		var oldPath = this.GamePathResolver.PlayerFileIn(this.PathIO, ps.Folder);
-		bool moved = archive ? this.GameFileService.Archive(ps) : this.GameFileService.Unarchive(ps);
-		if (moved)
-			this.UpdatePlayerFilePath(oldPath, this.GamePathResolver.PlayerFileIn(this.PathIO, ps.Folder));
-
-		return moved;
+		this.GameFileService.ToggleArchive(ps, archive);
+		this.UpdatePlayerFilePath(oldPath, this.GamePathResolver.PlayerFileIn(this.PathIO, ps.Folder));
 	}
 
 	/// <inheritdoc/>

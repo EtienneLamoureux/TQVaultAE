@@ -71,20 +71,9 @@ public interface IPlayerService
 	CharacterDuplicateResult DuplicateCharacter(PlayerSave source, string newName);
 
 	/// <summary>
-	/// Archives a character (moves its save folder) and keys the loaded player by its new file path.
-	/// </summary>
-	/// <returns><see langword="true"/> when the save was archived.</returns>
-	bool Archive(PlayerSave ps);
-
-	/// <summary>
-	/// Unarchives a character (moves its save folder back) and keys the loaded player by its new file path.
-	/// </summary>
-	/// <returns><see langword="true"/> when the save was unarchived.</returns>
-	bool Unarchive(PlayerSave ps);
-
-	/// <summary>
-	/// Archives (or unarchives) every save of <paramref name="saves"/> not yet in that state, as <see cref="Archive"/>
-	/// and <see cref="Unarchive"/> do one by one. With <paramref name="tag"/>, only the saves having that tag.
+	/// Archives (or unarchives) every save of <paramref name="saves"/> not yet in that state: moves its save folder and
+	/// keys its loaded player by its new file path. With <paramref name="tag"/>, only the saves having that tag. A save
+	/// that cannot be moved does not stop the others: it is reported, with the first error, for one message.
 	/// </summary>
 	/// <param name="saves">The known characters.</param>
 	/// <param name="archive"><see langword="true"/> to archive, <see langword="false"/> to unarchive.</param>

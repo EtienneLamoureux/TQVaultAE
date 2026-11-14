@@ -13,16 +13,16 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// IGameFileService implementation
 /// </summary>
-public partial class GameFileService(ILogger<GameFileService> log, IGamePathService iGamePathService, IUserNotifier userNotifier, IFileIO fileIO, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings userSettings) : IGameFileService
+public class GameFileService(ILogger<GameFileService> log, IGamePathService iGamePathService, IUserNotifier userNotifier, IFileIO fileIO, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings userSettings) : IGameFileService
 {
-	protected readonly ILogger Log = log;
-	protected readonly IGamePathService GamePathService = iGamePathService;
-	protected readonly IUserNotifier UserNotifier = userNotifier;
-	protected readonly IFileIO FileIO = fileIO;
-	protected readonly IPathIO PathIO = pathIO;
-	protected readonly IDirectoryIO DirectoryIO = directoryIO;
+	private readonly ILogger Log = log;
+	private readonly IGamePathService GamePathService = iGamePathService;
+	private readonly IUserNotifier UserNotifier = userNotifier;
+	private readonly IFileIO FileIO = fileIO;
+	private readonly IPathIO PathIO = pathIO;
+	private readonly IDirectoryIO DirectoryIO = directoryIO;
 
-	protected readonly UserSettings UserSettings = userSettings;
+	private readonly UserSettings UserSettings = userSettings;
 
 	public void GitRepositorySetup()
 	{
@@ -251,116 +251,29 @@ public partial class GameFileService(ILogger<GameFileService> log, IGamePathServ
 		}
 	}
 
-	public bool Archive(PlayerSave ps)
+	/// <inheritdoc/>
+	public void ToggleArchive(PlayerSave ps, bool archive)
 	{
-		if (ps is null)
-			return false;
+		ArgumentNullException.ThrowIfNull(ps);
 
-		if (ps.IsArchived)// Double Check
-			return true;
+		if (ps.IsArchived == archive)
+			return;
 
-		// Disable filewatchers
-		ToggleFileWatchers(ps, false);
-
-		// Move directory
-		var oldFolder = ps.Folder;
-
-		// -- Prep arbo
-		var archDirNameTarget = this.GamePathService.GetBaseCharacterFolder(ps.IsImmortalThrone, ps.IsCustom, true);
-		if (!DirectoryIO.Exists(archDirNameTarget))
-			DirectoryIO.CreateDirectory(archDirNameTarget);
-
-		var newFolder = GamePathService.ArchiveTogglePath(oldFolder);
-
-		Exception? ex = null;
-		try
+		// The archive folder is made at the first archive.
+		if (archive)
 		{
-			DirectoryIO.Move(oldFolder, newFolder);
-		}
-		catch (Exception exx)
-		{
-			ex = exx;
-			var errMess = "Error during move directory!";
-			this.Log.LogError(ex, "{Message}", errMess);
-			this.UserNotifier.ShowError(errMess, ex, Buttons: ShowMessageButtons.OK);
-		}
-		finally
-		{
-			// Update PlayerSave
-			if (ex is null)
-			{
-				ps.IsArchived = true;
-				ps.Folder = newFolder;
-
-				if (ps.PlayerSaveWatcher is not null)
-					ps.PlayerSaveWatcher.Path = newFolder;
-
-				if (ps.PlayerStashWatcher is not null)
-					ps.PlayerStashWatcher.Path = newFolder;
-			}
-			// Restart filewatchers
-			ToggleFileWatchers(ps, true);
+			var archiveFolder = this.GamePathService.GetBaseCharacterFolder(ps.IsImmortalThrone, ps.IsCustom, true);
+			if (!this.DirectoryIO.Exists(archiveFolder))
+				this.DirectoryIO.CreateDirectory(archiveFolder);
 		}
 
-		return ex is null;
-	}
+		var newFolder = this.GamePathService.ArchiveTogglePath(ps.Folder);
 
-	static void ToggleFileWatchers(PlayerSave ps, bool enable)
-	{
-		if (ps.PlayerSaveWatcher is not null)
-			ps.PlayerSaveWatcher.EnableRaisingEvents = enable;
-
-		if (ps.PlayerStashWatcher is not null)
-			ps.PlayerStashWatcher.EnableRaisingEvents = enable;
-	}
-
-	public bool Unarchive(PlayerSave ps)
-	{
-		if (ps is null)
-			return false;
-
-		if (!ps.IsArchived)// Double Check
-			return true;
-
-		// Disable filewatchers
-		ToggleFileWatchers(ps, false);
-
-		// Move directory
-		var oldFolder = ps.Folder;// Should include archDirName
-
-		var newFolder = GamePathService.ArchiveTogglePath(oldFolder);
-
-		Exception? ex = null;
-		try
+		// No hot reload while the folder moves; a failed move leaves the save and its watchers as they were.
+		using (ps.PauseWatching())
 		{
-			DirectoryIO.Move(oldFolder, newFolder);
+			this.DirectoryIO.Move(ps.Folder, newFolder);
+			ps.MovedTo(newFolder, archive);
 		}
-		catch (Exception exx)
-		{
-			ex = exx;
-			var errMess = "Error during move directory!";
-			this.Log.LogError(ex, "{Message}", errMess);
-			this.UserNotifier.ShowError(errMess, ex, Buttons: ShowMessageButtons.OK);
-		}
-		finally
-		{
-			// Update PlayerSave
-			if (ex is null)
-			{
-				ps.IsArchived = false;
-				ps.Folder = newFolder;
-
-				if (ps.PlayerSaveWatcher is not null)
-					ps.PlayerSaveWatcher.Path = newFolder;
-
-				if (ps.PlayerStashWatcher is not null)
-					ps.PlayerStashWatcher.Path = newFolder;
-			}
-
-			// Restart filewatchers
-			ToggleFileWatchers(ps, true);
-		}
-
-		return ex is null;
 	}
 }

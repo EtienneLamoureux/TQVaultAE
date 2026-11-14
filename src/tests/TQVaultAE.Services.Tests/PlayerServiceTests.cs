@@ -549,14 +549,13 @@ public class PlayerServiceTests
 		var playerSave = CreatePlayerSave(archive ? activeFolder : archivedFolder, isArchived: !archive);
 		var player = new PlayerCollection("TestPlayer", fromPath);
 		_sessionContext.Players.TryAdd(fromPath, new Lazy<PlayerCollection>(() => player));
-		_mockGameFileService.Setup(x => x.Archive(playerSave)).Callback(() => playerSave.Folder = archivedFolder).Returns(true);
-		_mockGameFileService.Setup(x => x.Unarchive(playerSave)).Callback(() => playerSave.Folder = activeFolder).Returns(true);
+		_mockGameFileService.Setup(x => x.ToggleArchive(playerSave, archive)).Callback(() => playerSave.Folder = archive ? archivedFolder : activeFolder);
 
 		// Act
-		bool moved = archive ? _playerService.Archive(playerSave) : _playerService.Unarchive(playerSave);
+		var result = _playerService.SetArchived([playerSave], archive, tag: null);
 
 		// Assert - every archive path (one save, all, by tag) keeps the session in step with the files
-		moved.Should().BeTrue();
+		result.Changed.Should().Equal(playerSave);
 		_sessionContext.Players.ContainsKey(fromPath).Should().BeFalse();
 		_sessionContext.Players[toPath].Value.PlayerFile.Should().Be(toPath);
 	}
@@ -569,13 +568,15 @@ public class PlayerServiceTests
 		var archivedPath = Path.Combine(archivedFolder, "Player.chr");
 		var playerSave = CreatePlayerSave(archivedFolder, isArchived: true);
 		_sessionContext.Players.TryAdd(archivedPath, new Lazy<PlayerCollection>(() => new PlayerCollection("TestPlayer", archivedPath)));
-		_mockGameFileService.Setup(x => x.Unarchive(playerSave)).Returns(false);
+		var error = new IOException("locked");
+		_mockGameFileService.Setup(x => x.ToggleArchive(playerSave, false)).Throws(error);
 
 		// Act
-		bool moved = _playerService.Unarchive(playerSave);
+		var result = _playerService.SetArchived([playerSave], archive: false, tag: null);
 
 		// Assert
-		moved.Should().BeFalse();
+		result.Failed.Should().Equal(playerSave);
+		result.FirstError.Should().BeSameAs(error);
 		_sessionContext.Players.Should().ContainKey(archivedPath);
 	}
 
@@ -599,16 +600,14 @@ public class PlayerServiceTests
 		var taggedArchived = CreateArchivableSave("TaggedArchived", isArchived: true, "Done");
 		var otherTag = CreateArchivableSave("OtherTag", isArchived: false, "Main");
 		var untagged = CreateArchivableSave("Untagged", isArchived: false);
-		_mockGameFileService.Setup(x => x.Archive(It.IsAny<PlayerSave>())).Returns(true);
-
 		// Act
 		var result = _playerService.SetArchived([taggedActive, taggedArchived, otherTag, untagged], archive: true, "Done");
 
 		// Assert
 		result.Changed.Should().Equal(taggedActive);
 		result.Failed.Should().BeEmpty();
-		_mockGameFileService.Verify(x => x.Archive(It.IsAny<PlayerSave>()), Times.Once);
-		_mockGameFileService.Verify(x => x.Unarchive(It.IsAny<PlayerSave>()), Times.Never);
+		_mockGameFileService.Verify(x => x.ToggleArchive(It.IsAny<PlayerSave>(), true), Times.Once);
+		_mockGameFileService.Verify(x => x.ToggleArchive(It.IsAny<PlayerSave>(), false), Times.Never);
 	}
 
 	[Fact]
@@ -618,28 +617,27 @@ public class PlayerServiceTests
 		var archivedTagged = CreateArchivableSave("ArchivedTagged", isArchived: true, "Done");
 		var archivedUntagged = CreateArchivableSave("ArchivedUntagged", isArchived: true);
 		var active = CreateArchivableSave("Active", isArchived: false);
-		_mockGameFileService.Setup(x => x.Unarchive(It.IsAny<PlayerSave>())).Returns(true);
-
 		// Act
 		var result = _playerService.SetArchived([archivedTagged, archivedUntagged, active], archive: false, tag: null);
 
 		// Assert
 		result.Changed.Should().Equal(archivedTagged, archivedUntagged);
 		result.AnyChanged.Should().BeTrue();
-		_mockGameFileService.Verify(x => x.Unarchive(active), Times.Never);
-		_mockGameFileService.Verify(x => x.Archive(It.IsAny<PlayerSave>()), Times.Never);
+		_mockGameFileService.Verify(x => x.ToggleArchive(active, It.IsAny<bool>()), Times.Never);
+		_mockGameFileService.Verify(x => x.ToggleArchive(It.IsAny<PlayerSave>(), true), Times.Never);
 	}
 
 	[Fact]
-	public void SetArchived_WhenAMoveFailsOrThrows_ReportsItAndMovesTheOthers()
+	public void SetArchived_WhenMovesFail_ReportsThemWithTheFirstErrorAndMovesTheOthers()
 	{
 		// Arrange
 		var refused = CreateArchivableSave("Refused", isArchived: false);
 		var throwing = CreateArchivableSave("Throwing", isArchived: false);
 		var moved = CreateArchivableSave("Moved", isArchived: false);
-		_mockGameFileService.Setup(x => x.Archive(refused)).Returns(false);
-		_mockGameFileService.Setup(x => x.Archive(throwing)).Throws(new IOException("locked"));
-		_mockGameFileService.Setup(x => x.Archive(moved)).Callback(() => moved.Folder = "/Test/Players/Archived/_Moved").Returns(true);
+		var firstError = new UnauthorizedAccessException("denied");
+		_mockGameFileService.Setup(x => x.ToggleArchive(refused, true)).Throws(firstError);
+		_mockGameFileService.Setup(x => x.ToggleArchive(throwing, true)).Throws(new IOException("locked"));
+		_mockGameFileService.Setup(x => x.ToggleArchive(moved, true)).Callback(() => moved.Folder = "/Test/Players/Archived/_Moved");
 		var movedActivePath = Path.Combine("/Test/Players/_Moved", "Player.chr");
 		_sessionContext.Players.TryAdd(movedActivePath, new Lazy<PlayerCollection>(() => new PlayerCollection("Moved", movedActivePath)));
 
@@ -649,6 +647,7 @@ public class PlayerServiceTests
 		// Assert - the moved save is keyed by its new path, as one by one
 		result.Changed.Should().Equal(moved);
 		result.Failed.Should().Equal(refused, throwing);
+		result.FirstError.Should().BeSameAs(firstError, "one message reports every failure, with the first error");
 		_sessionContext.Players.Should().ContainKey(Path.Combine("/Test/Players/Archived/_Moved", "Player.chr"));
 		_sessionContext.Players.Should().NotContainKey(movedActivePath);
 	}
@@ -665,7 +664,7 @@ public class PlayerServiceTests
 		// Assert
 		result.AnyChanged.Should().BeFalse();
 		result.Failed.Should().BeEmpty();
-		_mockGameFileService.Verify(x => x.Archive(It.IsAny<PlayerSave>()), Times.Never);
+		_mockGameFileService.Verify(x => x.ToggleArchive(It.IsAny<PlayerSave>(), It.IsAny<bool>()), Times.Never);
 	}
 
 	[Fact]

@@ -43,14 +43,11 @@ public interface IGameFileService
 	string GetDuplicateCharacterFolder(string playerSaveDirectory, string newname);
 
 	/// <summary>
-	/// Archive a character
+	/// Archives or unarchives a character: moves its save folder, then the save and its file watchers follow it.
+	/// Nothing happens when the save is in that state already.
 	/// </summary>
-	/// <param name="ps"></param>
-	bool Archive(PlayerSave ps);
-
-	/// <summary>
-	/// Unarchive a character
-	/// </summary>
-	/// <param name="ps"></param>
-	bool Unarchive(PlayerSave ps);
+	/// <param name="ps">The character.</param>
+	/// <param name="archive"><see langword="true"/> to archive, <see langword="false"/> to unarchive.</param>
+	/// <exception cref="IOException">The folder could not be moved; the save is left where it was.</exception>
+	void ToggleArchive(PlayerSave ps, bool archive);
 }

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
@@ -798,11 +799,24 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 	private void SetArchived(bool archive, string? tag)
 	{
 		var result = this.PlayerService.SetArchived(this.Items.OfType<PlayerSave>(), archive, tag);
+		this.ShowArchiveFailures(result);
 		if (!result.AnyChanged)
 			return;
 
 		RefreshItems();
 		RefreshContent();
+	}
+
+	/// <summary>
+	/// One message for the saves that could not be moved, however many.
+	/// </summary>
+	private void ShowArchiveFailures(ArchiveChangeResult result)
+	{
+		if (result.Failed.Count == 0)
+			return;
+
+		var names = string.Join(", ", result.Failed.Select(ps => ps.Name));
+		this.UIService.ShowError($"Error during move directory!{Environment.NewLine}{names}", result.FirstError, ShowMessageButtons.OK);
 	}
 
 	private void ToolStripTextBoxAdd_KeyDown(object? sender, KeyEventArgs e)
@@ -867,10 +881,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 		if (ps is not null)
 		{
 			// Archive it
-			if (archiveToolStripMenuItem.Checked)
-				this.PlayerService.Archive(ps);
-			else
-				this.PlayerService.Unarchive(ps);
+			this.ShowArchiveFailures(this.PlayerService.SetArchived([ps], archiveToolStripMenuItem.Checked, tag: null));
 
 			RefreshItem(ps);
 			RefreshContent();

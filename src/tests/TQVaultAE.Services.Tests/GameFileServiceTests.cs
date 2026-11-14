@@ -208,149 +208,77 @@ public class GameFileServiceTests
 
 	#endregion
 
-	#region Archive Tests
+	#region ToggleArchive Tests
 
-	[Fact]
-	public void Archive_WithValidPlayerSave_MovesToArchiveFolder()
+	private const string ArchiveDir = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters""";
+	private const string ArchivedFolder = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter""";
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void ToggleArchive_MovesTheFolder_AndTheSaveFollows(bool archive)
 	{
 		// Arrange
 		var playerSave = CreateTestPlayerSave();
+		playerSave.IsArchived = !archive;
 		var oldFolder = playerSave.Folder;
-		var archiveDir = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters""";
-		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter""";
-
-		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, true)).Returns(archiveDir);
-		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
-		_mockDirectoryIO.Setup(x => x.Exists(archiveDir)).Returns(false);
-		_mockDirectoryIO.Setup(x => x.CreateDirectory(archiveDir));
-		_mockDirectoryIO.Setup(x => x.Move(oldFolder, newFolder));
+		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, false, true)).Returns(ArchiveDir);
+		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(ArchivedFolder);
 
 		// Act
-		var result = _gameFileService.Archive(playerSave);
+		_gameFileService.ToggleArchive(playerSave, archive);
 
 		// Assert
-		result.Should().BeTrue();
-		playerSave.IsArchived.Should().BeTrue();
-		playerSave.Folder.Should().Be(newFolder);
+		_mockDirectoryIO.Verify(x => x.Move(oldFolder, ArchivedFolder), Times.Once);
+		playerSave.IsArchived.Should().Be(archive);
+		playerSave.Folder.Should().Be(ArchivedFolder);
 	}
 
 	[Fact]
-	public void Archive_WithNullPlayerSave_ReturnsFalse()
+	public void ToggleArchive_FirstArchive_CreatesTheArchiveFolder()
 	{
-		// Act
-		var result = _gameFileService.Archive(null!);
-
-		// Assert
-		result.Should().BeFalse();
-	}
-
-	[Fact]
-	public void Archive_WithAlreadyArchivedPlayerSave_ReturnsTrue()
-	{
-		// Arrange
 		var playerSave = CreateTestPlayerSave();
-		playerSave.IsArchived = true;
+		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, false, true)).Returns(ArchiveDir);
+		_mockGamePathService.Setup(x => x.ArchiveTogglePath(playerSave.Folder)).Returns(ArchivedFolder);
+		_mockDirectoryIO.Setup(x => x.Exists(ArchiveDir)).Returns(false);
 
-		// Act
-		var result = _gameFileService.Archive(playerSave);
+		_gameFileService.ToggleArchive(playerSave, archive: true);
 
-		// Assert
-		result.Should().BeTrue();
+		_mockDirectoryIO.Verify(x => x.CreateDirectory(ArchiveDir), Times.Once);
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void ToggleArchive_AlreadyInThatState_DoesNothing(bool archive)
+	{
+		var playerSave = CreateTestPlayerSave();
+		playerSave.IsArchived = archive;
+
+		_gameFileService.ToggleArchive(playerSave, archive);
+
 		_mockDirectoryIO.Verify(x => x.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 	}
 
 	[Fact]
-	public void Archive_WhenMoveFails_ReturnsFalse()
+	public void ToggleArchive_WhenMoveFails_ThrowsToTheCaller_AndLeavesTheSave_WithoutAMessageBox()
 	{
 		// Arrange
 		var playerSave = CreateTestPlayerSave();
 		var oldFolder = playerSave.Folder;
-		var archiveDir = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters""";
-		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\ArchivedCharacters\_MyCharacter""";
-
-		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, true)).Returns(archiveDir);
-		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
-		_mockDirectoryIO.Setup(x => x.Exists(archiveDir)).Returns(true);
-		_mockDirectoryIO.Setup(x => x.Move(oldFolder, newFolder)).Throws(new IOException("Move failed"));
+		_mockGamePathService.Setup(x => x.GetBaseCharacterFolder(false, false, true)).Returns(ArchiveDir);
+		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(ArchivedFolder);
+		_mockDirectoryIO.Setup(x => x.Exists(ArchiveDir)).Returns(true);
+		_mockDirectoryIO.Setup(x => x.Move(oldFolder, ArchivedFolder)).Throws(new IOException("Move failed"));
 
 		// Act
-		var result = _gameFileService.Archive(playerSave);
+		var act = () => _gameFileService.ToggleArchive(playerSave, archive: true);
 
-		// Assert
-		result.Should().BeFalse();
+		// Assert: the caller collects the failures ("Archive all" shows one message for all of them)
+		act.Should().Throw<IOException>();
 		playerSave.IsArchived.Should().BeFalse();
-		_mockUserNotifier.Verify(x => x.ShowError(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<ShowMessageButtons>()), Times.Once);
-	}
-
-	#endregion
-
-	#region Unarchive Tests
-
-	[Fact]
-	public void Unarchive_WithValidPlayerSave_MovesFromArchiveFolder()
-	{
-		// Arrange
-		var playerSave = CreateTestPlayerSave();
-		playerSave.IsArchived = true;
-		var oldFolder = playerSave.Folder;
-		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter""";
-
-		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
-		_mockDirectoryIO.Setup(x => x.Move(oldFolder, newFolder));
-
-		// Act
-		var result = _gameFileService.Unarchive(playerSave);
-
-		// Assert
-		result.Should().BeTrue();
-		playerSave.IsArchived.Should().BeFalse();
-		playerSave.Folder.Should().Be(newFolder);
-	}
-
-	[Fact]
-	public void Unarchive_WithNullPlayerSave_ReturnsFalse()
-	{
-		// Act
-		var result = _gameFileService.Unarchive(null!);
-
-		// Assert
-		result.Should().BeFalse();
-	}
-
-	[Fact]
-	public void Unarchive_WithNotArchivedPlayerSave_ReturnsTrue()
-	{
-		// Arrange
-		var playerSave = CreateTestPlayerSave();
-		playerSave.IsArchived = false;
-
-		// Act
-		var result = _gameFileService.Unarchive(playerSave);
-
-		// Assert
-		result.Should().BeTrue();
-		_mockDirectoryIO.Verify(x => x.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-	}
-
-	[Fact]
-	public void Unarchive_WhenMoveFails_ReturnsFalse()
-	{
-		// Arrange
-		var playerSave = CreateTestPlayerSave();
-		playerSave.IsArchived = true;
-		var oldFolder = playerSave.Folder;
-		var newFolder = """C:\Test\MyGames\Titan Quest\SaveData\_MyCharacter""";
-
-		_mockGamePathService.Setup(x => x.ArchiveTogglePath(oldFolder)).Returns(newFolder);
-		_mockDirectoryIO.Setup(x => x.Move(oldFolder, newFolder)).Throws(new IOException("Move failed"));
-
-		// Act
-		var result = _gameFileService.Unarchive(playerSave);
-
-		// Assert
-		result.Should().BeFalse();
-		playerSave.IsArchived.Should().BeTrue(); // Should remain unchanged
-		_mockUserNotifier.Verify(x => x.ShowError(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<ShowMessageButtons>()), Times.Once);
+		playerSave.Folder.Should().Be(oldFolder);
+		_mockUserNotifier.Verify(x => x.ShowError(It.IsAny<string>(), It.IsAny<Exception>(), It.IsAny<ShowMessageButtons>()), Times.Never);
 	}
 
 	#endregion
