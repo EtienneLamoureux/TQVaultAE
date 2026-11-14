@@ -64,6 +64,6 @@ internal static partial class AutomationTools
 			drag.Set(named.Panel, sack, item, new Point(1, 1));
 			drag.MarkModified(item);
 
-			return DragStatus(form);
+			return Serialize(DragStatus(form));
 		});
 }

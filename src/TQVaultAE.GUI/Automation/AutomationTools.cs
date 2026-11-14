@@ -367,7 +367,7 @@ internal static partial class AutomationTools
 			if (!drag.IsActive)
 				throw new McpException($"TQVault did not pick up '{ItemName(item)}'. Notification: '{form.AutomationNotificationText}'. See recent_log.");
 
-			return DragStatus(form);
+			return Serialize(DragStatus(form));
 		});
 
 	[McpServerTool(Name = "move_drag", Destructive = true)]
@@ -381,7 +381,7 @@ internal static partial class AutomationTools
 			var named = ResolveShownPanel(form, panel);
 			RequireDrag(form);
 			named.Panel.AutomationMouseMove(DragCursorFor(form, named.Panel, new Point(x, y)));
-			return DragStatus(form);
+			return Serialize(DragStatus(form));
 		});
 
 	[McpServerTool(Name = "drop_item", Destructive = true)]
@@ -411,7 +411,7 @@ internal static partial class AutomationTools
 				accepted = !stillHeld,
 				targetCells = target.Size.IsEmpty ? null : new { x = target.X, y = target.Y, width = target.Width, height = target.Height },
 				droppedItem = DescribeItem(dropped, null),
-				status = JsonDocument.Parse(DragStatus(form)).RootElement,
+				status = DragStatus(form),
 				hint = stillHeld ? "The panel refused the drop (cell out of range, occupied by several items, wrong slot, requirements or a read-only character: see notification). The item is still dragged." : null,
 				notification = form.AutomationNotificationText,
 			});
@@ -691,7 +691,7 @@ internal static partial class AutomationTools
 			drag.Cancel();
 			source?.Refresh();
 			ReleaseCursor(VirtualCursor.Target as SackPanel);
-			return DragStatus(form);
+			return Serialize(DragStatus(form));
 		});
 
 	#endregion
@@ -847,19 +847,20 @@ internal static partial class AutomationTools
 		panel?.AutomationMouseLeave();
 	}
 
-	private static string DragStatus(MainForm form)
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Anonymous JSON payload.")]
+	private static object DragStatus(MainForm form)
 	{
 		var drag = form.AutomationDragInfo;
 		var hovered = VirtualCursor.Target as SackPanel;
 		var cells = hovered?.AutomationCellsUnderDragItem ?? Rectangle.Empty;
-		return Serialize(new
+		return new
 		{
 			dragging = drag.IsActive,
 			item = drag.IsActive ? DescribeItem(drag.Item, null) : null,
 			sourcePanel = drag.IsActive ? AutomationPanels.IdOf(form, drag.SrcSackPanel) : null,
 			hoveredPanel = AutomationPanels.IdOf(form, hovered),
 			cellsUnderItem = cells.Size.IsEmpty ? null : new { x = cells.X, y = cells.Y, width = cells.Width, height = cells.Height },
-		});
+		};
 	}
 
 	private static Control ResolveCaptureTarget(MainForm form, string control)

@@ -23,13 +23,13 @@ internal static partial class AutomationTools
 		{
 			var sounds = RecordingSoundService.LastSequence;
 			form.AutomationShowForge(show);
-			return ForgeStatus(form, sounds, int.MaxValue);
+			return Serialize(ForgeStatus(form, sounds, int.MaxValue));
 		});
 
 	[McpServerTool(Name = "forge_state", ReadOnly = true)]
 	[Description("Returns the forge state: shown, mode, hardcore, the item in each slot (Base, Prefix, Suffix, Relic1, Relic2) with the parts it offers in God mode, the preview of the forged item and the last messages shown to the user (in 'newMessages').")]
 	public static string ForgeState()
-		=> AutomationHost.OnUi(form => ForgeStatus(form, RecordingSoundService.LastSequence, 0));
+		=> AutomationHost.OnUi(form => Serialize(ForgeStatus(form, RecordingSoundService.LastSequence, 0)));
 
 	[McpServerTool(Name = "forge_set_mode", Destructive = true)]
 	[Description("Selects the forge mode, like a click on its radio button: Game, Strict, Relax or God. Choosing a stricter mode than before clears the slots, as in the app.")]
@@ -120,7 +120,7 @@ internal static partial class AutomationTools
 
 			forge.AutomationForge();
 
-			var status = System.Text.Json.JsonDocument.Parse(ForgeStatus(form, sounds, messages)).RootElement;
+			var status = ForgeStatus(form, sounds, messages);
 			return Serialize(new
 			{
 				forged = baseItem is not null && !form.AutomationForgeShown,
@@ -220,7 +220,7 @@ internal static partial class AutomationTools
 			var sounds = RecordingSoundService.LastSequence;
 			var messages = forge.AutomationMessages.Count;
 			action(form, forge);
-			return ForgeStatus(form, sounds, messages);
+			return Serialize(ForgeStatus(form, sounds, messages));
 		});
 
 	private static ForgePanel RequireForge(MainForm form)
@@ -234,11 +234,12 @@ internal static partial class AutomationTools
 
 	/// <param name="soundsSince">Sounds recorded after this sequence number are reported as 'sounds'.</param>
 	/// <param name="messagesFrom">Messages from this index on are reported as 'newMessages'.</param>
-	private static string ForgeStatus(MainForm form, long soundsSince, int messagesFrom)
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Anonymous JSON payload.")]
+	private static object ForgeStatus(MainForm form, long soundsSince, int messagesFrom)
 	{
 		var forge = form.AutomationForgePanel;
 		var messages = forge?.AutomationMessages ?? [];
-		return Serialize(new
+		return new
 		{
 			shown = form.AutomationForgeShown,
 			mode = forge?.AutomationMode.ToString(),
@@ -256,7 +257,7 @@ internal static partial class AutomationTools
 			dragging = form.AutomationDragInfo.IsActive ? DescribeItem(form.AutomationDragInfo.Item, null) : null,
 			newMessages = messages.Skip(Math.Min(messagesFrom, messages.Count)).Select(m => new { message = m.Message.ToString(), text = m.Text }),
 			sounds = RecordingSoundService.Since(soundsSince).Select(DescribeSound),
-		});
+		};
 	}
 
 	private static object DescribeSound(RecordingSoundService.PlayedSound sound) => new
