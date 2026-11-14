@@ -635,16 +635,14 @@ public partial class BagButtonSettings : VaultForm
 	}
 
 	/// <summary>
-	/// Gives the apply and cancel buttons one width that holds the longer of their translated texts ("Appliquer" did
-	/// not fit the 80 pixels designed for "Apply"). Not AutoSize: ScalingButton fits its font to its width, and with
-	/// AutoSize the two chase each other. The bottom table places them.
+	/// Gives the apply and cancel buttons one width that holds the longer of their translated texts in their base font,
+	/// so both show their text at the same size ("Appliquer" was fitted 0.5 pt smaller than "Annuler": the width was
+	/// measured on the font already fitted, with another margin than the button's). Not AutoSize: ScalingButton fits its
+	/// font to its width, and with AutoSize the two chase each other. The bottom table places them.
 	/// </summary>
 	private void FitExitButtons()
 	{
-		// The margin ScalingButton keeps around its text.
-		const int textMargin = 16;
-		int width = new[] { this.applyButton, this.cancelButton }
-			.Max(b => Math.Max(b.Width, TextRenderer.MeasureText(b.Text, b.Font).Width + textMargin));
+		int width = new[] { this.applyButton, this.cancelButton }.Max(b => Math.Max(b.Width, b.TextFitWidth));
 		this.applyButton.Width = this.cancelButton.Width = width;
 	}
 

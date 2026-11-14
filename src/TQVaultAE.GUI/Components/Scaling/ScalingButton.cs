@@ -473,6 +473,15 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		}
 	}
 
+	/// <summary>The room kept around the text, at the DPI of the monitor (12 px at 144 dpi, 8 at 96).</summary>
+	private int TextMargin => this.LogicalToDeviceUnits(8);
+
+	/// <summary>
+	/// Gets the width at which the text fits in its base font, without being made smaller: buttons side by side given
+	/// the largest of their widths show their texts at one size.
+	/// </summary>
+	internal int TextFitWidth => TextRenderer.MeasureText(this.Text, this.baseFont ?? this.Font).Width + this.TextMargin + 1;
+
 	/// <summary>
 	/// Gets the scaled font size for the button text taking into account the size of the button.
 	/// </summary>
@@ -485,9 +494,9 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		if (font is null)
 			return null;
 
-		// The room left around the text, at the DPI of the monitor (12 px at 144 dpi, 8 at 96): a fixed 12 px left
-		// less room at 96 dpi, where a long text (French "Appliquer") was fitted smaller than its neighbour's.
-		int room = newWidth - this.LogicalToDeviceUnits(8);
+		// The room left around the text, at the DPI of the monitor: a fixed 12 px left less room at 96 dpi, where a
+		// long text (French "Appliquer") was fitted smaller than its neighbour's.
+		int room = newWidth - this.TextMargin;
 
 		// See if the text can fit on the button and if it does we do not need to do anything.
 		if (TextRenderer.MeasureText(this.Text, font).Width < room)
