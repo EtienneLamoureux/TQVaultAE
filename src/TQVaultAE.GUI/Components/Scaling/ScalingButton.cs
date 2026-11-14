@@ -61,11 +61,11 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		// ScalingButton
 		// 
 		this.TextChanged += new System.EventHandler(this.TextChangedCallback);
-		this.GotFocus += new System.EventHandler(this.GotFocusCallback);
-		this.LostFocus += new System.EventHandler(this.LostFocusCallback);
+		this.GotFocus += new System.EventHandler(this.ShowOverImage);
+		this.LostFocus += new System.EventHandler(this.ShowUpImage);
 		this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
-		this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
-		this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+		this.MouseEnter += new System.EventHandler(this.ShowOverImage);
+		this.MouseLeave += new System.EventHandler(this.ShowUpImage);
 		this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
 		this.ResumeLayout(false);
 	}
@@ -104,14 +104,14 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	}
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the button size is forced to be the same as the custom graphic.
-	/// </summary>
-	/// <summary>
 	/// Gets or sets a value indicating whether only the picture is drawn, not the text. The text stays the button's name
 	/// for accessibility and automation (window caption buttons: Close, Maximize...).
 	/// </summary>
 	public bool ImageOnly { get; set; }
 
+	/// <summary>
+	/// Gets or sets a value indicating whether the button size is forced to be the same as the custom graphic.
+	/// </summary>
 	public bool SizeToGraphic
 	{
 		get => this.sizeToGraphic;
@@ -264,15 +264,7 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 			return;
 		}
 
-		// Get a reference for scaling.
-		if (this.baseFont is null)
-			this.baseFont = this.Font;
-
-		// We changed the font so reset the base font.
-		if (this.baseFont.FontFamily != this.Font.FontFamily)
-			this.baseFont = this.Font;
-
-		this.baseFont = ZoomScope.ScaleFont(this.baseFont, factor.Height);
+		this.baseFont = ZoomScope.ScaleFont(this.EnsureBaseFont(), factor.Height);
 		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width)));
 
 		// Reset the image to the original size.  Assume that we are resizing and that this button is not under the mouse.
@@ -283,11 +275,11 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	}
 
 	/// <summary>
-	/// Handler for when the mouse enters the ScalingButton
+	/// Shows the hover picture, when the mouse enters the button or it gets the focus.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
-	private void MouseEnterCallback(object? sender, EventArgs e)
+	private void ShowOverImage(object? sender, EventArgs e)
 	{
 		if (this.UseCustomGraphic)
 		{
@@ -302,41 +294,11 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	}
 
 	/// <summary>
-	/// Handler for when the ScalingButton Gets Focus.
+	/// Shows the normal picture, when the mouse leaves the button or it loses the focus.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
-	private void GotFocusCallback(object? sender, EventArgs e)
-	{
-		if (this.UseCustomGraphic)
-		{
-			if (this.OverBitmap is not null)
-				this.Image = this.OverBitmap;
-			else
-			{
-				this.FlatAppearance.MouseOverBackColor = SystemColors.ButtonHighlight;
-				this.Image = this.UpBitmap;
-			}
-		}
-	}
-
-	/// <summary>
-	/// Handler for when the mouse leaves the ScalingButton
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void MouseLeaveCallback(object? sender, EventArgs e)
-	{
-		if (this.UseCustomGraphic)
-			this.Image = this.UpBitmap;
-	}
-
-	/// <summary>
-	/// Handler for when the ScalingButton Gets Focus.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void LostFocusCallback(object? sender, EventArgs e)
+	private void ShowUpImage(object? sender, EventArgs e)
 	{
 		if (this.UseCustomGraphic)
 			this.Image = this.UpBitmap;
@@ -378,21 +340,22 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	}
 
 	/// <summary>
-	/// Handler for when the mouse button is pressed.
+	/// Fits the new text to the button.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
 	private void TextChangedCallback(object? sender, EventArgs e)
+		=> this.SetFittedFont(this.GetScaledButtonTextFont(this.EnsureBaseFont(), this.Width));
+
+	/// <summary>
+	/// The base font the text is fitted from: the current font when there is none yet, or when the font family changed.
+	/// </summary>
+	private Font EnsureBaseFont()
 	{
-		// Make sure we start somewhere.
-		if (this.baseFont is null)
+		if (this.baseFont is null || this.baseFont.FontFamily != this.Font.FontFamily)
 			this.baseFont = this.Font;
 
-		// We changed the font so reset the base font.
-		if (this.baseFont.FontFamily != this.Font.FontFamily)
-			this.baseFont = this.Font;
-
-		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+		return this.baseFont;
 	}
 
 	/// <summary>
