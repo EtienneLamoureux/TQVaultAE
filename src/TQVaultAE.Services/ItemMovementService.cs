@@ -136,9 +136,8 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         if (order.Count == 0)
             return true;
 
-        // What to put back when the sort fails: the same items at their place, and the sack as modified as it was.
-        var before = sack.Select(item => (Item: item, item.PositionX, item.PositionY)).ToList();
-        bool wasModified = sack.IsModified;
+        // What to put back when the sort fails.
+        var before = SackSnapshot.Take(sack);
         sack.EmptySack();
 
         // Rows then columns, or columns then rows.
@@ -149,17 +148,7 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         {
             if (!PlaceSorted(sack, item, sackSize, vertical, outer, inner))
             {
-                // Put the sack back as it was: the items themselves, not copies, since the search and the panels
-                // know them; changes made before the sort are still to be saved.
-                sack.EmptySack();
-                foreach (var (original, x, y) in before)
-                {
-                    original.PositionX = x;
-                    original.PositionY = y;
-                    sack.AddItem(original);
-                }
-
-                sack.IsModified = wasModified;
+                before.Restore();
                 return false;
             }
         }

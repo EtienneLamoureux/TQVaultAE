@@ -70,9 +70,8 @@ public class ItemSortService(
 		if (sack.IsEmpty)
 			return SackSortResult.SortedOnly;
 
-		// What to put back when the sort fails after a merge: the items in their order and place, the sack as modified as it was.
-		var before = sack.Select(item => (Item: item, item.PositionX, item.PositionY)).ToList();
-		bool wasModified = sack.IsModified;
+		// What to put back when the sort fails after a merge.
+		var before = SackSnapshot.Take(sack);
 
 		var merge = mergeRelics ? this.MergeShards(sack) : null;
 
@@ -82,15 +81,7 @@ public class ItemSortService(
 			if (merge is { HasChanges: true })
 			{
 				merge.Undo(this._itemProvider);
-				sack.EmptySack();
-				foreach (var (item, x, y) in before)
-				{
-					item.PositionX = x;
-					item.PositionY = y;
-					sack.AddItem(item);
-				}
-
-				sack.IsModified = wasModified;
+				before.Restore();
 			}
 
 			return SackSortResult.NotSorted;
