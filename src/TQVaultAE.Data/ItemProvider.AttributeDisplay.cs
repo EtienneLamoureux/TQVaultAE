@@ -195,21 +195,21 @@ public partial class ItemProvider
 		{
 			List<Variable?> attrList = attrArray[i];
 
-			if (ItemAttributeProvider.AttributeGroupIs(new Collection<Variable?>(attrList), "offensiveGlobalChance") ||
-				ItemAttributeProvider.AttributeGroupIs(new Collection<Variable?>(attrList), "retaliationGlobalChance"))
+			if (ItemAttributeProvider.AttributeGroupIs(attrList, "offensiveGlobalChance") ||
+				ItemAttributeProvider.AttributeGroupIs(attrList, "retaliationGlobalChance"))
 			{
 				// check the next effect group
 				int j = i + 1;
 				if (j < attrArray.Length)
 				{
 					List<Variable?> next = attrArray[j];
-					if (!ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(next), "Global"))
+					if (!ItemAttributeProvider.AttributeGroupHas(next, "Global"))
 					{
 						// itm is a spurious globalChance entry.  Let's add 2 null entries to signal it should be ignored
 						attrList.Add(null);
 						attrList.Add(null);
 					}
-					else if (ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(next), "XOR"))
+					else if (ItemAttributeProvider.AttributeGroupHas(next, "XOR"))
 					{
 						// Yes it is global and is also XOR
 						// flag our current attribute as XOR
@@ -238,7 +238,7 @@ public partial class ItemProvider
 				AddOwnLines(skillRanks[attrList]);
 
 			// Used to sort out the Damage Qualifier effects.
-			if (ItemAttributeProvider.AttributeGroupIs(new Collection<Variable?>(attrList), ItemAttributesEffectType.DamageQualifierEffect))
+			if (ItemAttributeProvider.AttributeGroupIs(attrList, ItemAttributesEffectType.DamageQualifierEffect))
 				attrList.Sort(this.SortDamageQualifiers);
 
 			if (!convertStrings)
@@ -272,25 +272,26 @@ public partial class ItemProvider
 	/// Gets where the game's skill window lists an attribute group, from its first variable.
 	/// </summary>
 	private SkillWindowRank SkillWindowRankOf(List<Variable?> attributeList)
-	{
-		if (attributeList.FirstOrDefault(v => v is not null) is not { } first)
-			return SkillWindowAttributeOrder.Other;
-
-		bool isGlobal = ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(attributeList), "Global");
-		return SkillWindowAttributeOrder.RankOf(first.Name, ItemAttributeProvider.GetAttributeData(first.Name), isGlobal);
-	}
+		=> this.LeadOf(attributeList) is { } lead
+			? SkillWindowAttributeOrder.RankOf(lead.First.Name, ItemAttributeProvider.GetAttributeData(lead.First.Name), lead.IsGlobal)
+			: SkillWindowAttributeOrder.Other;
 
 	/// <summary>
 	/// Gets where the game lists an attribute group, from its first variable.
 	/// </summary>
 	private GameAttributeSlot GameSlotOf(Item itm, List<Variable?> attributeList)
-	{
-		if (attributeList.FirstOrDefault(v => v is not null) is not { } first)
-			return GameAttributeSlot.Other;
+		=> this.LeadOf(attributeList) is { } lead
+			? GameAttributeOrder.SlotOf(lead.First.Name, ItemAttributeProvider.GetAttributeData(lead.First.Name), lead.IsGlobal, physicalIsBase: itm.IsWeapon || itm.IsShield)
+			: GameAttributeSlot.Other;
 
-		bool isGlobal = ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(attributeList), "Global");
-		return GameAttributeOrder.SlotOf(first.Name, ItemAttributeProvider.GetAttributeData(first.Name), isGlobal, physicalIsBase: itm.IsWeapon || itm.IsShield);
-	}
+	/// <summary>
+	/// The first variable of an attribute group, which names the group, and whether the group is global; null for a
+	/// group without variables.
+	/// </summary>
+	private (Variable First, bool IsGlobal)? LeadOf(List<Variable?> attributeList)
+		=> attributeList.FirstOrDefault(v => v is not null) is { } first
+			? (first, ItemAttributeProvider.AttributeGroupHas(attributeList, "Global"))
+			: null;
 
 	/// <summary>
 	/// Formats the possible in-game values of the randomized variables of an attribute group,
@@ -430,7 +431,7 @@ public partial class ItemProvider
 		Variable? modifierChanceVar = null;
 		Variable? damageRatioVar = null;  // Added by VillageIdiot
 
-		bool isGlobal = ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(attributeList), "Global");
+		bool isGlobal = ItemAttributeProvider.AttributeGroupHas(attributeList, "Global");
 		string globalIndent = new string(' ', 4);
 
 		foreach (Variable? variable in attributeList)

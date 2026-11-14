@@ -1,6 +1,5 @@
 using AwesomeAssertions;
 using Moq;
-using System.Collections.ObjectModel;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
@@ -208,8 +207,8 @@ public class ItemAttributeListCompareTests
 			.Returns(new ItemAttributesData(ItemAttributesEffectType.Offense, "globalAttr", "effect", "var", 0));
 		_mockItemAttributeProvider.Setup(p => p.GetAttributeData("normalAttr"))
 			.Returns(new ItemAttributesData(ItemAttributesEffectType.Offense, "normalAttr", "effect", "var", 0));
-		_mockItemAttributeProvider.Setup(p => p.AttributeGroupHas(It.IsAny<Collection<Variable?>>(), "Global"))
-			.Returns((Collection<Variable> vars, string group) => vars[0].Name.Contains("global"));
+		_mockItemAttributeProvider.Setup(p => p.AttributeGroupHas(It.IsAny<IReadOnlyList<Variable?>>(), "Global"))
+			.Returns((IReadOnlyList<Variable?> vars, string group) => vars[0]!.Name.Contains("global"));
 
 		// Act
 		var result = ((IComparer<List<Variable>>)comparer).Compare(globalList, normalList);

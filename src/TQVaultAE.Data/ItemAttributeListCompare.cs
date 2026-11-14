@@ -122,7 +122,7 @@ public class ItemAttributeListCompare(bool isArmor, IItemAttributeProvider itemA
 		}
 
 		// Now see if the variable is global and move it to the global group if it is
-		if (ItemAttributeProvider.AttributeGroupHas(new Collection<Variable?>(attributes), "Global"))
+		if (ItemAttributeProvider.AttributeGroupHas(attributes, "Global"))
 			order = MakeGlobal(order);
 
 		return order;

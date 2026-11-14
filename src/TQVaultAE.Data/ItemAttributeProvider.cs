@@ -746,7 +746,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <param name="attributeList">Array of attributes</param>
 	/// <param name="effect">effect string to be tested</param>
 	/// <returns>true if attribute effect in group == effect</returns>
-	public bool AttributeGroupIs(Collection<Variable?> attributeList, string effect)
+	public bool AttributeGroupIs(IReadOnlyList<Variable?> attributeList, string effect)
 	{
 		if (attributeList[0] is not { } variable)
 			return false;
@@ -764,7 +764,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <param name="attributeList">Array of attributes</param>
 	/// <param name="type">Effect type enumeration</param>
 	/// <returns>true if attribute effect in group == type</returns>
-	public bool AttributeGroupIs(Collection<Variable?> attributeList, ItemAttributesEffectType type)
+	public bool AttributeGroupIs(IReadOnlyList<Variable?> attributeList, ItemAttributesEffectType type)
 	{
 		if (attributeList[0] is not { } variable)
 			return false;
@@ -782,7 +782,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	/// <param name="attributeList">array of attributes</param>
 	/// <param name="variableName">name of variable</param>
 	/// <returns>true if variable is present in the list</returns>
-	public bool AttributeGroupHas(Collection<Variable?> attributeList, string variableName)
+	public bool AttributeGroupHas(IReadOnlyList<Variable?> attributeList, string variableName)
 	{
 		foreach (Variable? variable in attributeList)
 		{
