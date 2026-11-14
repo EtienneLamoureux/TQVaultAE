@@ -316,93 +316,20 @@ public class ItemDatabaseService(
         if (request.InitialResults is null)
             return Array.Empty<SearchResult>();
 
-        // Start with all initial results
-        var results = request.InitialResults.ToList();
+        var flags = new ItemFlagFilter(request.HasPrefix, request.HasSuffix, request.HasRelic, request.HasCharm, request.IsSetItem, request.HasSkill);
+        var bounds = new RequirementBounds(
+            request.MinLevel, request.MaxLevel,
+            request.MinStrength, request.MaxStrength,
+            request.MinDexterity, request.MaxDexterity,
+            request.MinIntelligence, request.MaxIntelligence);
 
-        // Apply quick filters
-        if (request.HasPrefix)
-            results = results.Where(i => i.FriendlyNames?.Item?.HasPrefix == true).ToList();
-
-        if (request.HasSuffix)
-            results = results.Where(i => i.FriendlyNames?.Item?.HasSuffix == true).ToList();
-
-        if (request.HasRelic)
-            results = results.Where(i => i.FriendlyNames?.Item?.HasRelic == true).ToList();
-
-        if (request.HasCharm)
-            results = results.Where(i => i.FriendlyNames?.Item?.HasCharm == true).ToList();
-
-        if (request.IsSetItem)
-            results = results.Where(i => i.FriendlyNames?.ItemSet is not null).ToList();
-
-        if (request.HasSkill)
-            results = results.Where(i => this._itemProvider.HasGrantedSkill(i.Item)).ToList();
-
-        // Apply minimum requirements
-        if (request.MinLevel > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Lvl.HasValue || req.Lvl.Value >= request.MinLevel;
-            }).ToList();
-
-        if (request.MinStrength > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Str.HasValue || req.Str.Value >= request.MinStrength;
-            }).ToList();
-
-        if (request.MinDexterity > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Dex.HasValue || req.Dex.Value >= request.MinDexterity;
-            }).ToList();
-
-        if (request.MinIntelligence > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Int.HasValue || req.Int.Value >= request.MinIntelligence;
-            }).ToList();
-
-        // Apply maximum requirements
-        if (request.MaxLevel > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Lvl.HasValue || req.Lvl.Value <= request.MaxLevel;
-            }).ToList();
-
-        if (request.MaxStrength > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Str.HasValue || req.Str.Value <= request.MaxStrength;
-            }).ToList();
-
-        if (request.MaxDexterity > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Dex.HasValue || req.Dex.Value <= request.MaxDexterity;
-            }).ToList();
-
-        if (request.MaxIntelligence > 0)
-            results = results.Where(x =>
-            {
-                var req = x.FriendlyNames?.RequirementInfo;
-                if (req is null) return true;
-                return !req.Int.HasValue || req.Int.Value <= request.MaxIntelligence;
-            }).ToList();
+        // No filter reads no item's names.
+        var results = flags.IsEmpty && bounds.IsEmpty
+            ? request.InitialResults.ToList()
+            : request.InitialResults
+                .Where(r => flags.Matches(r.Item, r.FriendlyNames, this._itemProvider.HasGrantedSkill)
+                    && bounds.Matches(r.FriendlyNames?.RequirementInfo))
+                .ToList();
 
         this._log.LogDebug("Advanced search executed: {Count} results found", results.Count);
         return results;

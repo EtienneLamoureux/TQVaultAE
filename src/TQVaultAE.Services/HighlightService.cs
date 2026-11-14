@@ -80,7 +80,7 @@ public class HighlightService(
                         FriendlyNames = fnr,
                         Info = fnr.RequirementInfo,
                     };
-                }).AsQueryable();
+                });
 
             if (hasSearch)
             {
@@ -95,53 +95,14 @@ public class HighlightService(
 
             if (this.HighlightFilter is { } filter)
             {
-                if (filter.MinRequierement)
-                {
-                    if (filter.MinLvl != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Lvl.HasValue || i.Info.Lvl >= filter.MinLvl);
-                    }
-                    if (filter.MinDex != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Dex.HasValue || i.Info.Dex >= filter.MinDex);
-                    }
-                    if (filter.MinStr != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Str.HasValue || i.Info.Str >= filter.MinStr);
-                    }
-                    if (filter.MinInt != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Int.HasValue || i.Info.Int >= filter.MinInt);
-                    }
-                }
-
-                if (filter.MaxRequierement)
-                {
-                    if (filter.MaxLvl != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Lvl.HasValue || i.Info.Lvl <= filter.MaxLvl);
-                    }
-                    if (filter.MaxDex != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Dex.HasValue || i.Info.Dex <= filter.MaxDex);
-                    }
-                    if (filter.MaxStr != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Str.HasValue || i.Info.Str <= filter.MaxStr);
-                    }
-                    if (filter.MaxInt != 0)
-                    {
-                        availableItems = availableItems.Where(i =>
-                            i.Info == null || !i.Info.Int.HasValue || i.Info.Int <= filter.MaxInt);
-                    }
-                }
+                // Bounds not ticked are no bounds.
+                var bounds = new RequirementBounds(
+                    filter.MinRequierement ? filter.MinLvl : 0, filter.MaxRequierement ? filter.MaxLvl : 0,
+                    filter.MinRequierement ? filter.MinStr : 0, filter.MaxRequierement ? filter.MaxStr : 0,
+                    filter.MinRequierement ? filter.MinDex : 0, filter.MaxRequierement ? filter.MaxDex : 0,
+                    filter.MinRequierement ? filter.MinInt : 0, filter.MaxRequierement ? filter.MaxInt : 0);
+                if (!bounds.IsEmpty)
+                    availableItems = availableItems.Where(i => bounds.Matches(i.Info));
 
                 if (filter.ClassItem.Count != 0)
                 {
@@ -162,23 +123,9 @@ public class HighlightService(
                         filter.Origin.Contains(i.Item.GameDlc));
                 }
 
-                if (filter.HavingPrefix)
-                    availableItems = availableItems.Where(i => i.Item.HasPrefix);
-
-                if (filter.HavingSuffix)
-                    availableItems = availableItems.Where(i => i.Item.HasSuffix);
-
-                if (filter.HavingRelic)
-                    availableItems = availableItems.Where(i => i.Item.HasRelic);
-
-                if (filter.HavingCharm)
-                    availableItems = availableItems.Where(i => i.Item.HasCharm);
-
-                if (filter.IsSetItem)
-                    availableItems = availableItems.Where(i => i.FriendlyNames.ItemSet != null);
-
-                if (filter.HavingSkill)
-                    availableItems = availableItems.Where(i => this._itemProvider.HasGrantedSkill(i.Item));
+                var flags = new ItemFlagFilter(filter.HavingPrefix, filter.HavingSuffix, filter.HavingRelic, filter.HavingCharm, filter.IsSetItem, filter.HavingSkill);
+                if (!flags.IsEmpty)
+                    availableItems = availableItems.Where(i => flags.Matches(i.Item, i.FriendlyNames, this._itemProvider.HasGrantedSkill));
             }
 
             this.HighlightedItems = availableItems.Select(i => i.Item).ToList();
