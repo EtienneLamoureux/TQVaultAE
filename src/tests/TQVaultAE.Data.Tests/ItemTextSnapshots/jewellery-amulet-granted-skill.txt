@@ -1,0 +1,198 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Amulet of Testing
+FullName: Amulet of Testing
+FullNameBagTooltipClean: Amulet of Testing
+FullNameBagTooltip: Amulet of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\ArmorJewelry_Amulet.dbr
+BaseItemRarity: [Legendary]
+BaseItemInfoClass: tagItemAmulet
+BaseItemInfoDescription: Amulet of Testing
+ItemSeed: Seed 31 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 40
+RequirementVariables (1)
+  | LevelRequirement = 40
+RequirementInfo: Lvl=40 Str= Dex= Int=
+BaseAttributes (4)
+  | {^B}+30 Health
+  | 
+  | [text] {^W}Grants Skill :
+  | {^W}Healing Light (Activated on low health)\n25% Chance of Activating
+ClassicAttributes (4)
+  | {^B}+30 Health
+  | 
+  | [text] {^W}Grants Skill :
+  | {^W}Healing Light (Activated on low health)\n25% Chance of Activating
+ClassicAttributeRanges (0)
+ClassicAttributeSources (4)
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+GrantedSkills[0].SkillId: records\test\skill_heal.dbr
+GrantedSkills[0].Name: Healing Light
+GrantedSkills[0].Level: 2
+GrantedSkills[0].LevelText: Level:   2
+GrantedSkills[0].Icon: records\test\heal_up.tex
+GrantedSkills[0].Activation: (Activated on low health)\n25% Chance of Activating
+GrantedSkills[0].Description (2)
+  | Bathes you in light that mends your 
+  | wounds and those of your allies.
+GrantedSkills[0].Attributes (5)
+  | {^B}25 Energy Cost
+  | {^B}6.0 Second Duration
+  | {^B}{^a}28.0 Second(s) Recharge
+  | {^B}+4 Strength
+  | {^B}+8.0 Health Regenerated per second
+GrantedSkills[0].ModifiedLines (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\ArmorJewelry_Amulet.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (3)
+  | +30 Health
+  | [text] Grants Skill :
+  | Healing Light (Activated on low health)\n25% Chance of Activating
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Amulet of Testing
+FullName: Amulet of Testing
+FullNameBagTooltipClean: Amulet of Testing
+FullNameBagTooltip: Amulet of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\ArmorJewelry_Amulet.dbr
+BaseItemRarity: [Legendary]
+BaseItemInfoClass: tagItemAmulet
+BaseItemInfoDescription: Amulet of Testing
+ItemSeed: Seed 31 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 40
+RequirementVariables (1)
+  | LevelRequirement = 40
+RequirementInfo: Lvl=40 Str= Dex= Int=
+BaseAttributes (18)
+  | {^B}+30 Health
+  | 
+  | [text] {^W}Grants Skill :
+  | {^W}Healing Light (Activated on low health)\n25% Chance of Activating
+  | [text] {^W}    Bathes you in light that mends your 
+  | [text] {^W}    wounds and those of your allies.
+  | 
+  | {^B}25 Energy Cost
+  | {^B}6.0 Second Duration
+  | {^B}{^a}28.0 Second(s) Recharge
+  | {^B}+4 Strength
+  | {^B}+8.0 Health Regenerated per second
+  | {^P}?Class?: ArmorJewelry_Amulet
+  | {^P}?itemNameTag?: tagAmulet
+  | {^P}?itemClassification?: Legendary
+  | {^P}?itemSkillLevel?: 2
+  | {^P}?itemSkillAutoController?: records\test\controller_lowhealth.dbr
+  | {^P}?levelRequirement?: 40
+ClassicAttributes (18)
+  | {^B}+30 Health
+  | 
+  | [text] {^W}Grants Skill :
+  | {^W}Healing Light (Activated on low health)\n25% Chance of Activating
+  | [text] {^W}    Bathes you in light that mends your 
+  | [text] {^W}    wounds and those of your allies.
+  | 
+  | {^B}25 Energy Cost
+  | {^B}6.0 Second Duration
+  | {^B}{^a}28.0 Second(s) Recharge
+  | {^B}+4 Strength
+  | {^B}+8.0 Health Regenerated per second
+  | {^P}?Class?: ArmorJewelry_Amulet
+  | {^P}?itemNameTag?: tagAmulet
+  | {^P}?itemClassification?: Legendary
+  | {^P}?itemSkillLevel?: 2
+  | {^P}?itemSkillAutoController?: records\test\controller_lowhealth.dbr
+  | {^P}?levelRequirement?: 40
+ClassicAttributeRanges (0)
+ClassicAttributeSources (18)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\ArmorJewelry_Amulet.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (16)
+  | +30 Health
+  | [text] Grants Skill :
+  | Healing Light (Activated on low health)\n25% Chance of Activating
+  | [text]     Bathes you in light that mends your 
+  | [text]     wounds and those of your allies.
+  | 25 Energy Cost
+  | 6.0 Second Duration
+  | 28.0 Second(s) Recharge
+  | +4 Strength
+  | +8.0 Health Regenerated per second
+  | ?Class?: ArmorJewelry_Amulet
+  | ?itemNameTag?: tagAmulet
+  | ?itemClassification?: Legendary
+  | ?itemSkillLevel?: 2
+  | ?itemSkillAutoController?: records\test\controller_lowhealth.dbr
+  | ?levelRequirement?: 40
+== Search
+FullText (13)
+  | Amulet of Testing
+  | Seed 31 (0.00)
+  | +30 Health
+  | Grants Skill :
+  | Healing Light (Activated on low health)\n25% Chance of Activating
+  |     Bathes you in light that mends your 
+  |     wounds and those of your allies.
+  | 25 Energy Cost
+  | 6.0 Second Duration
+  | 28.0 Second(s) Recharge
+  | +4 Strength
+  | +8.0 Health Regenerated per second
+  | Required Player Level: 40
+AttributesAll (10)
+  | +30 Health
+  | [text] Grants Skill :
+  | Healing Light (Activated on low health)\n25% Chance of Activating
+  | [text]     Bathes you in light that mends your 
+  | [text]     wounds and those of your allies.
+  | 25 Energy Cost
+  | 6.0 Second Duration
+  | 28.0 Second(s) Recharge
+  | +4 Strength
+  | +8.0 Health Regenerated per second
+HasGrantedSkill: True
+GrantedSkillNames (1)
+  | Healing Light

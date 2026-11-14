@@ -1,0 +1,98 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Health Potion (7)
+FullName: Health Potion (7)
+FullNameBagTooltipClean: Health Potion (7)
+FullNameBagTooltip: Health Potion (7)
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\OneShot_PotionHealth.dbr
+BaseItemRarity: [Potion]
+BaseItemInfoClass: tagHUDHealthPotion
+BaseItemInfoDescription: Health Potion
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+NumberFormat: (7)
+FlavorText (1)
+  | Restores health over a short time.
+Requirements (0)
+RequirementVariables (0)
+RequirementInfo: Lvl= Str= Dex= Int=
+BaseAttributes (1)
+  | {^B}+300 Health
+ClassicAttributes (1)
+  | {^B}+300 Health
+ClassicAttributeRanges (0)
+ClassicAttributeSources (1)
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\OneShot_PotionHealth.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (1)
+  | +300 Health
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Health Potion (7)
+FullName: Health Potion (7)
+FullNameBagTooltipClean: Health Potion (7)
+FullNameBagTooltip: Health Potion (7)
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\OneShot_PotionHealth.dbr
+BaseItemRarity: [Potion]
+BaseItemInfoClass: tagHUDHealthPotion
+BaseItemInfoDescription: Health Potion
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+NumberFormat: (7)
+FlavorText (1)
+  | Restores health over a short time.
+Requirements (0)
+RequirementVariables (0)
+RequirementInfo: Lvl= Str= Dex= Int=
+BaseAttributes (4)
+  | {^B}+300 Health
+  | {^P}?Class?: OneShot_PotionHealth
+  | {^P}?description?: tagPotion
+  | {^P}?itemText?: tagPotionText
+ClassicAttributes (4)
+  | {^B}+300 Health
+  | {^P}?Class?: OneShot_PotionHealth
+  | {^P}?description?: tagPotion
+  | {^P}?itemText?: tagPotionText
+ClassicAttributeRanges (0)
+ClassicAttributeSources (4)
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\OneShot_PotionHealth.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (4)
+  | +300 Health
+  | ?Class?: OneShot_PotionHealth
+  | ?description?: tagPotion
+  | ?itemText?: tagPotionText
+== Search
+FullText (4)
+  | Health Potion (7)
+  | Seed 0 (0.00)
+  | +300 Health
+  | Restores health over a short time.
+AttributesAll (1)
+  | +300 Health
+HasGrantedSkill: False
+GrantedSkillNames (0)

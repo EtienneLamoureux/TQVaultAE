@@ -1,0 +1,34 @@
+== GetSkillAtLevel 1
+Skill.SkillId: records\test\skill_heal.dbr
+Skill.Name: Healing Light
+Skill.Level: 1
+Skill.LevelText: Level:   1
+Skill.Icon: records\test\heal_up.tex
+Skill.Activation: <null>
+Skill.Description (2)
+  | Bathes you in light that mends your 
+  | wounds and those of your allies.
+Skill.Attributes (5)
+  | {^W}{^a}30.0 Second(s) Recharge
+  | {^W}20 Energy Cost
+  | {^B}5.0 Second Duration
+  | {^B}+2 Strength
+  | {^B}+5.0 Health Regenerated per second
+Skill.ModifiedLines (0)
+== GetSkillAtLevel 3
+Skill.SkillId: records\test\skill_heal.dbr
+Skill.Name: Healing Light
+Skill.Level: 3
+Skill.LevelText: Level:   3
+Skill.Icon: records\test\heal_up.tex
+Skill.Activation: <null>
+Skill.Description (2)
+  | Bathes you in light that mends your 
+  | wounds and those of your allies.
+Skill.Attributes (5)
+  | {^W}{^a}26.0 Second(s) Recharge
+  | {^W}30 Energy Cost
+  | {^B}7.0 Second Duration
+  | {^B}+6 Strength
+  | {^B}+11.0 Health Regenerated per second
+Skill.ModifiedLines (0)

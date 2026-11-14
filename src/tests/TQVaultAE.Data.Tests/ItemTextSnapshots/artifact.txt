@@ -1,0 +1,139 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Eye of Testing
+FullName: Eye of Testing
+FullNameBagTooltipClean: Eye of Testing
+FullNameBagTooltip: Eye of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\artifact_eye.dbr
+BaseItemRarity: [Artifact]
+BaseItemInfoClass: tagArtifact
+BaseItemInfoDescription: Eye of Testing
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 45
+RequirementVariables (1)
+  | LevelRequirement = 45
+RequirementInfo: Lvl=45 Str= Dex= Int=
+BaseAttributes (3)
+  | {^B}25% Poison Resistance
+  | {^B}+20 Strength
+  | {^B}+150 Health
+ClassicAttributes (3)
+  | {^B}25% Poison Resistance
+  | {^B}+20 Strength
+  | {^B}+150 Health
+ClassicAttributeRanges (0)
+ClassicAttributeSources (3)
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\artifact_eye.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (1)
+  | {^B}+8 Attack Speed
+RelicBonus2Attributes (0)
+RelicBonus1InfoRecords: records\test\artifact_eye_bonus.dbr
+ArtifactClass: Greater Artifact
+ArtifactBonus: Completion Bonus
+ArtifactBonusFormat: (Completion Bonus ARTIFACT_EYE_BONUS)
+FormulaeArtifactAttributes (0)
+AttributesAll (4)
+  | 25% Poison Resistance
+  | +20 Strength
+  | +150 Health
+  | +8 Attack Speed
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Eye of Testing
+FullName: Eye of Testing
+FullNameBagTooltipClean: Eye of Testing
+FullNameBagTooltip: Eye of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\artifact_eye.dbr
+BaseItemRarity: [Artifact]
+BaseItemInfoClass: tagArtifact
+BaseItemInfoDescription: Eye of Testing
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 45
+RequirementVariables (1)
+  | LevelRequirement = 45
+RequirementInfo: Lvl=45 Str= Dex= Int=
+BaseAttributes (7)
+  | {^B}25% Poison Resistance
+  | {^B}+20 Strength
+  | {^B}+150 Health
+  | {^P}?Class?: ItemArtifact
+  | {^P}?description?: tagArtifactEye
+  | {^P}?artifactClassification?: Greater
+  | {^P}?levelRequirement?: 45
+ClassicAttributes (7)
+  | {^B}25% Poison Resistance
+  | {^B}+20 Strength
+  | {^B}+150 Health
+  | {^P}?Class?: ItemArtifact
+  | {^P}?description?: tagArtifactEye
+  | {^P}?artifactClassification?: Greater
+  | {^P}?levelRequirement?: 45
+ClassicAttributeRanges (0)
+ClassicAttributeSources (7)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\artifact_eye.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (2)
+  | {^B}+8 Attack Speed
+  | {^P}?Class?: LootRandomizer
+RelicBonus2Attributes (0)
+RelicBonus1InfoRecords: records\test\artifact_eye_bonus.dbr
+ArtifactClass: Greater Artifact
+ArtifactBonus: Completion Bonus
+ArtifactBonusFormat: (Completion Bonus ARTIFACT_EYE_BONUS)
+FormulaeArtifactAttributes (0)
+AttributesAll (9)
+  | 25% Poison Resistance
+  | +20 Strength
+  | +150 Health
+  | ?Class?: ItemArtifact
+  | ?description?: tagArtifactEye
+  | ?artifactClassification?: Greater
+  | ?levelRequirement?: 45
+  | +8 Attack Speed
+  | ?Class?: LootRandomizer
+== Search
+FullText (8)
+  | Eye of Testing
+  | Greater Artifact
+  | Seed 0 (0.00)
+  | 25% Poison Resistance
+  | +20 Strength
+  | +150 Health
+  | +8 Attack Speed
+  | Required Player Level: 45
+AttributesAll (4)
+  | 25% Poison Resistance
+  | +20 Strength
+  | +150 Health
+  | +8 Attack Speed
+HasGrantedSkill: False
+GrantedSkillNames (0)

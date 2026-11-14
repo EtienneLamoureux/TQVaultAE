@@ -58,11 +58,17 @@ public abstract class ItemProviderTextTestBase
 
 	protected readonly Mock<IDatabase> MockDatabase = new();
 	protected readonly UserSettings Settings = new() { ShowInGameValues = false };
+	protected readonly Mock<ITranslationService> MockTranslation = new();
 	protected readonly ItemProvider Provider;
 
-	protected ItemProviderTextTestBase()
+	protected ItemProviderTextTestBase() : this(null)
 	{
-		var mockTranslation = new Mock<ITranslationService>();
+	}
+
+	/// <param name="itemMods">Gives an item linked to a mod its mod's database; none by default.</param>
+	protected ItemProviderTextTestBase(IItemModService? itemMods)
+	{
+		var mockTranslation = this.MockTranslation;
 		mockTranslation.SetupGet(t => t.ItemSeed).Returns("Seed {0} ({1:0.00})");
 		mockTranslation.Setup(t => t.TryTranslateXTag(It.IsAny<string>(), out It.Ref<string>.IsAny, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 			.Returns(new TryTranslate((string tag, out string translation, bool _, bool _, bool _) =>
@@ -87,7 +93,8 @@ public abstract class ItemProviderTextTestBase
 			Mock.Of<ITQDataService>(),
 			mockTranslation.Object,
 			mockPath.Object,
-			this.Settings
+			this.Settings,
+			itemMods
 		);
 	}
 

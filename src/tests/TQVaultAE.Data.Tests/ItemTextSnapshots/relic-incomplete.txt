@@ -1,0 +1,150 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Ember
+FullName: Ember
+FullNameBagTooltipClean: Ember - Relic - 1 / 3
+FullNameBagTooltip: {^S}Ember - Relic - 1 / 3
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\relic_ember.dbr
+BaseItemRarity: [Relic]
+BaseItemInfoClass: tagRelic
+BaseItemInfoDescription: Ember
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+ItemWith: with
+FlavorText (2)
+  | A shard of an ever burning ember, still 
+  | warm to the touch.
+Requirements (1)
+  | Required Player Level: 20
+RequirementVariables (1)
+  | LevelRequirement = 20
+RequirementInfo: Lvl=20 Str= Dex= Int=
+BaseAttributes (2)
+  | {^B}+10% Fire Damage
+  | {^B}+8 Strength
+ClassicAttributes (2)
+  | {^B}+10% Fire Damage
+  | {^B}+8 Strength
+ClassicAttributeRanges (0)
+ClassicAttributeSources (2)
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\relic_ember.dbr
+AnimalPartComplete: Completed Charm
+AnimalPartCompleteBonus: Completion Bonus:
+AnimalPart: Charm
+AnimalPartRatio: {0} - {1} / {2}
+RelicComplete: Completed Relic
+RelicBonus: Completion Bonus:
+RelicShard: Relic
+RelicRatio: {0} - {1} / {2}
+RelicClass: Relic
+RelicCompletionFormat: Relic - 1 / 3
+RelicPattern: {0} - {1} / {2}
+RelicBonusFormat: Relic - 1 / 3
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (2)
+  | +10% Fire Damage
+  | +8 Strength
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Ember
+FullName: Ember
+FullNameBagTooltipClean: Ember - Relic - 1 / 3
+FullNameBagTooltip: {^S}Ember - Relic - 1 / 3
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\relic_ember.dbr
+BaseItemRarity: [Relic]
+BaseItemInfoClass: tagRelic
+BaseItemInfoDescription: Ember
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+ItemWith: with
+FlavorText (2)
+  | A shard of an ever burning ember, still 
+  | warm to the touch.
+Requirements (1)
+  | Required Player Level: 20
+RequirementVariables (1)
+  | LevelRequirement = 20
+RequirementInfo: Lvl=20 Str= Dex= Int=
+BaseAttributes (7)
+  | {^B}+10% Fire Damage
+  | {^B}+8 Strength
+  | {^P}?Class?: ItemRelic
+  | {^P}?description?: tagRelicEmber
+  | {^P}?itemText?: tagRelicEmberText
+  | {^P}?completedRelicLevel?: 3
+  | {^P}?levelRequirement?: 20
+ClassicAttributes (7)
+  | {^B}+10% Fire Damage
+  | {^B}+8 Strength
+  | {^P}?Class?: ItemRelic
+  | {^P}?description?: tagRelicEmber
+  | {^P}?itemText?: tagRelicEmberText
+  | {^P}?completedRelicLevel?: 3
+  | {^P}?levelRequirement?: 20
+ClassicAttributeRanges (0)
+ClassicAttributeSources (7)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\relic_ember.dbr
+AnimalPartComplete: Completed Charm
+AnimalPartCompleteBonus: Completion Bonus:
+AnimalPart: Charm
+AnimalPartRatio: {0} - {1} / {2}
+RelicComplete: Completed Relic
+RelicBonus: Completion Bonus:
+RelicShard: Relic
+RelicRatio: {0} - {1} / {2}
+RelicClass: Relic
+RelicCompletionFormat: Relic - 1 / 3
+RelicPattern: {0} - {1} / {2}
+RelicBonusFormat: Relic - 1 / 3
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (7)
+  | +10% Fire Damage
+  | +8 Strength
+  | ?Class?: ItemRelic
+  | ?description?: tagRelicEmber
+  | ?itemText?: tagRelicEmberText
+  | ?completedRelicLevel?: 3
+  | ?levelRequirement?: 20
+== Search
+FullText (9)
+  | Ember
+  | Relic - 1 / 3
+  | Relic - 1 / 3
+  | Seed 0 (0.00)
+  | +10% Fire Damage
+  | +8 Strength
+  | A shard of an ever burning ember, still 
+  | warm to the touch.
+  | Required Player Level: 20
+AttributesAll (2)
+  | +10% Fire Damage
+  | +8 Strength
+HasGrantedSkill: False
+GrantedSkillNames (0)

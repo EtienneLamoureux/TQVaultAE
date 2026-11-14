@@ -1,0 +1,133 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Hunter's Hood
+FullName: Hunter's Hood
+FullNameBagTooltipClean: Hunter's Hood
+FullNameBagTooltip: Hunter's Hood
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\set_hunter_helm.dbr
+BaseItemRarity: [Legendary]
+BaseItemInfoClass: tagCR_Head
+BaseItemInfoDescription: Hunter's Hood
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 38
+RequirementVariables (1)
+  | LevelRequirement = 38
+RequirementInfo: Lvl=38 Str= Dex= Int=
+BaseAttributes (2)
+  | {^W}90 Armor
+  | {^B}+25 Dexterity
+ClassicAttributes (3)
+  | {^W}90 Armor
+  | 
+  | {^B}+25 Dexterity
+ClassicAttributeRanges (0)
+ClassicAttributeSources (3)
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+ItemSet: records\test\set_hunter.dbr (tagSetHunter)
+ItemSet.Translations (3)
+  | tagSetHunter => {^G}Hunter's Garb
+  | records\test\set_hunter_helm.dbr => {^Y}    Hunter's Hood
+  | records\test\set_hunter_greaves.dbr => {^Y}    Hunter's Boots
+BaseItemInfoRecords: records\test\set_hunter_helm.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (2)
+  | 90 Armor
+  | +25 Dexterity
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Hunter's Hood
+FullName: Hunter's Hood
+FullNameBagTooltipClean: Hunter's Hood
+FullNameBagTooltip: Hunter's Hood
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\set_hunter_helm.dbr
+BaseItemRarity: [Legendary]
+BaseItemInfoClass: tagCR_Head
+BaseItemInfoDescription: Hunter's Hood
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 38
+RequirementVariables (1)
+  | LevelRequirement = 38
+RequirementInfo: Lvl=38 Str= Dex= Int=
+BaseAttributes (7)
+  | {^W}90 Armor
+  | {^B}+25 Dexterity
+  | {^P}?Class?: ArmorProtective_Head
+  | {^P}?itemNameTag?: tagSetHunterHelm
+  | {^P}?itemClassification?: Legendary
+  | {^P}?itemSetName?: records\test\set_hunter.dbr
+  | {^P}?levelRequirement?: 38
+ClassicAttributes (8)
+  | {^W}90 Armor
+  | 
+  | {^B}+25 Dexterity
+  | {^P}?Class?: ArmorProtective_Head
+  | {^P}?itemNameTag?: tagSetHunterHelm
+  | {^P}?itemClassification?: Legendary
+  | {^P}?itemSetName?: records\test\set_hunter.dbr
+  | {^P}?levelRequirement?: 38
+ClassicAttributeRanges (0)
+ClassicAttributeSources (8)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+ItemSet: records\test\set_hunter.dbr (tagSetHunter)
+ItemSet.Translations (3)
+  | tagSetHunter => {^G}Hunter's Garb
+  | records\test\set_hunter_helm.dbr => {^Y}    Hunter's Hood
+  | records\test\set_hunter_greaves.dbr => {^Y}    Hunter's Boots
+BaseItemInfoRecords: records\test\set_hunter_helm.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (7)
+  | 90 Armor
+  | +25 Dexterity
+  | ?Class?: ArmorProtective_Head
+  | ?itemNameTag?: tagSetHunterHelm
+  | ?itemClassification?: Legendary
+  | ?itemSetName?: records\test\set_hunter.dbr
+  | ?levelRequirement?: 38
+== Search
+FullText (8)
+  | Hunter's Hood
+  | Seed 0 (0.00)
+  | 90 Armor
+  | +25 Dexterity
+  | {^G}Hunter's Garb
+  | {^Y}    Hunter's Hood
+  | {^Y}    Hunter's Boots
+  | Required Player Level: 38
+AttributesAll (2)
+  | 90 Armor
+  | +25 Dexterity
+HasGrantedSkill: False
+GrantedSkillNames (0)

@@ -1,0 +1,148 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Ring of Testing Of Life
+FullName: Ring of Testing Of Life
+FullNameBagTooltipClean: Ring of Testing Of Life
+FullNameBagTooltip: Ring of Testing Of Life
+PrefixAttributes (0)
+SuffixInfoDescription: of Life
+SuffixAttributes (1)
+  | {^B}20.0% Chance of 1.0 ~ 1.5 Stun
+SuffixInfoRecords: records\test\suffix_life.dbr
+BaseItemId: records\test\ArmorJewelry_Ring.dbr
+BaseItemRarity: [Epic]
+BaseItemInfoClass: tagItemRing
+BaseItemInfoDescription: Ring of Testing
+ItemSeed: Seed 9 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 25
+RequirementVariables (1)
+  | LevelRequirement = 25
+RequirementInfo: Lvl=25 Str= Dex= Int=
+BaseAttributes (3)
+  | {^B}+50 Health
+  | {^B}+5 Attack Speed
+  | {^B}+1 to all Skills
+ClassicAttributes (4)
+  | {^B}20.0% Chance of 1.0 ~ 1.5 Stun
+  | {^B}+50 Health
+  | {^B}+5 Attack Speed
+  | {^B}+1 to all Skills
+ClassicAttributeRanges (0)
+ClassicAttributeSources (4)
+  | Suffix
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\ArmorJewelry_Ring.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (4)
+  | +50 Health
+  | +5 Attack Speed
+  | +1 to all Skills
+  | 20.0% Chance of 1.0 ~ 1.5 Stun
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Ring of Testing Of Life
+FullName: Ring of Testing Of Life
+FullNameBagTooltipClean: Ring of Testing Of Life
+FullNameBagTooltip: Ring of Testing Of Life
+PrefixAttributes (0)
+SuffixInfoDescription: of Life
+SuffixAttributes (4)
+  | {^B}20.0% Chance of 1.0 ~ 1.5 Stun
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagSuffixLife
+  | {^P}?itemClassification?: Rare
+SuffixInfoRecords: records\test\suffix_life.dbr
+BaseItemId: records\test\ArmorJewelry_Ring.dbr
+BaseItemRarity: [Epic]
+BaseItemInfoClass: tagItemRing
+BaseItemInfoDescription: Ring of Testing
+ItemSeed: Seed 9 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 25
+RequirementVariables (1)
+  | LevelRequirement = 25
+RequirementInfo: Lvl=25 Str= Dex= Int=
+BaseAttributes (7)
+  | {^B}+50 Health
+  | {^B}+5 Attack Speed
+  | {^B}+1 to all Skills
+  | {^P}?Class?: ArmorJewelry_Ring
+  | {^P}?itemNameTag?: tagRing
+  | {^P}?itemClassification?: Epic
+  | {^P}?levelRequirement?: 25
+ClassicAttributes (11)
+  | {^B}20.0% Chance of 1.0 ~ 1.5 Stun
+  | {^B}+50 Health
+  | {^B}+5 Attack Speed
+  | {^B}+1 to all Skills
+  | {^P}?Class?: ArmorJewelry_Ring
+  | {^P}?itemNameTag?: tagRing
+  | {^P}?itemClassification?: Epic
+  | {^P}?levelRequirement?: 25
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagSuffixLife
+  | {^P}?itemClassification?: Rare
+ClassicAttributeRanges (0)
+ClassicAttributeSources (11)
+  | Suffix
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Suffix
+  | Suffix
+  | Suffix
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\ArmorJewelry_Ring.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (11)
+  | +50 Health
+  | +5 Attack Speed
+  | +1 to all Skills
+  | ?Class?: ArmorJewelry_Ring
+  | ?itemNameTag?: tagRing
+  | ?itemClassification?: Epic
+  | ?levelRequirement?: 25
+  | 20.0% Chance of 1.0 ~ 1.5 Stun
+  | ?Class?: LootRandomizer
+  | ?lootRandomizerName?: tagSuffixLife
+  | ?itemClassification?: Rare
+== Search
+FullText (7)
+  | Ring of Testing Of Life
+  | Seed 9 (0.00)
+  | +50 Health
+  | +5 Attack Speed
+  | +1 to all Skills
+  | 20.0% Chance of 1.0 ~ 1.5 Stun
+  | Required Player Level: 25
+AttributesAll (4)
+  | +50 Health
+  | +5 Attack Speed
+  | +1 to all Skills
+  | 20.0% Chance of 1.0 ~ 1.5 Stun
+HasGrantedSkill: False
+GrantedSkillNames (0)

@@ -1,0 +1,183 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Scroll of the Wolf (3)
+FullName: Scroll of the Wolf (3)
+FullNameBagTooltipClean: Scroll of the Wolf (3)
+FullNameBagTooltip: Scroll of the Wolf (3)
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\OneShot_Scroll.dbr
+BaseItemRarity: [Scroll]
+BaseItemInfoClass: xtagLogScroll
+BaseItemInfoDescription: Scroll of the Wolf
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+NumberFormat: (3)
+FlavorText (0)
+Requirements (0)
+RequirementVariables (0)
+RequirementInfo: Lvl= Str= Dex= Int=
+BaseAttributes (11)
+  | {^W}2 Summon Limit
+  | [text] {^W}Wolf Attributes:
+  | {^W}Life Time 45.0 Seconds
+  | {^W}650  Health
+  | {^W}120  Energy
+  | 
+  | [text] {^W}Wolf Abilities:
+  | {^W}14 - 22  Damage
+  | {^W}Bite
+  | {^B}10 Physical Damage
+  | 
+ClassicAttributes (11)
+  | {^W}2 Summon Limit
+  | [text] {^W}Wolf Attributes:
+  | {^W}Life Time 45.0 Seconds
+  | {^W}650  Health
+  | {^W}120  Energy
+  | 
+  | [text] {^W}Wolf Abilities:
+  | {^W}14 - 22  Damage
+  | {^W}Bite
+  | {^B}10 Physical Damage
+  | 
+ClassicAttributeRanges (0)
+ClassicAttributeSources (11)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\OneShot_Scroll.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (9)
+  | 2 Summon Limit
+  | [text] Wolf Attributes:
+  | Life Time 45.0 Seconds
+  | 650  Health
+  | 120  Energy
+  | [text] Wolf Abilities:
+  | 14 - 22  Damage
+  | Bite
+  | 10 Physical Damage
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Scroll of the Wolf (3)
+FullName: Scroll of the Wolf (3)
+FullNameBagTooltipClean: Scroll of the Wolf (3)
+FullNameBagTooltip: Scroll of the Wolf (3)
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\OneShot_Scroll.dbr
+BaseItemRarity: [Scroll]
+BaseItemInfoClass: xtagLogScroll
+BaseItemInfoDescription: Scroll of the Wolf
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+NumberFormat: (3)
+FlavorText (0)
+Requirements (0)
+RequirementVariables (0)
+RequirementInfo: Lvl= Str= Dex= Int=
+BaseAttributes (13)
+  | {^P}?Class?: OneShot_Scroll
+  | {^P}?description?: tagScroll
+  | {^W}2 Summon Limit
+  | [text] {^W}Wolf Attributes:
+  | {^W}Life Time 45.0 Seconds
+  | {^W}650  Health
+  | {^W}120  Energy
+  | 
+  | [text] {^W}Wolf Abilities:
+  | {^W}14 - 22  Damage
+  | {^W}Bite
+  | {^B}10 Physical Damage
+  | 
+ClassicAttributes (13)
+  | {^P}?Class?: OneShot_Scroll
+  | {^P}?description?: tagScroll
+  | {^W}2 Summon Limit
+  | [text] {^W}Wolf Attributes:
+  | {^W}Life Time 45.0 Seconds
+  | {^W}650  Health
+  | {^W}120  Energy
+  | 
+  | [text] {^W}Wolf Abilities:
+  | {^W}14 - 22  Damage
+  | {^W}Bite
+  | {^B}10 Physical Damage
+  | 
+ClassicAttributeRanges (0)
+ClassicAttributeSources (13)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+BaseItemInfoRecords: records\test\OneShot_Scroll.dbr
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (11)
+  | ?Class?: OneShot_Scroll
+  | ?description?: tagScroll
+  | 2 Summon Limit
+  | [text] Wolf Attributes:
+  | Life Time 45.0 Seconds
+  | 650  Health
+  | 120  Energy
+  | [text] Wolf Abilities:
+  | 14 - 22  Damage
+  | Bite
+  | 10 Physical Damage
+== Search
+FullText (11)
+  | Scroll of the Wolf (3)
+  | Seed 0 (0.00)
+  | 2 Summon Limit
+  | Wolf Attributes:
+  | Life Time 45.0 Seconds
+  | 650  Health
+  | 120  Energy
+  | Wolf Abilities:
+  | 14 - 22  Damage
+  | Bite
+  | 10 Physical Damage
+AttributesAll (9)
+  | 2 Summon Limit
+  | [text] Wolf Attributes:
+  | Life Time 45.0 Seconds
+  | 650  Health
+  | 120  Energy
+  | [text] Wolf Abilities:
+  | 14 - 22  Damage
+  | Bite
+  | 10 Physical Damage
+HasGrantedSkill: False
+GrantedSkillNames (0)
