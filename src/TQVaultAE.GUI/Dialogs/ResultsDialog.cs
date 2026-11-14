@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Tooltips;
@@ -60,14 +61,13 @@ public partial class ResultsDialog : VaultForm
 
 		#region Apply custom font
 
-		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnItem.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnQuality.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnContainerName.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnContainerType.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnSack.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.columnLevel.DefaultCellStyle.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.Font = FontService.GetFont(9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+		var regular = FontService.GetFont(9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = regular;
+		// The item name in italics, the other columns regular.
+		this.columnItem.DefaultCellStyle.Font = FontService.GetFont(9F, FontStyle.Italic, GraphicsUnit.Point, 0);
+		foreach (var column in new DataGridViewColumn[] { this.columnQuality, this.columnContainerName, this.columnContainerType, this.columnSack, this.columnLevel })
+			column.DefaultCellStyle.Font = regular;
+		this.Font = regular;
 
 		#endregion
 
@@ -248,21 +248,25 @@ public partial class ResultsDialog : VaultForm
 	}
 
 	/// <summary>
+	/// The result shown on row <paramref name="rowIndex"/>; none for the header (a negative index) or a row without one.
+	/// </summary>
+	private bool TryGetResult(int rowIndex, [NotNullWhen(true)] out SearchResult? result)
+	{
+		result = rowIndex >= 0 && this.resultsDataGridView.Rows[rowIndex].Tag is int index ? this.resultsList[index] : null;
+		return result is not null;
+	}
+
+	/// <summary>
 	/// Handler for the focus changing to a different row.
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">DataGridViewCellEventArgs data</param>
 	private void ResultsDataGridViewRowEnter(object? sender, DataGridViewCellEventArgs e)
 	{
-		// Ignore click on the header.
-		if (e.RowIndex < 0)
+		if (!this.TryGetResult(e.RowIndex, out var result))
 			return;
 
-		var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
-		if (currentRow.Tag is null)
-			return;
-
-		this.selectedResult = this.resultsList[(int)currentRow.Tag];
+		this.selectedResult = result;
 	}
 
 	/// <summary>
@@ -273,15 +277,10 @@ public partial class ResultsDialog : VaultForm
 	/// <param name="e"></param>
 	private void ResultsDataGridViewCellClick(object? sender, DataGridViewCellEventArgs e)
 	{
-		// Ignore click on the header.
-		if (e.RowIndex < 0)
+		if (!this.TryGetResult(e.RowIndex, out var result))
 			return;
 
-		var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
-		if (currentRow.Tag is null)
-			return;
-
-		this.selectedResult = this.resultsList[(int)currentRow.Tag];
+		this.selectedResult = result;
 
 		if (this.selectedResult.FriendlyNames is not null && this.ResultChanged is not null)
 			this.ResultChanged(this, new ResultChangedEventArgs(this.selectedResult));
@@ -314,16 +313,11 @@ public partial class ResultsDialog : VaultForm
 	/// <param name="e">DataGridViewCellEventArgs data</param>
 	private void ResultsDataGridViewCellMouseEnter(object? sender, DataGridViewCellEventArgs e)
 	{
-		// Ignore click on the header.
-		if (e.RowIndex < 0)
+		if (!this.TryGetResult(e.RowIndex, out var result))
 			return;
 
-		var currentRow = this.resultsDataGridView.Rows[e.RowIndex];
-		if (currentRow.Tag is null)
-			return;
-
-		this.selectedResult = this.resultsList[(int)currentRow.Tag];
-		this.resultsDataGridView.CurrentCell = currentRow.Cells[e.ColumnIndex];
+		this.selectedResult = result;
+		this.resultsDataGridView.CurrentCell = this.resultsDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
 		this.GetToolTip(this.selectedResult);
 	}
 
