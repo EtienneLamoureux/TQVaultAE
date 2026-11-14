@@ -292,8 +292,8 @@ public partial class VaultPanel
 		{
 			var button = this.BagButtons[this.CurrentBag];
 
-			// A singleton kept for the next opening (its icon grids are filled once): never dispose it.
-			var bbs = this.Services.Forms.Create<BagButtonSettings>();
+			// Kept for the next opening at the same zoom (its icon grids are filled once): never dispose it.
+			var bbs = this.Services.Forms.BagButtonSettings();
 			bbs.CurrentBagButton = button;
 
 			if (bbs.ShowDialog() == DialogResult.OK)

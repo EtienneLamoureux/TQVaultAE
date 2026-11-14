@@ -171,20 +171,6 @@ public partial class VaultForm : Form, IScalingControl
 	}
 
 	/// <summary>
-	/// Applies the user's zoom to a designer control, which Windows Forms already scaled to the DPI; a control built in
-	/// code, at design size, also needs the DPI (<paramref name="builtInCode"/>).
-	/// </summary>
-	public static void ScaleControl(IUIService uiService, System.Windows.Forms.Control ctrl, bool isAbsolutePositioning = true, bool builtInCode = false)
-	{
-		float factor = uiService is null ? 1.0F : builtInCode ? uiService.Scale : uiService.Zoom;
-
-		if (isAbsolutePositioning)
-			ctrl.Location = new Point((int)System.Math.Round(ctrl.Location.X * factor), (int)System.Math.Round(ctrl.Location.Y * factor));
-
-		ctrl.Size = new Size((int)System.Math.Round(ctrl.Size.Width * factor), (int)System.Math.Round(ctrl.Size.Height * factor));
-	}
-
-	/// <summary>
 	/// Gets or sets a value indicating whether the form resizing will be constrained to the original form's width and height ratio.
 	/// </summary>
 	public bool ConstrainToDesignRatio { get; set; }

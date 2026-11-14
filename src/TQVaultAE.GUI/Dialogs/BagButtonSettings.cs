@@ -153,9 +153,6 @@ public partial class BagButtonSettings : VaultForm
 				c.ResetFont();
 		});
 
-		ScaleControl(this.UIService, this.cancelButton);
-		ScaleControl(this.UIService, this.applyButton);
-
 		this.FitExitButtons();
 		this.ApplyBorderPadding();
 
@@ -615,6 +612,22 @@ public partial class BagButtonSettings : VaultForm
 		this.scalingTextBoxLabel.Enabled = this.scalingCheckBoxLabel.Checked;
 
 		if (!this.scalingTextBoxLabel.Enabled) this.scalingTextBoxLabel.Text = string.Empty;
+	}
+
+	/// <summary>
+	/// Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>), the whole dialog;
+	/// kept while the zoom stays the same (<see cref="FormFactory.BagButtonSettings"/>).
+	/// </summary>
+	protected internal override bool FollowsUserZoom => true;
+
+	/// <summary>
+	/// Scaled to the user's zoom: the border room stays the border's (drawn at the DPI only), and the exit buttons share
+	/// one width again for their grown text.
+	/// </summary>
+	protected override void OnUserZoomApplied()
+	{
+		this.ApplyBorderPadding();
+		this.FitExitButtons();
 	}
 
 	/// <summary>Room for the custom border and its title bar at 96 DPI, around the layout table that fills the form.</summary>

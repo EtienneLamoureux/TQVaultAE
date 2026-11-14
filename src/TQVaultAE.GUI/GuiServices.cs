@@ -5,6 +5,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Config;
+using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.Presentation.Win32.Contracts;
 
@@ -216,8 +217,9 @@ public sealed class GuiServices
 /// Creates the forms registered in the container: the only GUI code allowed to resolve from it.
 /// </summary>
 /// <remarks>
-/// Dialogs are transient (a new instance per call), disposed by their caller; <see cref="MainForm"/> and
-/// <see cref="BagButtonSettings"/> (its icon grids are filled once) are singletons, never disposed by a caller.
+/// Dialogs are transient (a new instance per call), disposed by their caller; <see cref="MainForm"/> is a singleton.
+/// <see cref="BagButtonSettings"/> (its icon grids are filled once) is kept here between openings at the same zoom
+/// (<see cref="BagButtonSettings()"/>), never disposed by a caller.
 /// </remarks>
 public sealed class FormFactory
 {
@@ -228,6 +230,18 @@ public sealed class FormFactory
 
 	/// <summary>The main window, owner of the item and bag tooltips.</summary>
 	public MainForm MainForm => this._provider.GetRequiredService<MainForm>();
+
+	private readonly Infrastructure.KeptDialog<BagButtonSettings> bagButtonSettings = new();
+
+	/// <summary>
+	/// The bag icon picker: kept between openings, since filling its icon grids is the slow part, and made again at the
+	/// user's new zoom when it changed, as the other kept dialogs. Never disposed by the caller: the main window does.
+	/// </summary>
+	public BagButtonSettings BagButtonSettings()
+	{
+		float zoom = this._provider.GetRequiredService<Presentation.Win32.Contracts.IUIService>().Zoom;
+		return this.bagButtonSettings.Get(this.MainForm, zoom, this.Create<BagButtonSettings>, out _);
+	}
 
 	/// <summary>
 	/// Creates (or, for singletons, returns) the form <typeparamref name="TForm"/>. A new dialog designed at zoom 1 is
