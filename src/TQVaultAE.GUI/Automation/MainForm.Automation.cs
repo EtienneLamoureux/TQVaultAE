@@ -67,17 +67,17 @@ public partial class MainForm
 	/// </summary>
 	internal (IReadOnlyList<AutomationMenuEntry> Entries, string? Clicked) AutomationVaultMenu(IReadOnlyList<string>? path)
 	{
-		this.PrepareVaultMenu();
-		var entries = AutomationMenus.Describe(this.vaultExportContextMenu.Items);
-		string? clicked = path is { Count: > 0 } ? AutomationMenus.ClickLater(this, this.vaultExportContextMenu, path) : null;
+		this.mainView.PrepareVaultMenu();
+		var entries = AutomationMenus.Describe(this.mainView.VaultMenu.Items);
+		string? clicked = path is { Count: > 0 } ? AutomationMenus.ClickLater(this, this.mainView.VaultMenu, path) : null;
 		return (entries, clicked);
 	}
 
 	/// <summary>Draws the menu of the vault tools button as it opens, with the sub menus along <paramref name="open"/>.</summary>
 	internal Bitmap AutomationRenderVaultMenu(IReadOnlyList<string> open)
 	{
-		this.PrepareVaultMenu();
-		return AutomationMenus.Render(this.vaultExportContextMenu, open);
+		this.mainView.PrepareVaultMenu();
+		return AutomationMenus.Render(this.mainView.VaultMenu, open);
 	}
 
 	/// <summary>The mod the shown vault is linked to; null for none.</summary>
@@ -157,7 +157,7 @@ public partial class MainForm
 	/// <summary>
 	/// Imports an exported file, like "Import from file" without its file dialog.
 	/// </summary>
-	internal void AutomationImportFile(string fileName) => this.ImportFile(fileName);
+	internal void AutomationImportFile(string fileName) => this.mainView.ImportFile(fileName);
 
 	/// <summary>
 	/// Imports text like a paste (Ctrl+V) of the clipboard holding it, without touching the clipboard: the same parsing
@@ -168,7 +168,7 @@ public partial class MainForm
 	{
 		// Off the UI thread, as the paste awaits it: a PasteBin link is downloaded.
 		var result = Task.Run(() => this.itemExchangeService.ImportFromTextAsync(text)).GetAwaiter().GetResult();
-		this.HandleImportResult(result);
+		this.mainView.HandleImportResult(result);
 		return result.Success ? null : result.ErrorMessage;
 	}
 

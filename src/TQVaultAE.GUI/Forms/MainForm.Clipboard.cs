@@ -38,7 +38,7 @@ public partial class MainForm
 				return;
 
 			var result = await this.itemExchangeService.ImportFromTextAsync(text);
-			this.HandleImportResult(result);
+			this.mainView.HandleImportResult(result);
 		}
 		catch (Exception ex)
 		{

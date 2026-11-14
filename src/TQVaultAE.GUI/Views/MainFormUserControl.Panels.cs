@@ -128,6 +128,8 @@ public partial class MainFormUserControl
 
 		// Add the Forge
 		this.CreateForgePanel();
+
+		this.SetupVaultExportButton();
 	}
 
 	/// <summary>

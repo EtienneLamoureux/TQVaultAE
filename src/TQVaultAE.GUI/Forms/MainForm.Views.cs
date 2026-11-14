@@ -60,6 +60,11 @@ public partial class MainForm
 	internal IEnumerable<string> KnownVaultNames => this.mainView.KnownVaultNames;
 
 	/// <summary>
+	/// Imports an exported file chosen in a file dialog (the vault panel's menu).
+	/// </summary>
+	internal void ImportFromFile() => this.mainView.ImportFromFile();
+
+	/// <summary>
 	/// The window answers the main content's events: its toolbar follows the panels shown, and it shows the character
 	/// editor or saves the files when asked.
 	/// </summary>

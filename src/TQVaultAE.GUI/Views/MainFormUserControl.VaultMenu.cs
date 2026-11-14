@@ -10,17 +10,21 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.GUI.Components.Rendering;
 
 
-namespace TQVaultAE.GUI.Forms;
+namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// Main Dialog class
+/// The vault tools button next to the vault list, with its menu (maintenance, the vault's mod, export and import), and
+/// the placement of imported items and vaults.
 /// </summary>
-public partial class MainForm
+public partial class MainFormUserControl
 {
 	#region Vault Export/Import
 
 	private ScalingButton vaultExportButton = null!; // Created while the form loads.
 	private ContextMenuStrip vaultExportContextMenu = null!; // Created while the form loads.
+
+	/// <summary>The menu of the vault tools button.</summary>
+	internal ContextMenuStrip VaultMenu => this.vaultExportContextMenu;
 
 	/// <summary>Position of the "Modded vault" submenu in <see cref="vaultExportContextMenu"/>.</summary>
 	private int vaultModMenuIndex;
@@ -35,11 +39,11 @@ public partial class MainForm
 	/// Prepares the vault tools menu as it opens: the "Modded vault" submenu for the vault shown, and "Share to PasteBin"
 	/// enabled when an API key is set (it may be set in the settings after startup).
 	/// </summary>
-	private void PrepareVaultMenu()
+	internal void PrepareVaultMenu()
 	{
 		this.RefreshVaultModMenu();
 		if (this.vaultPasteBinItem is not null)
-			this.vaultPasteBinItem.Enabled = this.itemExchangeService?.HasPasteBinApiKey == true;
+			this.vaultPasteBinItem.Enabled = this.Services.ItemExchangeService.HasPasteBinApiKey == true;
 	}
 
 	/// <summary>
@@ -79,9 +83,9 @@ public partial class MainForm
 		{
 			try
 			{
-				up = this.UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONUP01.TEX");
-				over = this.UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONOVER01.TEX");
-				down = this.UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONDOWN01.TEX");
+				up = this.Services.UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONUP01.TEX");
+				over = this.Services.UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONOVER01.TEX");
+				down = this.Services.UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONDOWN01.TEX");
 			}
 			catch (Exception ex)
 			{
@@ -109,7 +113,7 @@ public partial class MainForm
 		{
 			vaultExportButton.Text = "...";
 			vaultExportButton.FlatStyle = FlatStyle.Flat;
-			vaultExportButton.Font = FontService.GetFontLight(10F, UIService.FontZoom);
+			vaultExportButton.Font = this.Services.FontService.GetFontLight(10F, this.Services.UIService.FontZoom);
 			vaultExportButton.FlatAppearance.BorderSize = 0;
 		}
 
@@ -119,7 +123,7 @@ public partial class MainForm
 		};
 		MenuStyle.Apply(vaultExportContextMenu, FontService, UIService.FontZoom);
 
-		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.mainView.MaintainVaultFilesDialog());
+		vaultExportContextMenu.Items.Add(Resources.MainFormMaintainVault, null, (s, e) => this.MaintainVaultFilesDialog());
 
 		// The vault's mod: built when the menu opens, for the vault shown then.
 		vaultExportContextMenu.Items.Add("-");
@@ -148,7 +152,7 @@ public partial class MainForm
 
 		this.flowLayoutPanelVaultSelector.Controls.Add(vaultExportButton);
 
-		ScaleControl(this.UIService, vaultExportButton, builtInCode: true);
+		Forms.VaultForm.ScaleControl(this.Services.UIService, vaultExportButton, builtInCode: true);
 	}
 
 	private void ExportVaultToFileClicked(object? sender, EventArgs e)
@@ -156,7 +160,7 @@ public partial class MainForm
 		var vault = this.vaultPanel.Player;
 		if (vault is null)
 		{
-			this.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
+			this.Services.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
 			return;
 		}
 
@@ -171,13 +175,13 @@ public partial class MainForm
 		{
 			try
 			{
-				this.itemExchangeService.ExportVaultToFile(vault, saveDialog.FileName);
-				this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultSuccessFile, saveDialog.FileName));
+				this.Services.ItemExchangeService.ExportVaultToFile(vault, saveDialog.FileName);
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultSuccessFile, saveDialog.FileName));
 			}
 			catch (Exception ex)
 			{
 				Log.LogError(ex, "Failed to export vault to file");
-				this.UIService.ShowError(Resources.ExportVaultFailFile);
+				this.Services.UIService.ShowError(Resources.ExportVaultFailFile);
 			}
 		}
 	}
@@ -187,20 +191,20 @@ public partial class MainForm
 		var vault = this.vaultPanel.Player;
 		if (vault is null)
 		{
-			this.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
+			this.Services.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
 			return;
 		}
 
 		try
 		{
-			var json = this.itemExchangeService.SerializePlayerCollection(vault);
+			var json = this.Services.ItemExchangeService.SerializePlayerCollection(vault);
 			Clipboard.SetText(json);
-			this.UIService.NotifyUser(Resources.ExportVaultSuccessClipboard);
+			this.Services.UIService.NotifyUser(Resources.ExportVaultSuccessClipboard);
 		}
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "Failed to export vault to clipboard");
-			this.UIService.ShowError(Resources.ExportVaultFailClipboard);
+			this.Services.UIService.ShowError(Resources.ExportVaultFailClipboard);
 		}
 	}
 
@@ -209,21 +213,21 @@ public partial class MainForm
 		var vault = this.vaultPanel.Player;
 		if (vault is null)
 		{
-			this.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
+			this.Services.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
 			return;
 		}
 
 		try
 		{
-			var json = this.itemExchangeService.SerializePlayerCollection(vault);
-			var url = await this.itemExchangeService.ExportToPasteBinAsync(json, vault.PlayerName);
+			var json = this.Services.ItemExchangeService.SerializePlayerCollection(vault);
+			var url = await this.Services.ItemExchangeService.ExportToPasteBinAsync(json, vault.PlayerName);
 			Clipboard.SetText(url);
-			this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultSuccessPasteBin, url));
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultSuccessPasteBin, url));
 		}
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "Failed to export vault to PasteBin");
-			this.UIService.ShowError(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultFailPasteBin, ex.Message));
+			this.Services.UIService.ShowError(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultFailPasteBin, ex.Message));
 		}
 	}
 
@@ -254,24 +258,24 @@ public partial class MainForm
 	{
 		try
 		{
-			var result = this.itemExchangeService.ImportFromFile(fileName);
+			var result = this.Services.ItemExchangeService.ImportFromFile(fileName);
 			this.HandleImportResult(result);
 		}
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "Failed to import from file");
-			this.UIService.NotifyUser(Resources.ImportFailFile);
+			this.Services.UIService.NotifyUser(Resources.ImportFailFile);
 		}
 	}
 
 	/// <summary>
 	/// Shows the error of a failed import, or puts the imported items or vault in place.
 	/// </summary>
-	private void HandleImportResult(ImportResult result)
+	internal void HandleImportResult(ImportResult result)
 	{
 		if (!result.Success)
 		{
-			this.UIService.NotifyUser(result.ErrorMessage ?? string.Empty);
+			this.Services.UIService.NotifyUser(result.ErrorMessage ?? string.Empty);
 			return;
 		}
 
@@ -285,7 +289,7 @@ public partial class MainForm
 	{
 		if (this.vaultPanel.Player is null)
 		{
-			this.UIService.ShowError(Resources.GlobalNoVaultImportTarget);
+			this.Services.UIService.ShowError(Resources.GlobalNoVaultImportTarget);
 			return;
 		}
 
@@ -293,11 +297,11 @@ public partial class MainForm
 		var sack = sackPanel.Sack;
 		if (sack is null)
 		{
-			this.UIService.ShowError(Resources.GlobalNoActiveTabImport);
+			this.Services.UIService.ShowError(Resources.GlobalNoActiveTabImport);
 			return;
 		}
 
-		var imported = this.itemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height
+		var imported = this.Services.ItemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height
 			, sackPanel.ContainerMap);
 
 		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
@@ -310,7 +314,7 @@ public partial class MainForm
 		}
 
 		this.vaultPanel.Refresh();
-		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportSuccessCount, imported.Count, importResult.TotalCount));
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportSuccessCount, imported.Count, importResult.TotalCount));
 		this.NotifyDroppedMods(importResult);
 	}
 
@@ -320,7 +324,7 @@ public partial class MainForm
 	private void NotifyDroppedMods(ImportResult importResult)
 	{
 		if (importResult.DroppedMods.Count != 0)
-			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ImportDroppedMods, string.Join(", ", importResult.DroppedMods)));
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ImportDroppedMods, string.Join(", ", importResult.DroppedMods)));
 	}
 
 	private void HandleVaultImportFromJson(ImportResult importResult)
@@ -328,7 +332,7 @@ public partial class MainForm
 		var targetVault = this.vaultPanel.Player;
 		if (targetVault is null)
 		{
-			this.UIService.ShowError(Resources.GlobalNoVaultImportTarget);
+			this.Services.UIService.ShowError(Resources.GlobalNoVaultImportTarget);
 			return;
 		}
 
@@ -362,19 +366,19 @@ public partial class MainForm
 
 		if (result == createButton)
 		{
-			var newName = this.itemExchangeService.ImportAsNewVault(importResult, DateTime.Now);
+			var newName = this.Services.ItemExchangeService.ImportAsNewVault(importResult, DateTime.Now);
 
-			this.mainView.GetVaultList(false);
-			this.mainView.SelectVault(newName);
+			this.GetVaultList(false);
+			this.SelectVault(newName);
 
-			this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccessCreate, newName));
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccessCreate, newName));
 			this.NotifyDroppedMods(importResult);
 			return;
 		}
 
-		if (!this.itemExchangeService.IsVaultEmpty(targetVault))
+		if (!this.Services.ItemExchangeService.IsVaultEmpty(targetVault))
 		{
-			var warning = this.UIService.ShowWarning(
+			var warning = this.Services.UIService.ShowWarning(
 				Resources.ImportVaultWarning,
 				null,
 				ShowMessageButtons.OKCancel);
@@ -383,7 +387,7 @@ public partial class MainForm
 				return;
 		}
 
-		this.itemExchangeService.ImportVaultInto(targetVault, importResult);
+		this.Services.ItemExchangeService.ImportVaultInto(targetVault, importResult);
 
 		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
 		foreach (var sack in targetVault)
@@ -397,7 +401,7 @@ public partial class MainForm
 				this.vaultPanel.BagButtons[i].ApplyIconInfo(sack);
 		}
 
-		this.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccess, importResult.TotalCount));
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccess, importResult.TotalCount));
 		this.NotifyDroppedMods(importResult);
 	}
 

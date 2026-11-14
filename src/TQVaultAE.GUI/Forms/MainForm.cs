@@ -232,8 +232,6 @@ Item Debug Level: {ItemDebugLevel}
 		this.GameFileService.GitRepositorySetup();
 
 		this.mainView.CreatePanels(this.GetPlayerList());
-
-		SetupVaultExportButton();
 	}
 
 	private void UIService_ShowMessageUserEvent(object? sender, ShowMessageUserEventHandlerEventArgs message)
