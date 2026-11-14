@@ -11,6 +11,7 @@ using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
@@ -48,21 +49,15 @@ public partial class SackPanel
 
 			var moveChoice = new ToolStripMenuItem(label, null, MoveItemClicked, label)
 			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
 				Tag = destination.BagIndex is int bagIndex ? new MenuItemTagBagIndex(bagIndex) : (object)destination.Location,
-			};
+			}.StyledLike(this.CustomContextMenu);
 			moveChoices.Add(moveChoice);
 		}
 
 		var moveSubMenu = new ToolStripMenuItem(Resources.SackPanelMenuMoveTo, null, moveChoices.ToArray())
 		{
-			BackColor = this.CustomContextMenu.BackColor,
-			Font = this.CustomContextMenu.Font,
-			ForeColor = this.CustomContextMenu.ForeColor,
 			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		};
+		}.StyledLike(this.CustomContextMenu);
 
 		this.CustomContextMenu.Items.Add(moveSubMenu);
 	}
@@ -73,36 +68,20 @@ public partial class SackPanel
 		{
 			var hasApiKey = this.ExchangeService?.HasPasteBinApiKey == true;
 
-			var exportClipboardItem = new ToolStripMenuItem(Resources.SackPanelMenuExportClipboard, null, ExportItemToClipboardClicked)
-			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
-			};
+			var exportClipboardItem = new ToolStripMenuItem(Resources.SackPanelMenuExportClipboard, null, ExportItemToClipboardClicked).StyledLike(this.CustomContextMenu);
 
-			var exportFileItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemFile, null, ExportItemToFileClicked)
-			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
-			};
+			var exportFileItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemFile, null, ExportItemToFileClicked).StyledLike(this.CustomContextMenu);
 
 			var exportPasteBinItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemPasteBin, null)
 			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
 				Enabled = hasApiKey
-			};
+			}.StyledLike(this.CustomContextMenu);
 			exportPasteBinItem.Click += ExportItemToPasteBinClicked;
 
 			var exportItemMenu = new ToolStripMenuItem(Resources.SackPanelMenuExportItem, null, exportClipboardItem, exportFileItem, exportPasteBinItem)
 			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
 				DisplayStyle = ToolStripItemDisplayStyle.Text,
-			};
+			}.StyledLike(this.CustomContextMenu);
 
 			this.CustomContextMenu.Items.Add(exportItemMenu);
 		}
@@ -111,36 +90,18 @@ public partial class SackPanel
 		{
 			var exportItemMenu = new ToolStripMenuItem(Resources.SackPanelMenuExportItem)
 			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
 				DisplayStyle = ToolStripItemDisplayStyle.Text,
-			};
+			}.StyledLike(this.CustomContextMenu);
 
-			var exportClipboardItem = new ToolStripMenuItem(Resources.SackPanelMenuExportClipboard, null, ExportItemToClipboardClicked)
-			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
-			};
+			var exportClipboardItem = new ToolStripMenuItem(Resources.SackPanelMenuExportClipboard, null, ExportItemToClipboardClicked).StyledLike(this.CustomContextMenu);
 			exportItemMenu.DropDownItems.Add(exportClipboardItem);
 
-			var exportFileItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemFile, null, ExportItemToFileClicked)
-			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
-			};
+			var exportFileItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemFile, null, ExportItemToFileClicked).StyledLike(this.CustomContextMenu);
 			exportItemMenu.DropDownItems.Add(exportFileItem);
 
 			if (this.ExchangeService?.HasPasteBinApiKey == true)
 			{
-				var exportPasteBinItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemPasteBin, null, ExportItemToPasteBinClicked)
-				{
-					BackColor = this.CustomContextMenu.BackColor,
-					Font = this.CustomContextMenu.Font,
-					ForeColor = this.CustomContextMenu.ForeColor,
-				};
+				var exportPasteBinItem = new ToolStripMenuItem(Resources.SackPanelMenuExportItemPasteBin, null, ExportItemToPasteBinClicked).StyledLike(this.CustomContextMenu);
 				exportItemMenu.DropDownItems.Add(exportPasteBinItem);
 			}
 
@@ -190,11 +151,8 @@ public partial class SackPanel
 				{
 					Text = setMember.Label,
 					Name = setMember.RecordId,
-					BackColor = this.CustomContextMenu.BackColor,
-					Font = this.CustomContextMenu.Font,
-					ForeColor = this.CustomContextMenu.ForeColor,
 					ToolTipText = setMember.RecordId,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				choice.Click += NewSetItemClicked;
 
 				choices.Add(choice);
@@ -202,11 +160,8 @@ public partial class SackPanel
 
 			var subMenu = new ToolStripMenuItem(Resources.SackPanelMenuSet, null, choices.ToArray())
 			{
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
 				DisplayStyle = ToolStripItemDisplayStyle.Text,
-			};
+			}.StyledLike(this.CustomContextMenu);
 
 			this.CustomContextMenu.Items.Add(subMenu);
 		}
@@ -251,13 +206,10 @@ public partial class SackPanel
 			{
 				Text = bonus.Label,
 				Name = bonus.Id.Raw,
-				BackColor = this.CustomContextMenu.BackColor,
-				Font = this.CustomContextMenu.Font,
-				ForeColor = this.CustomContextMenu.ForeColor,
 				ToolTipText = bonus.Id.Raw,
 				Tag = tag,
 				DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
-			};
+			}.StyledLike(this.CustomContextMenu);
 			choice.Click += handler;
 
 			if (bonus.Unknown)
@@ -283,11 +235,8 @@ public partial class SackPanel
 
 		var subMenu = new ToolStripMenuItem(menuText, null, choices.ToArray())
 		{
-			BackColor = this.CustomContextMenu.BackColor,
-			Font = this.CustomContextMenu.Font,
-			ForeColor = this.CustomContextMenu.ForeColor,
 			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		};
+		}.StyledLike(this.CustomContextMenu);
 
 		this.CustomContextMenu.Items.Add(subMenu);
 	}
@@ -336,9 +285,6 @@ public partial class SackPanel
 		{
 			this.CustomContextMenu.Items.Add("-");
 
-			var fnt = this.CustomContextMenu.Font;
-			var foreC = this.CustomContextMenu.ForeColor;
-			var backC = this.CustomContextMenu.BackColor;
 			var dispStl = ToolStripItemDisplayStyle.Text;
 			var tagSRemove = TranslationService.TranslateXTag("tagSRemove");
 
@@ -351,11 +297,8 @@ public partial class SackPanel
 				currentchoicesMenu = new ToolStripMenuItem()
 				{
 					Text = TranslationService.TranslateXTag("tagTutorialTip05TextC"),// Broken
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
@@ -372,11 +315,8 @@ public partial class SackPanel
 				currentchoicesMenu = new ToolStripMenuItem()
 				{
 					Text = Resources.GlobalPrefix,
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
@@ -389,11 +329,8 @@ public partial class SackPanel
 				var prefixMenu = new ToolStripMenuItem()
 				{
 					Text = $"{tagSRemove} {Resources.GlobalPrefix}",
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				prefixMenu.Click += RemovePrefixItemClicked;
 				this.CustomContextMenu.Items.Add(prefixMenu);
 			}
@@ -407,11 +344,8 @@ public partial class SackPanel
 				currentchoicesMenu = new ToolStripMenuItem()
 				{
 					Text = Resources.GlobalSuffix,
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.suffixID, currentchoicesMenu, ChangeSuffixItemClicked
@@ -424,11 +358,8 @@ public partial class SackPanel
 				var suffixMenu = new ToolStripMenuItem()
 				{
 					Text = $"{tagSRemove} {Resources.GlobalSuffix}",
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				suffixMenu.Click += RemoveSuffixItemClicked;
 				this.CustomContextMenu.Items.Add(suffixMenu);
 			}
@@ -442,11 +373,8 @@ public partial class SackPanel
 				Text = _DisplayAffixesByEffect
 					? Resources.AffixesDisplayByName
 					: Resources.AffixesDisplayByEffect,
-				BackColor = backC,
-				Font = fnt,
-				ForeColor = foreC,
 				DisplayStyle = dispStl,
-			};
+			}.StyledLike(this.CustomContextMenu);
 			swapDisplayMenuItem.Click += SwapAffixesDisplayModeClicked;
 			this.CustomContextMenu.Items.Add(swapDisplayMenuItem);
 
@@ -507,9 +435,6 @@ public partial class SackPanel
 		, IEnumerable<AffixGroup> currentaffixGroup
 	)
 	{
-		var fnt = this.CustomContextMenu.Font;
-		var foreC = this.CustomContextMenu.ForeColor;
-		var backC = this.CustomContextMenu.BackColor;
 		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
 
 
@@ -527,11 +452,8 @@ public partial class SackPanel
 				affixMenu = new ToolStripMenuItem()
 				{
 					Text = grp.Key.Translation,
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				choicesMenu.DropDownItems.Add(affixMenu);
 				choicesMenu = affixMenu; // Add a menu level
 			}
@@ -543,11 +465,8 @@ public partial class SackPanel
 					Text = val.FormattedText,
 					Name = val.AffixId.Raw,
 					ToolTipText = val.AffixId.Raw,
-					BackColor = backC,
-					Font = fnt,
-					ForeColor = foreC,
 					DisplayStyle = dispStl,
-				};
+				}.StyledLike(this.CustomContextMenu);
 				choice.Click += handler;
 
 				if (val.LootRandomizer.Unknown)

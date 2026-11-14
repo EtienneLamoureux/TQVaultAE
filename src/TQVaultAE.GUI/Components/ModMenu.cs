@@ -2,6 +2,7 @@ using System.Globalization;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components;
@@ -117,10 +118,5 @@ internal static class ModMenu
 	}
 
 	private static ToolStripMenuItem Styled(ToolStrip owner, string text)
-		=> new(text)
-		{
-			BackColor = owner.BackColor,
-			Font = owner.Font,
-			ForeColor = owner.ForeColor,
-		};
+		=> new ToolStripMenuItem(text).StyledLike(owner);
 }

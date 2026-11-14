@@ -17,6 +17,7 @@ using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Buttons;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Models;
@@ -124,25 +125,12 @@ public partial class VaultPanel
 						}
 						// Export to CSV
 						this.contextMenu.Items.Add("-");
-						var csvBagItem = new ToolStripMenuItem(Resources.ExportBagCSVToClipboard, null, this.ExportBagCSVToClipboard)
-						{
-							BackColor = this.contextMenu.BackColor,
-							Font = this.contextMenu.Font,
-							ForeColor = this.contextMenu.ForeColor,
-						};
-						var csvVaultItem = new ToolStripMenuItem(Resources.ExportVaultCSVToClipboard, null, this.ExportVaultCSVToClipboard)
-						{
-							BackColor = this.contextMenu.BackColor,
-							Font = this.contextMenu.Font,
-							ForeColor = this.contextMenu.ForeColor,
-						};
+						var csvBagItem = new ToolStripMenuItem(Resources.ExportBagCSVToClipboard, null, this.ExportBagCSVToClipboard).StyledLike(this.contextMenu);
+						var csvVaultItem = new ToolStripMenuItem(Resources.ExportVaultCSVToClipboard, null, this.ExportVaultCSVToClipboard).StyledLike(this.contextMenu);
 						var csvMenu = new ToolStripMenuItem(Resources.ExportToCSV, null, csvBagItem, csvVaultItem)
 						{
-							BackColor = this.contextMenu.BackColor,
-							Font = this.contextMenu.Font,
-							ForeColor = this.contextMenu.ForeColor,
 							DisplayStyle = ToolStripItemDisplayStyle.Text,
-						};
+						}.StyledLike(this.contextMenu);
 						this.contextMenu.Items.Add(csvMenu);
 
 						// Export Tab (JSON)
@@ -165,12 +153,7 @@ public partial class VaultPanel
 					this.contextMenu.Items.Add("-");
 					var importFileItem = new ToolStripMenuItem(
 						Resources.PlayerPanelMenuImportTabFile, null,
-						this.ImportFromFileClicked)
-					{
-						BackColor = this.contextMenu.BackColor,
-						Font = this.contextMenu.Font,
-						ForeColor = this.contextMenu.ForeColor,
-					};
+						this.ImportFromFileClicked).StyledLike(this.contextMenu);
 					this.contextMenu.Items.Add(importFileItem);
 				}
 

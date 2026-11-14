@@ -17,6 +17,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Forms;
@@ -74,41 +75,25 @@ public partial class VaultPanel
 
 		var clipboardItem = new ToolStripMenuItem(
 			Resources.PlayerPanelMenuExportTabClipboard, null,
-			this.ExportTabToClipboardClicked)
-		{
-			BackColor = this.contextMenu.BackColor,
-			Font = this.contextMenu.Font,
-			ForeColor = this.contextMenu.ForeColor,
-		};
+			this.ExportTabToClipboardClicked).StyledLike(this.contextMenu);
 
 		var fileItem = new ToolStripMenuItem(
 			Resources.PlayerPanelMenuExportTabFile, null,
-			this.ExportTabToFileClicked)
-		{
-			BackColor = this.contextMenu.BackColor,
-			Font = this.contextMenu.Font,
-			ForeColor = this.contextMenu.ForeColor,
-		};
+			this.ExportTabToFileClicked).StyledLike(this.contextMenu);
 
 		var pasteBinItem = new ToolStripMenuItem(
 			Resources.PlayerPanelMenuExportTabPasteBin, null,
 			this.ExportTabToPasteBinClicked)
 		{
-			BackColor = this.contextMenu.BackColor,
-			Font = this.contextMenu.Font,
-			ForeColor = this.contextMenu.ForeColor,
 			Enabled = hasApiKey
-		};
+		}.StyledLike(this.contextMenu);
 
 		var exportTabMenu = new ToolStripMenuItem(
 			Resources.PlayerPanelMenuExportTab, null,
 			clipboardItem, fileItem, pasteBinItem)
 		{
-			BackColor = this.contextMenu.BackColor,
-			Font = this.contextMenu.Font,
-			ForeColor = this.contextMenu.ForeColor,
 			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		};
+		}.StyledLike(this.contextMenu);
 
 		this.contextMenu.Items.Add(exportTabMenu);
 	}
@@ -197,22 +182,16 @@ public partial class VaultPanel
 				menuChoices[menuIndex] = new ToolStripMenuItem(string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val)
 					, null, menuCallback, string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val))
 				{
-					BackColor = this.contextMenu.BackColor,
-					Font = this.contextMenu.Font,
-					ForeColor = this.contextMenu.ForeColor,
 					Tag = new MenuItemTagBagIndex(i),
-				};
+				}.StyledLike(this.contextMenu);
 				menuIndex++;
 			}
 		}
 
 		var subMenu = new ToolStripMenuItem(menuText, null, menuChoices)
 		{
-			BackColor = this.contextMenu.BackColor,
-			Font = this.contextMenu.Font,
-			ForeColor = this.contextMenu.ForeColor,
 			DisplayStyle = ToolStripItemDisplayStyle.Text
-		};
+		}.StyledLike(this.contextMenu);
 
 		this.contextMenu.Items.Add(subMenu);
 	}
@@ -221,11 +200,8 @@ public partial class VaultPanel
 	{
 		var subMenu = new ToolStripMenuItem(menuText, null, menuCallback)
 		{
-			BackColor = this.contextMenu.BackColor,
-			Font = this.contextMenu.Font,
-			ForeColor = this.contextMenu.ForeColor,
 			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		};
+		}.StyledLike(this.contextMenu);
 
 		this.contextMenu.Items.Add(subMenu);
 	}
