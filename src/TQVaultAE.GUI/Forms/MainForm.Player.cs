@@ -320,7 +320,7 @@ public partial class MainForm
 			string newname;
 			while (true)
 			{
-				newname = InputDialog.Show(Resources.DuplicateCharacter_NewNameRequired, Resources.DuplicateCharacter_ModalTitle, "NewName").Trim();
+				newname = InputDialog.Show(this.Services.Forms, Resources.DuplicateCharacter_NewNameRequired, Resources.DuplicateCharacter_ModalTitle, "NewName").Trim();
 				if (newname == string.Empty) return;// Cancel button
 
 				var nameError = this.playerService.ValidateNewCharacterName(ps, newname, existingNames);

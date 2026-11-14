@@ -8,81 +8,159 @@ namespace TQVaultAE.GUI.Dialogs;
 
 using System;
 using System.Windows.Forms;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 
 /// <summary>
-/// A simple input dialog that replaces Microsoft.VisualBasic.Interaction.InputBox
+/// Asks the user for a text (the name of a duplicated character, of a loadout). A TQ window like Vault Maintenance:
+/// marble, the prompt in a caravan frame, the text box under it, gold buttons; laid out in code by a table, at the
+/// user's zoom, and following the DPI. Shown by <see cref="Show(FormFactory, string, string, string)"/>.
 /// </summary>
-public class InputDialog : Form
+internal sealed class InputDialog : VaultForm
 {
-	private TextBox textBox;
-	private Button okButton;
-	private Button cancelButton;
-	private Label promptLabel;
+	/// <summary>Width of the prompt's frame and of the text box, at zoom 1: a longer prompt wraps.</summary>
+	private const int ContentWidth = 380;
+
+	private readonly ScalingLabel promptLabel;
+	private readonly ScalingTextBox textBox;
+	private readonly ScalingButton okButton;
+	private readonly ScalingButton cancelButton;
 
 	/// <summary>
-	/// Gets the input value from the text box
+	/// Initializes a new instance of the InputDialog class. Created by <see cref="FormFactory.Create{TForm}"/>, then
+	/// given its <see cref="Prompt"/>, title (<see cref="Form.Text"/>) and <see cref="InputValue"/>.
 	/// </summary>
-	public string InputValue => this.textBox.Text;
-
-	/// <summary>
-	/// Initializes a new instance of the InputDialog class
-	/// </summary>
-	/// <param name="prompt">The prompt text to display</param>
-	/// <param name="title">The dialog title</param>
-	/// <param name="defaultValue">The default value for the text box</param>
-	public InputDialog(string prompt, string title, string defaultValue = "")
+	public InputDialog(MainForm instance) : base(instance.Services)
 	{
-		// Laid out by a table and sized to its content: a long prompt or a translation widens the dialog instead of
-		// being cut, and the layout follows the DPI.
-		this.promptLabel = new Label() { AutoSize = true, Text = prompt, Margin = new Padding(0, 0, 0, 6), Anchor = AnchorStyles.Left };
-		this.textBox = new TextBox() { Text = defaultValue, Dock = DockStyle.Fill, MinimumSize = new System.Drawing.Size(260, 0), Margin = new Padding(0, 0, 0, 10) };
-		this.okButton = new Button() { Text = Resources.GlobalOK, AutoSize = true, MinimumSize = new System.Drawing.Size(75, 23), UseVisualStyleBackColor = true };
-		this.cancelButton = new Button() { Text = Resources.GlobalCancel, AutoSize = true, MinimumSize = new System.Drawing.Size(75, 23), UseVisualStyleBackColor = true, DialogResult = DialogResult.Cancel };
+		this.Owner = instance;
+
+		float zoom = this.UIService.Zoom;
+		int Zoomed(int value) => (int)Math.Round(value * zoom);
+		int width = Zoomed(ContentWidth);
+		var font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);
+
+		// The prompt in a caravan frame as wide as the text box, one character of space inside it on the left and right,
+		// as the instructions of Vault Maintenance.
+		this.promptLabel = new ScalingLabel()
+		{
+			Name = nameof(this.promptLabel),
+			AutoSize = true,
+			Dock = DockStyle.Fill,
+			Font = font,
+			Margin = new Padding(0, 0, 0, Zoomed(8)),
+			MaximumSize = new Size(width, 0),
+			MinimumSize = new Size(width, 0),
+			UseMnemonic = false,
+		};
+		int space = CaravanFrame.Border + CaravanFrame.CharacterWidth(font);
+		CaravanFrame.ApplyTo(this.promptLabel, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
+
+		this.textBox = new ScalingTextBox()
+		{
+			Name = nameof(this.textBox),
+			Dock = DockStyle.Fill,
+			Font = font,
+			Margin = new Padding(0),
+			Width = width,
+		};
+
+		this.okButton = CaravanDialog.Button(this.FontService, zoom, nameof(this.okButton), Resources.GlobalOK);
 		this.okButton.Click += this.OkButton_Click;
+		this.cancelButton = CaravanDialog.Button(this.FontService, zoom, nameof(this.cancelButton), Resources.GlobalCancel);
+		this.cancelButton.DialogResult = DialogResult.Cancel;
+		// Also closes the dialog shown modeless (automation).
+		this.cancelButton.Click += (_, _) => this.Close();
 
 		var buttons = new FlowLayoutPanel()
 		{
+			Anchor = AnchorStyles.None,
 			AutoSize = true,
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			FlowDirection = FlowDirection.RightToLeft,
-			Anchor = AnchorStyles.Right,
-			Margin = new Padding(0),
+			FlowDirection = FlowDirection.LeftToRight,
+			Margin = new Padding(0, Zoomed(14), 0, 0),
 			WrapContents = false,
 		};
-		buttons.Controls.Add(this.cancelButton);
-		buttons.Controls.Add(this.okButton);
+		buttons.Controls.AddRange([this.okButton, this.cancelButton]);
 
 		var layout = new TableLayoutPanel()
 		{
 			AutoSize = true,
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
 			ColumnCount = 1,
-			RowCount = 3,
-			Dock = DockStyle.Fill,
-			Padding = new Padding(12),
+			Margin = new Padding(0),
 		};
-		layout.Controls.Add(this.promptLabel, 0, 0);
-		layout.Controls.Add(this.textBox, 0, 1);
-		layout.Controls.Add(buttons, 0, 2);
+		layout.Controls.AddRange([this.promptLabel, this.textBox, buttons]);
 
 		this.SuspendLayout();
-		this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+		this.AutoScaleDimensions = new SizeF(96F, 96F);
 		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.AutoSize = true;
-		this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+		this.BackColor = Color.FromArgb(46, 31, 21);
+		// Enter accepts the text, Escape cancels.
 		this.AcceptButton = this.okButton;
 		this.CancelButton = this.cancelButton;
-		this.Controls.Add(layout);
-		this.FormBorderStyle = FormBorderStyle.FixedDialog;
+		this.Font = font;
+		this.ForeColor = Color.White;
 		this.MaximizeBox = false;
 		this.MinimizeBox = false;
-		this.Name = "InputDialog";
+		this.NormalizeBox = false;
+		this.Name = nameof(InputDialog);
+		this.ShowIcon = false;
 		this.ShowInTaskbar = false;
 		this.StartPosition = FormStartPosition.CenterParent;
-		this.Text = title;
+		this.Padding = CaravanDialog.ContentPadding(zoom);
+		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
+		this.Controls.Add(layout);
+		this.DrawCustomBorder = true;
+		CaravanLook.Apply(this, layout, buttons);
 		this.ResumeLayout(false);
 		this.PerformLayout();
+
+		// The window follows its table: a longer prompt makes it higher.
+		this.FitAround(layout);
+	}
+
+	/// <summary>The text above the text box.</summary>
+	public string Prompt
+	{
+		get => this.promptLabel.Text;
+		set => this.promptLabel.Text = value;
+	}
+
+	/// <summary>The text in the text box: the default text before the dialog is shown, the user's after.</summary>
+	public string InputValue
+	{
+		get => this.textBox.Text;
+		set => this.textBox.Text = value;
+	}
+
+	/// <summary>
+	/// Shows the dialog over the main window and returns the text accepted with OK or Enter, or an empty string when it
+	/// was cancelled (Cancel, Escape, the close button).
+	/// </summary>
+	/// <param name="forms">The form factory, which creates the dialog.</param>
+	/// <param name="prompt">The prompt text to display.</param>
+	/// <param name="title">The dialog title.</param>
+	/// <param name="defaultValue">The text shown first, selected.</param>
+	/// <returns>The input value if OK was clicked, otherwise an empty string.</returns>
+	public static string Show(FormFactory forms, string prompt, string title, string defaultValue = "")
+	{
+		using var dialog = forms.Create<InputDialog>();
+		dialog.Prompt = prompt;
+		dialog.Text = title;
+		dialog.InputValue = defaultValue;
+		return dialog.ShowDialog() == DialogResult.OK ? dialog.InputValue : string.Empty;
+	}
+
+	/// <summary>
+	/// The keyboard starts in the text box, its text selected, not on the close button of the border.
+	/// </summary>
+	protected override void OnLoad(EventArgs e)
+	{
+		base.OnLoad(e);
+		this.textBox.SelectAll();
+		this.ActiveControl = this.textBox;
 	}
 
 #if DEBUG
@@ -108,18 +186,5 @@ public class InputDialog : Form
 	{
 		this.DialogResult = DialogResult.OK;
 		this.Close();
-	}
-
-	/// <summary>
-	/// Shows an input dialog box
-	/// </summary>
-	/// <param name="prompt">The prompt text to display</param>
-	/// <param name="title">The dialog title</param>
-	/// <param name="defaultValue">The default value for the text box</param>
-	/// <returns>The input value if OK was clicked, otherwise an empty string</returns>
-	public static string Show(string prompt, string title, string defaultValue = "")
-	{
-		using var dialog = new InputDialog(prompt, title, defaultValue);
-		return dialog.ShowDialog() == DialogResult.OK ? dialog.InputValue : string.Empty;
 	}
 }

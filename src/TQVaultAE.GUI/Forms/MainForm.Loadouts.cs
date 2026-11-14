@@ -72,7 +72,7 @@ public partial class MainForm
 	{
 		while (true)
 		{
-			var name = InputDialog.Show(Resources.LoadoutNamePrompt, Resources.LoadoutTitle, proposed).Trim();
+			var name = InputDialog.Show(this.Services.Forms, Resources.LoadoutNamePrompt, Resources.LoadoutTitle, proposed).Trim();
 			if (name.Length == 0)
 				return null;
 

@@ -175,14 +175,19 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "open_input_dialog", Destructive = true)]
-	[Description("Opens the text input dialog (InputDialog, used to name a duplicated character) modeless over the main window, to check its layout with capture and close it with close_dialog (button Cancel or OK).")]
+	[Description("Opens the text input dialog (InputDialog, used to name a duplicated character or a loadout) modeless over the main window, created like the application does, to check its layout with capture and close it with close_dialog (button Cancel or OK).")]
 	public static string OpenInputDialog(
 		[Description("Prompt above the text box.")] string prompt = "New name of the character:",
 		[Description("Dialog title.")] string title = "Input",
 		[Description("Text box content.")] string value = "NewName")
 		=> AutomationHost.OnUi(main =>
 		{
-			var dialog = new Dialogs.InputDialog(prompt, title, value);
+			var dialog = main.Services.Forms.Create<Dialogs.InputDialog>().With(d =>
+			{
+				d.Prompt = prompt;
+				d.Text = title;
+				d.InputValue = value;
+			});
 			dialog.Show(main);
 			return Serialize(new { title = dialog.Text, size = new { dialog.Width, dialog.Height }, deviceDpi = dialog.DeviceDpi });
 		});

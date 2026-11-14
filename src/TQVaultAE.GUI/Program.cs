@@ -208,6 +208,7 @@ public static class Program
 				.AddTransient<AboutBox>()
 				.AddSingleton<BagButtonSettings>()
 				.AddTransient<ItemProperties>()
+				.AddTransient<InputDialog>()
 				.AddTransient<ItemComparisonDialog>()
 				.AddTransient<ItemSeedDialog>()
 				.AddTransient<KeyBindsDialog>()
