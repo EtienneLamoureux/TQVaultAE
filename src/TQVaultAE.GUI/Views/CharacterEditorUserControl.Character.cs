@@ -1,4 +1,5 @@
 using TQVaultAE.Application.Contracts.Services;
+using Microsoft.Extensions.Logging;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -402,7 +403,10 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		base.OnDpiChangedAfterParent(e);
 		if (this._loaded && this.IsHandleCreated)
+		{
+			this._dpiScaledMs = this._dpiWatch.ElapsedMilliseconds;
 			this.BeginInvoke(this.FollowDpi);
+		}
 	}
 
 	/// <summary>
@@ -415,9 +419,12 @@ internal sealed partial class CharacterEditorUserControl
 		if (this.IsDisposed)
 			return;
 
-		if (this.DeviceDpi != this._laidOutDpi)
+		// Drawn once, at the end: frozen since the DPI change began (OnDpiChangedBeforeParent).
+		var startMs = this._dpiWatch.ElapsedMilliseconds;
+		using (this._dpiBatch ?? new LayoutBatch(this, this, this._content))
 		{
-			using (new LayoutBatch(this, this, this._content))
+			this._dpiBatch = null;
+			if (this.DeviceDpi != this._laidOutDpi)
 			{
 				foreach (var tab in this._skillTabs)
 				{
@@ -429,11 +436,35 @@ internal sealed partial class CharacterEditorUserControl
 				this.FitToFrame();
 			}
 
-			this.Invalidate(true);
+			this.RestoreSideEditors();
 		}
 
-		this.RestoreSideEditors();
+		this.Log.LogDebug("Character editor at {Dpi} dpi: scaled by Windows Forms in {Scaled} ms, laid out {Start} ms after the DPI change began, in {Layout} ms",
+			this.DeviceDpi, this._dpiScaledMs, startMs, this._dpiWatch.ElapsedMilliseconds - startMs);
 	}
+
+	/// <summary>The time Windows Forms took to scale the window at the last DPI change, for the log.</summary>
+	private long _dpiScaledMs;
+
+	/// <summary>
+	/// The editor is neither drawn nor laid out from the start of a DPI change until it is laid out at the new DPI
+	/// (<see cref="FollowDpi"/>): drawn as Windows Forms scaled each control, then once more laid out, it flickered.
+	/// </summary>
+	protected override void OnDpiChangedBeforeParent(EventArgs e)
+	{
+		base.OnDpiChangedBeforeParent(e);
+		if (this._loaded && this.IsHandleCreated && this._dpiBatch is null)
+		{
+			this._dpiWatch.Restart();
+			this._dpiBatch = new LayoutBatch(this, this, this._content);
+		}
+	}
+
+	/// <summary>The freeze of a DPI change in progress, ended by <see cref="FollowDpi"/>.</summary>
+	private LayoutBatch? _dpiBatch;
+
+	/// <summary>The time since the DPI change began, for the log.</summary>
+	private readonly System.Diagnostics.Stopwatch _dpiWatch = new();
 
 	/// <summary>Puts each editor of the side panel back at its place, in its font.</summary>
 	private void RestoreSideEditors()

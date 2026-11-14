@@ -321,8 +321,10 @@ public partial class MainForm
 		this.Log.LogDebug("DPI {Old} -> {New}: scale {Scale}", e.DeviceDpiOld, e.DeviceDpiNew, UIService.Scale);
 
 		Tooltips.ItemTooltip.HideTooltip();
+		var watch = System.Diagnostics.Stopwatch.StartNew();
 		base.OnDpiChanged(e);
 		this.Invalidate(true);
+		this.Log.LogDebug("DPI {New}: window scaled in {Elapsed} ms ({View} shown)", e.DeviceDpiNew, watch.ElapsedMilliseconds, this.shownView?.Name ?? "main content");
 	}
 
 	/// <summary>
