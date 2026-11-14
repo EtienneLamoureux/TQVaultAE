@@ -13,11 +13,4 @@ public partial class MainForm
 	internal IReadOnlyList<PlayerSave> AutomationPlayerSaves => [.. this.comboBoxCharacter.Items.OfType<PlayerSave>()];
 
 	internal PlayerSave? AutomationSelectedSave => this.comboBoxCharacter.SelectedItem as PlayerSave;
-
-	/// <summary>
-	/// Opens the mod link dialog of the selected character, like its context menu entry. Runs after the call returns,
-	/// since the dialog is modal.
-	/// </summary>
-	internal void AutomationOpenModLinkDialog(PlayerSave save)
-		=> this.BeginInvoke(() => this.OpenModLinkDialog(save));
 }

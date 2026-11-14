@@ -248,23 +248,21 @@ internal static partial class AutomationTools
 	#region Character editor and tags
 
 	[McpServerTool(Name = "archive_character", Destructive = true)]
-	[Description("Ticks (archived=true) or unticks the 'Archived' entry of the character menu for the selected character, like a click: TQVault moves its save folder to or from the archive folder. Only test characters (names starting with 'claude-', 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
+	[Description("Archives (archived=true) or unarchives the selected character like the user: opens the menu of the tools button next to the character list and clicks 'Archived' when its tick differs (menu_click('characterTools', 'Archived')), before returning; TQVault moves its save folder to or from the archive folder. Only test characters (names starting with 'claude-', 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
 	public static string ArchiveCharacter([Description("true to archive, false to unarchive.")] bool archived)
 		=> AutomationHost.OnUi(form =>
 		{
-			try
-			{
-				var (name, isArchived, folder) = form.AutomationCharacterCombo.AutomationSetArchived(archived);
-				return Serialize(new { name, isArchived, folder, selected = form.AutomationSelectedCharacter, characterFile = form.AutomationCurrentPlayerFile });
-			}
-			catch (InvalidOperationException ex)
-			{
-				throw new McpException(ex.Message);
-			}
+			var combo = form.AutomationCharacterCombo;
+			if (combo.SelectedItem is not PlayerSave ps)
+				throw new McpException("No character is selected.");
+
+			var entry = combo.AutomationArchiveEntry;
+			var clicked = RunMenu(form, "characterTools", null, _ => entry.Checked == archived ? [] : [entry], now: true).Clicked;
+			return Serialize(new { name = ps.Name, clicked = clicked is not null, isArchived = ps.IsArchived, folder = ps.Folder, selected = form.AutomationSelectedCharacter, characterFile = form.AutomationCurrentPlayerFile });
 		});
 
 	[McpServerTool(Name = "character_read_only", Destructive = true)]
-	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first clicks 'Read-only' in the character menu like a user, which sets or clears that attribute (test characters only: names starting with 'claude-', 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
+	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first opens the character menu and clicks 'Read-only' like a user (menu_click('characterTools', 'Read-only')), which sets or clears that attribute (test characters only: names starting with 'claude-', 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
 	public static string CharacterReadOnly([Description("true to click 'Read-only' first; false to only read.")] bool toggle = false)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -273,7 +271,10 @@ internal static partial class AutomationTools
 				var combo = form.AutomationCharacterCombo;
 				bool? checkedBefore = null;
 				if (toggle)
-					checkedBefore = combo.AutomationClickReadOnly().CheckedBefore;
+				{
+					checkedBefore = combo.AutomationReadOnlyChecked;
+					RunMenu(form, "characterTools", null, _ => [combo.AutomationReadOnlyEntry], now: true);
+				}
 
 				if (combo.SelectedItem is not PlayerSave ps)
 					throw new McpException("No character is selected.");
@@ -348,7 +349,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "tag_box", Destructive = true)]
-	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' removes the test tag 'text' without asking; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Names must start with 'claude-'. Read the tags with list_tags.")]
+	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' clicks Tags > 'text' > Delete in the menu of the tools button (menu_click), after this call returns, and answers its confirmation with OK; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Names must start with 'claude-'. Read the tags with list_tags.")]
 	public static string TagBox(
 		[Description("add, rename, delete, assign or unassign.")] string box,
 		[Description("The text typed (add, rename) or the tag to delete, assign or unassign.")] string text,
@@ -391,8 +392,14 @@ internal static partial class AutomationTools
 				{
 					if (!isTestName(text))
 						throw new McpException($"Test tags only: the name must start with '{TestFilePrefix}'.");
-					Program.ServiceProvider.GetRequiredService<ITagService>().DeleteTag(text);
-					comboType.GetMethod("RefreshMenuTagList", Private)!.Invoke(combo, null);
+					try
+					{
+						ClickCharacterTool(form, combo.AutomationTagDeletePath(text), new QueuedAnswer(DialogResult.OK));
+					}
+					catch (InvalidOperationException ex)
+					{
+						throw new McpException(ex.Message);
+					}
 					break;
 				}
 				case "assign":

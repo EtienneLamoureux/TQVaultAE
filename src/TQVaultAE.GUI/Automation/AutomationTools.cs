@@ -294,16 +294,17 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "duplicate_character", Destructive = true)]
-	[Description("Duplicates the selected character like the 'Duplicate Character' menu entry (a full save set: player file, stash and all), with the given name instead of the name dialog. The name must start with 'claude-' (e.g. claude-character1). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy.")]
+	[Description("Duplicates the selected character like the user (a full save set: player file, stash and all): clicks 'Duplicate Character' in the menu of the tools button next to the character list (menu_click('characterTools', 'Duplicate')), after this call returns, and types the name into its name dialog (queued first as its answer: the dialog's checks run, a refused name shows an error box, then the dialog again). The entry shows only when 'Allow character edit' is on in the settings. The name must start with 'claude-' (e.g. claude-character1). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy; dialog_answers tells a refusal.")]
 	public static string DuplicateCharacter([Description("Name of the copy, starting with 'claude-'.")] string name)
 	{
 		RequireTestName(name);
 		return AutomationHost.OnUi(form =>
 		{
-			var error = form.AutomationDuplicateCharacter(name);
-			if (error is not null)
-				throw new McpException(error);
-			return Serialize(new { duplicated = form.AutomationSelectedCharacter, newName = name, restarting = true });
+			var entry = form.AutomationCharacterCombo.AutomationDuplicateEntry;
+			if (!entry.Available)
+				throw new McpException("'Duplicate Character' is hidden: select a character, and turn on 'Allow character edit' in the settings.");
+			ClickCharacterTool(form, [entry], new QueuedAnswer(DialogResult.OK, name));
+			return Serialize(new { duplicating = form.AutomationSelectedCharacter, newName = name });
 		});
 	}
 

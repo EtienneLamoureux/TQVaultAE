@@ -13,39 +13,26 @@ namespace TQVaultAE.GUI.Components.Character;
 /// </summary>
 public partial class ComboBoxCharacter
 {
-	/// <summary>
-	/// Ticks or unticks "Archived" in the character menu like a click, for the selected character only, which moves
-	/// its save folder to or from the archive folder. Only test characters (<see cref="Automation.AutomationTestNames"/>).
-	/// </summary>
-	/// <returns>The character, whether it is archived now, and its save folder.</returns>
-	internal (string Name, bool IsArchived, string? PlayerFile) AutomationSetArchived(bool archived)
+	/// <summary>The "Archived" entry of the tools menu.</summary>
+	internal ToolStripMenuItem AutomationArchiveEntry => this.archiveToolStripMenuItem;
+
+	/// <summary>The "Read-only" entry of the tools menu.</summary>
+	internal ToolStripMenuItem AutomationReadOnlyEntry => this.readOnlyToolStripMenuItem;
+
+	/// <summary>The "Duplicate Character" entry of the tools menu.</summary>
+	internal ToolStripMenuItem AutomationDuplicateEntry => this.duplicateToolStripMenuItem;
+
+	/// <summary>The "Mod link..." entry of the tools menu.</summary>
+	internal ToolStripMenuItem AutomationModLinkEntry => this.modLinkToolStripMenuItem;
+
+	/// <summary>The entries down to the Delete entry of a tag in the tools menu (Tags, the tag, Delete), as last built.</summary>
+	internal IReadOnlyList<ToolStripItem> AutomationTagDeletePath(string tag)
 	{
-		if (this.SelectedItem is not PlayerSave ps)
-			throw new InvalidOperationException("No character is selected.");
-		if (!Automation.AutomationTestNames.IsTestFile(ps.Name))
-			throw new InvalidOperationException($"'{ps.Name}' is not a test character: only names starting with {Automation.AutomationTestNames.Accepted} may be archived.");
-
-		this.archiveToolStripMenuItem.Checked = archived;
-		return (ps.Name, ps.IsArchived, ps.Folder);
-	}
-
-	/// <summary>
-	/// Clicks "Read-only" in the character menu like the user, for the selected character only, which sets or clears
-	/// the read-only attribute of its save files. Only test characters (<see cref="Automation.AutomationTestNames"/>).
-	/// </summary>
-	/// <returns>The character, the menu tick before the click, and its save folder.</returns>
-	internal (string Name, bool CheckedBefore, string Folder) AutomationClickReadOnly()
-	{
-		if (this.SelectedItem is not PlayerSave ps)
-			throw new InvalidOperationException("No character is selected.");
-		if (!Automation.AutomationTestNames.IsTestFile(ps.Name))
-			throw new InvalidOperationException($"'{ps.Name}' is not a test character: only names starting with {Automation.AutomationTestNames.Accepted} may be made read-only.");
-
-		// The menu as it opens for the selection.
-		this.RefreshContent();
-		bool before = this.readOnlyToolStripMenuItem.Checked;
-		this.readOnlyToolStripMenuItem.PerformClick();
-		return (ps.Name, before, ps.Folder);
+		var tagItem = this.tagsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
+			.FirstOrDefault(i => i.Text == tag && (i.Name?.StartsWith(TAGKEY, StringComparison.Ordinal) ?? false))
+			?? throw new InvalidOperationException($"No tag '{tag}' in the menu.");
+		var delete = tagItem.DropDownItems.OfType<ToolStripMenuItem>().First(i => i.Name?.StartsWith("tagDeleteItem", StringComparison.Ordinal) ?? false);
+		return [this.tagsToolStripMenuItem, tagItem, delete];
 	}
 
 	/// <summary>The tick of "Read-only" in the character menu, as it opens for the selected character.</summary>
@@ -118,6 +105,51 @@ public partial class ComboBoxCharacter
 		}
 
 		return this.DropDown;
+	}
+
+	/// <summary>
+	/// Clicks the tools button next to the character list with mouse messages, which opens its menu as for the user.
+	/// </summary>
+	/// <returns>The menu, open.</returns>
+	internal ContextMenuStrip AutomationOpenToolsMenu()
+	{
+		Automation.AutomationInput.SendClick(this.scalingButtonTools, Automation.AutomationInput.Center(this.scalingButtonTools), MouseButtons.Left, Keys.None);
+		return this.contextMenuStrip;
+	}
+
+	/// <summary>
+	/// Why automation may not click the entry at the end of <paramref name="chain"/> of the tools menu, or null: the
+	/// entries that change files only for test characters and test tags (<c>claude-</c>), Duplicate Character only with a
+	/// queued test name, and never the global Archive all / Unarchive all nor a tag's, which move real characters
+	/// (<c>tag_archive_all</c> checks the tag's characters first).
+	/// </summary>
+	internal string? AutomationRefuseMenuPath(IReadOnlyList<ToolStripItem> chain)
+	{
+		var entry = chain[^1];
+		string name = entry.Name ?? string.Empty;
+		if (entry == this.archiveAllToolStripMenuItemGlobal || entry == this.unarchiveAllToolStripMenuItemGlobal
+			|| name.StartsWith("tagArchiveAllItem", StringComparison.Ordinal) || name.StartsWith("tagUnArchiveAllItem", StringComparison.Ordinal))
+			return "Archive all / Unarchive all move real characters: not driven (tag_archive_all checks a test tag's characters first).";
+
+		if (entry == this.duplicateToolStripMenuItem)
+		{
+			var pending = Automation.AutomationHost.PendingDialogAnswers;
+			return pending.Count > 0 && pending[0].Text is { } newName && Automation.AutomationTestNames.IsTestFile(newName)
+				? null
+				: $"Queue the copy's name first, a test name: queue_dialog_answers('text:claude-...') (accepted: {Automation.AutomationTestNames.Accepted}).";
+		}
+
+		// A tag's entries (its tick, Color, Delete): test tags only.
+		if (chain.Count >= 2 && chain[0] == this.tagsToolStripMenuItem && chain[1].Name?.StartsWith(TAGKEY, StringComparison.Ordinal) == true
+			&& !(chain[1].Text ?? string.Empty).StartsWith("claude-", StringComparison.OrdinalIgnoreCase))
+			return $"'{chain[1].Text}' is not a test tag: only tags starting with 'claude-'.";
+
+		// Its tick changes the selected character; the other top-level entries too.
+		bool tagEntry = chain.Count > 2 && chain[0] == this.tagsToolStripMenuItem;
+		if (!tagEntry && !(this.SelectedItem is PlayerSave ps && Automation.AutomationTestNames.IsTestFile(ps.Name)))
+			return $"Select a test character first (names starting with {Automation.AutomationTestNames.Accepted}).";
+
+		return null;
 	}
 
 	/// <summary>

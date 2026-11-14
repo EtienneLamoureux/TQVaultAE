@@ -227,30 +227,6 @@ public partial class MainForm
 		return VaultMaintenanceError.None;
 	}
 
-	/// <summary>
-	/// Duplicates the selected character like the Duplicate Character menu entry, with <paramref name="newName"/>
-	/// instead of the name dialog. On success, TQVault restarts shortly after, as it does for a user.
-	/// </summary>
-	/// <returns>An error message, or null on success.</returns>
-	internal string? AutomationDuplicateCharacter(string newName)
-	{
-		if (this.comboBoxCharacter.SelectedItem is not PlayerSave ps)
-			return "No character is selected.";
-
-		var existingNames = this.comboBoxCharacter.Items.OfType<PlayerSave>().Select(save => save.Name).ToList();
-		var nameError = this.playerService.ValidateNewCharacterName(ps, newName, existingNames);
-		if (nameError != CharacterNameError.None)
-			return $"Name refused: {nameError}.";
-
-		var result = this.playerService.DuplicateCharacter(ps, newName);
-		if (!result.IsSuccess)
-			return result.Error?.Message ?? "The duplication failed.";
-
-		// Restart after the tool has answered.
-		_ = Task.Delay(500).ContinueWith(_ => this.BeginInvoke(System.Windows.Forms.Application.Restart), TaskScheduler.Default);
-		return null;
-	}
-
 
 	/// <summary>
 	/// Saves the modified characters, vaults and stashes like the Save button, file errors included
