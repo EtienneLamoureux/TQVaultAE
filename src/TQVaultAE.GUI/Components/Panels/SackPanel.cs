@@ -254,7 +254,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		this.BackColor = Theme.Background;
 
 		CustomProfessionalRenderer.Apply(this.CustomContextMenu);
-		this.CustomContextMenu.Font = FontService.GetFont(9.0F * UIService.FontZoom);
+		this.CustomContextMenu.Font = this.MenuFont();
 
 		this.CustomContextMenuAffixUnknown = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLQUEST01.TEX");
 		this.CustomContextMenuAffixUntranslated = this.UIService.LoadBitmap(@"INGAMEUI\MAP\ICONS\ICONSMALLAREAOFINTEREST01.TEX");
@@ -593,6 +593,12 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		=> FontRebaser.RebaseMenu(this.CustomContextMenu, fontService);
 
 	/// <summary>
+	/// The font of the context menu, at the zoom: the game font of the font service. The zoom made it again from its
+	/// name, which gave the game font's light face: the whole menu looked thinner after a zoom.
+	/// </summary>
+	private Font MenuFont() => this.FontService.GetFont(9.0F * UIService.FontZoom);
+
+	/// <summary>
 	/// Override of ScaleControl which supports scaling of the fonts and internal items.
 	/// </summary>
 	/// <param name="factor">SizeF for the scale factor</param>
@@ -601,7 +607,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	{
 		this.borderPen.Width = Math.Max((4.0F * UIService.Scale), 1.0F);
 		this.numberFont = new Font(this.numberFont.Name, 10.0F * UIService.Scale, GraphicsUnit.Pixel);
-		this.CustomContextMenu.Font = new Font(this.CustomContextMenu.Font.Name, 9.0F * UIService.FontZoom);
+		this.CustomContextMenu.Font = this.MenuFont();
 
 		this.Size = new Size(
 			(Convert.ToInt32(this.borderPen.Width) * 2) + (UIService.ItemUnitSize * this.SackSize.Width),
