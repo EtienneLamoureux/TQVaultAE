@@ -144,21 +144,11 @@ internal sealed class ModLinkDialog : VaultForm
 		CaravanFrame.FrameAround(this.listBoxMods);
 
 		this.SuspendLayout();
-		this.AutoScaleDimensions = new SizeF(96F, 96F);
-		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.BackColor = Color.FromArgb(46, 31, 21);
+		CaravanDialog.SetUpWindow(this, nameof(ModLinkDialog));
 		// Enter links the chosen mod, like a double click (nothing while Link is disabled); Escape closes.
 		this.AcceptButton = this.buttonLink;
 		this.CancelButton = this.buttonClose;
 		this.Font = this.FontService.GetFontLight(11F, zoom);
-		this.ForeColor = Color.White;
-		this.MaximizeBox = false;
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
-		this.Name = nameof(ModLinkDialog);
-		this.ShowIcon = false;
-		this.ShowInTaskbar = false;
-		this.StartPosition = FormStartPosition.CenterParent;
 		this.Text = Resources.ModLinkDialogTitle;
 		this.Padding = CaravanDialog.ContentPadding(zoom);
 		layout.Location = new Point(this.Padding.Left, this.Padding.Top);

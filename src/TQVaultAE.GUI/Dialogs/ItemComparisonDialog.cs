@@ -22,9 +22,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// <summary>Background of the columns: the black inside their caravan frame, as Item Properties' lines.</summary>
 	private static readonly Color ColumnColor = Color.Black;
 
-	/// <summary>Background of the dialog where the marble is not drawn (high contrast), as Item Properties'.</summary>
-	private static readonly Color DialogColor = Color.FromArgb(46, 31, 21);
-
 	private readonly IItemComparisonService _comparisonService;
 	private readonly ItemComparisonContentBuilder _builder;
 	private readonly Panel _scroll;
@@ -60,18 +57,8 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		// window (the system's), fonts with the user's zoom only, and Windows Forms scales them to its monitor's DPI when it
 		// opens and when it moves to a monitor of another DPI (AutoScaleMode.Dpi); the columns, made again at each change,
 		// are made at the dialog's DPI (ContentScale), and again when it changes (OnDpiChanged).
-		this.AutoScaleDimensions = new SizeF(96F, 96F);
-		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.BackColor = DialogColor;
-		this.ForeColor = Color.White;
-		this.MaximizeBox = false;
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
-		this.ShowIcon = false;
-		this.ShowInTaskbar = false;
-		this.StartPosition = FormStartPosition.CenterParent;
+		CaravanDialog.SetUpWindow(this, nameof(ItemComparisonDialog));
 		this.Text = Resources.ItemComparisonText;
-		this.Name = nameof(ItemComparisonDialog);
 
 		float scale = this.ContentScale;
 		int gap = (int)Math.Round(4 * scale);
@@ -107,25 +94,12 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 		// OK closes, as Escape and the close button of the border do (shown modeless too); at the bottom right, as in Item
 		// Properties.
-		var ok = new ScalingButton()
-		{
-			Anchor = AnchorStyles.None,
-			BackColor = Color.Transparent,
-			DialogResult = DialogResult.OK,
-			FlatStyle = FlatStyle.Flat,
-			ForeColor = Theme.ButtonText,
-			Name = "okButton",
-			Size = new Size((int)(137 * scale), (int)(30 * scale)),
-			SizeToGraphic = false,
-			Text = Resources.GlobalOK,
-			UseCustomGraphic = true,
-			UseVisualStyleBackColor = false,
-			Font = this.FontService.GetFontLight(CaravanLook.ButtonTextSize, this.UIService.Zoom),
-		};
+		// Placed by hand in its panel, at the dialog's DPI like the columns: wider than the other dialogs' buttons.
+		var ok = CaravanDialog.Button(this.FontService, this.UIService.Zoom, "okButton", Resources.GlobalOK);
+		ok.Anchor = AnchorStyles.None;
+		ok.DialogResult = DialogResult.OK;
+		ok.Size = new Size((int)(137 * scale), (int)(30 * scale));
 		ok.Click += (_, _) => this.Close();
-		ok.FlatAppearance.BorderSize = 0;
-		ok.FlatAppearance.MouseDownBackColor = Theme.TransparentButton;
-		ok.FlatAppearance.MouseOverBackColor = Theme.TransparentButton;
 
 		// Right-aligned with the last column's frame.
 		int frameGap = (int)Math.Round(ColumnGap / 2 * scale);
@@ -185,9 +159,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// </summary>
 	private void SetPadding()
 	{
-		int gap = (int)Math.Round(4 * this.ContentScale);
-		var border = CustomBorderThickness;
-		this.Padding = new Padding(border.Left + gap, border.Top + gap, border.Right + gap, border.Bottom + gap);
+		this.Padding = CaravanDialog.BorderPadding(new Padding((int)Math.Round(4 * this.ContentScale)));
 	}
 
 	/// <summary>

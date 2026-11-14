@@ -97,20 +97,10 @@ internal sealed class ItemSeedDialog : VaultForm
 		layout.Controls.AddRange([this.labelInfos, seedRow, buttons]);
 
 		this.SuspendLayout();
-		this.AutoScaleDimensions = new SizeF(96F, 96F);
-		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.BackColor = Color.FromArgb(46, 31, 21);
+		CaravanDialog.SetUpWindow(this, nameof(ItemSeedDialog));
 		this.AcceptButton = this.ButtonOk;
 		this.CancelButton = this.ButtonCancel;
 		this.Font = font;
-		this.ForeColor = Color.White;
-		this.MaximizeBox = false;
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
-		this.Name = nameof(ItemSeedDialog);
-		this.ShowIcon = false;
-		this.ShowInTaskbar = false;
-		this.StartPosition = FormStartPosition.CenterParent;
 		this.Text = Resources.SeedText;
 		this.TopMost = true;
 		this.Padding = CaravanDialog.ContentPadding(zoom);

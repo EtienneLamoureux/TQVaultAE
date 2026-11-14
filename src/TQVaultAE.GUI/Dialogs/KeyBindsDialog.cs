@@ -203,19 +203,9 @@ internal sealed partial class KeyBindsDialog : VaultForm
 		CaravanFrame.FrameAround(this.listPanel);
 
 		this.SuspendLayout();
-		this.AutoScaleDimensions = new SizeF(96F, 96F);
-		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.BackColor = Color.FromArgb(46, 31, 21);
+		CaravanDialog.SetUpWindow(this, nameof(KeyBindsDialog));
 		this.CancelButton = this.buttonCancel;
 		this.Font = font;
-		this.ForeColor = Color.White;
-		this.MaximizeBox = false;
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
-		this.Name = nameof(KeyBindsDialog);
-		this.ShowIcon = false;
-		this.ShowInTaskbar = false;
-		this.StartPosition = FormStartPosition.CenterParent;
 		this.Text = Resources.KeyBindsTitle;
 		this.Padding = CaravanDialog.ContentPadding(zoom);
 		this.layout.Location = new Point(this.Padding.Left, this.Padding.Top);

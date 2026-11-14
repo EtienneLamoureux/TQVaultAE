@@ -6,12 +6,34 @@ using TQVaultAE.Presentation.Win32.Contracts;
 namespace TQVaultAE.GUI.Infrastructure;
 
 /// <summary>
-/// The pieces of the marble dialogs laid out in code by a table (Key Binds, Mod Link, Item Seed, the text input): their
-/// game buttons and the space around their table. Sizes are given at zoom 1 and 96 dpi: the zoom is applied here, the
-/// DPI by Windows Forms (<see cref="AutoScaleMode.Dpi"/>).
+/// The pieces of the marble dialogs laid out in code (Key Binds, Mod Link, Item Seed, the text input, Item Comparison):
+/// their window settings, their game buttons and the space around their content. Sizes are given at zoom 1 and 96 dpi:
+/// the zoom is applied here, the DPI by Windows Forms (<see cref="AutoScaleMode.Dpi"/>).
 /// </summary>
 internal static class CaravanDialog
 {
+	/// <summary>
+	/// The window settings every dialog laid out in code shares: designed at 96 dpi and scaled by Windows Forms to its
+	/// monitor's DPI, the dialog background and white text, no maximize, minimize or zoom reset button, no icon nor
+	/// taskbar button, centered on its owner. The caller then sets its text, font, buttons and content.
+	/// </summary>
+	/// <param name="dialog">The dialog, while it is built.</param>
+	/// <param name="name">Its name, used by the automation.</param>
+	public static void SetUpWindow(VaultForm dialog, string name)
+	{
+		dialog.AutoScaleDimensions = new SizeF(96F, 96F);
+		dialog.AutoScaleMode = AutoScaleMode.Dpi;
+		dialog.BackColor = Theme.DialogBackground;
+		dialog.ForeColor = Color.White;
+		dialog.MaximizeBox = false;
+		dialog.MinimizeBox = false;
+		dialog.NormalizeBox = false;
+		dialog.Name = name;
+		dialog.ShowIcon = false;
+		dialog.ShowInTaskbar = false;
+		dialog.StartPosition = FormStartPosition.CenterParent;
+	}
+
 	/// <summary>
 	/// A game button (the gold picture, its text dark) in the button size of the marble dialogs
 	/// (<see cref="CaravanLook.ButtonTextSize"/>).
@@ -52,8 +74,17 @@ internal static class CaravanDialog
 	public static Padding ContentPadding(float zoom)
 	{
 		int Zoomed(int value) => (int)Math.Round(value * zoom);
-		var border = VaultForm.CustomBorderThickness;
 		int gap = Zoomed(10);
-		return new Padding(border.Left + gap, border.Top + Zoomed(4), border.Right + gap, border.Bottom + Zoomed(6));
+		return BorderPadding(new Padding(gap, Zoomed(4), gap, Zoomed(6)));
+	}
+
+	/// <summary>
+	/// The padding of a dialog drawn with the custom border: the border's thickness (<see cref="VaultForm.CustomBorderThickness"/>)
+	/// plus <paramref name="gap"/>, in pixels, between the border and the content.
+	/// </summary>
+	public static Padding BorderPadding(Padding gap)
+	{
+		var border = VaultForm.CustomBorderThickness;
+		return new Padding(border.Left + gap.Left, border.Top + gap.Top, border.Right + gap.Right, border.Bottom + gap.Bottom);
 	}
 }

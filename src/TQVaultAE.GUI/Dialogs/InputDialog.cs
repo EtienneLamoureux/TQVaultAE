@@ -94,21 +94,11 @@ internal sealed class InputDialog : VaultForm
 		layout.Controls.AddRange([this.promptLabel, this.textBox, buttons]);
 
 		this.SuspendLayout();
-		this.AutoScaleDimensions = new SizeF(96F, 96F);
-		this.AutoScaleMode = AutoScaleMode.Dpi;
-		this.BackColor = Color.FromArgb(46, 31, 21);
+		CaravanDialog.SetUpWindow(this, nameof(InputDialog));
 		// Enter accepts the text, Escape cancels.
 		this.AcceptButton = this.okButton;
 		this.CancelButton = this.cancelButton;
 		this.Font = font;
-		this.ForeColor = Color.White;
-		this.MaximizeBox = false;
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
-		this.Name = nameof(InputDialog);
-		this.ShowIcon = false;
-		this.ShowInTaskbar = false;
-		this.StartPosition = FormStartPosition.CenterParent;
 		this.Padding = CaravanDialog.ContentPadding(zoom);
 		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
 		this.Controls.Add(layout);
