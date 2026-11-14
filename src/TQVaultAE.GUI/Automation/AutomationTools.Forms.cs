@@ -41,7 +41,7 @@ internal static partial class AutomationTools
 	[McpServerTool(Name = "control_tree", ReadOnly = true)]
 	[Description("Lists the controls of an open form, or of the settings shown in the main window ('Settings'), with their type, bounds (client coordinates of their parent, in pixels), font, visibility and enabled state, to check layout and scaling. Also reports the form's DPI and TQVault's scale, zoom and DPI factor.")]
 	public static string ControlTree(
-		[Description("Part of the form title (case-insensitive); empty for the main window.")] string form = "",
+		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form = "",
 		[Description("Maximum depth below the form (default 3).")] int depth = 3)
 		=> AutomationHost.OnUi(main =>
 		{
@@ -462,7 +462,7 @@ internal static partial class AutomationTools
 	public static async Task<string> MoveWindow(
 		[Description("Left of the window in virtual screen pixels.")] int x,
 		[Description("Top of the window in virtual screen pixels.")] int y,
-		[Description("Part of the form title (case-insensitive); empty for the main window.")] string form = "")
+		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form = "")
 	{
 		// A view shown in the main window (the settings) moves with the main window.
 		Form Target(Forms.MainForm main)

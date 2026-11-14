@@ -13,7 +13,7 @@ internal static partial class AutomationTools
 	[Description("Reads a DataGridView of an open form (for example the search results): its column headers and, per row, the text of each cell (images as 'image'), the row text color and the tool tip of the cells. Visible or not: the grids of the other tab pages are read too.")]
 	public static string GridValues(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
-		[Description("Grid name, as listed by control_tree.")] string grid)
+		[Description("Grid name, as listed by control_tree; empty for the form's only grid.")] string grid)
 		=> AutomationHost.OnUi(_ =>
 		{
 			var target = FindOpenForm(form);
@@ -24,7 +24,7 @@ internal static partial class AutomationTools
 	[Description("Changes a cell of a DataGridView of an open form like a user: a button cell is clicked (CellContentClick), a text cell is edited then left (CellEndEdit). The row is its index or the text of one of its cells (for example a skill name); the column is its index or header text. Read-only cells are refused. Read the grid again with grid_values: a dialog may refresh it after the edit ends.")]
 	public static string SetGridCell(
 		[Description("Part of the form title or its type name (case-insensitive).")] string form,
-		[Description("Grid name, as listed by control_tree.")] string grid,
+		[Description("Grid name, as listed by control_tree; empty for the form's only grid.")] string grid,
 		[Description("Row index, or the text of one of its cells.")] string row,
 		[Description("Column index, or its header text.")] string column,
 		[Description("New text of a text cell; ignored for a button cell.")] string value = "")

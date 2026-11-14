@@ -168,14 +168,14 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "mouse_wheel", Destructive = true)]
-	[Description("Turns the mouse wheel over a point of a control: WM_MOUSEWHEEL sent to the deepest visible window under that point, as Windows does for the window under the cursor; a window that does not use the wheel passes it to its parents, as for the user. notches > 0 turns it away from the user (scrolls up), < 0 towards (down). modifiers ('ctrl', 'shift', 'ctrl+shift') are held during the message. Runs before this call returns, which then gives the receiver and the scroll position of each scrollable control from the receiver up to the form (AutoScroll panels: x and y; list boxes: topIndex; visible scroll bar children: value), to read the effect. Works headless: the search dialog's lists, the bag settings' icon grids, the character list.")]
+	[Description("Turns the mouse wheel over a point of a control: WM_MOUSEWHEEL sent to the deepest visible window under that point, as Windows does for the window under the cursor; a window that does not use the wheel passes it to its parents, as for the user. notches > 0 turns it away from the user (scrolls up), < 0 towards (down). modifiers ('ctrl', 'shift', 'alt', 'ctrl+shift') are held during the message. Runs before this call returns, which then gives the receiver and the scroll position of each scrollable control from the receiver up to the form (AutoScroll panels: x and y; list boxes: topIndex; visible scroll bar children: value), to read the effect. Works headless: the search dialog's lists, the bag settings' icon grids, the character list.")]
 	public static string MouseWheel(
 		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
 		[Description("Control name, as listed by control_tree.")] string control,
 		[Description("X in the control's client coordinates.")] int x,
 		[Description("Y in the control's client coordinates.")] int y,
 		[Description("Wheel notches: positive up (away from the user), negative down.")] int notches,
-		[Description("Modifier keys held: ctrl, shift or ctrl+shift; empty for none.")] string? modifiers = null)
+		[Description("Modifier keys held: ctrl, shift, alt or a combination like ctrl+shift; empty for none.")] string? modifiers = null)
 		=> AutomationHost.OnUi(main =>
 		{
 			var target = FormOrMain(main, form);
