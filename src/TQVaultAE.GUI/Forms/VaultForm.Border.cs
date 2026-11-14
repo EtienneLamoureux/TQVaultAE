@@ -3,10 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-/// <summary>
-/// Abstract class used for constructing TQVault themed forms.
-/// </summary>
-
 using TQVaultAE.Application;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Application.Contracts.Providers;
@@ -28,6 +24,86 @@ using TQVaultAE.Presentation;
 
 public partial class VaultForm
 {
+	/// <summary>
+	/// Bitmap graphic for the top border
+	/// </summary>
+	private Bitmap topBorder;
+
+	/// <summary>
+	/// Bitmap graphic for the bottom border
+	/// </summary>
+	private Bitmap bottomBorder;
+
+	/// <summary>
+	/// Bitmap graphic for the side borders
+	/// </summary>
+	private Bitmap sideBorder;
+
+	/// <summary>
+	/// Bitmap graphic for the bottom right corner
+	/// </summary>
+	private Bitmap bottomRightCorner;
+
+	/// <summary>
+	/// Bitmap graphic for the bottom left
+	/// </summary>
+	private Bitmap bottomLeftCorner;
+
+	/// <summary>
+	/// Flag to indicate whether custom border will be drawn
+	/// </summary>
+	private bool drawCustomBorder;
+
+	/// <summary>
+	/// Bounding Rectangle for the upper left corner of the form.
+	/// </summary>
+	private Rectangle upperLeftCorner;
+
+	/// <summary>
+	/// Bounding Rectangle for the upper right corner of the form
+	/// </summary>
+	private Rectangle upperRightCorner;
+
+	/// <summary>
+	/// Bounding Rectangle for the lower left corner of the form.
+	/// </summary>
+	private Rectangle lowerLeftCorner;
+
+	/// <summary>
+	/// Bounding Rectangle for the lower right corner of the form.
+	/// </summary>
+	private Rectangle lowerRightCorner;
+
+	/// <summary>
+	/// Bounding Rectangle for the top border of the form.
+	/// </summary>
+	private Rectangle topBorderRect;
+
+	/// <summary>
+	/// Bounding Rectangle for the bottom border of the form.
+	/// </summary>
+	private Rectangle bottomBorderRect;
+
+	/// <summary>
+	/// Bounding Rectangle for the right border of the form.
+	/// </summary>
+	private Rectangle rightBorderRect;
+
+	/// <summary>
+	/// Bounding Rectangle for the left border of the form.
+	/// </summary>
+	private Rectangle leftBorderRect;
+
+	/// <summary>
+	/// Bounding Rectangle for the top of the form used for resizing.
+	/// </summary>
+	private Rectangle topResizeRect;
+
+	/// <summary>
+	/// Font used to draw the title.
+	/// </summary>
+	private Font titleFont;
+
 	/// <summary>
 	/// The space the TQ border (<see cref="DrawCustomBorder"/>) takes on each side of the window: its pictures are drawn
 	/// at their own size. A dialog laid out in code keeps its content inside with this padding.
@@ -113,7 +189,7 @@ public partial class VaultForm
 	/// </summary>
 	public virtual bool NormalizeBox
 	{
-		get => _NormalizeBox && (this.UIService?.Zoom ?? 1.0F) != 1.0F;
+		get => this.NormalizeShown;
 		set
 		{
 			_NormalizeBox = value;
@@ -121,9 +197,12 @@ public partial class VaultForm
 		}
 	}
 
+	/// <summary>The zoom reset button is shown when the form allows it and the zoom is not 1.</summary>
+	private bool NormalizeShown => _NormalizeBox && (this.UIService?.Zoom ?? 1.0F) != 1.0F;
+
 	private void RefreshNormalizeBox()
 	{
-		var val = _NormalizeBox && (this.UIService?.Zoom ?? 1.0F) != 1.0F;
+		var val = this.NormalizeShown;
 		if (this.systemMenu is not null)
 			this.systemMenu.NormalizeEnabled = val;
 
@@ -305,9 +384,6 @@ public partial class VaultForm
 		this.WndProc(ref message);
 	}
 
-	/// <summary>
-	/// Sets the location for the minimize, maximize and close buttons for the custom border.
-	/// </summary>
 	/// <summary>Minimize, maximize and normalize button size at 96 DPI, zoom 1.</summary>
 	private const float CaptionButtonSize = 15.0F;
 
@@ -317,6 +393,9 @@ public partial class VaultForm
 	/// <summary>Space between the caption buttons at 96 DPI, zoom 1.</summary>
 	private const float CaptionButtonGap = 5.0F;
 
+	/// <summary>
+	/// Sets the location for the minimize, maximize and close buttons for the custom border.
+	/// </summary>
 	protected void PlaceButtons()
 	{
 		// The buttons are created by InitializeComponent; the border can be set while it runs.
@@ -432,6 +511,102 @@ public partial class VaultForm
 	protected Rectangle ContentAreaOf(Size client) => this.DrawCustomBorder
 		? WindowLayout.ContentArea(client, this.sideBorder.Width, this.topBorder.Height, this.bottomBorder.Height, GripMargin)
 		: new Rectangle(Point.Empty, client);
+
+	/// <summary>
+	/// The top border picture at its design size, read once: the paint handler measures the title's background on it, and
+	/// a transparent control has its window painted behind it, so it was read from the resources several times per control.
+	/// </summary>
+	private static Bitmap DesignTopBorder => designTopBorder ??= Images.BorderTop;
+
+	private static Bitmap? designTopBorder;
+
+	/// <summary>
+	/// Handler for the form Paint callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">PaintEventArgs data</param>
+	protected virtual void PaintCallback(object? sender, PaintEventArgs e)
+	{
+		if (this.IsDisposed || this.Disposing)
+			return;
+
+		if (this.DrawCustomBorder)
+		{
+			{
+				// Draw the Top (the border bitmaps are set by InitForm)
+				Rectangle topBorderRect = new Rectangle(ClientRectangle.Left, ClientRectangle.Top, this.ClientRectangle.Width, this.topBorder.Height);
+				e.Graphics.DrawImage(this.topBorder, topBorderRect);
+
+				// Show the title text if we are drawing the top border.
+				if (!string.IsNullOrEmpty(this.Text) && this.titleFont is not null)
+				{
+					Size textSize = TextRenderer.MeasureText(this.Text, this.titleFont);
+					Rectangle textRect = new Rectangle(new Point((this.ClientSize.Width - textSize.Width) / 2, (this.topBorder.Height - textSize.Height) / 2), textSize);
+
+					// Check if the background for the title text needs to be resized.
+					float factor = (float)topBorderRect.Width / (float)DesignTopBorder.Width;
+					int textBackroundWidth = Convert.ToInt32(114.0F * factor);
+					if (textRect.Width > textBackroundWidth)
+					{
+						// Copy the center 126 pixels from the top border which make up the background to the title text.
+						Rectangle srcRect = new Rectangle((DesignTopBorder.Width / 2) - 61, 0, 126, DesignTopBorder.Height);
+						Rectangle destRect = new Rectangle(
+							textRect.Left - Convert.ToInt32(6.0F * factor)
+							, 0
+							, textRect.Width + Convert.ToInt32(12.0F * factor)
+							, topBorderRect.Height
+						);
+						e.Graphics.DrawImage(DesignTopBorder, destRect, srcRect, GraphicsUnit.Pixel);
+					}
+
+					TextRenderer.DrawText(
+						e.Graphics
+						, this.Text
+						, this.titleFont
+						, textRect
+						, this.TitleTextColor
+					);
+				}
+			}
+
+			int topBorderOffset = Convert.ToInt32(3.0F * ((float)this.topBorder.Height) / (float)DesignTopBorder.Height);
+
+			// Draw the Left side
+			e.Graphics.DrawImage(
+				this.sideBorder,
+				new Rectangle(ClientRectangle.Left, ClientRectangle.Top + topBorderOffset, this.sideBorder.Width, this.ClientRectangle.Height - topBorderOffset));
+
+			// Draw the Right side
+			e.Graphics.DrawImage(
+				this.sideBorder,
+				new Rectangle(ClientRectangle.Right - this.sideBorder.Width, ClientRectangle.Top + topBorderOffset, this.sideBorder.Width, this.ClientRectangle.Height - topBorderOffset));
+
+			// Draw the Bottom
+			e.Graphics.DrawImage(
+				this.bottomBorder,
+				new Rectangle(ClientRectangle.Left, ClientRectangle.Bottom - this.bottomBorder.Height, this.ClientRectangle.Width, this.bottomBorder.Height));
+
+			// Draw the Bottom Right Corner Graphics
+			e.Graphics.DrawImage(
+				this.bottomRightCorner,
+				new Rectangle(ClientRectangle.Right - this.bottomRightCorner.Width, ClientRectangle.Bottom - this.bottomRightCorner.Height, this.bottomRightCorner.Width, this.bottomRightCorner.Height));
+
+			// Draw the Bottom Left Corner Graphics
+			e.Graphics.DrawImage(
+				this.bottomLeftCorner,
+				new Rectangle(ClientRectangle.Left, ClientRectangle.Bottom - this.bottomLeftCorner.Height, this.bottomLeftCorner.Width, this.bottomLeftCorner.Height));
+		}
+	}
+
+	/// <summary>
+	/// Processes a Client Right Button Up Event.
+	/// </summary>
+	/// <param name="parameter">Windows parameters</param>
+	private void OnNonClientRButtonUp(IntPtr parameter)
+	{
+		if (this.topBorderRect.Contains(this.PointToClient(new Point(parameter.ToInt32()))))
+			this.SendNCWinMessage(User32.WindowMessage.GetSysMenu, IntPtr.Zero, parameter);
+	}
 
 	/// <summary>
 	/// Creates the bounding Rectangles for the border graphics
