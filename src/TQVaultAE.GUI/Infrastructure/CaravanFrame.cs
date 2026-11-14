@@ -277,13 +277,23 @@ internal static class CaravanFrame
 	/// Draws the frame around <paramref name="control"/>, on its parent: the control gets a margin of the frame's
 	/// thickness, in which the parent paints the frame. For a control that draws its own content from its corner (a list).
 	/// </summary>
-	public static void FrameAround(Control control)
+	/// <param name="control">The control.</param>
+	/// <param name="spaceText">
+	/// Whether half a character of its font is kept in black between the frame and the control: for a control whose text
+	/// starts at its very edge (a text box), the space a padding gives inside the other frames. It follows the font
+	/// (zoom, DPI).
+	/// </param>
+	public static void FrameAround(Control control, bool spaceText = false)
 	{
 		if (control.Parent is not { } parent || !MarkFramed(control))
 			return;
 
-		control.Margin = new Padding(Border);
-		DrawAround(parent, [control]);
+		int Inset() => spaceText ? CharacterWidth(control.Font) / 2 : 0;
+		void Fit() => control.Margin = new Padding(Border + Inset());
+		Fit();
+		if (spaceText)
+			control.FontChanged += (_, _) => Fit();
+		DrawAround(parent, [control], Inset);
 	}
 
 	/// <summary>
@@ -298,11 +308,14 @@ internal static class CaravanFrame
 			|| controls.Any(c => c.Parent != parent) || !controls.All(MarkFramed))
 			return;
 
-		DrawAround(parent, controls);
+		DrawAround(parent, controls, static () => 0);
 	}
 
-	/// <summary>Paints the frame around the shown <paramref name="controls"/> on <paramref name="parent"/>.</summary>
-	private static void DrawAround(Control parent, Control[] controls)
+	/// <summary>
+	/// Paints the frame around the shown <paramref name="controls"/> on <paramref name="parent"/>, <paramref name="inset"/>
+	/// pixels of black between them and the frame.
+	/// </summary>
+	private static void DrawAround(Control parent, Control[] controls, Func<int> inset)
 	{
 		var frame = new FrameCache(controls[0]);
 		void Paint(object? sender, PaintEventArgs e)
@@ -311,7 +324,8 @@ internal static class CaravanFrame
 			if (shown.Count == 0)
 				return;
 
-			var bounds = Rectangle.Inflate(shown.Aggregate(Rectangle.Union), Border, Border);
+			int around = Border + inset();
+			var bounds = Rectangle.Inflate(shown.Aggregate(Rectangle.Union), around, around);
 			e.Graphics.DrawImageUnscaled(frame.Get(bounds.Size), bounds.Location);
 		}
 

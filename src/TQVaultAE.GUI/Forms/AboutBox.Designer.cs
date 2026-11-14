@@ -90,7 +90,6 @@ internal partial class AboutBox
         // 
         // tableLayoutPanel
         // 
-        this.tableLayoutPanel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
         this.tableLayoutPanel.ColumnCount = 2;
         this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
         this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
@@ -119,6 +118,7 @@ internal partial class AboutBox
         this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
         this.logoPictureBox.Name = "logoPictureBox";
         this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 6);
+        this.logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
         this.logoPictureBox.Size = new System.Drawing.Size(181, 410);
         this.logoPictureBox.TabIndex = 12;
         this.logoPictureBox.TabStop = false;
@@ -130,7 +130,6 @@ internal partial class AboutBox
         this.labelProductName.ForeColor = System.Drawing.Color.White;
         this.labelProductName.Location = new System.Drawing.Point(193, 0);
         this.labelProductName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-        this.labelProductName.MaximumSize = new System.Drawing.Size(0, 17);
         this.labelProductName.Name = "labelProductName";
         this.labelProductName.Size = new System.Drawing.Size(372, 17);
         this.labelProductName.TabIndex = 19;
@@ -144,7 +143,6 @@ internal partial class AboutBox
         this.labelVersion.ForeColor = System.Drawing.Color.White;
         this.labelVersion.Location = new System.Drawing.Point(193, 41);
         this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-        this.labelVersion.MaximumSize = new System.Drawing.Size(0, 17);
         this.labelVersion.Name = "labelVersion";
         this.labelVersion.Size = new System.Drawing.Size(372, 17);
         this.labelVersion.TabIndex = 0;
@@ -158,7 +156,6 @@ internal partial class AboutBox
         this.labelCopyright.ForeColor = System.Drawing.Color.White;
         this.labelCopyright.Location = new System.Drawing.Point(193, 82);
         this.labelCopyright.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-        this.labelCopyright.MaximumSize = new System.Drawing.Size(0, 17);
         this.labelCopyright.Name = "labelCopyright";
         this.labelCopyright.Size = new System.Drawing.Size(372, 17);
         this.labelCopyright.TabIndex = 21;
@@ -167,7 +164,8 @@ internal partial class AboutBox
         // 
         // textBoxDescription
         // 
-        this.textBoxDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+        this.textBoxDescription.BackColor = System.Drawing.Color.Black;
+        this.textBoxDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
         this.textBoxDescription.Dock = System.Windows.Forms.DockStyle.Fill;
         this.textBoxDescription.Font = new System.Drawing.Font("Albertus MT Light", 9.75F);
         this.textBoxDescription.ForeColor = System.Drawing.Color.White;
@@ -176,7 +174,7 @@ internal partial class AboutBox
         this.textBoxDescription.Multiline = true;
         this.textBoxDescription.Name = "textBoxDescription";
         this.textBoxDescription.ReadOnly = true;
-        this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+        this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
         this.textBoxDescription.Size = new System.Drawing.Size(372, 248);
         this.textBoxDescription.TabIndex = 23;
         this.textBoxDescription.TabStop = false;

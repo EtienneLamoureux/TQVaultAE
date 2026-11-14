@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Infrastructure;
 
 /// <summary>
 /// Class for About dialog box.
@@ -28,11 +29,13 @@ internal sealed partial class AboutBox : VaultForm
 
 		#region Apply custom font
 
-		this.labelProductName.Font = FontService.GetFontLight(11.25F);
-		this.labelVersion.Font = FontService.GetFontLight(11.25F);
-		this.labelCopyright.Font = FontService.GetFontLight(11.25F);
-		this.textBoxDescription.Font = FontService.GetFontLight(9.75F);
-		this.buttonOK.Font = FontService.GetFontLight(12F);
+		// The sizes of the other marble dialogs: the text in the base size, the button larger.
+		var text = FontService.GetFontLight(CaravanLook.TextSize);
+		this.labelProductName.Font = text;
+		this.labelVersion.Font = text;
+		this.labelCopyright.Font = text;
+		this.textBoxDescription.Font = text;
+		this.buttonOK.Font = FontService.GetFontLight(CaravanLook.ButtonTextSize);
 
 		#endregion
 
@@ -45,6 +48,12 @@ internal sealed partial class AboutBox : VaultForm
 		this.labelVersion.Text = string.Format(CultureInfo.CurrentCulture, Resources.AboutVersion, AssemblyVersion);
 		this.labelCopyright.Text = AssemblyCopyright;
 		this.textBoxDescription.Text = Resources.AboutDescription; // AssemblyDescription;
+		this.buttonOK.Text = Resources.GlobalOK;
+
+		// The look of Vault Maintenance: the marble behind the table, the labels over it with their shadow, and the
+		// description, a text box that draws its own content from its corner, on black in a caravan frame drawn around it.
+		CaravanFrame.FrameAround(this.textBoxDescription, spaceText: true);
+		CaravanLook.Apply(this, this.tableLayoutPanel);
 
 		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
@@ -178,21 +187,14 @@ internal sealed partial class AboutBox : VaultForm
 	#endregion Assembly Attribute Accessors
 
 	/// <summary>
-	/// Override of ScaleControl which supports picturebox image scaling.
+	/// Override of ScaleControl which grows the dialog's font with the zoom. The logo follows its box by itself
+	/// (<see cref="PictureBoxSizeMode.Zoom"/>).
 	/// </summary>
 	/// <param name="factor">SizeF for the scale factor</param>
 	/// <param name="specified">BoundsSpecified value.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
 		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-
-		if (this.logoPictureBox is not null && this.logoPictureBox.Image is not null)
-		{
-			this.logoPictureBox.Image = new Bitmap(
-				this.logoPictureBox.Image,
-				new Size(Convert.ToInt32((float)this.logoPictureBox.Size.Width * UIService.Scale), Convert.ToInt32((float)this.logoPictureBox.Size.Height * UIService.Scale)));
-		}
-
 		base.ScaleControl(factor, specified);
 	}
 }
