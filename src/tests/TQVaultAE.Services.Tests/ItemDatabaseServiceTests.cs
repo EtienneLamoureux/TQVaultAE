@@ -19,18 +19,15 @@ public class ItemDatabaseServiceTests
 {
 	private readonly Mock<ILogger<ItemDatabaseService>> _mockLogger;
 	private readonly Mock<IItemProvider> _mockItemProvider;
-	private readonly SessionContext _sessionContext;
 	private readonly ItemDatabaseService _service;
 
 	public ItemDatabaseServiceTests()
 	{
 		_mockLogger = new Mock<ILogger<ItemDatabaseService>>();
 		_mockItemProvider = new Mock<IItemProvider>();
-		_sessionContext = new SessionContext();
 		_service = new ItemDatabaseService(
 			_mockLogger.Object,
-			_mockItemProvider.Object,
-			_sessionContext
+			_mockItemProvider.Object
 		);
 	}
 
@@ -245,158 +242,85 @@ public class ItemDatabaseServiceTests
 		_service.ItemDatabase.Should().HaveCount(1);
 	}
 
-	[Fact]
-	public void ClearItemDatabase_ClearsAllItems()
-	{
-		// Arrange
-		var item = CreateTestItem();
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(item, It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
-			.Returns(new ToFriendlyNameResult(item));
-		_service.TryAddItemToDatabase(item);
-
-		// Act
-		_service.ClearItemDatabase();
-
-		// Assert
-		_service.ItemDatabase.Should().BeEmpty();
-	}
-
-	[Fact]
-	public void RebuildItemDatabase_WithEmptySession_DoesNotThrow()
-	{
-		// Act
-		_service.Invoking(s => s.RebuildItemDatabase())
-			.Should().NotThrow();
-
-		// Assert
-		_service.ItemDatabase.Should().BeEmpty();
-	}
-
-	[Fact]
-	public void RebuildItemDatabase_WithVaults_AddsVaultItems()
-	{
-		// Arrange
-		var vaultPath = "/vaults/TestVault.vault";
-		var vault = new PlayerCollection("TestVault", vaultPath) { IsVault = true };
-		vault.CreateEmptySacks(1);
-		vault.Sacks[0].AddItem(CreateTestItem());
-		vault.Sacks[0].AddItem(CreateTestItem());
-		_sessionContext.Vaults.GetOrAddAtomic(vaultPath, _ => vault);
-
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
+	private void NamesForAll()
+		=> _mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
 			.Returns((Item i, FriendlyNamesExtraScopes? s, bool b) => new ToFriendlyNameResult(i));
 
-		// Act
-		_service.RebuildItemDatabase();
+	[Fact]
+	public void IndexVault_NumbersEachItemByItsVaultBag()
+	{
+		// Arrange: an item in bag 0 and one in bag 2, bag 1 empty
+		var vault = new PlayerCollection("TestVault", "/vaults/TestVault.vault") { IsVault = true };
+		vault.CreateEmptySacks(3);
+		var first = CreateTestItem();
+		var third = CreateTestItem();
+		vault.Sacks[0].AddItem(first);
+		vault.Sacks[2].AddItem(third);
+		NamesForAll();
 
-		// Assert
-		_service.ItemDatabase.Should().HaveCount(2);
+		// Act
+		_service.IndexVault(vault, vault.PlayerFile, vault.PlayerName);
+
+		// Assert: the search jump opens the bag that holds each item
+		var locations = _service.ItemDatabase.ToDictionary(r => r.Item, SearchResultNavigation.Resolve);
+		locations[first].Should().Be(new ResultLocation(ResultPanelKind.Vault, 0, first.Location));
+		locations[third].Should().Be(new ResultLocation(ResultPanelKind.Vault, 2, third.Location));
 	}
 
 	[Fact]
-	public void RebuildItemDatabase_WithPlayers_AddsPlayerItems()
+	public void IndexPlayer_EquipmentAndBags_JumpToTheirPanels()
 	{
-		// Arrange
-		var playerPath = "/players/TestPlayer";
-		var player = new PlayerCollection("TestPlayer", playerPath);
-		player.CreateEmptySacks(1);
-		player.Sacks[0].AddItem(CreateTestItem());
-		_sessionContext.Players.GetOrAddAtomic(playerPath, _ => player);
-
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
-			.Returns((Item i, FriendlyNamesExtraScopes? s, bool b) => new ToFriendlyNameResult(i));
-
-		// Act
-		_service.RebuildItemDatabase();
-
-		// Assert
-		_service.ItemDatabase.Should().HaveCount(1);
-	}
-
-	[Fact]
-	public void RebuildItemDatabase_WithEquipmentSack_AddsEquipmentItems()
-	{
-		// Arrange
-		var playerPath = "/players/TestPlayer";
-		var player = new PlayerCollection("TestPlayer", playerPath);
+		// Arrange: one item in the main sack, one in the first bag, one worn
+		var player = new PlayerCollection("TestPlayer", "/players/_TestPlayer/Player.chr");
+		player.CreateEmptySacks(2);
+		var main = CreateTestItem();
+		var bagged = CreateTestItem();
+		var worn = CreateTestItem();
+		player.Sacks[0].AddItem(main);
+		player.Sacks[1].AddItem(bagged);
 		player.EquipmentSack = new SackCollection();
-		player.EquipmentSack.AddItem(CreateTestItem());
-		_sessionContext.Players.GetOrAddAtomic(playerPath, _ => player);
-
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
-			.Returns((Item i, FriendlyNamesExtraScopes? s, bool b) => new ToFriendlyNameResult(i));
+		player.EquipmentSack.AddItem(worn);
+		NamesForAll();
 
 		// Act
-		_service.RebuildItemDatabase();
+		_service.IndexPlayer(player, player.PlayerFile, player.PlayerName);
+
+		// Assert: the equipment opens the equipment tab of the stash panel, as a drop there numbers it
+		var locations = _service.ItemDatabase.ToDictionary(r => r.Item, SearchResultNavigation.Resolve);
+		locations[main].Panel.Should().Be(ResultPanelKind.PlayerMainSack);
+		locations[bagged].Should().Be(new ResultLocation(ResultPanelKind.PlayerBag, 0, bagged.Location));
+		locations[worn].Should().Be(new ResultLocation(ResultPanelKind.Equipment, BagIdConstants.BAGID_EQUIPMENTPANEL, worn.Location));
+		worn.Place.SackType.Should().Be(SackType.Equipment);
+	}
+
+	[Theory]
+	[InlineData(StashType.PlayerStash, ResultPanelKind.CharacterStash, BagIdConstants.BAGID_PLAYERSTASH)]
+	[InlineData(StashType.TransferStash, ResultPanelKind.SharedStash, BagIdConstants.BAGID_TRANSFERSTASH)]
+	[InlineData(StashType.RelicVaultStash, ResultPanelKind.SharedStash, BagIdConstants.BAGID_RELICVAULTSTASH)]
+	public void IndexStash_NumbersTheItemsByTheirStashTab(StashType stashType, ResultPanelKind panel, int tab)
+	{
+		// Arrange
+		var stash = new Stash("TestPlayer", "/stashes/TestStash") { Sack = new SackCollection() };
+		var item = CreateTestItem();
+		stash.Sack.AddItem(item);
+		NamesForAll();
+
+		// Act
+		_service.IndexStash(stash, stash.StashFile, "Stash name", stashType);
 
 		// Assert
-		_service.ItemDatabase.Should().HaveCount(1);
-		_service.ItemDatabase.First().Item.Place.SackType.Should().Be(SackType.Equipment);
+		var result = _service.ItemDatabase.Single();
+		result.Item.Place.StashType.Should().Be(stashType);
+		result.ContainerName.Should().Be("Stash name");
+		SearchResultNavigation.Resolve(result).Should().Be(new ResultLocation(panel, tab, item.Location));
 	}
 
 	[Fact]
-	public void RebuildItemDatabase_WithPlayerStash_AddsStashItems()
+	public void IndexStash_WithoutSack_AddsNothing()
 	{
-		// Arrange
-		var stashPath = "/stashes/TestStash";
-		var stash = new Stash("TestPlayer", stashPath);
-		stash.Sack = new SackCollection();
-		stash.Sack.AddItem(CreateTestItem());
-		_sessionContext.Stashes.GetOrAddAtomic(stashPath, _ => stash);
+		_service.IndexStash(new Stash("TestPlayer", "/stashes/Missing"), "/stashes/Missing", "Stash", StashType.PlayerStash);
 
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
-			.Returns((Item i, FriendlyNamesExtraScopes? s, bool b) => new ToFriendlyNameResult(i));
-
-		// Act
-		_service.RebuildItemDatabase();
-
-		// Assert
-		_service.ItemDatabase.Should().HaveCount(1);
-		_service.ItemDatabase.First().Item.Place.SackType.Should().Be(SackType.Stash);
-	}
-
-	[Fact]
-	public void RebuildItemDatabase_WithTransferStash_SetsCorrectStashType()
-	{
-		// Arrange
-		var stashPath = "/stashes/TransferStash";
-		var stash = new Stash("TestPlayer", stashPath);
-		stash.Sack = new SackCollection();
-		stash.Sack.StashType = StashType.TransferStash;
-		stash.Sack.AddItem(CreateTestItem());
-		_sessionContext.Stashes.GetOrAddAtomic(stashPath, _ => stash);
-
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
-			.Returns((Item i, FriendlyNamesExtraScopes? s, bool b) => new ToFriendlyNameResult(i));
-
-		// Act
-		_service.RebuildItemDatabase();
-
-		// Assert
-		_service.ItemDatabase.Should().HaveCount(1);
-		_service.ItemDatabase.First().Item.Place.StashType.Should().Be(StashType.TransferStash);
-	}
-
-	[Fact]
-	public void RebuildItemDatabase_WithRelicVaultStash_SetsCorrectStashType()
-	{
-		// Arrange
-		var stashPath = "/stashes/RelicVaultStash";
-		var stash = new Stash("TestPlayer", stashPath);
-		stash.Sack = new SackCollection();
-		stash.Sack.StashType = StashType.RelicVaultStash;
-		stash.Sack.AddItem(CreateTestItem());
-		_sessionContext.Stashes.GetOrAddAtomic(stashPath, _ => stash);
-
-		_mockItemProvider.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
-			.Returns((Item i, FriendlyNamesExtraScopes? s, bool b) => new ToFriendlyNameResult(i));
-
-		// Act
-		_service.RebuildItemDatabase();
-
-		// Assert
-		_service.ItemDatabase.Should().HaveCount(1);
-		_service.ItemDatabase.First().Item.Place.StashType.Should().Be(StashType.RelicVaultStash);
+		_service.ItemDatabase.Should().BeEmpty();
 	}
 
 	[Fact]

@@ -51,14 +51,20 @@ public interface IItemDatabaseService
     void AddLoadoutsToDatabase(LoadoutSet loadouts);
 
     /// <summary>
-    /// Clears all items from the search database.
+    /// Adds the items of a vault to the search database: vault sack N is search sack N.
     /// </summary>
-    void ClearItemDatabase();
+    void IndexVault(PlayerCollection vault, string containerPath, string containerName);
 
     /// <summary>
-    /// Populates the item database from all loaded containers.
+    /// Adds the items of a character to the search database: player sack N is search sack N, and its equipment is
+    /// numbered <see cref="BagIdConstants.BAGID_EQUIPMENTPANEL"/>, as <see cref="SearchResultNavigation"/> reads them.
     /// </summary>
-    void RebuildItemDatabase();
+    void IndexPlayer(PlayerCollection player, string containerPath, string containerName);
+
+    /// <summary>
+    /// Adds the items of a stash to the search database, numbered by its stash panel tab (its <paramref name="stashType"/>).
+    /// </summary>
+    void IndexStash(Stash stash, string containerPath, string containerName, StashType stashType);
 
     /// <summary>
     /// Counts the loaded items made from each of <paramref name="recordIds"/> (their base item),
@@ -101,8 +107,6 @@ public interface IItemDatabaseService
     IReadOnlyList<SearchResult> FullTextSearch(string searchText, bool isRegex = false);
 
     #endregion
-
-    void ResetAllItemDatabase(List<SearchResult> validItems);
 
     /// <summary>
     /// Computes, in the background and at low priority, the display data of every item in the database

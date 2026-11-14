@@ -15,11 +15,10 @@ namespace TQVaultAE.Tests.Services;
 /// </summary>
 public class LoadoutSearchTests
 {
-	private readonly SessionContext _session = new();
 	private readonly ItemDatabaseService _database;
 
 	public LoadoutSearchTests()
-		=> this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemProvider>().Object, this._session);
+		=> this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemProvider>().Object);
 
 	private static Item Piece(string name) => new() { BaseItemId = RecordId.Create($"records/item/{name}.dbr") };
 
@@ -70,18 +69,6 @@ public class LoadoutSearchTests
 		this._database.RemoveContainerFromDatabase("""C:\Saves\_HeroA\Player.chr""");
 
 		this._database.ItemDatabase.Select(r => r.Item).Should().Equal(piece);
-	}
-
-	[Fact]
-	public void RebuildItemDatabase_KeepsTheLoadoutsOfTheSession()
-	{
-		var piece = Piece("helm");
-		var set = Set(new Loadout("Fire", false, [piece]));
-		this._session.Loadouts[set.FilePath] = set;
-
-		this._database.RebuildItemDatabase();
-
-		this._database.ItemDatabase.Single().LoadoutName.Should().Be("Fire");
 	}
 
 	[Fact]

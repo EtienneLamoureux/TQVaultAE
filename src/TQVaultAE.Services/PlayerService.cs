@@ -110,24 +110,8 @@ public class PlayerService(
 					this.DescribeCharacter(selectedSave);
 					this.GameMapService.MarkLoaded(selectedSave);
 
-					// Add player items to the search database
-					int sackNumber = -1;
-					foreach (var sack in resultPC)
-					{
-						sackNumber++;
-						if (sack is null)
-							continue;
-
-						foreach (var item in sack)
-							this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, sackNumber, SackType.Player);
-					}
-
-					// Add equipment items
-					if (resultPC.EquipmentSack is not null)
-					{
-						foreach (var item in resultPC.EquipmentSack)
-							this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, 0, SackType.Equipment);
-					}
+					// Add player and equipment items to the search database
+					this.ItemDatabaseService.IndexPlayer(resultPC, k, selectedSave.Name);
 
 					// Its loadouts, read with its map like its items.
 					this.LoadoutService?.Read(selectedSave.Folder, selectedSave.Name, characterMod);

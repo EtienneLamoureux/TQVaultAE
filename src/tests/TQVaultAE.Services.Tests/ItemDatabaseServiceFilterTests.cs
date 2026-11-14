@@ -26,8 +26,7 @@ public class ItemDatabaseServiceFilterTests
 	{
 		this._service = new ItemDatabaseService(
 			new Mock<ILogger<ItemDatabaseService>>().Object,
-			new Mock<IItemProvider>().Object,
-			new SessionContext());
+			new Mock<IItemProvider>().Object);
 		this._a = NewResult();
 		this._b = NewResult();
 		this._c = NewResult();
@@ -126,7 +125,7 @@ public class ItemDatabaseServiceFilterTests
 	{
 		// Arrange: two named items, one without a name, one whose display data cannot be built
 		var itemProvider = new Mock<IItemProvider>();
-		var service = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, itemProvider.Object, new SessionContext());
+		var service = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, itemProvider.Object);
 		var named = new[] { new Item(), new Item() };
 		var nameless = new Item();
 		var broken = new Item();

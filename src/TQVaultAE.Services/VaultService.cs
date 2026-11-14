@@ -104,22 +104,7 @@ public class VaultService(
 	public void ReindexVault(PlayerCollection vault)
 	{
 		this.ItemDatabaseService.RemoveContainerFromDatabase(vault.PlayerFile);
-		this.IndexVaultItems(vault, vault.PlayerFile, vault.PlayerName);
-	}
-
-	/// <summary>Adds the items of a vault to the search database.</summary>
-	private void IndexVaultItems(PlayerCollection vault, string file, string vaultName)
-	{
-		int sackNumber = -1;
-		foreach (var sack in vault)
-		{
-			sackNumber++;
-			if (sack is null)
-				continue;
-
-			foreach (var item in sack)
-				this.ItemDatabaseService.AddItemToDatabase(item, file, vaultName, sackNumber, SackType.Vault);
-		}
+		this.ItemDatabaseService.IndexVault(vault, vault.PlayerFile, vault.PlayerName);
 	}
 
 	/// <summary>
@@ -155,7 +140,7 @@ public class VaultService(
 					pc.VaultLoaded = true;
 				}
 
-				this.IndexVaultItems(pc, k, vaultName);
+				this.ItemDatabaseService.IndexVault(pc, k, vaultName);
 
 				return pc;
 			});

@@ -83,11 +83,7 @@ public class StashService(
 				stash.IsReadOnly = this.CharacterReadOnly?.IsReadOnly(selectedSave.Folder) ?? false;
 
 				// Add stash items to the search database
-				if (stash.Sack is not null)
-				{
-					foreach (var item in stash.Sack)
-						this.ItemDatabaseService.AddItemToDatabase(item, k, selectedSave.Name, BagIdConstants.BAGID_PLAYERSTASH, SackType.Stash, StashType.PlayerStash);
-				}
+				this.ItemDatabaseService.IndexStash(stash, k, selectedSave.Name, StashType.PlayerStash);
 			}
 			catch (ArgumentException argumentException)
 			{
@@ -137,11 +133,7 @@ public class StashService(
 					stash.Sack.StashType = StashType.TransferStash;
 
 				// Add transfer stash items to the search database
-				if (stash.Sack is not null)
-				{
-					foreach (var item in stash.Sack)
-						this.ItemDatabaseService.AddItemToDatabase(item, k, this.SharedStashName(Resources.GlobalTransferStash, map), BagIdConstants.BAGID_TRANSFERSTASH, SackType.Stash, StashType.TransferStash);
-				}
+				this.ItemDatabaseService.IndexStash(stash, k, this.SharedStashName(Resources.GlobalTransferStash, map), StashType.TransferStash);
 			}
 			catch (ArgumentException argumentException)
 			{
@@ -212,11 +204,7 @@ public class StashService(
 					stash.Sack.StashType = StashType.RelicVaultStash;
 
 				// Add relic vault stash items to the search database
-				if (stash.Sack is not null)
-				{
-					foreach (var item in stash.Sack)
-						this.ItemDatabaseService.AddItemToDatabase(item, k, this.SharedStashName(Resources.GlobalRelicVaultStash, map), BagIdConstants.BAGID_RELICVAULTSTASH, SackType.Stash, StashType.RelicVaultStash);
-				}
+				this.ItemDatabaseService.IndexStash(stash, k, this.SharedStashName(Resources.GlobalRelicVaultStash, map), StashType.RelicVaultStash);
 			}
 			catch (ArgumentException argumentException)
 			{

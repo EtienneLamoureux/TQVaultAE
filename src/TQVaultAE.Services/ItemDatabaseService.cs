@@ -17,12 +17,10 @@ namespace TQVaultAE.Services;
 /// </summary>
 public class ItemDatabaseService(
     ILogger<ItemDatabaseService> log,
-    IItemProvider itemProvider,
-    SessionContext sessionContext) : IItemDatabaseService
+    IItemProvider itemProvider) : IItemDatabaseService
 {
     private readonly ILogger<ItemDatabaseService> _log = log;
     private readonly IItemProvider _itemProvider = itemProvider;
-    private readonly SessionContext _sessionContext = sessionContext;
 
     /// <summary>
     /// The searchable items and, by reference, the items already in it. Replaced as a whole, so both always match.
@@ -147,90 +145,42 @@ public class ItemDatabaseService(
     }
 
     /// <inheritdoc/>
-    public void ClearItemDatabase()
-        => this._database = Database.Of([]);
+    public void IndexVault(PlayerCollection vault, string containerPath, string containerName)
+        => this.IndexSacks(vault, containerPath, containerName, SackType.Vault);
 
     /// <inheritdoc/>
-    public void RebuildItemDatabase()
+    public void IndexPlayer(PlayerCollection player, string containerPath, string containerName)
     {
-        this.ClearItemDatabase();
+        this.IndexSacks(player, containerPath, containerName, SackType.Player);
 
-        // Add vault items
-        foreach (var kvp in this._sessionContext.Vaults)
+        // The equipment is numbered by its stash panel tab, like the stashes (SearchResultNavigation).
+        foreach (var item in player.EquipmentSack ?? [])
+            this.AddItemToDatabase(item, containerPath, containerName, BagIdConstants.BAGID_EQUIPMENTPANEL, SackType.Equipment);
+    }
+
+    /// <inheritdoc/>
+    public void IndexStash(Stash stash, string containerPath, string containerName, StashType stashType)
+    {
+        // A stash type is its stash panel tab (StashType values are the bag ids).
+        foreach (var item in stash.Sack ?? [])
+            this.AddItemToDatabase(item, containerPath, containerName, (int)stashType, SackType.Stash, stashType);
+    }
+
+    /// <summary>
+    /// Adds the items of every sack of a vault or a character, each with its sack number (its index).
+    /// </summary>
+    private void IndexSacks(PlayerCollection container, string containerPath, string containerName, SackType sackType)
+    {
+        int sackNumber = -1;
+        foreach (var sack in container)
         {
-            var vault = kvp.Value.Value;
-            if (vault is null)
+            sackNumber++;
+            if (sack is null)
                 continue;
 
-            int sackNumber = -1;
-            foreach (var sack in vault)
-            {
-                sackNumber++;
-                if (sack is null)
-                    continue;
-
-                foreach (var item in sack)
-                    this.AddItemToDatabase(item, kvp.Key, vault.PlayerName, sackNumber, SackType.Vault);
-            }
+            foreach (var item in sack)
+                this.AddItemToDatabase(item, containerPath, containerName, sackNumber, sackType);
         }
-
-        // Add player items
-        foreach (var kvp in this._sessionContext.Players)
-        {
-            var player = kvp.Value.Value;
-            if (player is null)
-                continue;
-
-            // Player sacks
-            int sackNumber = -1;
-            foreach (var sack in player)
-            {
-                sackNumber++;
-                if (sack is null)
-                    continue;
-
-                foreach (var item in sack)
-                    this.AddItemToDatabase(item, kvp.Key, player.PlayerName, sackNumber, SackType.Player);
-            }
-
-            // Equipment sack
-            if (player.EquipmentSack is not null)
-            {
-                foreach (var item in player.EquipmentSack)
-                    this.AddItemToDatabase(item, kvp.Key, player.PlayerName, BagIdConstants.BAGID_EQUIPMENTPANEL, SackType.Equipment);
-            }
-        }
-
-        // Add the characters' loadouts
-        foreach (var set in this._sessionContext.Loadouts.Values)
-            this.AddLoadoutsToDatabase(set);
-
-        // Add stash items
-        foreach (var kvp in this._sessionContext.Stashes)
-        {
-            var stash = kvp.Value.Value;
-            if (stash?.Sack is null)
-                continue;
-
-            int sackNumber = BagIdConstants.BAGID_PLAYERSTASH;
-            StashType stashType = StashType.PlayerStash;
-
-            if (stash.Sack.StashType == StashType.TransferStash)
-            {
-                sackNumber = BagIdConstants.BAGID_TRANSFERSTASH;
-                stashType = StashType.TransferStash;
-            }
-            else if (stash.Sack.StashType == StashType.RelicVaultStash)
-            {
-                sackNumber = BagIdConstants.BAGID_RELICVAULTSTASH;
-                stashType = StashType.RelicVaultStash;
-            }
-
-            foreach (var item in stash.Sack)
-                this.AddItemToDatabase(item, kvp.Key, stash.Name, sackNumber, SackType.Stash, stashType);
-        }
-
-        this._log.LogInformation("Item database rebuilt with {Count} items", this.ItemDatabase.Count);
     }
 
     /// <inheritdoc/>
@@ -271,7 +221,7 @@ public class ItemDatabaseService(
         return this.ApplyTextSearch(itemDatabase, searchText, isRegex).ToList();
     }
 
-    public void ResetAllItemDatabase(List<SearchResult> validItems)
+    private void ResetAllItemDatabase(List<SearchResult> validItems)
     {
 	    this._database = Database.Of(validItems);
 	}
