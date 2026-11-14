@@ -111,28 +111,7 @@ internal sealed class ModLinkDialog : VaultForm
 		this.labelFolder.FontChanged += (_, _) => this.labelFolder.Height = this.labelFolder.Font.Height;
 		this.labelSuggestion = NewLabel(nameof(this.labelSuggestion));
 
-		ScalingButton NewButton(string name, string text)
-		{
-			var button = new ScalingButton()
-			{
-				Name = name,
-				BackColor = Color.Transparent,
-				FlatStyle = FlatStyle.Flat,
-				Font = this.FontService.GetFontLight(12F, zoom),
-				ForeColor = Theme.ButtonText,
-				Margin = new Padding(Zoomed(3), 0, Zoomed(3), 0),
-				Size = new Size(Zoomed(132), Zoomed(30)),
-				SizeToGraphic = false,
-				UseCustomGraphic = true,
-				UseVisualStyleBackColor = false,
-			};
-			button.FlatAppearance.BorderSize = 0;
-			button.FlatAppearance.MouseDownBackColor = Theme.TransparentButton;
-			button.FlatAppearance.MouseOverBackColor = Theme.TransparentButton;
-			// After the font: the button fits its text to its width.
-			button.Text = text;
-			return button;
-		}
+		ScalingButton NewButton(string name, string text) => CaravanDialog.Button(this.FontService, zoom, name, text);
 
 		this.buttonSuggest = NewButton(nameof(this.buttonSuggest), Resources.ModLinkSuggest);
 		this.buttonSuggest.Click += (_, _) => this.SuggestMod();
@@ -181,9 +160,7 @@ internal sealed class ModLinkDialog : VaultForm
 		this.ShowInTaskbar = false;
 		this.StartPosition = FormStartPosition.CenterParent;
 		this.Text = Resources.ModLinkDialogTitle;
-		var border = CustomBorderThickness;
-		int gap = Zoomed(10);
-		this.Padding = new Padding(border.Left + gap, border.Top + Zoomed(4), border.Right + gap, border.Bottom + Zoomed(6));
+		this.Padding = CaravanDialog.ContentPadding(zoom);
 		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
 		this.Controls.Add(layout);
 		this.labelFolder.Height = this.labelFolder.Font.Height;
