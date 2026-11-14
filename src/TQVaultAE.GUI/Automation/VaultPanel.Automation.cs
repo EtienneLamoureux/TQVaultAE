@@ -43,6 +43,30 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
+	/// Right-clicks a bag button like <see cref="AutomationBagMenu"/> and clicks its "Change icon" entry after the calling
+	/// tool has returned (the bag button settings are modal).
+	/// </summary>
+	/// <returns>The text of the entry clicked.</returns>
+	/// <exception cref="InvalidOperationException">The bag has no such entry: only the vault bags have it.</exception>
+	internal string AutomationChangeIcon(int bag)
+	{
+		if (bag < 0 || bag >= this.BagButtons.Count)
+			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+
+		this.contextMenu.Items.Clear();
+		var button = this.BagButtons[bag];
+		this.BagButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		var entry = this.contextMenu.Items.OfType<ToolStripItem>().FirstOrDefault(i => i.Tag is BagMenuAction.ChangeIcon);
+		if (entry is null)
+		{
+			this.contextMenu.Close();
+			throw new InvalidOperationException("This bag has no 'Change icon' entry: only the vault bags' menu has it.");
+		}
+
+		return AutomationMenus.ClickLater(this, [entry]);
+	}
+
+	/// <summary>
 	/// The sort button that sorts <paramref name="target"/>, as its click handler picks it; refused while it is hidden
 	/// (the stash panel's equipment tab, a panel with no bag), as the user cannot click it then.
 	/// </summary>

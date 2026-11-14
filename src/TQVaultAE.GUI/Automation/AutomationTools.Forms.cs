@@ -322,21 +322,23 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_bag_settings", Destructive = true)]
-	[Description("Opens the bag button settings (icon and label picker) for the current bag of a panel, like its 'Change icon' context menu entry. The dialog is modal: capture it with capture('Bag Button Settings') and close it with close_dialog('Bag Button Settings', 'Cancel'). The game icons load in the background after startup, so 'iconsLoaded' may be false right after launch.")]
+	[Description("Opens the bag button settings (icon and label picker) of a vault bag like the user: right-clicks its bag button (which shows that bag) and clicks 'Change icon' (bag_menu(panel, bag, 'Change icon')), after this call returns; OK applies the choice and redraws the button, as for the user. Only vault bags have the entry: the character's bags and the stash tabs are refused. The dialog is modal: capture it with capture('Bag Button Settings') and close it with close_dialog('Bag Button Settings', 'Cancel'). Waits for the game icons, which load in the background after startup ('iconsLoaded').")]
 	public static async Task<string> OpenBagSettings(
-		[Description("Panel id with bag buttons: vault, secondaryVault, playerBag or stash.")] string panel = "vault")
+		[Description("Panel id of a vault: vault or secondaryVault.")] string panel = "vault",
+		[Description("Zero-based bag button index; omit for the bag shown.")] int? bag = null)
 	{
 		AutomationHost.OnUi(form =>
 		{
 			var container = AutomationPanels.Resolve(form, panel).Container
 				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
-
-			var dialog = form.Services.Forms.Create<Dialogs.BagButtonSettings>();
-			dialog.CurrentBagButton = container.BagButtons[container.ShownBag()];
-
-			// ShowDialog runs its own message loop: start it after this call returns.
-			form.BeginInvoke(() => dialog.ShowDialog(form));
-			return 0;
+			try
+			{
+				return container.AutomationChangeIcon(bag ?? container.ShownBag());
+			}
+			catch (InvalidOperationException ex)
+			{
+				throw new McpException(ex.Message);
+			}
 		});
 
 		// Let the dialog load (its icons come from the icon service, already loading in the background).
