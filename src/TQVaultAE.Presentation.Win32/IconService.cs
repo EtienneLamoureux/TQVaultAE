@@ -92,7 +92,7 @@ public class IconService : IIconService
 			if (info.Category == IconCategory.Shields)
 			{
 				var first = info.HasOn ? info.On : info.HasOff ? info.Off : info.Over;
-				if (this.SizeOf(first) is not { } size || size.Width != size.Height)
+				if (this.Database.GetTextureSize(first) is not { } size || size.Width != size.Height)
 					continue;
 			}
 
@@ -189,27 +189,6 @@ public class IconService : IIconService
 
 	/// <summary>Half the cores, so the main window stays responsive while this runs.</summary>
 	private static int WorkerCount => Math.Max(1, Environment.ProcessorCount / 2);
-
-	/// <summary>
-	/// Width and height of the texture <paramref name="resourceId"/>, read from its DDS header without decoding it
-	/// (see tq-file-formats.md, Textures). <c>null</c> when the texture is missing or not a TEX file.
-	/// </summary>
-	private Size? SizeOf(RecordId resourceId)
-	{
-		var data = this.Database.LoadResource(resourceId);
-		if (data is null || data.Length < 13 || data[0] != 'T' || data[1] != 'E' || data[2] != 'X')
-			return null;
-
-		// Version 1: "TEX" 1, u32 fps, u32 frame size. Version 2 has a flag byte after fps.
-		int dds = data[3] == 2 ? 13 : 12;
-		if (data.Length < dds + 20)
-			return null;
-
-		// DDS header: magic, size, flags, height, width.
-		int height = BitConverter.ToInt32(data, dds + 12);
-		int width = BitConverter.ToInt32(data, dds + 16);
-		return new Size(width, height);
-	}
 
 	private static string Replace(string input, string[] onrep)
 	{
