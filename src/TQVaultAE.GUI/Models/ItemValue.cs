@@ -2,7 +2,6 @@
 
 namespace TQVaultAE.GUI.Models;
 
-public class ItemType : ItemValue<string> { }
 public class ItemRarity : ItemValue<Rarity> { }
 public class ItemOrigin : ItemValue<GameDlc> { }
 
