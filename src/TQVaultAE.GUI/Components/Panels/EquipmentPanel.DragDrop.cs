@@ -3,10 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-/// <summary>
-/// Class for holding all of the UI functions of the sack panel in the stash panel.
-/// </summary>
-
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;

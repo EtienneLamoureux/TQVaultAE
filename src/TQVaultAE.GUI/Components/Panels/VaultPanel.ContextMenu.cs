@@ -3,10 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-/// <summary>
-/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
-/// </summary>
-
 using TQVaultAE.Domain.Actions;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -186,11 +182,6 @@ public partial class VaultPanel
 		this.contextMenu.Items.Add(subMenu);
 	}
 
-	/// <summary>
-	/// Handler for clicking on the context menu
-	/// </summary>
-	/// <param name="sender">semder object</param>
-	/// <param name="e">ToolStripItemClickedEventArgs data</param>
 	/// <summary>
 	/// Links the vault to a mod, or to none: its items without a mod of their own are read again with that mod's data.
 	/// </summary>
