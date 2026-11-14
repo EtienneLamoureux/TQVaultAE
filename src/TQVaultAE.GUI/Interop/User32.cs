@@ -3,20 +3,21 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Runtime.InteropServices;
+
 namespace TQVaultAE.GUI.Interop;
 
 /// <summary>
-/// Class encapsulating the User messages.
+/// The user32.dll functions the application calls, with the window messages and values they take. Each function is
+/// declared here once; the declarations used only by the Debug automation endpoint stay in <c>Automation/</c>.
 /// </summary>
-internal sealed class User32
+internal static partial class User32
 {
-	/// <summary>
-	/// Prevents a default instance of the User32 class from being created.
-	/// </summary>
-	private User32()
-		: base()
-	{
-	}
+	/// <summary>Turns a window's drawing off (wParam 0) or back on (wParam 1) (WM_SETREDRAW).</summary>
+	public const int WM_SETREDRAW = 0x000B;
+
+	/// <summary>Gives a control the font to draw its text with; lParam 1 redraws it (WM_SETFONT).</summary>
+	public const int WM_SETFONT = 0x0030;
 
 	/// <summary>
 	/// Enumeration of Window Messages that this form handles.
@@ -368,14 +369,52 @@ internal sealed class User32
 		XButtonDoubleClick = 0xAD
 	}
 
+	/// <summary>A point packed in a message parameter as Windows packs the mouse position (MAKELPARAM: x low, y high).</summary>
+	public static IntPtr MakeLParam(Point point) => (point.Y << 16) | (point.X & 0xFFFF);
+
+	/// <summary>MonitorFromPoint: the monitor nearest to the point when none contains it.</summary>
+	public const uint MONITOR_DEFAULTTONEAREST = 2;
+
+	/// <summary>A point as Windows passes it (POINT).</summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public readonly record struct NativePoint(int X, int Y);
+
 	/// <summary>
-	/// Takes a Hi Word and Lo Word and combines into a LParam
+	/// ICONINFO. <c>fIcon</c> is a Win32 BOOL kept as an <see cref="int"/> so the struct stays blittable
+	/// for the source-generated P/Invokes.
 	/// </summary>
-	/// <param name="lowWord">Low word to be combined</param>
-	/// <param name="highWord">High word to be combined.</param>
-	/// <returns>IntPtr holding the combined lo Word and Hi Word</returns>
-	/*private static IntPtr MakeLongParameter(int lowWord, int highWord)
-    {
-        return (IntPtr)((highWord << 16) | (lowWord & 0xFFFF));
-    }*/
+	[StructLayout(LayoutKind.Sequential)]
+	public struct IconInfo
+	{
+		public int fIcon;
+		public int xHotspot;
+		public int yHotspot;
+		public IntPtr hbmMask;
+		public IntPtr hbmColor;
+	}
+
+	/// <summary>Sends <paramref name="msg"/> to a window and waits for its window procedure.</summary>
+	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+	public static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+	[LibraryImport("user32.dll")]
+	public static partial IntPtr MonitorFromPoint(NativePoint point, uint flags);
+
+	[LibraryImport("user32.dll")]
+	public static partial uint GetDpiForSystem();
+
+	[LibraryImport("user32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool GetIconInfo(IntPtr hIcon, out IconInfo pIconInfo);
+
+	[LibraryImport("user32.dll", SetLastError = true)]
+	public static partial IntPtr CreateIconIndirect(ref IconInfo icon);
+
+	[LibraryImport("user32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool DestroyIcon(IntPtr hIcon);
+
+	[LibraryImport("user32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static partial bool DestroyCursor(IntPtr hCursor);
 }

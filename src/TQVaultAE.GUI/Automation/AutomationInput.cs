@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using TQVaultAE.Application.KeyBinds;
+using TQVaultAE.GUI.Interop;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -109,7 +110,7 @@ internal static partial class AutomationInput
 		using var held = HoldModifiers(modifiers);
 		var (down, up, _, buttonFlag) = ButtonMessages(button);
 		int keyFlags = KeyFlags(modifiers);
-		nint position = NativeWindows.MakeLParam(client);
+		nint position = User32.MakeLParam(client);
 		SendMessage(target.Handle, down, buttonFlag | keyFlags, position);
 		SendMessage(target.Handle, up, keyFlags, position);
 	}
@@ -131,7 +132,7 @@ internal static partial class AutomationInput
 		const int WM_MOUSEMOVE = 0x0200, WM_CONTEXTMENU = 0x007B;
 		bool right = button == MouseButtons.Right;
 		var (down, up, doubleClick, flag) = ButtonMessages(button);
-		nint position = NativeWindows.MakeLParam(client);
+		nint position = User32.MakeLParam(client);
 		nint handle = target.Handle;
 		SendMessage(handle, WM_MOUSEMOVE, 0, position);
 		SendMessage(handle, down, flag, position);
@@ -145,7 +146,7 @@ internal static partial class AutomationInput
 		if (right && !target.IsDisposed)
 		{
 			var screen = target.PointToScreen(client);
-			SendMessage(handle, WM_CONTEXTMENU, handle, NativeWindows.MakeLParam(screen));
+			SendMessage(handle, WM_CONTEXTMENU, handle, User32.MakeLParam(screen));
 		}
 	}
 
@@ -156,7 +157,7 @@ internal static partial class AutomationInput
 	public static void SendButton(Control target, Point client, MouseButtons button, bool down)
 	{
 		var (downMessage, upMessage, _, flag) = ButtonMessages(button);
-		SendMessage(target.Handle, down ? downMessage : upMessage, down ? flag : 0, NativeWindows.MakeLParam(client));
+		SendMessage(target.Handle, down ? downMessage : upMessage, down ? flag : 0, User32.MakeLParam(client));
 	}
 
 	/// <summary>
@@ -169,7 +170,7 @@ internal static partial class AutomationInput
 		const int WM_MOUSEWHEEL = 0x020A, WHEEL_DELTA = 120;
 		using var held = HoldModifiers(modifiers);
 		var screen = target.PointToScreen(client);
-		SendMessage(target.Handle, WM_MOUSEWHEEL, ((notches * WHEEL_DELTA) << 16) | KeyFlags(modifiers), NativeWindows.MakeLParam(screen));
+		SendMessage(target.Handle, WM_MOUSEWHEEL, ((notches * WHEEL_DELTA) << 16) | KeyFlags(modifiers), User32.MakeLParam(screen));
 	}
 
 	/// <summary>The center of <paramref name="control"/> in its client coordinates.</summary>
@@ -293,7 +294,7 @@ internal static partial class AutomationInput
 
 	private static bool PostMessage(nint hWnd, int msg, nint wParam, nint lParam) => NativeWindows.Post(hWnd, msg, wParam, lParam);
 
-	private static nint SendMessage(nint hWnd, int msg, nint wParam, nint lParam) => NativeWindows.Send(hWnd, msg, wParam, lParam);
+	private static nint SendMessage(nint hWnd, int msg, nint wParam, nint lParam) => User32.SendMessage(hWnd, msg, wParam, lParam);
 
 	[LibraryImport("user32.dll")]
 	[return: MarshalAs(UnmanagedType.Bool)]

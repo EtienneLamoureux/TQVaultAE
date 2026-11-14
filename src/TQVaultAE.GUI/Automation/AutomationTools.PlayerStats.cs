@@ -2,6 +2,7 @@ using System.ComponentModel;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using TQVaultAE.GUI.Interop;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -27,7 +28,7 @@ internal static partial class AutomationTools
 				throw new McpException("The statistics panel is not shown: select a character and stash bag 0 (equipment).");
 
 			// A leave first, as the pointer coming from elsewhere: the panel forgets the rollover it showed.
-			NativeWindows.Send(panel.Handle, WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
+			User32.SendMessage(panel.Handle, WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
 			VirtualCursor.Release();
 			if (hide)
 				return (Serialize(new { hidden = true }), (byte[]?)null);
@@ -44,7 +45,7 @@ internal static partial class AutomationTools
 			VirtualCursor.Set(panel, center);
 			try
 			{
-				NativeWindows.Send(panel.Handle, WM_MOUSEMOVE, IntPtr.Zero, NativeWindows.MakeLParam(center));
+				User32.SendMessage(panel.Handle, WM_MOUSEMOVE, IntPtr.Zero, User32.MakeLParam(center));
 			}
 			finally
 			{

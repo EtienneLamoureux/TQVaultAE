@@ -1,15 +1,15 @@
 namespace TQVaultAE.GUI.Components.Rendering;
 
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using TQVaultAE.GUI.Infrastructure;
 using CheckBoxState = System.Windows.Forms.VisualStyles.CheckBoxState;
 
 /// <summary>
 /// Where the system draws a check box's text, after its glyph: the code that draws over that text (a dimmed or outlined
 /// text, a caption outline) must start where the system's text starts.
 /// </summary>
-internal static partial class CheckBoxGlyph
+internal static class CheckBoxGlyph
 {
 	/// <summary>The gap between the glyph and the text, as the system draws it.</summary>
 	private const int TextGap = 3;
@@ -22,7 +22,7 @@ internal static partial class CheckBoxGlyph
 	/// </summary>
 	public static int TextLeft(Graphics graphics, CheckBox box, CheckBoxState state)
 	{
-		int systemDpi = (int)GetDpiForSystem();
+		int systemDpi = MonitorDpi.SystemDpi;
 		int glyph = CheckBoxRenderer.GetGlyphSize(graphics, state).Width;
 		if (systemDpi > 0 && box.DeviceDpi != systemDpi)
 			glyph = (int)Math.Round((double)glyph * box.DeviceDpi / systemDpi);
@@ -44,7 +44,4 @@ internal static partial class CheckBoxGlyph
 		using var graphics = Graphics.FromHwnd(IntPtr.Zero);
 		return CheckBoxRenderer.GetGlyphSize(graphics, CheckBoxState.UncheckedNormal);
 	}
-
-	[LibraryImport("user32.dll")]
-	private static partial uint GetDpiForSystem();
 }

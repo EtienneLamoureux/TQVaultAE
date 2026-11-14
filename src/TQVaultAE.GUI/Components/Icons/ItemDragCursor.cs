@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+using TQVaultAE.GUI.Interop;
 
 namespace TQVaultAE.GUI.Components.Icons;
 
@@ -6,7 +6,7 @@ namespace TQVaultAE.GUI.Components.Icons;
 /// Mouse cursor showing an item bitmap, with its hot spot at the centre: Windows draws and moves it, so dragging over
 /// a control costs no repaint, and the bitmap keeps its transparency.
 /// </summary>
-internal sealed partial class ItemDragCursor : IDisposable
+internal sealed class ItemDragCursor : IDisposable
 {
 	private IntPtr _handle;
 
@@ -34,25 +34,25 @@ internal sealed partial class ItemDragCursor : IDisposable
 		IntPtr icon = sized.GetHicon();
 		try
 		{
-			if (!GetIconInfo(icon, out var info))
+			if (!User32.GetIconInfo(icon, out var info))
 				return null;
 			try
 			{
 				info.fIcon = 0; // FALSE: a cursor
 				info.xHotspot = width / 2;
 				info.yHotspot = height / 2;
-				IntPtr cursor = CreateIconIndirect(ref info);
+				IntPtr cursor = User32.CreateIconIndirect(ref info);
 				return cursor == IntPtr.Zero ? null : new ItemDragCursor(cursor);
 			}
 			finally
 			{
-				DeleteObject(info.hbmColor);
-				DeleteObject(info.hbmMask);
+				Gdi32.DeleteObject(info.hbmColor);
+				Gdi32.DeleteObject(info.hbmMask);
 			}
 		}
 		finally
 		{
-			DestroyIcon(icon);
+			User32.DestroyIcon(icon);
 		}
 	}
 
@@ -61,40 +61,7 @@ internal sealed partial class ItemDragCursor : IDisposable
 		if (this._handle == IntPtr.Zero)
 			return;
 		this.Cursor.Dispose();
-		DestroyCursor(this._handle);
+		User32.DestroyCursor(this._handle);
 		this._handle = IntPtr.Zero;
 	}
-
-	/// <summary>
-	/// ICONINFO. <c>fIcon</c> is a Win32 BOOL kept as an <see cref="int"/> so the struct stays blittable
-	/// for the source-generated P/Invokes.
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	private struct IconInfo
-	{
-		public int fIcon;
-		public int xHotspot;
-		public int yHotspot;
-		public IntPtr hbmMask;
-		public IntPtr hbmColor;
-	}
-
-	[LibraryImport("user32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool GetIconInfo(IntPtr hIcon, out IconInfo pIconInfo);
-
-	[LibraryImport("user32.dll", SetLastError = true)]
-	private static partial IntPtr CreateIconIndirect(ref IconInfo icon);
-
-	[LibraryImport("user32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool DestroyIcon(IntPtr hIcon);
-
-	[LibraryImport("user32.dll", SetLastError = true)]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool DestroyCursor(IntPtr hCursor);
-
-	[LibraryImport("gdi32.dll")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool DeleteObject(IntPtr hObject);
 }

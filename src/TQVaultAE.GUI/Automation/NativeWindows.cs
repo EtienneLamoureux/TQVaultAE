@@ -123,9 +123,6 @@ internal static partial class NativeWindows
 		return result;
 	}
 
-	/// <summary>A point packed in a message parameter as Windows packs the mouse position (MAKELPARAM: x low, y high).</summary>
-	public static IntPtr MakeLParam(Point point) => (point.Y << 16) | (point.X & 0xFFFF);
-
 	/// <summary>The bounds of a window on the screen, as Windows gives them; empty when it gives none.</summary>
 	public static Rectangle WindowRect(IntPtr hwnd)
 		=> GetWindowRect(hwnd, out var r) ? Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom) : Rectangle.Empty;
@@ -197,12 +194,6 @@ internal static partial class NativeWindows
 
 	[LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
 	private static partial int GetClassName(IntPtr hWnd, [Out] char[] lpClassName, int nMaxCount);
-
-	/// <summary>Sends <paramref name="msg"/> to a window and waits for its window procedure, as Windows does for input.</summary>
-	public static IntPtr Send(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => SendMessage(hwnd, msg, wParam, lParam);
-
-	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
-	private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
 	/// <summary>Posts <paramref name="msg"/> to a window's message queue, handled by its thread's message loop.</summary>
 	public static bool Post(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => PostMessage(hwnd, msg, wParam, lParam);

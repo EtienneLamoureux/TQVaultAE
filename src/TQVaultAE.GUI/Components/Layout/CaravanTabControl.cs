@@ -1,3 +1,5 @@
+using TQVaultAE.GUI.Interop;
+
 namespace TQVaultAE.GUI.Components.Layout;
 
 /// <summary>
@@ -5,10 +7,8 @@ namespace TQVaultAE.GUI.Components.Layout;
 /// system's white tabs and strip. The selected tab is black with its text in gold, the others dark brown with light
 /// text, each tab and the page edged in the dark gold of the frames; the pages are black.
 /// </summary>
-public partial class CaravanTabControl : TabControl
+public class CaravanTabControl : TabControl
 {
-	private const int WM_SETFONT = 0x0030;
-
 	/// <summary>The font handle given to the native control, deleted when replaced.</summary>
 	private IntPtr _fontHandle;
 
@@ -54,10 +54,10 @@ public partial class CaravanTabControl : TabControl
 	{
 		var old = this._fontHandle;
 		this._fontHandle = this.Font.ToHfont();
-		var message = Message.Create(this.Handle, WM_SETFONT, this._fontHandle, 1);
+		var message = Message.Create(this.Handle, User32.WM_SETFONT, this._fontHandle, 1);
 		this.DefWndProc(ref message);
 		if (old != IntPtr.Zero)
-			DeleteObject(old);
+			Gdi32.DeleteObject(old);
 	}
 
 	protected override void Dispose(bool disposing)
@@ -65,14 +65,10 @@ public partial class CaravanTabControl : TabControl
 		base.Dispose(disposing);
 		if (this._fontHandle != IntPtr.Zero)
 		{
-			DeleteObject(this._fontHandle);
+			Gdi32.DeleteObject(this._fontHandle);
 			this._fontHandle = IntPtr.Zero;
 		}
 	}
-
-	[System.Runtime.InteropServices.LibraryImport("gdi32.dll")]
-	[return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
-	private static partial bool DeleteObject(IntPtr handle);
 
 	protected override void OnSelectedIndexChanged(EventArgs e)
 	{

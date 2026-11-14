@@ -2,6 +2,7 @@ using System.ComponentModel;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using TQVaultAE.GUI.Interop;
 using TQVaultAE.GUI.Dialogs;
 
 namespace TQVaultAE.GUI.Automation;
@@ -133,14 +134,14 @@ internal static partial class AutomationTools
 			switch (parts[0].ToLowerInvariant())
 			{
 				case "page":
-					NativeWindows.Send(scroll.Handle, WM_VSCROLL, count > 0 ? SB_PAGEDOWN : SB_PAGEUP, 0);
-					NativeWindows.Send(scroll.Handle, WM_VSCROLL, SB_ENDSCROLL, 0);
+					User32.SendMessage(scroll.Handle, WM_VSCROLL, count > 0 ? SB_PAGEDOWN : SB_PAGEUP, 0);
+					User32.SendMessage(scroll.Handle, WM_VSCROLL, SB_ENDSCROLL, 0);
 					break;
 				case "wheel":
 					// The wheel delta in the high word, the pointer (screen coordinates) over the panel's centre.
 					var center = scroll.PointToScreen(new Point(scroll.ClientSize.Width / 2, scroll.ClientSize.Height / 2));
-					NativeWindows.Send(scroll.Handle, WM_MOUSEWHEEL, (count > 0 ? -WHEEL_DELTA : WHEEL_DELTA) << 16,
-						NativeWindows.MakeLParam(center));
+					User32.SendMessage(scroll.Handle, WM_MOUSEWHEEL, (count > 0 ? -WHEEL_DELTA : WHEEL_DELTA) << 16,
+						User32.MakeLParam(center));
 					break;
 				default:
 					throw new McpException($"Unknown scroll '{request}'. Use 'page:N' or 'wheel:N'.");

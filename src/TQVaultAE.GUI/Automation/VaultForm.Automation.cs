@@ -7,6 +7,7 @@ namespace TQVaultAE.GUI.Forms;
 
 using System.Drawing;
 using System.Windows.Forms;
+using TQVaultAE.GUI.Interop;
 
 /// <summary>
 /// Debug-only access to the custom border of a TQVault form for the automation endpoint.
@@ -31,9 +32,8 @@ public partial class VaultForm
 		if (!this.DrawCustomBorder)
 			return null;
 
-		const int WM_NCRBUTTONUP = 0x00A5, HTCAPTION = 2;
 		var screen = this.PointToScreen(new Point(this.topBorderRect.Left + (this.topBorderRect.Width / 2), this.topBorderRect.Top + (this.topBorderRect.Height / 2)));
-		TQVaultAE.GUI.Automation.NativeWindows.Send(this.Handle, WM_NCRBUTTONUP, HTCAPTION, TQVaultAE.GUI.Automation.NativeWindows.MakeLParam(screen));
+		User32.SendMessage(this.Handle, (int)User32.NonClientMouseMessage.RightButtonUp, (int)User32.NonClientHitTestResult.Caption, User32.MakeLParam(screen));
 		return this.systemMenu;
 	}
 }
