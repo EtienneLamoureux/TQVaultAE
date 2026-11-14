@@ -445,50 +445,6 @@ public class StringHelperTests
 
 	#endregion
 
-	#region Eval Tests
-
-	[Theory]
-	[InlineData("2 + 2", 4)]
-	[InlineData("10 - 3", 7)]
-	[InlineData("5 * 6", 30)]
-	[InlineData("20 / 4", 5)]
-	[InlineData("2 + 3 * 4", 14)] // Standard order of operations
-	public void Eval_WithNumericExpressions_ReturnsExpectedResult(string expression, int expected)
-	{
-		// Act
-		var result = expression.Eval<int>();
-
-		// Assert
-		result.Should().Be(expected);
-	}
-
-	[Theory]
-	[InlineData("2.5 + 3.5", 6.0)]
-	[InlineData("10.0 / 4.0", 2.5)]
-	public void Eval_WithDecimalExpressions_ReturnsExpectedResult(string expression, double expected)
-	{
-		// Act
-		var result = expression.Eval<double>();
-
-		// Assert
-		result.Should().BeApproximately(expected, 0.001);
-	}
-
-	[Fact]
-	public void Eval_WithComplexExpression_ReturnsCorrectResult()
-	{
-		// Arrange
-		var expression = "(10 + 5) * 2";
-
-		// Act
-		var result = expression.Eval<int>();
-
-		// Assert
-		result.Should().Be(30);
-	}
-
-	#endregion
-
 	#region InsertAfterColorPrefix Tests
 
 	[Fact]

@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
@@ -34,14 +33,6 @@ public static partial class StringHelper
 	public static bool ContainsIgnoreCase(this Span<char> input, ReadOnlySpan<char> search)
 		=> ((ReadOnlySpan<char>)input).Contains(search, noCase);
 
-
-	#region Eval
-
-	static DataTable CheapestDotNetEval = new DataTable();
-	public static T Eval<T>(this string expression)
-		=> (T)Convert.ChangeType(CheapestDotNetEval.Compute(expression, null), typeof(T));
-
-	#endregion
 
 	/// <summary>
 	/// Tells if <paramref name="search"/> is a regex input search

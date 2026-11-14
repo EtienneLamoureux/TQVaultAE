@@ -7,6 +7,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Frozen;
 using System.Globalization;
+using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -368,7 +369,12 @@ public partial class ItemProvider
 		if (lvl is null)
 			return;
 
-		string itemLevel = lvl.ToStringValue();
+		// The item cost equations use the item level and the total attribute count.
+		var equationVariables = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
+		{
+			[itemLevelTag] = Convert.ToDouble(lvl[0], CultureInfo.InvariantCulture),
+			["totalAttCount"] = itm.attributeCount,
+		};
 		string itemCostName = itemInfo.GetString("itemCostName");
 
 		record = Database.GetRecordFromFile(itemCostName);
@@ -417,12 +423,7 @@ public partial class ItemProvider
 			if (requirements.ContainsKey(key))
 				continue;
 
-			string valueRaw = variable.ToStringValue();
-			string value = variable.ToStringValue().Replace(itemLevelTag, itemLevel);
-
-			// Added by VillageIdiot
-			// Changed to reflect Total Attribut count
-			value = value.Replace("totalAttCount", Convert.ToString(itm.attributeCount, CultureInfo.InvariantCulture));
+			string value = variable.ToStringValue();
 
 			// Changed by Bman to fix random overflow crashes
 			Variable ans = new Variable(variableKey, VariableDataType.Integer, 1);
@@ -431,10 +432,10 @@ public partial class ItemProvider
 			double tempVal = 0;
 			try
 			{
-				tempVal = value.Eval<double>();
+				tempVal = GameEquation.Evaluate(value, equationVariables);
 				tempVal = Math.Ceiling(tempVal);
 			}
-			catch (System.Data.EvaluateException)
+			catch (Exception ex) when (ex is System.Data.EvaluateException or FormatException)
 			{
 				var mess = $@"Item Property value computation failed!
 
@@ -442,8 +443,7 @@ ItemID : {itemInfo.ItemId}
 ItemLevel : {lvl.ToStringValue()}
 Variablekey : {key}
 Variablekey Raw : {keyRaw}
-VariableValue : {value} 
-VariableValue Raw : {valueRaw}
+VariableValue : {value}
 ""{value}"" can't be evaluated!
 ";
 				if (USettings.ItemDebugLevel > 0)
