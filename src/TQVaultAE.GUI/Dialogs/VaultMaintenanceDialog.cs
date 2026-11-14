@@ -72,7 +72,6 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.cancelButton.Font = FontService.GetFontLight(12F);
 		this.vaultListComboBox.Font = FontService.GetFontLight(11F);
 		this.newRadioButton.Font = FontService.GetFontLight(11.25F);
-		this.selectFunctionGroupBox.Font = FontService.GetFontLight(11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.renameRadioButton.Font = FontService.GetFontLight(11.25F);
 		this.copyRadioButton.Font = FontService.GetFontLight(11.25F);
 		this.deleteRadioButton.Font = FontService.GetFontLight(11.25F);
@@ -88,8 +87,8 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.deleteRadioButton.Text = Resources.MaintenanceRbDelete;
 		this.newRadioButton.Text = Resources.MaintenanceRbNew;
 		this.renameRadioButton.Text = Resources.MaintenanceRbRename;
+		// Not drawn (the caravan frame covers the caption): kept as the group's accessible name.
 		this.selectFunctionGroupBox.Text = Resources.MaintenanceGroup;
-		this.selectFunctionGroupBox.ForeColor = Color.White;
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
 		this.instructionsLabel.Text = Resources.MaintenanceInstructions;
@@ -115,52 +114,23 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.GetVaultList();
 	}
 
-	/// <summary>
-	/// Gets the user selected function.
-	/// </summary>
-	public VaultMaintenance Action
-	{
-		get
-		{
-			return this.action;
-		}
-	}
+	/// <summary>Gets the user selected function.</summary>
+	public VaultMaintenance Action => this.action;
+
+	/// <summary>Gets the source vault string.</summary>
+	public string? Source => this.source;
+
+	/// <summary>Gets the target vault string.</summary>
+	public string? Target => this.target;
 
 	/// <summary>
-	/// Gets the source vault string
-	/// </summary>
-	public string? Source
-	{
-		get
-		{
-			return this.source;
-		}
-	}
-
-	/// <summary>
-	/// Gets the target vault string
-	/// </summary>
-	public string? Target
-	{
-		get
-		{
-			return this.target;
-		}
-	}
-
-	/// <summary>
-	/// Override of ScaleControl which supports groupbox scaling.
+	/// The zoom grows the form's font with the controls.
 	/// </summary>
 	/// <param name="factor">SizeF for the scale factor</param>
 	/// <param name="specified">BoundsSpecified value.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
 		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
-		if (this.selectFunctionGroupBox is not null && this.selectFunctionGroupBox.Font is not null)
-		{
-			this.selectFunctionGroupBox.Font = ZoomScope.ScaleFont(this.selectFunctionGroupBox.Font, factor.Height);
-		}
-
 		base.ScaleControl(factor, specified);
 	}
 
