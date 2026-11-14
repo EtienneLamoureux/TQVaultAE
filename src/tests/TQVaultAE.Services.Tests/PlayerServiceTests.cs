@@ -35,7 +35,6 @@ public class PlayerServiceTests
 	private readonly UserSettings _userSettings;
 	private readonly Mock<IDirectoryIO> _mockDirectoryIO;
 	private readonly Mock<IItemProvider> _mockItemProvider;
-	private readonly Mock<IDatabase> _mockDatabase;
 	private readonly Mock<IGameMapService> _mockGameMapService = new();
 	private readonly Mock<ICharacterStatsService> _mockStats = new();
 	private readonly Mock<ICharacterEditService> _mockCharacterEdit = new();
@@ -76,7 +75,6 @@ public class PlayerServiceTests
 		_userSettings = new UserSettings();
 		_mockDirectoryIO = new Mock<IDirectoryIO>();
 		_mockItemProvider = new Mock<IItemProvider>();
-		_mockDatabase = new Mock<IDatabase>();
 		_mockGamePathService.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
 		_mockGamePathService.Setup(x => x.PlayerStashFileNameB).Returns("winsys.dxb");
 		_mockCharacterEdit.Setup(x => x.GetMasteries(It.IsAny<PlayerInfo>())).Returns([]);
@@ -100,7 +98,6 @@ public class PlayerServiceTests
 			_userSettings,
 			_mockDirectoryIO.Object,
 			_mockItemProvider.Object,
-			_mockDatabase.Object,
 			_mockGameMapService.Object,
 			_mockStats.Object,
 			_mockCharacterEdit.Object
@@ -384,31 +381,6 @@ public class PlayerServiceTests
 
 		// Assert
 		result.Should().BeEmpty();
-	}
-
-	/// <summary>
-	/// Test GetPlayerSaveListReadOnly returns same as GetPlayerSaveList
-	/// </summary>
-	[Fact]
-	public void GetPlayerSaveListReadOnly_ReturnsSameAsGetPlayerSaveList()
-	{
-		// Arrange
-		var characterFolders = new[] { "/Test/_PlayerA" };
-		_mockGamePathService.Setup(x => x.GetCharacterList()).Returns(characterFolders);
-		_mockGamePathService.Setup(x => x.SaveDirNameTQIT).Returns("");
-		_mockGamePathService.Setup(x => x.ArchiveDirName).Returns("ArchivedCharacters");
-		_mockGamePathService.Setup(x => x.IsCustom).Returns(false);
-		_mockGamePathService.Setup(x => x.MapName).Returns("");
-		_mockPathIO.Setup(x => x.GetFileName("/Test/_PlayerA")).Returns("_PlayerA");
-		_mockPathIO.Setup(x => x.GetFileName("")).Returns("");
-
-		// Act
-		var result = _playerService.GetPlayerSaveList();
-		var resultReadOnly = _playerService.GetPlayerSaveListReadOnly();
-
-		// Assert
-		resultReadOnly.Should().HaveCount(result.Length);
-		resultReadOnly.Should().BeEquivalentTo(result);
 	}
 
 	/// <summary>

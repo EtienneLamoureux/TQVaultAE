@@ -28,17 +28,14 @@ public class PlayerService(
 	, UserSettings userSettings
 	, IDirectoryIO directoryIO
 	, IItemProvider itemProvider
-	, IDatabase database
 	, IGameMapService gameMapService
 	, ICharacterStatsService characterStatsService
 	, ICharacterEditService characterEditService
-	, IItemModService? itemModService = null
 	, ICharacterReadOnlyService? characterReadOnlyService = null
 	, ILoadoutService? loadoutService = null
 ) : IPlayerService
 {
 	private readonly ILoadoutService? LoadoutService = loadoutService;
-	private readonly IItemModService? ItemModService = itemModService;
 	private readonly ICharacterReadOnlyService? CharacterReadOnly = characterReadOnlyService;
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
@@ -55,7 +52,6 @@ public class PlayerService(
 	private readonly UserSettings UserSettings = userSettings;
 	private readonly IDirectoryIO DirectoryIO = directoryIO;
 	private readonly IItemProvider ItemProvider = itemProvider;
-	private readonly IDatabase Database = database;
 	private readonly IGameMapService GameMapService = gameMapService;
 	private readonly ICharacterStatsService CharacterStatsService = characterStatsService;
 	private readonly ICharacterEditService CharacterEditService = characterEditService;
@@ -251,13 +247,6 @@ public class PlayerService(
 			})
 			.ToArray();
 	}
-
-	/// <summary>
-	/// Gets a list of all of the character files in the save folder.
-	/// </summary>
-	/// <returns>Read-only list of character files descriptor</returns>
-	public IReadOnlyList<PlayerSave> GetPlayerSaveListReadOnly()
-		=> GetPlayerSaveList();
 
 	public void AlterNameInPlayerFileSave(string newname, string saveFolder)
 	{

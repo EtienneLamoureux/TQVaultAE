@@ -124,55 +124,6 @@ public class ItemMovementServiceTests
 	}
 
 	/// <summary>
-	/// Test CanPlaceItem with null sack returns false
-	/// </summary>
-	[Fact]
-	public void CanPlaceItem_WithNullSack_ReturnsFalse()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-
-		// Act
-		var result = _service.CanPlaceItem(null!, item, 10, 10);
-
-		// Assert
-		result.Should().BeFalse();
-	}
-
-	/// <summary>
-	/// Test CanPlaceItem with null item returns false
-	/// </summary>
-	[Fact]
-	public void CanPlaceItem_WithNullItem_ReturnsFalse()
-	{
-		// Arrange
-		var sack = new SackCollection();
-
-		// Act
-		var result = _service.CanPlaceItem(sack, null!, 10, 10);
-
-		// Assert
-		result.Should().BeFalse();
-	}
-
-	/// <summary>
-	/// Test CanPlaceItem with valid empty sack returns true
-	/// </summary>
-	[Fact]
-	public void CanPlaceItem_WithEmptySack_ReturnsTrue()
-	{
-		// Arrange
-		var sack = new SackCollection();
-		var item = CreateItem("Item1", 0, 0, 2, 2);
-
-		// Act
-		var result = _service.CanPlaceItem(sack, item, 10, 10);
-
-		// Assert
-		result.Should().BeTrue();
-	}
-
-	/// <summary>
 	/// Test IsItemValidForStashType with null item returns false
 	/// </summary>
 	[Fact]
@@ -231,80 +182,6 @@ public class ItemMovementServiceTests
 
 		// Assert
 		result.Should().BeTrue();
-	}
-
-	/// <summary>
-	/// Test MoveItem with null item returns failed result
-	/// </summary>
-	[Fact]
-	public void MoveItem_WithNullItem_ReturnsFailedResult()
-	{
-		// Arrange
-		var destSack = new SackCollection();
-
-		// Act
-		var result = _service.MoveItem(null!, null!, destSack, new Point(0, 0));
-
-		// Assert
-		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Be("Item is null");
-	}
-
-	/// <summary>
-	/// Test MoveItem with null destination returns failed result
-	/// </summary>
-	[Fact]
-	public void MoveItem_WithNullDestination_ReturnsFailedResult()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-
-		// Act
-		var result = _service.MoveItem(item, null!, null!, new Point(0, 0));
-
-		// Assert
-		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Be("Destination sack is null");
-	}
-
-	/// <summary>
-	/// Test MoveItem with invalid position returns failed result
-	/// </summary>
-	[Fact]
-	public void MoveItem_WithInvalidPosition_ReturnsFailedResult()
-	{
-		// Arrange
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		var destSack = new SackCollection();
-
-		// Act
-		var result = _service.MoveItem(item, null!, destSack, new Point(-1, 0));
-
-		// Assert
-		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Be("Invalid destination position");
-	}
-
-	/// <summary>
-	/// Test MoveItem successfully moves item
-	/// </summary>
-	[Fact]
-	public void MoveItem_WithValidInput_MovesItem()
-	{
-		// Arrange
-		var sourceSack = new SackCollection();
-		var destSack = new SackCollection();
-		var item = CreateItem("Item1", 0, 0, 1, 1);
-		sourceSack.AddItem(item);
-
-		// Act
-		var result = _service.MoveItem(item, sourceSack, destSack, new Point(5, 5));
-
-		// Assert
-		result.Success.Should().BeTrue();
-		item.PositionX.Should().Be(5);
-		item.PositionY.Should().Be(5);
-		destSack.Count.Should().Be(1);
 	}
 
 	[Fact]

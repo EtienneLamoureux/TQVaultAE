@@ -209,21 +209,6 @@ public class PlayerInfo
 	public int CalculatedMana => this.Calculated(this.BaseMana, "characterMana");
 
 	/// <summary>
-	/// Return skills having the same skill line base.
-	/// </summary>
-	/// <param name="dbr"></param>
-	/// <returns></returns>
-	public IEnumerable<SkillRecord> GetSkillsByBaseRecordName(RecordId dbr)
-	{
-		var baseRec = PathIO.GetDirectoryName(dbr.Normalized);
-		foreach (var sk in this.SkillRecordList)
-		{
-			if (sk.skillName.StartsWith(baseRec, noCase))
-				yield return sk;
-		}
-	}
-
-	/// <summary>
 	/// Total time played in seconds
 	/// </summary>
 	public int PlayTimeInSeconds { get; set; }

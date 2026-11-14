@@ -19,17 +19,6 @@ public interface IItemMovementService
     Point FindOpenCells(SackCollection sack, int itemWidth, int itemHeight, int sackWidth, int sackHeight);
     
     /// <summary>
-    /// Validates if an item can be placed in the specified sack.
-    /// Checks both space availability and item type restrictions.
-    /// </summary>
-    /// <param name="sack">The destination sack.</param>
-    /// <param name="item">The item to place.</param>
-    /// <param name="sackWidth">Width of the sack in cells.</param>
-    /// <param name="sackHeight">Height of the sack in cells.</param>
-    /// <returns>True if the item can be placed.</returns>
-    bool CanPlaceItem(SackCollection sack, Item item, int sackWidth, int sackHeight);
-    
-    /// <summary>
     /// Checks if an item is valid for placement in a specific stash type.
     /// Relic Vault Stash only accepts artifacts, relics, charms, or formulae.
     /// </summary>
@@ -48,16 +37,6 @@ public interface IItemMovementService
     /// <returns>The item covering the cell, or null.</returns>
     Item? FindItem(SackCollection sack, Point cellLocation, Item? ignoredItem = null);
 
-    /// <summary>
-    /// Moves an item from source to destination sack.
-    /// </summary>
-    /// <param name="item">The item to move.</param>
-    /// <param name="sourceSack">The source sack.</param>
-    /// <param name="destinationSack">The destination sack.</param>
-    /// <param name="destinationPosition">The position in the destination sack.</param>
-    /// <returns>Result of the move operation.</returns>
-    ItemMoveResult MoveItem(Item item, SackCollection sourceSack, SackCollection destinationSack, Point destinationPosition);
-    
     /// <summary>
     /// Builds the place of a sack of a container, as the search shows it.
     /// </summary>

@@ -9,10 +9,9 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// Resolves items linked to a mod with that mod's database (mod data first, then the base game's).
 /// </summary>
-public class ItemModService(IDatabaseMaps maps, IDatabase database, IModLinkService modLinks) : IItemModService
+public class ItemModService(IDatabaseMaps maps, IModLinkService modLinks) : IItemModService
 {
 	private readonly IDatabaseMaps Maps = maps;
-	private readonly IDatabase Database = database;
 	private readonly IModLinkService ModLinks = modLinks;
 
 	/// <inheritdoc/>

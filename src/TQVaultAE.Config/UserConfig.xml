@@ -11,7 +11,6 @@
 	<VaultPath></VaultPath>
 	<LoadAllFiles >1</LoadAllFiles>
 	<SuppressWarnings>0</SuppressWarnings>
-	<CheckForNewVersions>0</CheckForNewVersions>
 	<AllowItemCopy>0</AllowItemCopy>
 	<AllowItemEdit>0</AllowItemEdit>
 	<TQITPath></TQITPath>

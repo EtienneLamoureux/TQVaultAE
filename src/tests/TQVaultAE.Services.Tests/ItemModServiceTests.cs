@@ -19,7 +19,6 @@ public class ItemModServiceTests
 	private static readonly RecordId ModRecord = RecordId.Create(@"records\customitems\mi\e_centurionlance.dbr");
 
 	private readonly Mock<IDatabaseMaps> _maps = new();
-	private readonly Mock<IDatabase> _database = new();
 	private readonly Mock<IModLinkService> _links = new();
 	private readonly ItemModService _service;
 	private readonly List<string?> _scopes = [];
@@ -30,9 +29,7 @@ public class ItemModServiceTests
 		this._links.Setup(l => l.FindMod(It.IsAny<string?>())).Returns<string?>(key
 			=> string.Equals(ModIdentity.NameOf(key), Shadow.Name, StringComparison.OrdinalIgnoreCase) ? Shadow : null);
 		this._maps.Setup(m => m.Use(It.IsAny<string?>())).Returns(Mock.Of<IDisposable>()).Callback<string?>(this._scopes.Add);
-		// The base game knows the base record only.
-		this._database.Setup(d => d.GetInfo(BaseRecord)).Returns(new Info(new DBRecordCollection(BaseRecord, "ArmorJewelry_Ring")));
-		this._service = new ItemModService(this._maps.Object, this._database.Object, this._links.Object);
+		this._service = new ItemModService(this._maps.Object, this._links.Object);
 	}
 
 	private static Item ItemOf(RecordId id, string? mod = null, ModOrigin origin = ModOrigin.Inherited)

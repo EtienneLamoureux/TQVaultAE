@@ -62,24 +62,6 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
     }
 
     /// <summary>
-    /// Validates if an item can be placed in the specified sack.
-    /// Checks both space availability and item type restrictions.
-    /// </summary>
-    public bool CanPlaceItem(SackCollection sack, Item item, int sackWidth, int sackHeight)
-    {
-        if (sack is null || item is null)
-            return false;
-
-        // Check if item is valid for the stash type
-        if (!IsItemValidForStashType(item, sack.StashType))
-            return false;
-
-        // Check if there's space for the item
-        var position = FindOpenCells(sack, item.Width, item.Height, sackWidth, sackHeight);
-        return position.X >= 0 && position.Y >= 0;
-    }
-
-    /// <summary>
     /// Checks if an item is valid for placement in a specific stash type.
     /// Relic Vault Stash only accepts artifacts, relics, charms, or formulae.
     /// </summary>
@@ -95,39 +77,6 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// Moves an item from source to destination sack.
-    /// </summary>
-    public ItemMoveResult MoveItem(Item item, SackCollection sourceSack, SackCollection destinationSack, Point destinationPosition)
-    {
-        if (item is null)
-            return ItemMoveResultFailed("Item is null");
-
-        if (destinationSack is null)
-            return ItemMoveResultFailed("Destination sack is null", item);
-
-        if (destinationPosition.X < 0 || destinationPosition.Y < 0)
-            return ItemMoveResultFailed("Invalid destination position", item, destinationSack);
-
-        // Remove from source sack if provided
-        if (sourceSack is not null)
-        {
-            sourceSack.RemoveItem(item);
-        }
-
-        // Set the item's position
-        item.PositionX = destinationPosition.X;
-        item.PositionY = destinationPosition.Y;
-
-        // Add to destination sack
-        destinationSack.AddItem(item);
-
-        this._log.LogDebug("Moved item {ItemId} to position ({X}, {Y})", 
-            item.BaseItemId, destinationPosition.X, destinationPosition.Y);
-
-        return ItemMoveResult.Succeeded(item, destinationSack, destinationPosition);
     }
 
     /// <inheritdoc/>
@@ -357,9 +306,6 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
 
         return null;
     }
-
-    private static ItemMoveResult ItemMoveResultFailed(string errorMessage, Item? item = null, SackCollection? destinationSack = null)
-        => ItemMoveResult.Failed(errorMessage, item, destinationSack);
 
     #endregion
 }

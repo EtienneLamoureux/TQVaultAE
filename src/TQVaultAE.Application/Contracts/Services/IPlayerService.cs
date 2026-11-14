@@ -53,19 +53,6 @@ public interface IPlayerService
 	PlayerSave[] GetPlayerSaveList();
 
 	/// <summary>
-	/// Gets a list of all of the character files in the save folder.
-	/// </summary>
-	/// <returns>Read-only list of character files descriptor</returns>
-	IReadOnlyList<PlayerSave> GetPlayerSaveListReadOnly();
-
-	/// <summary>
-	/// Alters the player name in the save file.
-	/// </summary>
-	/// <param name="newname">New player name.</param>
-	/// <param name="saveFolder">Save folder path.</param>
-	void AlterNameInPlayerFileSave(string newname, string saveFolder);
-
-	/// <summary>
 	/// Checks the name of a character about to be duplicated from <paramref name="source"/>.
 	/// </summary>
 	/// <param name="source">The character to duplicate.</param>
@@ -82,13 +69,6 @@ public interface IPlayerService
 	/// <param name="newName">The new name, validated by <see cref="ValidateNewCharacterName"/>.</param>
 	/// <returns>The new save folder, or the failure.</returns>
 	CharacterDuplicateResult DuplicateCharacter(PlayerSave source, string newName);
-
-	/// <summary>
-	/// Updates the player file path in the player collection cache after archiving/unarchiving.
-	/// </summary>
-	/// <param name="oldPath">The old file path of the player.</param>
-	/// <param name="newPath">The new file path of the player.</param>
-	void UpdatePlayerFilePath(string oldPath, string newPath);
 
 	/// <summary>
 	/// Archives a character (moves its save folder) and keys the loaded player by its new file path.

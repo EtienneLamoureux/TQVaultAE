@@ -11,13 +11,6 @@ public interface ITQDataService
 	/// <returns>string of data that was read</returns>
 	string ReadCString(BinaryReader reader);
 	/// <summary>
-	/// Reads a string from the binary stream.
-	/// Expects an integer length value followed by the actual string of the stated length.
-	/// </summary>
-	/// <param name="reader">BinaryReader instance</param>
-	/// <returns>string of data that was read</returns>
-	string ReadUTF16String(BinaryReader reader);
-	/// <summary>
 	/// Validates that the next string is a certain value and throws an exception if it is not.
 	/// </summary>
 	/// <param name="value">value to be validated</param>
@@ -73,15 +66,6 @@ public interface ITQDataService
 	/// <param name="offset">Offset that will be advanced by the method</param>
 	/// <returns>The decoded string</returns>
 	string ReadCString(ReadOnlySpan<byte> data, ref int offset);
-
-	/// <summary>
-	/// Reads a length-prefixed UTF-16 string from a span.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>The decoded string</returns>
-	string ReadUTF16String(ReadOnlySpan<byte> data, ref int offset);
 
 	/// <summary>
 	/// Validates that the next string matches the expected value using span-based parsing.

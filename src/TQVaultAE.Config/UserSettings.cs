@@ -41,9 +41,6 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(SuppressWarnings))]
 	public bool SuppressWarnings { get; set; } = false;
 
-	[XmlElement(ElementName = nameof(CheckForNewVersions))]
-	public bool CheckForNewVersions { get; set; } = false;
-
 	[XmlElement(ElementName = nameof(AllowItemCopy))]
 	public bool AllowItemCopy { get; set; } = false;
 
@@ -248,12 +245,6 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(UILanguage))]
 	public string? UILanguage { get; set; }
 
-	/// <summary>
-	/// https://github.com/EtienneLamoureux/TQVaultAE
-	/// </summary>
-	[XmlElement(ElementName = nameof(UpdateURL))]
-	public string UpdateURL { get; set; } = "https://github.com/EtienneLamoureux/TQVaultAE";
-	
 	[XmlElement(ElementName = nameof(ShowSkillLevel))]
 	public bool ShowSkillLevel { get; set; }
 	

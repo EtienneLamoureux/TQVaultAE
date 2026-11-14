@@ -45,11 +45,6 @@ public interface IUserNotifier
 	/// <param name="exception"></param>
 	/// <param name="message"></param>
 	ShowMessageUserEventHandlerEventArgs ShowWarning(string message, Exception? exception = null, ShowMessageButtons Buttons = ShowMessageButtons.OKCancel);
-	/// <summary>
-	/// Display error to user
-	/// </summary>
-	/// <param name="message"></param>
-	ShowMessageUserEventHandlerEventArgs ShowInfo(string message, ShowMessageButtons Buttons = ShowMessageButtons.OK);
 }
 
 /// <summary>

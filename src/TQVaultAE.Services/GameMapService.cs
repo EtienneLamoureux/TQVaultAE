@@ -123,10 +123,6 @@ public class GameMapService(
 		=> string.Equals(System.IO.Path.GetFullPath(a), System.IO.Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
 
 	/// <inheritdoc/>
-	public bool UsesActiveMap(PlayerSave save)
-		=> GameMaps.Same(this.MapFor(save), this.ActiveMap);
-
-	/// <inheritdoc/>
 	public bool ActivateFor(PlayerSave save)
 	{
 		this.Refresh(save);

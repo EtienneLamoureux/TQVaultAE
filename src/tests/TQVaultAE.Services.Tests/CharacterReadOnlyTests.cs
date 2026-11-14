@@ -282,7 +282,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 		var service = new PlayerService(new Mock<ILogger<PlayerService>>().Object, this._session, Mock.Of<IItemDatabaseService>()
 			, Mock.Of<IPlayerCollectionProvider>(), Mock.Of<IStashService>(), Mock.Of<IGameFileService>(), this._gamePath.Object
 			, Mock.Of<ITranslationService>(), Mock.Of<ITQDataService>(), Mock.Of<ITagService>(), this._fileIO, new PathIO()
-			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IDatabase>(), Mock.Of<IGameMapService>()
+			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IGameMapService>()
 			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>());
 
 		service.GetModifiedPlayers().Should().BeEmpty();
@@ -324,7 +324,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 		var service = new PlayerService(new Mock<ILogger<PlayerService>>().Object, this._session, Mock.Of<IItemDatabaseService>()
 			, Mock.Of<IPlayerCollectionProvider>(), Mock.Of<IStashService>(), gameFiles.Object, this._gamePath.Object
 			, Mock.Of<ITranslationService>(), Mock.Of<ITQDataService>(), Mock.Of<ITagService>(), this._fileIO, new PathIO()
-			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IDatabase>(), Mock.Of<IGameMapService>()
+			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IGameMapService>()
 			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>(), characterReadOnlyService: this._service);
 
 		var result = service.DuplicateCharacter(this.Save(), "HeroB");

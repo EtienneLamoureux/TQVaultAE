@@ -103,11 +103,6 @@ public interface IGameMapService
 	PlayerSave? CharacterShowing(string sharedStashFile, IEnumerable<PlayerSave> characters, PlayerSave? selected);
 
 	/// <summary>
-	/// True when a character is played with the active map.
-	/// </summary>
-	bool UsesActiveMap(PlayerSave save);
-
-	/// <summary>
 	/// Updates a listed character after its link changed: its mod and its label.
 	/// </summary>
 	void Refresh(PlayerSave save);
