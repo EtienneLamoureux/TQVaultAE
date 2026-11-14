@@ -176,29 +176,6 @@ public class BitmapService : IBitmapService
 	/// Loads the raw data and try to convert it to a bitmap
 	/// </summary>
 	/// <param name="data">raw image data</param>
-	/// <param name="offset">offset into the raw data</param>
-	/// <param name="count">number of bytes to read</param>
-	/// <returns>converted bitmap</returns>
-	private Bitmap LoadFromMemory(byte[] data, int offset, int count)
-	{
-		ArgumentNullException.ThrowIfNull(data);
-
-		if (offset < 0 || offset > data.Length)
-			throw new ArgumentOutOfRangeException(nameof(offset));
-
-		if (count < 0 || (data.Length - offset) < count)
-			throw new ArgumentOutOfRangeException(nameof(count));
-
-		byte[] buffer = new byte[count];
-		Buffer.BlockCopy(data, offset, buffer, 0, count);
-
-		return LoadFromMemory(buffer);
-	}
-
-	/// <summary>
-	/// Loads the raw data and try to convert it to a bitmap
-	/// </summary>
-	/// <param name="data">raw image data</param>
 	/// <returns>converted bitmap</returns>
 	private Bitmap LoadFromMemory(byte[] data)
 	{

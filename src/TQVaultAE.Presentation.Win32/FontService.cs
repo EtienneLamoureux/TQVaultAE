@@ -213,9 +213,6 @@ public class FontService : IFontService
 	public Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b)
 		=> this.Get(true, fontSize, fontStyle, unit, b);
 
-	public Font GetFontLight(float fontSize)
-		=> this.Get(true, fontSize);
-
 	public Font GetFontLight(float fontSize, float? scale = null)
 		=> this.Get(true, fontSize * (scale ?? 1F));
 

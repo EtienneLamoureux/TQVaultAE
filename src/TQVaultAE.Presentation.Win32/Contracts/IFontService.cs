@@ -14,7 +14,6 @@ public interface IFontService
 	Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit);
 	Font GetFont(float fontSize, FontStyle fontStyle, GraphicsUnit unit, byte b);
 	Font GetFont(float fontSize, GraphicsUnit unit);
-	Font GetFontLight(float fontSize);
 	Font GetFontLight(float fontSize, float? scale = null);
 	Font GetFontLight(float fontSize, FontStyle fontStyle, float? scale = null);
 	Font GetFontLight(float fontSize, FontStyle fontStyle, GraphicsUnit unit);
