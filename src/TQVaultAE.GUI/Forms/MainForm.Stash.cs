@@ -25,8 +25,6 @@ public partial class MainForm
 		// New location in bottom right of the Main Form.
 		// Align to playerPanel
 
-		this.stashPanel.DrawAsGroupBox = false;
-
 		this.stashPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.stashPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 		this.stashPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);

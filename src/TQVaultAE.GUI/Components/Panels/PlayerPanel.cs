@@ -40,7 +40,6 @@ public class PlayerPanel : VaultPanel
 		: base(dragInfo, numberOfBags, panel2Size, 2, AutoMoveLocation.Player, services)
 	{
 		this.Text = Resources.PlayerPanelNoPlayer;
-		this.NoPlayerString = Resources.PlayerPanelNoPlayer;
 
 		this.TabStop = false;
 

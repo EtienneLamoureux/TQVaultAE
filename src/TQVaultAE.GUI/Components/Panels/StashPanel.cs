@@ -160,7 +160,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.BagSackPanel.ShownStash = () => this.ShownStash;
 
 		this.Text = Resources.StashPanelText;
-		this.NoPlayerString = Resources.StashPanelText;
 		this.Paint += new PaintEventHandler(this.PaintCallback);
 
 		this.BagSackPanel.MaxSacks = 1;
@@ -481,8 +480,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	protected override void UpdateText()
 	{
 		this.Text = string.Empty;
-		if (this.DrawAsGroupBox)
-			this.Text = Resources.StashPanelText;
 
 		// Player was changed, force an update to the player info panel.
 		this.DisplayPlayerInfoLastName = null;
@@ -561,7 +558,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">PaintEventArgs data</param>
-	protected new void PaintCallback(object? sender, PaintEventArgs e)
+	private void PaintCallback(object? sender, PaintEventArgs e)
 	{
 		var rect = this.GetBackgroundRect();
 		if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL && this.equipmentBackground is not null && rect.Width > 0 && rect.Height > 0)
@@ -572,7 +569,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		}
 		else if (this.background is not null)
 			e.Graphics.DrawImage(this.background, rect);
-		base.PaintCallback(sender, e);
 
 		// Update the player info panel
 		DisplayPlayerInfo();

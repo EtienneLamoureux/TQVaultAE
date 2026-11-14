@@ -95,7 +95,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		// VaultPanel
 		// 
 		this.BackColor = System.Drawing.Color.Transparent;
-		this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
 		this.ResumeLayout(false);
 	}
 
@@ -122,8 +121,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		this.DragInfo = dragInfo;
 		this.AutoMoveLocation = autoMoveLocation;
 		this.Text = Resources.PlayerPanelNoVault;
-		this.NoPlayerString = Resources.PlayerPanelNoVault;
-		this.DrawAsGroupBox = false;
 
 		this.PanelCells = panelSize;
 		this.hasSortRoom = numberOfAutosortButtons > 0;
@@ -246,11 +243,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	public EventHandler<SackPanelEventArgs>? OnNewItemHighlighted { get; set; }
 
 	/// <summary>
-	/// Gets or sets the string used when no player is set.
-	/// </summary>
-	public string NoPlayerString { get; set; }
-
-	/// <summary>
 	/// Gets or sets the AutoMoveLocation for this panel.
 	/// </summary>
 	public AutoMoveLocation AutoMoveLocation { get; protected set; }
@@ -269,11 +261,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	/// Gets or sets the bag offset.  Vaults are 1 based, player is 0 based.
 	/// </summary>
 	public int BagPanelOffset { get; set; }
-
-	/// <summary>
-	/// Gets or sets a value indicating whether this form is rendered as a groupbox or panel.
-	/// </summary>
-	public bool DrawAsGroupBox { get; set; }
 
 	/// <summary>
 	/// return the vault instance if it's a vault
@@ -376,19 +363,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		}
 	}
 
-	/// <summary>
-	/// Callback for the Paint event
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">PaintEventArgs data</param>
-	public void PaintCallback(object? sender, PaintEventArgs e)
-	{
-		if (this.DrawAsGroupBox)
-		{
-			GroupBoxRenderer.DrawGroupBox(e.Graphics, ClientRectangle, this.Text, this.Font, System.Windows.Forms.VisualStyles.GroupBoxState.Normal);
-		}
-	}
-
 	#endregion VaultPanel Public Methods
 
 	#region VaultPanel Protected Methods
@@ -445,20 +419,10 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	}
 
 	/// <summary>
-	/// Updates the text for the group box when the player is changed.
+	/// Updates the panel when the player is changed: the panel shows no caption.
 	/// </summary>
 	protected virtual void UpdateText()
-	{
-		this.Text = string.Empty;
-		if (this.DrawAsGroupBox)
-		{
-			this.Text = this.NoPlayerString;
-			if (this.player is not null)
-			{
-				this.Text = this.player.PlayerName;
-			}
-		}
-	}
+		=> this.Text = string.Empty;
 
 	private void ImportFromFileClicked(object? sender, EventArgs e)
 	{

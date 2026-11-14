@@ -27,8 +27,6 @@ public partial class MainForm
 	{
 		this.vaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.Vault, this.Services);
 
-		this.vaultPanel.DrawAsGroupBox = false;
-
 		this.vaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.vaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
 		this.vaultPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
@@ -46,7 +44,6 @@ public partial class MainForm
 	private void CreateSecondaryVaultPanel(int numBags)
 	{
 		this.secondaryVaultPanel = new VaultPanel(this.DragInfo, numBags, new Size(18, 20), 1, AutoMoveLocation.SecondaryVault, this.Services);
-		this.secondaryVaultPanel.DrawAsGroupBox = false;
 
 		this.secondaryVaultPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
 		this.secondaryVaultPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
