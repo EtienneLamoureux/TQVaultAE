@@ -170,10 +170,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.background = this.EquipmentBackground = Images.equipment_bg_and_char;
 		this.StashBackground = Images.caravan_bg;
 
-		// Set up the inital font size
-		if (UIService.FontZoom != 1.0F)
-			this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.FontZoom, this.Font.Style);
-
 		// The sort button of the stash tabs, placed by LayOut. The base panel makes none (it keeps the trash panel's settings).
 		var sortButton = this.NewSortButton(0, true, mirrored: true);
 		this.AutoSortButtons.Add(sortButton);

@@ -43,7 +43,6 @@ public class PlayerPanel : VaultPanel
 		this.NoPlayerString = Resources.PlayerPanelNoPlayer;
 
 		this.TabStop = false;
-		this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.FontZoom, this.Font.Style);
 
 		this.BagPanelOffset = 1; // bag panel starts with bag #1
 		this.mainSackPanel = new SackPanel(panel1Size.Width, panel1Size.Height, this.DragInfo, AutoMoveLocation.Player, services);
