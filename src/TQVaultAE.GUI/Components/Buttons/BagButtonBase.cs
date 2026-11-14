@@ -204,23 +204,6 @@ public class BagButtonBase : Panel
 	#endregion BagButton Properties
 
 	/// <summary>
-	/// Tooltip callback that is used to display a tooltip with the bag's contents.
-	/// </summary>
-	/// <param name="windowHandle">window handle for parent</param>
-	/// <returns>string with the bag's contents</returns>
-	public void ToolTipCallback(int windowHandle)
-	{
-		// see if this is us
-		if (this.Handle.ToInt32() == windowHandle)
-		{
-			// yep.
-			var temp = this.getToolTip;
-			if (temp is not null)
-				temp(this);
-		}
-	}
-
-	/// <summary>
 	/// Sets the background bitmaps for the BagButton
 	/// </summary>
 	public virtual void CreateBackgroundGraphics()

@@ -389,26 +389,6 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		}
 	}
 
-	/// <summary>
-	/// Tooltip callback for displaying the bag summary
-	/// </summary>
-	/// <param name="windowHandle">Window handle</param>
-	/// <returns>String containing the tooltip text</returns>
-	public virtual void ToolTipCallback(int windowHandle)
-	{
-		// check the bag buttons
-		if (this.BagButtons is not null && this.BagButtons.Count > 0)
-		{
-			foreach (BagButtonBase button in this.BagButtons)
-			{
-				if (button is not null)
-				{
-					button.ToolTipCallback(windowHandle);
-				}
-			}
-		}
-	}
-
 	#endregion VaultPanel Public Methods
 
 	#region VaultPanel Protected Methods

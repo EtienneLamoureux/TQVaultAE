@@ -83,16 +83,6 @@ public class PlayerPanel : VaultPanel
 	}
 
 	/// <summary>
-	/// Tooltip callback for displaying the bag summary
-	/// </summary>
-	/// <param name="windowHandle">Window handle</param>
-	/// <returns>String containing the tooltip text</returns>
-	public override void ToolTipCallback(int windowHandle)
-	{
-		base.ToolTipCallback(windowHandle);
-	}
-
-	/// <summary>
 	/// Creates a new Autosort button
 	/// </summary>
 	/// <param name="buttonNumber">Number of the autosort button we are creating</param>

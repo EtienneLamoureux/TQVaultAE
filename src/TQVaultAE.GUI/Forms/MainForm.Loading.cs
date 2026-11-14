@@ -158,25 +158,6 @@ public partial class MainForm
 		this.Activate();
 	}
 
-
-	/// <summary>
-	/// Tooltip callback
-	/// </summary>
-	/// <param name="windowHandle">handle of the main window form</param>
-	/// <returns>tooltip string</returns>
-	private void ToolTipCallback(int windowHandle)
-	{
-		this.vaultPanel.ToolTipCallback(windowHandle);
-		this.playerPanel.ToolTipCallback(windowHandle);
-		this.stashPanel.ToolTipCallback(windowHandle);
-		this.secondaryVaultPanel.ToolTipCallback(windowHandle);
-
-		// Changed by VillageIdiot
-		// If we are dragging something around, clear the tooltip and text box.
-		if (this.DragInfo.IsActive)
-			this.NotificationText.Text = string.Empty;
-	}
-
 	#endregion
 
 	#region Game Resources
