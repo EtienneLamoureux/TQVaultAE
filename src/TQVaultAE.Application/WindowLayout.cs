@@ -47,13 +47,6 @@ public static class WindowLayout
 			client.Height + Math.Max(0, location.Y + content.Height - area.Bottom));
 
 	/// <summary>
-	/// The largest zoom at which <paramref name="design"/> (a size in design pixels) at <paramref name="dpiScale"/> times
-	/// the zoom still fits inside <paramref name="limit"/>.
-	/// </summary>
-	public static float LargestZoom(Size design, float dpiScale, Size limit)
-		=> Math.Min(limit.Width / (design.Width * dpiScale), limit.Height / (design.Height * dpiScale));
-
-	/// <summary>
 	/// <paramref name="size"/>, cut to <paramref name="limit"/> on each side that exceeds it.
 	/// </summary>
 	public static Size Within(Size size, Size limit)

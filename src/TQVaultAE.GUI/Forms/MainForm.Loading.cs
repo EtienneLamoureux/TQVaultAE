@@ -324,7 +324,7 @@ public partial class MainForm
 		if (characterName == Resources.MainFormSelectCharacter)
 			characterName = string.Empty;
 
-		return new SessionConfiguration(vaultName, characterName, UIService.Zoom);
+		return new SessionConfiguration(vaultName, characterName, this.NominalZoom);
 	}
 
 	/// <summary>

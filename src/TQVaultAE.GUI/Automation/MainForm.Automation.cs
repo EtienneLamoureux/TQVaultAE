@@ -25,8 +25,11 @@ public partial class MainForm
 
 	internal UserSettings AutomationSettings => this.USettings;
 
-	/// <summary>The largest client size Windows lets the window take, and the largest zoom that fits it.</summary>
-	internal (Size MaxClientSize, float LargestZoom) AutomationZoomLimit => (this.MaxClientSize, this.LargestZoom());
+	/// <summary>The largest client size Windows lets the window take, and the largest zoom step that fits it.</summary>
+	internal (Size MaxClientSize, int LargestStep) AutomationZoomLimit => (this.MaxClientSize, this.LargestStep());
+
+	/// <summary>The window's zoom step.</summary>
+	internal int AutomationZoomStep => this.ZoomStep;
 
 	/// <summary>Gets the table that lays out the vault, player and stash panels.</summary>
 	internal TableLayoutPanel AutomationLayoutTable => this.tableLayoutPanelMain;

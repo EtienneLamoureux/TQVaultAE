@@ -12,7 +12,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "zoom", Destructive = true)]
-	[Description("Zooms the main window like its keyboard shortcuts: 'in' (Ctrl +, +10 %), 'out' (Ctrl -, -10 %) or 'reset' (Ctrl Home, 100 %). Returns the zoom, the DPI factor, the resulting scale and the client size. The zoom is saved to UserConfig.xml like a user zoom: end with 'reset'.")]
+	[Description("Zooms the main window like its keyboard shortcuts: 'in' (Ctrl +, +10 %), 'out' (Ctrl -, -10 %) or 'reset' (Ctrl Home, 100 %). Returns the zoom step (0 to 16, nominal zoom 0.4 to 2 by 0.1), its nominal zoom, the item cell size in pixels, the effective zoom (the cell over the design cell without the DPI), the DPI factor, the resulting scale and the client size. The zoom is saved to UserConfig.xml like a user zoom: end with 'reset'.")]
 	public static string Zoom([Description("in, out or reset.")] string step)
 		=> AutomationHost.OnUi(main =>
 		{
@@ -26,7 +26,16 @@ internal static partial class AutomationTools
 
 			main.AutomationZoom(delta);
 			var ui = main.Services.UIService;
-			return Serialize(new { zoom = ui.Zoom, dpiScale = ui.DpiScale, scale = ui.Scale, clientSize = new { main.ClientSize.Width, main.ClientSize.Height } });
+			return Serialize(new
+			{
+				step = main.AutomationZoomStep,
+				nominalZoom = main.NominalZoom,
+				cell = ui.ItemUnitSize,
+				zoom = ui.Zoom,
+				dpiScale = ui.DpiScale,
+				scale = ui.Scale,
+				clientSize = new { main.ClientSize.Width, main.ClientSize.Height },
+			});
 		});
 
 	[McpServerTool(Name = "control_tree", ReadOnly = true)]
@@ -426,7 +435,11 @@ internal static partial class AutomationTools
 				// Windows lets it take and the largest zoom that fits it (a zoom in stops there).
 				windowRect = NativeWindowRect(main.Handle),
 				maxClientSize = new { main.AutomationZoomLimit.MaxClientSize.Width, main.AutomationZoomLimit.MaxClientSize.Height },
-				largestZoom = main.AutomationZoomLimit.LargestZoom,
+				step = main.AutomationZoomStep,
+				nominalZoom = main.NominalZoom,
+				cell = ui.ItemUnitSize,
+				largestStep = main.AutomationZoomLimit.LargestStep,
+				largestZoom = TQVaultAE.Application.ZoomSteps.Nominal(main.AutomationZoomLimit.LargestStep),
 				// The window sizes a resize by the user is kept between.
 				resizeBounds = new
 				{

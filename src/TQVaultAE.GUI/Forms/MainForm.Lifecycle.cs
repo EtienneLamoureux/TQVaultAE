@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application;
 using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Application.Results;
 using TQVaultAE.GUI.Infrastructure;
@@ -315,9 +316,8 @@ public partial class MainForm
 	/// </summary>
 	protected override void OnDpiChanged(DpiChangedEventArgs e)
 	{
-		var zoom = UIService.Zoom;
 		UIService.DpiScale = e.DeviceDpiNew / UIService.DESIGNDPI;
-		UIService.Scale = zoom * UIService.DpiScale;
+		UIService.Scale = ZoomSteps.Scale(this.ZoomStep, UIService.DpiScale);
 		this.Log.LogDebug("DPI {Old} -> {New}: scale {Scale}", e.DeviceDpiOld, e.DeviceDpiNew, UIService.Scale);
 
 		Tooltips.ItemTooltip.HideTooltip();
@@ -328,12 +328,13 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Gives the main form <paramref name="zoom"/>, then the fonts set in code and the window's size at that zoom.
+	/// Gives the main form the zoom of <paramref name="zoomStep"/>, then the fonts set in code and the window's size at that
+	/// zoom.
 	/// </summary>
-	/// <param name="zoom">The zoom, an absolute value (1 for the design size).</param>
-	protected override void ScaleForm(float zoom)
+	/// <param name="zoomStep">The zoom step (<see cref="ZoomSteps.Reset"/> for the design size).</param>
+	protected override void ScaleForm(int zoomStep)
 	{
-		base.ScaleForm(zoom);
+		base.ScaleForm(zoomStep);
 
 		// A link label does not scale its font with the zoom by itself.
 		this.ApplyHighlightLabelFont();
@@ -357,9 +358,7 @@ public partial class MainForm
 	{
 		if (this.WindowState == FormWindowState.Normal)
 		{
-			// A maximize and restore gives back the zoom within float noise (0.99997): not a pixel less for it.
-			var zoom = MathF.Round(UIService.Zoom, 3);
-			var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, zoom * UIService.DpiScale);
+			var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.Scale);
 			client = TQVaultAE.Application.WindowLayout.GrowToFit(
 				client, this.ContentAreaOf(client), this.mainView.Location, this.tableLayoutPanelMain.PreferredSize);
 
@@ -434,7 +433,7 @@ public partial class MainForm
 		// The window and its panels are built at zoom 1, then take the user's zoom as a live zoom gives it
 		// (ApplyStartupZoom): every control then follows the zoom the same way, so the content keeps the room the zoom 1
 		// layout leaves it inside the window, and a reset gives back the layout of a start at zoom 1.
-		this.startupZoom = this.InitialZoom(workingArea);
+		this.startupStep = this.InitialStep(workingArea);
 
 		this.ScaleOnResize = false;
 
@@ -442,7 +441,7 @@ public partial class MainForm
 
 		this.ScaleOnResize = true;
 
-		UIService.Scale = UIService.DpiScale;
+		UIService.Scale = ZoomSteps.Scale(ZoomSteps.Reset, UIService.DpiScale);
 
 		// The height / width ratio a resize or a maximize keeps.
 		this.FormDesignRatio = (float)this.Height / (float)this.Width;
@@ -451,7 +450,7 @@ public partial class MainForm
 	/// <summary>
 	/// The zoom the window takes once built at zoom 1 (<see cref="SetupFormSize"/>).
 	/// </summary>
-	private float startupZoom = 1.0F;
+	private int startupStep = ZoomSteps.Reset;
 
 	/// <summary>
 	/// Places the window, before it is created, on a monitor at the DPI Windows Forms laid the designer out at (the
@@ -507,8 +506,8 @@ public partial class MainForm
 	{
 		this.KeepZoomSnapshot();
 
-		if (this.startupZoom != 1.0F)
-			this.ScaleForm(this.startupZoom);
+		if (this.startupStep != ZoomSteps.Reset)
+			this.ScaleForm(this.startupStep);
 		else
 			this.SizeToZoom();
 

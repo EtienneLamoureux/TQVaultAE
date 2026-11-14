@@ -7,6 +7,7 @@
 /// Abstract class used for constructing TQVault themed forms.
 /// </summary>
 
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.KeyBinds;
@@ -54,17 +55,26 @@ public partial class VaultForm
 		=> this.zoomSnapshot = ZoomSnapshot.Take(this, UIService.Scale);
 
 	/// <summary>
-	/// Gives the window <paramref name="zoom"/> (the DPI is applied on top of it: UIService.Scale = zoom * DpiScale) and
-	/// saves it. The layout kept at zoom 1 is given back, then scaled once by the zoom: the layout is the same whatever
-	/// the zooms before, and a reset gives back the layout at zoom 1.
+	/// Gets the window's zoom step (<see cref="ZoomSteps"/>): its scale is the step's whole cell size over the design cell.
 	/// </summary>
-	/// <param name="zoom">The zoom, an absolute value (1 for the design size).</param>
-	protected virtual void ScaleForm(float zoom)
+	protected int ZoomStep { get; private set; } = ZoomSteps.Reset;
+
+	/// <summary>Gets the nominal zoom of <see cref="ZoomStep"/> (0.4 to 2 by 0.1): the zoom saved.</summary>
+	internal float NominalZoom => ZoomSteps.Nominal(this.ZoomStep);
+
+	/// <summary>
+	/// Gives the window the zoom of <paramref name="zoomStep"/> and saves it. Its scale is the step's cell size over the
+	/// design cell, on top of the DPI. The layout kept at zoom 1 is given back, then scaled once by the new scale: the
+	/// layout is the same whatever the zooms before, and a reset gives back the layout at zoom 1.
+	/// </summary>
+	/// <param name="zoomStep">The zoom step (<see cref="ZoomSteps.Reset"/> for the design size).</param>
+	protected virtual void ScaleForm(int zoomStep)
 	{
 		float previous = UIService.Scale;
-		UIService.Scale = zoom * UIService.DpiScale;
+		this.ZoomStep = Math.Clamp(zoomStep, 0, ZoomSteps.Count - 1);
+		UIService.Scale = ZoomSteps.Scale(this.ZoomStep, UIService.DpiScale);
 
-		if (zoom == 1.0F)
+		if (this.ZoomStep == ZoomSteps.Reset)
 		{
 			// Reset the border graphics to the originals.
 			this.topBorder = Images.BorderTop;
@@ -100,7 +110,7 @@ public partial class VaultForm
 				this.Scale(new SizeF(factor, factor));
 		}
 
-		USettings.Scale = UIService.Zoom;
+		USettings.Scale = this.NominalZoom;
 		USettings.Save();
 
 		RefreshNormalizeBox();
@@ -121,64 +131,48 @@ public partial class VaultForm
 
 		if (this.ScaleOnResize)
 		{
-			float scale;
-			if (e.ResizeDelta == 1.0F)
-				scale = e.ResizeDelta;
-			else
-				// Without the float noise of the steps added (1.0000001 after zooms out and back in): the layout depends on
-				// the zoom alone, and 2.5000002 pixels rounded to 3 where the zoom itself gives 2.
-				scale = MathF.Round(UIService.Zoom + e.ResizeDelta, 2);
-
-			if (scale < 0.39F || scale > 2.01F)
+			int step = e.ResizeDelta == 1.0F ? ZoomSteps.Reset : this.ZoomStep + Math.Sign(e.ResizeDelta);
+			if (step < 0 || step >= ZoomSteps.Count)
 				return;
 
 			// A zoom in stops where the window would be larger than Windows lets it be: Windows would cut it behind the
 			// layout's back, and the sizes the next zooms start from would be wrong.
-			if (e.ResizeDelta > 0.0F && e.ResizeDelta != 1.0F && scale > this.LargestZoom() + ZoomTolerance)
+			if (e.ResizeDelta > 0.0F && e.ResizeDelta != 1.0F && step > this.LargestStep())
 				return;
 
-			this.ScaleForm(scale);
+			this.ScaleForm(step);
 		}
 
 		this.LastFormSize = this.Size;
 	}
 
 	/// <summary>
-	/// The zoom saved from the last session, lowered (and saved) when the window would not fit the working area at it.
+	/// The zoom step of the zoom saved from the last session (the nearest step: a drag of an older version left any
+	/// zoom), lowered when the window would not fit the working area or what Windows lets a window be; saved when it
+	/// changed.
 	/// </summary>
-	protected float InitialZoom(Rectangle workingArea)
+	protected int InitialStep(Rectangle workingArea)
 	{
 		// The working area is in screen pixels, the normal size in design pixels.
+		var design = new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
 		float dpi = UIService.DpiScale;
+		int step = ZoomSteps.Nearest(USettings.Scale);
 
 		// If screen is smaller than NORMAL_FORM sizes, adjust scaling (mostly at first run)
 		if (workingArea.Width < NORMAL_FORMWIDTH * dpi || workingArea.Height < NORMAL_FORMHEIGHT * dpi)
-		{
-			var initialScale = Math.Min(
-				Convert.ToSingle(workingArea.Width) / (NORMAL_FORMWIDTH * dpi)
-				, Convert.ToSingle(workingArea.Height) / (NORMAL_FORMHEIGHT * dpi)
-			);
-
-			if (USettings.Scale > initialScale)
-			{
-				USettings.Scale = initialScale;
-				USettings.Save();
-			}
-		}
+			step = Math.Min(step, ZoomSteps.LargestFitting(design, dpi, workingArea.Size));
 
 		// Nor larger than Windows lets a window be (a zoom saved on a larger monitor, or by a version without the limit).
-		float largest = this.LargestZoom();
-		if (USettings.Scale > largest + ZoomTolerance)
+		step = Math.Min(step, this.LargestStep());
+
+		if (ZoomSteps.Nominal(step) != USettings.Scale)
 		{
-			USettings.Scale = largest;
+			USettings.Scale = ZoomSteps.Nominal(step);
 			USettings.Save();
 		}
 
-		return USettings.Scale;
+		return step;
 	}
-
-	/// <summary>The float noise a zoom step leaves (1.3000001): not a reason to refuse it.</summary>
-	private const float ZoomTolerance = 0.0001F;
 
 	/// <summary>
 	/// The largest client size Windows lets the window take: it cuts a larger size it is given, whatever the layout
@@ -195,11 +189,10 @@ public partial class VaultForm
 	}
 
 	/// <summary>
-	/// The largest zoom at which the window at its design size fits <see cref="MaxClientSize"/>.
+	/// The largest zoom step at which the window at its design size fits <see cref="MaxClientSize"/>.
 	/// </summary>
-	protected float LargestZoom()
-		=> TQVaultAE.Application.WindowLayout.LargestZoom(
-			new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.MaxClientSize);
+	protected int LargestStep()
+		=> ZoomSteps.LargestFitting(new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.MaxClientSize);
 
 	/// <summary>
 	/// Handler for the ResizeBegin event.  Used for handling the maximize and minimize functions.
@@ -294,6 +287,9 @@ public partial class VaultForm
 		this.PlaceButtons();
 	}
 
+	/// <summary>The zoom step before the window was maximized, given back when it is restored.</summary>
+	private int? stepBeforeMaximize;
+
 	protected virtual void DoResizeEndCallback(object? sender, EventArgs e, bool fromMinimizedMaximized = false)
 	{
 		// Dragging the form will trigger this event.
@@ -304,30 +300,36 @@ public partial class VaultForm
 		if (this.ScaleOnResize)
 		{
 			Size resizeTo = this.LastFormSize;
-			// Scale the internal controls to the new size, from the width as a zoom does: the main window may be taller
-			// than its design ratio, grown to fit its content.
-			float scalingFactor = (float)this.Size.Width / (float)resizeTo.Width;
-
-			// Reset scaling to 1.0 if resize from minimize/maximize to normal with its modifier held (Shift).
-			if (fromMinimizedMaximized)
+			int step;
+			if (this.WindowState == FormWindowState.Maximized)
 			{
+				// Maximized: the largest step whose window fits, the margin left around it. The step before is given
+				// back by the restore.
+				this.stepBeforeMaximize = this.ZoomStep;
+				step = ZoomSteps.LargestFitting(new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.ClientSize);
+			}
+			else if (this.WindowState == FormWindowState.Minimized)
+				step = this.ZoomStep;
+			else if (fromMinimizedMaximized)
+			{
+				// Restored: the step it had before the maximize; zoom 1 with the reset modifier held (Shift).
 				var held = this.Services.KeyBinds.Get(KeyBindAction.ResetZoomOnRestore, 0);
-				if (!held.IsNone && KeyBindInput.ToModifiers(Control.ModifierKeys).HasFlag(held.Modifiers))
-				{
-					resizeTo = new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
-					scalingFactor = 1.0F;
-				}
+				bool reset = !held.IsNone && KeyBindInput.ToModifiers(Control.ModifierKeys).HasFlag(held.Modifiers);
+				step = reset ? ZoomSteps.Reset : this.stepBeforeMaximize ?? this.ZoomStep;
+				this.stepBeforeMaximize = null;
+			}
+			else
+			{
+				// A resize by the user: the step nearest to the zoom of the new width, from the width as a zoom does (the
+				// main window may be taller than its design ratio, grown to fit its content); the window then takes the
+				// step's size.
+				float zoom = UIService.Zoom * this.Size.Width / resizeTo.Width;
+				step = Math.Min(ZoomSteps.Nearest(zoom), this.LargestStep());
 			}
 
 			// Set it back to the original size since the Scale() call in ScaleForm() will also resize the form.
 			this.Size = resizeTo;
-
-			// The zoom the new width gives (a factor of 1 resets the zoom); out of the zoom's range, the zoom stays.
-			float zoom = scalingFactor == 1.0F ? 1.0F : UIService.Zoom * scalingFactor;
-			if (zoom > Presentation.Win32.UIService.MaxZoom || zoom < Presentation.Win32.UIService.MinZoom)
-				zoom = UIService.Zoom;
-
-			this.ScaleForm(zoom);
+			this.ScaleForm(step);
 		}
 
 		this.LastFormSize = this.Size;

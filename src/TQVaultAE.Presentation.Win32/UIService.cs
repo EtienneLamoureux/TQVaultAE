@@ -96,14 +96,15 @@ public class UIService : IUIService, IGameDataCache
 
 	/// <summary>
 	/// Gets or sets the pixels per design pixel (the UI is designed at 96 DPI): what the item cells, panels and pixel
-	/// fonts are multiplied by. It is the user's <see cref="Zoom"/> times <see cref="DpiScale"/>, and is kept within
-	/// <see cref="MinZoom"/> and <see cref="MaxZoom"/> zoom.
+	/// fonts are multiplied by. The main window sets it from its zoom step: the step's whole cell size over the design
+	/// cell, on top of <see cref="DpiScale"/> (within about 3 % of the nominal zoom times the DPI: not clamped to
+	/// <see cref="MinZoom"/> and <see cref="MaxZoom"/> times the DPI, which would undo the whole cell).
 	/// </summary>
 	public float Scale
 	{
 		get => _Scale;
 
-		set => _Scale = Math.Clamp(value, MinZoom * this._DpiScale, MaxZoom * this._DpiScale);
+		set => _Scale = value > 0F ? value : this._DpiScale;
 	}
 
 	/// <summary>

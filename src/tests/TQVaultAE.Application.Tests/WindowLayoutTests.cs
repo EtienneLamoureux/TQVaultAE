@@ -73,24 +73,6 @@ public class WindowLayoutTests
 		WindowLayout.GrowToFit(client, area, new Point(19, 75), new Size(1624, 1039)).Should().Be(client);
 	}
 
-	// 125 % DPI, Windows lets a window grow to 2572 x 1462: the height limits the zoom to 1.285, so 1.2 fits and 1.3
-	// (1479 px high) does not.
-	[Fact]
-	public void LargestZoom_IsLimitedByTheTighterSide()
-	{
-		var zoom = WindowLayout.LargestZoom(new Size(1350, 910), 1.25F, new Size(2572, 1462));
-
-		zoom.Should().BeApproximately(1462F / (910 * 1.25F), 1e-6F);
-		WindowLayout.Scaled(new Size(1350, 910), 1.2F * 1.25F).Height.Should().BeLessThanOrEqualTo(1462);
-		WindowLayout.Scaled(new Size(1350, 910), 1.3F * 1.25F).Height.Should().BeGreaterThan(1462);
-		zoom.Should().BeGreaterThan(1.2F).And.BeLessThan(1.3F);
-	}
-
-	// 96 dpi, a 1920 x 1300 limit: the width limits the zoom to 1.422.
-	[Fact]
-	public void LargestZoom_CanBeLimitedByTheWidth()
-		=> WindowLayout.LargestZoom(new Size(1350, 910), 1.0F, new Size(1920, 1300)).Should().BeApproximately(1920F / 1350, 1e-6F);
-
 	[Fact]
 	public void Within_CutsOnlyTheSidesPastTheLimit()
 	{
