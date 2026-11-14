@@ -266,7 +266,10 @@ public partial class HighlightFilters : UserControl, IZoomFit
 			this.AdjustLocation();
 	}
 
-	/// <summary>Nothing to give back before a zoom (the panel is only placed). An open panel is placed over its link again: the zoom gave it back the bounds it had when the layout was kept.</summary>
+	/// <summary>
+	/// Nothing to give back before a zoom (the panel is only placed). An open panel is placed over its link again: the
+	/// zoom gave it back the bounds it had when the layout was kept.
+	/// </summary>
 	void IZoomFit.Fit()
 	{
 		if (this.Visible && this._link is not null)
