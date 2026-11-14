@@ -242,9 +242,7 @@ public partial class VaultPanel
 	/// </summary>
 	private void ItemsReadAgain(Item[] items)
 	{
-		ItemTooltip.InvalidateCache(items);
-		BagButtonTooltip.InvalidateCache(items);
-		this.Services.ItemProvider.InvalidateFriendlyNamesCache(items);
+		ItemCaches.Invalidate(items, this.Services.ItemProvider);
 		this.Services.ItemDatabaseService.RefreshItems(items);
 	}
 

@@ -661,15 +661,8 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	#endregion SackPanel Protected Methods
 
 	protected void InvalidateItemCacheAll(params Item?[] items)
-	{
-		ItemTooltip.InvalidateCache(items);
-		BagButtonTooltip.InvalidateCache(items);
-		this.ItemProvider.InvalidateFriendlyNamesCache(items.OfType<Item>().ToArray());
-	}
+		=> ItemCaches.Invalidate(items, this.ItemProvider);
 
 	private void InvalidateItemCacheItemTooltip(params Item[] items)
-	{
-		ItemTooltip.InvalidateCache(items);
-		this.ItemProvider.InvalidateFriendlyNamesCache(items);
-	}
+		=> ItemCaches.Invalidate(items, this.ItemProvider, bagTooltips: false);
 }

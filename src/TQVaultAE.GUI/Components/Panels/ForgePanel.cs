@@ -609,7 +609,8 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing, I
 			return;
 		}
 
-		InvalidateTooltipCaches([.. result.Consumed, result.Forged!]);
+		// The forged and consumed items are drawn anew; the forge service refreshed their friendly names.
+		ItemCaches.Invalidate([.. result.Consumed, result.Forged!], names: null);
 
 		// Repaint the sacks the items left (and the forged item) at the next paint, not synchronously.
 		this.FindForm()?.Invalidate(true);
@@ -625,13 +626,6 @@ public partial class ForgePanel : UserControl, IScalingControl, IFontRebasing, I
 		// External Code
 		if (ForgeAction is not null)
 			ForgeAction();
-	}
-
-	/// <summary>The forged and consumed items are drawn anew; the forge service refreshed their friendly names.</summary>
-	private static void InvalidateTooltipCaches(Item[] items)
-	{
-		ItemTooltip.InvalidateCache(items);
-		BagButtonTooltip.InvalidateCache(items);
 	}
 
 	#endregion
