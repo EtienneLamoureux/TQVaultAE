@@ -60,7 +60,7 @@ public class EquipmentRulesTests
 		return sack;
 	}
 
-	private static bool IsEmpty(Item item) => RecordId.IsNullOrEmpty(item.BaseItemId);
+	private static bool IsEmpty(Item item) => item.IsEmpty;
 
 	#endregion
 

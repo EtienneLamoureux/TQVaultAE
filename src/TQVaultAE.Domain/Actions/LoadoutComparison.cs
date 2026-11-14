@@ -46,8 +46,8 @@ public static class LoadoutComparison
 	/// <param name="piece">The loadout's piece (<see langword="null"/> or an empty item for an empty slot).</param>
 	public static LoadoutSlotMatch CompareSlot(Item? worn, Item? piece)
 	{
-		bool wornEmpty = ItemKey.IsEmptyItem(worn);
-		bool pieceEmpty = ItemKey.IsEmptyItem(piece);
+		bool wornEmpty = Item.IsNullOrEmpty(worn);
+		bool pieceEmpty = Item.IsNullOrEmpty(piece);
 		if (wornEmpty && pieceEmpty)
 			return LoadoutSlotMatch.BothEmpty;
 		if (wornEmpty || pieceEmpty)

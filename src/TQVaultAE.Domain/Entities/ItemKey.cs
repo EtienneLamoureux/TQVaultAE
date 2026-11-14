@@ -59,7 +59,7 @@ public readonly record struct ItemKey(
 
 	/// <summary>True for no item, or an empty slot's item (no base record).</summary>
 	/// <param name="item">The item.</param>
-	public static bool IsEmptyItem(Item? item) => item is null || RecordId.IsNullOrEmpty(item.BaseItemId);
+	public static bool IsEmptyItem(Item? item) => Item.IsNullOrEmpty(item);
 
 	private static string Of(RecordId? id) => RecordId.IsNullOrEmpty(id) ? string.Empty : id!.Normalized;
 }

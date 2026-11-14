@@ -96,7 +96,7 @@ public static class EquipmentRules
 					return true;
 
 				// A two-handed weapon needs at least one free slot in the pair.
-				return IsEmpty(sack.GetItem(OtherSlotOfPair(slot))) || IsEmpty(sack.GetItem(slot));
+				return Item.IsNullOrEmpty(sack.GetItem(OtherSlotOfPair(slot))) || Item.IsNullOrEmpty(sack.GetItem(slot));
 
 			case ArtifactSlot:
 				return item.IsArtifact;
@@ -232,13 +232,13 @@ public static class EquipmentRules
 			if (slot != secondSlot)
 			{
 				// Dropped on the first slot of the pair.
-				if (itemUnderUs is not null && !IsEmpty(itemUnderUs))
+				if (itemUnderUs is not null && !Item.IsNullOrEmpty(itemUnderUs))
 				{
 					// For a two-handed weapon, the item under us is the one in the second slot.
 					itemUnderUs = PickUpCopy(sack, itemUnderUs.Is2HWeapon ? secondSlot : slot);
 					PutEmptyItem(sack, item, slot);
 				}
-				else if (!IsEmpty(sack.GetItem(secondSlot)))
+				else if (!Item.IsNullOrEmpty(sack.GetItem(secondSlot)))
 				{
 					itemUnderUs = PickUpCopy(sack, secondSlot);
 					PutEmptyItem(sack, item, secondSlot);
@@ -250,12 +250,12 @@ public static class EquipmentRules
 			{
 				// Dropped on the second slot, the first slot of the pair may hold something.
 				int firstSlot = secondSlot - 1;
-				if (itemUnderUs is not null && !IsEmpty(itemUnderUs))
+				if (itemUnderUs is not null && !Item.IsNullOrEmpty(itemUnderUs))
 				{
 					itemUnderUs = PickUpCopy(sack, slot);
 					PutEmptyItem(sack, item, slot);
 				}
-				else if (!IsEmpty(sack.GetItem(firstSlot)))
+				else if (!Item.IsNullOrEmpty(sack.GetItem(firstSlot)))
 				{
 					itemUnderUs = PickUpCopy(sack, firstSlot);
 					PutEmptyItem(sack, item, firstSlot);
@@ -278,8 +278,6 @@ public static class EquipmentRules
 
 		return itemUnderUs;
 	}
-
-	private static bool IsEmpty(Item item) => RecordId.IsNullOrEmpty(item.BaseItemId);
 
 	/// <summary>The other slot of a weapon pair: 7 and 8, 9 and 10.</summary>
 	private static int OtherSlotOfPair(int slot) => (slot % 2) == 1 ? slot + 1 : slot - 1;

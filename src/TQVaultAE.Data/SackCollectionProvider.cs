@@ -80,7 +80,7 @@ public class SackCollectionProvider(ILogger<SackCollectionProvider> log, IItemPr
 			if (sc.SackType == SackType.Equipment)
 			{
 				TQData.WriteCString(writer, "itemAttached");
-				if (!RecordId.IsNullOrEmpty(item.BaseItemId) && slotNumber != 9 && slotNumber != 10)
+				if (!item.IsEmpty && slotNumber != 9 && slotNumber != 10)
 					// If there is an item in sc slot, set the flag.
 					// Unless it's in the secondary weapon slot.
 					itemAttached = 1;

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using TQVaultAE.Domain.Results;
 
@@ -144,6 +145,16 @@ public class Item
 	/// Gets the base item id
 	/// </summary>
 	public RecordId BaseItemId { get; set; } = RecordId.Empty;
+
+	/// <summary>
+	/// True for an empty slot's item: it has no base record.
+	/// </summary>
+	public bool IsEmpty => RecordId.IsNullOrEmpty(this.BaseItemId);
+
+	/// <summary>
+	/// True for no item, or an empty slot's item (no base record).
+	/// </summary>
+	public static bool IsNullOrEmpty([NotNullWhen(false)] Item? item) => item is null || item.IsEmpty;
 
 	/// <summary>
 	/// Gets or sets the relic bonus id

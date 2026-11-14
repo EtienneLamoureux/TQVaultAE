@@ -391,7 +391,7 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 						res.NumberFormat = string.Format(CultureInfo.CurrentCulture, "({0:n0})", k.Item.Number);
 				}
 			}
-			else if (!RecordId.IsNullOrEmpty(k.Item.BaseItemId))
+			else if (!k.Item.IsEmpty)
 			{
 				// A base record the loaded data lacks: its file name rather than no name at all.
 				res.BaseItemInfoDescription = k.Item.BaseItemId.PrettyFileName;

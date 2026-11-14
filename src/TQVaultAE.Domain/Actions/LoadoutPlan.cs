@@ -74,8 +74,8 @@ public sealed class LoadoutPlan
 		for (int slot = 0; slot < slots; slot++)
 		{
 			var piece = PieceOf(slot);
-			if (ItemKey.IsEmptyItem(piece))
-				steps[slot] = new LoadoutSlotStep(slot, ItemKey.IsEmptyItem(worn[slot]) ? LoadoutSlotAction.Keep : LoadoutSlotAction.Clear);
+			if (Item.IsNullOrEmpty(piece))
+				steps[slot] = new LoadoutSlotStep(slot, Item.IsNullOrEmpty(worn[slot]) ? LoadoutSlotAction.Keep : LoadoutSlotAction.Clear);
 			else if (ItemIdentityComparer.Instance.Equals(worn[slot], piece))
 			{
 				steps[slot] = new LoadoutSlotStep(slot, LoadoutSlotAction.Keep);
@@ -109,7 +109,7 @@ public sealed class LoadoutPlan
 			}
 		}
 
-		var leaving = Enumerable.Range(0, slots).Where(slot => !used[slot] && !ItemKey.IsEmptyItem(worn[slot])).ToList();
+		var leaving = Enumerable.Range(0, slots).Where(slot => !used[slot] && !Item.IsNullOrEmpty(worn[slot])).ToList();
 		return new LoadoutPlan([.. steps.Select(step => step!.Value)], leaving);
 	}
 }
