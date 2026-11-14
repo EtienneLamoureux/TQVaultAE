@@ -67,12 +67,15 @@ public partial class MainFormUserControl : UserControl
 
 		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
 
-		this.vaultPictureBox.Image = Images.Majestic_Chest_small;
-		this.vaultPictureBox.Size = Images.Majestic_Chest_small.Size;
+		// Each read of the picture makes a new bitmap: one per box.
+		var chest = Images.Majestic_Chest_small;
+		this.vaultPictureBox.Image = chest;
+		this.vaultPictureBox.Size = chest.Size;
 		toolTip.SetToolTip(this.vaultPictureBox, Resources.MainFormLabel2);
 
-		this.pictureBoxSecondVault.Image = Images.Majestic_Chest_small;
-		this.pictureBoxSecondVault.Size = Images.Majestic_Chest_small.Size;
+		var secondChest = Images.Majestic_Chest_small;
+		this.pictureBoxSecondVault.Image = secondChest;
+		this.pictureBoxSecondVault.Size = secondChest.Size;
 		toolTip.SetToolTip(this.pictureBoxSecondVault, Resources.MainForm2ndVault);
 
 		this.comboBoxCharacter.Init(
