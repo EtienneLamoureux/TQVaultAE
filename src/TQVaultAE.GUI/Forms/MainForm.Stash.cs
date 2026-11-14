@@ -13,64 +13,6 @@ namespace TQVaultAE.GUI.Forms;
 public partial class MainForm
 {
 	/// <summary>
-	/// Loads and shows the transfer and relic vault stashes, unless the selected character is a Titan Quest original one.
-	/// </summary>
-	private void LoadSharedStashes()
-	{
-		var selectedSave = this.comboBoxCharacter.SelectedItem as PlayerSave;
-		this.ShowTransferStash(this.stashService.LoadTransferStashFor(selectedSave), false);
-		this.ShowRelicVaultStash(this.stashService.LoadRelicVaultStashFor(selectedSave), false);
-	}
-
-	/// <summary>
-	/// Shows the loaded transfer stash: its messages, then the stash in the panel (unless reloaded by the file watcher).
-	/// </summary>
-	/// <param name="result">The load; null when the character has no transfer stash, which clears the panel.</param>
-	private void ShowTransferStash(StashLoadResult? result, bool fromFileWatcher)
-	{
-		if (result is null)
-		{
-			this.stashPanel.TransferStash = null;
-			return;
-		}
-
-		this.ShowLoaded(
-			LoadMessages.ForTransferStash(result)
-			, result.StashFile
-			, Resources.MainFormStashReadError
-			, () =>
-			{
-				if (!fromFileWatcher)
-					this.stashPanel.TransferStash = result.Stash;
-			}
-			, () => this.stashPanel.TransferStash = null);
-	}
-
-	/// <summary>
-	/// Shows the loaded relic vault stash: its messages, then the stash in the panel (unless reloaded by the file watcher).
-	/// </summary>
-	/// <param name="result">The load; null when the character has no relic vault stash, which clears the panel.</param>
-	private void ShowRelicVaultStash(StashLoadResult? result, bool fromFileWatcher)
-	{
-		if (result is null)
-		{
-			this.stashPanel.RelicVaultStash = null;
-			return;
-		}
-
-		this.ShowLoaded(
-			LoadMessages.ForRelicVaultStash(result)
-			, result.StashFile
-			, Resources.MainFormStashReadError
-			, () =>
-			{
-				if (!fromFileWatcher)
-					this.stashPanel.RelicVaultStash = result.Stash;
-			}
-			, () => this.stashPanel.RelicVaultStash = null);
-	}
-
-	/// <summary>
 	/// The watchers of the shared stash files (transfer stash and relic vault) of every map in use, by file.
 	/// </summary>
 	private readonly Dictionary<string, FileSystemWatcher> sharedStashWatchers = new(StringComparer.OrdinalIgnoreCase);
@@ -106,6 +48,8 @@ public partial class MainForm
 				watcher.Changed += (_, e) => this.SharedStashFile_Changed(e, type, watchedMap);
 				watcher.EnableRaisingEvents = true;
 				this.sharedStashWatchers[file] = watcher;
+				// The form's container disposes it with the form.
+				this.components?.Add(watcher);
 			}
 		}
 	}
@@ -118,27 +62,6 @@ public partial class MainForm
 	{
 		if (e.ChangeType != WatcherChangeTypes.Changed) return;
 
-		this.FileReloadDebouncer.Schedule(e.FullPath, () =>
-		{
-			var stashResult = this.stashService.ReloadSharedStash(type, map);
-			if (stashResult is null)
-				return;
-
-			// The panel shows the active map's shared stashes, unless the character shown has none (Titan Quest original).
-			var selected = this.comboBoxCharacter.SelectedItem as PlayerSave;
-			bool shown = GameMaps.Same(map, this.gameMapService.ActiveMap) && (selected is null || selected.IsImmortalThrone);
-			if (type == StashType.TransferStash)
-			{
-				this.ShowTransferStash(stashResult, true);
-				if (shown)
-					this.stashPanel.TransferStash = stashResult.Stash;
-			}
-			else
-			{
-				this.ShowRelicVaultStash(stashResult, true);
-				if (shown)
-					this.stashPanel.RelicVaultStash = stashResult.Stash;
-			}
-		});
+		this.FileReloadDebouncer.Schedule(e.FullPath, () => this.mainView.ReloadSharedStash(type, map));
 	}
 }

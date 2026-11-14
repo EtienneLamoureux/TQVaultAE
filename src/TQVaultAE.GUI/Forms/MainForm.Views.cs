@@ -65,13 +65,13 @@ public partial class MainForm
 	/// </summary>
 	private void WireMainView()
 	{
-		this.comboBoxCharacter.SelectedIndexChanged += this.CharacterComboBoxSelectedIndexChanged;
 		this.mainView.SecondaryVaultShownChanged += this.MainView_SecondaryVaultShownChanged;
 		this.mainView.EditCharacterRequested += (_, player) => this.ShowCharacterEditorView(player);
 		this.mainView.LoadoutAction += this.LoadoutActionCallback;
 		this.mainView.ForgeCancelled += (_, _) => this.ForgeActionCanceled();
 		this.mainView.ForgeForged += (_, _) => this.ForgeHideUI();
 		this.mainView.SaveRequested += (_, _) => this.SaveAllModifiedFiles();
+		this.mainView.ModLinkChanged += (_, _) => this.WatchSharedStashFiles();
 	}
 
 	#endregion

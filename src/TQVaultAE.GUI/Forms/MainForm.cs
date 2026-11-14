@@ -199,25 +199,7 @@ Item Debug Level: {ItemDebugLevel}
 		this.InitializeComponent();
 		this.WireMainView();
 
-		this.vaultPictureBox.Image = Images.Majestic_Chest_small;
-		this.vaultPictureBox.Size = Images.Majestic_Chest_small.Size;
-		this.toolTip.SetToolTip(this.vaultPictureBox, Resources.MainFormLabel2);
-
-		this.pictureBoxSecondVault.Image = Images.Majestic_Chest_small;
-		this.pictureBoxSecondVault.Size = Images.Majestic_Chest_small.Size;
-		this.toolTip.SetToolTip(this.pictureBoxSecondVault, Resources.MainForm2ndVault);
-
-		this.comboBoxCharacter.Init(
-			this.UIService
-			, this.FontService
-			, this.TranslationService
-			, this.TagService
-			, this.playerService
-			, USettings
-			, () => DuplicateCharacter()
-			, this.OpenModLinkDialog
-			, this.ToggleCharacterReadOnly
-		);
+		this.mainView.Initialize();
 
 		this.SetupFormSize();
 
@@ -249,7 +231,7 @@ Item Debug Level: {ItemDebugLevel}
 		// are listed.
 		this.GameFileService.GitRepositorySetup();
 
-		this.mainView.CreatePanels(this.GetPlayerList);
+		this.mainView.CreatePanels(this.GetPlayerList());
 
 		SetupVaultExportButton();
 	}

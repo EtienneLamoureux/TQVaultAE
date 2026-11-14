@@ -119,7 +119,7 @@ public partial class MainForm
 			// The stash panel shows the shared stashes of the shown character's map: another map's transfer stash or
 			// relic vault needs a character played with that map, selected like a character's result.
 			var selected = this.comboBoxCharacter.SelectedItem as PlayerSave;
-			var save = this.gameMapService.CharacterShowing(selectedResult.Container, this.ListedCharacters(), selected);
+			var save = this.gameMapService.CharacterShowing(selectedResult.Container, this.mainView.ListedCharacters(), selected);
 			if (save is null)
 			{
 				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.SearchSharedStashNoCharacter, selectedResult.ContainerName), TQColor.Red);

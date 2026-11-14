@@ -96,8 +96,8 @@ public partial class MainFormUserControl
 	/// <summary>
 	/// Creates the view's internal panels
 	/// </summary>
-	/// <param name="listCharacters">Fills the character list, once the player panel is built.</param>
-	internal void CreatePanels(Action listCharacters)
+	/// <param name="characters">The characters to list.</param>
+	internal void CreatePanels(PlayerSave[] characters)
 	{
 		this.DragInfo = new ItemDragInfo(this.Services.UIService);
 
@@ -107,7 +107,7 @@ public partial class MainFormUserControl
 		// since only one can be shown at a time.
 		this.bufferedFlowLayoutPanelsecondaryVaultList.Visible = false;
 
-		listCharacters();
+		this.ListCharacters(characters);
 
 		this.CreateVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function
 		this.CreateSecondaryVaultPanel(12); // # of bags in a vault.  This number is also buried in the CreateVault() function

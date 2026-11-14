@@ -7,6 +7,8 @@
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Views;
@@ -27,6 +29,7 @@ public partial class MainFormUserControl : UserControl
 	private readonly SessionContext userContext;
 	private readonly IHighlightService highlightService;
 	private readonly ITranslationService translationService;
+	private readonly ITagService tagService;
 
 #if DEBUG
 	// For Design Mode
@@ -38,8 +41,9 @@ public partial class MainFormUserControl : UserControl
 	/// <summary>
 	/// Initializes a new instance of the MainFormUserControl class.
 	/// </summary>
-	public MainFormUserControl(GuiServices services)
+	public MainFormUserControl(GuiServices services, ITagService tagService)
 	{
+		this.tagService = tagService;
 		this.Services = services;
 		this.Log = services.Logger<MainFormUserControl>();
 		this.userContext = services.Session;
@@ -50,6 +54,36 @@ public partial class MainFormUserControl : UserControl
 
 		this.vaultListComboBox.SelectedIndexChanged += this.VaultListComboBoxSelectedIndexChanged;
 		this.secondaryVaultListComboBox.SelectedIndexChanged += this.SecondaryVaultListComboBoxSelectedIndexChanged;
+		this.comboBoxCharacter.SelectedIndexChanged += this.CharacterComboBoxSelectedIndexChanged;
+	}
+
+	/// <summary>
+	/// Sets up the view's own controls once it is in the window: the vault pictures and the character list, whose
+	/// menus reach the window.
+	/// </summary>
+	internal void Initialize()
+	{
+		var toolTip = new ToolTip(this.components);
+
+		this.vaultPictureBox.Image = Images.Majestic_Chest_small;
+		this.vaultPictureBox.Size = Images.Majestic_Chest_small.Size;
+		toolTip.SetToolTip(this.vaultPictureBox, Resources.MainFormLabel2);
+
+		this.pictureBoxSecondVault.Image = Images.Majestic_Chest_small;
+		this.pictureBoxSecondVault.Size = Images.Majestic_Chest_small.Size;
+		toolTip.SetToolTip(this.pictureBoxSecondVault, Resources.MainForm2ndVault);
+
+		this.comboBoxCharacter.Init(
+			this.Services.UIService
+			, this.Services.FontService
+			, this.translationService
+			, this.tagService
+			, this.Services.PlayerService
+			, this.Services.Settings
+			, () => this.DuplicateCharacter()
+			, this.OpenModLinkDialog
+			, this.ToggleCharacterReadOnly
+		);
 	}
 
 	/// <summary>

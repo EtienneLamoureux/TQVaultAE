@@ -25,13 +25,7 @@ public partial class MainForm
 	/// </summary>
 	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 	private int LoadAllFilesTotal()
-		=> ILoadAllService.CountSteps(this.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.SharedStashMaps().Count);
-
-	/// <summary>
-	/// The listed characters: each is read with its own map's database.
-	/// </summary>
-	private PlayerSave[] ListedCharacters()
-		=> [.. this.comboBoxCharacter.Items.OfType<PlayerSave>()];
+		=> ILoadAllService.CountSteps(this.mainView.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.SharedStashMaps().Count);
 
 	/// <summary>
 	/// The maps whose shared stashes (transfer stash, relic vault) LoadAllFiles reads: the base game and the map of
@@ -40,7 +34,7 @@ public partial class MainForm
 	private List<string> SharedStashMaps()
 	{
 		var maps = new List<string>();
-		foreach (var save in this.ListedCharacters().Where(c => c.IsImmortalThrone))
+		foreach (var save in this.mainView.ListedCharacters().Where(c => c.IsImmortalThrone))
 		{
 			var map = this.gameMapService.MapFor(save);
 			if (!maps.Any(m => GameMaps.Same(m, map)))
@@ -70,7 +64,7 @@ public partial class MainForm
 		}
 
 		var result = this.loadAllService.LoadAll(
-			this.ListedCharacters()
+			this.mainView.ListedCharacters()
 			, GamePathResolver.GetVaultList()
 			, progress
 			, this.SharedStashMaps());
@@ -227,7 +221,7 @@ public partial class MainForm
 		this.Enabled = true;
 
 		// The characters may have been loaded by LoadAllFiles.
-		this.comboBoxCharacter.RefreshItems();
+		this.mainView.RefreshCharacters();
 
 		// Prepare the search data now, so the first search does not have to,
 		// then the bag button icons, so the bag button settings open at once.
@@ -235,10 +229,10 @@ public partial class MainForm
 		_ = this.Services.ItemDatabaseService.WarmUpAsync()
 			.ContinueWith(_ => iconService.GetIconDatabaseAsync(), TaskScheduler.Default);
 
-		this.LoadSharedStashes();
+		this.mainView.LoadSharedStashes();
 		this.WatchSharedStashFiles();
 
-		var characters = this.comboBoxCharacter.Items.OfType<PlayerSave>().ToArray();
+		var characters = this.mainView.ListedCharacters();
 
 		// The databases of the mods the characters are linked to load in the background (already done by LoadAllFiles),
 		// so that selecting a modded character does not wait for its mod's database on the UI thread.
@@ -252,7 +246,7 @@ public partial class MainForm
 
 		// Load last character here if selected
 		if (selection.CharacterKey is not null)
-			this.comboBoxCharacter.SelectedItem = characters.First(ps => ps.Key == selection.CharacterKey);
+			this.mainView.SelectCharacter(characters.First(ps => ps.Key == selection.CharacterKey));
 
 		this.mainView.SelectVault(selection.VaultName);
 
@@ -263,10 +257,7 @@ public partial class MainForm
 		if (selection.SkipTitle)
 		{
 			// The command line player is a character key (IT/User/HeroA) or the start of a name in the list.
-			if (characters.FirstOrDefault(ps => ps.Key.Equals(selection.AutomaticPlayer, StringComparison.OrdinalIgnoreCase)) is { } player)
-				this.comboBoxCharacter.SelectedItem = player;
-			else if (this.comboBoxCharacter.FindString(selection.AutomaticPlayer) is var index and not -1)
-				this.comboBoxCharacter.SelectedIndex = index;
+			this.mainView.SelectAutomaticPlayer(selection.AutomaticPlayer);
 
 			this.splashScreen.CloseForm();
 		}
@@ -290,18 +281,7 @@ public partial class MainForm
 	/// </summary>
 	private SessionConfiguration CurrentSessionConfiguration()
 	{
-		string? vaultName = this.vaultListComboBox.SelectedItem is not null ? this.vaultListComboBox.SelectedItemText() : null;
-
-		// The key, not the name: a main campaign and a custom map character can have the same name.
-		string? characterName = this.comboBoxCharacter.SelectedItem is PlayerSave ps
-			? ps.Key
-			: this.comboBoxCharacter.SelectedItem?.ToString();
-
-		// No character is selected
-		if (characterName == Resources.MainFormSelectCharacter)
-			characterName = string.Empty;
-
-		return new SessionConfiguration(vaultName, characterName, this.NominalZoom);
+		return new SessionConfiguration(this.mainView.SelectedVaultName, this.mainView.SelectedCharacterKey, this.NominalZoom);
 	}
 
 	/// <summary>
