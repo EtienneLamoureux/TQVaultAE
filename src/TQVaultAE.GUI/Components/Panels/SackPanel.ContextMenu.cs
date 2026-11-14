@@ -182,24 +182,7 @@ public partial class SackPanel
 				DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
 			}.StyledLike(this.CustomContextMenu);
 			choice.Click += handler;
-
-			if (bonus.Unknown)
-			{
-				choice.Image = this.CustomContextMenuAffixUnknown;
-				choice.ToolTipText = "Unknown : " + choice.ToolTipText;
-			}
-			else if (bonus.Untranslated)
-			{
-				choice.Image = this.CustomContextMenuAffixUntranslated;
-				choice.ToolTipText = "No Translation : " + choice.ToolTipText;
-			}
-
-			// make the currently selected bonus bold
-			if (bonus.IsCurrent)
-			{
-				choice.Font = new Font(choice.Font, FontStyle.Bold);
-				choice.BackColor = ControlPaint.Dark(choice.BackColor);
-			}
+			this.DecorateChoice(choice, bonus.Unknown, bonus.Untranslated, bonus.IsCurrent);
 
 			choices.Add(choice);
 		}
@@ -210,6 +193,30 @@ public partial class SackPanel
 		}.StyledLike(this.CustomContextMenu);
 
 		this.CustomContextMenu.Items.Add(subMenu);
+	}
+
+	/// <summary>
+	/// Marks a bonus or affix choice: the icon and tool tip prefix of an unknown or untranslated one, and the current one
+	/// in bold on a darker background.
+	/// </summary>
+	private void DecorateChoice(ToolStripMenuItem choice, bool unknown, bool untranslated, bool current)
+	{
+		if (unknown)
+		{
+			choice.Image = this.CustomContextMenuAffixUnknown;
+			choice.ToolTipText = "Unknown : " + choice.ToolTipText;
+		}
+		else if (untranslated)
+		{
+			choice.Image = this.CustomContextMenuAffixUntranslated;
+			choice.ToolTipText = "No Translation : " + choice.ToolTipText;
+		}
+
+		if (current)
+		{
+			choice.Font = this.FontService.WithStyle(choice.Font, FontStyle.Bold);
+			choice.BackColor = ControlPaint.Dark(choice.BackColor);
+		}
 	}
 
 	#region ContextMenuMouseWheel
@@ -440,30 +447,17 @@ public partial class SackPanel
 				}.StyledLike(this.CustomContextMenu);
 				choice.Click += handler;
 
-				if (val.LootRandomizer.Unknown)
-				{
-					choice.Image = this.CustomContextMenuAffixUnknown;
-					choice.ToolTipText = "Unknown : " + choice.ToolTipText;
-				}
-				else if (val.LootRandomizer.TranslationTagIsEmpty)
-				{
-					choice.Image = this.CustomContextMenuAffixUntranslated;
-					choice.ToolTipText = "No Translation : " + choice.ToolTipText;
-				}
-
 				if (affixMenu is not null)
 					choice.Text = this.Services.AffixCatalogService.FormatVariantLabel(val, _DisplayAffixesByEffect);
 
-				// make the currently selected affix bold
-				if (val.AffixId == currentSelectedAffix)
+				bool current = val.AffixId == currentSelectedAffix;
+				this.DecorateChoice(choice, val.LootRandomizer.Unknown, val.LootRandomizer.TranslationTagIsEmpty, current);
+
+				// The variants' menu of the current affix looks like it.
+				if (current && affixMenu is not null)
 				{
-					choice.Font = new Font(choice.Font, FontStyle.Bold);
-					choice.BackColor = ControlPaint.Dark(choice.BackColor);
-					if (affixMenu is not null)
-					{
-						affixMenu.Font = choice.Font;
-						affixMenu.BackColor = choice.BackColor;
-					}
+					affixMenu.Font = choice.Font;
+					affixMenu.BackColor = choice.BackColor;
 				}
 
 				choicesMenu.DropDownItems.Add(choice);
