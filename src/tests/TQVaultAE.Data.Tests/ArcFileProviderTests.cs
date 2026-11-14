@@ -13,7 +13,7 @@ namespace TQVaultAE.Tests.Data;
 /// </summary>
 public sealed class ArcFileProviderTests : IDisposable
 {
-	private readonly ArcFileProvider _provider = new(NullLogger<ArcFileProvider>.Instance, new PathIO(), new DirectoryIO(), new UserSettings());
+	private readonly ArcFileProvider _provider = new(NullLogger<ArcFileProvider>.Instance, new PathIO(), new DirectoryIO(), new FileIO(), new UserSettings());
 	private readonly List<string> _tempFiles = [];
 	private readonly List<ArcFile> _files = [];
 

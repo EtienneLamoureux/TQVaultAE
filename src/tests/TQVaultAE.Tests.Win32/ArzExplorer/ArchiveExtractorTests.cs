@@ -18,7 +18,7 @@ public sealed class ArchiveExtractorTests : IDisposable
 {
 	private const short Int = 0;
 
-	private readonly ArcFileProvider _arcProvider = new(NullLogger<ArcFileProvider>.Instance, new PathIO(), new DirectoryIO(), new UserSettings());
+	private readonly ArcFileProvider _arcProvider = new(NullLogger<ArcFileProvider>.Instance, new PathIO(), new DirectoryIO(), new FileIO(), new UserSettings());
 	private readonly ArzFileProvider _arzProvider = new(NullLogger<ArzFileProvider>.Instance);
 	private readonly DBRecordCollectionProvider _recordWriter = new(new DirectoryIO(), new PathIO(), new FileIO());
 	private readonly ArchiveExtractor _extractor;

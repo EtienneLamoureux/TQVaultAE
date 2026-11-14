@@ -89,10 +89,7 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 
 		data = CalculateCRC(data);
 
-		using (FileStream outStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-		{
-			outStream.Write(data, 0, data.Length);
-		}
+		this.FileIO.WriteAllBytes(fileName, data);
 
 		// Save the corresponding dxg file
 		data = EncodeBackupFile(data);
@@ -101,10 +98,7 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		data = CalculateCRC(data);
 
 		string dxgFilename = this.PathIO.ChangeExtension(fileName, ".dxg");
-		using (FileStream dxgOutStream = new FileStream(dxgFilename, FileMode.Create, FileAccess.Write))
-		{
-			dxgOutStream.Write(data, 0, data.Length);
-		}
+		this.FileIO.WriteAllBytes(dxgFilename, data);
 	}
 
 	/// <summary>
@@ -171,14 +165,8 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		if (!this.FileIO.Exists(sta.StashFile))
 			return false;
 
-		using (FileStream file = new FileStream(sta.StashFile, FileMode.Open, FileAccess.Read))
-		{
-			using (BinaryReader reader = new BinaryReader(file))
-			{
-				// Just suck the entire file into memory
-				sta.rawData = reader.ReadBytes((int)file.Length);
-			}
-		}
+		// Just suck the entire file into memory
+		sta.rawData = this.FileIO.ReadAllBytes(sta.StashFile);
 
 		try
 		{

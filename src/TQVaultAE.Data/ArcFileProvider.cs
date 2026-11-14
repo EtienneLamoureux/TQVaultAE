@@ -7,11 +7,12 @@ using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Data;
 
-public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings uSettings) : IArcFileProvider
+public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDirectoryIO directoryIO, IFileIO fileIO, UserSettings uSettings) : IArcFileProvider
 {
 	private readonly ILogger Log = log;
 	private readonly IPathIO PathIO = pathIO;
 	private readonly IDirectoryIO DirectoryIO = directoryIO;
+	private readonly IFileIO FileIO = fileIO;
 	private readonly UserSettings USettings = uSettings;
 
 	#region ArcFile Public Methods
@@ -49,26 +50,14 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 			if (!file.FileHasBeenRead)
 				this.ReadARCToC(file);
 
-			string dataID = string.Concat(this.PathIO.GetFileNameWithoutExtension(file.FileName), "\\", record.Raw);
-			byte[]? data = this.GetData(file, dataID);
-			if (data is null)
+			if (!file.DirectoryEntries.TryGetValue(record, out ArcEntry? entry))
 				return;
 
 			string destination = baseFolder;
 			if (!destination.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
 				destination = string.Concat(destination, "\\");
 
-			destination = string.Concat(destination, destinationFileName);
-
-			// If there is a sub directory in the arc file then we need to create it.
-			var destDirName = PathIO.GetDirectoryName(destination);
-			if (!DirectoryIO.Exists(destDirName))
-				DirectoryIO.CreateDirectory(destDirName);
-
-			using (FileStream outStream = new FileStream(destination, FileMode.Create, FileAccess.Write))
-			{
-				outStream.Write(data, 0, data.Length);
-			}
+			this.WriteEntry(file, entry, string.Concat(destination, destinationFileName));
 		}
 		catch (IOException exception)
 		{
@@ -139,39 +128,16 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 
 			foreach (ArcEntry dirEntry in file.DirectoryEntries.Values)
 			{
-				RecordId dataID = string.Concat(
-					this.PathIO.GetFileNameWithoutExtension(file.FileName), "\\"
-					, dirEntry.Name
-				);
-
-				if (USettings.ARCFileDebugLevel > 1)
-				{
-					Log.LogDebug("Directory Filename = {DirEntryFileName}", dirEntry.Name);
-					Log.LogDebug("dataID = {DataID}", dataID);
-				}
-
-				byte[]? data = this.GetData(file, dataID);
-				if (data is null)
-					continue;
-
 				string filename = destination;
 				if (!filename.EndsWith('\\'))
 					filename = string.Concat(filename, "\\");
 
 				filename = string.Concat(filename, dirEntry.Name);
 
-				// If there is a sub directory in the arc file then we need to create it.
-				var dirName = PathIO.GetDirectoryName(filename);
-				if (!DirectoryIO.Exists(dirName))
-					DirectoryIO.CreateDirectory(dirName);
-
 				if (USettings.ARCFileDebugLevel > 1)
 					Log.LogDebug("Creating File - {Filename}", filename);
 
-				using (FileStream outStream = new FileStream(filename, FileMode.Create, FileAccess.Write))
-				{
-					outStream.Write(data, 0, data.Length);
-				}
+				this.WriteEntry(file, dirEntry, filename);
 			}
 
 			if (USettings.ARCFileDebugLevel > 0)
@@ -187,6 +153,18 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 	}
 
 	#endregion ArcFile Public Methods
+
+	/// <summary>
+	/// Writes the content of an entry to a file, creating its folder (the entry may sit in a sub folder of the archive).
+	/// </summary>
+	private void WriteEntry(ArcFile file, ArcEntry entry, string path)
+	{
+		var folder = this.PathIO.GetDirectoryName(path);
+		if (!this.DirectoryIO.Exists(folder))
+			this.DirectoryIO.CreateDirectory(folder);
+
+		this.FileIO.WriteAllBytes(path, file.Archive!.ReadAll(entry));
+	}
 
 	#region ArcFile Private Methods
 
