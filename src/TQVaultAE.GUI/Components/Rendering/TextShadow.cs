@@ -34,6 +34,18 @@ internal static class TextShadow
 		DrawCopy(g, text, font, bounds, flags, 2, 2);
 	}
 
+	/// <summary>
+	/// Draws the outline of <paramref name="text"/> (<see cref="DrawOutline"/>) when <paramref name="outline"/> is set,
+	/// else its drop shadow (<see cref="DrawShadow"/>).
+	/// </summary>
+	public static void Draw(Graphics g, string text, Font font, Rectangle bounds, TextFormatFlags flags, bool outline)
+	{
+		if (outline)
+			DrawOutline(g, text, font, bounds, flags);
+		else
+			DrawShadow(g, text, font, bounds, flags);
+	}
+
 	private static void DrawCopy(Graphics g, string text, Font font, Rectangle bounds, TextFormatFlags flags, int dx, int dy)
 	{
 		bounds.Offset(dx, dy);

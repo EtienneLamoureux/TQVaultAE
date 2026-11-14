@@ -57,6 +57,23 @@ public class ScalingLabel : Label, IScalingControl
 	private bool textShadow;
 
 	/// <summary>
+	/// Gets or sets a value indicating whether the text has a dark outline instead of the drop shadow, as the captions over
+	/// a frame's gold border (<see cref="Rendering.TextShadow.DrawOutline"/>).
+	/// </summary>
+	[System.ComponentModel.DefaultValue(false)]
+	public bool TextOutline
+	{
+		get => this.textOutline;
+		set
+		{
+			this.textOutline = value;
+			this.Invalidate();
+		}
+	}
+
+	private bool textOutline;
+
+	/// <summary>
 	/// Gets or sets a value indicating whether a text too long for one line keeps its start and end and loses its middle
 	/// ("C:\Games\...\mod"), on one line: for a path, whose last folder matters most. Set <see cref="Label.AutoEllipsis"/>
 	/// too for the tool tip of the whole text and an ellipsis at the end of a last folder longer than the line.
@@ -81,7 +98,7 @@ public class ScalingLabel : Label, IScalingControl
 	protected override void OnPaint(PaintEventArgs e)
 	{
 		bool dimmed = !this.Enabled && DisabledTextPainter.Applies(this.ForeColor);
-		if (this.Image is not null || (!dimmed && !this.TextShadow && !this.PathEllipsis)) {
+		if (this.Image is not null || (!dimmed && !this.TextShadow && !this.TextOutline && !this.PathEllipsis)) {
 			base.OnPaint(e);
 			return;
 		}
@@ -105,8 +122,8 @@ public class ScalingLabel : Label, IScalingControl
 			client.Width - this.Padding.Horizontal,
 			client.Height - this.Padding.Vertical);
 
-		if (this.TextShadow)
-			Rendering.TextShadow.DrawShadow(e.Graphics, this.Text, this.Font, bounds, flags);
+		if (this.TextShadow || this.TextOutline)
+			Rendering.TextShadow.Draw(e.Graphics, this.Text, this.Font, bounds, flags, this.TextOutline);
 
 		var color = dimmed ? DisabledTextPainter.ColorFor(this.ForeColor) : this.ForeColor;
 		TextRenderer.DrawText(e.Graphics, this.Text, this.Font, bounds, color, flags);

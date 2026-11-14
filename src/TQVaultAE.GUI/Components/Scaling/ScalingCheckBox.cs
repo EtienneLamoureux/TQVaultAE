@@ -35,14 +35,31 @@ public class ScalingCheckBox : CheckBox, IScalingControl
 	private bool textShadow;
 
 	/// <summary>
+	/// Gets or sets a value indicating whether the text has a dark outline instead of the drop shadow, as the captions over
+	/// a frame's gold border (<see cref="Rendering.TextShadow.DrawOutline"/>).
+	/// </summary>
+	[System.ComponentModel.DefaultValue(false)]
+	public bool TextOutline
+	{
+		get => this.textOutline;
+		set
+		{
+			this.textOutline = value;
+			this.Invalidate();
+		}
+	}
+
+	private bool textOutline;
+
+	/// <summary>
 	/// Draws disabled light text dimmed instead of the system dark gray, which is not readable on the dark UI, and the
-	/// drop shadow under the text when <see cref="TextShadow"/> is set.
+	/// drop shadow under the text when <see cref="TextShadow"/> is set (the outline with <see cref="TextOutline"/>).
 	/// Only the standard left-aligned glyph layout is handled; other layouts keep the system rendering.
 	/// </summary>
 	protected override void OnPaint(PaintEventArgs pevent)
 	{
 		bool dimmed = !this.Enabled && DisabledTextPainter.Applies(this.ForeColor);
-		if ((!dimmed && !this.TextShadow)
+		if ((!dimmed && !this.TextShadow && !this.TextOutline)
 			|| this.Appearance != Appearance.Normal
 			|| this.CheckAlign != ContentAlignment.MiddleLeft
 			|| this.RightToLeft == RightToLeft.Yes
@@ -78,8 +95,8 @@ public class ScalingCheckBox : CheckBox, IScalingControl
 		if (!this.AutoSize)
 			flags |= TextFormatFlags.WordBreak;
 
-		if (this.TextShadow)
-			Rendering.TextShadow.DrawShadow(g, this.Text, this.Font, textBounds, flags);
+		if (this.TextShadow || this.TextOutline)
+			Rendering.TextShadow.Draw(g, this.Text, this.Font, textBounds, flags, this.TextOutline);
 
 		var color = dimmed ? DisabledTextPainter.ColorFor(this.ForeColor) : this.ForeColor;
 		TextRenderer.DrawText(g, this.Text, this.Font, textBounds, color, flags);

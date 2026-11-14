@@ -38,6 +38,32 @@ internal static class CaravanLook
 	}
 
 	/// <summary>
+	/// <see cref="Apply(Control, Control[])"/> with another marble, the main window's for example.
+	/// </summary>
+	/// <param name="form">The dialog or the view.</param>
+	/// <param name="marble">The marble tiled behind it.</param>
+	/// <param name="transparent">The panels laid over the whole dialog, made transparent so that the marble shows.</param>
+	public static void Apply(Control form, MarbleBackground.Marble marble, params Control[] transparent)
+	{
+		MarbleBackground.ApplyTo(form, marble);
+		ApplyFrames(form, CaravanFrame.CaptionEdge.Broken, transparent);
+	}
+
+	/// <summary>
+	/// Draws the labels and check boxes over the marble of <paramref name="form"/> like the group captions over the frames:
+	/// a dark outline around the text instead of the drop shadow. Call it after <see cref="Apply(Control, Control[])"/>.
+	/// </summary>
+	/// <param name="form">The dialog or the view.</param>
+	public static void OutlineText(Control form)
+		=> form.ProcessAllControls(c =>
+		{
+			if (c is ScalingLabel { TextShadow: true } label)
+				label.TextOutline = true;
+			else if (c is ScalingCheckBox { TextShadow: true } box)
+				box.TextOutline = true;
+		});
+
+	/// <summary>
 	/// <see cref="Apply(Control, Control[])"/> without the marble: for a view laid in the main window, over the window's
 	/// own background, which shows through it (the view and <paramref name="transparent"/> made transparent).
 	/// </summary>

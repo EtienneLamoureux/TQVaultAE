@@ -50,8 +50,10 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.ItemDatabaseService = itemDatabaseService;
 
 		this.InitializeComponent();
-		// The marble shows behind every panel, around the dark lists; the labels over it get a drop shadow.
-		CaravanLook.Apply(this, this.tableLayoutPanelContent, this.tableLayoutPanelBottom);
+		// The main window's marble shows behind every panel, around the dark lists; the labels and check boxes over it are
+		// drawn like the captions over the frames.
+		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow, this.tableLayoutPanelContent, this.tableLayoutPanelBottom);
+		CaravanLook.OutlineText(this);
 
 		this.MinimizeBox = false;
 		this.NormalizeBox = false;
