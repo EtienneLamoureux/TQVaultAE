@@ -399,6 +399,12 @@ public class Item
 
 
 	/// <summary>
+	/// The item or one of its affixes comes from an expansion (Immortal Throne, Ragnarok, Atlantis, Eternal Embers).
+	/// </summary>
+	private bool IsFromExpansion
+		=> this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers;
+
+	/// <summary>
 	/// Gets a value indicating whether the item is a scroll.
 	/// </summary>
 	public bool IsScroll
@@ -408,7 +414,7 @@ public class Item
 			if (this.baseItemInfo is not null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_SCROLL, noCase);
 			else if (this.BaseItemId is not null
-				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.IsFromExpansion
 				&& this.BaseItemId.IsScroll)
 				return true;
 
@@ -424,7 +430,7 @@ public class Item
 		get
 		{
 			if (this.BaseItemId is not null
-				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.IsFromExpansion
 				&& this.BaseItemId.IsParchment)
 				return true;
 
@@ -442,7 +448,7 @@ public class Item
 			if (this.baseItemInfo is not null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_FORMULA, noCase);
 			else if (this.BaseItemId is not null
-				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.IsFromExpansion
 				&& this.BaseItemId.IsFormulae)
 				return true;
 
@@ -460,7 +466,7 @@ public class Item
 			if (this.baseItemInfo is not null)
 				return this.baseItemInfo.ItemClass.Equals(ICLASS_ARTIFACT, noCase);
 			else if (this.BaseItemId is not null
-				&& (this.IsImmortalThrone || this.IsRagnarok || this.IsAtlantis || this.IsEmbers)
+				&& this.IsFromExpansion
 				&& this.BaseItemId.IsArtifact)
 				return true;
 
@@ -472,39 +478,37 @@ public class Item
 	/// Gets a value indicating whether the item is a shield.
 	/// </summary>
 	public bool IsShield
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_SHIELD, noCase) : false;
+		=> this.HasClass(ICLASS_SHIELD);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is armor.
 	/// </summary>
 	public bool IsArmor
-		=> (this.baseItemInfo is not null)
-		? this.baseItemInfo.ItemClass.StartsWith("ARMORPROTECTIVE", noCase)
-		: false;
+		=> this.HasClassPrefix(ICLASS_PREFIX_ARMORPROTECTIVE);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a helm.
 	/// </summary>
 	public bool IsHelm
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_HEAD, noCase) : false;
+		=> this.HasClass(ICLASS_HEAD);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a bracer.
 	/// </summary>
 	public bool IsBracer
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_FOREARM, noCase) : false;
+		=> this.HasClass(ICLASS_FOREARM);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is torso armor.
 	/// </summary>
 	public bool IsTorsoArmor
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_UPPERBODY, noCase) : false;
+		=> this.HasClass(ICLASS_UPPERBODY);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a greave.
 	/// </summary>
 	public bool IsGreave
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_LOWERBODY, noCase) : false;
+		=> this.HasClass(ICLASS_LOWERBODY);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is Jewellery.
@@ -516,46 +520,45 @@ public class Item
 	/// Gets a value indicating whether the item is a ring.
 	/// </summary>
 	public bool IsRing
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_RING, noCase) : false;
+		=> this.HasClass(ICLASS_RING);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is an amulet.
 	/// </summary>
 	public bool IsAmulet
-		=> (this.baseItemInfo is not null) ? this.baseItemInfo.ItemClass.Equals(ICLASS_AMULET, noCase) : false;
+		=> this.HasClass(ICLASS_AMULET);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a weapon.
 	/// </summary>
 	public bool IsWeapon
-		=> (this.baseItemInfo is not null)
-		? !this.IsShield && this.baseItemInfo.ItemClass.StartsWith("WEAPON", noCase)
-		: false;
+		=> !this.IsShield && this.HasClassPrefix(ICLASS_PREFIX_WEAPON);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a thrown weapon.
 	/// </summary>
 	public bool IsThrownWeapon
-		=> (this.baseItemInfo is not null)
-		? this.baseItemInfo.ItemClass.Equals(ICLASS_RANGEDONEHAND, noCase)
-		: false;
+		=> this.HasClass(ICLASS_RANGEDONEHAND);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a two handed weapon.
 	/// </summary>
 	public bool Is2HWeapon
-		=> (this.baseItemInfo is not null)
-		? this.baseItemInfo.ItemClass.Equals(ICLASS_BOW, noCase)
-			|| this.baseItemInfo.ItemClass.Equals(ICLASS_STAFF, noCase)
-		: false;
+		=> this.HasClass(ICLASS_BOW) || this.HasClass(ICLASS_STAFF);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a weapon or shield.
 	/// </summary>
 	public bool IsWeaponShield
-		=> (this.baseItemInfo is not null)
-		? this.baseItemInfo.ItemClass.StartsWith("WEAPON", noCase)
-		: false;
+		=> this.HasClassPrefix(ICLASS_PREFIX_WEAPON);
+
+	/// <summary>The item's class (from its base record) is <paramref name="itemClass"/>, whatever the case.</summary>
+	private bool HasClass(string itemClass)
+		=> this.baseItemInfo is not null && this.baseItemInfo.ItemClass.Equals(itemClass, noCase);
+
+	/// <summary>The item's class (from its base record) starts with <paramref name="prefix"/>, whatever the case.</summary>
+	private bool HasClassPrefix(string prefix)
+		=> this.baseItemInfo is not null && this.baseItemInfo.ItemClass.StartsWith(prefix, noCase);
 
 	/// <summary>
 	/// Gets a value indicating whether the item is a quest item.
@@ -880,6 +883,12 @@ public class Item
 
 	#region	ItemClass const
 
+	/// <summary>Start of the classes of armor pieces (head, forearm, upper and lower body).</summary>
+	public const string ICLASS_PREFIX_ARMORPROTECTIVE = "ArmorProtective";
+	/// <summary>Start of the classes of jewellery (rings, amulets).</summary>
+	public const string ICLASS_PREFIX_ARMORJEWELRY = "ArmorJewelry";
+	/// <summary>Start of the classes of weapons and shields.</summary>
+	public const string ICLASS_PREFIX_WEAPON = "Weapon";
 	public const string ICLASS_HEAD = "ArmorProtective_Head";
 	public const string ICLASS_FOREARM = "ArmorProtective_Forearm";
 	public const string ICLASS_UPPERBODY = "ArmorProtective_UpperBody";

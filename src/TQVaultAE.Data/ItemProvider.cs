@@ -97,9 +97,9 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 	{
 		var itemClass = itm.baseItemInfo?.ItemClass;
 		if (baseRecord is null || itm.Seed == 0 || itemClass is null || itm.IsRelicOrCharm
-			|| !(itemClass.StartsWith("ArmorProtective", StringComparison.OrdinalIgnoreCase)
-				|| itemClass.StartsWith("ArmorJewelry", StringComparison.OrdinalIgnoreCase)
-				|| itemClass.StartsWith("Weapon", StringComparison.OrdinalIgnoreCase)))
+			|| !(itemClass.StartsWith(Item.ICLASS_PREFIX_ARMORPROTECTIVE, StringComparison.OrdinalIgnoreCase)
+				|| itemClass.StartsWith(Item.ICLASS_PREFIX_ARMORJEWELRY, StringComparison.OrdinalIgnoreCase)
+				|| itemClass.StartsWith(Item.ICLASS_PREFIX_WEAPON, StringComparison.OrdinalIgnoreCase)))
 			return null;
 
 		try {
