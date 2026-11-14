@@ -74,16 +74,6 @@ public partial class VaultForm
 		this.ZoomStep = Math.Clamp(zoomStep, 0, ZoomSteps.Count - 1);
 		UIService.Scale = ZoomSteps.Scale(this.ZoomStep, UIService.DpiScale);
 
-		if (this.ZoomStep == ZoomSteps.Reset)
-		{
-			// Reset the border graphics to the originals.
-			this.topBorder = Images.BorderTop;
-			this.bottomBorder = Images.BorderBottom;
-			this.sideBorder = Images.BorderSide;
-			this.bottomRightCorner = Images.BorderBottomRightCorner;
-			this.bottomLeftCorner = Images.BorderBottomLeftCorner;
-		}
-
 		// Maximized (or minimized), the window cannot be given its size at zoom 1, and the size Windows restores it to
 		// follows the scaling of its size: it is scaled from the zoom before, as the content until it is restored; the
 		// zoom of the restore gives the content its layout from zoom 1 back.
