@@ -279,6 +279,16 @@ public class StringHelperTests
 
 	#endregion
 
+	#region MakeMD5 Tests
+
+	[Theory]
+	[InlineData("abc", "900150983cd24fb0d6963f7d28e17f72")]
+	[InlineData("", "d41d8cd98f00b204e9800998ecf8427e")]
+	public void MakeMD5_ReturnsTheLowerCaseHexOfTheUtf8Hash(string input, string expected)
+		=> input.MakeMD5().Should().Be(expected);
+
+	#endregion
+
 	#region RecordFileName Tests
 
 	[Theory]

@@ -64,21 +64,7 @@ public static partial class StringHelper
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351", Justification = "MD5 makes a stable identifier, not a security hash.")]
 	public static string MakeMD5(this string input)
-	{
-
-		// Convert the input string to a byte array and compute the hash.
-		byte[] data = MD5.HashData(Encoding.UTF8.GetBytes(input));
-
-		// Pre-allocate StringBuilder with exact capacity
-		var sBuilder = new StringBuilder(data.Length * 2, data.Length * 2);
-
-		// Use span-based hex conversion for better performance
-		var dataSpan = data.AsSpan();
-		for (int i = 0; i < dataSpan.Length; i++)
-			sBuilder.Append(dataSpan[i].ToString("x2"));
-
-		return sBuilder.ToString();
-	}
+		=> Convert.ToHexStringLower(MD5.HashData(Encoding.UTF8.GetBytes(input)));
 
 	[return: NotNullIfNotNull(nameof(text))]
 	public static string? ToFirstCharUpperCase(this string? text)

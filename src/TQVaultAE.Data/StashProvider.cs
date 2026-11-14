@@ -7,6 +7,7 @@
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
+using System.Buffers.Binary;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
 
@@ -166,7 +167,7 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		var dataSpan = data.AsSpan();
 		// Find the length of the filename string.
 		// It's an Int32 starting at offset 52 in the file.
-		int offset = dataSpan[52] + (256 * dataSpan[53]) + (65536 * dataSpan[54]) + (16777216 * dataSpan[55]);
+		int offset = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(52));
 
 		// Adjust for the location of the filename string - 1
 		// which is at offset 56.  Subtract 1 to get the last letter of the filename.
