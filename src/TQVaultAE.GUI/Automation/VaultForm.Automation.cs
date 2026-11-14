@@ -33,7 +33,7 @@ public partial class VaultForm
 
 		const int WM_NCRBUTTONUP = 0x00A5, HTCAPTION = 2;
 		var screen = this.PointToScreen(new Point(this.topBorderRect.Left + (this.topBorderRect.Width / 2), this.topBorderRect.Top + (this.topBorderRect.Height / 2)));
-		TQVaultAE.GUI.Automation.NativeWindows.Send(this.Handle, WM_NCRBUTTONUP, HTCAPTION, (screen.Y << 16) | (screen.X & 0xFFFF));
+		TQVaultAE.GUI.Automation.NativeWindows.Send(this.Handle, WM_NCRBUTTONUP, HTCAPTION, TQVaultAE.GUI.Automation.NativeWindows.MakeLParam(screen));
 		return this.systemMenu;
 	}
 }

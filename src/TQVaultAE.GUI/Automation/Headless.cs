@@ -127,29 +127,18 @@ internal static partial class Headless
 			if (wParam != _lastCancelled)
 			{
 				_lastCancelled = wParam;
-				var title = GetText(wParam);
+				var title = NativeWindows.GetText(wParam);
 				_cancelled.Enqueue($"{DateTime.Now:HH:mm:ss} {title}");
 				AutomationHost.Log?.LogWarning("Headless: native dialog \"{Title}\" cancelled", title);
 			}
-			PostMessage(wParam, WM_COMMAND, IDCANCEL, IntPtr.Zero);
+			NativeWindows.Post(wParam, WM_COMMAND, IDCANCEL, IntPtr.Zero);
 		}
 
 		return CallNextHookEx(_cbtHook, code, wParam, lParam);
 	}
 
 	private static bool IsTopLevelDialog(IntPtr hwnd)
-	{
-		var buffer = new char[16];
-		int length = GetClassName(hwnd, buffer, buffer.Length);
-		return new string(buffer, 0, length) == "#32770" && (GetWindowLong(hwnd, GWL_STYLE) & WS_CHILD) == 0;
-	}
-
-	private static string GetText(IntPtr hwnd)
-	{
-		var buffer = new char[256];
-		int length = GetWindowText(hwnd, buffer, buffer.Length);
-		return new string(buffer, 0, length);
-	}
+		=> NativeWindows.GetClass(hwnd) == NativeWindows.DialogClass && (GetWindowLong(hwnd, GWL_STYLE) & WS_CHILD) == 0;
 
 	private static string? CurrentDesktopName()
 	{
@@ -227,16 +216,6 @@ internal static partial class Headless
 	[LibraryImport("kernel32.dll")]
 	private static partial uint GetCurrentThreadId();
 
-	[LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
-	private static partial int GetClassName(IntPtr hWnd, [Out] char[] lpClassName, int nMaxCount);
-
-	[LibraryImport("user32.dll", EntryPoint = "GetWindowTextW", StringMarshalling = StringMarshalling.Utf16)]
-	private static partial int GetWindowText(IntPtr hWnd, [Out] char[] lpString, int nMaxCount);
-
 	[LibraryImport("user32.dll", EntryPoint = "GetWindowLongW")]
 	private static partial int GetWindowLong(IntPtr hWnd, int index);
-
-	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 }

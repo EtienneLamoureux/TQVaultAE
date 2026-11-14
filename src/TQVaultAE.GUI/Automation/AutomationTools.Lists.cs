@@ -108,7 +108,7 @@ internal static partial class AutomationTools
 			list.FindForm()?.Activate();
 			list.Focus();
 			foreach (var key in parsed)
-				NativeWindows.PostKey(list.Handle, key);
+				AutomationInput.PostKey(list, key);
 			return Serialize(new { name = list.Name, focused = list.Focused, keys = parsed.Select(k => k.ToString()).ToList() });
 		});
 

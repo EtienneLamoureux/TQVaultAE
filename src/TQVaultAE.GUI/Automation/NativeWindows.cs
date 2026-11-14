@@ -33,12 +33,15 @@ internal static partial class NativeWindows
 		["Close"] = 8,
 	};
 
+	/// <summary>The window class of the standard Win32 dialogs (message box, task dialog, common dialog).</summary>
+	public const string DialogClass = "#32770";
+
 	public sealed record NativeWindow(IntPtr Handle, string Title, string ClassName, bool Visible, bool Enabled, IntPtr Owner)
 	{
 		/// <summary>
 		/// Gets a value indicating whether this is a standard Win32 dialog (message box, task dialog, common dialog).
 		/// </summary>
-		public bool IsDialogClass => this.ClassName == "#32770";
+		public bool IsDialogClass => this.ClassName == DialogClass;
 	}
 
 	public sealed record NativeButton(IntPtr Handle, int ControlId, string Text);
@@ -120,34 +123,28 @@ internal static partial class NativeWindows
 		return result;
 	}
 
-	/// <summary>
-	/// Posts a key press (key down, key up) to a window, through the message loop like a real key: WinForms then runs
-	/// its pre-processing (IsInputKey, dialog keys) before the control's key events, and the loop's TranslateMessage
-	/// adds the character message.
-	/// </summary>
-	public static bool PostKey(IntPtr hwnd, Keys key)
-	{
-		const int WM_KEYDOWN = 0x0100;
-		const int WM_KEYUP = 0x0101;
-		var virtualKey = (IntPtr)(int)(key & Keys.KeyCode);
-		// Repeat count 1; key up also sets the previous state and transition bits.
-		return PostMessage(hwnd, WM_KEYDOWN, virtualKey, 1)
-			&& PostMessage(hwnd, WM_KEYUP, virtualKey, (IntPtr)unchecked((int)0xC0000001));
-	}
+	/// <summary>A point packed in a message parameter as Windows packs the mouse position (MAKELPARAM: x low, y high).</summary>
+	public static IntPtr MakeLParam(Point point) => (point.Y << 16) | (point.X & 0xFFFF);
+
+	/// <summary>The bounds of a window on the screen, as Windows gives them; empty when it gives none.</summary>
+	public static Rectangle WindowRect(IntPtr hwnd)
+		=> GetWindowRect(hwnd, out var r) ? Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom) : Rectangle.Empty;
 
 	private static string Normalize(string text) => text.Replace("&", string.Empty).Trim();
 
 	private static NativeWindow Describe(IntPtr hwnd)
 		=> new(hwnd, GetText(hwnd), GetClass(hwnd), IsWindowVisible(hwnd), IsWindowEnabled(hwnd), GetWindow(hwnd, GW_OWNER));
 
-	private static string GetText(IntPtr hwnd)
+	/// <summary>The title or text of a window.</summary>
+	public static string GetText(IntPtr hwnd)
 	{
 		var buffer = new char[GetWindowTextLength(hwnd) + 1];
 		int length = GetWindowText(hwnd, buffer, buffer.Length);
 		return new string(buffer, 0, length);
 	}
 
-	private static string GetClass(IntPtr hwnd)
+	/// <summary>The class name of a window.</summary>
+	public static string GetClass(IntPtr hwnd)
 	{
 		var buffer = new char[256];
 		int length = GetClassName(hwnd, buffer, buffer.Length);
@@ -212,9 +209,25 @@ internal static partial class NativeWindows
 	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
 	private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+	/// <summary>Posts <paramref name="msg"/> to a window's message queue, handled by its thread's message loop.</summary>
+	public static bool Post(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => PostMessage(hwnd, msg, wParam, lParam);
+
 	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+	[StructLayout(LayoutKind.Sequential)]
+	private struct NativeRect
+	{
+		public int Left;
+		public int Top;
+		public int Right;
+		public int Bottom;
+	}
+
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool GetWindowRect(IntPtr hWnd, out NativeRect rect);
 
 	/// <summary>PrintWindow: the window's content as the desktop composes it, not a WM_PRINT repaint.</summary>
 	private const uint PW_RENDERFULLCONTENT = 0x2;

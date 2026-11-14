@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -45,7 +44,7 @@ internal static partial class AutomationTools
 			VirtualCursor.Set(panel, center);
 			try
 			{
-				NativeWindows.Send(panel.Handle, WM_MOUSEMOVE, IntPtr.Zero, (IntPtr)((center.Y << 16) | (center.X & 0xFFFF)));
+				NativeWindows.Send(panel.Handle, WM_MOUSEMOVE, IntPtr.Zero, NativeWindows.MakeLParam(center));
 			}
 			finally
 			{
@@ -55,7 +54,7 @@ internal static partial class AutomationTools
 			var tooltip = panel.Tooltip ?? throw new McpException("The panel has no game tool tip.");
 			var window = NativeWindows.GetProcessTopLevelWindows()
 				.Where(w => w.ClassName.Contains("tooltips_class32", StringComparison.OrdinalIgnoreCase))
-				.Select(w => GetWindowRect(w.Handle, out var r) ? Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom) : Rectangle.Empty)
+				.Select(w => NativeWindows.WindowRect(w.Handle))
 				.FirstOrDefault(r => !r.IsEmpty);
 
 			var equipment = ResolveShownPanel(form, "equipment").Panel;
@@ -94,19 +93,6 @@ internal static partial class AutomationTools
 
 		return AutomationImages.Result(text, png, "playerstatshover");
 	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	private struct NativeRect
-	{
-		public int Left;
-		public int Top;
-		public int Right;
-		public int Bottom;
-	}
-
-	[LibraryImport("user32.dll")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool GetWindowRect(IntPtr hWnd, out NativeRect rect);
 
 	#endregion
 }

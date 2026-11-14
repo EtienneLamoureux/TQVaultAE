@@ -107,16 +107,13 @@ internal static partial class AutomationInput
 	public static void SendClick(Control target, Point client, MouseButtons button, Keys modifiers)
 	{
 		using var held = HoldModifiers(modifiers);
-		var (down, up, buttonFlag) = button == MouseButtons.Right
-			? (WM_RBUTTONDOWN, WM_RBUTTONUP, MK_RBUTTON)
-			: (WM_LBUTTONDOWN, WM_LBUTTONUP, MK_LBUTTON);
-		int keyFlags = (modifiers.HasFlag(Keys.Control) ? MK_CONTROL : 0) | (modifiers.HasFlag(Keys.Shift) ? MK_SHIFT : 0);
-		nint position = (client.Y << 16) | (client.X & 0xFFFF);
+		var (down, up, _, buttonFlag) = ButtonMessages(button);
+		int keyFlags = KeyFlags(modifiers);
+		nint position = NativeWindows.MakeLParam(client);
 		SendMessage(target.Handle, down, buttonFlag | keyFlags, position);
 		SendMessage(target.Handle, up, keyFlags, position);
 	}
 
-	/// <summary>The center of <paramref name="control"/> in its client coordinates.</summary>
 	/// <summary>
 	/// Right-clicks <paramref name="target"/> at a client point (button down and up), then sends the
 	/// <c>WM_CONTEXTMENU</c> Windows sends after it with that point on the screen: the control shows its
@@ -131,12 +128,10 @@ internal static partial class AutomationInput
 	/// </summary>
 	public static void SendMouse(Control target, Point client, MouseButtons button, int clicks)
 	{
-		const int WM_MOUSEMOVE = 0x0200, WM_LBUTTONDBLCLK = 0x0203, WM_RBUTTONDBLCLK = 0x0206, WM_CONTEXTMENU = 0x007B;
+		const int WM_MOUSEMOVE = 0x0200, WM_CONTEXTMENU = 0x007B;
 		bool right = button == MouseButtons.Right;
-		var (down, up, doubleClick, flag) = right
-			? (WM_RBUTTONDOWN, WM_RBUTTONUP, WM_RBUTTONDBLCLK, MK_RBUTTON)
-			: (WM_LBUTTONDOWN, WM_LBUTTONUP, WM_LBUTTONDBLCLK, MK_LBUTTON);
-		nint position = (client.Y << 16) | (client.X & 0xFFFF);
+		var (down, up, doubleClick, flag) = ButtonMessages(button);
+		nint position = NativeWindows.MakeLParam(client);
 		nint handle = target.Handle;
 		SendMessage(handle, WM_MOUSEMOVE, 0, position);
 		SendMessage(handle, down, flag, position);
@@ -150,7 +145,7 @@ internal static partial class AutomationInput
 		if (right && !target.IsDisposed)
 		{
 			var screen = target.PointToScreen(client);
-			SendMessage(handle, WM_CONTEXTMENU, handle, (screen.Y << 16) | (screen.X & 0xFFFF));
+			SendMessage(handle, WM_CONTEXTMENU, handle, NativeWindows.MakeLParam(screen));
 		}
 	}
 
@@ -160,9 +155,8 @@ internal static partial class AutomationInput
 	/// </summary>
 	public static void SendButton(Control target, Point client, MouseButtons button, bool down)
 	{
-		bool right = button == MouseButtons.Right;
-		int message = down ? (right ? WM_RBUTTONDOWN : WM_LBUTTONDOWN) : (right ? WM_RBUTTONUP : WM_LBUTTONUP);
-		SendMessage(target.Handle, message, down ? (right ? MK_RBUTTON : MK_LBUTTON) : 0, (client.Y << 16) | (client.X & 0xFFFF));
+		var (downMessage, upMessage, _, flag) = ButtonMessages(button);
+		SendMessage(target.Handle, down ? downMessage : upMessage, down ? flag : 0, NativeWindows.MakeLParam(client));
 	}
 
 	/// <summary>
@@ -174,12 +168,25 @@ internal static partial class AutomationInput
 	{
 		const int WM_MOUSEWHEEL = 0x020A, WHEEL_DELTA = 120;
 		using var held = HoldModifiers(modifiers);
-		int keyFlags = (modifiers.HasFlag(Keys.Control) ? MK_CONTROL : 0) | (modifiers.HasFlag(Keys.Shift) ? MK_SHIFT : 0);
 		var screen = target.PointToScreen(client);
-		SendMessage(target.Handle, WM_MOUSEWHEEL, ((notches * WHEEL_DELTA) << 16) | keyFlags, (screen.Y << 16) | (screen.X & 0xFFFF));
+		SendMessage(target.Handle, WM_MOUSEWHEEL, ((notches * WHEEL_DELTA) << 16) | KeyFlags(modifiers), NativeWindows.MakeLParam(screen));
 	}
 
+	/// <summary>The center of <paramref name="control"/> in its client coordinates.</summary>
 	public static Point Center(Control control) => new(control.Width / 2, control.Height / 2);
+
+	/// <summary>The messages of a mouse button (down, up, double click) and its <c>MK_</c> flag.</summary>
+	private static (int Down, int Up, int DoubleClick, int Flag) ButtonMessages(MouseButtons button)
+	{
+		const int WM_LBUTTONDBLCLK = 0x0203, WM_RBUTTONDBLCLK = 0x0206;
+		return button == MouseButtons.Right
+			? (WM_RBUTTONDOWN, WM_RBUTTONUP, WM_RBUTTONDBLCLK, MK_RBUTTON)
+			: (WM_LBUTTONDOWN, WM_LBUTTONUP, WM_LBUTTONDBLCLK, MK_LBUTTON);
+	}
+
+	/// <summary>The <c>MK_</c> flags of the modifiers a mouse message carries (Ctrl and Shift; Alt has none).</summary>
+	private static int KeyFlags(Keys modifiers)
+		=> (modifiers.HasFlag(Keys.Control) ? MK_CONTROL : 0) | (modifiers.HasFlag(Keys.Shift) ? MK_SHIFT : 0);
 
 	/// <summary>
 	/// The deepest visible child of <paramref name="control"/> under a client point, as Windows finds the window that gets
@@ -284,12 +291,9 @@ internal static partial class AutomationInput
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool SetKeyboardState(byte[] state);
 
-	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool PostMessage(nint hWnd, int msg, nint wParam, nint lParam);
+	private static bool PostMessage(nint hWnd, int msg, nint wParam, nint lParam) => NativeWindows.Post(hWnd, msg, wParam, lParam);
 
-	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
-	private static partial nint SendMessage(nint hWnd, int msg, nint wParam, nint lParam);
+	private static nint SendMessage(nint hWnd, int msg, nint wParam, nint lParam) => NativeWindows.Send(hWnd, msg, wParam, lParam);
 
 	[LibraryImport("user32.dll")]
 	[return: MarshalAs(UnmanagedType.Bool)]

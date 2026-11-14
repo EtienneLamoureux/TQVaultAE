@@ -414,9 +414,10 @@ internal static partial class AutomationTools
 		});
 
 	private static object NativeWindowRect(IntPtr handle)
-		=> GetWindowRect(handle, out var r)
-			? new { X = r.Left, Y = r.Top, Width = r.Right - r.Left, Height = r.Bottom - r.Top }
-			: new { X = 0, Y = 0, Width = 0, Height = 0 };
+	{
+		var r = NativeWindows.WindowRect(handle);
+		return new { r.X, r.Y, r.Width, r.Height };
+	}
 
 	[McpServerTool(Name = "window_state", Destructive = true)]
 	[Description("Sets the main window's state like the taskbar or the caption buttons do: 'minimize', 'restore' (back from minimized or maximized, as a click on the taskbar icon) or 'maximize'. Returns the state, bounds and client size after it, and the bounds of the custom border's caption buttons (to check they are back in place after a restore).")]

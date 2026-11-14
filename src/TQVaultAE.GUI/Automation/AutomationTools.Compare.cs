@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -134,14 +133,14 @@ internal static partial class AutomationTools
 			switch (parts[0].ToLowerInvariant())
 			{
 				case "page":
-					SendScrollMessage(scroll.Handle, WM_VSCROLL, count > 0 ? SB_PAGEDOWN : SB_PAGEUP, 0);
-					SendScrollMessage(scroll.Handle, WM_VSCROLL, SB_ENDSCROLL, 0);
+					NativeWindows.Send(scroll.Handle, WM_VSCROLL, count > 0 ? SB_PAGEDOWN : SB_PAGEUP, 0);
+					NativeWindows.Send(scroll.Handle, WM_VSCROLL, SB_ENDSCROLL, 0);
 					break;
 				case "wheel":
 					// The wheel delta in the high word, the pointer (screen coordinates) over the panel's centre.
 					var center = scroll.PointToScreen(new Point(scroll.ClientSize.Width / 2, scroll.ClientSize.Height / 2));
-					SendScrollMessage(scroll.Handle, WM_MOUSEWHEEL, (count > 0 ? -WHEEL_DELTA : WHEEL_DELTA) << 16,
-						(center.Y << 16) | (center.X & 0xFFFF));
+					NativeWindows.Send(scroll.Handle, WM_MOUSEWHEEL, (count > 0 ? -WHEEL_DELTA : WHEEL_DELTA) << 16,
+						NativeWindows.MakeLParam(center));
 					break;
 				default:
 					throw new McpException($"Unknown scroll '{request}'. Use 'page:N' or 'wheel:N'.");
@@ -151,9 +150,6 @@ internal static partial class AutomationTools
 		System.Windows.Forms.Application.DoEvents();
 		return new Point(-scroll.AutoScrollPosition.X, -scroll.AutoScrollPosition.Y);
 	}
-
-	[LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
-	private static partial nint SendScrollMessage(nint hWnd, int msg, nint wParam, nint lParam);
 
 	/// <summary><c>Control.OnClick</c>, which raises the control's Click event as a mouse click does.</summary>
 	private static readonly System.Reflection.MethodInfo ClickMethod = typeof(Control).GetMethod("OnClick",
