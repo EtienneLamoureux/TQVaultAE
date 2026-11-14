@@ -3,7 +3,6 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Presentation;
 using TQVaultAE.Config;
 using TQVaultAE.Application.Results;
 
@@ -105,8 +104,8 @@ public class StashService(
 	private sealed record SharedStashKind(StashType Type, string Name, Func<string> ActiveMapFile, Func<string, string> FileOfMap);
 
 	private SharedStashKind KindOf(StashType type) => type == StashType.TransferStash
-		? new(StashType.TransferStash, Resources.GlobalTransferStash, () => this.GamePathResolver.TransferStashFileFullPath, this.GamePathResolver.TransferStashFileFullPathFor)
-		: new(StashType.RelicVaultStash, Resources.GlobalRelicVaultStash, () => this.GamePathResolver.RelicVaultStashFileFullPath, this.GamePathResolver.RelicVaultStashFileFullPathFor);
+		? new(StashType.TransferStash, SharedStashNames.TransferStash, () => this.GamePathResolver.TransferStashFileFullPath, this.GamePathResolver.TransferStashFileFullPathFor)
+		: new(StashType.RelicVaultStash, SharedStashNames.RelicVault, () => this.GamePathResolver.RelicVaultStashFileFullPath, this.GamePathResolver.RelicVaultStashFileFullPathFor);
 
 	/// <summary>
 	/// Loads the transfer stash for immortal throne.

@@ -323,6 +323,19 @@ public class SaveOrchestratorTests
 	}
 
 	[Fact]
+	public void Save_SharedStashFileLocked_ReportsItsStashTypeForTheUIToNameIt()
+	{
+		var transfer = new Stash(SharedStashNames.TransferStash, "winsys.dxb") { Sack = new SackCollection { StashType = StashType.TransferStash } };
+		this._stashService.Setup(s => s.GetModifiedStashes()).Returns([("winsys.dxb", transfer)]);
+		this.Fails($"stash:{transfer.PlayerName}", _ => new IOException("locked"));
+
+		this._orchestrator.Save(SaveRequest.FilesOnly, this.Answer(SaveDecision.Ignore));
+
+		this._asked.Should().ContainSingle();
+		(this._asked[0].Name, this._asked[0].StashType).Should().Be(("Transfer Stash - Immortal Throne", StashType.TransferStash));
+	}
+
+	[Fact]
 	public void Save_ErrorOtherThanFileError_IsNotCaught()
 	{
 		this.Fails("player:Hero", _ => new InvalidOperationException("bug"));

@@ -30,12 +30,7 @@ public static class ItemSummaryText
 			SackType.Player => Resources.ResultsContainerPlayer,
 			SackType.Equipment => Resources.ResultsContainerEquip,
 			SackType.Loadout => Resources.LoadoutResultsContainer,
-			SackType.Stash => stashType switch
-			{
-				StashType.TransferStash => Resources.GlobalTransferStash,
-				StashType.RelicVaultStash => Resources.GlobalRelicVaultStash,
-				_ => Resources.ResultsContainerStash
-			},
+			SackType.Stash => SharedStashText.Name(stashType) ?? Resources.ResultsContainerStash,
 			_ => "Unknown",
 		};
 

@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Exceptions;
-using TQVaultAE.Presentation;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
@@ -92,10 +92,10 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 			string fileAndExtension = this.PathIO.GetFileName(filename);
 			if (fileAndExtension.Contains("MISC", StringComparison.OrdinalIgnoreCase))
 				// Check for the relic vault stash.
-				charName = Resources.GlobalRelicVaultStash;
+				charName = SharedStashNames.RelicVault;
 			else if (fileAndExtension.Contains("WIN", StringComparison.OrdinalIgnoreCase))
 				// Check for the transfer stash.
-				charName = Resources.GlobalTransferStash;
+				charName = SharedStashNames.TransferStash;
 			else
 				charName = null;
 		}

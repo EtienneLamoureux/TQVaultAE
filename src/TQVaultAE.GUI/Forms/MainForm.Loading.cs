@@ -105,7 +105,8 @@ public partial class MainForm
 	/// </summary>
 	private SaveDecision AskSaveDecision(SaveError error)
 	{
-		string title = string.Format(CultureInfo.CurrentCulture, Resources.MainFormSaveError, error.Name);
+		string? name = error.Name is null ? null : SharedStashText.Localize(error.Name, error.StashType);
+		string title = string.Format(CultureInfo.CurrentCulture, Resources.MainFormSaveError, name);
 		Log.LogError(error.Exception, "{Message}", title);
 		return this.Services.MessageBoxes.Ask(Log.FormatException(error.Exception), title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Exclamation) switch
 		{

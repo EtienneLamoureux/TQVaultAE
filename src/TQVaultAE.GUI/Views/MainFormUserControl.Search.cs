@@ -58,7 +58,7 @@ public partial class MainFormUserControl
 			var save = this.Services.GameMapService.CharacterShowing(selectedResult.Container, this.ListedCharacters(), selected);
 			if (save is null)
 			{
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.SearchSharedStashNoCharacter, selectedResult.ContainerName), TQColor.Red);
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.SearchSharedStashNoCharacter, SharedStashText.Localize(selectedResult.ContainerName, selectedResult.StashType)), TQColor.Red);
 				return;
 			}
 

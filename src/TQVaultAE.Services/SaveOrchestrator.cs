@@ -41,7 +41,7 @@ public class SaveOrchestrator(
 				, v => this._vaultService.SaveModifiedVault(v.File, v.Vault), onError, errors);
 
 			stashesSaved = SaveFiles(SaveStep.Stashes, this._stashService.GetModifiedStashes(), s => s.Stash.PlayerName
-				, s => this._stashService.SaveModifiedStash(s.File, s.Stash), onError, errors);
+				, s => this._stashService.SaveModifiedStash(s.File, s.Stash), onError, errors, s => s.Stash.Sack?.StashType);
 		}
 
 		bool? configChanged = null;
@@ -75,13 +75,14 @@ public class SaveOrchestrator(
 	/// <param name="save">Saves one file.</param>
 	/// <param name="onError">Decides after a file error.</param>
 	/// <param name="errors">Receives each file error.</param>
+	/// <param name="stashType">The stash type of a file, for the stashes.</param>
 	/// <returns>How many files were saved.</returns>
-	private static int SaveFiles<T>(SaveStep step, IEnumerable<T> files, Func<T, string?> name, Action<T> save, Func<SaveError, SaveDecision> onError, List<SaveError> errors)
+	private static int SaveFiles<T>(SaveStep step, IEnumerable<T> files, Func<T, string?> name, Action<T> save, Func<SaveError, SaveDecision> onError, List<SaveError> errors, Func<T, StashType?>? stashType = null)
 	{
 		int saved = 0;
 		foreach (var file in files)
 		{
-			if (SaveFile(step, file, name, save, onError, errors))
+			if (SaveFile(step, file, name, save, onError, errors, stashType))
 				saved++;
 		}
 
@@ -92,7 +93,7 @@ public class SaveOrchestrator(
 	/// Writes one file, asking <paramref name="onError"/> after each file or access error.
 	/// </summary>
 	/// <returns>Whether the file was saved; false when it was ignored after an error.</returns>
-	private static bool SaveFile<T>(SaveStep step, T file, Func<T, string?> name, Action<T> save, Func<SaveError, SaveDecision> onError, List<SaveError> errors)
+	private static bool SaveFile<T>(SaveStep step, T file, Func<T, string?> name, Action<T> save, Func<SaveError, SaveDecision> onError, List<SaveError> errors, Func<T, StashType?>? stashType)
 	{
 		while (true)
 		{
@@ -103,7 +104,7 @@ public class SaveOrchestrator(
 			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
-				var error = new SaveError(step, name(file), exception);
+				var error = new SaveError(step, name(file), exception, stashType?.Invoke(file));
 				errors.Add(error);
 				switch (onError(error))
 				{

@@ -205,7 +205,7 @@ public partial class ResultsDialog : VaultForm
 			int currentRow = this.resultsDataGridView.Rows.Add(
 				result.ItemName
 				, result.ItemStyle
-				, result.ContainerName
+				, SharedStashText.Localize(result.ContainerName, result.StashType)
 				, ItemSummaryText.ContainerTypeLabel(result.SackType, result.StashType)
 				, ItemSummaryText.PlaceLabel(result.LoadoutName, SearchResultNavigation.Resolve(result).BagNumber)
 				, result.RequiredLevel

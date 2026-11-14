@@ -29,10 +29,12 @@ public enum SaveDecision
 /// A file that could not be written during a save.
 /// </summary>
 /// <param name="Step">The step that failed.</param>
-/// <param name="Name">The name of the character, vault or stash being saved.</param>
+/// <param name="Name">The name of the character, vault or stash being saved; a shared stash has its neutral name
+/// (<see cref="SharedStashNames"/>), which the UI translates.</param>
 /// <param name="Exception">The file error: an <see cref="IOException"/> (file locked, disk full, path not found)
 /// or an <see cref="UnauthorizedAccessException"/> (read-only file, no permission, protected folder).</param>
-public sealed record SaveError(SaveStep Step, string? Name, Exception Exception);
+/// <param name="StashType">The type of the stash being saved, or null for a character or a vault.</param>
+public sealed record SaveError(SaveStep Step, string? Name, Exception Exception, Domain.Entities.StashType? StashType = null);
 
 /// <summary>
 /// The state of the session written to the user settings after the files.
