@@ -2490,4 +2490,64 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
 	<data name="SettingsMcpServerPortTT" xml:space="preserve">
     <value>Port du point d'accès MCP, sur cet ordinateur seulement (127.0.0.1) : ne l'ouvrez jamais au réseau. Par défaut : 47017.</value>
   </data>
+	<data name="ResultsMenuSelectAll" xml:space="preserve">
+    <value>Tout sélectionner</value>
+  </data>
+	<data name="ResultsMenuMoveTo" xml:space="preserve">
+    <value>Déplacer vers</value>
+  </data>
+	<data name="ResultsMenuPlayerStash" xml:space="preserve">
+    <value>Zone de stockage</value>
+  </data>
+	<data name="ResultsMenuVaults" xml:space="preserve">
+    <value>Coffres</value>
+  </data>
+	<data name="ResultsMenuUndo" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+	<data name="ResultsMoveVaultBag" xml:space="preserve">
+    <value>{0}, sac {1}</value>
+  </data>
+	<data name="ResultsMoved" xml:space="preserve">
+    <value>{0} objet(s) déplacé(s) vers {1}.</value>
+  </data>
+	<data name="ResultsUndone" xml:space="preserve">
+    <value>{0} objet(s) remis en place.</value>
+  </data>
+	<data name="ResultsNotMoved" xml:space="preserve">
+    <value>Non déplacé(s) ({0}) : {1}.</value>
+  </data>
+	<data name="ResultsNotPutBack" xml:space="preserve">
+    <value>Non remis en place ({0}) : {1}.</value>
+  </data>
+	<data name="ResultsSkipReason" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+	<data name="ResultsSkipNoRoom" xml:space="preserve">
+    <value>pas de place</value>
+  </data>
+	<data name="ResultsSkipReadOnly" xml:space="preserve">
+    <value>personnage en lecture seule</value>
+  </data>
+	<data name="ResultsSkipEquipmentLocked" xml:space="preserve">
+    <value>équipement verrouillé par « {0} »</value>
+  </data>
+	<data name="ResultsSkipNotAccepted" xml:space="preserve">
+    <value>refusé par la chambre des reliques</value>
+  </data>
+	<data name="ResultsSkipNotFound" xml:space="preserve">
+    <value>n'est plus là</value>
+  </data>
+	<data name="ResultsSkipAlreadyThere" xml:space="preserve">
+    <value>déjà sur place</value>
+  </data>
+	<data name="ResultsSkipTargetReadOnly" xml:space="preserve">
+    <value>zone de stockage d'un personnage en lecture seule</value>
+  </data>
+	<data name="ResultsSkipLoadoutNotWritten" xml:space="preserve">
+    <value>fichier des tenues non écrit</value>
+  </data>
+	<data name="ResultsMoveHeldItem" xml:space="preserve">
+    <value>Posez d'abord l'objet tenu.</value>
+  </data>
 </root>

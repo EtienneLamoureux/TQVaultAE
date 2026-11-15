@@ -2860,4 +2860,64 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
 	<data name="SettingsMcpServerPortTT" xml:space="preserve">
     <value>Port of the MCP endpoint, on this computer only (127.0.0.1): never open it to the network. Default: 47017.</value>
   </data>
+	<data name="ResultsMenuSelectAll" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+	<data name="ResultsMenuMoveTo" xml:space="preserve">
+    <value>Move To</value>
+  </data>
+	<data name="ResultsMenuPlayerStash" xml:space="preserve">
+    <value>Player Stash</value>
+  </data>
+	<data name="ResultsMenuVaults" xml:space="preserve">
+    <value>Vaults</value>
+  </data>
+	<data name="ResultsMenuUndo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+	<data name="ResultsMoveVaultBag" xml:space="preserve">
+    <value>{0}, bag {1}</value>
+  </data>
+	<data name="ResultsMoved" xml:space="preserve">
+    <value>{0} item(s) moved to {1}.</value>
+  </data>
+	<data name="ResultsUndone" xml:space="preserve">
+    <value>{0} item(s) put back.</value>
+  </data>
+	<data name="ResultsNotMoved" xml:space="preserve">
+    <value>Not moved ({0}): {1}.</value>
+  </data>
+	<data name="ResultsNotPutBack" xml:space="preserve">
+    <value>Not put back ({0}): {1}.</value>
+  </data>
+	<data name="ResultsSkipReason" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+	<data name="ResultsSkipNoRoom" xml:space="preserve">
+    <value>no room</value>
+  </data>
+	<data name="ResultsSkipReadOnly" xml:space="preserve">
+    <value>read-only character</value>
+  </data>
+	<data name="ResultsSkipEquipmentLocked" xml:space="preserve">
+    <value>equipment locked by “{0}”</value>
+  </data>
+	<data name="ResultsSkipNotAccepted" xml:space="preserve">
+    <value>not taken by the relic vault</value>
+  </data>
+	<data name="ResultsSkipNotFound" xml:space="preserve">
+    <value>no longer there</value>
+  </data>
+	<data name="ResultsSkipAlreadyThere" xml:space="preserve">
+    <value>already there</value>
+  </data>
+	<data name="ResultsSkipTargetReadOnly" xml:space="preserve">
+    <value>the stash of a read-only character</value>
+  </data>
+	<data name="ResultsSkipLoadoutNotWritten" xml:space="preserve">
+    <value>loadouts file not written</value>
+  </data>
+	<data name="ResultsMoveHeldItem" xml:space="preserve">
+    <value>Put down the held item first.</value>
+  </data>
 </root>

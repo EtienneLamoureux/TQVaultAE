@@ -66,6 +66,7 @@ public sealed class GuiServices
 		, KeyBindMap keyBinds
 		, ILoadoutService loadouts
 		, IGameProcessService gameProcess
+		, IResultsMoveService resultsMove
 	)
 	{
 		this.CharacterReadOnlyService = characterReadOnlyService;
@@ -110,6 +111,7 @@ public sealed class GuiServices
 		this.KeyBinds = keyBinds;
 		this.Loadouts = loadouts;
 		this.GameProcess = gameProcess;
+		this.ResultsMove = resultsMove;
 	}
 
 	/// <summary>Creates dialogs and gives access to the main form.</summary>
@@ -212,6 +214,9 @@ public sealed class GuiServices
 
 	/// <summary>Whether the game is running.</summary>
 	public IGameProcessService GameProcess { get; }
+
+	/// <summary>Moves the items of search results to a stash or a vault bag, and puts them back.</summary>
+	public IResultsMoveService ResultsMove { get; }
 
 	/// <summary>Logger for <typeparamref name="T"/>.</summary>
 	public ILogger<T> Logger<T>() => this._loggerFactory.CreateLogger<T>();

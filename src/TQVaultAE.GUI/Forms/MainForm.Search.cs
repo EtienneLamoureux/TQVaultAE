@@ -99,6 +99,9 @@ public partial class MainForm
 	private void SelectResult(object? sender, ResultChangedEventArgs e)
 		=> this.mainView.ShowSearchResult(e.Result);
 
+	/// <summary>The main content, for the results window's <i>Move To</i>: its targets, and its panels shown again.</summary>
+	internal Views.MainFormUserControl ResultsMoveHost => this.mainView;
+
 
 
 

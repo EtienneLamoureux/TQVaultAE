@@ -7869,5 +7869,185 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("LoadoutMarkClickToCompare", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select All.
+        /// </summary>
+        public static string ResultsMenuSelectAll {
+            get {
+                return ResourceManager.GetString("ResultsMenuSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move To.
+        /// </summary>
+        public static string ResultsMenuMoveTo {
+            get {
+                return ResourceManager.GetString("ResultsMenuMoveTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player Stash.
+        /// </summary>
+        public static string ResultsMenuPlayerStash {
+            get {
+                return ResourceManager.GetString("ResultsMenuPlayerStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vaults.
+        /// </summary>
+        public static string ResultsMenuVaults {
+            get {
+                return ResourceManager.GetString("ResultsMenuVaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string ResultsMenuUndo {
+            get {
+                return ResourceManager.GetString("ResultsMenuUndo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, bag {1}.
+        /// </summary>
+        public static string ResultsMoveVaultBag {
+            get {
+                return ResourceManager.GetString("ResultsMoveVaultBag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} item(s) moved to {1}..
+        /// </summary>
+        public static string ResultsMoved {
+            get {
+                return ResourceManager.GetString("ResultsMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} item(s) put back..
+        /// </summary>
+        public static string ResultsUndone {
+            get {
+                return ResourceManager.GetString("ResultsUndone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not moved ({0}): {1}..
+        /// </summary>
+        public static string ResultsNotMoved {
+            get {
+                return ResourceManager.GetString("ResultsNotMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not put back ({0}): {1}..
+        /// </summary>
+        public static string ResultsNotPutBack {
+            get {
+                return ResourceManager.GetString("ResultsNotPutBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        public static string ResultsSkipReason {
+            get {
+                return ResourceManager.GetString("ResultsSkipReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to no room.
+        /// </summary>
+        public static string ResultsSkipNoRoom {
+            get {
+                return ResourceManager.GetString("ResultsSkipNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to read-only character.
+        /// </summary>
+        public static string ResultsSkipReadOnly {
+            get {
+                return ResourceManager.GetString("ResultsSkipReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to equipment locked by “{0}”.
+        /// </summary>
+        public static string ResultsSkipEquipmentLocked {
+            get {
+                return ResourceManager.GetString("ResultsSkipEquipmentLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to not taken by the relic vault.
+        /// </summary>
+        public static string ResultsSkipNotAccepted {
+            get {
+                return ResourceManager.GetString("ResultsSkipNotAccepted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to no longer there.
+        /// </summary>
+        public static string ResultsSkipNotFound {
+            get {
+                return ResourceManager.GetString("ResultsSkipNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to already there.
+        /// </summary>
+        public static string ResultsSkipAlreadyThere {
+            get {
+                return ResourceManager.GetString("ResultsSkipAlreadyThere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the stash of a read-only character.
+        /// </summary>
+        public static string ResultsSkipTargetReadOnly {
+            get {
+                return ResourceManager.GetString("ResultsSkipTargetReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to loadouts file not written.
+        /// </summary>
+        public static string ResultsSkipLoadoutNotWritten {
+            get {
+                return ResourceManager.GetString("ResultsSkipLoadoutNotWritten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put down the held item first..
+        /// </summary>
+        public static string ResultsMoveHeldItem {
+            get {
+                return ResourceManager.GetString("ResultsMoveHeldItem", resourceCulture);
+            }
+        }
     }
 }
