@@ -43,6 +43,7 @@ Works with all expansions!
     - Tool tips with the values the item has in game (the "Show In-Game Values" setting, on by default)
 - [Character management](documentation/CHARMANAGE.md)
 - [Loadouts](documentation/LOADOUTS.md) — save the gear a character wears and wear it again in a click.
+- [AI agents (MCP)](documentation/mcp.md) — let an AI agent on your computer read and drive TQVault, and take pictures of it for your game documentation (off by default: read its rules first).
 - [Mods (custom maps)](documentation/MODS.md) — modded characters, items and vaults shown with their own mod's data, next to the regular ones. See also [how the mod link works](documentation/MODLINK.md).
 - Character backups
     - If an error occurs, backups are located at `My Documents\My Games\Titan Quest\TQVaultData\Backups` (the `Backups` folder of your vault folder)
@@ -68,6 +69,7 @@ The "Configure" button (top-left) opens up the configuration menu. That's where 
 - The font, the sounds and the tool tips ("Show In-Game Values", "Tooltip Enhanced"). In "Tooltip Enhanced", "Enable detailed view" splits the item tool tip into prefix, base and suffix sections; the other options (in-game rolls, min/max values, item skills, set piece counts) apply to both the classic and the detailed view
 - The cheats: the "Allow Cheats" group holds character editing, item editing and item copying (see the F.A.Q. below)
 - The hot reload features, [Git Backup](documentation/GITBACKUP.md), [TQ original support](documentation/TQORIGINAL.md), the [PasteBin integration](documentation/IMPORT_EXPORT.md) and the CSV delimiter of the search export
+- The [MCP endpoint for AI agents](documentation/mcp.md) and its port
 
 Every vault button can be customized using in-game pictures: right-click a bag button and choose "Change icon".
 

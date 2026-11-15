@@ -152,7 +152,7 @@ data (Application types), and the GUI or Presentation turns them into translated
 | TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | `System.Drawing` bitmaps, fonts, icons, tooltip image cache, UI images (`Images`) |
 | TQVaultAE.GameFiles | .NET 10.0 | Game file readers (`.arz`, `.arc`, text), shared by Data and `tqdb` |
 | TQVaultAE.DbCli | .NET 10.0 | `tqdb` command line |
-| TQVaultAE.Automation | .NET 10.0 Windows | Code shared by the Debug automation endpoints of the GUI and ARZExplorer (headless mode, UI thread calls); referenced in Debug builds only |
+| TQVaultAE.Automation | .NET 10.0 Windows | Code shared by the automation endpoints of the GUI and ARZExplorer (UI thread calls, control walks, headless mode); referenced by the GUI in every build (its headless mode in Debug builds only), by ARZExplorer in Debug builds only |
 | TQVaultAE.<Layer>.Tests | .NET 10.0 | Unit tests, one project per layer (Domain, Application, Config, Data, Services, Presentation, DbCli) |
 | TQVaultAE.Tests.Win32 | .NET 10.0 Windows | Unit tests of the Windows-only projects |
 
@@ -181,7 +181,7 @@ Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other W
 
 ## Verifying GUI Changes (`tqvault` MCP)
 
-Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127.0.0.1:47017/mcp`. It is registered for Claude Code in `.mcp.json`. Use it to check UI changes on the running app, instead of screenshots and real mouse clicks.
+Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127.0.0.1:47017/mcp`, with the user tools and the developer tools (Release builds serve the user tools only, when the user turns the endpoint on in the settings: `documentation/mcp.md`). It is registered for Claude Code in `.mcp.json`. Use it to check UI changes on the running app, instead of screenshots and real mouse clicks.
 
 1. Build Debug: `dotnet build TQVaultAE.slnx`.
 2. Run `src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe`. Prefer `TQVaultAE.exe --headless`: it runs on a hidden desktop, so no window, taskbar button or focus change reaches the user. Message boxes then take their default answer (Cancel/No/Ignore/OK) unless one is queued, and native file/folder dialogs are cancelled. Add `TQVAULT_MCP_PORT=47018` when another Debug instance already uses 47017. See "Headless mode" in `documentation/AUTOMATION.md`.
@@ -214,7 +214,7 @@ Rules:
 - Nothing blocks saves: work only in your own test files, vaults `claude-vault1`, `claude-vault2`, ... and characters `claude-character1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
 - Put items back with `cancel_drag`.
 - `PlayerReadonly` blocks picking from and dropping on the equipment panel. A read-only character (its save files carry the read-only attribute) blocks all of its bags, equipment and storage area.
-- Release builds contain none of this. Keep any new hook inside `#if DEBUG`.
+- Release builds serve the user tools (methods of `AutomationTools`) when the setting is on. A developer tool goes in `Automation/Dev/` (nested class `AutomationTools.DevTools`, left out of Release builds) and its hooks inside `#if DEBUG`; add every new tool to one of the two lists of `AutomationToolLevelsTests` and mark it in `documentation/AUTOMATION.md` (and `documentation/mcp.md` for a user tool).
 
 Full reference: `documentation/AUTOMATION.md`.
 
