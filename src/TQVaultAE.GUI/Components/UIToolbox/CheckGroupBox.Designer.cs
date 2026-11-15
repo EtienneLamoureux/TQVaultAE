@@ -1,4 +1,4 @@
-namespace UIToolbox;
+namespace TQVaultAE.GUI.Components.UIToolbox;
 
 partial class CheckGroupBox
 {

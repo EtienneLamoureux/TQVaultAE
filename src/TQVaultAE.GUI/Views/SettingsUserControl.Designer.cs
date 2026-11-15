@@ -764,7 +764,7 @@ internal partial class SettingsUserControl
 		// 
 		checkGroupBoxGitBackup.AutoSize = true;
 		checkGroupBoxGitBackup.Checked = false;
-		checkGroupBoxGitBackup.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+		checkGroupBoxGitBackup.CheckedBehavior = TQVaultAE.GUI.Components.UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
 		checkGroupBoxGitBackup.CheckState = CheckState.Unchecked;
 		checkGroupBoxGitBackup.Controls.Add(bufferedFlowLayoutPanelGitBackup);
 		checkGroupBoxGitBackup.ForeColor = Color.Gold;
@@ -842,7 +842,7 @@ internal partial class SettingsUserControl
 		// checkGroupBoxOriginalTQSupport
 		// 
 		checkGroupBoxOriginalTQSupport.Checked = false;
-		checkGroupBoxOriginalTQSupport.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+		checkGroupBoxOriginalTQSupport.CheckedBehavior = TQVaultAE.GUI.Components.UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
 		checkGroupBoxOriginalTQSupport.CheckState = CheckState.Unchecked;
 		checkGroupBoxOriginalTQSupport.Controls.Add(bufferedFlowLayoutPanelTQOriginalSupport);
 		checkGroupBoxOriginalTQSupport.ForeColor = Color.Gold;
@@ -882,7 +882,7 @@ internal partial class SettingsUserControl
 		//
 		checkGroupBoxMcpServer.AutoSize = true;
 		checkGroupBoxMcpServer.Checked = false;
-		checkGroupBoxMcpServer.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+		checkGroupBoxMcpServer.CheckedBehavior = TQVaultAE.GUI.Components.UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
 		checkGroupBoxMcpServer.CheckState = CheckState.Unchecked;
 		checkGroupBoxMcpServer.Controls.Add(bufferedFlowLayoutPanelMcpServer);
 		checkGroupBoxMcpServer.ForeColor = Color.Gold;
@@ -1171,7 +1171,7 @@ internal partial class SettingsUserControl
 		// 
 		checkGroupBoxAllowCheats.AutoSize = true;
 		checkGroupBoxAllowCheats.Checked = false;
-		checkGroupBoxAllowCheats.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+		checkGroupBoxAllowCheats.CheckedBehavior = TQVaultAE.GUI.Components.UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
 		checkGroupBoxAllowCheats.CheckState = CheckState.Unchecked;
 		checkGroupBoxAllowCheats.Controls.Add(bufferedFlowLayoutPanelCheats);
 		checkGroupBoxAllowCheats.ForeColor = Color.Gold;
@@ -1229,7 +1229,7 @@ internal partial class SettingsUserControl
 		// detectLanguageCheckBox
 		// 
 		detectLanguageCheckBox.AutoSize = true;
-		detectLanguageCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
+		detectLanguageCheckBox.CheckedBehavior = TQVaultAE.GUI.Components.UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
 		detectLanguageCheckBox.Controls.Add(bufferedFlowLayoutPanelLanguage);
 		detectLanguageCheckBox.ForeColor = Color.Gold;
 		detectLanguageCheckBox.Location = new Point(3, 296);
@@ -1256,7 +1256,7 @@ internal partial class SettingsUserControl
 		// 
 		detectGamePathsCheckBox.AutoSize = true;
 		detectGamePathsCheckBox.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-		detectGamePathsCheckBox.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
+		detectGamePathsCheckBox.CheckedBehavior = TQVaultAE.GUI.Components.UIToolbox.CheckGroupBoxCheckedBehavior.Disable;
 		detectGamePathsCheckBox.Controls.Add(bufferedFlowLayoutPanelAutoDetectGamePath);
 		detectGamePathsCheckBox.ForeColor = Color.Gold;
 		detectGamePathsCheckBox.Location = new Point(3, 60);

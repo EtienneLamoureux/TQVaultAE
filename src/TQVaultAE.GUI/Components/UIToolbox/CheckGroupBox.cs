@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
 
-namespace UIToolbox;
+namespace TQVaultAE.GUI.Components.UIToolbox;
 
 /// <summary>
 /// Define <see cref="CheckGroupBox"/> behaviour. e.g. <c><see cref="Enable"/> | <see cref="Show"/></c>
