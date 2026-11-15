@@ -120,7 +120,7 @@ public partial class VaultForm
 	/// <param name="zoomStep">The zoom step (<see cref="ZoomSteps.Reset"/> for the design size).</param>
 	protected void ZoomTo(int zoomStep)
 	{
-		using (this.BeginRescale(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"zoom step {this.ZoomStep} -> {zoomStep}")))
+		using (this.BeginRescale($"zoom step {this.ZoomStep} -> {zoomStep}"))
 			this.ScaleForm(zoomStep);
 	}
 
@@ -132,13 +132,13 @@ public partial class VaultForm
 	/// (<see cref="RescaleScope"/>), timed by phase (<see cref="RescalePhase"/>) and logged when the window is drawn
 	/// again; null, and nothing started, inside a rescale already running.
 	/// </summary>
-	/// <param name="what">What changes, for the log line.</param>
-	protected IDisposable? BeginRescale(string what)
+	/// <param name="what">What changes, for the log line (formatted in the invariant culture).</param>
+	protected IDisposable? BeginRescale(FormattableString what)
 	{
 		if (this.rescale is not null)
 			return null;
 
-		return this.rescale = new RescaleScope(this.Log, $"{this.Name}: {what}", this, () => this.rescale = null);
+		return this.rescale = new RescaleScope(this.Log, $"{this.Name}: {FormattableString.Invariant(what)}", this, () => this.rescale = null);
 	}
 
 	/// <summary>Ends the phase <paramref name="name"/> of the rescale running, if any (<see cref="BeginRescale"/>).</summary>
@@ -412,7 +412,7 @@ public partial class VaultForm
 		if (this.followDpiPending)
 		{
 			this.followDpiPending = false;
-			using (this.BeginRescale(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"DPI {this.DeviceDpi}, after the drag")))
+			using (this.BeginRescale($"DPI {this.DeviceDpi}, after the drag"))
 				this.FollowDpi();
 			this.LastFormSize = this.Size;
 		}

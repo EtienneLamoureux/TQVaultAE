@@ -24,7 +24,6 @@ public partial class MainForm
 		Tooltips.ItemTooltip.HideTooltip();
 		base.OnDpiChanged(e);
 		this.Invalidate(true);
-		this.Log.LogDebug("DPI {New}: window scaled ({View} shown)", e.DeviceDpiNew, this.shownView?.Name ?? "main content");
 	}
 
 	/// <summary>

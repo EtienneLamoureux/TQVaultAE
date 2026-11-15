@@ -101,11 +101,11 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 	}
 
 	/// <summary>Height of one row.</summary>
-	[Browsable(false)]
 	/// <remarks>
 	/// From <see cref="Control.FontHeight"/>, which Windows Forms keeps per font: each read of <see cref="Font.Height"/>
 	/// asks GDI, and the rows read the height several times each at every paint.
 	/// </remarks>
+	[Browsable(false)]
 	public int ItemHeight => Math.Max(this.FontHeight, CheckBoxGlyph.RendererSize.Height) + 2;
 
 	public int GetItemHeight(int index) => this.ItemHeight;
@@ -183,11 +183,8 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 	/// Measuring the 10,000 entries of the attribute lists one by one takes about a second. So each text first gets an
 	/// estimate, the sum of the widths of its characters (measured once each), and the texts are measured in decreasing
 	/// estimate order until the estimate falls below the widest measured width by more than the estimate can be off
-	/// (see <see cref="EstimateMargin"/>): no text left can then be wider.
-	/// </remarks>
-	/// <remarks>
-	/// Kept per font until the items change: a move to a monitor of another DPI and back gives the list the fonts it had
-	/// before, which are then not measured again.
+	/// (see <see cref="EstimateMargin"/>): no text left can then be wider. The width is kept per font until the items
+	/// change: a move to a monitor of another DPI and back gives the list the fonts it had before, not measured again.
 	/// </remarks>
 	public int GetMaxTextWidth()
 	{
@@ -570,8 +567,8 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 		{
 			int before = this._owner._items.Count;
 			this._owner._items.AddRange(items);
-			this._owner.ItemsChanged();
 			this._owner._checked.AddRange(Enumerable.Repeat(false, this._owner._items.Count - before));
+			this._owner.ItemsChanged();
 			this._owner.UpdateLayout();
 		}
 
