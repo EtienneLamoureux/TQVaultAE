@@ -141,6 +141,7 @@ Application (DTOs, Results, Search)
 | TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | `System.Drawing` bitmaps, fonts, icons, tooltip image cache, UI images (`Images`) |
 | TQVaultAE.GameFiles | .NET 10.0 | Game file readers (`.arz`, `.arc`, text), shared by Data and `tqdb` |
 | TQVaultAE.DbCli | .NET 10.0 | `tqdb` command line |
+| TQVaultAE.Automation | .NET 10.0 Windows | Code shared by the Debug automation endpoints of the GUI and ARZExplorer (headless mode, UI thread calls); referenced in Debug builds only |
 | TQVaultAE.<Layer>.Tests | .NET 10.0 | Unit tests, one project per layer (Domain, Application, Config, Data, Services, Presentation, DbCli) |
 | TQVaultAE.Tests.Win32 | .NET 10.0 Windows | Unit tests of the Windows-only projects |
 

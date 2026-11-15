@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
+using TQVaultAE.Automation;
 
 namespace ArzExplorer.Automation;
 
@@ -44,7 +45,7 @@ internal static class AutomationHost
 	public static void AttachMainForm(MainForm mainForm)
 	{
 		_mainForm = mainForm;
-		if (Headless.Enabled)
+		if (HeadlessDesktop.Enabled)
 			mainForm.DeferSplitterLayoutUntilShown();
 	}
 
@@ -65,17 +66,14 @@ internal static class AutomationHost
 	/// </summary>
 	public static T OnUi<T>(Func<MainForm, T> action, TimeSpan? timeout = null)
 	{
-		var form = Form;
-		if (!form.InvokeRequired)
-			return action(form);
-
-		var limit = timeout ?? TimeSpan.FromSeconds(30);
-		// A Func delegate, not a lambda: the lambda would bind to BeginInvoke(Action) and lose the result.
-		var pending = form.BeginInvoke(new Func<T>(() => action(form)));
-		if (!pending.AsyncWaitHandle.WaitOne(limit))
-			throw new McpException($"The UI thread did not answer within {limit.TotalSeconds:0.#} s: it is blocked (hang).");
-
-		return (T)form.EndInvoke(pending)!;
+		try
+		{
+			return UiThread.Run(Form, action, timeout ?? TimeSpan.FromSeconds(30));
+		}
+		catch (UiThreadHangException ex)
+		{
+			throw new McpException(ex.Message, ex);
+		}
 	}
 
 	private static async Task StartServerAsync(int port)

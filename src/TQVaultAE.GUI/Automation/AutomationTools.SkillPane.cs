@@ -4,6 +4,7 @@ using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
+using static TQVaultAE.Automation.ControlTree;
 
 namespace TQVaultAE.GUI.Automation;
 

@@ -1,4 +1,5 @@
 using System.Drawing.Imaging;
+using TQVaultAE.Automation;
 
 namespace ArzExplorer;
 
@@ -35,7 +36,7 @@ public partial class MainForm
 		box.Show(this);
 		try
 		{
-			var texts = All(box).Where(c => c is Label or TextBox or Button && !string.IsNullOrWhiteSpace(c.Text))
+			var texts = ControlTree.AllControls(box).Where(c => c is Label or TextBox or Button && !string.IsNullOrWhiteSpace(c.Text))
 				.Select(c => $"{c.Name}: {c.Text.ReplaceLineEndings(" ")}")
 				.Prepend($"title: {box.Text}")
 				.ToArray();
@@ -49,16 +50,6 @@ public partial class MainForm
 		finally
 		{
 			box.Close();
-		}
-
-		static IEnumerable<Control> All(Control parent)
-		{
-			foreach (Control child in parent.Controls)
-			{
-				yield return child;
-				foreach (var nested in All(child))
-					yield return nested;
-			}
 		}
 	}
 }

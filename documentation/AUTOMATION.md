@@ -303,6 +303,11 @@ Debug builds of `ARZExplorer` host their own MCP server, built the same way (`sr
 `http://127.0.0.1:47020/mcp` (`ARZEXPLORER_MCP_PORT` to change it, `ARZEXPLORER_MCP_DISABLED=1` to turn it off).
 Release builds contain none of it.
 
+The code both endpoints share sits in `src/TQVaultAE.Automation/`: the hidden desktop of the headless mode
+(`HeadlessDesktop`), the calls on the main form's UI thread (`UiThread`), the control walk (`ControlTree`) and the
+window helpers (`Win32Window`). Each app references that project in Debug builds only and keeps its own part in its
+`Automation/Headless.cs` (desktop name, how a cancelled dialog is recorded, ARZExplorer's muting).
+
 - `ARZExplorer.exe --headless` runs it on a hidden desktop, like TQVault. ARZExplorer calls `MessageBox.Show` directly,
   so every message box and file dialog there is cancelled as soon as it opens and recorded with its caption and text:
   read them with `dialogs`. Its audio volume is set to 0 (`dialogs` reports `muted`): sounds play through the normal

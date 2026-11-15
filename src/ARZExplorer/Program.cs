@@ -35,7 +35,7 @@ public static class Program
 	{
 #if DEBUG
 		// --headless: start again on a hidden desktop and leave (see Automation\Headless.cs).
-		if (Automation.Headless.IsRequested() && !Automation.Headless.TryAttach())
+		if (TQVaultAE.Automation.HeadlessDesktop.IsRequested(Environment.GetCommandLineArgs().Skip(1)) && !Automation.Headless.TryAttach())
 		{
 			var headlessError = Automation.Headless.StartOnHiddenDesktop();
 			if (headlessError is not null)

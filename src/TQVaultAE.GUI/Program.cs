@@ -81,7 +81,7 @@ public static class Program
 
 #if DEBUG
 			// --headless: TQVault runs on a hidden desktop, driven through the automation endpoint. See documentation/AUTOMATION.md
-			if (TQVaultAE.GUI.Automation.Headless.IsRequested(commandLine))
+			if (TQVaultAE.Automation.HeadlessDesktop.IsRequested(commandLine))
 			{
 				if (!TQVaultAE.GUI.Automation.Headless.TryAttach())
 				{
@@ -95,8 +95,8 @@ public static class Program
 					return;
 				}
 
-				commandLine = TQVaultAE.GUI.Automation.Headless.WithoutSwitch(commandLine);
-				Log.LogInformation("Headless mode: running on the hidden desktop {Desktop}", TQVaultAE.GUI.Automation.Headless.DesktopName);
+				commandLine = TQVaultAE.Automation.HeadlessDesktop.WithoutSwitch(commandLine);
+				Log.LogInformation("Headless mode: running on the hidden desktop {Desktop}", TQVaultAE.Automation.HeadlessDesktop.DesktopName);
 			}
 
 			// In-app MCP automation endpoint, started early so that startup dialogs can be answered. See documentation/AUTOMATION.md

@@ -3,6 +3,7 @@ using System.Reflection;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.GUI.Components.Layout;
+using static TQVaultAE.Automation.ControlTree;
 
 namespace TQVaultAE.GUI.Automation;
 

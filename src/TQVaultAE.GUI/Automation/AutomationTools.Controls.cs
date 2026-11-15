@@ -7,6 +7,8 @@ using ModelContextProtocol.Server;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.Automation;
+using static TQVaultAE.Automation.ControlTree;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -221,10 +223,10 @@ internal static partial class AutomationTools
 	public static string DialogAnswers()
 		=> Serialize(new
 		{
-			headless = Headless.Enabled,
+			headless = HeadlessDesktop.Enabled,
 			answered = AutomationHost.AnsweredDialogs,
 			unanswered = AutomationHost.UnansweredDialogs,
-			cancelledNativeDialogs = Headless.CancelledNativeDialogs,
+			cancelledNativeDialogs = HeadlessDesktop.CancelledDialogs,
 			pending = AutomationHost.PendingDialogAnswers.Select(a => a.ToString()).ToList(),
 		});
 
@@ -255,15 +257,6 @@ internal static partial class AutomationTools
 		=> System.Windows.Forms.Application.OpenForms.OfType<T>().FirstOrDefault(f => f.Visible)
 			?? throw new McpException($"The {what} is not open.");
 
-	private static IEnumerable<Control> AllControls(Control parent)
-	{
-		foreach (Control child in parent.Controls)
-		{
-			yield return child;
-			foreach (var grandChild in AllControls(child))
-				yield return grandChild;
-		}
-	}
 
 	/// <summary>Raises a protected event method of a control (OnScroll, OnLeave...), as its own input handling does.</summary>
 	private static void RaiseProtected(Control c, string method, EventArgs? args = null)

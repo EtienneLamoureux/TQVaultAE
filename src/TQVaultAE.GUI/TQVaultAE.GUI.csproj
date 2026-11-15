@@ -53,6 +53,7 @@
 	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="ModelContextProtocol.AspNetCore" />
+		<ProjectReference Include="..\TQVaultAE.Automation\TQVaultAE.Automation.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' != 'Debug'">

@@ -19,6 +19,8 @@ using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Forms;
+using TQVaultAE.Automation;
+using static TQVaultAE.Automation.ControlTree;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -73,7 +75,7 @@ internal static partial class AutomationTools
 			};
 		});
 
-		return Serialize(new { endpoint = AutomationHost.Address, headless = Headless.DesktopName, windows });
+		return Serialize(new { endpoint = AutomationHost.Address, headless = HeadlessDesktop.DesktopName, windows });
 	}
 
 	[McpServerTool(Name = "close_dialog", Destructive = true)]

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using TQVaultAE.GUI.Forms;
+using TQVaultAE.Automation;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -90,7 +91,7 @@ internal static class AutomationHost
 		_dialogAnswers.Clear();
 		_dialogAnswered.Clear();
 		_dialogUnanswered.Clear();
-		Headless.ClearCancelled();
+		HeadlessDesktop.ClearCancelled();
 	}
 
 	/// <summary>Gets the answers not used yet.</summary>
@@ -121,7 +122,7 @@ internal static class AutomationHost
 		}
 
 		answer = DialogResult.None;
-		if (!Headless.Enabled)
+		if (!HeadlessDesktop.Enabled)
 			return false;
 
 		answer = headlessAnswer ?? HeadlessAnswer(buttons);
@@ -143,7 +144,7 @@ internal static class AutomationHost
 		text = null;
 		if (!_dialogAnswers.TryPeek(out var next) || (next.Text is null && next.Result != DialogResult.Cancel) || !_dialogAnswers.TryDequeue(out _))
 		{
-			if (Headless.Enabled)
+			if (HeadlessDesktop.Enabled)
 				_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {title} (text input): no queued text, left open");
 			return false;
 		}
@@ -244,21 +245,16 @@ internal static class AutomationHost
 
 		try
 		{
-			if (!form.InvokeRequired)
-				return action(form);
-
 			// Control.Invoke runs the delegate in the caller's ExecutionContext, and the culture flows with it: without
 			// this, forms and texts made by a tool would take the request thread's culture instead of the UI language.
-			return (T)form.Invoke(() =>
+			return UiThread.Run(form, action, enter: () =>
 			{
 				if (_uiCulture is not null && _culture is not null)
 				{
 					CultureInfo.CurrentUICulture = _uiCulture;
 					CultureInfo.CurrentCulture = _culture;
 				}
-
-				return action(form);
-			})!;
+			});
 		}
 		catch (AutomationRefusedException ex)
 		{

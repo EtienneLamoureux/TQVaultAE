@@ -5,6 +5,7 @@ using System.Text.Json;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using TQVaultAE.Automation;
 
 namespace ArzExplorer.Automation;
 
@@ -35,9 +36,9 @@ internal static class AutomationTools
 	[Description("Headless mode: whether ARZExplorer runs on its hidden desktop and the dialogs cancelled there because nobody could answer them (message boxes with their caption and text, file dialogs), oldest first. clear=true empties the record.")]
 	public static string Dialogs([Description("Empty the record after reading it.")] bool clear = false)
 	{
-		var result = new { headless = Headless.Enabled, desktop = Headless.DesktopName, muted = Headless.Muted, cancelled = Headless.CancelledDialogs };
+		var result = new { headless = HeadlessDesktop.Enabled, desktop = HeadlessDesktop.DesktopName, muted = Headless.Muted, cancelled = HeadlessDesktop.CancelledDialogs };
 		if (clear)
-			Headless.ClearCancelled();
+			HeadlessDesktop.ClearCancelled();
 		return Json(result);
 	}
 

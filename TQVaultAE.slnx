@@ -38,6 +38,7 @@
   <Project Path="src\TQVaultAE.DbCli\TQVaultAE.DbCli.csproj" />
   <Project Path="src\TQVaultAE.GameFiles\TQVaultAE.GameFiles.csproj" />
   <Project Path="src\TQVaultAE.Application\TQVaultAE.Application.csproj" />
+  <Project Path="src\TQVaultAE.Automation\TQVaultAE.Automation.csproj" />
   <Project Path="src\TQVaultAE.Config\TQVaultAE.Config.csproj" />
   <Project Path="src\TQVaultAE.Data\TQVaultAE.Data.csproj" />
   <Project Path="src\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />

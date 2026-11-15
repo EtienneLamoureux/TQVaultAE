@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
+using TQVaultAE.Automation;
+using static TQVaultAE.Automation.ControlTree;
 
 namespace ArzExplorer.Automation;
 
@@ -56,7 +58,7 @@ internal static partial class DiagnosticTools
 			if (form is null)
 				return false;
 			// What the title bar X and Alt+F4 send: WinForms then reports CloseReason.UserClosing (a bare WM_CLOSE gives TaskManagerClosing).
-			PostMessage(form.Handle, WM_SYSCOMMAND, (IntPtr)SC_CLOSE, IntPtr.Zero);
+			Win32Window.Post(form.Handle, WM_SYSCOMMAND, (IntPtr)SC_CLOSE, IntPtr.Zero);
 			return true;
 		}, TimeSpan.FromSeconds(5));
 		return found ? $"SC_CLOSE posted to {name}." : throw new McpException($"No open form named '{name}'.");
@@ -79,9 +81,9 @@ internal static partial class DiagnosticTools
 
 			const int WM_MOUSEMOVE = 0x0200, WM_LBUTTONDOWN = 0x0201, WM_LBUTTONUP = 0x0202, MK_LBUTTON = 0x0001;
 			var position = (IntPtr)((y << 16) | (x & 0xFFFF));
-			PostMessage(c.Handle, WM_MOUSEMOVE, IntPtr.Zero, position);
-			PostMessage(c.Handle, WM_LBUTTONDOWN, MK_LBUTTON, position);
-			PostMessage(c.Handle, WM_LBUTTONUP, IntPtr.Zero, position);
+			Win32Window.Post(c.Handle, WM_MOUSEMOVE, IntPtr.Zero, position);
+			Win32Window.Post(c.Handle, WM_LBUTTONDOWN, MK_LBUTTON, position);
+			Win32Window.Post(c.Handle, WM_LBUTTONUP, IntPtr.Zero, position);
 			return $"Click posted to {target.Name}.{c.Name} at ({x}, {y}), enabled={c.Enabled}.";
 		}, TimeSpan.FromSeconds(5));
 
@@ -97,9 +99,9 @@ internal static partial class DiagnosticTools
 
 			const int WM_SYSKEYDOWN = 0x0104, WM_SYSKEYUP = 0x0105, VK_MENU = 0x12, VK_F4 = 0x73;
 			const int AltFlag = 1 << 29, PreviousDown = 1 << 30, Released = 1 << 31;
-			PostMessage(receiver.Handle, WM_SYSKEYDOWN, VK_MENU, (IntPtr)(1 | (0x38 << 16) | AltFlag));
-			PostMessage(receiver.Handle, WM_SYSKEYDOWN, VK_F4, (IntPtr)(1 | (0x3E << 16) | AltFlag));
-			PostMessage(receiver.Handle, WM_SYSKEYUP, VK_F4, (IntPtr)(1 | (0x3E << 16) | AltFlag | PreviousDown | Released));
+			Win32Window.Post(receiver.Handle, WM_SYSKEYDOWN, VK_MENU, (IntPtr)(1 | (0x38 << 16) | AltFlag));
+			Win32Window.Post(receiver.Handle, WM_SYSKEYDOWN, VK_F4, (IntPtr)(1 | (0x3E << 16) | AltFlag));
+			Win32Window.Post(receiver.Handle, WM_SYSKEYUP, VK_F4, (IntPtr)(1 | (0x3E << 16) | AltFlag | PreviousDown | Released));
 			return $"Alt+F4 posted to {target.Name}.{receiver.Name} ({receiver.GetType().Name}).";
 		}, TimeSpan.FromSeconds(5));
 
@@ -109,15 +111,6 @@ internal static partial class DiagnosticTools
 			?? throw new McpException($"No open form named '{name}'.");
 
 	/// <summary>Every control of <paramref name="parent"/>, depth first.</summary>
-	private static IEnumerable<Control> AllControls(Control parent)
-	{
-		foreach (Control child in parent.Controls)
-		{
-			yield return child;
-			foreach (var inner in AllControls(child))
-				yield return inner;
-		}
-	}
 
 	[McpServerTool(Name = "process_resources", ReadOnly = true)]
 	[Description("Resources of the ARZExplorer process: GDI and USER object counts (GetGuiResources), handle count, private bytes, managed heap bytes, and the disposable objects the root service provider keeps until exit, by type. collect=true runs a full garbage collection with finalizers first (objects only freed by a finalizer then disappear).")]
@@ -163,8 +156,4 @@ internal static partial class DiagnosticTools
 
 	[LibraryImport("user32.dll")]
 	private static partial uint GetGuiResources(IntPtr process, uint flags);
-
-	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using ArzExplorer.Models;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Automation;
 
 namespace ArzExplorer;
 
@@ -86,17 +87,7 @@ public partial class MainForm
 		}
 
 		// The menu and the toolbar sit in panels: walk every control.
-		static IEnumerable<Control> All(Control parent)
-		{
-			foreach (Control child in parent.Controls)
-			{
-				yield return child;
-				foreach (var nested in All(child))
-					yield return nested;
-			}
-		}
-
-		return All(this).OfType<ToolStrip>().SelectMany(strip => Walk(strip.Items));
+		return ControlTree.AllControls(this).OfType<ToolStrip>().SelectMany(strip => Walk(strip.Items));
 	}
 
 	/// <summary>The menu and toolbar items: name, text, enabled, checked.</summary>

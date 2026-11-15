@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 using System.Runtime.InteropServices;
 using System.Text;
+using TQVaultAE.Automation;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -34,7 +35,7 @@ internal static partial class NativeWindows
 	};
 
 	/// <summary>The window class of the standard Win32 dialogs (message box, task dialog, common dialog).</summary>
-	public const string DialogClass = "#32770";
+	public const string DialogClass = Win32Window.DialogClass;
 
 	public sealed record NativeWindow(IntPtr Handle, string Title, string ClassName, bool Enabled)
 	{
@@ -91,13 +92,13 @@ internal static partial class NativeWindows
 		{
 			// WM_COMMAND/BN_CLICKED to the parent works even when the dialog is not the foreground window, unlike BM_CLICK.
 			// WinForms reflects it to the button, which raises Click.
-			PostMessage(GetParent(button.Handle), WM_COMMAND, (IntPtr)((BN_CLICKED << 16) | (button.ControlId & 0xFFFF)), button.Handle);
+			Post(GetParent(button.Handle), WM_COMMAND, (IntPtr)((BN_CLICKED << 16) | (button.ControlId & 0xFFFF)), button.Handle);
 			return button.Text;
 		}
 
 		if (StandardCommandIds.TryGetValue(wanted, out var id))
 		{
-			PostMessage(dialog, WM_COMMAND, (IntPtr)id, IntPtr.Zero);
+			Post(dialog, WM_COMMAND, (IntPtr)id, IntPtr.Zero);
 			return buttonText;
 		}
 
@@ -133,20 +134,10 @@ internal static partial class NativeWindows
 		=> new(hwnd, GetText(hwnd), GetClass(hwnd), IsWindowEnabled(hwnd));
 
 	/// <summary>The title or text of a window.</summary>
-	public static string GetText(IntPtr hwnd)
-	{
-		var buffer = new char[GetWindowTextLength(hwnd) + 1];
-		int length = GetWindowText(hwnd, buffer, buffer.Length);
-		return new string(buffer, 0, length);
-	}
+	public static string GetText(IntPtr hwnd) => Win32Window.Text(hwnd);
 
 	/// <summary>The class name of a window.</summary>
-	public static string GetClass(IntPtr hwnd)
-	{
-		var buffer = new char[256];
-		int length = GetClassName(hwnd, buffer, buffer.Length);
-		return new string(buffer, 0, length);
-	}
+	public static string GetClass(IntPtr hwnd) => Win32Window.ClassName(hwnd);
 
 	private const uint SWP_NOSIZE = 0x0001;
 	private const uint SWP_NOZORDER = 0x0004;
@@ -186,21 +177,8 @@ internal static partial class NativeWindows
 	[LibraryImport("user32.dll")]
 	private static partial int GetDlgCtrlID(IntPtr hWnd);
 
-	[LibraryImport("user32.dll", EntryPoint = "GetWindowTextLengthW")]
-	private static partial int GetWindowTextLength(IntPtr hWnd);
-
-	[LibraryImport("user32.dll", EntryPoint = "GetWindowTextW", StringMarshalling = StringMarshalling.Utf16)]
-	private static partial int GetWindowText(IntPtr hWnd, [Out] char[] lpString, int nMaxCount);
-
-	[LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
-	private static partial int GetClassName(IntPtr hWnd, [Out] char[] lpClassName, int nMaxCount);
-
 	/// <summary>Posts <paramref name="msg"/> to a window's message queue, handled by its thread's message loop.</summary>
-	public static bool Post(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => PostMessage(hwnd, msg, wParam, lParam);
-
-	[LibraryImport("user32.dll", EntryPoint = "PostMessageW")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+	public static bool Post(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => Win32Window.Post(hwnd, msg, wParam, lParam);
 
 	[StructLayout(LayoutKind.Sequential)]
 	private struct NativeRect
