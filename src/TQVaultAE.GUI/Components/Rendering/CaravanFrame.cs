@@ -126,7 +126,27 @@ internal static class CaravanFrame
 	public static void FrameLabel(Label label, Control box)
 	{
 		label.AutoSize = false;
-		label.Bounds = new Rectangle(label.Left, box.Top, Math.Max(label.Width, box.Left - label.Left - 6), box.Height);
+		label.Bounds = new Rectangle(label.Left, box.Top, Math.Max(label.Width, box.Left - label.Left - LabelGap), box.Height);
+		FrameLabelText(label);
+	}
+
+	/// <summary>
+	/// A label in a frame filling its table cell, as high as its row (the control it names, in the next cell), as wide as
+	/// its text, its text centered: <see cref="FrameLabel"/> for a label laid out by a table.
+	/// </summary>
+	public static void FrameCellLabel(Label label)
+	{
+		label.AutoSize = false;
+		label.Dock = DockStyle.Fill;
+		label.Margin = new Padding(0, 0, LabelGap, 0);
+		FrameLabelText(label);
+	}
+
+	/// <summary>The gap between a framed label and the control it names.</summary>
+	private const int LabelGap = 6;
+
+	private static void FrameLabelText(Label label)
+	{
 		label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 		ApplyTo(label, new Padding(Border, 0, Border, 0));
 	}

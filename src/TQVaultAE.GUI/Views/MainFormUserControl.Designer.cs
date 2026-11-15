@@ -69,24 +69,25 @@ public partial class MainFormUserControl
         // 
         // itemTextPanel
         // 
-        this.itemTextPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(188)))), ((int)(((byte)(97)))));
+        this.itemTextPanel.BackColor = System.Drawing.Color.Transparent;
         this.itemTextPanel.Controls.Add(this.NotificationText);
         this.itemTextPanel.Location = new System.Drawing.Point(4, 154);
         this.itemTextPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 20);
         this.itemTextPanel.Name = "itemTextPanel";
-        this.itemTextPanel.Padding = new System.Windows.Forms.Padding(2);
+        this.itemTextPanel.Padding = new System.Windows.Forms.Padding(0);
         this.itemTextPanel.Size = new System.Drawing.Size(592, 22);
         this.itemTextPanel.TabIndex = 4;
         // 
         // NotificationText
         // 
-        this.NotificationText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(41)))), ((int)(((byte)(31)))));
+        this.NotificationText.BackColor = System.Drawing.Color.Transparent;
         this.NotificationText.Dock = System.Windows.Forms.DockStyle.Fill;
         this.NotificationText.Font = new System.Drawing.Font("Arial Black", 8.25F);
         this.NotificationText.Location = new System.Drawing.Point(2, 2);
         this.NotificationText.Name = "NotificationText";
         this.NotificationText.Size = new System.Drawing.Size(588, 18);
         this.NotificationText.TabIndex = 0;
+        this.NotificationText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
         // 
         // vaultListComboBox
         // 

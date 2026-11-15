@@ -7,6 +7,7 @@
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Session;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -66,6 +67,8 @@ public partial class MainFormUserControl : UserControl
 		var toolTip = new ToolTip(this.components);
 
 		this.scalingLabelHighlight.Text = Resources.MainFormHighlightLabelText;
+		CaravanFrame.FrameCellLabel(this.scalingLabelHighlight);
+		CaravanFrame.ApplyTo(this.NotificationText, new Padding(CaravanFrame.Border, 0, CaravanFrame.Border, 0));
 
 		// Each read of the picture makes a new bitmap: one per box.
 		var chest = Images.Majestic_Chest_small;
