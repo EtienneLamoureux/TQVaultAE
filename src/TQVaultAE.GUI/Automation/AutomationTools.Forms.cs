@@ -139,6 +139,22 @@ internal static partial class AutomationTools
 			return Serialize(report);
 		});
 
+	[McpServerTool(Name = "close_form", Destructive = true)]
+	[Description("Closes an open modeless form that has no button to answer it (close_dialog needs one), like its close box: for example the search results window. The main window is refused. Returns the title of the form closed.")]
+	public static string CloseForm(
+		[Description("Part of the form title or its type name (case-insensitive); the last one opened when several match.")] string form)
+		=> AutomationHost.OnUi(main =>
+		{
+			var target = FindOpenForm(form) as Form
+				?? throw new McpException($"'{form}' is a view of the main window, not a form.");
+			if (ReferenceEquals(target, main))
+				throw new McpException("The main window is not closed by close_form: use click_control(\"\", \"exitButton\").");
+
+			string title = target.Text;
+			target.Close();
+			return Serialize(new { closed = title });
+		});
+
 	[McpServerTool(Name = "open_item_dialog", Destructive = true)]
 	[Description("Opens the Properties or Seed dialog of an item, like its context menu entries, but modeless over the main window, to check its layout with control_tree, text_fit and capture. Close it with close_dialog and its Cancel/OK button: the Seed dialog's OK only validates the typed seed (the context menu entry then applies it), so it leaves the item unchanged here.")]
 	public static string OpenItemDialog(
