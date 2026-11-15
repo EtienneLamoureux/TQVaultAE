@@ -2,7 +2,7 @@ using System.Drawing;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Search;
 
 /// <summary>
 /// Panel that shows the item of a search result.

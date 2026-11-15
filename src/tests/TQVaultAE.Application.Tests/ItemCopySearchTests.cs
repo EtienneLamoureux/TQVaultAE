@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Search;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Tests.Application;

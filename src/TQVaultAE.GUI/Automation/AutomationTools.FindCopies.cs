@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Search;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.Presentation;
 

@@ -9,6 +9,7 @@ using System.Globalization;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Search;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;

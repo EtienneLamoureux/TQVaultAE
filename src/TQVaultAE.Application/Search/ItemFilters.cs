@@ -1,7 +1,7 @@
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Search;
 
 /// <summary>
 /// Requirement bounds shared by the advanced search and the highlight filter. A bound of 0 is no bound.

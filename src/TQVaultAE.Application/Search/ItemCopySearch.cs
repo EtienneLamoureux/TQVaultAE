@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Search;
 
 /// <summary>
 /// What the item menu's <i>Search</i> looks for among the loaded items, from the item clicked.

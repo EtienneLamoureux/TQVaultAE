@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
+using TQVaultAE.Application.Search;
 using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Forms;
@@ -13,7 +14,6 @@ using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
 using TQVaultAE.GUI.Components.Scaling;
 

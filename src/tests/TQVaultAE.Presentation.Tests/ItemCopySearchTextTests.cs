@@ -1,6 +1,6 @@
 using System.Globalization;
 using AwesomeAssertions;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Search;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Tests.Presentation;

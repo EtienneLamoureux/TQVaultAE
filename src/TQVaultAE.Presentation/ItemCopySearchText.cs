@@ -1,5 +1,5 @@
 using System.Globalization;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Search;
 
 namespace TQVaultAE.Presentation;
 

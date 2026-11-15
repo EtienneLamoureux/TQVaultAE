@@ -4,6 +4,7 @@ using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Search;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;

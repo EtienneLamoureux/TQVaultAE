@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Search;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Services;
