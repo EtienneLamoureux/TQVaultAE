@@ -32,10 +32,13 @@ internal static class CaravanFrame
 	/// <summary>The controls given a frame, so that each gets one only once and the text inside is known to be on black.</summary>
 	private static readonly ConditionalWeakTable<Control, object> Framed = new();
 
-	/// <summary>The frame at <paramref name="size"/>.</summary>
+	/// <summary>
+	/// The frame at <paramref name="size"/>, in the premultiplied format GDI+ draws fastest (the frames around the lists of a
+	/// dialog took a quarter of its painting in the default format).
+	/// </summary>
 	public static Bitmap Render(Size size)
 	{
-		var result = new Bitmap(Math.Max(1, size.Width), Math.Max(1, size.Height));
+		var result = new Bitmap(Math.Max(1, size.Width), Math.Max(1, size.Height), System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 		using var g = Graphics.FromImage(result);
 		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
