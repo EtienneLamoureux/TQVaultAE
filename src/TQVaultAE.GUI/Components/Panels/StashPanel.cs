@@ -11,6 +11,7 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Layout;
+using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.Presentation.Win32;
@@ -24,7 +25,6 @@ using TQVaultAE.GUI.Models;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
-using TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
 /// Class for handling the stash panel ui functions

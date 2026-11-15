@@ -1,6 +1,6 @@
 using TQVaultAE.Presentation.Win32.Contracts;
 
-namespace TQVaultAE.GUI.Components.Rendering;
+namespace TQVaultAE.GUI.Components.Menus;
 
 /// <summary>
 /// The look of the entries added in code to a menu built in code.

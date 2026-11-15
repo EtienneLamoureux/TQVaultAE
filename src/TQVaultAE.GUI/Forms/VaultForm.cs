@@ -7,6 +7,7 @@
 using System.Diagnostics.CodeAnalysis;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Interop;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -20,7 +21,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using TQVaultAE.Config;
-using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;
 

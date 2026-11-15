@@ -1,6 +1,7 @@
 ﻿using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Components.Rendering;
 
-namespace TQVaultAE.GUI.Components.Rendering;
+namespace TQVaultAE.GUI.Components.Menus;
 
 /// <summary>
 /// Class for rendering the context menu strip.

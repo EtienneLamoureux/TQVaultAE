@@ -2,10 +2,9 @@ using System.Globalization;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation;
 
-namespace TQVaultAE.GUI.Components;
+namespace TQVaultAE.GUI.Components.Menus;
 
 /// <summary>
 /// The "Modded" submenu of the item and vault menus: the base game, then the installed mods, the current one checked.

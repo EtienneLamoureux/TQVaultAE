@@ -7,6 +7,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Buttons;
+using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.Presentation.Win32;
@@ -19,7 +20,6 @@ using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 using TQVaultAE.Presentation;
-using TQVaultAE.GUI.Components.Rendering;
 
 public partial class StashPanel
 {

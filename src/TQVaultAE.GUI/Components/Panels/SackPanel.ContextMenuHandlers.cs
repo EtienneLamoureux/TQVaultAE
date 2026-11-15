@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.GUI.Tooltips;

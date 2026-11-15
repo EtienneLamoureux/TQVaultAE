@@ -1,13 +1,12 @@
 using System.ComponentModel;
 using System.Globalization;
+using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Components.Scaling;
-using TQVaultAE.GUI.Components;
 using TQVaultAE.Presentation;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
-using TQVaultAE.GUI.Components.Rendering;
 
 
 namespace TQVaultAE.GUI.Views;
