@@ -288,6 +288,43 @@ public class LootTableCollectionProviderTests
 	}
 
 	[Fact]
+	public void AllLootRandomizerTranslated_BaseGameThenMod_EachScopeGetsItsOwnAffixes()
+	{
+		// Arrange: the mod overrides the base affix and adds one; the database answers for the active scope.
+		var shared = RecordId.Create("records\\affix\\shared.dbr");
+		var added = RecordId.Create("records\\affix\\modonly.dbr");
+		var scope = string.Empty;
+		var baseAffixes = new Dictionary<RecordId, LootRandomizerItem>
+		{
+			{ shared, new LootRandomizerItem(shared, "tagBase", 0, 0, string.Empty, string.Empty, string.Empty) },
+		};
+		var modAffixes = new Dictionary<RecordId, LootRandomizerItem>
+		{
+			{ shared, new LootRandomizerItem(shared, "tagModShared", 0, 0, string.Empty, string.Empty, string.Empty) },
+			{ added, new LootRandomizerItem(added, "tagModAdded", 0, 0, string.Empty, string.Empty, string.Empty) },
+		};
+		_mockDatabase.Setup(x => x.DataScope).Returns(() => scope);
+		_mockDatabase.Setup(x => x.AllLootRandomizer).Returns(() => new ReadOnlyDictionary<RecordId, LootRandomizerItem>(
+			scope.Length == 0 ? baseAffixes : modAffixes));
+		_mockTranslationService.Setup(x => x.TranslateXTag(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+			.Returns((string tag, bool _, bool _, bool _) => tag + " text");
+
+		// Act: the base game fills its cache first, then the mod reads its own.
+		var baseResult = _provider.AllLootRandomizerTranslated;
+		scope = "MyMod";
+		var modResult = _provider.AllLootRandomizerTranslated;
+		scope = string.Empty;
+		var baseAgain = _provider.AllLootRandomizerTranslated;
+
+		// Assert
+		baseResult[shared].Translation.Should().Be("tagBase text");
+		baseResult.Should().NotContainKey(added);
+		modResult[shared].Translation.Should().Be("tagModShared text");
+		modResult[added].Translation.Should().Be("tagModAdded text");
+		baseAgain.Should().BeSameAs(baseResult);
+	}
+
+	[Fact]
 	public void LoadTable_WithEmptyAffixId_SkipsEntry()
 	{
 		// Arrange

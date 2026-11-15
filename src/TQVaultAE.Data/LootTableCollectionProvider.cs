@@ -38,7 +38,7 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 	{
 		this._lootTableCaches = new(StringComparer.OrdinalIgnoreCase);
 		this._allLootRandomizerTables = new(StringComparer.OrdinalIgnoreCase);
-		this._AllLootRandomizerTranslated = null;
+		this._allLootRandomizerTranslated = new(StringComparer.OrdinalIgnoreCase);
 	}
 
 	public ReadOnlyDictionary<RecordId, LootTableCollection> AllLootRandomizerTable
@@ -58,16 +58,18 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 		}
 	}
 
-	private ReadOnlyDictionary<RecordId, LootRandomizerItem>? _AllLootRandomizerTranslated;
+	/// <summary>The translated affix records, per data scope: a mod adds affixes and may override those of the base game.</summary>
+	private Dictionary<string, ReadOnlyDictionary<RecordId, LootRandomizerItem>> _allLootRandomizerTranslated = new(StringComparer.OrdinalIgnoreCase);
+
 	/// <summary>
-	/// Return all loot randomizer (Affix effect infos)
+	/// Return all loot randomizer (Affix effect infos) of the data the calling thread reads now.
 	/// </summary>
-	/// <returns></returns>
 	public ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizerTranslated
 	{
 		get
 		{
-			if (_AllLootRandomizerTranslated is null)
+			var scope = this.Database.DataScope ?? string.Empty;
+			if (!this._allLootRandomizerTranslated.TryGetValue(scope, out var translated))
 			{
 				var dico = Database.AllLootRandomizer.Select(r =>
 				{
@@ -92,10 +94,10 @@ public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> lo
 					};
 				}).ToDictionary(v => v.Id);
 
-				_AllLootRandomizerTranslated = new ReadOnlyDictionary<RecordId, LootRandomizerItem>(dico);
+				this._allLootRandomizerTranslated[scope] = translated = new ReadOnlyDictionary<RecordId, LootRandomizerItem>(dico);
 			}
 
-			return _AllLootRandomizerTranslated;
+			return translated;
 		}
 	}
 
