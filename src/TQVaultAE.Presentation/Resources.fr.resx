@@ -1585,7 +1585,10 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>Affiche les affixes par effets</value>
   </data>
 	<data name="AffixChanceHeader" xml:space="preserve">
-    <value>% = chance quand l'objet reçoit ce type d'affixe (meilleure source de butin)</value>
+    <value>% = Chance de butin</value>
+  </data>
+	<data name="AffixChanceTooltip" xml:space="preserve">
+    <value>Meilleure chance parmi les sources de butin de l'objet, une fois qu'il reçoit un affixe de ce type. Pas la chance que l'objet lui-même tombe.</value>
   </data>
 	<data name="AffixShareHeader" xml:space="preserve">
     <value>% = part dans sa table d'affixes (tous les affixes de ce type d'équipement)</value>

@@ -1936,7 +1936,10 @@ You still have to close TQVaultAE to apply your changes.
     <value>Display affixes by effect</value>
   </data>
 	<data name="AffixChanceHeader" xml:space="preserve">
-    <value>% = chance once the item gets this kind of affix (best drop source)</value>
+    <value>% = Loot chance</value>
+  </data>
+	<data name="AffixChanceTooltip" xml:space="preserve">
+    <value>Best chance among the item's drop sources, once the item gets an affix of this kind. Not the chance for the item itself to drop.</value>
   </data>
 	<data name="AffixShareHeader" xml:space="preserve">
     <value>% = share in its affix table (all affixes of this gear type)</value>

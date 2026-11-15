@@ -295,6 +295,7 @@ public partial class SackPanel
 			var tagSRemove = TranslationService.TranslateXTag("tagSRemove");
 			// What the percentages mean, shown above the choices.
 			var header = affixes.AllAffixesOfGearType ? Resources.AffixShareHeader : Resources.AffixChanceHeader;
+			var headerTip = affixes.AllAffixesOfGearType ? string.Empty : Resources.AffixChanceTooltip;
 
 			ToolStripMenuItem currentchoicesMenu;
 
@@ -310,7 +311,7 @@ public partial class SackPanel
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
-					, affixes.Broken, header
+					, affixes.Broken, header, headerTip
 				);
 			}
 
@@ -328,7 +329,7 @@ public partial class SackPanel
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
-					, affixes.Prefix, header
+					, affixes.Prefix, header, headerTip
 				);
 			}
 
@@ -357,7 +358,7 @@ public partial class SackPanel
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.suffixID, currentchoicesMenu, ChangeSuffixItemClicked
-					, affixes.Suffix, header
+					, affixes.Suffix, header, headerTip
 				);
 			}
 
@@ -445,6 +446,7 @@ public partial class SackPanel
 		, EventHandler handler
 		, IEnumerable<AffixGroup> currentaffixGroup
 		, string header
+		, string headerTip
 	)
 	{
 		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
@@ -453,6 +455,7 @@ public partial class SackPanel
 		currentchoicesMenu.DropDownItems.Add(new ToolStripMenuItem()
 		{
 			Text = header,
+			ToolTipText = headerTip,
 			Enabled = false,
 			DisplayStyle = ToolStripItemDisplayStyle.Text,
 		}.StyledLike(this.CustomContextMenu).WithTextColor(ItemStyle.Broken.Color()));

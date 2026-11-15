@@ -105,11 +105,20 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to % = chance once the item gets this kind of affix (best drop source).
+        ///   Looks up a localized string similar to % = Loot chance.
         /// </summary>
         public static string AffixChanceHeader {
             get {
                 return ResourceManager.GetString("AffixChanceHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Best chance among the item's drop sources, once the item gets an affix of this kind. Not the chance for the item itself to drop..
+        /// </summary>
+        public static string AffixChanceTooltip {
+            get {
+                return ResourceManager.GetString("AffixChanceTooltip", resourceCulture);
             }
         }
         
