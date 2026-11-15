@@ -1,6 +1,6 @@
 using TQVaultAE.GUI.Interop;
 
-namespace TQVaultAE.GUI.Infrastructure;
+namespace TQVaultAE.GUI.Components.Scaling;
 
 /// <summary>
 /// The DPI Windows gives a monitor (its scaling setting), which <see cref="Screen"/> does not tell.

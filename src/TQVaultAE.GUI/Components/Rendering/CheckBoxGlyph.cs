@@ -2,7 +2,7 @@ namespace TQVaultAE.GUI.Components.Rendering;
 
 using System.Drawing;
 using System.Windows.Forms;
-using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.GUI.Components.Scaling;
 using CheckBoxState = System.Windows.Forms.VisualStyles.CheckBoxState;
 
 /// <summary>
