@@ -1,6 +1,6 @@
 # AI agents (MCP endpoint)
 
-TQVault can let an AI agent running on your computer (Claude Code, Claude Desktop, or any other
+TQVault can let an AI agent running on your computer (any
 [MCP](https://modelcontextprotocol.io) client) read and drive it: list your characters, vaults and stashes, search
 items, move them, apply loadouts, use the forge, and take pictures of the window for your own game documentation.
 
@@ -69,12 +69,6 @@ Most MCP clients take a JSON configuration like this one (the key holding the se
     }
   }
 }
-```
-
-With Claude Code, one command does it:
-
-```bash
-claude mcp add --transport http tqvault http://127.0.0.1:47017/mcp
 ```
 
 Start TQVault first, then the client. The tools show up under the name you gave (`tqvault`). Ask the agent to start

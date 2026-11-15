@@ -182,7 +182,7 @@ Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other W
 
 ## Verifying GUI Changes (`tqvault` MCP)
 
-Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127.0.0.1:47017/mcp`, with the user tools and the developer tools (Release builds serve the user tools only, when the user turns the endpoint on in the settings: `documentation/mcp.md`). It is registered for Claude Code in `.mcp.json`. Use it to check UI changes on the running app, instead of screenshots and real mouse clicks.
+Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127.0.0.1:47017/mcp`, with the user tools and the developer tools (Release builds serve the user tools only, when the user turns the endpoint on in the settings: `documentation/mcp.md`). It is registered for MCP clients in the repository's `.mcp.json`. Use it to check UI changes on the running app, instead of screenshots and real mouse clicks.
 
 1. Build Debug: `dotnet build TQVaultAE.slnx`.
 2. Run `src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe`. Prefer `TQVaultAE.exe --headless`: it runs on a hidden desktop, so no window, taskbar button or focus change reaches the user. Message boxes then take their default answer (Cancel/No/Ignore/OK) unless one is queued, and native file/folder dialogs are cancelled. Add `TQVAULT_MCP_PORT=47018` when another Debug instance already uses 47017. See "Headless mode" in `documentation/AUTOMATION.md`.

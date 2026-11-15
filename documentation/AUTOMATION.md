@@ -1,7 +1,7 @@
 # Automation endpoint
 
 TQVault hosts an [MCP](https://modelcontextprotocol.io) server inside the application.
-An AI agent (Claude Code, or any MCP client) can use it to inspect and drive the running UI
+An AI agent (any MCP client) can use it to inspect and drive the running UI
 without screenshots or real mouse clicks. It has two levels:
 
 - **User tools**, in every build: reading the state, the user's actions and captures. Release builds serve them only
@@ -76,17 +76,17 @@ TQVAULT_MCP_PORT=47018 src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe
 Release builds ignore the switch: its code is in the Debug-only `Automation/Dev/` folder and `HeadlessDesktop.cs`, and
 the call is in `#if DEBUG`.
 
-## Register it in Claude Code
+## Register it in an MCP client
 
 The repository's `.mcp.json` already registers it as `tqvault`. Follow these steps:
 
 1. Start a Debug build: run `dotnet build TQVaultAE.slnx`, then `src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe`.
-2. Open Claude Code at the repository root, and approve the project server when you are asked.
+2. Open your MCP client at the repository root, and approve the project server when you are asked.
 
-The tools show up as `mcp__tqvault__*` in sessions started at the repository root. A local registration counts only for the folder the command runs in, not the whole repository. To register the server by hand from another folder, use:
+The tools show up under the server name `tqvault` in sessions started at the repository root. To register the server by hand from another folder, add an HTTP MCP server named `tqvault` with this URL:
 
-```bash
-claude mcp add --transport http tqvault http://127.0.0.1:47017/mcp
+```text
+http://127.0.0.1:47017/mcp
 ```
 
 If you use another port (`TQVAULT_MCP_PORT`), update the URL in `.mcp.json` too.
