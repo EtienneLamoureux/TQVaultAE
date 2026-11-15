@@ -6,6 +6,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Data.Dto;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Services.Export;
 
 namespace TQVaultAE.Services;
 

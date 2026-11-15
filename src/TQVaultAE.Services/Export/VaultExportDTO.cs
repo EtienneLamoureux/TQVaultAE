@@ -4,7 +4,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Data.Dto;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Services;
+namespace TQVaultAE.Services.Export;
 
 public class VaultExportDTO
 {
