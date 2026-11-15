@@ -90,4 +90,38 @@ public class WindowLayoutTests
 	public void CenteredIn_KeepsTheCaptionOfALargerWindowOnScreen()
 		=> WindowLayout.CenteredIn(new Rectangle(-1920, 358, 1920, 1032), new Size(1688, 1138))
 			.Should().Be(new Point(-1920 + 116, 358));
+
+	private static readonly Rectangle Area = new(0, 0, 1920, 1040);
+	private static readonly Size Window = new(800, 600);
+
+	[Fact]
+	public void Cascade_TakesThePreferredPlaceWhenNoWindowIsThere()
+		=> WindowLayout.Cascade(new Point(560, 220), Window, Area, [new Point(100, 100)], step: 30)
+			.Should().Be(new Point(560, 220));
+
+	// A third comparison opened over two that the user left where they opened: one step past the last.
+	[Fact]
+	public void Cascade_StepsDownAndRightPastTheWindowsAlreadyThere()
+		=> WindowLayout.Cascade(new Point(560, 220), Window, Area, [new Point(560, 220), new Point(590, 250)], step: 30)
+			.Should().Be(new Point(620, 280));
+
+	// A window moved by a few pixels still takes its place: the new one would hide all but a sliver of it.
+	[Fact]
+	public void Cascade_CountsAPlaceTakenWithinHalfAStep()
+		=> WindowLayout.Cascade(new Point(560, 220), Window, Area, [new Point(570, 208)], step: 30)
+			.Should().Be(new Point(590, 250));
+
+	// The steps would leave the bottom of the screen: the next window starts again from the area's top left.
+	[Fact]
+	public void Cascade_StartsAgainFromTheTopLeftOnceTheWindowWouldLeaveTheArea()
+		=> WindowLayout.Cascade(new Point(1000, 400), Window, Area, [new Point(1000, 400), new Point(1030, 430)], step: 40)
+			.Should().Be(new Point(0, 0));
+
+	[Fact]
+	public void Cascade_GivesThePreferredPlaceWhenEveryPlaceIsTaken()
+	{
+		var small = new Rectangle(0, 0, 820, 620);
+		WindowLayout.Cascade(new Point(10, 10), Window, small, [new Point(10, 10), new Point(0, 0)], step: 30)
+			.Should().Be(new Point(10, 10));
+	}
 }

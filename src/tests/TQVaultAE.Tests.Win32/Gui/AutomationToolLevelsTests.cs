@@ -25,7 +25,7 @@ public sealed class AutomationToolLevelsTests
 	[
 		"archive_character", "bag_menu", "bag_settings_pick_icon", "cancel_drag", "capture", "capture_menu",
 		"character_attribute_click", "character_list", "character_panel", "character_read_only", "character_stat_sources",
-		"character_tooltip", "click_cell", "close_dialog", "close_form", "compare_click", "compare_items", "context_menu",
+		"character_tooltip", "click_cell", "close_dialog", "close_form", "compare_click", "compare_items", "comparison_windows", "context_menu",
 		"context_menu_click", "create_vault", "dialog_answers", "drop_item", "duplicate_character", "export_csv",
 		"export_items", "export_tab", "export_vault", "find_copies", "forge_cancel", "forge_drop", "forge_forge",
 		"forge_mode_card", "forge_reset", "forge_select_part", "forge_set_hardcore", "forge_set_mode", "forge_show",

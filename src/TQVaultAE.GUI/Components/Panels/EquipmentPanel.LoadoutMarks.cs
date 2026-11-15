@@ -100,7 +100,7 @@ public partial class EquipmentPanel
 	/// side is empty: there is nothing to compare.
 	/// </summary>
 	/// <param name="slot">The equipment slot.</param>
-	/// <returns><see langword="true"/> when the comparison opens (after the caller returns: the dialog is modal).</returns>
+	/// <returns><see langword="true"/> when the comparison opens (in a new window, after the caller returns).</returns>
 	public bool ShowLoadoutComparison(int slot)
 	{
 		if (this._comparedLoadout is not { } loadout

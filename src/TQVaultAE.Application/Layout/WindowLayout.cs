@@ -60,4 +60,38 @@ public static class WindowLayout
 		=> new(
 			workingArea.Left + Math.Max(0, (workingArea.Width - size.Width) / 2),
 			workingArea.Top + Math.Max(0, (workingArea.Height - size.Height) / 2));
+
+	/// <summary>
+	/// Where a new window of <paramref name="size"/> goes so that it does not sit on one of the same kind already open:
+	/// <paramref name="preferred"/> when no window of <paramref name="taken"/> is there, else the first free place one
+	/// <paramref name="step"/> further down and right, then from the top left of <paramref name="workingArea"/> once the
+	/// window would leave it. A place is taken when an open window's top left is less than half a step away. With every
+	/// place taken, <paramref name="preferred"/>.
+	/// </summary>
+	/// <param name="preferred">The place the window would take alone (centered on its owner, for example).</param>
+	/// <param name="size">The window's size.</param>
+	/// <param name="workingArea">The working area of the window's screen.</param>
+	/// <param name="taken">The top left corners of the windows of the same kind already open.</param>
+	/// <param name="step">The offset between two windows, on each axis; at least 1.</param>
+	public static Point Cascade(Point preferred, Size size, Rectangle workingArea, IReadOnlyCollection<Point> taken, int step)
+	{
+		step = Math.Max(1, step);
+		bool Free(Point p) => !taken.Any(t => Math.Abs(t.X - p.X) * 2 < step && Math.Abs(t.Y - p.Y) * 2 < step);
+		bool Fits(Point p) => p.X + size.Width <= workingArea.Right && p.Y + size.Height <= workingArea.Bottom;
+
+		foreach (var origin in new[] { preferred, workingArea.Location })
+		{
+			for (int i = 0; ; i++)
+			{
+				var candidate = new Point(origin.X + (i * step), origin.Y + (i * step));
+				// The preferred place itself, even when it does not fit (a window larger than the area).
+				if (i > 0 && !Fits(candidate))
+					break;
+				if (Free(candidate))
+					return candidate;
+			}
+		}
+
+		return preferred;
+	}
 }

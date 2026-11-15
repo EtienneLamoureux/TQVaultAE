@@ -1,5 +1,4 @@
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 
@@ -57,19 +56,29 @@ public partial class SackPanel
 		if (e.Button == MouseButtons.Right)
 			selection.Cancel();
 		else if (e.Button == MouseButtons.Left && selection.Pick(this.FindItem(this.FindCell(e.Location))) is { } pair)
-			// After the mouse handler: the dialog is modal.
+			// After the mouse handler: the new window takes the focus.
 			this.BeginInvoke(() => this.ShowComparison(pair.First, pair.Second));
 
 		return true;
 	}
 
-	/// <summary>Opens the item comparison of <paramref name="first"/> and <paramref name="second"/>.</summary>
+	/// <summary>
+	/// Opens the item comparison of <paramref name="first"/> and <paramref name="second"/> in a new window, through the
+	/// main content (<see cref="IItemComparisonHost"/>).
+	/// </summary>
 	private protected void ShowComparison(Item first, Item second)
+		=> this.FindHost<IItemComparisonHost>()?.ShowComparison(first, second);
+
+	/// <summary>The first parent of this panel that is a <typeparamref name="THost"/>: the main content.</summary>
+	private protected THost? FindHost<THost>() where THost : class
 	{
-		using var dlg = this.Services.Forms.Create<ItemComparisonDialog>();
-		dlg.First = first;
-		dlg.Second = second;
-		dlg.ShowDialog();
+		for (var parent = this.Parent; parent is not null; parent = parent.Parent)
+		{
+			if (parent is THost host)
+				return host;
+		}
+
+		return null;
 	}
 
 	/// <summary>Frames the first item of the compare selection when this panel shows it.</summary>

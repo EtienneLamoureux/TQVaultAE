@@ -1,4 +1,5 @@
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
@@ -16,6 +17,8 @@ namespace TQVaultAE.GUI.Dialogs;
 /// "Show sources"); a click on a stat with sources shows or hides them for that stat.
 /// The content is decided by <see cref="ItemComparisonContentBuilder"/>; this dialog only draws its lines, with the rows
 /// of the item tooltip, in the look of Item Properties: the marble behind, each column on black in a caravan frame.
+/// A modeless window owned by the main window, like the search results: several may stay open, each placed clear of the
+/// others (<see cref="Views.MainFormUserControl.OpenComparison"/> opens them).
 /// </summary>
 internal sealed partial class ItemComparisonDialog : VaultForm
 {
@@ -52,6 +55,10 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._comparisonService = comparisonService;
 		this._builder = new ItemComparisonContentBuilder(this.Services.TranslationService);
 		this.Owner = instance;
+
+		// The user's zoom when the window opens, kept while it is open: its toolbar and its columns, made again at each
+		// change, stay at one zoom while the main window zooms (several comparisons may stay open beside it).
+		this.UserZoomForLayout();
 
 		// The DPI of the dialog's monitor: the toolbar and the button are made at the dialog's DPI before it has a
 		// window (the system's), fonts with the user's zoom only, and Windows Forms scales them to its monitor's DPI when it
@@ -92,10 +99,10 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._scroll.Scroll += (_, _) => this._scroll.Invalidate(true);
 		this._scroll.MouseWheel += (_, _) => this._scroll.Invalidate(true);
 
-		// OK closes, as Escape and the close button of the border do (shown modeless too); at the bottom right, as in Item
+		// OK closes, as Escape and the close button of the border do; at the bottom right, as in Item
 		// Properties.
 		// Placed by hand in its panel, at the dialog's DPI like the columns: wider than the other dialogs' buttons.
-		var ok = CaravanDialog.Button(this.FontService, this.UIService.Zoom, "okButton", Resources.GlobalOK);
+		var ok = CaravanDialog.Button(this.FontService, this.ScaledZoom, "okButton", Resources.GlobalOK);
 		ok.Anchor = AnchorStyles.None;
 		ok.DialogResult = DialogResult.OK;
 		ok.Size = new Size((int)(137 * scale), (int)(30 * scale));
@@ -151,7 +158,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// The scale of the columns, made at each change of the content, in pixels of the dialog's monitor: the user's zoom
 	/// and that monitor's DPI.
 	/// </summary>
-	private float ContentScale => this.UIService.Zoom * this.DpiScale();
+	private float ContentScale => this.ScaledZoom * this.DpiScale();
 
 	/// <summary>
 	/// The space between the border and the content, at the dialog's DPI: Windows Forms does not scale a window's own
@@ -206,7 +213,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			Checked = isChecked,
 			ForeColor = Color.Gold,
 			BackColor = Color.Transparent,
-			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.UIService.Zoom),
+			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.ScaledZoom),
 			Margin = new Padding((int)Math.Round(4 * this.ContentScale), 0, (int)Math.Round(12 * this.ContentScale), 0),
 			Name = name,
 			Text = text,
@@ -321,6 +328,9 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// <summary>The names of the cells above the four columns, left to right: the item pictures above the item columns.</summary>
 	internal static readonly string[] PictureNames = ["firstDifferencesPicture", "firstPicture", "secondPicture", "secondDifferencesPicture"];
 
+	/// <summary>Offset between two comparison windows opened one after the other, at 96 DPI: about a title bar.</summary>
+	private const float CascadeStep = 30F;
+
 	/// <summary>Space between two column frames, at 96 DPI and zoom 1: half on each side.</summary>
 	private const float ColumnGap = 8F;
 
@@ -386,7 +396,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		column.SuspendLayout();
 		foreach (var line in lines)
 		{
-			var row = BaseTooltip.MakeLineRow(this.UIService, this.FontService, line, ColumnColor, this.UIService.Zoom);
+			var row = BaseTooltip.MakeLineRow(this.UIService, this.FontService, line, ColumnColor, this.ScaledZoom);
 			if (row is not null && line.ToggleKey is { } key)
 				this.MakeToggle(row, key);
 			column.Controls.Add(row);
@@ -408,7 +418,8 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 
 	/// <summary>
 	/// Sizes the dialog to its columns and border, within the working area of its screen; the rest scrolls. Centered on
-	/// its owner, on the owner's screen, or where it is, kept within the working area of the screen it is on, when
+	/// its owner, on the owner's screen, one step down and right of each comparison already there
+	/// (<see cref="WindowLayout.Cascade"/>), or where it is, kept within the working area of the screen it is on, when
 	/// <paramref name="keepLocation"/> (the user may have moved it to another monitor).
 	/// </summary>
 	private void FitToContent(bool keepLocation = false)
@@ -439,10 +450,13 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		else if (this.Owner is not null)
 		{
 			var owner = this.Owner.Bounds;
-			this.StartPosition = FormStartPosition.Manual;
-			this.Location = new Point(
+			var centered = new Point(
 				Math.Clamp(owner.Left + ((owner.Width - this.Width) / 2), area.Left, Math.Max(area.Left, area.Right - this.Width)),
 				Math.Clamp(owner.Top + ((owner.Height - this.Height) / 2), area.Top, Math.Max(area.Top, area.Bottom - this.Height)));
+			var others = this.Owner.OwnedForms.OfType<ItemComparisonDialog>()
+				.Where(f => f != this && f.Visible && !f.IsDisposed).Select(f => f.Location).ToList();
+			this.StartPosition = FormStartPosition.Manual;
+			this.Location = WindowLayout.Cascade(centered, this.Size, area, others, (int)Math.Round(CascadeStep * this.DpiScale()));
 		}
 	}
 }

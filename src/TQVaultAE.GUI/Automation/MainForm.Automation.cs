@@ -20,6 +20,13 @@ public partial class MainForm
 {
 	internal ItemDragInfo AutomationDragInfo => this.mainView.DragInfo;
 
+	/// <summary>Opens a comparison window like the user's Compare (<see cref="Views.MainFormUserControl.OpenComparison"/>).</summary>
+	internal Dialogs.ItemComparisonDialog AutomationOpenComparison(TQVaultAE.Domain.Entities.Item first, TQVaultAE.Domain.Entities.Item second)
+		=> this.mainView.OpenComparison(first, second);
+
+	/// <summary>The comparison windows open, oldest first.</summary>
+	internal IReadOnlyList<Dialogs.ItemComparisonDialog> AutomationComparisons => this.mainView.OpenComparisons;
+
 	/// <summary>Zooms like Ctrl + / Ctrl - (delta 0.1 / -0.1) or Ctrl Home (delta 1, back to 100 %).</summary>
 	internal void AutomationZoom(float delta) => this.ResizeFormCallback(this, new ResizeEventArgs(delta));
 

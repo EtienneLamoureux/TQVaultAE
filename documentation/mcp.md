@@ -89,7 +89,7 @@ Coordinates are item cells (`x`, `y`) as `get_state` gives them. Panels are `vau
 |---|---|
 | Read the state | `get_state` (characters, vaults, panels, items), `character_list`, `player_info` (the statistics panel), `mod_state`, `mod_suggest`, `list_tags`, `key_binds`, `game_text` (translate game text tags) |
 | Item search | `search_entries`, `search_containers`, `select_search_result`, `find_copies` (copies of an item: same seed, same base, prefix, suffix), `owned_skill_items`, `highlight_filters` |
-| Tool tips and comparison | `hover_item` (an item's tool tip, text and picture), `hover_end`, `hover_bag`, `compare_items` / `compare_click` (the item comparison dialog) |
+| Tool tips and comparison | `hover_item` (an item's tool tip, text and picture), `hover_end`, `hover_bag`, `compare_items` / `compare_click` (the item comparison windows, several may stay open) / `comparison_windows` (lists or closes them) |
 | Navigate | `select_character`, `select_vault`, `select_bag`, `select_tab` |
 | Move items | `pick_item`, `move_drag`, `drop_item`, `cancel_drag`, `click_cell` (clicks with modifiers: copy, duplicate), `select_items` |
 | Menus | `context_menu` / `context_menu_click` (an item's right-click menu), `bag_menu`, `vault_menu`, `menu_click` (character tools, loadout menus), `sort_menu` / `sort_click`, `open_bag_settings` / `bag_settings_pick_icon` (bag icons) |

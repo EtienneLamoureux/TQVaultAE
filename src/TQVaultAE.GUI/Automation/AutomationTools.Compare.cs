@@ -4,6 +4,7 @@ using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.GUI.Interop;
 using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Forms;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -13,7 +14,7 @@ namespace TQVaultAE.GUI.Automation;
 internal static partial class AutomationTools
 {
 	[McpServerTool(Name = "compare_items", ReadOnly = true)]
-	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged, showSources; empty keeps the last ones) and per-stat source clicks (toggle), then scrolls its columns like the user (height, scroll), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog is shown modeless and closed at the end unless keepOpen (then capture it by its title and close it with close_dialog). Nothing is changed.")]
+	[Description("Opens the item comparison dialog directly on two items, which may be on different panels (equipment vs vault), with its toolbar choices (alignRows, hideUnchanged, showSources; empty keeps the last ones) and per-stat source clicks (toggle), then scrolls its columns like the user (height, scroll), and returns its four columns as rendered (firstDifferences, first, second, secondDifferences; rows as tooltip_text_dump: kind, text, color, bold) with a PNG of the whole content, scroll included. The dialog opens like the user's Compare, in a new modeless window placed clear of the comparisons already open (comparison_windows lists them), and is closed at the end unless keepOpen. Nothing is changed.")]
 	public static IEnumerable<ContentBlock> CompareItems(
 		[Description("Panel id of the first item.")] string panel,
 		[Description("Cell column of the first item.")] int x,
@@ -22,7 +23,7 @@ internal static partial class AutomationTools
 		[Description("Cell row of the second item.")] int y2,
 		[Description("Panel id of the second item; empty for the first item's panel.")] string? panel2 = null,
 		[Description("PNG file the capture is also written to; empty for a temporary file.")] string? path = null,
-		[Description("Leave the dialog open.")] bool keepOpen = false,
+		[Description("Leave the window open, beside the other comparisons (comparison_windows lists and closes them).")] bool keepOpen = false,
 		[Description("The 'Align rows' check box; empty keeps the last choice.")] bool? alignRows = null,
 		[Description("The 'Hide unchanged' check box; empty keeps the last choice.")] bool? hideUnchanged = null,
 		[Description("The 'Show sources' check box; empty keeps the last choice.")] bool? showSources = null,
@@ -39,10 +40,7 @@ internal static partial class AutomationTools
 			var item2 = second.Panel.AutomationFindItem(new Point(x2, y2))
 				?? throw new McpException($"No item at {x2},{y2} in '{second.Id}'.");
 
-			var dialog = main.Services.Forms.Create<ItemComparisonDialog>();
-			dialog.First = item1;
-			dialog.Second = item2;
-			dialog.Show(main);
+			var dialog = main.AutomationOpenComparison(item1, item2);
 
 			try
 			{
@@ -94,6 +92,7 @@ internal static partial class AutomationTools
 					toggled,
 					scrolled,
 					dialogSize = dialog.Size,
+					window = DescribeComparison(main, dialog),
 					contentSize = table.Size,
 					columns,
 				});
@@ -101,15 +100,60 @@ internal static partial class AutomationTools
 			}
 			finally
 			{
+				// A modeless window disposes itself when it closes.
 				if (!keepOpen)
-				{
 					dialog.Close();
-					dialog.Dispose();
-				}
 			}
 		});
 
 		return AutomationImages.Result(json, png, "compare", path);
+	}
+
+	[McpServerTool(Name = "comparison_windows", Destructive = false)]
+	[Description("Lists the item comparison windows open (oldest first: index, the two items, bounds, whether active, toolbar choices), or closes one (action 'close', index) or all of them (action 'closeAll') like their OK button; closing returns the windows left. Each comparison is a modeless window owned by the main window: compare_items with keepOpen or compare_click opens a new one beside the others.")]
+	public static string ComparisonWindows(
+		[Description("'list' (default), 'close' or 'closeAll'.")] string action = "list",
+		[Description("Index of the window to close, from the list.")] int index = -1)
+		=> AutomationHost.OnUi(main =>
+		{
+			var windows = main.AutomationComparisons;
+			switch (action.Trim().ToLowerInvariant())
+			{
+				case "list":
+					break;
+				case "close":
+					if (index < 0 || index >= windows.Count)
+						throw new McpException($"No comparison window {index}: {windows.Count} open.");
+					windows[index].Close();
+					break;
+				case "closeall":
+					foreach (var window in windows)
+						window.Close();
+					break;
+				default:
+					throw new McpException($"Unknown action '{action}'. Use 'list', 'close' or 'closeAll'.");
+			}
+
+			System.Windows.Forms.Application.DoEvents();
+			var left = main.AutomationComparisons;
+			return Serialize(new { count = left.Count, windows = left.Select(w => DescribeComparison(main, w)) });
+		});
+
+	/// <summary>A comparison window: its index among those open, its items, bounds, whether active, toolbar choices.</summary>
+	private static object DescribeComparison(MainForm main, ItemComparisonDialog window)
+	{
+		var windows = main.AutomationComparisons;
+		return new
+		{
+			index = windows.ToList().IndexOf(window),
+			title = window.Text,
+			first = DescribeItem(window.First, null),
+			second = DescribeItem(window.Second, null),
+			bounds = window.Bounds,
+			active = Form.ActiveForm == window,
+			visible = window.Visible,
+			options = window.Options,
+		};
 	}
 
 	/// <summary>
@@ -161,7 +205,7 @@ internal static partial class AutomationTools
 		=> row is Label ? row.Text : string.Concat(row.Controls.Cast<Control>().Select(c => c.Text));
 
 	[McpServerTool(Name = "compare_click", Destructive = true)]
-	[Description("Clicks a cell of a panel like the user while the compare selection may be on (started by the item menu's 'Compare' entry: context_menu_click(panel, x, y, 'Compare')). Left on an item: picks the second item and opens the comparison dialog (modal, after the call returns: drive it with set_control / control_values / capture('Item Comparison') and close it with close_dialog('Item Comparison', 'OK')); left on the first item ends the selection; left on an empty cell keeps it; right cancels it. Without the selection on, a left click picks the item up like pick_item. Returns the compare selection before and after.")]
+	[Description("Clicks a cell of a panel like the user while the compare selection may be on (started by the item menu's 'Compare' entry: context_menu_click(panel, x, y, 'Compare')). Left on an item: picks the second item and opens the comparison in a new modeless window, beside the comparisons already open, after the call returns (comparison_windows lists and closes them; drive the newest with set_control / control_values / capture('Item Comparison')); left on the first item ends the selection; left on an empty cell keeps it; right cancels it. Without the selection on, a left click picks the item up like pick_item. Returns the compare selection before and after.")]
 	public static string CompareClick(
 		[Description("Panel id.")] string panel,
 		[Description("Cell column.")] int x,
