@@ -82,11 +82,6 @@ public partial class MainForm : VaultForm
 	/// </summary>
 	private SplashScreenForm splashScreen = null!; // Created while the form loads.
 
-	/// <summary>
-	/// Holds the opacity interval for fading the form.
-	/// </summary>
-	private double fadeInterval;
-
 
 	#endregion
 

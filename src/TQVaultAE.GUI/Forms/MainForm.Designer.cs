@@ -58,7 +58,6 @@ public partial class MainForm
 	/// <summary>
 	/// Timer for fading in the main form.
 	/// </summary>
-	private System.Windows.Forms.Timer fadeInTimer;
 
 	/// <summary>
 	/// Required designer variable.
@@ -95,7 +94,6 @@ public partial class MainForm
         this.aboutButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.titleLabel = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.searchButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
-        this.fadeInTimer = new System.Windows.Forms.Timer(this.components);
         this.saveButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.flowLayoutPanelMenuButtons = new System.Windows.Forms.FlowLayoutPanel();
         this.forgeButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
@@ -228,11 +226,6 @@ public partial class MainForm
         this.searchButton.UseCustomGraphic = true;
         this.searchButton.UseVisualStyleBackColor = false;
         this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
-        // 
-        // fadeInTimer
-        // 
-        this.fadeInTimer.Interval = 50;
-        this.fadeInTimer.Tick += new System.EventHandler(this.FadeInTimerTick);
         // 
         // saveButton
         // 

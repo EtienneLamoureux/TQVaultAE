@@ -224,26 +224,6 @@ public partial class MainForm
 
 
 	/// <summary>
-	/// Handles Timer ticks for fading in the main form.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void FadeInTimerTick(object? sender, EventArgs e)
-	{
-		if (this.Opacity < 1)
-		{
-			this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInterval);
-			if (this.Opacity >= 1)
-			{
-				StartupTiming.Mark(this.Log, "main opaque");
-				StartupTiming.MarkWhenIdle(this.Log, "main ready");
-			}
-		}
-		else
-			this.fadeInTimer.Stop();
-	}
-
-	/// <summary>
 	/// Handler for the exit button.
 	/// Closes the main form
 	/// </summary>

@@ -277,12 +277,6 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(ShowSkillLevel))]
 	public bool ShowSkillLevel { get; set; }
 	
-	[XmlElement(ElementName = nameof(FadeInInterval))]
-	public double FadeInInterval { get; set; } = 0.1;
-	
-	[XmlElement(ElementName = nameof(FadeOutInterval))]
-	public double FadeOutInterval { get; set; } = 0.2;
-	
 	[XmlElement(ElementName = nameof(DebugEnabled))]
  	public bool DebugEnabled { get; set; }
 

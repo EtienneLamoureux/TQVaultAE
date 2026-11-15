@@ -30,24 +30,9 @@ internal sealed partial class SplashScreenForm : VaultForm
 	private int waitTimerFlip;
 
 	/// <summary>
-	/// Indicates whether to fade in or fade out the form.
-	/// </summary>
-	private bool fadeOut;
-
-	/// <summary>
 	/// Holds the color of the label prior to flipping to white.
 	/// </summary>
 	private Color flipColor;
-
-	/// <summary>
-	/// Interval used to adjust the opacity during form fade in.
-	/// </summary>
-	private double fadeInInterval;
-
-	/// <summary>
-	/// Interval used to adjust the opacity during form fade out.
-	/// </summary>
-	private double fadeOutInterval;
 
 	/// <summary>
 	/// Indicates whether the form will be drawn with the outer edges clipped to a rounded rectangle.
@@ -87,11 +72,8 @@ internal sealed partial class SplashScreenForm : VaultForm
 		this.labelPleaseWait.Text = Resources.Form1LblPleaseWait;
 		this.Icon = Images.TQVIcon;
 		this.ShowMainForm = false;
-		//this.Opacity = 0.0F;
 
 		this.FormBorderStyle = FormBorderStyle.None;
-		this.fadeInInterval = this.USettings.FadeInInterval;
-		this.fadeOutInterval = this.USettings.FadeOutInterval;
 
 		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
@@ -106,7 +88,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 		}
 
 		this.flipColor = this.labelPleaseWait.ForeColor;
-		this.fadeTimer.Start();
 	}
 
 	/// <summary>
@@ -150,12 +131,12 @@ internal sealed partial class SplashScreenForm : VaultForm
 	public void IncrementValue() => this.progressBar.Increment(1);
 
 	/// <summary>
-	/// Close the form and start the fade out.
+	/// Closes the form.
 	/// </summary>
 	public void CloseForm()
 	{
-		this.fadeOut = true;
-		this.fadeTimer.Start();
+		this.waitTimer.Stop();
+		this.Close();
 	}
 
 	/// <summary>
@@ -258,32 +239,5 @@ internal sealed partial class SplashScreenForm : VaultForm
 	{
 		if (this.ShowMainForm)
 			this.CloseForm();
-	}
-
-	/// <summary>
-	/// Fade Timer handler for fading in and out of the form.
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void FadeTimerTick(object? sender, EventArgs e)
-	{
-		if (!this.fadeOut)
-		{
-			if (this.Opacity < 1)
-				this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInInterval);
-			else
-				this.fadeTimer.Stop();
-		}
-		else
-		{
-			if (this.Opacity > 0)
-				this.Opacity = Math.Max(0.0F, this.Opacity - this.fadeOutInterval);
-			else
-			{
-				this.waitTimer.Stop();
-				this.fadeTimer.Stop();
-				this.Close();
-			}
-		}
 	}
 }

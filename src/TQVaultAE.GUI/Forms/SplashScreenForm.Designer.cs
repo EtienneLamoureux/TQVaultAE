@@ -48,7 +48,6 @@ internal partial class SplashScreenForm
 	/// <summary>
 	/// Timer for fading in and out of the form.
 	/// </summary>
-	private System.Windows.Forms.Timer fadeTimer;
 
 	/// <summary>
 	/// Required designer variable.
@@ -84,7 +83,6 @@ internal partial class SplashScreenForm
         this.exitButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.labelPleaseWait = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.waitTimer = new System.Timers.Timer();
-        this.fadeTimer = new System.Windows.Forms.Timer(this.components);
         this.progressBar = new TQVaultAE.GUI.Components.VaultProgressBar();
         ((System.ComponentModel.ISupportInitialize)(this.waitTimer)).BeginInit();
         this.SuspendLayout();
@@ -168,11 +166,6 @@ internal partial class SplashScreenForm
         this.waitTimer.Interval = 500D;
         this.waitTimer.SynchronizingObject = this;
         this.waitTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.WaitTimerElapsed);
-        // 
-        // fadeTimer
-        // 
-        this.fadeTimer.Interval = 50;
-        this.fadeTimer.Tick += new System.EventHandler(this.FadeTimerTick);
         // 
         // progressBar
         // 

@@ -459,7 +459,10 @@ public sealed class UserSettingsTests : IDisposable
 
 	#region Culture
 
-	/// <summary>A file as the app saves it, with a zoom that is not round.</summary>
+	/// <summary>
+	/// A file as the app saves it, with a zoom that is not round, and the FadeInInterval of the versions that faded the
+	/// startup windows, which no setting reads any more.
+	/// </summary>
 	private const string SavedByTheApp = """
 		<?xml version="1.0"?>
 		<UserSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -483,7 +486,6 @@ public sealed class UserSettingsTests : IDisposable
 
 		settings.Scale.Should().Be(0.94945055F);
 		settings.ItemBGColorOpacity.Should().Be(-3);
-		settings.FadeInInterval.Should().Be(0.05);
 		settings.GitBackupRepository.Should().BeEmpty();
 	}
 
@@ -494,7 +496,7 @@ public sealed class UserSettingsTests : IDisposable
 	[InlineData("tr-TR")]
 	public void Save_InAnotherCulture_WritesInvariantNumbers(string cultureName)
 	{
-		var settings = new UserSettings { Scale = 0.94945055F, ItemBGColorOpacity = -3, FadeInInterval = 0.05, SkipTitle = true };
+		var settings = new UserSettings { Scale = 0.94945055F, ItemBGColorOpacity = -3, SkipTitle = true };
 
 		InCulture(cultureName, () =>
 		{
@@ -505,7 +507,6 @@ public sealed class UserSettingsTests : IDisposable
 		var root = XDocument.Load(this._xmlPath).Root!;
 		root.Element(nameof(UserSettings.Scale))!.Value.Should().Be("0.94945055");
 		root.Element(nameof(UserSettings.ItemBGColorOpacity))!.Value.Should().Be("-3");
-		root.Element(nameof(UserSettings.FadeInInterval))!.Value.Should().Be("0.05");
 		root.Element(nameof(UserSettings.SkipTitle))!.Value.Should().Be("true");
 		UserSettings.Read(this._xmlPath).Should().BeEquivalentTo(settings);
 	}

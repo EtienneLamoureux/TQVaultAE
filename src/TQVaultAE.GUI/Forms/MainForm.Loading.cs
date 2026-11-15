@@ -133,17 +133,24 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Starts the fade in of the main form.
+	/// Shows the main form, transparent until it is moved to the monitor it opens on (<see cref="MoveToOpeningScreen"/>),
+	/// then opaque at once.
 	/// </summary>
 	private void ShowMainForm()
 	{
-		this.fadeInTimer.Start();
 		this.ShowInTaskbar = true;
 		this.Enabled = true;
 		this.Show();
 		this.MoveToOpeningScreen();
 		this.Activate();
 		StartupTiming.Mark(this.Log, "main shown");
+
+		this.Opacity = 1;
+
+		// Painted now, not after the messages waiting in the queue.
+		this.Update();
+		StartupTiming.Mark(this.Log, "main opaque");
+		StartupTiming.MarkWhenIdle(this.Log, "main ready");
 	}
 
 	#endregion

@@ -132,7 +132,6 @@ public partial class MainForm
 	{
 		this.DrawCustomBorder = true;
 		this.ResizeCustomAllowed = true;
-		this.fadeInterval = USettings.FadeInInterval;
 
 		this.openingScreen = this.PlaceForCreation();
 
@@ -201,8 +200,8 @@ public partial class MainForm
 	/// <summary>
 	/// Moves the window, built on the monitor it was created on (<see cref="PlaceForCreation"/>), to the one it opens on,
 	/// at the size it takes there: Windows sends one DPI change, which scales it as a move there does, then it is
-	/// centered there. Once shown, still transparent before its fade in: a hidden window scaled to another DPI kept
-	/// sizes of the DPI before in its auto-sized panels (the vault list row was 5 px higher).
+	/// centered there. Called once shown, still transparent (<see cref="ShowMainForm"/>): a hidden window scaled to
+	/// another DPI kept sizes of the DPI before in its auto-sized panels (the vault list row was 5 px higher).
 	/// </summary>
 	private void MoveToOpeningScreen()
 	{
