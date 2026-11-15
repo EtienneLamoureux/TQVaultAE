@@ -39,6 +39,11 @@ public class DBRecordCollection : IEnumerable<Variable>
 	public RecordId Id { get; private set; }
 
 	/// <summary>
+	/// The database the record was read from: a record a mod overrides, read from the mod's database, is the mod's.
+	/// </summary>
+	public RecordSource Source { get; init; } = RecordSource.BaseGame;
+
+	/// <summary>
 	/// Gets the RecordType
 	/// </summary>
 	public string RecordType { get; private set; }

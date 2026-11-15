@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
@@ -17,10 +18,21 @@ namespace TQVaultAE.Data;
 /// </remarks>
 /// <param name="log">Logger.</param>
 /// <param name="createDatabase">Creates a database, not loaded yet.</param>
-public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Database> createDatabase) : IDatabase, IDatabaseMaps, IDisposable
+/// <param name="modLinks">Names the mod of each map, which the records of its database carry; null: the folder's name.</param>
+public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Database> createDatabase, IModLinkService? modLinks = null) : IDatabase, IDatabaseMaps, IDisposable
 {
 	private readonly ILogger Log = log;
-	private readonly Func<Database> CreateDatabase = createDatabase;
+	private readonly Func<Database> CreateDatabaseOfFactory = createDatabase;
+	private readonly IModLinkService? ModLinks = modLinks;
+
+	/// <summary>A new database, not loaded yet, that names its mod as the installed mods do.</summary>
+	private Database CreateDatabase()
+	{
+		var database = this.CreateDatabaseOfFactory();
+		if (this.ModLinks is { } modLinks)
+			database.ModIdOfMap = modLinks.ModIdOfMap;
+		return database;
+	}
 	private readonly Dictionary<string, Lazy<Database>> _databases = new(StringComparer.OrdinalIgnoreCase);
 	private readonly Lock _lock = new();
 

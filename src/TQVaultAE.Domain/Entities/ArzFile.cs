@@ -20,6 +20,12 @@ public class ArzFile
 	public readonly string FileName;
 
 	/// <summary>
+	/// Which database this is (base game, Immortal Throne or a mod): every record read from it carries it
+	/// (<see cref="DBRecordCollection.Source"/>).
+	/// </summary>
+	public RecordSource Source { get; init; } = RecordSource.BaseGame;
+
+	/// <summary>
 	/// Open reader for the file, set by <c>IArzFileProvider.Read</c>; records are decoded from it on demand.
 	/// </summary>
 	public IArzDatabase? Database { get; set; }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GameFiles;
@@ -64,6 +65,18 @@ public class ModLinkService(
 			return null;
 
 		return this.GetInstalledMods().FirstOrDefault(m => m.Id.Equals(key, StringComparison.OrdinalIgnoreCase));
+	}
+
+	/// <inheritdoc/>
+	public string? ModIdOfMap(string? mapFolder)
+	{
+		string map = GameMaps.Normalize(mapFolder);
+		if (map.Length == 0)
+			return null;
+
+		// The installed mod of that folder, with its source; else the folder's name.
+		return this.GetInstalledMods().FirstOrDefault(m => GameMaps.Same(m.Folder, map))?.Id
+			?? Path.GetFileName(Path.TrimEndingDirectorySeparator(map));
 	}
 
 	private string LinkFile(string saveFolder) => this.PathIO.Combine(saveFolder, IModLinkService.LinkFileName);

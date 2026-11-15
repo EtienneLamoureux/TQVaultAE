@@ -84,7 +84,7 @@ public class ArzFileProvider(ILogger<ArzFileProvider> log) : IArzFileProvider
 			throw error;
 		}
 
-		var result = new DBRecordCollection(info.Id, info.Class, record.Variables.Count);
+		var result = new DBRecordCollection(info.Id, info.Class, record.Variables.Count) { Source = file.Source };
 		foreach (var source in record.Variables)
 		{
 			if (source.Values.Length == 0)

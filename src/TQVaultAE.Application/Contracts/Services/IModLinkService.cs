@@ -29,6 +29,12 @@ public interface IModLinkService
 	InstalledMod? FindMod(string? key);
 
 	/// <summary>
+	/// The mod a custom map folder is, as items and links name it: the identity of the installed mod in that folder,
+	/// else the folder's name; null for the base game (empty folder).
+	/// </summary>
+	string? ModIdOfMap(string? mapFolder);
+
+	/// <summary>
 	/// Reads the link file of a save folder.
 	/// </summary>
 	/// <returns>The link; null when there is none, it cannot be read, or it lacks the mod's name or source.</returns>

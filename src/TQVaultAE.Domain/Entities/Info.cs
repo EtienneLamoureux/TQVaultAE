@@ -92,6 +92,11 @@ public class Info
 	public RecordId ItemId => this.record.Id;
 
 	/// <summary>
+	/// The database the record was read from (<see cref="DBRecordCollection.Source"/>).
+	/// </summary>
+	public RecordSource Source => this.record.Source;
+
+	/// <summary>
 	/// Gets the item description tag
 	/// </summary>
 	public string DescriptionTag => this.GetString(this.descriptionVar);

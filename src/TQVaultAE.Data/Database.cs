@@ -176,6 +176,12 @@ public partial class Database : IDatabase
 	/// </summary>
 	public string? CustomMapFolder { get; set; }
 
+	/// <summary>
+	/// Gives the mod identity of a custom map folder (<c>IModLinkService.ModIdOfMap</c>), which the records of the mod's
+	/// database carry (<see cref="RecordSource.Mod"/>); without it, the folder's name. Set before <see cref="LoadDBFile"/>.
+	/// </summary>
+	public Func<string, string?>? ModIdOfMap { get; set; }
+
 	/// <inheritdoc/>
 	public string DataScope => this.CustomMapFolder ?? string.Empty;
 
@@ -1329,7 +1335,7 @@ public partial class Database : IDatabase
 		// from the original TQ folder
 		string file = this.PathIO.Combine(GamePathResolver.GamePathTQ, "Database", "database.arz");
 
-		this.ArzFile = new ArzFile(file);
+		this.ArzFile = new ArzFile(file) { Source = RecordSource.BaseGame };
 		arzProv.Read(this.ArzFile);
 
 		if (USettings.DatabaseDebugLevel > 1)
@@ -1345,7 +1351,7 @@ public partial class Database : IDatabase
 		{
 			file = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Database", "database.arz");
 
-			this.ArzFileIT = new ArzFile(file);
+			this.ArzFileIT = new ArzFile(file) { Source = RecordSource.ImmortalThrone };
 			arzProv.Read(this.ArzFileIT);
 
 			if (USettings.DatabaseDebugLevel > 1)
@@ -1368,7 +1374,9 @@ public partial class Database : IDatabase
 
 			if (this.FileIO.Exists(file))
 			{
-				this.ArzFileMod = new ArzFile(file);
+				// Its records are the mod's, those it overrides in the game's database too.
+				string modId = this.ModIdOfMap?.Invoke(this.MapFolder) ?? this.PathIO.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(this.MapFolder));
+				this.ArzFileMod = new ArzFile(file) { Source = RecordSource.FromMod(modId) };
 				arzProv.Read(this.ArzFileMod);
 			}
 			else

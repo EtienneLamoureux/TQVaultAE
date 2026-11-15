@@ -54,16 +54,7 @@ public class GameMapService(
 			: null;
 
 	/// <inheritdoc/>
-	public string? ModNameOfMap(string? mapFolder)
-	{
-		string map = GameMaps.Normalize(mapFolder);
-		if (map.Length == 0)
-			return null;
-
-		// The installed mod of that folder, with its source; else the folder's name.
-		return this.ModLinkService.GetInstalledMods().FirstOrDefault(m => GameMaps.Same(m.Folder, map))?.Id
-			?? System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(map));
-	}
+	public string? ModNameOfMap(string? mapFolder) => this.ModLinkService.ModIdOfMap(mapFolder);
 
 	/// <inheritdoc/>
 	public string? ActiveCharacterMod { get; private set; }
