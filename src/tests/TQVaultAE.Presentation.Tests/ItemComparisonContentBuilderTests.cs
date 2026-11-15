@@ -188,6 +188,31 @@ public class ItemComparisonContentBuilderTests
 	}
 
 	[Fact]
+	public void ItemColumnLines_SocketedRelicNameKept_LikeTheItemName()
+	{
+		TooltipLine[] item =
+		[
+			TooltipLine.Of("Bronze Hooked Blade", bold: true),
+			TooltipLine.Of("+18 Strength"),
+			TooltipLine.Delimiter,
+			TooltipLine.Of("Heart of the Phoenix", bold: true),
+			TooltipLine.Of("Completed"),
+			TooltipLine.Of("+12 Strength"),
+			TooltipLine.Of("Completion Bonus:"),
+			TooltipLine.Of("+7 Strength"),
+			TooltipLine.Delimiter,
+			TooltipLine.Of("Spirit of the Ancients", bold: true),
+			TooltipLine.Of("Relic Shard - 1 / 3"),
+			TooltipLine.Of("+12 Strength"),
+		];
+
+		ItemComparisonContentBuilder.ItemColumnLines(item).Select(l => l.Text).Where(t => t.Length != 0).Should().Equal(
+			"Bronze Hooked Blade", "+18 Strength",
+			"Heart of the Phoenix", "+12 Strength", "+7 Strength",
+			"Spirit of the Ancients", "Relic Shard - 1 / 3", "+12 Strength");
+	}
+
+	[Fact]
 	public void ItemColumnLines_GrantedSkillNameKept_SoItsStatsAlignUnderIt()
 	{
 		TooltipLine[] item = [TooltipLine.Of("Blood Gem"), TooltipLine.Of("Grants Skill :"), TooltipLine.Of("{^E}Blood Boil"), TooltipLine.Of("6.0 Meter Radius")];

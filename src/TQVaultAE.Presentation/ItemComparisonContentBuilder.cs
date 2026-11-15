@@ -123,8 +123,9 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 
 	/// <summary>
 	/// The lines of an item column: the item tooltip without the lines that carry no number (lore, set member lists,
-	/// "Speed: Fast", "Grants Skill :"), as in the difference columns. The item name (the first line) and the warnings
-	/// stay, and so does a text line heading indented lines with numbers ("Bonus to all Pets:") or naming one of
+	/// "Speed: Fast", "Grants Skill :"), as in the difference columns. The item name (the first line), the titles (the
+	/// bold lines: a socketed relic's or charm's name, an artifact formula's) and the warnings stay, and so does a text
+	/// line heading indented lines with numbers ("Bonus to all Pets:") or naming one of
 	/// <paramref name="skillNames"/> (the granted skills, whose differences are aligned under their name). Blank lines and
 	/// delimiters left next to each other are merged into one (a delimiter wins), none at the start or the end.
 	/// </summary>
@@ -137,7 +138,8 @@ public class ItemComparisonContentBuilder(ITranslationService translationService
 		bool Kept(int i)
 		{
 			var line = lines[i];
-			if (line.Kind is TooltipLineKind.Spacer or TooltipLineKind.Delimiter or TooltipLineKind.Warning || i == name)
+			if (line.Kind is TooltipLineKind.Spacer or TooltipLineKind.Delimiter or TooltipLineKind.Warning || i == name
+				|| (line.Bold && line.Kind == TooltipLineKind.Text && line.Text.Length != 0))
 				return true;
 
 			if (parsed[i] is not { } stat)
