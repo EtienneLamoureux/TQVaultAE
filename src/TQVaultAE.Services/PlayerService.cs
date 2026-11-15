@@ -86,16 +86,16 @@ public class PlayerService(
 			{
 				try
 				{
-					// Read with the character's own map, whatever the active one is; its items inherit that map.
+					// Read with the character's own map, whatever the active one is; its items keep that map.
 					using (this.GameMapService.ReadWith(selectedSave))
 						PlayerCollectionProvider.LoadFile(resultPC);
 
 					string? characterMod = this.GameMapService.ModNameFor(selectedSave);
 					foreach (var item in resultPC.Where(s => s is not null).SelectMany(s => s))
-						item.InheritMod(characterMod);
+						item.SetContainerMod(characterMod);
 
 					foreach (var item in resultPC.EquipmentSack ?? [])
-						item.InheritMod(characterMod);
+						item.SetContainerMod(characterMod);
 
 					// Once the sacks exist: a read-only character marks them all.
 					resultPC.IsReadOnly = this.CharacterReadOnly.IsReadOnly(selectedSave.Folder);

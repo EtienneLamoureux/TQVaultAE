@@ -149,7 +149,7 @@ public partial class MainFormUserControl
 	/// <param name="place">Adds the panel to its container.</param>
 	private VaultPanel CreateVaultPanel(AutoMoveLocation location, Action<Control> place)
 	{
-		var panel = new VaultPanel(this.DragInfo, 12, new Size(18, 20), 1, location, this.Services);
+		var panel = new VaultPanel(this.DragInfo, 12, TQVaultAE.Domain.Actions.SackLayout.VaultBagSize, 1, location, this.Services);
 		panel.UseCaravanFrame();
 		this.WirePanel(panel, place);
 		return panel;

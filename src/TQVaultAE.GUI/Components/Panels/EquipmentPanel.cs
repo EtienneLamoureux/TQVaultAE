@@ -22,9 +22,6 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	private readonly ILogger Log;
 	private readonly UserSettings USettings;
 
-	/// <summary>An equipped item lies in a slot, not in cells: whatever its size, it stays in its slot.</summary>
-	protected override bool HasRoomOnceReadAgain(Item item) => true;
-
 	/// <summary>
 	/// Initializes a new instance of the EquipmentPanel class.
 	/// </summary>

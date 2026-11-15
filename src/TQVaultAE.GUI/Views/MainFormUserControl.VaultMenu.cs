@@ -303,10 +303,9 @@ public partial class MainFormUserControl
 			return;
 		}
 
-		var imported = this.Services.ItemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height
-			, sackPanel.ContainerMap);
+		var imported = this.Services.ItemExchangeService.PlaceImportedItems(sack, importResult, sackPanel.SackSize.Width, sackPanel.SackSize.Height);
 
-		// Into a vault linked to a mod: the imported items follow its link like dropped ones.
+		// The imported items take the map of their container like dropped ones.
 		this.vaultPanel.AdoptVaultMod(sack, imported);
 
 		if (importResult.SetsTabIcon)

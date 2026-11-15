@@ -8,6 +8,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Services;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Services;
 
@@ -395,7 +396,7 @@ public class SearchCategoryServiceTests
 	}
 
 	private static SearchResult Modded(string? mod)
-		=> Result(new Item { Mod = mod, ModOrigin = mod is null ? ModOrigin.None : ModOrigin.Own });
+		=> Result(new Item().ReadFrom(mod));
 
 	[Fact]
 	public void BuildCategory_Mod_ListsTheInstalledModsInTheirOrder_ThenTheOthers_LeavingOutTheBaseGame()

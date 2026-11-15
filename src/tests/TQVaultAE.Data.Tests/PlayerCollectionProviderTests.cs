@@ -10,6 +10,7 @@ using TQVaultAE.Application.Session;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Tests;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Data;
 
@@ -197,32 +198,31 @@ public class PlayerCollectionProviderTests
 	}
 
 	[Fact]
-	public void LoadFile_ModdedVault_ItemsGetTheirOwnModElseTheVaults_BeforeTheyAreRead()
+	public void LoadFile_ModdedVault_EveryItemIsReadWithTheVaultsMap_AnObsoleteItemModIsIgnored()
 	{
 		var pc = new PlayerCollection("test", "vault.json") { IsVault = true };
 		var json = """
 			{"mod":"shadowchampions","sacks":[{"items":[
 				{"baseName":"records/a.dbr"},
-				{"baseName":"records/b.dbr","mod":"Lilith"}]}]}
+				{"baseName":"records/b.dbr","mod":"Lilith"},
+				{"baseName":"records/c.dbr","noMod":true}]}]}
 			""";
 		_mockFileIO.Setup(x => x.ReadAllText("vault.json", It.IsAny<Encoding>())).Returns(json);
-		var modsWhenRead = new List<string?>();
-		_mockItemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i => modsWhenRead.Add(i.Mod));
+		var mapsWhenRead = new List<string?>();
+		_mockItemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i => mapsWhenRead.Add(i.HasContainerMod ? i.ContainerMod : "none"));
 
 		_provider.LoadFile(pc, "vault.json");
 
 		pc.Mod.Should().Be("shadowchampions");
-		pc.Sacks![0].Select(i => (i.Mod, i.ModOrigin)).Should().Equal(("shadowchampions", ModOrigin.Inherited), ("Lilith", ModOrigin.Own));
-		modsWhenRead.Should().Equal("shadowchampions", "Lilith");
+		mapsWhenRead.Should().Equal("shadowchampions", "shadowchampions", "shadowchampions");
 	}
 
 	[Fact]
-	public void Save_ModdedVault_WritesTheVaultsMod_AndTheItemsOwnLinks()
+	public void Save_ModdedVault_WritesTheVaultsMod_AndNoItemMod()
 	{
 		var sack = new SackCollection();
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions", ModOrigin = ModOrigin.Inherited });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith", ModOrigin = ModOrigin.Own });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/c.dbr"), Mod = "shadowchampions", ModOrigin = ModOrigin.Own });
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr") }.ReadFrom("shadowchampions"));
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr") }.ReadFrom(null));
 		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "shadowchampions", Sacks = [sack] };
 		string? written = null;
 		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
@@ -232,50 +232,21 @@ public class PlayerCollectionProviderTests
 
 		using var doc = JsonDocument.Parse(written!);
 		doc.RootElement.GetProperty("mod").GetString().Should().Be("shadowchampions");
-		var items = doc.RootElement.GetProperty("sacks")[0].GetProperty("items");
-		items[0].TryGetProperty("mod", out _).Should().BeFalse();
-		items[1].GetProperty("mod").GetString().Should().Be("Lilith");
-		// Its own link, even when it is the vault's: it keeps it if the vault's link changes.
-		items[2].GetProperty("mod").GetString().Should().Be("shadowchampions");
+		foreach (var item in doc.RootElement.GetProperty("sacks")[0].GetProperty("items").EnumerateArray())
+		{
+			item.TryGetProperty("mod", out _).Should().BeFalse("an item's mod is computed when it is read, never saved");
+			item.TryGetProperty("modSource", out _).Should().BeFalse();
+			item.TryGetProperty("noMod", out _).Should().BeFalse();
+		}
 	}
 
 	[Fact]
-	public void SaveThenLoad_BaseGameChosenInAModdedVault_StaysBaseGame()
-	{
-		// Arrange: in a vault linked to Lilith, the base game was chosen for one item
-		var sack = new SackCollection();
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), ModOrigin = ModOrigin.Own });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "Lilith", ModOrigin = ModOrigin.Inherited });
-		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "Lilith", Sacks = [sack] };
-		string? written = null;
-		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
-			.Callback<string, string, Encoding>((_, text, _) => written = text);
-		var modsWhenRead = new List<string?>();
-		_mockItemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i => modsWhenRead.Add(i.Mod));
-
-		// Act
-		_provider.Save(pc, "vault.json");
-		_mockFileIO.Setup(x => x.ReadAllText("vault.json", It.IsAny<Encoding>())).Returns(() => written!);
-		var loaded = new PlayerCollection("test", "vault.json") { IsVault = true };
-		_provider.LoadFile(loaded, "vault.json");
-
-		// Assert: written once, only for that item; read back without the vault's mod
-		using var doc = JsonDocument.Parse(written!);
-		var items = doc.RootElement.GetProperty("sacks")[0].GetProperty("items");
-		items[0].GetProperty("noMod").GetBoolean().Should().BeTrue();
-		items[1].TryGetProperty("noMod", out _).Should().BeFalse();
-		loaded.Sacks![0].Select(i => (i.Mod, i.ModOrigin)).Should().Equal(((string?)null, ModOrigin.Own), ("Lilith", ModOrigin.Inherited));
-		modsWhenRead.Should().Equal(null, "Lilith");
-	}
-
-	[Fact]
-	public void SaveThenLoad_ModsWithTheirSource_WriteNameAndSourceApart_AndReadBackTheSameMods()
+	public void SaveThenLoad_VaultModWithItsSource_WritesNameAndSourceApart_AndReadsTheItemsWithIt()
 	{
 		// A custom map and a Steam Workshop mod of the same folder name, told apart by their source.
 		var sack = new SackCollection();
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions|custommaps", ModOrigin = ModOrigin.Inherited });
-		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/b.dbr"), Mod = "shadowchampions|workshop:1949340853", ModOrigin = ModOrigin.Own });
-		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "shadowchampions|custommaps", Sacks = [sack] };
+		sack.AddItem(new Item { BaseItemId = RecordId.Create("records/a.dbr") });
+		var pc = new PlayerCollection("test", "vault.json") { IsVault = true, Mod = "shadowchampions|workshop:1949340853", Sacks = [sack] };
 		string? written = null;
 		_mockFileIO.Setup(x => x.WriteAllText("vault.json", It.IsAny<string>(), It.IsAny<Encoding>()))
 			.Callback<string, string, Encoding>((_, text, _) => written = text);
@@ -288,14 +259,9 @@ public class PlayerCollectionProviderTests
 		// The name stays in "mod", where older versions read it.
 		using var doc = JsonDocument.Parse(written!);
 		doc.RootElement.GetProperty("mod").GetString().Should().Be("shadowchampions");
-		doc.RootElement.GetProperty("modSource").GetString().Should().Be("custommaps");
-		var items = doc.RootElement.GetProperty("sacks")[0].GetProperty("items");
-		items[0].TryGetProperty("modSource", out _).Should().BeFalse();
-		items[1].GetProperty("mod").GetString().Should().Be("shadowchampions");
-		items[1].GetProperty("modSource").GetString().Should().Be("workshop:1949340853");
-		loaded.Mod.Should().Be("shadowchampions|custommaps");
-		loaded.Sacks![0].Select(i => (i.Mod, i.ModOrigin)).Should().Equal(
-			("shadowchampions|custommaps", ModOrigin.Inherited), ("shadowchampions|workshop:1949340853", ModOrigin.Own));
+		doc.RootElement.GetProperty("modSource").GetString().Should().Be("workshop:1949340853");
+		loaded.Mod.Should().Be("shadowchampions|workshop:1949340853");
+		loaded.Sacks![0].Single().ContainerMod.Should().Be("shadowchampions|workshop:1949340853");
 	}
 
 	[Fact]

@@ -1792,8 +1792,8 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="ImportVaultSuccessCreate" xml:space="preserve">
     <value>Nouveau coffre &quot;{0}&quot; créé avec les données importées.</value>
   </data>
-  <data name="ModMapKeptNoRoom" xml:space="preserve">
-    <value>Lu avec sa nouvelle carte, un objet n'avait pas la place dans son conteneur : il garde sa carte précédente, comme lien propre. {0}</value>
+  <data name="ModNoRoomShown" xml:space="preserve">
+    <value>Lus avec la carte de leur conteneur, ces objets n'ont pas la place pour leur taille là où ils sont : ils sont montrés en 1 x 1 jusqu'à ce que vous les déplaciez là où ils tiennent. {0}</value>
   </data>
   <data name="ModDropNoRoomInTab" xml:space="preserve">
     <value>Lu avec les données de sa carte ici, {0} n'a pas la place dans cet onglet : déposez-le dans un autre onglet.</value>
@@ -1801,11 +1801,8 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
   <data name="SearchSharedStashNoCharacter" xml:space="preserve">
     <value>{0} s'affiche avec les personnages qui jouent avec sa carte, et aucun personnage de la liste n'en fait partie.</value>
   </data>
-  <data name="ModChoiceNoRoomInTab" xml:space="preserve">
-    <value>Lu avec les données de cette carte, {0} n'aurait pas la place dans cet onglet : déplacez-le d'abord dans un autre onglet.</value>
-  </data>
   <data name="ImportDroppedMods" xml:space="preserve">
-    <value>Ces mods ne sont pas installés : leurs liens sont abandonnés et les objets prennent la carte de leur coffre. Installez le mod, puis liez le coffre ou les objets (Modded). {0}</value>
+    <value>Ces mods ne sont pas installés : leurs liens sont abandonnés et les objets prennent la carte de leur coffre. Installez le mod, puis liez le coffre. {0}</value>
   </data>
   <data name="ImportSuccessCount" xml:space="preserve">
     <value>{0} objets importés sur {1}.</value>
@@ -2555,5 +2552,8 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   </data>
 	<data name="ResultsMoveHeldItem" xml:space="preserve">
     <value>Posez d'abord l'objet tenu.</value>
+  </data>
+  <data name="ItemNoRoom" xml:space="preserve">
+    <value>Pas la place ici pour la taille de cet objet, lu avec la carte de son conteneur : montré en 1 x 1 jusqu'à ce qu'il soit déplacé là où il tient.</value>
   </data>
 </root>

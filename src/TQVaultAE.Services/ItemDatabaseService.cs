@@ -99,7 +99,7 @@ public class ItemDatabaseService(
 
 #if DEBUG
         // Every item a container read has a map (MODLINK.md): one without is a path that forgot to give it one.
-        if (item.ModOrigin == ModOrigin.None)
+        if (!item.HasContainerMod)
             this._log.LogWarning("Item without a map: {Item} in {Container}", item.BaseItemId, containerPath);
 #endif
 

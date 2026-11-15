@@ -157,18 +157,15 @@ public partial class SackPanel
 			dragItem = drop.DroppedItem;
 			itemUnderUs = drop.ItemUnderUs;
 
-			// The item takes its map here (MODLINK.md): an own map goes with it, leaving a character for a vault makes it
-			// its own, else it inherits the container's. Read with a new map, it may take its real size: where it was
-			// dropped, else at a free spot of the bag (checked before the drop), else it keeps its previous map.
+			// The item takes its container's map here (MODLINK.md). Read with a new map, it may take another size: where it
+			// was dropped, else at a free spot of the bag (checked before the drop). Shown 1 x 1 for want of room, it gets
+			// its real size back where that fits.
 			if (!drop.Stacked)
 			{
-				var outcome = this.Services.ItemEditService.SettleIn(dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMap
+				var outcome = this.Services.ItemEditService.SettleIn(dragItem, this.ContainerMap
 					, item => SackLayout.Fits(this.ShownSack, this.SackSize, item, itemUnderUs) || SackLayout.MoveToFreeSpot(this.ShownSack, this.SackSize, item));
 				if (outcome != SettleOutcome.Unchanged)
 					this.InvalidateItemCacheAll(dragItem);
-
-				if (outcome == SettleOutcome.KeptOwnMap)
-					this.NotifyKeptMap([dragItem]);
 			}
 
 			this.PickUpAfterDrop(itemUnderUs);

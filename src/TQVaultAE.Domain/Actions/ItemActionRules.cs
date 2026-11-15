@@ -57,12 +57,6 @@ public enum ItemActions
 	Compare = 1 << 14,
 
 	/// <summary>
-	/// Link the item under the cursor to a mod, or to the base game ("Modded" menu). For that item even when others are
-	/// selected.
-	/// </summary>
-	ChangeMod = 1 << 15,
-
-	/// <summary>
 	/// Find the item's copies, or the items sharing its base, prefix or suffix, among every loaded item ("Search" menu).
 	/// Only reads the items: read-only sacks too.
 	/// </summary>
@@ -159,10 +153,6 @@ public static class ItemActionRules
 
 		if (anyTarget && !context.ReadOnly)
 			actions |= ItemActions.Delete | ItemActions.MoveTo;
-
-		// A vault item only: a character's files cannot keep a choice, which the next read would lose.
-		if (item is not null && !context.ReadOnly && item.InVault)
-			actions |= ItemActions.ChangeMod;
 
 		if (singleItem)
 		{

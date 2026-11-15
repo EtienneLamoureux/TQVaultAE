@@ -316,12 +316,6 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	public Func<bool>? HoldsVault { get; set; }
 
 	/// <summary>
-	/// Whether an item of the panel, read again with other data (it may take another size), still has room: where it
-	/// lies, or at the free spot it is then moved to.
-	/// </summary>
-	protected virtual bool HasRoomOnceReadAgain(Item item) => SackLayout.FitsOrMoves(this.ShownSack, this.SackSize, item);
-
-	/// <summary>
 	/// Whether the dragged item, dropped on the cells under it, has room in the shown bag once it takes its map here
 	/// (MODLINK.md): read with a new map it may take another size. Room is where it is dropped, else a free spot of
 	/// the bag; never another tab.
@@ -335,7 +329,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 			return true;
 
 		var cell = this.CellsUnderDragItem.Location;
-		return this.Services.ItemEditService.HasRoomOnceSettled(dragItem, this.HoldsVault?.Invoke() ?? false, this.ContainerMap
+		return this.Services.ItemEditService.HasRoomOnceSettled(dragItem, this.ContainerMap
 			, item => SackLayout.HasRoomAt(this.ShownSack, this.SackSize, item, cell, itemUnderUs));
 	}
 
@@ -358,15 +352,15 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 			: this.Services.GameMapService.ActiveCharacterMod;
 
 	/// <summary>
-	/// Tells the user which items kept their previous map for want of room once read with the new one.
+	/// Tells the user which items are shown 1 x 1 for want of room once read with their container's map.
 	/// </summary>
-	internal void NotifyKeptMap(IReadOnlyCollection<Item> kept)
+	internal void NotifyNoRoom(IReadOnlyCollection<Item> noRoom)
 	{
-		if (kept.Count == 0)
+		if (noRoom.Count == 0)
 			return;
 
-		var names = string.Join(", ", kept.Select(i => this.Services.ItemText.GetFriendlyNames(i).FullNameClean));
-		this.Services.UIService.NotifyUser(string.Format(System.Globalization.CultureInfo.CurrentCulture, TQVaultAE.Presentation.Resources.ModMapKeptNoRoom, names));
+		var names = string.Join(", ", noRoom.Select(i => this.Services.ItemText.GetFriendlyNames(i).FullNameClean));
+		this.Services.UIService.NotifyUser(string.Format(System.Globalization.CultureInfo.CurrentCulture, TQVaultAE.Presentation.Resources.ModNoRoomShown, names));
 	}
 
 	/// <summary>

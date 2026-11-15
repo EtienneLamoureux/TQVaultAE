@@ -36,7 +36,7 @@ public sealed class ResultsMoveServiceTests : IDisposable
 		Directory.CreateDirectory(this._folder);
 		var movement = new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object);
 		this._itemEdit
-			.Setup(e => e.SettleAll(It.IsAny<SackCollection>(), It.IsAny<Size>(), It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>(), It.IsAny<string?>(), It.IsAny<Func<SackCollection, Item, bool>?>()))
+			.Setup(e => e.SettleAll(It.IsAny<SackCollection>(), It.IsAny<Size>(), It.IsAny<IEnumerable<Item>>(), It.IsAny<string?>(), It.IsAny<Func<SackCollection, Item, bool>?>()))
 			.Returns(new SettleResult([], []));
 		this._loadouts = new LoadoutService(new Mock<ILogger<LoadoutService>>().Object, this._itemProvider.Object, movement
 			, new Mock<IItemDatabaseService>().Object, this._session, new FileIO(), new PathIO());
@@ -57,8 +57,6 @@ public sealed class ResultsMoveServiceTests : IDisposable
 		BaseItemId = RecordId.Create(record),
 		Width = width,
 		Height = height,
-		Mod = null,
-		ModOrigin = ModOrigin.Inherited,
 	};
 
 	/// <summary>A vault of the session, its items placed as the search places them.</summary>
@@ -151,7 +149,7 @@ public sealed class ResultsMoveServiceTests : IDisposable
 
 		this._service.Move([ring], target);
 
-		this._itemEdit.Verify(e => e.SettleAll(target.Sack, VaultBag, It.Is<IEnumerable<Item>>(i => i.Single() == ring), true, "SomeMod|custommaps", null), Times.Once);
+		this._itemEdit.Verify(e => e.SettleAll(target.Sack, VaultBag, It.Is<IEnumerable<Item>>(i => i.Single() == ring), "SomeMod|custommaps", null), Times.Once);
 	}
 
 	[Fact]
@@ -401,19 +399,19 @@ public sealed class ResultsMoveServiceTests : IDisposable
 	}
 
 	[Fact]
-	public void Undo_AnItemReadWithTheTargetsMap_IsReadAgainWithItsOwn()
+	public void Undo_AnItemReadWithTheTargetsMap_IsReadAgainWithTheMapItHad()
 	{
 		var source = this.Vault("Source");
 		var ring = Put(source.GetSack(0)!, NewItem(), 0, 0, VaultPlace(source, 0));
 		var target = this._service.VaultTarget(this.Vault("Target"), 0, VaultBag)!;
 		var batch = this._service.Move([ring], target).Batch!;
 		// What SettleAll does in a modded vault.
-		(ring.Mod, ring.ModOrigin) = ("SomeMod|custommaps", ModOrigin.Inherited);
+		ring.SetContainerMod("SomeMod|custommaps");
 
 		var outcome = this._service.Undo(batch);
 
 		outcome.ReadAgain.Should().Equal(ring);
-		ring.Mod.Should().BeNull();
+		ring.ContainerMod.Should().BeNull();
 		this._itemProvider.Verify(p => p.GetDBData(ring), Times.Once);
 	}
 

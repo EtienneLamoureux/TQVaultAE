@@ -1,46 +1,37 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services.Export;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Services;
 
 /// <summary>
-/// <see cref="ItemDtoExtensions"/>: the item part of the exports keeps the mod link, and the base game chosen for an item.
+/// <see cref="ItemDtoExtensions"/>: the item part of the exports. An item's mod is never written: it is computed when the
+/// item is read with the map of its container.
 /// </summary>
 public class ItemDtoExtensionsTests
 {
 	[Fact]
-	public void ExportThenImport_BaseGameChosen_IsKept()
+	public void Export_ModdedItem_WritesNoMod_AndTheImportedItemWaitsForItsContainersMap()
 	{
-		// Arrange
-		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr"), ModOrigin = ModOrigin.Own };
+		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr") }.ReadFrom("shadowchampions|workshop:1949340853");
+		item.SetContainerMod("shadowchampions|workshop:1949340853");
 
-		// Act
-		var dto = ItemDtoExtensions.FromItem(item);
-		var imported = dto.ToItem();
+		var imported = ItemDtoExtensions.FromItem(item).ToItem();
 
-		// Assert
-		dto.noMod.Should().BeTrue();
-		(imported.Mod, imported.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
+		imported.Mod.Should().BeNull("its records are read once it is placed");
+		imported.HasContainerMod.Should().BeFalse();
 	}
 
 	[Fact]
-	public void ExportThenImport_ModWithItsSource_WritesNameAndSourceApart_AndReadsTheSameMod()
+	public void Export_ItemShown1x1ForWantOfRoom_WritesItsRealSize()
 	{
-		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "shadowchampions|workshop:1949340853", ModOrigin = ModOrigin.Own };
+		var item = new Item { BaseItemId = RecordId.Create("records/a.dbr"), Width = 1, Height = 5 };
+		item.ShowNoRoom();
 
 		var dto = ItemDtoExtensions.FromItem(item);
 
-		(dto.mod, dto.modSource).Should().Be(("shadowchampions", "workshop:1949340853"));
-		dto.ToItem().Mod.Should().Be("shadowchampions|workshop:1949340853");
-	}
-
-	[Fact]
-	public void Export_ItemWithAMod_WritesNoBaseGameMark()
-	{
-		var dto = ItemDtoExtensions.FromItem(new Item { BaseItemId = RecordId.Create("records/a.dbr"), Mod = "Lilith" });
-
-		(dto.mod, dto.noMod).Should().Be(("Lilith", (bool?)null));
-		dto.ToItem().ModOrigin.Should().Be(ModOrigin.Own);
+		(dto.width, dto.height).Should().Be((1, 5));
+		dto.ToItem().LacksRoom.Should().BeFalse("the lack of room is never saved");
 	}
 }

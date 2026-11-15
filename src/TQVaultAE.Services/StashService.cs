@@ -27,11 +27,11 @@ public class StashService(
 	private IDisposable ReadWithMap(string? mapFolder)
 		=> this.GameMapService.ReadWithMap(mapFolder);
 
-	/// <summary>The items of a stash just read inherit its map.</summary>
+	/// <summary>The items of a stash just read keep its map, which they were read with.</summary>
 	private static void Inherit(Stash stash, string? mod)
 	{
 		foreach (var item in stash.Sack ?? [])
-			item.InheritMod(mod);
+			item.SetContainerMod(mod);
 	}
 
 	/// <summary>A shared stash's name in the search: a mod's names its mod, as each map has its own.</summary>

@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Forge;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Domain;
 
@@ -53,6 +54,13 @@ public class ForgeRulesTests
 
 	/// <summary>Relic whose record allows shields only, as the Aegis of Athena's does.</summary>
 	private static Item Relic(RecordId id) => Make(Item.ICLASS_RELIC, id.Raw, slotFlags: "shield");
+
+	/// <summary>The item, its prefix read from a mod's database (<paramref name="mod"/>) or the base game's.</summary>
+	private static Item ReadFrom(Item item, string? mod)
+	{
+		item.prefixInfo = TestRecords.InfoFrom(item.prefixID!, mod, "LootRandomizer");
+		return item;
+	}
 
 	private static ForgeSelection With(Item? baseItem = null, Item? prefix = null, Item? suffix = null, Item? relic1 = null, Item? relic2 = null)
 	{
@@ -339,21 +347,16 @@ public class ForgeRulesTests
 	}
 
 	[Theory]
-	[InlineData(null, true, null, true)]           // base game parts go anywhere
-	[InlineData("modA", true, null, true)]
-	[InlineData("modA", true, "modA", true)]       // same mod
-	[InlineData("modA", true, "modB", false)]      // another mod's affix
-	[InlineData(null, true, "modA", false)]        // a base game vault item cannot read a mod affix
-	[InlineData(null, false, "modA", false)]       // nor a base game character item: its map is known too
-	[InlineData("modA", false, "modA", true)]      // a character item of that mod's map
-	public void CheckForge_PartOfAnotherMod_IsRefused(string? baseMod, bool baseInVault, string? materialMod, bool allowed)
+	[InlineData(null, null, true)]           // base game parts go anywhere
+	[InlineData("modA", null, true)]
+	[InlineData("modA", "modA", true)]       // same mod
+	[InlineData("modA", "modB", false)]      // another mod's affix
+	[InlineData(null, "modA", false)]        // a base game item cannot read a mod affix
+	public void CheckForge_PartOfAnotherMod_IsRefused(string? baseMod, string? materialMod, bool allowed)
 	{
-		// Arrange
-		var item = SwordItem();
-		item.Mod = baseMod;
-		item.InVault = baseInVault;
-		var material = SwordItem();
-		material.Mod = materialMod;
+		// Arrange: the mod of each item comes from where its records were read
+		var item = ReadFrom(SwordItem(), baseMod);
+		var material = ReadFrom(SwordItem(), materialMod);
 
 		// Act
 		var problem = this._rules.CheckForge(With(item, prefix: material));

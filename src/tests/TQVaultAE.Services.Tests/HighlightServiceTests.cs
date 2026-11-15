@@ -8,6 +8,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Services;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Services;
 
@@ -253,11 +254,11 @@ public class HighlightServiceTests
 	public void ApplyFilter_Mods_KeepsTheItemsOfTheTickedMods_AndAddsToTheOtherSections()
 	{
 		var swordA = ItemOfClass(Item.ICLASS_SWORD);
-		swordA.Mod = "A|custommaps";
+		swordA.ReadFrom("A|custommaps");
 		var ringA = ItemOfClass(Item.ICLASS_RING);
-		ringA.Mod = "A|custommaps";
+		ringA.ReadFrom("A|custommaps");
 		var swordB = ItemOfClass(Item.ICLASS_SWORD);
-		swordB.Mod = "B|workshop:7";
+		swordB.ReadFrom("B|workshop:7");
 		var swordBase = ItemOfClass(Item.ICLASS_SWORD);
 		AddPlayerItems(swordA, ringA, swordB, swordBase);
 

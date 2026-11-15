@@ -89,12 +89,11 @@ public interface IItemExchangeService
 	/// <summary>
 	/// Places the items of an item, multi-select or tab import into a sack.
 	/// Each item keeps its exported position when those cells are free, else it takes the first open cells;
-	/// an item that does not fit is skipped. A tab import also gives its icon to the sack, and the items that inherited
-	/// the tab's map keep it: inherited when the target has the same map, else as their own.
+	/// an item that does not fit is skipped. A tab import also gives its icon to the sack. The items placed then take the
+	/// map of their container (<see cref="IItemEditService.SettleAll"/>).
 	/// </summary>
-	/// <param name="targetMod">The map of the target container; null for the base game.</param>
 	/// <returns>The items placed, in order; the skipped ones are left out.</returns>
-	IReadOnlyList<Item> PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null);
+	IReadOnlyList<Item> PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight);
 
 	/// <summary>
 	/// Gets whether no sack of the vault holds an item.

@@ -11,6 +11,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Services;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Services;
 
@@ -377,8 +378,8 @@ public class ItemDatabaseServiceTests
 	{
 		// Arrange
 		var modded = CreateTestItem();
-		modded.Mod = "Mod|custommaps";
-		modded.ModOrigin = ModOrigin.Inherited;
+		modded.ReadFrom("Mod|custommaps");
+		modded.SetContainerMod("Mod|custommaps");
 		var baseGame = CreateTestItem();
 		_service.TryAddItemToDatabase(modded);
 		_service.TryAddItemToDatabase(baseGame);

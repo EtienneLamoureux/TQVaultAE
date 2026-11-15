@@ -190,10 +190,6 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					var2 = i.Var2,
 					pointX = i.PositionX,
 					pointY = i.PositionY,
-					// Only an item's own map is written: an inherited one is the vault's.
-					mod = i.HasOwnMod ? ModIdentity.NameOf(i.Mod) : null,
-					modSource = i.HasOwnMod ? ModIdentity.SourceOf(i.Mod) : null,
-					noMod = i.HasOwnMod && i.Mod is null ? true : null,
 				}).ToList()
 			}).ToList()
 		};
@@ -312,11 +308,6 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					PositionY = s.pointY,
 					endBlockCrap1 = this.TQData.EndBlockValue,
 					StackSize = s.stackSize,
-					// Its own map ("mod", or "noMod" for the base game), else the vault's, inherited. Set before the
-					// records are read: they resolve with that map's data.
-					Mod = s.noMod == true ? null : string.IsNullOrWhiteSpace(s.mod) ? pc.Mod : ModIdentity.Compose(s.mod, s.modSource),
-					ModOrigin = s.noMod == true || !string.IsNullOrWhiteSpace(s.mod) ? ModOrigin.Own : ModOrigin.Inherited,
-					InVault = true,
 					// Atlantis
 					relic2ID = RecordId.Empty,
 					RelicBonus2Id = RecordId.Empty,
@@ -335,6 +326,8 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					itm.Var2 = s.var2;
 				}
 
+				// Read with the vault's map: its mod, Item.Mod, comes from the records found.
+				itm.SetContainerMod(pc.Mod);
 				this.ItemProvider.GetDBData(itm);
 
 				return itm;

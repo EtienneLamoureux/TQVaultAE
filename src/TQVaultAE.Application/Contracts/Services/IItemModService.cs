@@ -4,7 +4,7 @@ using TQVaultAE.Domain.Entities;
 namespace TQVaultAE.Application.Contracts.Services;
 
 /// <summary>
-/// The map of an item (<see cref="Item.Mod"/>): its records resolve in that mod's database, mod data first and then the
+/// The map of an item (<see cref="Item.ContainerMod"/>, its container's): its records resolve in that mod's database, mod data first and then the
 /// base game's, whatever the active map is.
 /// </summary>
 public interface IItemModService
@@ -23,7 +23,7 @@ public interface IItemModService
 	/// <summary>
 	/// Makes the database of an item's map answer for the current thread until disposed, so that reading, drawing and
 	/// describing the item use its map's data: its mod's, or the base game's for none or a mod that is not installed.
-	/// An item without a map yet (<see cref="ModOrigin.None"/>) gets nothing: it uses the data in use at that moment.
+	/// An item without a container yet (<see cref="Item.HasContainerMod"/> false) gets nothing: it uses the data in use at that moment.
 	/// </summary>
 	IDisposable Scope(Item? item);
 

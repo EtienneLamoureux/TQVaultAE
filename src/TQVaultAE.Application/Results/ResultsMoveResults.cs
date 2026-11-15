@@ -10,10 +10,9 @@ namespace TQVaultAE.Application.Results;
 /// <param name="Sack">The bag.</param>
 /// <param name="SackSize">Its size in cells.</param>
 /// <param name="Place">The place its items get (the search follows them).</param>
-/// <param name="InVault">Whether a vault holds the bag.</param>
 /// <param name="ContainerMod">The map its items inherit: the vault's mod, or the shown character's map for a stash; null
 /// for the base game.</param>
-public sealed record ResultsMoveTarget(SackCollection Sack, Size SackSize, ContainerPlace Place, bool InVault, string? ContainerMod);
+public sealed record ResultsMoveTarget(SackCollection Sack, Size SackSize, ContainerPlace Place, string? ContainerMod);
 
 /// <summary>Why the results window did not move an item, or did not put it back.</summary>
 public enum ResultsMoveSkip
@@ -73,14 +72,14 @@ public sealed class ResultsMoveOrigin
 	/// <summary>Its place, as the search showed it.</summary>
 	public required ContainerPlace Place { get; init; }
 
-	/// <summary>The map it was read with.</summary>
-	public string? Mod { get; init; }
+	/// <summary>The map it was read with (<see cref="Item.ContainerMod"/>).</summary>
+	public string? ContainerMod { get; init; }
 
-	/// <summary>Whether that map was its own or inherited.</summary>
-	public ModOrigin ModOrigin { get; init; }
+	/// <summary>Whether a container had given it a map (<see cref="Item.HasContainerMod"/>).</summary>
+	public bool HasContainerMod { get; init; }
 
-	/// <summary>Whether a vault held it.</summary>
-	public bool InVault { get; init; }
+	/// <summary>Whether it was shown 1 x 1 for want of room (<see cref="Item.LacksRoom"/>).</summary>
+	public bool LacksRoom { get; init; }
 
 	/// <summary>The character owning its equipment, when it was worn: its gear bonuses are summed again.</summary>
 	public PlayerCollection? Wearer { get; init; }
@@ -107,7 +106,7 @@ public sealed record ResultsMoveBatch(ResultsMoveTarget Target, IReadOnlyList<Re
 /// <param name="Done">The items moved (or put back).</param>
 /// <param name="Skipped">The items left where they were, with the reason.</param>
 /// <param name="ReadAgain">The items read again with another map: their tool tips and search names are made again.</param>
-/// <param name="KeptMap">The items that kept their previous map for want of room once read with the new one.</param>
+/// <param name="NoRoom">The items shown 1 x 1 for want of room once read with the new map.</param>
 /// <param name="Wearers">The characters whose equipment changed: their gear bonuses are summed again.</param>
 /// <param name="LoadoutsChanged">The loadouts whose pieces changed: the loadout bar shows them again.</param>
 /// <param name="Batch">The move, to undo it; null for an undo or when nothing moved.</param>
@@ -115,7 +114,7 @@ public sealed record ResultsMoveOutcome(
 	IReadOnlyList<Item> Done,
 	IReadOnlyList<ResultsMoveSkipped> Skipped,
 	IReadOnlyList<Item> ReadAgain,
-	IReadOnlyList<Item> KeptMap,
+	IReadOnlyList<Item> NoRoom,
 	IReadOnlyList<PlayerCollection> Wearers,
 	IReadOnlyList<LoadoutSet> LoadoutsChanged,
 	ResultsMoveBatch? Batch)

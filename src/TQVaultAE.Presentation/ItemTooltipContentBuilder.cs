@@ -163,7 +163,10 @@ public class ItemTooltipContentBuilder
 		// Fullname
 		lines.Add(TooltipLine.Of(data.FullName, nameColor, bold: true));
 
-		// Records the loaded game data lacks (a mod not linked, or not installed)
+		// No room for its size where it lies (shown 1 x 1), then the records the loaded game data lacks (a mod not
+		// linked, or not installed)
+		if (item.LacksRoom)
+			lines.Add(TooltipLine.WarningOf(Resources.ItemNoRoom));
 		AddIncomplete(lines, item);
 
 		// Thrown

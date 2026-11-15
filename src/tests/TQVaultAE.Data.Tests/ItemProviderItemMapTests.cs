@@ -41,15 +41,15 @@ public class ItemProviderItemMapTests
 		database.Setup(d => d.GetRecordFromFile(It.IsAny<RecordId>()))
 			.Returns((RecordId id) => this._maps[this._current].GetValueOrDefault(id));
 
-		// Like ItemModService.Scope: the item's map until disposed, nothing for an item without a map yet.
+		// Like ItemModService.Scope: the map of the item's container until disposed, nothing for an item without one yet.
 		var itemMods = new Mock<IItemModService>();
 		itemMods.Setup(m => m.Scope(It.IsAny<Item?>())).Returns((Item? item) =>
 		{
-			if (item is null || item.ModOrigin == ModOrigin.None)
+			if (item is null || !item.HasContainerMod)
 				return NoScope.Instance;
 
 			var previous = this._current;
-			this._current = item.Mod ?? string.Empty;
+			this._current = item.ContainerMod ?? string.Empty;
 			return new Restore(() => this._current = previous);
 		});
 
@@ -65,7 +65,7 @@ public class ItemProviderItemMapTests
 	}
 
 	[Fact]
-	public void GetAttributeSums_ModItemOnABaseGameCharacter_ReadsTheModsRecords()
+	public void GetAttributeSums_ItemInAModContainerWhileTheBaseGameIsActive_ReadsTheModsRecords()
 	{
 		this.Add(ModName, Sword, "WeaponMelee_Sword", ("characterStrength", 30), ("petBonusName", PetBonus.Raw));
 		this.Add(ModName, Relic, "ItemRelic", ("characterLife", 50));
@@ -83,14 +83,14 @@ public class ItemProviderItemMapTests
 	}
 
 	[Fact]
-	public void GetAttributeSums_BaseGameItemOnAModCharacter_ReadsTheBaseGameRecords()
+	public void GetAttributeSums_ItemInABaseGameContainerWhileAModIsActive_ReadsTheBaseGameRecords()
 	{
 		this.Add(string.Empty, Sword, "WeaponMelee_Sword", ("characterStrength", 30));
 		this.Add(ModName, Sword, "WeaponMelee_Sword", ("characterStrength", 90));
 		var sword = this.Equipped(mod: null);
 		this._current = ModName;
 
-		this._provider.GetAttributeSums(sword)["characterStrength"].Should().Be(30, "the mod changes the record, the item is the base game's");
+		this._provider.GetAttributeSums(sword)["characterStrength"].Should().Be(30, "the mod changes the record, the item's container is the base game's");
 	}
 
 	[Fact]
@@ -114,20 +114,23 @@ public class ItemProviderItemMapTests
 		this._provider.GetGrantedSkillLevels(sword).Should().Equal((skill.ToRecordId(), 4));
 	}
 
-	/// <summary>An equipped sword with a relic, linked to <paramref name="mod"/> by an own link (moved in from a vault).</summary>
-	private Item Equipped(string? mod) => new()
+	/// <summary>An equipped sword with a relic, in a container of the map <paramref name="mod"/> (null: the base game).</summary>
+	private Item Equipped(string? mod)
 	{
-		BaseItemId = Sword,
-		relicID = Relic,
-		RelicBonusId = RelicBonus,
-		Var1 = 1,
-		Mod = mod,
-		ModOrigin = ModOrigin.Own,
-	};
+		var item = new Item
+		{
+			BaseItemId = Sword,
+			relicID = Relic,
+			RelicBonusId = RelicBonus,
+			Var1 = 1,
+		};
+		item.SetContainerMod(mod);
+		return item;
+	}
 
 	private DBRecordCollection Add(string map, RecordId id, string recordClass, params (string Name, object Value)[] variables)
 	{
-		var record = new DBRecordCollection(id, recordClass);
+		var record = new DBRecordCollection(id, recordClass) { Source = map.Length == 0 ? RecordSource.BaseGame : RecordSource.FromMod(map) };
 		record.Set(new Variable("Class", VariableDataType.StringVar, 1) { [0] = recordClass });
 		foreach (var (name, value) in variables)
 		{

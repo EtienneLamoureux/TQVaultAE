@@ -352,16 +352,16 @@ public class CharacterStatsServiceTests
 	}
 
 	[Fact]
-	public void GetItemSkillAttributes_ModItemOnABaseGameCharacter_ReadsTheSkillInTheItemsMap()
+	public void GetItemSkillAttributes_ReadsTheSkillWithTheMapOfTheItemsContainer_WhateverTheActiveMap()
 	{
-		// A passive only the mod has, granted by a ring linked to that mod, on a character of the base game.
+		// A passive only the mod has, granted by a ring in a container of that mod, while the base game is active.
 		var modSkill = """records\mod\skills\passive.dbr""".ToRecordId();
 		string current = string.Empty;
 		var itemMods = new Mock<IItemModService>();
 		itemMods.Setup(m => m.Scope(It.IsAny<Item?>())).Returns((Item? item) =>
 		{
 			var previous = current;
-			current = item?.Mod ?? string.Empty;
+			current = item?.ContainerMod ?? string.Empty;
 			return new Restore(() => current = previous);
 		});
 		var passive = new DBRecordCollection(modSkill, "Skill_Passive");
@@ -373,8 +373,7 @@ public class CharacterStatsServiceTests
 			return sum;
 		});
 		var ring = Weapon("ArmorJewelry_Ring", 0, x: 4);
-		ring.Mod = "ModA";
-		ring.ModOrigin = ModOrigin.Own;
+		ring.SetContainerMod("ModA");
 		this._items.Setup(p => p.GetGrantedSkillLevels(ring)).Returns([(modSkill, 3)]);
 		var service = new CharacterStatsService(this._database.Object, this._items.Object, Mock.Of<ILogger<CharacterStatsService>>(), itemMods.Object);
 

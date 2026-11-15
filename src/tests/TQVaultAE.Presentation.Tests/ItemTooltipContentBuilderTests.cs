@@ -5,6 +5,7 @@ using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Presentation;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Presentation;
 
@@ -82,10 +83,23 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Fact]
+	public void Build_ItemWithoutRoomForItsSize_WarnsOfTheLackOfRoom_NotOfMissingRecords()
+	{
+		var data = Sword();
+		data.Item.ShowNoRoom();
+
+		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
+
+		lines[1].Kind.Should().Be(TooltipLineKind.Warning);
+		lines[1].Text.Should().Be(TQVaultAE.Presentation.Resources.ItemNoRoom);
+		lines.Should().NotContain(l => l.Text == TQVaultAE.Presentation.Resources.ItemIncomplete, "its records were all found");
+	}
+
+	[Fact]
 	public void Build_ItemLinkedToAMod_NamesItsModLastInTheSeedSection()
 	{
 		var data = Sword("""records\xpack4\items\swords\a01_sword.dbr"""); // an Atlantis item: it has an expansion clause
-		data.Item.Mod = "shadowchampions";
+		data.Item.ReadFrom("shadowchampions");
 		data.ItemSeed = "Seed 1";
 		data.Requirements = ["Level 10"];
 
@@ -103,7 +117,7 @@ public class ItemTooltipContentBuilderTests
 	public void Build_ItemLinkedToAModWithItsSource_NamesTheModOnly()
 	{
 		var data = Sword();
-		data.Item.Mod = "shadowchampions|workshop:1949340853";
+		data.Item.ReadFrom("shadowchampions|workshop:1949340853");
 
 		var lines = this._builder.Build(data, ItemTooltipView.Classic).Lines;
 

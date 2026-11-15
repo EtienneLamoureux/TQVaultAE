@@ -140,4 +140,44 @@ public class SackLayoutTests
 
 		SackLayout.HasRoomAt(Sack(leaving), Grid, item, new Point(0, 0), leaving).Should().BeTrue();
 	}
+
+	[Fact]
+	public void ShowItemsWithoutRoom_ItemsOverAKeptOneOrOutOfTheGrid_AreShown1x1_TheOthersKeepTheirSize()
+	{
+		// Arrange: read with another map, the sword grew over the ring, and the lance out of the grid
+		var sword = Item(0, 0, 2, 2);
+		var ring = Item(1, 1, 1, 1);
+		var lance = Item(3, 1, 1, 5);
+		var helm = Item(2, 0, 1, 1);
+
+		// Act
+		var noRoom = SackLayout.ShowItemsWithoutRoom(Sack(sword, ring, lance, helm), Grid);
+
+		// Assert: the first in the sack keeps its place; 1x1 the others, where they lie
+		noRoom.Should().Equal(ring, lance);
+		(sword.LacksRoom, helm.LacksRoom).Should().Be((false, false));
+		(ring.Width, ring.Height, lance.Width, lance.Height, lance.RealHeight).Should().Be((1, 1, 1, 1, 5));
+	}
+
+	[Fact]
+	public void ShowItemsWithoutRoom_ItemThatHasRoomAgain_GetsItsRealSizeBack()
+	{
+		var lance = Item(3, 0, 1, 3);
+		lance.ShowNoRoom();
+
+		SackLayout.ShowItemsWithoutRoom(Sack(lance), Grid).Should().BeEmpty();
+
+		(lance.LacksRoom, lance.Height).Should().Be((false, 3));
+	}
+
+	[Fact]
+	public void Fits_ItemShown1x1_TakesOneCell()
+	{
+		// The lance's real 1x3 would cover the ring: shown 1x1, it does not.
+		var lance = Item(0, 0, 1, 3);
+		lance.ShowNoRoom();
+		var ring = Item(0, 1, 1, 1);
+
+		SackLayout.Fits(Sack(lance, ring), Grid, ring).Should().BeTrue();
+	}
 }

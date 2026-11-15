@@ -394,38 +394,6 @@ public partial class SackPanel
 	}
 
 
-	/// <summary>
-	/// Adds the Modded submenu: links the item to an installed mod, or to none.
-	/// </summary>
-	private void AddModMenuItems(Item focusedItem)
-	{
-		this.CustomContextMenu.Items.Add("-");
-		this.CustomContextMenu.Items.Add(ModMenu.Create(this.CustomContextMenu, Resources.CharacterModded
-			, this.Services.ItemModService, focusedItem.Mod, mod => this.ChangeModItemClicked(focusedItem, mod)
-			, () => this.Services.ItemModService.Suggest([focusedItem])));
-	}
-
-	private void ChangeModItemClicked(Item focusedItem, string? mod)
-	{
-		// The mod's data may have loaded in the background meanwhile: the item must still be in the tab shown.
-		if (this.ShownSack is not { } sack || !sack.Contains(focusedItem))
-			return;
-
-		// Read with the chosen map, the item may take another size: without room in this tab, the choice is refused
-		// and the user moves the item to another tab first (MODLINK.md).
-		var outcome = this.Services.ItemEditService.ChangeMod(this.ShownSack, focusedItem, mod, this.HasRoomOnceReadAgain);
-		if (outcome == ModChoiceOutcome.NoRoom)
-			this.NotifyNoRoomInTab(focusedItem, Resources.ModChoiceNoRoomInTab);
-
-		if (outcome != ModChoiceOutcome.Changed)
-			return;
-
-		ItemTooltip.HideTooltip();
-		this.InvalidateItemCacheAll(focusedItem);
-		BagButtonTooltip.InvalidateCache(this.ShownSack);
-		this.Refresh();
-	}
-
 	private void SwapAffixesDisplayModeClicked(object? sender, EventArgs e)
 	{
 		_DisplayAffixesByEffect = !_DisplayAffixesByEffect;

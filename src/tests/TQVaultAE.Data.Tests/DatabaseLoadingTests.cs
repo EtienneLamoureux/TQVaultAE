@@ -191,6 +191,51 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
+	public void GetRecordFromFile_CustomMap_EachRecordCarriesTheDatabaseItCameFrom_AnOverrideIsTheMods()
+	{
+		// Arrange: the provider gives a record the source of its archive, as the real one does
+		const string ModId = "shadowchampions|workshop:1949340853";
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		this.AddRecord(gameArz, """records\item\overridden.dbr""");
+		this.AddRecord(modArz, """records\item\overridden.dbr""");
+		this.AddRecord(modArz, """records\customitems\lance.dbr""");
+		this.AddRecord(gameArz, """records\item\ring.dbr""");
+		this._arzProvider.Setup(a => a.GetItem(It.IsAny<ArzFile>(), It.IsAny<RecordId>()))
+			.Returns<ArzFile, RecordId>((arz, id) => this._arzRecords.TryGetValue((arz.FileName, id.Normalized), out var r)
+				? new DBRecordCollection(r.Id, r.RecordType) { Source = arz.Source }
+				: null);
+		var db = this.CreateDatabase();
+		db.ModIdOfMap = folder => folder == ModFolder ? ModId : null;
+
+		// Act
+		db.LoadDBFile();
+
+		// Assert
+		db.ArzFile!.Source.Should().Be(RecordSource.BaseGame);
+		db.ArzFileMod!.Source.Should().Be(RecordSource.FromMod(ModId));
+		db.GetRecordFromFile("""records\item\overridden.dbr""")!.Source.Should().Be(RecordSource.FromMod(ModId), "the mod overrides it");
+		db.GetRecordFromFile("""records\customitems\lance.dbr""")!.Source.Mod.Should().Be(ModId);
+		db.GetRecordFromFile("""records\item\ring.dbr""")!.Source.IsMod.Should().BeFalse("the mod does not have it");
+	}
+
+	[Fact]
+	public void LoadDBFile_CustomMapWithoutAModName_NamesTheModAfterItsFolder()
+	{
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		this.AddArz(Path.Combine(ModFolder, "database", "shadowchampions.arz"));
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.ArzFileMod!.Source.Should().Be(RecordSource.FromMod("shadowchampions"));
+	}
+
+	[Fact]
 	public void LoadDBFile_CustomMapWithoutDatabase_KeepsOnlyTheGameDatabase()
 	{
 		this.UseAnniversaryEdition();

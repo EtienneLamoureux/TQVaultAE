@@ -22,11 +22,11 @@ public class ItemModService(IDatabaseMaps maps, IModLinkService modLinks) : IIte
 
 	/// <inheritdoc/>
 	public IDisposable Scope(Item? item)
-		// The item's map, and only it: a mod not installed reads the base game data. An item without a map yet (being
-		// read, or a placeholder) uses the data in use at that moment.
-		=> item is null || item.ModOrigin == ModOrigin.None
+		// The map of the item's container, and only it: a mod not installed reads the base game data. An item without a
+		// container yet (being read, or a placeholder) uses the data in use at that moment.
+		=> item is null || !item.HasContainerMod
 			? NoScope.Instance
-			: this.Maps.Use(this.Find(item.Mod)?.Folder ?? string.Empty);
+			: this.Maps.Use(this.Find(item.ContainerMod)?.Folder ?? string.Empty);
 
 	/// <inheritdoc/>
 	public Task LoadDataAsync(string? modName)

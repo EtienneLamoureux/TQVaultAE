@@ -53,12 +53,11 @@ public class VaultService(
 		{
 			LoadVault(vault, oldFormatfileName);
 
-			// The old format is read like a character's file: its items are vault items, inheriting the vault's map,
-			// the base game (the old format has no link).
-			foreach (var item in vault.Where(s => s is not null).SelectMany(s => s).Where(i => !i.InVault))
+			// The old format is read like a character's file: its items are vault items, read with the vault's map, the
+			// base game (the old format has no link).
+			foreach (var item in vault.Where(s => s is not null).SelectMany(s => s))
 			{
-				item.InVault = true;
-				item.InheritMod(vault.Mod);
+				item.SetContainerMod(vault.Mod);
 				this.ItemProvider.GetDBData(item);
 			}
 
@@ -139,6 +138,11 @@ public class VaultService(
 					LoadVault(pc, k);
 					pc.VaultLoaded = true;
 				}
+
+				// Read with the vault's map, an item may take a size its saved place cannot hold (the link changed since
+				// the save): it is shown 1 x 1 there until moved where it fits.
+				foreach (var sack in pc.Where(sack => sack is not null))
+					TQVaultAE.Domain.Actions.SackLayout.ShowItemsWithoutRoom(sack, TQVaultAE.Domain.Actions.SackLayout.VaultBagSize);
 
 				this.ItemDatabaseService.IndexVault(pc, k, vaultName);
 

@@ -899,15 +899,20 @@ internal static partial class AutomationTools
 			name,
 			baseName,
 			baseItemId = item.BaseItemId.ToString(),
-			// Records the loaded game data lacks (a mod not loaded): the tooltip shows the item incomplete.
-			// The item's map (null: the base game) and where it comes from: Own, Inherited, or None before a container.
+			// The mod its records were read from (null: the base game), the map it is read with (its container's; null:
+			// the base game), and the records the loaded game data lacks (a mod not loaded): the tooltip shows the item
+			// incomplete.
 			mod = item.Mod,
-			modOrigin = item.ModOrigin.ToString(),
+			containerMod = item.ContainerMod,
 			missingRecords = item.IsIncomplete ? item.MissingRecords.Select(m => new { role = m.Role.ToString(), id = m.Id.Raw }) : null,
 			x = item.PositionX,
 			y = item.PositionY,
 			width = item.Width,
 			height = item.Height,
+			// Shown 1 x 1 for want of room for its real size where it lies.
+			lacksRoom = item.LacksRoom ? true : (bool?)null,
+			realWidth = item.LacksRoom ? item.RealWidth : (int?)null,
+			realHeight = item.LacksRoom ? item.RealHeight : (int?)null,
 			quantity = item.DoesStack ? item.Number : (int?)null,
 			// What the sort orders read, and the shards a relic or charm holds (its completion bonus once complete).
 			itemClass = item.ItemClass,

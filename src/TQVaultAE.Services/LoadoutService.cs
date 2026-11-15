@@ -169,7 +169,6 @@ public partial class LoadoutService(
 				continue;
 
 			// As read from the file: in no bag, with no cell.
-			piece.InVault = false;
 			piece.PositionX = -1;
 			piece.PositionY = -1;
 			slots[slot.Slot] = piece;
@@ -226,7 +225,7 @@ public partial class LoadoutService(
 			pieces = [.. loadout.Pieces
 				.Select((item, slot) => (item, slot))
 				.Where(p => p.item is not null)
-				.Select(p => new LoadoutPieceDto { slot = p.slot, item = ItemDtoExtensions.FromItem(p.item!, ownMapOnly: true) })],
+				.Select(p => new LoadoutPieceDto { slot = p.slot, item = ItemDtoExtensions.FromItem(p.item!) })],
 		};
 
 	private Loadout FromDto(LoadoutDto dto, string? characterMod)
@@ -236,10 +235,8 @@ public partial class LoadoutService(
 		foreach (var piece in dto.pieces.Where(p => p.slot >= 0 && p.item is not null))
 		{
 			var item = piece.item!.ToItem();
-			// A piece without its own map is the character's, as its worn items.
-			if (item.ModOrigin == ModOrigin.None)
-				item.InheritMod(characterMod);
-			item.InVault = false;
+			// A piece is read with the character's map, as its worn items.
+			item.SetContainerMod(characterMod);
 			item.PositionX = -1;
 			item.PositionY = -1;
 			this.ItemProvider.GetDBData(item);

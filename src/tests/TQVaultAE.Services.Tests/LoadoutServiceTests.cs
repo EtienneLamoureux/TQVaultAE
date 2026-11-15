@@ -56,8 +56,6 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		Seed = seed,
 		Width = 1,
 		Height = 2,
-		Mod = CharacterMod,
-		ModOrigin = ModOrigin.Inherited,
 	};
 
 	/// <summary>A character wearing the given pieces (empty items elsewhere, as the save has them).</summary>
@@ -92,8 +90,7 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		ItemIdentityComparer.Instance.Equals(loadout.Pieces[0], helm).Should().BeTrue();
 		ItemIdentityComparer.Instance.Equals(loadout.Pieces[EquipmentRules.Ring2Slot], ring).Should().BeTrue();
 		loadout.Items.Should().HaveCount(2);
-		loadout.Pieces[0]!.Mod.Should().Be(CharacterMod, "a piece without its own map takes the character's");
-		loadout.Pieces[0]!.ModOrigin.Should().Be(ModOrigin.Inherited);
+		loadout.Pieces[0]!.ContainerMod.Should().Be(CharacterMod, "a piece is read with the character's map");
 		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Exactly(2));
 	}
 
@@ -108,20 +105,6 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		helm.Seed = 99;
 
 		set.Loadouts[0].Pieces[0]!.Seed.Should().Be(11);
-	}
-
-	[Fact]
-	public void Add_PieceWithItsOwnMap_KeepsItThroughTheFile()
-	{
-		var relic = Piece("ring", 5);
-		relic.Mod = null;
-		relic.ModOrigin = ModOrigin.Own;
-
-		this._service.Add(this.Read(), "A", Wearing(false, (EquipmentRules.Ring1Slot, relic)));
-		var piece = this.Read().Loadouts[0].Pieces[EquipmentRules.Ring1Slot]!;
-
-		piece.ModOrigin.Should().Be(ModOrigin.Own);
-		piece.Mod.Should().BeNull();
 	}
 
 	[Theory]

@@ -162,9 +162,9 @@ public partial class EquipmentPanel
 			dragItem = drop.DroppedItem;
 			itemUnderUs = drop.ItemUnderUs;
 
-			// Equipped, an item without an own map inherits the character's; a slot holds any size.
+			// Equipped, an item takes the character's map; a slot holds any size.
 			if (!drop.Stacked
-				&& this.Services.ItemEditService.SettleIn(dragItem, false, this.Services.GameMapService.ActiveCharacterMod, _ => true) != SettleOutcome.Unchanged)
+				&& this.Services.ItemEditService.SettleIn(dragItem, this.Services.GameMapService.ActiveCharacterMod, _ => true) != SettleOutcome.Unchanged)
 				this.InvalidateItemCacheAll(dragItem);
 
 			this.PickUpAfterDrop(itemUnderUs);

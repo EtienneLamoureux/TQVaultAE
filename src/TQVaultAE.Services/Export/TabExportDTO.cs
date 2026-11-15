@@ -42,10 +42,10 @@ public class TabExportDTO
 	/// <param name="containerMod">The mod of its container (vault or character); null for the base game.</param>
 	public static TabExportDTO FromSackCollection(SackCollection sack, int sackNumber, string? containerMod = null)
 	{
-		// As in the vault file: only an item's own map is written, the others inherit the tab's mod.
+		// As in the vault file: the container's mod is written once; an item's mod is never written.
 		var items = new List<ItemDto>();
 		foreach (var item in sack)
-			items.Add(ItemDtoExtensions.FromItem(item, ownMapOnly: true));
+			items.Add(ItemDtoExtensions.FromItem(item));
 
 		return new TabExportDTO
 		{

@@ -33,7 +33,7 @@ public class ItemKeyTests
 		var worn = Piece();
 		var copy = worn.Clone();
 		copy.PositionX = 7;
-		copy.Mod = "SomeMod";
+		copy.SetContainerMod("SomeMod");
 
 		ItemKey.From(copy).Should().Be(ItemKey.From(worn), "place and map are not saved fields of the item");
 		Same(worn, copy).Should().BeTrue();

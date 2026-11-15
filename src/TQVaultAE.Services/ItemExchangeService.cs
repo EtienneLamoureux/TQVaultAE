@@ -39,7 +39,7 @@ public class ItemExchangeService(
 	/// A mod named by an export, when it is installed here; else null, and its name is added to <paramref name="dropped"/>:
 	/// the link is dropped and the items fall back on their target container's map until the user links them.
 	/// </summary>
-	private string? Installed(string? mod, ICollection<string> dropped)
+	private string? Installed(string? mod, List<string> dropped)
 	{
 		if (string.IsNullOrWhiteSpace(mod))
 			return null;
@@ -53,20 +53,6 @@ public class ItemExchangeService(
 			dropped.Add(name);
 
 		return null;
-	}
-
-	/// <summary>
-	/// An imported item linked to a mod not installed here loses that link: it takes its target container's map.
-	/// </summary>
-	private Item DropMissingMod(Item item, ICollection<string> dropped)
-	{
-		if (item.HasOwnMod && item.Mod is not null && this.Installed(item.Mod, dropped) is null)
-		{
-			item.Mod = null;
-			item.ModOrigin = ModOrigin.None;
-		}
-
-		return item;
 	}
 
 	public string SerializeItem(Item item)
@@ -161,7 +147,8 @@ public class ItemExchangeService(
 						if (dto is null)
 							return ImportResult.Failed("Failed to deserialize item data.");
 
-						var item = this.DropMissingMod(dto.ToItem(), dropped);
+						// Read with the data in use; placed, it takes its container's map.
+						var item = dto.ToItem();
 						_itemProvider.GetDBData(item);
 						return ImportResult.Succeeded(item);
 					}
@@ -173,27 +160,23 @@ public class ItemExchangeService(
 						if (dto is null)
 							return ImportResult.Failed("Failed to deserialize tab data.");
 
-						// The items without an own map inherited the tab's container's map (a mod, or the base game): they
-						// keep it, placed by PlaceImportedItems (inherited in a vault of that map, else as their own). A mod
-						// not installed here is dropped: they take their target's map.
+						// The items are read with the map of the tab's container (a mod, or the base game) until placed,
+						// where they take their target's map. A mod not installed here is dropped: they are read with the
+						// data in use.
 						string? tabMod = this.Installed(dto.ModKey, dropped);
 						bool tabMapKnown = tabMod is not null || string.IsNullOrWhiteSpace(dto.Mod);
 						var items = new List<Item>();
 						foreach (var itemDto in dto.Items)
 						{
-							var item = this.DropMissingMod(itemDto.ToItem(), dropped);
-							if (item.ModOrigin == ModOrigin.None && tabMapKnown && !itemDto.IsDroppedOwnMod(item))
-							{
-								item.Mod = tabMod;
-								item.ModOrigin = ModOrigin.Inherited;
-								item.InVault = true;
-							}
+							var item = itemDto.ToItem();
+							if (tabMapKnown)
+								item.SetContainerMod(tabMod);
 
 							_itemProvider.GetDBData(item);
 							items.Add(item);
 						}
 
-						return ImportResult.SucceededTab(items, dto.SackNumber, dto.IconInfo, tabMod, tabMapKnown);
+						return ImportResult.SucceededTab(items, dto.SackNumber, dto.IconInfo);
 					}
 
 				case ExportScope.MultiSelect:
@@ -206,7 +189,7 @@ public class ItemExchangeService(
 					var items = dtos
 						.Select(dto =>
 						{
-							var item = this.DropMissingMod(dto.ToItem(), dropped);
+							var item = dto.ToItem();
 							_itemProvider.GetDBData(item);
 							return item;
 						})
@@ -230,10 +213,9 @@ public class ItemExchangeService(
 							var itemList = new List<Item>();
 							foreach (var itemDto in sackDto.Items)
 							{
-								// An item without an own map inherits the vault's.
-								var item = this.DropMissingMod(itemDto.ToItem(), dropped);
-								item.InVault = true;
-								item.InheritMod(vaultMod);
+								// Read with the vault's map.
+								var item = itemDto.ToItem();
+								item.SetContainerMod(vaultMod);
 								_itemProvider.GetDBData(item);
 								itemList.Add(item);
 							}
@@ -283,14 +265,9 @@ public class ItemExchangeService(
 
 			foreach (var item in kvp.Value)
 			{
-				// A vault item: without an own map, it inherits the vault's, which the export may not have set.
-				item.InVault = true;
-				if (!item.HasOwnMod && !string.Equals(item.Mod, vault.Mod, StringComparison.OrdinalIgnoreCase))
-				{
-					item.Mod = vault.Mod;
-					item.ModOrigin = ModOrigin.Inherited;
+				// A vault item is read with the vault's map, which the export may not have set.
+				if (item.SetContainerMod(vault.Mod))
 					this._itemProvider.GetDBData(item);
-				}
 
 				sack.AddItem(item);
 			}
@@ -409,19 +386,11 @@ public class ItemExchangeService(
 			this.SerializeSackCollection(sack, sackNumber, containerMod)
 			, this.BuildTabPasteName(vaultName, sack, sackNumber));
 
-	public IReadOnlyList<Item> PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight, string? targetMod = null)
+	public IReadOnlyList<Item> PlaceImportedItems(SackCollection sack, ImportResult importResult, int sackWidth, int sackHeight)
 	{
 		IReadOnlyList<Item> items = importResult.Scope == ExportScope.Item
 			? (importResult.Item is { } single ? [single] : [])
 			: importResult.Items;
-
-		// A tab's items that inherited its mod keep it: inherited in a container of that mod, else as their own.
-		if (importResult.Scope == ExportScope.Tab && importResult.TabMapKnown
-			&& !string.Equals(importResult.TabMod, targetMod, StringComparison.OrdinalIgnoreCase))
-		{
-			foreach (var item in items.Where(i => i.ModOrigin == ModOrigin.Inherited))
-				item.ModOrigin = ModOrigin.Own;
-		}
 
 		var placed = new List<Item>();
 		foreach (var item in items)

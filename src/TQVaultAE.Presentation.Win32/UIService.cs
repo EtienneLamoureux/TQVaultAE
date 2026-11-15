@@ -376,6 +376,10 @@ public class UIService : IUIService, IGameDataCache
 	/// </summary>
 	public Bitmap? GetBitmap(Item itm)
 	{
+		// Shown 1 x 1 for want of room for its size where it lies: the warning tile, its size kept.
+		if (itm.LacksRoom && !RecordId.IsNullOrEmpty(itm.BaseItemId))
+			return MissingItemBitmap(1, 1);
+
 		// The picture of an item linked to a mod comes from that mod's files.
 		using var modScope = this.ItemMods.ScopeOrNone(itm);
 		Bitmap? bmp = null;

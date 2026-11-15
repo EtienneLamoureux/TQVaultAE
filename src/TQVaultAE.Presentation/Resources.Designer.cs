@@ -6133,14 +6133,14 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Read with its new map, an item had no room in its container: it keeps its previous map, as its own. {0}.
+        ///   Looks up a localized string similar to Read with their container's map, these items have no room for their size where they lie: they are shown 1 x 1 until you move them where they fit. {0}.
         /// </summary>
-        public static string ModMapKeptNoRoom {
+        public static string ModNoRoomShown {
             get {
-                return ResourceManager.GetString("ModMapKeptNoRoom", resourceCulture);
+                return ResourceManager.GetString("ModNoRoomShown", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to {0} is shown with the characters played with its map, and no listed character is..
         /// </summary>
@@ -6160,16 +6160,7 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Read with the data of that map, {0} would have no room in this tab: move it to another tab first..
-        /// </summary>
-        public static string ModChoiceNoRoomInTab {
-            get {
-                return ResourceManager.GetString("ModChoiceNoRoomInTab", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to These mods are not installed: their links were dropped and the items take their vault's map. Install the mod, then link the vault or the items (Modded). {0}.
+        ///   Looks up a localized string similar to These mods are not installed: their links were dropped and the items take their vault's map. Install the mod, then link the vault. {0}.
         /// </summary>
         public static string ImportDroppedMods {
             get {
@@ -6786,6 +6777,15 @@ namespace TQVaultAE.Presentation {
         public static string ItemIncomplete {
             get {
                 return ResourceManager.GetString("ItemIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No room here for this item's size, read with its container's map: shown 1 x 1 until moved where it fits..
+        /// </summary>
+        public static string ItemNoRoom {
+            get {
+                return ResourceManager.GetString("ItemNoRoom", resourceCulture);
             }
         }
         

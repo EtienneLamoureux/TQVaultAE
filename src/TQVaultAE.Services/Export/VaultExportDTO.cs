@@ -49,8 +49,8 @@ public class VaultExportDTO
 			var items = new List<ItemDto>();
 			foreach (var item in sack)
 			{
-				// As in the vault file: only an item's own map is written, the others inherit the vault's mod.
-				items.Add(ItemDtoExtensions.FromItem(item, ownMapOnly: true));
+				// As in the vault file: the vault's mod is written once; an item's mod is never written.
+				items.Add(ItemDtoExtensions.FromItem(item));
 			}
 
 			sacks.Add(new SackExportDTO

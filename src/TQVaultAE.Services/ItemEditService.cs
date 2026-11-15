@@ -185,36 +185,6 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 	}
 
 	/// <inheritdoc/>
-	public ModChoiceOutcome ChangeMod(SackCollection sack, Item item, string? modName, Func<Item, bool>? fits = null)
-	{
-		string? mod = Normalize(modName);
-		if (item.HasOwnMod && SameMod(item.Mod, mod))
-			return ModChoiceOutcome.Unchanged;
-
-		// Chosen for the item: its own map from now on, kept wherever it goes and saved in the vault file.
-		var previous = (item.Mod, item.ModOrigin);
-		item.Mod = mod;
-		item.ModOrigin = ModOrigin.Own;
-
-		if (!SameMod(previous.Mod, mod))
-		{
-			this._itemProvider.GetDBData(item);
-
-			// Read with other data, the item may take another size: without room for it, the choice is refused rather
-			// than saving items that overlap. The user moves the item to another tab first.
-			if (fits is not null && !fits(item))
-			{
-				(item.Mod, item.ModOrigin) = previous;
-				this._itemProvider.GetDBData(item);
-				return ModChoiceOutcome.NoRoom;
-			}
-		}
-
-		MarkModified(sack, item);
-		return ModChoiceOutcome.Changed;
-	}
-
-	/// <inheritdoc/>
 	public VaultModChange ChangeVaultMod(PlayerCollection vault, string? modName, Func<SackCollection, Item, bool>? fits = null)
 	{
 		string? mod = Normalize(modName);
@@ -223,29 +193,25 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 
 		vault.Mod = mod;
 		var changed = new List<Item>();
-		var kept = new List<Item>();
+		var noRoom = new List<Item>();
 		foreach (var sack in vault)
 		{
 			if (sack is null)
 				continue;
 
-			// The items inheriting the vault's map take the new one; own maps are kept. A copy of the list: fits may move
-			// an item to another bag.
-			foreach (var item in sack.Where(i => !i.HasOwnMod).ToList())
+			// Every item takes the new map. A copy of the list: fits may move an item to another bag.
+			foreach (var item in sack.ToList())
 			{
-				var previous = item.Mod;
-				item.Mod = mod;
-				item.ModOrigin = ModOrigin.Inherited;
-				item.IsModified = true;
+				item.SetContainerMod(mod);
+				item.ClearNoRoom();
 				this._itemProvider.GetDBData(item);
 
-				// Read with other data, the item may take another size: without room for it anywhere, it keeps its map,
-				// as its own, rather than being saved over its neighbours.
+				// Read with other data, the item may take another size: without room for it anywhere, it is shown 1 x 1
+				// where it lies rather than over its neighbours, until it is moved where it fits.
 				if (fits is not null && !fits(sack, item))
 				{
-					(item.Mod, item.ModOrigin) = (previous, ModOrigin.Own);
-					this._itemProvider.GetDBData(item);
-					kept.Add(item);
+					item.ShowNoRoom();
+					noRoom.Add(item);
 					continue;
 				}
 
@@ -255,84 +221,79 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 			sack.IsModified = true;
 		}
 
-		return new VaultModChange(changed, kept);
+		return new VaultModChange(changed, noRoom);
 	}
 
 	/// <inheritdoc/>
-	public SettleResult SettleAll(SackCollection sack, System.Drawing.Size sackSize, IEnumerable<Item> items, bool inVault, string? containerMod, Func<SackCollection, Item, bool>? elsewhere = null)
+	public SettleResult SettleAll(SackCollection sack, System.Drawing.Size sackSize, IEnumerable<Item> items, string? containerMod, Func<SackCollection, Item, bool>? elsewhere = null)
 	{
 		var readAgain = new List<Item>();
-		var kept = new List<Item>();
+		var noRoom = new List<Item>();
+		bool Fits(Item item) => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, sackSize, item) || (elsewhere?.Invoke(sack, item) ?? false);
 		foreach (var item in items.ToList())
 		{
-			var outcome = this.SettleIn(item, inVault, containerMod
-				, i => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, sackSize, i) || (elsewhere?.Invoke(sack, i) ?? false));
-			if (outcome == SettleOutcome.ReadAgain)
+			bool hadNoRoom = item.LacksRoom;
+			item.ClearNoRoom();
+			bool newMap = item.SetContainerMod(containerMod);
+			if (newMap)
+				this._itemProvider.GetDBData(item);
+
+			// Already in the bag, at the size it had: without room for its new size, it is shown 1 x 1 where it lies.
+			if (!Fits(item))
+			{
+				item.ShowNoRoom();
+				noRoom.Add(item);
+			}
+			else if (newMap || hadNoRoom)
 				readAgain.Add(item);
-			else if (outcome == SettleOutcome.KeptOwnMap)
-				kept.Add(item);
 		}
 
-		return new SettleResult(readAgain, kept);
+		return new SettleResult(readAgain, noRoom);
 	}
 
 	/// <inheritdoc/>
-	public SettleOutcome SettleIn(Item item, bool inVault, string? containerMod, Func<Item, bool> fits)
+	public SettleOutcome SettleIn(Item item, string? containerMod, Func<Item, bool> fits)
 	{
-		bool leavesCharacter = inVault && !item.InVault;
-		item.InVault = inVault;
+		var previous = (item.ContainerMod, item.HasContainerMod);
+		bool hadNoRoom = item.LacksRoom;
+		item.ClearNoRoom();
 
-		// An own map goes with the item.
-		if (item.HasOwnMod)
-			return SettleOutcome.Unchanged;
-
-		// Leaving a character (or a game stash) for a vault makes the map explicit: the item keeps the data the game
-		// reads it with.
-		if (leavesCharacter && item.ModOrigin == ModOrigin.Inherited)
+		// The item takes the map of its new container; with the same map, it keeps its data.
+		if (!item.SetContainerMod(containerMod))
 		{
-			item.ModOrigin = ModOrigin.Own;
-			item.IsModified = true;
+			if (!hadNoRoom)
+				return SettleOutcome.Unchanged;
+
+			// Shown 1 x 1, it gets its real size back where that fits; else it stays 1 x 1.
+			if (fits(item))
+				return SettleOutcome.ReadAgain;
+
+			item.ShowNoRoom();
 			return SettleOutcome.Unchanged;
 		}
 
-		// Else the item inherits the map of its new container.
-		string? mod = Normalize(containerMod);
-		var previous = (item.Mod, item.ModOrigin);
-		item.Mod = mod;
-		item.ModOrigin = ModOrigin.Inherited;
-		if (previous.ModOrigin != ModOrigin.None && SameMod(previous.Mod, mod))
-			return SettleOutcome.Unchanged;
-
-		item.IsModified = true;
 		this._itemProvider.GetDBData(item);
 
-		// Read with the new map, the item may take its real size: it must fit where it lies, or at another free spot.
-		// Without room for it, it keeps its previous map, as its own.
-		if (!fits(item))
-		{
-			(item.Mod, item.ModOrigin) = (previous.Mod, ModOrigin.Own);
-			this._itemProvider.GetDBData(item);
-			return SettleOutcome.KeptOwnMap;
-		}
+		// Read with the new map, the item may take another size: it must fit where it lies, or at another free spot.
+		if (fits(item))
+			return SettleOutcome.ReadAgain;
 
-		return SettleOutcome.ReadAgain;
+		this.Restore(item, previous, hadNoRoom);
+		return SettleOutcome.NoRoom;
 	}
 
 	/// <inheritdoc/>
-	public bool HasRoomOnceSettled(Item item, bool inVault, string? containerMod, Func<Item, bool> fits)
+	public bool HasRoomOnceSettled(Item item, string? containerMod, Func<Item, bool> fits)
 	{
-		// The same rules as SettleIn: an own map goes with the item, and an item leaving a character for a vault keeps
-		// its map; only an item taking another map is read with other data.
-		string? mod = Normalize(containerMod);
-		if (item.HasOwnMod
-			|| (inVault && !item.InVault && item.ModOrigin == ModOrigin.Inherited)
-			|| (item.ModOrigin != ModOrigin.None && SameMod(item.Mod, mod)))
-		{
+		// The same rules as SettleIn: only an item taking another map is read with other data; one keeping its map
+		// keeps its size there (1 x 1 when it lacks room).
+		if (item.HasContainerMod && SameMod(item.ContainerMod, Normalize(containerMod)))
 			return true;
-		}
 
-		var previous = (item.Mod, item.ModOrigin);
-		(item.Mod, item.ModOrigin) = (mod, ModOrigin.Inherited);
+		var previous = (item.ContainerMod, item.HasContainerMod);
+		bool hadNoRoom = item.LacksRoom;
+		item.ClearNoRoom();
+		item.SetContainerMod(containerMod);
 		this._itemProvider.GetDBData(item);
 		try
 		{
@@ -340,9 +301,21 @@ public class ItemEditService(IDatabase database, IItemProvider itemProvider, IIt
 		}
 		finally
 		{
-			(item.Mod, item.ModOrigin) = previous;
-			this._itemProvider.GetDBData(item);
+			this.Restore(item, previous, hadNoRoom);
 		}
+	}
+
+	/// <summary>Puts an item back on the map it was read with, and its size.</summary>
+	private void Restore(Item item, (string? Mod, bool Set) previous, bool lacksRoom)
+	{
+		if (previous.Set)
+			item.SetContainerMod(previous.Mod);
+		else
+			item.ClearContainerMod();
+
+		this._itemProvider.GetDBData(item);
+		if (lacksRoom)
+			item.ShowNoRoom();
 	}
 
 	private static string? Normalize(string? modName) => string.IsNullOrWhiteSpace(modName) ? null : modName;

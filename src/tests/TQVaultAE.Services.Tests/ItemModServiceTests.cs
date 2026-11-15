@@ -31,8 +31,13 @@ public class ItemModServiceTests
 		this._service = new ItemModService(this._maps.Object, this._links.Object);
 	}
 
-	private static Item ItemOf(RecordId id, string? mod = null, ModOrigin origin = ModOrigin.Inherited)
-		=> new() { BaseItemId = id, Mod = mod, ModOrigin = origin };
+	/// <summary>An item in a container of the map <paramref name="containerMod"/>.</summary>
+	private static Item ItemOf(RecordId id, string? containerMod = null)
+	{
+		var item = new Item { BaseItemId = id };
+		item.SetContainerMod(containerMod);
+		return item;
+	}
 
 	[Fact]
 	public async Task LoadDataAsync_ModNotLoadedYet_LoadsItsDatabase()
@@ -73,17 +78,15 @@ public class ItemModServiceTests
 	[Fact]
 	public void Scope_ItemWithoutMapYet_LeavesTheDatabaseAlone()
 	{
-		this._service.Scope(ItemOf(ModRecord, "shadowchampions", ModOrigin.None)).Should().BeSameAs(NoScope.Instance);
+		this._service.Scope(new Item { BaseItemId = ModRecord }).Should().BeSameAs(NoScope.Instance);
 		this._service.Scope(null).Should().BeSameAs(NoScope.Instance);
 		this._scopes.Should().BeEmpty();
 	}
 
-	[Theory]
-	[InlineData(ModOrigin.Inherited)]
-	[InlineData(ModOrigin.Own)]
-	public void Scope_BaseGameMap_UsesTheBaseGameWhateverTheActiveMap(ModOrigin origin)
+	[Fact]
+	public void Scope_BaseGameContainer_UsesTheBaseGameWhateverTheActiveMap()
 	{
-		using var scope = this._service.Scope(ItemOf(ModRecord, null, origin));
+		using var scope = this._service.Scope(ItemOf(ModRecord, null));
 
 		this._scopes.Should().Equal(string.Empty);
 	}
@@ -96,16 +99,11 @@ public class ItemModServiceTests
 		this._scopes.Should().Equal(string.Empty);
 	}
 
-	[Theory]
-	[InlineData(ModOrigin.Inherited)]
-	[InlineData(ModOrigin.Own)]
-	public void Scope_InstalledMod_UsesThatModsDatabase_InAVaultOrOnACharacter(ModOrigin origin)
+	[Fact]
+	public void Scope_ContainerOfAnInstalledMod_UsesThatModsDatabase()
 	{
-		var inVault = ItemOf(ModRecord, "SHADOWCHAMPIONS", origin);
-		inVault.InVault = true;
-
-		using (this._service.Scope(inVault))
-		using (this._service.Scope(ItemOf(ModRecord, "shadowchampions", origin)))
+		using (this._service.Scope(ItemOf(ModRecord, "SHADOWCHAMPIONS")))
+		using (this._service.Scope(ItemOf(ModRecord, "shadowchampions")))
 		{
 		}
 
@@ -128,8 +126,8 @@ public class ItemModServiceTests
 	}
 
 	[Fact]
-	public void Clone_KeepsTheMod()
+	public void Clone_KeepsTheContainersMap()
 	{
-		ItemOf(ModRecord, Shadow.Name).Clone().Mod.Should().Be(Shadow.Name);
+		ItemOf(ModRecord, Shadow.Name).Clone().ContainerMod.Should().Be(Shadow.Name);
 	}
 }

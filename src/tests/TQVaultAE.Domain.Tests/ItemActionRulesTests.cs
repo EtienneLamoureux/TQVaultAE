@@ -25,31 +25,10 @@ public class ItemActionRulesTests
 		return potion;
 	}
 
-	/// <summary>The actions offered, without <see cref="ItemActions.ChangeMod"/> (tested on its own).</summary>
+	/// <summary>The actions offered.</summary>
 	private static ItemActions For(Item? item, int selectionCount = 0, bool itemIsTheSelection = false
 		, bool readOnly = false, bool allowEdit = false, bool allowCopy = false)
-		=> ItemActionRules.Available(new ItemActionContext(item, selectionCount, itemIsTheSelection, readOnly, allowEdit, allowCopy))
-			& ~ItemActions.ChangeMod;
-
-	[Theory]
-	[InlineData(true, 0, false, true)]    // the item under the cursor
-	[InlineData(true, 3, false, true)]    // even with a selection: the menu acts on the item under the cursor
-	[InlineData(false, 3, false, false)]  // a selection alone
-	[InlineData(true, 0, true, false)]    // read-only equipment
-	public void Available_ChangeMod_ForTheItemUnderTheCursorOfAWritableVault(bool item, int selectionCount, bool readOnly, bool expected)
-	{
-		var sword = Sword();
-		sword.InVault = true;
-
-		ItemActionRules.Available(new ItemActionContext(item ? sword : null, selectionCount, false, readOnly, false, false))
-			.HasFlag(ItemActions.ChangeMod).Should().Be(expected);
-	}
-
-	[Fact]
-	public void Available_ChangeMod_NotForACharactersItem()
-		// A character's files cannot keep the choice: the next read would lose it.
-		=> ItemActionRules.Available(new ItemActionContext(Sword(), 0, false, false, false, false))
-			.HasFlag(ItemActions.ChangeMod).Should().BeFalse();
+		=> ItemActionRules.Available(new ItemActionContext(item, selectionCount, itemIsTheSelection, readOnly, allowEdit, allowCopy));
 
 	[Theory]
 	[InlineData("""records\item\equipmentweapon\sword\us_n_01.dbr""", false, true)]

@@ -73,4 +73,37 @@ public static class SackLayout
 		(item.PositionX, item.PositionY) = (x0, y0);
 		return room;
 	}
+
+	/// <summary>
+	/// The size of a vault bag, in cells.
+	/// </summary>
+	public static readonly Size VaultBagSize = new(18, 20);
+
+	/// <summary>
+	/// Shows 1 x 1 (<see cref="Item.ShowNoRoom"/>) the items of a sack whose real size has no room where they lie: out
+	/// of the grid, or over an item already kept, in the sack's order. Read again with another map (a link changed since
+	/// the file was saved), an item may take a size its place cannot hold. The others get their real size back.
+	/// </summary>
+	/// <returns>The items now shown 1 x 1.</returns>
+	public static IReadOnlyList<Item> ShowItemsWithoutRoom(SackCollection sack, Size sackSize)
+	{
+		var kept = new List<Rectangle>();
+		var noRoom = new List<Item>();
+		var grid = new Rectangle(Point.Empty, sackSize);
+		foreach (var item in sack)
+		{
+			item.ClearNoRoom();
+			var cells = new Rectangle(item.PositionX, item.PositionY, item.Width, item.Height);
+			if (!grid.Contains(cells) || kept.Any(other => other.IntersectsWith(cells)))
+			{
+				item.ShowNoRoom();
+				noRoom.Add(item);
+				cells = new Rectangle(item.PositionX, item.PositionY, 1, 1);
+			}
+
+			kept.Add(cells);
+		}
+
+		return noRoom;
+	}
 }

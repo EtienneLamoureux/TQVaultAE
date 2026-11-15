@@ -160,9 +160,6 @@ public partial class SackPanel
 					AddItemSetMenuItems(focusedItem!);
 				}
 
-				if (actions.HasFlag(ItemActions.ChangeMod))
-					this.AddModMenuItems(focusedItem!);
-
 				if (actions.HasFlag(ItemActions.Properties))
 				{
 					this.CustomContextMenu.Items.Add("-");

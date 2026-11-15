@@ -183,7 +183,7 @@ public partial class VaultPanel
 	}
 
 	/// <summary>
-	/// Links the vault to a mod, or to none: its items without a mod of their own are read again with that mod's data.
+	/// Links the vault to a mod, or to none: its items are read again with that mod's data.
 	/// </summary>
 	internal void ChangeVaultMod(string? mod)
 	{
@@ -191,14 +191,15 @@ public partial class VaultPanel
 		var change = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod
 			, (sack, item) => SackLayout.FitsOrMoves(sack, size, item) || this.MoveToAnotherBag(sack, item));
 
-		Item[] items = [.. change.Changed, .. change.Kept];
+		Item[] items = [.. change.Changed, .. change.NoRoom];
 		if (items.Length == 0)
 			return;
 
 		this.ItemsReadAgain(items);
 		ItemTooltip.HideTooltip();
+		BagButtonTooltip.InvalidateCache([.. this.ShownVault.Where(sack => sack is not null)]);
 		this.BagSackPanel.Refresh();
-		this.BagSackPanel.NotifyKeptMap(change.Kept);
+		this.BagSackPanel.NotifyNoRoom(change.NoRoom);
 	}
 
 	/// <summary>
@@ -247,15 +248,15 @@ public partial class VaultPanel
 	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items, Size? sackSize = null)
 	{
 		var size = sackSize ?? this.BagSackPanel.SackSize;
-		var result = this.Services.ItemEditService.SettleAll(sack, size, items, this.Vault is not null, this.BagSackPanel.ContainerMap
+		var result = this.Services.ItemEditService.SettleAll(sack, size, items, this.BagSackPanel.ContainerMap
 			, this.MoveToAnotherBag);
 
-		Item[] changed = [.. result.ReadAgain, .. result.Kept];
+		Item[] changed = [.. result.ReadAgain, .. result.NoRoom];
 		if (changed.Length == 0)
 			return;
 
 		this.ItemsReadAgain(changed);
-		this.BagSackPanel.NotifyKeptMap(result.Kept);
+		this.BagSackPanel.NotifyNoRoom(result.NoRoom);
 	}
 
 	/// <summary>The bag menu entries handled by <see cref="ContextMenuItemClicked"/>, carried by their tag.</summary>

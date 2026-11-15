@@ -4,6 +4,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Services;
 
@@ -415,308 +416,249 @@ public class ItemEditServiceTests
 		member.beginBlockCrap1.Should().Be(7);
 		this._itemProvider.Verify(p => p.GetDBData(member), Times.Once);
 	}
-	/// <summary>An item a container holds: in a vault or not, with a map it inherits or owns.</summary>
-	private static Item Placed(string record, string? mod, ModOrigin origin, bool inVault = true)
-		=> new() { BaseItemId = RecordId.Create(record), Mod = mod, ModOrigin = origin, InVault = inVault, Width = 1, Height = 1 };
+	#region Maps
 
-	/// <summary>The mod has the lance; nothing has the unknown sword.</summary>
-	private void ModHasTheLance(RecordId lance)
-		=> this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(i =>
-			i.baseItemInfo = i.Mod == "shadowchampions" && i.BaseItemId == lance ? MakeInfo(lance.Raw, "WeaponMelee_Spear") : null);
+	private const string Shadow = "shadowchampions|custommaps";
+	private static readonly RecordId Lance = RecordId.Create("records/customitems/lance.dbr");
 
-	[Fact]
-	public void ChangeMod_GivesTheModAsTheItemsOwnMap_AndReadsItAgain()
+	/// <summary>
+	/// The databases, read with the map of the item's container: the mod adds a 1x5 lance; every other record is the
+	/// base game's, 1x1. Without the mod, the lance is missing (a 1x1 warning tile).
+	/// </summary>
+	private void UseTheMaps()
+		=> this._itemProvider.Setup(p => p.GetDBData(It.IsAny<Item>())).Callback<Item>(Read);
+
+	private static void Read(Item item)
 	{
-		var item = Placed("records/ring.dbr", null, ModOrigin.Inherited);
-
-		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().Be(ModChoiceOutcome.Changed);
-
-		(item.Mod, item.ModOrigin).Should().Be(("shadowchampions", ModOrigin.Own));
-		item.IsModified.Should().BeTrue();
-		this._sack.IsModified.Should().BeTrue();
-		this._itemProvider.Verify(p => p.GetDBData(item), Times.Once);
+		bool modded = item.ContainerMod == Shadow;
+		bool lance = item.BaseItemId == Lance;
+		item.baseItemInfo = lance
+			? (modded ? TestRecords.InfoFrom(Lance, Shadow, "WeaponMelee_Spear") : null)
+			: TestRecords.InfoFrom(item.BaseItemId, null);
+		item.Width = 1;
+		item.Height = lance && modded ? 5 : 1;
 	}
 
-	[Fact]
-	public void ChangeMod_ItemNoLongerFits_RefusesTheChoice()
+	/// <summary>An item a container of the map <paramref name="containerMod"/> holds, read with that map.</summary>
+	private static Item Placed(RecordId record, string? containerMod, int x = 0, int y = 0)
 	{
-		// Arrange: read with the mod's data the item takes another size, and its container has no room for it
-		var item = Placed("records/ring.dbr", null, ModOrigin.Inherited);
-		this._sack.IsModified = false;
-
-		// Act
-		var outcome = this._service.ChangeMod(this._sack, item, "shadowchampions", _ => false);
-
-		// Assert: refused for want of room (the user is told to use another tab), nothing to save, and the item is read
-		// again with the map it had
-		outcome.Should().Be(ModChoiceOutcome.NoRoom);
-		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Inherited));
-		this._sack.IsModified.Should().BeFalse();
-		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
+		var item = new Item { BaseItemId = record, PositionX = x, PositionY = y };
+		item.SetContainerMod(containerMod);
+		Read(item);
+		return item;
 	}
 
-	[Fact]
-	public void ChangeMod_SameOwnMod_ChangesNothing()
+	private static TQVaultAE.Application.Session.PlayerCollection Vault(string? mod, params Item[] items)
 	{
-		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Own);
-
-		this._service.ChangeMod(this._sack, item, "ShadowChampions").Should().Be(ModChoiceOutcome.Unchanged);
-
-		this._sack.IsModified.Should().BeFalse();
-		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
-	}
-
-	[Fact]
-	public void ChangeMod_TheMapItInherits_BecomesItsOwn_WithoutReadingItAgain()
-	{
-		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Inherited);
-
-		this._service.ChangeMod(this._sack, item, "shadowchampions").Should().Be(ModChoiceOutcome.Changed);
-
-		item.ModOrigin.Should().Be(ModOrigin.Own);
-		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
-	}
-
-	[Fact]
-	public void ChangeMod_BaseGameChosenInAModdedVault_IsKeptWhenTheVaultChangesItsLink()
-	{
-		// Arrange: an item inheriting the vault's Lilith link
-		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
-		var item = Placed("records/a.dbr", "Lilith", ModOrigin.Inherited);
-		sack.AddItem(item);
-		vault.Sacks = [sack];
+		foreach (var item in items)
+			sack.AddItem(item);
 
-		// Act: the base game is chosen for it, then the vault is linked to another mod
-		this._service.ChangeMod(sack, item, null).Should().Be(ModChoiceOutcome.Changed);
-		var change = this._service.ChangeVaultMod(vault, "shadowchampions");
-
-		// Assert
-		change.Changed.Should().BeEmpty();
-		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
+		return new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = mod, Sacks = [sack] };
 	}
 
+	#endregion
+
 	[Fact]
-	public void ChangeVaultMod_InheritedMapsTakeTheNewOne_OwnMapsAreKept()
+	public void ChangeVaultMod_EveryItemTakesTheNewMap_AndIsReadAgain()
 	{
-		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
-		var sack = new SackCollection();
-		var inherited = Placed("records/b.dbr", "Lilith", ModOrigin.Inherited);
-		var own = Placed("records/d.dbr", "Lilith", ModOrigin.Own);
-		var other = Placed("records/c.dbr", "Masteries", ModOrigin.Own);
-		sack.AddItem(inherited);
-		sack.AddItem(own);
-		sack.AddItem(other);
-		vault.Sacks = [sack];
+		this.UseTheMaps();
+		var ring = Placed(RecordId.Create("records/ring.dbr"), "Lilith|custommaps");
+		var sword = Placed(RecordId.Create("records/sword.dbr"), "Lilith|custommaps", x: 1);
+		var vault = Vault("Lilith|custommaps", ring, sword);
 
-		var change = this._service.ChangeVaultMod(vault, "shadowchampions");
+		var change = this._service.ChangeVaultMod(vault, Shadow);
 
-		vault.Mod.Should().Be("shadowchampions");
-		change.Changed.Should().Equal(inherited);
-		change.Kept.Should().BeEmpty();
-		(inherited.Mod, inherited.ModOrigin).Should().Be(("shadowchampions", ModOrigin.Inherited));
-		(own.Mod, other.Mod).Should().Be(("Lilith", "Masteries"));
+		vault.Mod.Should().Be(Shadow);
+		change.Changed.Should().Equal(ring, sword);
+		change.NoRoom.Should().BeEmpty();
+		(ring.ContainerMod, sword.ContainerMod).Should().Be((Shadow, Shadow));
 		vault.IsModified.Should().BeTrue();
 	}
 
 	[Fact]
-	public void ChangeVaultMod_AnItemTheModCompletes_StillOnlyInheritsIt()
+	public void ChangeVaultMod_TheModCompletesAnItem_AndUnlinkingMakesItIncompleteAgain()
 	{
-		// Arrange: an incomplete lance in a vault without link; the mod completes it
-		var lance = RecordId.Create("records/customitems/lance.dbr");
-		this.ModHasTheLance(lance);
-		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true };
-		var sack = new SackCollection();
-		var item = Placed(lance.Raw, null, ModOrigin.Inherited);
-		sack.AddItem(item);
-		vault.Sacks = [sack];
+		// Arrange: an incomplete lance in a vault without link; the mod has it
+		this.UseTheMaps();
+		var lance = Placed(Lance, null);
+		var vault = Vault(null, lance);
 
 		// Act: linked to the mod, then unlinked
-		this._service.ChangeVaultMod(vault, "shadowchampions");
-		var linked = (item.Mod, item.ModOrigin, item.IsIncomplete);
+		this._service.ChangeVaultMod(vault, Shadow, (sack, item) => true);
+		var linked = (lance.Mod, lance.IsIncomplete);
 		this._service.ChangeVaultMod(vault, null);
 
-		// Assert: no guess, the item follows the vault both times
-		linked.Should().Be(("shadowchampions", ModOrigin.Inherited, false));
-		(item.Mod, item.ModOrigin, item.IsIncomplete).Should().Be(((string?)null, ModOrigin.Inherited, true));
+		// Assert: its mod is the database its records were read from, each time
+		linked.Should().Be((Shadow, false));
+		(lance.Mod, lance.IsIncomplete).Should().Be(((string?)null, true));
 	}
 
 	[Fact]
-	public void ChangeVaultMod_ItemWithoutRoom_KeepsItsPreviousMapAsItsOwn()
+	public void ChangeVaultMod_ItemWhoseNewSizeHasNoRoom_IsShown1x1_UntilTheLinkGivesItRoomAgain()
 	{
-		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
-		var sack = new SackCollection();
-		var item = Placed("records/b.dbr", "Lilith", ModOrigin.Inherited);
-		sack.AddItem(item);
-		vault.Sacks = [sack];
+		// Arrange: a 2x2 bag; read with the mod, the 1x1 tile of the lance becomes 1x5
+		this.UseTheMaps();
+		var lance = Placed(Lance, null);
+		var vault = Vault(null, lance);
+		var bag = new System.Drawing.Size(2, 2);
 
-		var change = this._service.ChangeVaultMod(vault, "shadowchampions", (_, _) => false);
+		// Act
+		var change = this._service.ChangeVaultMod(vault, Shadow, (sack, item) => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, bag, item));
 
+		// Assert: shown 1x1 where it lies, read with the mod (whole records), its real size kept
+		change.NoRoom.Should().Equal(lance);
 		change.Changed.Should().BeEmpty();
-		change.Kept.Should().Equal(item);
-		(item.Mod, item.ModOrigin).Should().Be(("Lilith", ModOrigin.Own));
-		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
+		(lance.LacksRoom, lance.Width, lance.Height, lance.RealHeight).Should().Be((true, 1, 1, 5));
+		(lance.Mod, lance.IsIncomplete, lance.HasWarning).Should().Be((Shadow, false, true));
+
+		// Unlinked again, it is 1x1 for real (a missing record): no lack of room any more
+		this._service.ChangeVaultMod(vault, null, (sack, item) => TQVaultAE.Domain.Actions.SackLayout.FitsOrMoves(sack, bag, item));
+		(lance.LacksRoom, lance.Height, lance.IsIncomplete).Should().Be((false, 1, true));
 	}
 
 	[Fact]
-	public void SettleIn_OwnMap_GoesWithTheItem()
+	public void SettleIn_ModdedItemMovedToAContainerOfAnotherMap_IsReadAgainWithIt_AndLosesItsMod()
 	{
-		var item = Placed("records/lilith/sword.dbr", "Lilith", ModOrigin.Own, inVault: false);
+		this.UseTheMaps();
+		var lance = Placed(Lance, Shadow);
 
-		this._service.SettleIn(item, inVault: true, "shadowchampions", _ => true).Should().Be(SettleOutcome.Unchanged);
+		this._service.SettleIn(lance, null, _ => true).Should().Be(SettleOutcome.ReadAgain);
+		var unlinked = (lance.ContainerMod, lance.Mod, lance.IsIncomplete);
+		this._service.SettleIn(lance, Shadow, _ => true).Should().Be(SettleOutcome.ReadAgain);
 
-		(item.Mod, item.ModOrigin, item.InVault).Should().Be(("Lilith", ModOrigin.Own, true));
-		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
-	}
-
-	[Theory]
-	[InlineData("shadowchampions")]
-	[InlineData(null)]
-	public void SettleIn_LeavingACharacterForAVault_MakesTheMapItsOwn(string? vaultMod)
-	{
-		var item = Placed("records/item/sword.dbr", "shadowchampions", ModOrigin.Inherited, inVault: false);
-
-		this._service.SettleIn(item, inVault: true, vaultMod, _ => true).Should().Be(SettleOutcome.Unchanged);
-
-		(item.Mod, item.ModOrigin, item.InVault).Should().Be(("shadowchampions", ModOrigin.Own, true));
-		item.IsModified.Should().BeTrue();
-		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
+		unlinked.Should().Be(((string?)null, (string?)null, true));
+		(lance.ContainerMod, lance.Mod, lance.IsIncomplete).Should().Be((Shadow, Shadow, false));
 	}
 
 	[Fact]
-	public void SettleIn_VaultItemMovedToAVaultOfAnotherMod_InheritsItAndIsReadAgain()
+	public void SettleIn_BaseGameItemInALinkedContainer_HasNoMod()
 	{
-		var lance = RecordId.Create("records/customitems/lance.dbr");
-		this.ModHasTheLance(lance);
-		var item = Placed(lance.Raw, null, ModOrigin.Inherited);
+		// Every record of the ring is the base game's: read with the mod's data, it is still no mod's.
+		this.UseTheMaps();
+		var ring = Placed(RecordId.Create("records/ring.dbr"), null);
 
-		this._service.SettleIn(item, inVault: true, "shadowchampions", _ => true).Should().Be(SettleOutcome.ReadAgain);
+		this._service.SettleIn(ring, Shadow, _ => true).Should().Be(SettleOutcome.ReadAgain);
 
-		(item.Mod, item.ModOrigin, item.IsIncomplete).Should().Be(("shadowchampions", ModOrigin.Inherited, false));
-	}
-
-	[Fact]
-	public void SettleIn_VaultItemTakenToACharacter_InheritsTheCharactersMap()
-	{
-		var item = Placed("records/item/ring.dbr", null, ModOrigin.Inherited);
-
-		this._service.SettleIn(item, inVault: false, "shadowchampions", _ => true).Should().Be(SettleOutcome.ReadAgain);
-
-		(item.Mod, item.ModOrigin, item.InVault).Should().Be(("shadowchampions", ModOrigin.Inherited, false));
-		this._itemProvider.Verify(p => p.GetDBData(item), Times.Once);
+		(ring.ContainerMod, ring.Mod).Should().Be((Shadow, (string?)null));
 	}
 
 	[Fact]
 	public void SettleIn_SameMap_IsNotReadAgain()
 	{
-		var item = Placed("records/ring.dbr", "shadowchampions", ModOrigin.Inherited);
+		this.UseTheMaps();
+		var ring = Placed(RecordId.Create("records/ring.dbr"), Shadow);
 
-		this._service.SettleIn(item, inVault: true, "SHADOWCHAMPIONS", _ => true).Should().Be(SettleOutcome.Unchanged);
+		this._service.SettleIn(ring, Shadow.ToUpperInvariant(), _ => true).Should().Be(SettleOutcome.Unchanged);
 
 		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]
-	public void SettleIn_NoRoomOnceReadWithTheNewMap_KeepsThePreviousMapAsItsOwn()
+	public void SettleIn_NoRoomOnceReadWithTheNewMap_IsRefused_AndTheItemGoesBackToItsMap()
 	{
-		var item = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
+		this.UseTheMaps();
+		var lance = Placed(Lance, null);
 
-		this._service.SettleIn(item, inVault: true, "shadowchampions", _ => false).Should().Be(SettleOutcome.KeptOwnMap);
+		this._service.SettleIn(lance, Shadow, _ => false).Should().Be(SettleOutcome.NoRoom);
 
-		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Own));
-		this._itemProvider.Verify(p => p.GetDBData(item), Times.Exactly(2));
+		(lance.ContainerMod, lance.Height, lance.LacksRoom).Should().Be(((string?)null, 1, false));
+		this._itemProvider.Verify(p => p.GetDBData(lance), Times.Exactly(2));
+	}
+
+	[Theory]
+	[InlineData(true, SettleOutcome.ReadAgain, false, 5)]
+	[InlineData(false, SettleOutcome.Unchanged, true, 1)]
+	public void SettleIn_ItemShown1x1_GetsItsRealSizeBackOnlyWhereItFits(bool fits, SettleOutcome expected, bool lacksRoom, int height)
+	{
+		this.UseTheMaps();
+		var lance = Placed(Lance, Shadow);
+		lance.ShowNoRoom();
+		int? checkedHeight = null;
+
+		this._service.SettleIn(lance, Shadow, i => { checkedHeight = i.Height; return fits; }).Should().Be(expected);
+
+		checkedHeight.Should().Be(5, "the room is checked at its real size");
+		(lance.LacksRoom, lance.Height).Should().Be((lacksRoom, height));
+		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]
 	public void HasRoomOnceSettled_TakingANewMap_ChecksAtTheNewSize_AndLeavesTheItemAsItWas()
 	{
 		// Arrange: read with the mod's data, the 1x1 tile becomes a 1x5 lance
-		var item = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
-		item.PositionX = 2;
-		this._itemProvider.Setup(p => p.GetDBData(item)).Callback<Item>(i => i.Height = i.Mod == "shadowchampions" ? 5 : 1);
+		this.UseTheMaps();
+		var lance = Placed(Lance, null, x: 2);
 		int? checkedHeight = null;
 
 		// Act
-		var room = this._service.HasRoomOnceSettled(item, inVault: true, "shadowchampions", i => { checkedHeight = i.Height; return false; });
+		var room = this._service.HasRoomOnceSettled(lance, Shadow, i => { checkedHeight = i.Height; return false; });
 
 		// Assert
 		room.Should().BeFalse();
 		checkedHeight.Should().Be(5);
-		(item.Mod, item.ModOrigin, item.Height, item.PositionX, item.IsModified).Should().Be(((string?)null, ModOrigin.Inherited, 1, 2, false));
+		(lance.ContainerMod, lance.Height, lance.PositionX, lance.IsIncomplete).Should().Be(((string?)null, 1, 2, true));
 	}
 
 	[Fact]
-	public void HasRoomOnceSettled_RoomAtTheNewSize_IsTrue()
+	public void HasRoomOnceSettled_SameMap_IsNotChecked()
 	{
-		var item = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
+		this.UseTheMaps();
+		var lance = Placed(Lance, Shadow);
 
-		this._service.HasRoomOnceSettled(item, inVault: false, "shadowchampions", _ => true).Should().BeTrue();
-
-		(item.Mod, item.ModOrigin).Should().Be(((string?)null, ModOrigin.Inherited));
-	}
-
-	[Theory]
-	[InlineData("Lilith", ModOrigin.Own, true, true, "shadowchampions")]
-	[InlineData("shadowchampions", ModOrigin.Inherited, false, true, null)]
-	[InlineData("shadowchampions", ModOrigin.Inherited, false, false, "ShadowChampions")]
-	public void HasRoomOnceSettled_ItemKeepingItsData_IsNotChecked(string mod, ModOrigin origin, bool itemInVault, bool toVault, string? containerMod)
-	{
-		// An own map, an item leaving a character for a vault, the same map: the item keeps its data and size.
-		var item = Placed("records/item/sword.dbr", mod, origin, itemInVault);
-
-		this._service.HasRoomOnceSettled(item, toVault, containerMod, _ => false).Should().BeTrue();
+		this._service.HasRoomOnceSettled(lance, Shadow, _ => false).Should().BeTrue();
 
 		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]
-	public void SettleIn_ItemWithoutAMapYet_InheritsTheContainersAndIsRead()
+	public void SettleIn_ItemWithoutAMapYet_TakesTheContainersAndIsRead()
 	{
-		// An imported item without "mod": read with the data in use, it now takes its vault's map.
+		// An imported item: read with the data in use, it now takes its vault's map.
+		this.UseTheMaps();
 		var item = new Item { BaseItemId = RecordId.Create("records/ring.dbr") };
 
-		this._service.SettleIn(item, inVault: true, containerMod: null, _ => true).Should().Be(SettleOutcome.ReadAgain);
+		this._service.SettleIn(item, containerMod: null, _ => true).Should().Be(SettleOutcome.ReadAgain);
 
-		(item.Mod, item.ModOrigin, item.InVault).Should().Be(((string?)null, ModOrigin.Inherited, true));
+		(item.HasContainerMod, item.ContainerMod).Should().Be((true, (string?)null));
 	}
 
 	[Fact]
 	public void SettleAll_ReturnsTheItemsReadAgain_AndMovesThoseThatNoLongerFit()
 	{
-		// Arrange: a 2x2 bag; the new item lies in the corner, read again it takes 1x2 and moves up
+		// Arrange: a 2x5 bag; the lance arrives in the bottom corner, read with the mod it takes 1x5 and moves up
+		this.UseTheMaps();
+		var staying = Placed(RecordId.Create("records/ring.dbr"), Shadow);
+		var arriving = Placed(Lance, null, x: 1, y: 4);
 		var sack = new SackCollection();
-		var staying = Placed("records/ring.dbr", null, ModOrigin.Inherited);
-		var arriving = new Item { BaseItemId = RecordId.Create("records/customitems/lance.dbr"), PositionX = 1, PositionY = 1, Width = 1, Height = 1 };
 		sack.AddItem(staying);
 		sack.AddItem(arriving);
-		this._itemProvider.Setup(p => p.GetDBData(arriving)).Callback<Item>(i => i.Height = 2);
 
 		// Act
-		var result = this._service.SettleAll(sack, new System.Drawing.Size(2, 2), [staying, arriving], inVault: true, containerMod: null);
+		var result = this._service.SettleAll(sack, new System.Drawing.Size(2, 5), [staying, arriving], Shadow);
 
 		// Assert
 		result.ReadAgain.Should().Equal(arriving);
-		result.Kept.Should().BeEmpty();
-		(arriving.PositionX, arriving.PositionY).Should().Be((1, 0));
+		result.NoRoom.Should().BeEmpty();
+		(arriving.PositionX, arriving.PositionY, arriving.Height).Should().Be((1, 0, 5));
 	}
 
 	[Theory]
-	[InlineData(true, SettleOutcome.ReadAgain)]
-	[InlineData(false, SettleOutcome.KeptOwnMap)]
-	public void SettleAll_NoRoomInTheBag_TriesAnotherBag_ElseKeepsTheMap(bool anotherBagHasRoom, SettleOutcome expected)
+	[InlineData(true)]
+	[InlineData(false)]
+	public void SettleAll_NoRoomInTheBag_TriesAnotherBag_ElseShowsTheItem1x1(bool anotherBagHasRoom)
 	{
-		// Arrange: a 1x1 bag; read with the vault's map the item takes 1x2
+		// Arrange: a 1x1 bag; read with the vault's map the lance takes 1x5
+		this.UseTheMaps();
+		var arriving = Placed(Lance, null);
 		var sack = new SackCollection();
-		var arriving = Placed("records/customitems/lance.dbr", null, ModOrigin.Inherited);
 		sack.AddItem(arriving);
-		this._itemProvider.Setup(p => p.GetDBData(arriving)).Callback<Item>(i => i.Height = i.Mod is null ? 1 : 2);
 
 		// Act
-		var result = this._service.SettleAll(sack, new System.Drawing.Size(1, 1), [arriving], inVault: true, "shadowchampions"
-			, (_, _) => anotherBagHasRoom);
+		var result = this._service.SettleAll(sack, new System.Drawing.Size(1, 1), [arriving], Shadow, (_, _) => anotherBagHasRoom);
 
-		// Assert
-		(expected == SettleOutcome.ReadAgain ? result.ReadAgain : result.Kept).Should().Equal(arriving);
-		arriving.Mod.Should().Be(expected == SettleOutcome.ReadAgain ? "shadowchampions" : null);
+		// Assert: read with the vault's map either way
+		(anotherBagHasRoom ? result.ReadAgain : result.NoRoom).Should().Equal(arriving);
+		(arriving.Mod, arriving.LacksRoom).Should().Be((Shadow, !anotherBagHasRoom));
 	}
 }

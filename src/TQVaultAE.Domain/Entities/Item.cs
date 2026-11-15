@@ -252,37 +252,76 @@ public class Item
 	public Info? RelicBonus2Info { get; set; }
 
 	/// <summary>
-	/// The item's map: the mod whose data its records resolve in (the mod's folder name, as in a character's link file),
-	/// mod data first and then the base game's; null for the base game. A mod that is not installed is kept and the item
-	/// is read with the base game data. Where it comes from is <see cref="ModOrigin"/>. Kept by copies.
+	/// The mod the item comes from, computed from the records it was read with (<see cref="Info.Source"/>): the mod whose
+	/// database gave at least one of its records (base item, affixes, relics and their bonuses), a record of its own or
+	/// one it overrides; null when they all come from the game. Never saved: read again with another map (its container
+	/// changed, or its container's link), the item may lose it or take another.
 	/// </summary>
-	public string? Mod { get; set; }
+	public string? Mod
+		=> this.RecordInfos().FirstOrDefault(info => info.Source.IsMod)?.Source.Mod;
 
-	/// <summary>
-	/// Where <see cref="Mod"/> comes from: the item's own (saved in the vault files), or the container holding it.
-	/// <see cref="ModOrigin.None"/> only before a container gave it one: a placeholder, or an item being read.
-	/// </summary>
-	public ModOrigin ModOrigin { get; set; }
-
-	/// <summary>True when the item's map is its own: <c>"mod"</c> or <c>"noMod"</c> in the vault file.</summary>
-	public bool HasOwnMod => this.ModOrigin == ModOrigin.Own;
-
-	/// <summary>Gives the item the map of the container holding it, when it has none yet.</summary>
-	/// <param name="containerMod">The container's mod; null for the base game.</param>
-	public void InheritMod(string? containerMod)
+	/// <summary>The records the item was read with, those found.</summary>
+	private IEnumerable<Info> RecordInfos()
 	{
-		if (this.ModOrigin != ModOrigin.None)
-			return;
-
-		this.Mod = string.IsNullOrWhiteSpace(containerMod) ? null : containerMod;
-		this.ModOrigin = ModOrigin.Inherited;
+		foreach (var info in new[] { this.baseItemInfo, this.prefixInfo, this.suffixInfo, this.RelicInfo, this.RelicBonusInfo, this.Relic2Info, this.RelicBonus2Info })
+		{
+			if (info is not null)
+				yield return info;
+		}
 	}
 
 	/// <summary>
-	/// True while a vault holds the item, false on a character or in a game stash: leaving a character for a vault makes
-	/// an inherited map the item's own. Kept by copies; set when the item is put in a vault or taken to a character.
+	/// The map the item's records are read with: its container's (a character's link, a vault's link, the map of a
+	/// shared stash), as a mod identity; null for the base game. Volatile: set when the item is put in a container
+	/// (<see cref="SetContainerMod"/>), never saved. Kept by copies until they are placed.
 	/// </summary>
-	public bool InVault { get; set; }
+	public string? ContainerMod { get; private set; }
+
+	/// <summary>
+	/// True once a container gave the item its map (<see cref="ContainerMod"/>): before, a placeholder or an item being
+	/// read uses the data in use at that moment.
+	/// </summary>
+	public bool HasContainerMod { get; private set; }
+
+	/// <summary>Gives the item the map of the container holding it.</summary>
+	/// <param name="containerMod">The container's mod; null or blank for the base game.</param>
+	/// <returns>True when the item's map changed: its records must be read again.</returns>
+	public bool SetContainerMod(string? containerMod)
+	{
+		string? mod = string.IsNullOrWhiteSpace(containerMod) ? null : containerMod;
+		bool changed = !this.HasContainerMod || !string.Equals(this.ContainerMod, mod, StringComparison.OrdinalIgnoreCase);
+		this.ContainerMod = mod;
+		this.HasContainerMod = true;
+		return changed;
+	}
+
+	/// <summary>Takes the item's map away: it is read with the data in use at that moment, as before it was placed.</summary>
+	public void ClearContainerMod()
+	{
+		this.ContainerMod = null;
+		this.HasContainerMod = false;
+	}
+
+	/// <summary>
+	/// True while the item is shown 1 x 1 because its real size has no room where it lies: its container's link changed
+	/// and, read again, it took a size its bag cannot hold there. <see cref="Width"/> and <see cref="Height"/> then give
+	/// one cell (<see cref="RealWidth"/> and <see cref="RealHeight"/> keep the real one), so that layout, drawing (a
+	/// warning tile) and search see it as it lies. Never saved. Cleared (<see cref="ClearNoRoom"/>) once the item is put
+	/// where its real size fits: moved or dropped there, or its container's link changed again.
+	/// </summary>
+	public bool LacksRoom { get; private set; }
+
+	/// <summary>Shows the item 1 x 1: its real size has no room where it lies (<see cref="LacksRoom"/>).</summary>
+	public void ShowNoRoom() => this.LacksRoom = true;
+
+	/// <summary>Gives the item back its real size (<see cref="LacksRoom"/>).</summary>
+	public void ClearNoRoom() => this.LacksRoom = false;
+
+	/// <summary>
+	/// True when the item shows the warning of an item that cannot be shown whole: records missing
+	/// (<see cref="IsIncomplete"/>), or no room for its real size (<see cref="LacksRoom"/>).
+	/// </summary>
+	public bool HasWarning => this.LacksRoom || this.IsIncomplete;
 
 	/// <summary>
 	/// The records the item names that the loaded game data does not have (once read with <c>GetDBData</c>): typically
@@ -323,12 +362,30 @@ public class Item
 	/// <summary>
 	/// Gets the item's width in cells
 	/// </summary>
-	public int Width { get; set; }
+	public int Width
+	{
+		get => this.LacksRoom ? 1 : this.RealWidth;
+		set => this.RealWidth = value;
+	}
+
+	/// <summary>
+	/// The item's width in cells, read from its picture, even while it is shown 1 x 1 (<see cref="LacksRoom"/>).
+	/// </summary>
+	public int RealWidth { get; private set; }
 
 	/// <summary>
 	/// Gets the item's height in cells.
 	/// </summary>
-	public int Height { get; set; }
+	public int Height
+	{
+		get => this.LacksRoom ? 1 : this.RealHeight;
+		set => this.RealHeight = value;
+	}
+
+	/// <summary>
+	/// The item's height in cells, read from its picture, even while it is shown 1 x 1 (<see cref="LacksRoom"/>).
+	/// </summary>
+	public int RealHeight { get; private set; }
 
 	/// <summary>
 	/// Gets the item's size in cells.
@@ -1020,11 +1077,17 @@ public class Item
 			Var2 = var2Default,
 			PositionX = -1,
 			PositionY = -1,
-			// A new item made from this one (a relic taken out, an artifact, a set member) has its map.
-			Mod = this.Mod,
-			ModOrigin = this.ModOrigin,
-			InVault = this.InVault,
-		};
+		}.WithContainerModOf(this);
+
+	/// <summary>
+	/// A new item made from this one (a relic taken out, an artifact, a set member) is read with its map.
+	/// </summary>
+	private Item WithContainerModOf(Item source)
+	{
+		this.ContainerMod = source.ContainerMod;
+		this.HasContainerMod = source.HasContainerMod;
+		return this;
+	}
 
 	/// <summary>
 	/// Makes a new item based on the passed item id string

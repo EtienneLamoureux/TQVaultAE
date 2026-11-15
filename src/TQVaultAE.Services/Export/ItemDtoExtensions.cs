@@ -6,12 +6,10 @@ namespace TQVaultAE.Services.Export;
 public static class ItemDtoExtensions
 {
 	/// <summary>
-	/// The export of an item.
+	/// The export of an item. Its mod is not written: an item takes the map of the container it is put in.
 	/// </summary>
 	/// <param name="item">The item.</param>
-	/// <param name="ownMapOnly">True in a vault or tab export, which writes the container's mod once: an item writes only
-	/// its own map. False in an item export: each item writes the map it is read with, made explicit.</param>
-	public static ItemDto FromItem(Item item, bool ownMapOnly = false)
+	public static ItemDto FromItem(Item item)
 		=> new()
 		{
 			stackSize = item.StackSize,
@@ -27,19 +25,10 @@ public static class ItemDtoExtensions
 			var2 = item.Var2,
 			pointX = item.PositionX,
 			pointY = item.PositionY,
-			width = item.Width,
-			height = item.Height,
-			mod = ownMapOnly && !item.HasOwnMod ? null : ModIdentity.NameOf(item.Mod),
-			modSource = ownMapOnly && !item.HasOwnMod ? null : ModIdentity.SourceOf(item.Mod),
-			noMod = (!ownMapOnly || item.HasOwnMod) && item.Mod is null ? true : null,
+			// Its real size, even while it is shown 1 x 1 for want of room.
+			width = item.RealWidth,
+			height = item.RealHeight,
 		};
-
-	/// <summary>
-	/// True when the export gave the item an own mod that the import dropped (not installed): the item then takes its
-	/// target container's map, not the map its export's container had.
-	/// </summary>
-	public static bool IsDroppedOwnMod(this ItemDto dto, Item item)
-		=> !string.IsNullOrWhiteSpace(dto.mod) && dto.noMod != true && item.ModOrigin == ModOrigin.None;
 
 	public static Item ToItem(this ItemDto dto)
 	{
@@ -57,9 +46,6 @@ public static class ItemDtoExtensions
 			PositionY = dto.pointY,
 			Width = dto.width,
 			Height = dto.height,
-			// "mod" or "noMod" is the item's own map; without them it takes its container's when placed.
-			Mod = dto.noMod == true ? null : ModIdentity.Compose(dto.mod, dto.modSource),
-			ModOrigin = dto.noMod == true || !string.IsNullOrWhiteSpace(dto.mod) ? ModOrigin.Own : ModOrigin.None,
 			endBlockCrap2 = 0,
 			endBlockCrap1 = 0
 		};

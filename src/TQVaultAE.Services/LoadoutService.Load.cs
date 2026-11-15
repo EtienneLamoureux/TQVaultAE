@@ -143,7 +143,6 @@ public partial class LoadoutService
 		copy.beginBlockCrap2 = replaced.beginBlockCrap2;
 		copy.endBlockCrap1 = replaced.endBlockCrap1;
 		copy.endBlockCrap2 = replaced.endBlockCrap2;
-		copy.InVault = false;
 		copy.Place = new ContainerPlace();
 		return copy;
 	}

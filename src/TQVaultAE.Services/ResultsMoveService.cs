@@ -41,13 +41,13 @@ public class ResultsMoveService(
 	/// <inheritdoc/>
 	public ResultsMoveTarget? StashTarget(Stash? stash, StashType stashType)
 		=> stash?.Sack is { } sack
-			? new(sack, new Size(stash.Width, stash.Height), this._itemMovementService.PlaceIn(stash, stashType), false, this._gameMapService.ActiveCharacterMod)
+			? new(sack, new Size(stash.Width, stash.Height), this._itemMovementService.PlaceIn(stash, stashType), this._gameMapService.ActiveCharacterMod)
 			: null;
 
 	/// <inheritdoc/>
 	public ResultsMoveTarget? VaultTarget(PlayerCollection vault, int bag, Size bagSize)
 		=> vault.GetSack(bag) is { } sack
-			? new(sack, bagSize, this._itemMovementService.PlaceIn(vault, SackType.Vault, bag), true, vault.Mod)
+			? new(sack, bagSize, this._itemMovementService.PlaceIn(vault, SackType.Vault, bag), vault.Mod)
 			: null;
 
 	/// <inheritdoc/>
@@ -114,12 +114,12 @@ public class ResultsMoveService(
 		}
 
 		// Like items put there by Move To: they take the map of their new place.
-		var settled = this._itemEditService.SettleAll(target.Sack, target.SackSize, moved, target.InVault, target.ContainerMod);
+		var settled = this._itemEditService.SettleAll(target.Sack, target.SackSize, moved, target.ContainerMod);
 
 		this._log.LogInformation("Results move: {Moved} item(s) to {Name} sack {SackNumber}, {Skipped} skipped",
 			moved.Count, target.Place.Name, target.Place.SackNumber, skipped.Count);
 
-		return new(moved, skipped, settled.ReadAgain, settled.Kept, Wearers(origins), loadoutsChanged
+		return new(moved, skipped, settled.ReadAgain, settled.NoRoom, Wearers(origins), loadoutsChanged
 			, origins.Count == 0 ? null : new ResultsMoveBatch(target, origins))
 		{
 			ChangedSacks = [.. changedSacks.Distinct()],
@@ -243,9 +243,9 @@ public class ResultsMoveService(
 			Wearer = worn ? this.Container(this._session.Players, place.Path) : null,
 			Cell = item.Location,
 			Place = Snapshot(place),
-			Mod = item.Mod,
-			ModOrigin = item.ModOrigin,
-			InVault = item.InVault,
+			ContainerMod = item.ContainerMod,
+			HasContainerMod = item.HasContainerMod,
+			LacksRoom = item.LacksRoom,
 		}, default);
 	}
 
@@ -272,9 +272,9 @@ public class ResultsMoveService(
 				LoadoutSlot = new LoadoutPieceSlot(loadout.Name, slot),
 				Cell = item.Location,
 				Place = Snapshot(item.Place),
-				Mod = item.Mod,
-				ModOrigin = item.ModOrigin,
-				InVault = item.InVault,
+				ContainerMod = item.ContainerMod,
+				HasContainerMod = item.HasContainerMod,
+				LacksRoom = item.LacksRoom,
 			}, default);
 		}
 
@@ -332,16 +332,24 @@ public class ResultsMoveService(
 		return this.RestoreMap(origin);
 	}
 
-	/// <summary>Gives an item back the map it was read with; returns whether it was read again.</summary>
+	/// <summary>Gives an item back the map it was read with, and its size; returns whether it was read again.</summary>
 	private bool RestoreMap(ResultsMoveOrigin origin)
 	{
 		var item = origin.Item;
-		item.InVault = origin.InVault;
-		if (item.ModOrigin == origin.ModOrigin && string.Equals(item.Mod, origin.Mod, StringComparison.OrdinalIgnoreCase))
-			return false;
+		bool resized = item.LacksRoom != origin.LacksRoom;
+		if (origin.LacksRoom)
+			item.ShowNoRoom();
+		else
+			item.ClearNoRoom();
 
-		(item.Mod, item.ModOrigin) = (origin.Mod, origin.ModOrigin);
-		item.IsModified = true;
+		if (item.HasContainerMod == origin.HasContainerMod && string.Equals(item.ContainerMod, origin.ContainerMod, StringComparison.OrdinalIgnoreCase))
+			return resized;
+
+		if (origin.HasContainerMod)
+			item.SetContainerMod(origin.ContainerMod);
+		else
+			item.ClearContainerMod();
+
 		this._itemProvider.GetDBData(item);
 		return true;
 	}

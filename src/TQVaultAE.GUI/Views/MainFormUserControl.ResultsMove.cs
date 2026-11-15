@@ -72,7 +72,7 @@ public partial class MainFormUserControl
 	/// </summary>
 	internal void ResultsMoved(ResultsMoveOutcome outcome)
 	{
-		Item[] readAgain = [.. outcome.ReadAgain, .. outcome.KeptMap];
+		Item[] readAgain = [.. outcome.ReadAgain, .. outcome.NoRoom];
 		if (readAgain.Length > 0)
 		{
 			ItemCaches.Invalidate(readAgain, this.Services.ItemText);
@@ -80,7 +80,7 @@ public partial class MainFormUserControl
 		}
 
 		BagButtonTooltip.InvalidateCache([.. outcome.ChangedSacks]);
-		this.vaultPanel.SackPanel.NotifyKeptMap(outcome.KeptMap);
+		this.vaultPanel.SackPanel.NotifyNoRoom(outcome.NoRoom);
 
 		var shown = this.stashPanel.Player;
 		if (shown is not null && outcome.Wearers.Contains(shown))

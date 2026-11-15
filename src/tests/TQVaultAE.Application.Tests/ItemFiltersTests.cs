@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using TQVaultAE.Application.Search;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Application;
 
@@ -64,16 +65,16 @@ public class ItemFiltersTests
 		var modded = new ItemFlagFilter(false, false, false, false, false, false, Modded: true);
 
 		modded.IsEmpty.Should().BeFalse();
-		modded.Matches(new Item { Mod = "Mod|custommaps" }, null, _ => false).Should().BeTrue();
-		modded.Matches(new Item { Mod = "Gone" }, null, _ => false).Should().BeTrue("a mod not installed is still a mod");
+		modded.Matches(new Item().ReadFrom("Mod|custommaps"), null, _ => false).Should().BeTrue();
+		modded.Matches(new Item().ReadFrom("Gone"), null, _ => false).Should().BeTrue("a mod not installed is still a mod");
 		modded.Matches(new Item(), null, _ => false).Should().BeFalse("a base game item has no mod");
-		modded.Matches(new Item { Mod = "  " }, null, _ => false).Should().BeFalse();
+		modded.Matches(new Item().ReadFrom(null), null, _ => false).Should().BeFalse("its records come from the base game");
 	}
 
 	[Fact]
 	public void ItemMods_IsFrom_ComparesTheModIdentityIgnoringCase_AndNoModMatchesNothing()
 	{
-		var item = new Item { Mod = "ShadowChampions|workshop:1" };
+		var item = new Item().ReadFrom("ShadowChampions|workshop:1");
 
 		ItemMods.IsFrom(item, "shadowchampions|WORKSHOP:1").Should().BeTrue();
 		ItemMods.IsFrom(item, "shadowchampions|custommaps").Should().BeFalse("the same name from another source is another mod");
@@ -84,8 +85,8 @@ public class ItemFiltersTests
 	[Fact]
 	public void ItemMods_IsFromAny_IsAnOrInsideTheSection_AndAnEmptySectionKeepsEverything()
 	{
-		var a = new Item { Mod = "A|custommaps" };
-		var b = new Item { Mod = "B|custommaps" };
+		var a = new Item().ReadFrom("A|custommaps");
+		var b = new Item().ReadFrom("B|custommaps");
 		var none = new Item();
 		string[] onlyA = ["A|custommaps"];
 		string[] both = ["A|custommaps", "B|custommaps"];
