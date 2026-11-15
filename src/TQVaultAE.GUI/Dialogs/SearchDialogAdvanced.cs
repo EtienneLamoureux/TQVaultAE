@@ -471,11 +471,12 @@ public partial class SearchDialogAdvanced : VaultForm
 
 	/// <summary>
 	/// On a monitor of another DPI the fonts change: the category lists, sized from their text in code, are sized again.
+	/// Called inside the rescale, the dialog's drawing frozen; during a drag by the title bar, once the drag ends.
 	/// </summary>
-	protected override void OnDpiChanged(DpiChangedEventArgs e)
+	protected override void FollowDpi()
 	{
-		base.OnDpiChanged(e);
 		this.FitCategoriesToFont();
+		this.RescalePhase("category lists");
 	}
 
 	/// <summary>
@@ -488,13 +489,29 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.FitCategoriesToFont();
 	}
 
-	/// <summary>Sizes the category lists again from their text, after a font change.</summary>
+	/// <summary>
+	/// Sizes the category lists again from their text, after a font change: their panels laid out once for all the lists,
+	/// not once per list, then the dialog grown if they overflow by a few pixels.
+	/// </summary>
 	private void FitCategoriesToFont()
 	{
-		this.AdjustCheckBoxesWidth();
-		this.AdjustCheckBoxesHeight();
+		using (new LayoutBatch(this.flowLayoutPanelMainAutoScroll, this.CategoryContainers()))
+		{
+			this.AdjustCheckBoxesWidth();
+			this.AdjustCheckBoxesHeight();
+		}
+
 		this.FitCategoriesHeight();
 	}
+
+	/// <summary>The panels that hold the category lists, outermost first, for a <see cref="LayoutBatch"/>.</summary>
+	private Control[] CategoryContainers()
+		=> this.CachedCheckedListBoxes
+			.Select(lb => lb.Parent)
+			.OfType<Control>()
+			.Distinct()
+			.Prepend(this.flowLayoutPanelMain)
+			.ToArray();
 
 	/// <summary>
 	/// Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>). It is kept between
@@ -574,14 +591,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	/// </summary>
 	private void ShowCategoryLists(Func<VirtualCheckedListBox, bool> visible)
 	{
-		var containers = this.CachedCheckedListBoxes
-			.Select(lb => lb.Parent)
-			.OfType<Control>()
-			.Distinct()
-			.Prepend(this.flowLayoutPanelMain)
-			.ToArray();
-
-		using (new LayoutBatch(this.flowLayoutPanelMainAutoScroll, containers))
+		using (new LayoutBatch(this.flowLayoutPanelMainAutoScroll, this.CategoryContainers()))
 		{
 			foreach (var lb in this.CachedCheckedListBoxes)
 				lb.Visible = visible(lb);

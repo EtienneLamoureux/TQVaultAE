@@ -163,27 +163,27 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	}
 
 	/// <summary>
-	/// The dialog moved to a monitor of another DPI: Windows Forms scaled the toolbar and the button; the columns are made
-	/// again at the new scale and the dialog fits them where it is.
+	/// The dialog moved to a monitor of another DPI and Windows Forms scaled the toolbar and the button: the columns are
+	/// made again at the new scale and the dialog fits them where it is. Called inside the rescale, its drawing frozen,
+	/// so the dialog is drawn once, with its new columns; during a drag by the title bar, once the drag ends.
 	/// </summary>
-	protected override void OnDpiChanged(DpiChangedEventArgs e)
+	protected override void FollowDpi()
 	{
-		base.OnDpiChanged(e);
-		if (e.Cancel || this.Content is null)
+		if (this.Content is null)
 			return;
 
 		this.SetPadding();
+		this.Rebuild();
+		this.RescalePhase("columns");
+	}
 
-		this.BeginInvoke(() =>
-		{
-			if (this.IsDisposed)
-				return;
-
-			var scroll = this._scroll.AutoScrollPosition;
-			this.Fill();
-			this.FitToContent(keepLocation: true);
-			this._scroll.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
-		});
+	/// <summary>Makes the columns again and fits the dialog to them where it is, its scroll position kept.</summary>
+	private void Rebuild()
+	{
+		var scroll = this._scroll.AutoScrollPosition;
+		this.Fill();
+		this.FitToContent(keepLocation: true);
+		this._scroll.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
 	}
 
 	protected override void OnLoad(EventArgs e)
@@ -243,10 +243,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			this._toggled.Add(key);
 
 		// The rows under the click stay where they are: same scroll, the window grows from its top.
-		var scroll = this._scroll.AutoScrollPosition;
-		this.Fill();
-		this.FitToContent(keepLocation: true);
-		this._scroll.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
+		this.Rebuild();
 	}
 
 	/// <summary>Compares <see cref="First"/> and <see cref="Second"/> and lays out the four columns.</summary>
