@@ -26,6 +26,7 @@ internal sealed class ModLinkDialog : VaultForm
 	private readonly IMessageBoxService MessageBoxes;
 
 	private readonly ScalingLabel labelCharacter;
+	private readonly ScalingLabel labelCharacterName;
 	private readonly ScalingLabel labelState;
 	private readonly ScalingLabel labelMods;
 	private readonly ListBox listBoxMods;
@@ -77,8 +78,22 @@ internal sealed class ModLinkDialog : VaultForm
 			Margin = new Padding(0, 0, 0, Zoomed(6)),
 		};
 
+		// The first line: its caption in gold like the other texts, the character's name after it in white.
 		this.labelCharacter = NewLabel(nameof(this.labelCharacter));
 		this.labelCharacter.Font = this.FontService.GetFontLight(13F, FontStyle.Bold, zoom);
+		this.labelCharacter.Margin = Padding.Empty;
+		this.labelCharacterName = NewLabel(nameof(this.labelCharacterName));
+		this.labelCharacterName.Font = this.labelCharacter.Font;
+		this.labelCharacterName.Margin = Padding.Empty;
+		var characterLine = new FlowLayoutPanel()
+		{
+			AutoSize = true,
+			AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			FlowDirection = FlowDirection.LeftToRight,
+			Margin = new Padding(0, 0, 0, Zoomed(6)),
+			WrapContents = false,
+		};
+		characterLine.Controls.AddRange([this.labelCharacter, this.labelCharacterName]);
 		this.labelState = NewLabel(nameof(this.labelState));
 		this.labelMods = NewLabel(nameof(this.labelMods));
 		this.labelMods.Text = Resources.ModLinkInstalledMods;
@@ -140,7 +155,7 @@ internal sealed class ModLinkDialog : VaultForm
 			ColumnCount = 1,
 			Margin = new Padding(0),
 		};
-		layout.Controls.AddRange([this.labelCharacter, this.labelState, this.labelMods, this.listBoxMods, this.labelFolder, this.labelSuggestion, buttons]);
+		layout.Controls.AddRange([characterLine, this.labelState, this.labelMods, this.listBoxMods, this.labelFolder, this.labelSuggestion, buttons]);
 		CaravanFrame.FrameAround(this.listBoxMods);
 
 		this.SuspendLayout();
@@ -155,7 +170,13 @@ internal sealed class ModLinkDialog : VaultForm
 		this.Controls.Add(layout);
 		this.labelFolder.Height = this.labelFolder.Font.Height;
 		this.DrawCustomBorder = true;
-		CaravanLook.Apply(this, layout, buttons);
+		CaravanLook.Apply(this, layout, buttons, characterLine);
+		// The texts over the marble in gold, outlined like the group titles over the frames; the name stays white, the
+		// mod list and its folder line keep their colours.
+		foreach (var label in new[] { this.labelCharacter, this.labelState, this.labelMods, this.labelSuggestion })
+			label.ForeColor = Color.Gold;
+		this.labelCharacterName.ForeColor = Color.White;
+		CaravanLook.OutlineText(this);
 		this.ResumeLayout(false);
 		this.PerformLayout();
 
@@ -175,7 +196,11 @@ internal sealed class ModLinkDialog : VaultForm
 	private void ShowCharacter()
 	{
 		var save = this._save!;
-		this.labelCharacter.Text = string.Format(CultureInfo.CurrentCulture, Resources.ModLinkCharacter, save.Name);
+		// "Character: {0}": the text before the name in the gold caption, the name and what follows it in white.
+		string format = Resources.ModLinkCharacter;
+		int at = format.IndexOf("{0}", StringComparison.Ordinal);
+		this.labelCharacter.Text = at < 0 ? format : format[..at];
+		this.labelCharacterName.Text = at < 0 ? save.Name : save.Name + format[(at + 3)..];
 
 		var mods = this.ModLinkService.GetInstalledMods(refresh: true);
 		this.listBoxMods.BeginUpdate();
