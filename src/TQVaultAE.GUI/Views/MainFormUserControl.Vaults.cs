@@ -3,6 +3,7 @@ using System.Globalization;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Session;
+using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Infrastructure;
@@ -29,12 +30,13 @@ public partial class MainFormUserControl
 		=> this.vaultListComboBox.SelectedItem is not null ? this.vaultListComboBox.SelectedItemText() : null;
 
 	/// <summary>
-	/// The mod a vault is linked to, once the vault is loaded; null otherwise.
+	/// The name of the mod a vault is linked to (not where it is installed from), once the vault is loaded; null
+	/// otherwise.
 	/// </summary>
 	private string? LoadedVaultMod(string vaultName)
 		=> this.Services.Session.Vaults.TryGetValue(this.Services.GamePathService.GetVaultFile(vaultName), out var vault)
 			&& vault.IsValueCreated
-				? vault.Value?.Mod
+				? ModIdentity.NameOf(vault.Value?.Mod)
 				: null;
 
 	/// <summary>
