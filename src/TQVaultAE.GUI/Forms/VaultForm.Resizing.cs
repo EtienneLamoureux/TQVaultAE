@@ -87,6 +87,42 @@ public partial class VaultForm
 	}
 
 	/// <summary>
+	/// Whether the open dialog follows the user's zoom when it changes (<see cref="FollowUserZoom"/>), called by the main
+	/// window after each zoom on the dialogs it owns. Off for the dialogs that keep the zoom they opened at.
+	/// </summary>
+	protected internal virtual bool FollowsUserZoomChanges => false;
+
+	/// <summary>
+	/// The user's zoom changed while the dialog is open: scales it from <see cref="ScaledZoom"/> to the new zoom, as a zoom
+	/// of the main window scales it (bounds, and the fonts of the scaling controls and of the title), in one rescale, then
+	/// <see cref="OnUserZoomFollowed"/> lets the dialog lay out again what it makes in code. Nothing at the same zoom.
+	/// </summary>
+	public void FollowUserZoom()
+	{
+		float zoom = this.UIService.Zoom;
+		if (zoom == this.ScaledZoom || this.IsDisposed)
+			return;
+
+		float factor = zoom / this.ScaledZoom;
+		using (this.BeginRescale($"user zoom {this.ScaledZoom} -> {zoom}"))
+		{
+			using (ZoomScope.Enter())
+				this.Scale(new SizeF(factor, factor));
+			this.ScaledZoom = zoom;
+			this.RescalePhase("scale");
+			this.OnUserZoomFollowed();
+		}
+	}
+
+	/// <summary>
+	/// The open dialog was scaled to the user's new zoom (<see cref="FollowUserZoom"/>), its drawing frozen: it lays out
+	/// again at <see cref="ScaledZoom"/> what it makes in code.
+	/// </summary>
+	protected virtual void OnUserZoomFollowed()
+	{
+	}
+
+	/// <summary>
 	/// The user's zoom a dialog laid out in code builds its controls at (fonts, sizes, gaps); recorded as the dialog's
 	/// <see cref="ScaledZoom"/>, as if <see cref="ApplyUserZoom"/> had scaled it.
 	/// </summary>

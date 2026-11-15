@@ -30,6 +30,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	private readonly Panel _scroll;
 	private readonly TableLayoutPanel _table;
 	private readonly Panel _buttons;
+	private readonly ScalingButton _ok;
 	private readonly FlowLayoutPanel _toolbar;
 	private readonly ScalingCheckBox _alignRows;
 	private readonly ScalingCheckBox _hideUnchanged;
@@ -56,8 +57,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this._builder = new ItemComparisonContentBuilder(this.Services.TranslationService);
 		this.Owner = instance;
 
-		// The user's zoom when the window opens, kept while it is open: its toolbar and its columns, made again at each
-		// change, stay at one zoom while the main window zooms (several comparisons may stay open beside it).
+		// The user's zoom when the window opens; it follows the zoom of the main window while open (FollowUserZoom).
 		this.UserZoomForLayout();
 
 		// The DPI of the dialog's monitor: the toolbar and the button are made at the dialog's DPI before it has a
@@ -67,8 +67,6 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		CaravanDialog.SetUpWindow(this, nameof(ItemComparisonDialog));
 		this.Text = Resources.ItemComparisonText;
 
-		float scale = this.ContentScale;
-		int gap = (int)Math.Round(4 * scale);
 		this.SetPadding();
 
 		this._table = new TableLayoutPanel()
@@ -102,22 +100,17 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		// OK closes, as Escape and the close button of the border do; at the bottom right, as in Item
 		// Properties.
 		// Placed by hand in its panel, at the dialog's DPI like the columns: wider than the other dialogs' buttons.
-		var ok = CaravanDialog.Button(this.FontService, this.ScaledZoom, "okButton", Resources.GlobalOK);
+		var ok = this._ok = CaravanDialog.Button(this.FontService, this.ScaledZoom, "okButton", Resources.GlobalOK);
 		ok.Anchor = AnchorStyles.None;
 		ok.DialogResult = DialogResult.OK;
-		ok.Size = new Size((int)(137 * scale), (int)(30 * scale));
 		ok.Click += (_, _) => this.Close();
 
-		// Right-aligned with the last column's frame.
-		int frameGap = (int)Math.Round(ColumnGap / 2 * scale);
 		this._buttons = new Panel()
 		{
 			Dock = DockStyle.Bottom,
-			Height = ok.Height + (2 * gap),
 		};
 		this._buttons.Controls.Add(ok);
-		this._buttons.Resize += (_, _) => ok.Location = new Point(
-			Math.Max(0, this._buttons.Width - ok.Width - frameGap), (this._buttons.Height - ok.Height) / 2);
+		this._buttons.Resize += (_, _) => this.PlaceOkButton();
 
 		// The toolbar, first row of the dialog: changing a choice lays the columns out again.
 		// The choices saved in UserConfig.xml (<ItemCompare ... />).
@@ -132,12 +125,13 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			AutoSizeMode = AutoSizeMode.GrowAndShrink,
 			FlowDirection = FlowDirection.LeftToRight,
 			WrapContents = true,
-			Padding = new Padding(0, 0, 0, gap),
 			Name = "comparisonToolbar",
 		};
 		this._toolbar.Controls.Add(this._alignRows);
 		this._toolbar.Controls.Add(this._hideUnchanged);
 		this._toolbar.Controls.Add(this._showSources);
+
+		this.SizeChrome();
 
 		this.Controls.Add(this._scroll);
 		this.Controls.Add(this._toolbar);
@@ -159,6 +153,71 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 	/// and that monitor's DPI.
 	/// </summary>
 	private float ContentScale => this.ScaledZoom * this.DpiScale();
+
+	/// <summary>
+	/// The sizes of the toolbar and of the button made in code, at <see cref="ContentScale"/>: when made (Windows Forms
+	/// then scales them to the monitor's DPI), and again after a zoom, from the zoom rather than from the sizes before, so
+	/// that zooms back and forth leave no rounding behind.
+	/// </summary>
+	private void SizeChrome()
+	{
+		float scale = this.ContentScale;
+		int gap = (int)Math.Round(4 * scale);
+		this._toolbar.Padding = new Padding(0, 0, 0, gap);
+		foreach (Control box in this._toolbar.Controls)
+		{
+			box.Margin = this.ToolbarMargin();
+			// From the zoom, not grown from the font before, which drifted from a fresh window's after a few zooms.
+			if (this.IsHandleCreated)
+				box.Font = this.ToolbarFont(this.ScaledZoom * this.DpiScale() / this.UIService.SystemDpiScale);
+			// Its text's size: scaled bounds rounded up, which an auto-sized check box does not shrink back from.
+			box.Size = box.PreferredSize;
+		}
+		// Wider than the other dialogs' buttons.
+		this._ok.Size = new Size((int)(137 * scale), (int)(30 * scale));
+		this._buttons.Height = this._ok.Height + (2 * gap);
+		this.PlaceOkButton();
+	}
+
+	/// <summary>The OK button at the bottom right of its panel, right-aligned with the last column's frame.</summary>
+	private void PlaceOkButton()
+	{
+		int frameGap = (int)Math.Round(ColumnGap / 2 * this.ContentScale);
+		this._ok.Location = new Point(
+			Math.Max(0, this._buttons.Width - this._ok.Width - frameGap), (this._buttons.Height - this._ok.Height) / 2);
+	}
+
+	/// <summary>
+	/// The font of a toolbar check box at <paramref name="fontZoom"/>: the user's zoom for a check box made before the
+	/// window (Windows Forms then scales it to the monitor), times the monitor's DPI over the system's for one already on it
+	/// (as <see cref="Presentation.Win32.Contracts.IUIService.FontZoom"/>, at the dialog's DPI).
+	/// </summary>
+	private Font ToolbarFont(float fontZoom)
+		=> this.FontService.GetFontLight(CaravanLook.TextSize, fontZoom);
+
+	/// <summary>The margin of a toolbar check box, at <see cref="ContentScale"/>.</summary>
+	private Padding ToolbarMargin()
+		=> new((int)Math.Round(4 * this.ContentScale), 0, (int)Math.Round(12 * this.ContentScale), 0);
+
+	/// <summary>Follows the main window's zoom while open (<see cref="VaultForm.FollowUserZoom"/>).</summary>
+	protected internal override bool FollowsUserZoomChanges => true;
+
+	/// <summary>
+	/// The user's zoom changed: the toolbar and the button were scaled with their fonts and the title; their sizes are made
+	/// again at the new zoom, then the columns, and the dialog fits them where it is. Inside the rescale, its drawing
+	/// frozen.
+	/// </summary>
+	protected override void OnUserZoomFollowed()
+	{
+		this.SetPadding();
+		this.SizeChrome();
+		this.RescalePhase("chrome");
+		if (this.Content is null)
+			return;
+
+		this.Rebuild();
+		this.RescalePhase("columns");
+	}
 
 	/// <summary>
 	/// The space between the border and the content, at the dialog's DPI: Windows Forms does not scale a window's own
@@ -213,8 +272,7 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 			Checked = isChecked,
 			ForeColor = Color.Gold,
 			BackColor = Color.Transparent,
-			Font = this.FontService.GetFontLight(CaravanLook.TextSize, this.ScaledZoom),
-			Margin = new Padding((int)Math.Round(4 * this.ContentScale), 0, (int)Math.Round(12 * this.ContentScale), 0),
+			Font = this.ToolbarFont(this.ScaledZoom),
 			Name = name,
 			Text = text,
 		};

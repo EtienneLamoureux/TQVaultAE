@@ -63,6 +63,10 @@ public partial class MainForm
 		this.mainView.ShowNotification(string.Empty);
 
 		this.Invalidate();
+
+		// The open dialogs that follow the zoom live (the item comparisons): each one rescaled once, after the window.
+		foreach (var dialog in this.OwnedForms.OfType<VaultForm>().Where(f => f.FollowsUserZoomChanges && f.IsHandleCreated && !f.IsDisposed).ToList())
+			dialog.FollowUserZoom();
 	}
 
 	/// <summary>The client size of the window at zoom 1 and 96 dpi.</summary>
