@@ -335,20 +335,60 @@ public class DatabaseLoadingTests
 		return variable;
 	}
 
+	private static Variable Int(string name, int value)
+	{
+		var variable = new Variable(name, VariableDataType.Integer, 1);
+		variable[0] = value;
+		return variable;
+	}
+
+	private static Variable Flt(string name, float value)
+	{
+		var variable = new Variable(name, VariableDataType.Float, 1);
+		variable[0] = value;
+		return variable;
+	}
+
+	/// <summary>A fixed weight loot item table dropping <paramref name="items"/> (weight 1 each), every kind rolled at 100 %.</summary>
+	private DBRecordCollection AddFixedLootTable(string id, params string[] items)
+	{
+		var arz = Path.Combine(GameAE, "Database", "database.arz");
+		var table = this.AddRecord(arz, id, "LootItemTable_FixedWeight");
+		for (int i = 0; i < items.Length; i++)
+		{
+			table.Set(Str($"lootName{i + 1}", items[i]));
+			table.Set(Int($"lootWeight{i + 1}", 1));
+		}
+
+		table.Set(Flt("brokenRandomizerChance", 100F));
+		table.Set(Flt("prefixRandomizerChance", 100F));
+		table.Set(Flt("suffixRandomizerChance", 100F));
+		return table;
+	}
+
+	/// <summary>Changes the value of a variable the record already has.</summary>
+	private static void Change(DBRecordCollection record, string name, object value)
+		=> record.First(v => v.Name == name)[0] = value;
+
+	/// <summary>Adds a weighted affix table to a slot of a loot item table.</summary>
+	private static void AddAffixTable(DBRecordCollection lootTable, string kind, int slot, string table, int weight = 10)
+	{
+		lootTable.Set(Str($"{kind}RandomizerName{slot}", table));
+		lootTable.Set(Int($"{kind}RandomizerWeight{slot}", weight));
+	}
+
 	[Fact]
 	public void GetItemAffixTableMap_FixedWeightLootTable_MapsEachLootNameToTheNumberedAffixTables()
 	{
 		this.UseAnniversaryEdition();
-		var arz = Path.Combine(GameAE, "Database", "database.arz");
-		var table = this.AddRecord(arz, """records\loot\table_a.dbr""", "LootItemTable_FixedWeight");
-		table.Set(Str("lootName1", """records\item\sword.dbr"""));
-		table.Set(Str("lootName2", """records\item\axe.dbr"""));
-		table.Set(Str("lootName3", ""));
+		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""", """records\item\axe.dbr""", "");
+		table.Set(Int("bothPrefixSuffix", 50));
+		table.Set(Int("brokenOnly", 10));
 		table.Set(Str("brokenRandomizerName1", ""));
-		table.Set(Str("prefixRandomizerName2", """records\affix\prefix2.dbr"""));
-		table.Set(Str("prefixRandomizerName1", """records\affix\prefix1.dbr"""));
-		table.Set(Str("suffixRandomizerName1", """records\affix\suffix1.dbr"""));
-		table.Set(Str("brokenRandomizerName3", """records\affix\broken3.dbr"""));
+		AddAffixTable(table, "prefix", 2, """records\affix\prefix2.dbr""");
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
+		AddAffixTable(table, "suffix", 1, """records\affix\suffix1.dbr""");
+		AddAffixTable(table, "broken", 3, """records\affix\broken3.dbr""");
 		table.Set(Str("suffixRandomizerName4", " "));
 		var db = this.CreateDatabase();
 
@@ -360,8 +400,8 @@ public class DatabaseLoadingTests
 			new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", """records\affix\suffix1.dbr"""),
 			new AffixTableMapItem("""records\affix\broken3.dbr""", RecordId.Empty, RecordId.Empty),
 		};
-		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().Equal(expected);
-		db.GetItemAffixTableMap("""records\item\axe.dbr""").Should().Equal(expected);
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().BeEquivalentTo(expected);
+		db.GetItemAffixTableMap("""records\item\axe.dbr""").Should().BeEquivalentTo(expected);
 	}
 
 	[Fact]
@@ -372,7 +412,9 @@ public class DatabaseLoadingTests
 		var arz = Path.Combine(GameAE, "Database", "database.arz");
 		var table = this.AddRecord(arz, """records\loot\table_c.dbr""", "lootitemtable_fixedweight");
 		table.Set(Str("lootName1", """records\item\sword.dbr"""));
-		table.Set(Str("prefixRandomizerName1", """records\affix\prefix1.dbr"""));
+		table.Set(Int("lootWeight1", 5));
+		table.Set(Flt("prefixRandomizerChance", 20F));
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
 		var db = this.CreateDatabase();
 
 		db.LoadDBFile();
@@ -391,7 +433,8 @@ public class DatabaseLoadingTests
 		itemNames[0] = """records\item\ring.dbr""";
 		itemNames[1] = """records\item\amulet.dbr""";
 		table.Set(itemNames);
-		table.Set(Str("prefixRandomizerName1", """records\affix\prefix1.dbr"""));
+		table.Set(Flt("prefixRandomizerChance", 30F));
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
 		var db = this.CreateDatabase();
 
 		db.LoadDBFile();
@@ -399,6 +442,91 @@ public class DatabaseLoadingTests
 		var expected = new[] { new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty) };
 		db.GetItemAffixTableMap("""records\item\ring.dbr""").Should().Equal(expected);
 		db.GetItemAffixTableMap("""records\item\amulet.dbr""").Should().Equal(expected);
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_ItemSlotWithoutWeight_IsNeverDroppedSoGetsNoAffixes()
+	{
+		this.UseAnniversaryEdition();
+		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""", """records\item\axe.dbr""");
+		Change(table, "lootWeight2", 0);
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().ContainSingle();
+		db.GetItemAffixTableMap("""records\item\axe.dbr""").Should().BeNull();
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_AffixTableWithoutWeight_IsLeftOut()
+	{
+		// Weight 0 and no weight at all: the game never picks the table.
+		this.UseAnniversaryEdition();
+		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""");
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
+		AddAffixTable(table, "suffix", 1, """records\affix\suffix1.dbr""", weight: 0);
+		table.Set(Str("suffixRandomizerName2", """records\affix\suffix2.dbr"""));
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should()
+			.Equal(new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty));
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_KindWithoutChance_IsLeftOut()
+	{
+		this.UseAnniversaryEdition();
+		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""");
+		Change(table, "suffixRandomizerChance", 0F);
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
+		AddAffixTable(table, "suffix", 1, """records\affix\suffix1.dbr""");
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should()
+			.Equal(new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty));
+	}
+
+	[Theory]
+	[InlineData(0, 0, 0, 0, 0, false, true, true)] // all zero: the game rolls a prefix and a suffix
+	[InlineData(0, 10, 0, 0, 0, false, false, false)] // only "no affix"
+	[InlineData(0, 10, 0, 0, 5, true, false, false)] // broken only
+	[InlineData(0, 10, 5, 0, 0, false, true, false)] // prefix only
+	[InlineData(0, 10, 0, 5, 0, false, false, true)] // suffix only
+	[InlineData(5, 0, 0, 0, 0, false, true, true)] // both
+	public void GetItemAffixTableMap_KindWeights_KeepOnlyTheKindsTheGameCanRoll(
+		int both, int none, int prefixOnly, int suffixOnly, int brokenOnly, bool hasBroken, bool hasPrefix, bool hasSuffix)
+	{
+		this.UseAnniversaryEdition();
+		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""");
+		table.Set(Int("bothPrefixSuffix", both));
+		table.Set(Int("noPrefixNoSuffix", none));
+		table.Set(Int("prefixOnly", prefixOnly));
+		table.Set(Int("suffixOnly", suffixOnly));
+		table.Set(Int("brokenOnly", brokenOnly));
+		AddAffixTable(table, "broken", 1, """records\affix\broken1.dbr""");
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""");
+		AddAffixTable(table, "suffix", 1, """records\affix\suffix1.dbr""");
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		var map = db.GetItemAffixTableMap("""records\item\sword.dbr""");
+		if (!(hasBroken || hasPrefix || hasSuffix))
+		{
+			map.Should().BeNull();
+			return;
+		}
+
+		var tables = map.Should().ContainSingle().Subject;
+		tables.BrokenTable.IsEmpty.Should().Be(!hasBroken);
+		tables.PrefixTable.IsEmpty.Should().Be(!hasPrefix);
+		tables.SuffixTable.IsEmpty.Should().Be(!hasSuffix);
 	}
 
 	#endregion

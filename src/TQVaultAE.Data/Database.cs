@@ -465,12 +465,18 @@ public partial class Database : IDatabase
 	#region ItemAffixTableMap
 
 
+	/// <summary>The slot limits of a loot item table, as the game reads it: item slots and affix table slots.</summary>
+	private const int MaxLootItemSlots = 30, MaxAffixTableSlots = 15;
+
 	/// <summary>
 	/// Create a map between Items and affix loot tables
 	/// </summary>
+	/// <remarks>
+	/// Keeps only what the game can roll from each loot item table: item slots with a weight, affix tables with a weight,
+	/// and the affix kinds the table can roll at all (chance above zero and a kind weight, see <see cref="RollableKinds"/>).
+	/// </remarks>
 	private void BuildItemAffixTableMap()
 	{
-		// Load all available loot table
 		var data = this.ArzFilesByPriority()
 			.SelectMany(db => db.ArzFile.RecordInfo
 				.Where(r =>
@@ -478,74 +484,103 @@ public partial class Database : IDatabase
 					|| r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_DYNWEIGHT, noCase)
 				)
 			)
-			.Select(r =>
-			{
-				// Listed in the record table, so it can be read.
-				var rec = GetRecordFromFile(r.Key)!;
-				var lootNames = new List<RecordId>();
-				var records = new List<(RecordId brokenTable, RecordId prefixTable, RecordId suffixTable, List<RecordId> lootNames)>();
-
-				// Read loot names
-				if (r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
-				{
-					foreach (var variable in rec)
-					{
-						if (variable.Name.StartsWith("lootName", noCase))
-						{
-							var lootName = variable.GetString(0);
-
-							if (!string.IsNullOrWhiteSpace(lootName))
-								lootNames.Add(lootName);
-						}
-					}
-				}
-				else // LootItemTable_DynWeight
-				{
-					var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
-					if (itemNames?.Any() ?? false)
-						lootNames.AddRange(itemNames.Select(ina => ina.ToRecordId()));
-				}
-
-				// Read loot tables
-				var tables = rec.GroupNumberedVariables(
-					variable => !string.IsNullOrWhiteSpace(variable.GetString(0))
-					, "brokenRandomizerName", "prefixRandomizerName", "suffixRandomizerName");
-
-				// Avoid useless records
-				if (lootNames.Count > 0 && tables.Count > 0)
-				{
-					records.AddRange(tables.Values.Select(table =>
-						(
-							TableOf(table[0]),
-							TableOf(table[1]),
-							TableOf(table[2]),
-							lootNames
-						)
-					));
-				}
-
-				return records;
-			})
-			.SelectMany(i => i)
-			.SelectMany(itemAffix => itemAffix.lootNames
-				.Select(itemId => new
-				{
-					itemId = itemId,
-					itemAffix.suffixTable,
-					itemAffix.prefixTable,
-					itemAffix.brokenTable
-				})
-			) // Flatten
-			.GroupBy(i => i.itemId)
+			.DistinctBy(r => r.Key) // An overridden table is read once, in the version that wins.
+			// Listed in the record table, so it can be read.
+			.SelectMany(r => ReadLootItemTable(this.GetRecordFromFile(r.Key)!, r.Value.Class))
+			.GroupBy(i => i.Item)
 			.ToDictionary(i =>
 				i.Key
 				, j => j
-					.Select(k => new AffixTableMapItem(k.brokenTable, k.prefixTable, k.suffixTable)).Distinct()
+					.Select(k => k.Tables).Distinct()
 					.ToList().AsReadOnly()
 			);
 
 		ItemAffixTableMap = new ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>(data);
 	}
+
+	/// <summary>
+	/// The items a loot item table can drop, each with the affix tables of every slot the table can roll.
+	/// </summary>
+	private static IEnumerable<(RecordId Item, AffixTableMapItem Tables)> ReadLootItemTable(DBRecordCollection rec, string recordClass)
+	{
+		var items = new List<RecordId>();
+		if (recordClass.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
+		{
+			// lootName<N>, picked only when lootWeight<N> is above zero.
+			foreach (var slot in rec.GroupNumberedVariables(_ => true, "lootName", "lootWeight"))
+			{
+				var name = slot.Value[0]?.GetString(0);
+				if (IsSlot(slot.Key, MaxLootItemSlots) && !string.IsNullOrWhiteSpace(name) && NumberOf(slot.Value[1]) > 0)
+					items.Add(name);
+			}
+		}
+		else // LootItemTable_DynWeight
+		{
+			var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
+			if (itemNames is not null)
+				items.AddRange(itemNames.Select(ina => ina.ToRecordId()));
+		}
+
+		if (items.Count == 0)
+			yield break;
+
+		var (broken, prefix, suffix) = RollableKinds(rec);
+		var slots = rec.GroupNumberedVariables(_ => true
+			, "brokenRandomizerName", "brokenRandomizerWeight"
+			, "prefixRandomizerName", "prefixRandomizerWeight"
+			, "suffixRandomizerName", "suffixRandomizerWeight");
+
+		foreach (var slot in slots)
+		{
+			if (!IsSlot(slot.Key, MaxAffixTableSlots))
+				continue;
+
+			var tables = new AffixTableMapItem(
+				broken ? TableOf(slot.Value[0], slot.Value[1]) : RecordId.Empty
+				, prefix ? TableOf(slot.Value[2], slot.Value[3]) : RecordId.Empty
+				, suffix ? TableOf(slot.Value[4], slot.Value[5]) : RecordId.Empty);
+
+			if (tables.IsEmpty)
+				continue;
+
+			foreach (var item in items)
+				yield return (item, tables);
+		}
+	}
+
+	/// <summary>
+	/// The affix kinds a loot item table can roll, as the game picks them: the kind's chance must be above zero, and its
+	/// weight among the kind weights too (prefix: <c>bothPrefixSuffix</c> + <c>prefixOnly</c>, suffix:
+	/// <c>bothPrefixSuffix</c> + <c>suffixOnly</c>, broken: <c>brokenOnly</c>). When every kind weight is zero, the game
+	/// rolls a prefix and a suffix, never a broken affix.
+	/// </summary>
+	private static (bool Broken, bool Prefix, bool Suffix) RollableKinds(DBRecordCollection rec)
+	{
+		float both = rec.GetSingle("bothPrefixSuffix", 0)
+			, none = rec.GetSingle("noPrefixNoSuffix", 0)
+			, prefixOnly = rec.GetSingle("prefixOnly", 0)
+			, suffixOnly = rec.GetSingle("suffixOnly", 0)
+			, brokenOnly = rec.GetSingle("brokenOnly", 0);
+
+		bool allZero = both + none + prefixOnly + suffixOnly + brokenOnly <= 0;
+
+		return (
+			!allZero && brokenOnly > 0 && rec.GetSingle("brokenRandomizerChance", 0) > 0
+			, (allZero || both + prefixOnly > 0) && rec.GetSingle("prefixRandomizerChance", 0) > 0
+			, (allZero || both + suffixOnly > 0) && rec.GetSingle("suffixRandomizerChance", 0) > 0
+		);
+	}
+
+	/// <summary>True when a numbered variable's number is a slot the game reads: 1 to <paramref name="max"/>.</summary>
+	private static bool IsSlot(string number, int max)
+		=> int.TryParse(number, NumberStyles.None, CultureInfo.InvariantCulture, out int slot) && slot >= 1 && slot <= max;
+
+	/// <summary>The value of a weight variable, integer or float; 0 when it is absent or of another type.</summary>
+	private static float NumberOf(Variable? variable) => variable?.DataType switch
+	{
+		VariableDataType.Integer or VariableDataType.Float => variable.GetSingle(0),
+		_ => 0.0F,
+	};
 
 	public ReadOnlyCollection<AffixTableMapItem>? GetItemAffixTableMap(RecordId itemId)
 	{
@@ -570,8 +605,9 @@ public partial class Database : IDatabase
 			yield return (2, this.ArzFile);
 	}
 
-	/// <summary>The affix table a loot table variable names, empty when the variable is absent.</summary>
-	private static RecordId TableOf(Variable? variable) => variable is null ? RecordId.Empty : variable.GetString(0);
+	/// <summary>The affix table of a loot item table slot, empty when the slot has no name or no weight (never rolled).</summary>
+	private static RecordId TableOf(Variable? name, Variable? weight)
+		=> name is not null && !string.IsNullOrWhiteSpace(name.GetString(0)) && NumberOf(weight) > 0 ? name.GetString(0) : RecordId.Empty;
 
 	/// <summary>
 	/// Gets a DBRecord for the specified item ID string.
