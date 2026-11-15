@@ -22,7 +22,7 @@ Debug builds start an [MCP](https://modelcontextprotocol.io) server inside TQVau
 - drag items through the panels' own code;
 - capture a panel to PNG.
 
-The repository's `.mcp.json` registers it as `tqvault`: start the Debug build, then open your MCP client at the repository root. Automation saves like a user does, so in Debug builds it works only in test vaults and characters (its own `claude-*` ones, and the neutral `player-test*`, `player-mod*`, `vault-*` capture data). Release builds serve only the user tools, and only when the user turns the endpoint on in the settings (see [AI agents (MCP)](documentation/mcp.md)); the developer tools and the headless mode are Debug-only. See [Automation endpoint](documentation/AUTOMATION.md).
+The repository's `.mcp.json` registers it as `tqvault`: start the Debug build, then open your MCP client at the repository root. Automation saves like a user does, so in Debug builds it works only in test vaults and characters (the neutral `player-test*` and `player-mod*` characters, `vault-*` vaults and `test-*` tags). Release builds serve only the user tools, and only when the user turns the endpoint on in the settings (see [AI agents (MCP)](documentation/mcp.md)); the developer tools and the headless mode are Debug-only. See [Automation endpoint](documentation/AUTOMATION.md).
 
 ## Style and format
 TQVaultAE follows the standard C# format and import order. Refrain from submitting white-space changes mixed-in with your functional changes. 

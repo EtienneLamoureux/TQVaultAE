@@ -20,7 +20,7 @@ internal static partial class AutomationTools
 
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
 	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'text:<name>' answers the next text input dialog (the name asked by Duplicate Character and the loadout actions): the dialog opens, the text is typed and its OK button clicked, so its own checks run (Cancel cancels it; no comma in the text). 'clear' empties the queue and the record. Covers every message box, the startup notices included, and the vault import dialog (Yes replaces the vault, No imports it as a new vault, Cancel cancels). In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers; a text input dialog without one stays open (close_dialog, or set_control and click_control).")]
-	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No' or 'text:claude-set1,OK', or 'clear'.")] string answers)
+	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No' or 'text:test-set1,OK', or 'clear'.")] string answers)
 	{
 		if (string.Equals(answers.Trim(), "clear", StringComparison.OrdinalIgnoreCase))
 			AutomationHost.ClearDialogAnswers();
@@ -103,7 +103,7 @@ internal static partial class AutomationTools
 	#region Character editor and tags
 
 	[McpServerTool(Name = "archive_character", Destructive = true)]
-	[Description("Archives (archived=true) or unarchives the selected character like the user: opens the menu of the tools button next to the character list and clicks 'Archived' when its tick differs (menu_click('characterTools', 'Archived')), before returning; TQVault moves its save folder to or from the archive folder. Debug builds: only test characters (names starting with 'claude-', 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
+	[Description("Archives (archived=true) or unarchives the selected character like the user: opens the menu of the tools button next to the character list and clicks 'Archived' when its tick differs (menu_click('characterTools', 'Archived')), before returning; TQVault moves its save folder to or from the archive folder. Debug builds: only test characters (names starting with 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
 	public static string ArchiveCharacter([Description("true to archive, false to unarchive.")] bool archived)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -117,7 +117,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "character_read_only", Destructive = true)]
-	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first opens the character menu and clicks 'Read-only' like a user (menu_click('characterTools', 'Read-only')), which sets or clears that attribute (Debug builds: test characters only, names starting with 'claude-', 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
+	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first opens the character menu and clicks 'Read-only' like a user (menu_click('characterTools', 'Read-only')), which sets or clears that attribute (Debug builds: test characters only, names starting with 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
 	public static string CharacterReadOnly([Description("true to click 'Read-only' first; false to only read.")] bool toggle = false)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -175,7 +175,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "tag_archive_all", Destructive = true)]
-	[Description("Clicks 'Archive all' (archived=true) or 'Unarchive all' in the menu of a tag, like a user: TQVault moves the save folders of the characters having that tag. Debug builds: only test tags starting with 'claude-' whose characters are all claude-* test characters. Returns those characters with their state and folder.")]
+	[Description("Clicks 'Archive all' (archived=true) or 'Unarchive all' in the menu of a tag, like a user: TQVault moves the save folders of the characters having that tag. Debug builds: only test tags starting with 'test-' whose characters are all test characters. Returns those characters with their state and folder.")]
 	public static string TagArchiveAll(
 		[Description("The test tag.")] string tag,
 		[Description("true to archive, false to unarchive.")] bool archived)
@@ -187,7 +187,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_character_editor", Destructive = true)]
-	[Description("Shows the character editor of the selected character in place of the main content, like the Edit button of the stash panel, before returning. Read and change it with control_values and set_control (form 'Character Editor'), then leave it with close_dialog('Character Editor', OK or Cancel) (OK applies the changes in memory; save_files writes them). Debug builds: work only on claude-* test characters.")]
+	[Description("Shows the character editor of the selected character in place of the main content, like the Edit button of the stash panel, before returning. Read and change it with control_values and set_control (form 'Character Editor'), then leave it with close_dialog('Character Editor', OK or Cancel) (OK applies the changes in memory; save_files writes them). Debug builds: work only on test characters (player-test*, player-mod*).")]
 	public static string OpenCharacterEditor()
 		=> AutomationHost.OnUi(form =>
 		{
@@ -198,7 +198,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "tag_box", Destructive = true)]
-	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' clicks Tags > 'text' > Delete in the menu of the tools button (menu_click), after this call returns, and answers its confirmation with OK; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Debug builds: names must start with 'claude-' and only test characters. Read the tags with list_tags.")]
+	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' clicks Tags > 'text' > Delete in the menu of the tools button (menu_click), after this call returns, and answers its confirmation with OK; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Debug builds: names must start with 'test-' and only test characters. Read the tags with list_tags.")]
 	public static string TagBox(
 		[Description("add, rename, delete, assign or unassign.")] string box,
 		[Description("The text typed (add, rename) or the tag to delete, assign or unassign.")] string text,

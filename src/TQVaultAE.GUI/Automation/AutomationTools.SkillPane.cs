@@ -34,7 +34,7 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "skill_panel_click", Destructive = true)]
-	[Description("In the open character editor, clicks a button of a mastery slot's skill pane like the mouse, through its hit test: left raises the skill (or the mastery) by one point, right lowers it, shift=true goes to the highest level the points allow or down to the lowest. The editor's rules apply (tier, parent skill, points left). Returns the pane state afterwards. Debug builds: work only on claude-* test characters.")]
+	[Description("In the open character editor, clicks a button of a mastery slot's skill pane like the mouse, through its hit test: left raises the skill (or the mastery) by one point, right lowers it, shift=true goes to the highest level the points allow or down to the lowest. The editor's rules apply (tier, parent skill, points left). Returns the pane state afterwards. Debug builds: work only on test characters (player-test*, player-mod*).")]
 	public static string SkillPanelClick(
 		[Description("Mastery slot, from 1.")] int slot,
 		[Description("The skill: its record id, part of its name, or 'mastery' for the mastery button.")] string skill,

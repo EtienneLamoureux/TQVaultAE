@@ -30,7 +30,7 @@ internal sealed class SaveFixtures : IDisposable
 
 	public static string StashDxg => Path.Combine(SaveFilesFolder, "winsys.dxg");
 
-	public static string VaultJson => Path.Combine(SaveFilesFolder, "claude-vault1.vault.json");
+	public static string VaultJson => Path.Combine(SaveFilesFolder, "vault-test1.vault.json");
 
 	public Mock<IDatabase> Database { get; } = new();
 
@@ -70,7 +70,7 @@ internal sealed class SaveFixtures : IDisposable
 	/// <summary>Loads a character file the way <c>PlayerService</c> does.</summary>
 	public PlayerCollection LoadPlayer(string? path = null)
 	{
-		var pc = new PlayerCollection("claude-character1", path ?? PlayerChr) { IsImmortalThrone = true };
+		var pc = new PlayerCollection("player-test1", path ?? PlayerChr) { IsImmortalThrone = true };
 		this.PlayerProvider.LoadFile(pc);
 		return pc;
 	}
@@ -78,7 +78,7 @@ internal sealed class SaveFixtures : IDisposable
 	/// <summary>Loads a vault file (json or legacy binary) the way <c>VaultService</c> does.</summary>
 	public PlayerCollection LoadVault(string path)
 	{
-		var pc = new PlayerCollection("claude-vault1", path) { IsVault = true, IsImmortalThrone = true };
+		var pc = new PlayerCollection("vault-test1", path) { IsVault = true, IsImmortalThrone = true };
 		this.PlayerProvider.LoadFile(pc);
 		return pc;
 	}
@@ -86,7 +86,7 @@ internal sealed class SaveFixtures : IDisposable
 	/// <summary>Loads a stash file the way <c>StashService</c> does.</summary>
 	public Stash LoadStash(string? path = null)
 	{
-		var stash = new Stash("claude-character1", path ?? StashDxb);
+		var stash = new Stash("player-test1", path ?? StashDxb);
 		this.StashProvider.LoadFile(stash).Should().BeTrue();
 		return stash;
 	}

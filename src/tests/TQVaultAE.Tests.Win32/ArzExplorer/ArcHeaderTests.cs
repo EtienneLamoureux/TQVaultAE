@@ -8,7 +8,7 @@ namespace TQVaultAE.Tests.Win32.ArzExplorer;
 /// </summary>
 public sealed class ArcHeaderTests : IDisposable
 {
-	private readonly string _path = Path.Combine(Path.GetTempPath(), $"claude-archeader-{Guid.NewGuid():N}.arc");
+	private readonly string _path = Path.Combine(Path.GetTempPath(), $"tqvault-archeader-{Guid.NewGuid():N}.arc");
 
 	public void Dispose()
 	{

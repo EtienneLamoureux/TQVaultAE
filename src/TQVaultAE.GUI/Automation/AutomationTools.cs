@@ -245,7 +245,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "import_file", Destructive = true)]
-	[Description("Imports an exported JSON file like the vault menu's 'Import from file' without its file dialog: items go into the current tab; a whole vault asks to replace the vault shown or import it as a new vault (answer with queue_dialog_answers: Yes replaces, No creates a new vault, Cancel). The vault shown may be replaced (Debug builds: it must be a test vault, 'claude-...'). Queue the answers first: the import waits for its boxes.")]
+	[Description("Imports an exported JSON file like the vault menu's 'Import from file' without its file dialog: items go into the current tab; a whole vault asks to replace the vault shown or import it as a new vault (answer with queue_dialog_answers: Yes replaces, No creates a new vault, Cancel). The vault shown may be replaced (Debug builds: it must be a test vault, 'vault-...'). Queue the answers first: the import waits for its boxes.")]
 	public static string ImportFile([Description("Path of the exported JSON file.")] string path)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -256,7 +256,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "import_text", Destructive = true)]
-	[Description("Pastes text like Ctrl+V with the clipboard holding it, without touching the clipboard: exported JSON (an item, items, a tab or a vault, as copied by 'Share to Clipboard') or a PasteBin link. Items go into the current tab of the vault shown; a whole vault asks to replace the vault shown or import it as a new vault (queue_dialog_answers first: Yes replaces, No creates a new vault, Cancel). Give the text, or the path of a file holding it. The vault shown must be a test vault ('claude-...').")]
+	[Description("Pastes text like Ctrl+V with the clipboard holding it, without touching the clipboard: exported JSON (an item, items, a tab or a vault, as copied by 'Share to Clipboard') or a PasteBin link. Items go into the current tab of the vault shown; a whole vault asks to replace the vault shown or import it as a new vault (queue_dialog_answers first: Yes replaces, No creates a new vault, Cancel). Give the text, or the path of a file holding it. The vault shown must be a test vault ('vault-...').")]
 	public static string ImportText(
 		[Description("Text to paste; empty to read it from path.")] string? text = null,
 		[Description("File holding the text to paste, when text is empty.")] string? path = null)
@@ -274,12 +274,12 @@ internal static partial class AutomationTools
 	private static void RequireTestName(string name)
 	{
 		if (!AutomationTestNames.IsTestFile(name))
-			throw new McpException($"Test files only: the name must start with {AutomationTestNames.Accepted}, e.g. 'claude-vault1'.");
+			throw new McpException($"Test files only: the name must start with {AutomationTestNames.Accepted}, e.g. 'vault-test1'.");
 	}
 
 	[McpServerTool(Name = "create_vault", Destructive = true)]
-	[Description("Creates a vault like the New action of 'Maintain Vault Files...', then selects and loads it. Debug builds: the name must start with 'claude-' (e.g. claude-vault1), automation works only in its own test files. The file is written when the vault is saved.")]
-	public static string CreateVault([Description("New vault name (Debug builds: starting with 'claude-').")] string name)
+	[Description("Creates a vault like the New action of 'Maintain Vault Files...', then selects and loads it. Debug builds: the name must start with 'vault-' (e.g. vault-test1), automation works only in its own test files. The file is written when the vault is saved.")]
+	public static string CreateVault([Description("New vault name (Debug builds: starting with 'vault-').")] string name)
 	{
 		RequireTestName(name);
 		return AutomationHost.OnUi(form =>
@@ -292,8 +292,8 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "duplicate_character", Destructive = true)]
-	[Description("Duplicates the selected character like the user (a full save set: player file, stash and all): clicks 'Duplicate Character' in the menu of the tools button next to the character list (menu_click('characterTools', 'Duplicate')), after this call returns, and types the name into its name dialog (queued first as its answer: the dialog's checks run, a refused name shows an error box, then the dialog again). The entry shows only when 'Allow character edit' is on in the settings. Debug builds: the name must start with 'claude-' (e.g. claude-character1). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy; dialog_answers tells a refusal.")]
-	public static string DuplicateCharacter([Description("Name of the copy (Debug builds: starting with 'claude-').")] string name)
+	[Description("Duplicates the selected character like the user (a full save set: player file, stash and all): clicks 'Duplicate Character' in the menu of the tools button next to the character list (menu_click('characterTools', 'Duplicate')), after this call returns, and types the name into its name dialog (queued first as its answer: the dialog's checks run, a refused name shows an error box, then the dialog again). The entry shows only when 'Allow character edit' is on in the settings. Debug builds: the name must start with 'player-test' or 'player-mod' (e.g. player-test-copy). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy; dialog_answers tells a refusal.")]
+	public static string DuplicateCharacter([Description("Name of the copy (Debug builds: starting with 'player-test' or 'player-mod').")] string name)
 	{
 		RequireTestName(name);
 		return AutomationHost.OnUi(form =>
@@ -308,7 +308,7 @@ internal static partial class AutomationTools
 
 
 	[McpServerTool(Name = "save_files", Destructive = true)]
-	[Description("Saves the modified characters, vaults and stashes like the Save button. A file error shows the Abort/Retry/Ignore box: this call then waits until the box is answered, so answer it from another call with close_dialog (button Abort, Retry or Ignore). Debug builds: work only in claude-* test files. Returns whether characters were saved and the panels still modified; see recent_log for the save's log lines.")]
+	[Description("Saves the modified characters, vaults and stashes like the Save button. A file error shows the Abort/Retry/Ignore box: this call then waits until the box is answered, so answer it from another call with close_dialog (button Abort, Retry or Ignore). Debug builds: work only in test files (player-test*, player-mod*, vault-*). Returns whether characters were saved and the panels still modified; see recent_log for the save's log lines.")]
 	public static string SaveFiles()
 		=> AutomationHost.OnUi(form =>
 		{

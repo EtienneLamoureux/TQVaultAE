@@ -13,7 +13,7 @@ internal static partial class AutomationTools
 	internal static partial class DevTools
 	{
 		[McpServerTool(Name = "create_item", Destructive = true)]
-		[Description("Creates an item in memory from database records (base item, affixes, relics) and drags it over a panel, like the Duplicate menu entry: place it with drop_item. It is saved with its vault or character like any item: use claude-* test files. Useful to test combinations no vault holds, e.g. an affix that grants a skill.")]
+		[Description("Creates an item in memory from database records (base item, affixes, relics) and drags it over a panel, like the Duplicate menu entry: place it with drop_item. It is saved with its vault or character like any item: use test files (player-test*, player-mod*, vault-*). Useful to test combinations no vault holds, e.g. an affix that grants a skill.")]
 		public static string CreateItem(
 			[Description("Panel the drag starts from, e.g. vault.")] string panel,
 			[Description("""Base item record, e.g. records\item\equipmentamulet\u_n_moonclaw.dbr.""")] string baseItem,

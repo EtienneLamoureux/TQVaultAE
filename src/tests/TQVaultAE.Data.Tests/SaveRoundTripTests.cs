@@ -439,7 +439,7 @@ public sealed class SaveRoundTripTests : IDisposable
 	public void Save_UnchangedJsonVault_WritesTheSameFile()
 	{
 		var vault = this._fixtures.LoadVault(SaveFixtures.VaultJson);
-		var path = this._fixtures.TempFile("claude-vault1.vault.json");
+		var path = this._fixtures.TempFile("vault-test1.vault.json");
 
 		this._fixtures.PlayerProvider.Save(vault, path);
 
@@ -469,7 +469,7 @@ public sealed class SaveRoundTripTests : IDisposable
 		vault.Sacks[4].AddItem(socketed);
 		vault.currentlySelectedSackNumber = 4;
 		vault.DisabledTooltipBagId = [1, 3];
-		var path = this._fixtures.TempFile("claude-vault1.vault.json");
+		var path = this._fixtures.TempFile("vault-test1.vault.json");
 
 		this._fixtures.PlayerProvider.Save(vault, path);
 
@@ -488,7 +488,7 @@ public sealed class SaveRoundTripTests : IDisposable
 		copy.PositionY = 1;
 		vault.Sacks[2].AddItem(copy);
 		var legacy = this._fixtures.PlayerProvider.Encode(vault);
-		var path = this._fixtures.TempFile("claude-vault1.vault");
+		var path = this._fixtures.TempFile("vault-test1.vault");
 		File.WriteAllBytes(path, legacy);
 
 		var reloaded = this._fixtures.LoadVault(path);
@@ -503,10 +503,10 @@ public sealed class SaveRoundTripTests : IDisposable
 	public void Save_LegacyVault_IsWrittenAsJson()
 	{
 		var vault = this._fixtures.LoadVault(SaveFixtures.VaultJson);
-		var path = this._fixtures.TempFile("claude-vault1.vault");
+		var path = this._fixtures.TempFile("vault-test1.vault");
 		File.WriteAllBytes(path, this._fixtures.PlayerProvider.Encode(vault));
 		var legacy = this._fixtures.LoadVault(path);
-		var jsonPath = this._fixtures.TempFile("claude-vault1.vault.json");
+		var jsonPath = this._fixtures.TempFile("vault-test1.vault.json");
 
 		this._fixtures.PlayerProvider.Save(legacy, jsonPath);
 
@@ -551,7 +551,7 @@ public sealed class SaveRoundTripTests : IDisposable
 		var originalBytes = this.EncodeInSack(withDefaultMarkers);
 		var vault = this._fixtures.LoadVault(SaveFixtures.VaultJson);
 		vault.Sacks![3].AddItem(item);
-		var vaultPath = this._fixtures.TempFile("claude-vault1.vault.json");
+		var vaultPath = this._fixtures.TempFile("vault-test1.vault.json");
 		this._fixtures.PlayerProvider.Save(vault, vaultPath);
 
 		var fromVault = this._fixtures.LoadVault(vaultPath).Sacks![3].Single();

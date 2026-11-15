@@ -106,7 +106,7 @@ public partial class ComboBoxCharacter
 
 	/// <summary>
 	/// Clicks "Archive all" (or "Unarchive all") in the menu of a tag, which moves the save folders of the characters
-	/// having that tag. Only test tags (names starting with <c>claude-</c>) whose characters are all test characters.
+	/// having that tag. Only test tags (names starting with <c>test-</c>) whose characters are all test characters.
 	/// </summary>
 	/// <returns>The characters having the tag, and whether each one is archived now.</returns>
 	internal IReadOnlyList<(string Name, bool IsArchived, string Folder)> AutomationSetArchivedByTag(string tag, bool archived)
@@ -162,7 +162,7 @@ public partial class ComboBoxCharacter
 
 	/// <summary>
 	/// Why automation may not click the entry at the end of <paramref name="chain"/> of the tools menu, or null: the
-	/// entries that change files only for test characters and test tags (<c>claude-</c>), Duplicate Character only with a
+	/// entries that change files only for test characters and test tags (<c>test-</c>), Duplicate Character only with a
 	/// queued test name, and never the global Archive all / Unarchive all nor a tag's, which move real characters
 	/// (<c>tag_archive_all</c> checks the tag's characters first).
 	/// </summary>
@@ -179,7 +179,7 @@ public partial class ComboBoxCharacter
 			var pending = Automation.AutomationHost.PendingDialogAnswers;
 			return pending.Count > 0 && pending[0].Text is { } newName && Automation.AutomationTestNames.IsTestFile(newName)
 				? null
-				: $"Queue the copy's name first, a test name: queue_dialog_answers('text:claude-...') (accepted: {Automation.AutomationTestNames.Accepted}).";
+				: $"Queue the copy's name first, a test name: queue_dialog_answers('text:player-test...') (accepted: {Automation.AutomationTestNames.Accepted}).";
 		}
 
 		// A tag's entries (its tick, Color, Delete): test tags only.

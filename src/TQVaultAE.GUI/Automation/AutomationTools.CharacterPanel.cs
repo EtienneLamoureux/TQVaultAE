@@ -61,7 +61,7 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "character_attribute_click", Destructive = true)]
-	[Description("In the open character editor, clicks the + button of an attribute on tab I of the statistics panel like the mouse, through its hit test: 'left' spends an attribute point, 'right' takes one back, shift=true all the points left or back to the value at the start. Attributes: health, energy, strength, intelligence, dexterity (or 0-4); 'undo' clicks the Undo button that replaces the Attributes title once an attribute changed (all back to the start). Refused when the button does not show (no + button while no point is left). Returns the panel state. Debug builds: work only on claude-* test characters.")]
+	[Description("In the open character editor, clicks the + button of an attribute on tab I of the statistics panel like the mouse, through its hit test: 'left' spends an attribute point, 'right' takes one back, shift=true all the points left or back to the value at the start. Attributes: health, energy, strength, intelligence, dexterity (or 0-4); 'undo' clicks the Undo button that replaces the Attributes title once an attribute changed (all back to the start). Refused when the button does not show (no + button while no point is left). Returns the panel state. Debug builds: work only on test characters (player-test*, player-mod*).")]
 	public static string CharacterAttributeClick(
 		[Description("health, energy, strength, intelligence, dexterity, 0-4, or undo.")] string attribute,
 		[Description("'left' or 'right'.")] string button = "left",
