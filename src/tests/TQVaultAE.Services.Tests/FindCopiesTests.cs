@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application;
-using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
 using TQVaultAE.Services;
@@ -14,13 +14,13 @@ namespace TQVaultAE.Tests.Services;
 /// </summary>
 public class FindCopiesTests
 {
-	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemTextFormatter> _itemText = new();
 	private readonly ItemDatabaseService _database;
 
 	public FindCopiesTests()
 	{
-		this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, this._itemProvider.Object);
-		this._itemProvider.Setup(p => p.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
+		this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, this._itemText.Object);
+		this._itemText.Setup(p => p.GetFriendlyNames(It.IsAny<Item>(), It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
 			.Returns((Item item, FriendlyNamesExtraScopes? _, bool _) => new ToFriendlyNameResult(item)
 			{
 				BaseItemInfoDescription = "Sword",
@@ -106,7 +106,7 @@ public class FindCopiesTests
 		var broken = Sword();
 		Add(source, "vault-a");
 		Add(broken, "vault-b");
-		this._itemProvider.Setup(p => p.GetFriendlyNames(broken, It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
+		this._itemText.Setup(p => p.GetFriendlyNames(broken, It.IsAny<FriendlyNamesExtraScopes?>(), It.IsAny<bool>()))
 			.Throws(new InvalidOperationException("broken record"));
 
 		this._database.FindCopies(source, CopySearchKind.SameSeed).Select(r => r.Item).Should().Equal(source);
