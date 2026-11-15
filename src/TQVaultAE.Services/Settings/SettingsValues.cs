@@ -1,6 +1,6 @@
 using TQVaultAE.Config;
 
-namespace TQVaultAE.Services;
+namespace TQVaultAE.Services.Settings;
 
 /// <summary>
 /// The values of <see cref="UserSettings"/> the settings dialog edits, copied so the dialog can change them without

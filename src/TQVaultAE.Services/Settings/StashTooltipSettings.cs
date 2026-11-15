@@ -1,7 +1,7 @@
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Services;
+namespace TQVaultAE.Services.Settings;
 
 /// <summary>
 /// Maps the stash panel bags to their "disable tooltip" user settings.

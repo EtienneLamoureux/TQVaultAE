@@ -1,7 +1,7 @@
 using AwesomeAssertions;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.Services;
+using TQVaultAE.Services.Settings;
 
 namespace TQVaultAE.Tests.Services;
 

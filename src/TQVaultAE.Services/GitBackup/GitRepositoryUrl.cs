@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace TQVaultAE.Services;
+namespace TQVaultAE.Services.GitBackup;
 
 /// <summary>
 /// Validates the url of the git repository used for the vault backup.

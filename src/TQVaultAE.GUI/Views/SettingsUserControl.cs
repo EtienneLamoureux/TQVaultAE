@@ -16,7 +16,7 @@ using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32.Contracts;
-using TQVaultAE.Services;
+using TQVaultAE.Services.Settings;
 
 namespace TQVaultAE.GUI.Views;
 

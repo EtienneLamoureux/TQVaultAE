@@ -1,7 +1,8 @@
 using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
+using TQVaultAE.Services.GitBackup;
 
-namespace TQVaultAE.Services;
+namespace TQVaultAE.Services.Settings;
 
 /// <summary>
 /// Edits a copy of the settings for the settings dialog: holds the rules between settings and tells what changed by

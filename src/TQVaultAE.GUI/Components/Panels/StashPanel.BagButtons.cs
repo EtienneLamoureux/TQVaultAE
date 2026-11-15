@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 using TQVaultAE.Presentation;
+using TQVaultAE.Services.Settings;
 
 public partial class StashPanel
 {

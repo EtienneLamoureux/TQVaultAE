@@ -1,7 +1,7 @@
 using System.Globalization;
 using AwesomeAssertions;
 using TQVaultAE.Config;
-using TQVaultAE.Services;
+using TQVaultAE.Services.Settings;
 
 namespace TQVaultAE.Tests.Services;
 

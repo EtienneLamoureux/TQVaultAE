@@ -2,7 +2,7 @@ using System.Globalization;
 using EnumsNET;
 using TQVaultAE.Config;
 
-namespace TQVaultAE.Services;
+namespace TQVaultAE.Services.Settings;
 
 /// <summary>
 /// One entry of a settings drop down: the value saved and the text shown.

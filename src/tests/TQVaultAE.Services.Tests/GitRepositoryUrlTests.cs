@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using TQVaultAE.Services;
+using TQVaultAE.Services.GitBackup;
 
 namespace TQVaultAE.Tests.Services;
 
