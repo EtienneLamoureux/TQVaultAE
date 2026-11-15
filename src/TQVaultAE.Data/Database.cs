@@ -486,22 +486,20 @@ public partial class Database : IDatabase
 			)
 			.DistinctBy(r => r.Key) // An overridden table is read once, in the version that wins.
 			// Listed in the record table, so it can be read.
-			.SelectMany(r => ReadLootItemTable(this.GetRecordFromFile(r.Key)!, r.Value.Class))
+			.SelectMany(r => ReadLootItemTable(r.Key, this.GetRecordFromFile(r.Key)!, r.Value.Class))
 			.GroupBy(i => i.Item)
 			.ToDictionary(i =>
 				i.Key
-				, j => j
-					.Select(k => k.Tables).Distinct()
-					.ToList().AsReadOnly()
+				, j => j.Select(k => k.Tables).ToList().AsReadOnly()
 			);
 
 		ItemAffixTableMap = new ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>(data);
 	}
 
 	/// <summary>
-	/// The items a loot item table can drop, each with the affix tables of every slot the table can roll.
+	/// The items a loot item table can drop, each with the weighted affix tables the table can roll, per kind.
 	/// </summary>
-	private static IEnumerable<(RecordId Item, AffixTableMapItem Tables)> ReadLootItemTable(DBRecordCollection rec, string recordClass)
+	private static IEnumerable<(RecordId Item, AffixTableMapItem Tables)> ReadLootItemTable(RecordId tableId, DBRecordCollection rec, string recordClass)
 	{
 		var items = new List<RecordId>();
 		if (recordClass.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
@@ -525,27 +523,42 @@ public partial class Database : IDatabase
 			yield break;
 
 		var (broken, prefix, suffix) = RollableKinds(rec);
-		var slots = rec.GroupNumberedVariables(_ => true
-			, "brokenRandomizerName", "brokenRandomizerWeight"
-			, "prefixRandomizerName", "prefixRandomizerWeight"
-			, "suffixRandomizerName", "suffixRandomizerWeight");
+		var tables = new AffixTableMapItem(tableId
+			, broken ? WeightedTables(rec, "broken") : []
+			, prefix ? WeightedTables(rec, "prefix") : []
+			, suffix ? WeightedTables(rec, "suffix") : []);
 
-		foreach (var slot in slots)
+		if (tables.IsEmpty)
+			yield break;
+
+		foreach (var item in items.Distinct())
+			yield return (item, tables);
+	}
+
+	/// <summary>
+	/// The affix tables of a kind a loot item table picks from: the slots <c>&lt;kind&gt;RandomizerName&lt;N&gt;</c> with a
+	/// name and a weight above zero (<c>&lt;kind&gt;RandomizerWeight&lt;N&gt;</c>). A table named in several slots adds its
+	/// weights, as the game's cumulative pick does.
+	/// </summary>
+	private static List<WeightedAffixTable> WeightedTables(DBRecordCollection rec, string kind)
+	{
+		var tables = new List<WeightedAffixTable>();
+		foreach (var slot in rec.GroupNumberedVariables(_ => true, kind + "RandomizerName", kind + "RandomizerWeight"))
 		{
-			if (!IsSlot(slot.Key, MaxAffixTableSlots))
+			var name = slot.Value[0]?.GetString(0);
+			float weight = NumberOf(slot.Value[1]);
+			if (!IsSlot(slot.Key, MaxAffixTableSlots) || string.IsNullOrWhiteSpace(name) || weight <= 0)
 				continue;
 
-			var tables = new AffixTableMapItem(
-				broken ? TableOf(slot.Value[0], slot.Value[1]) : RecordId.Empty
-				, prefix ? TableOf(slot.Value[2], slot.Value[3]) : RecordId.Empty
-				, suffix ? TableOf(slot.Value[4], slot.Value[5]) : RecordId.Empty);
-
-			if (tables.IsEmpty)
-				continue;
-
-			foreach (var item in items)
-				yield return (item, tables);
+			RecordId table = name;
+			int known = tables.FindIndex(t => t.Table == table);
+			if (known < 0)
+				tables.Add(new WeightedAffixTable(table, weight));
+			else
+				tables[known] = tables[known] with { Weight = tables[known].Weight + weight };
 		}
+
+		return tables;
 	}
 
 	/// <summary>
@@ -604,10 +617,6 @@ public partial class Database : IDatabase
 		if (this.ArzFile is not null)
 			yield return (2, this.ArzFile);
 	}
-
-	/// <summary>The affix table of a loot item table slot, empty when the slot has no name or no weight (never rolled).</summary>
-	private static RecordId TableOf(Variable? name, Variable? weight)
-		=> name is not null && !string.IsNullOrWhiteSpace(name.GetString(0)) && NumberOf(weight) > 0 ? name.GetString(0) : RecordId.Empty;
 
 	/// <summary>
 	/// Gets a DBRecord for the specified item ID string.

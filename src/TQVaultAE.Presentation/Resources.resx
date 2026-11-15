@@ -1935,6 +1935,12 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="AffixesDisplayByEffect" xml:space="preserve">
     <value>Display affixes by effect</value>
   </data>
+	<data name="AffixChanceHeader" xml:space="preserve">
+    <value>% = chance once the item gets this kind of affix (best drop source)</value>
+  </data>
+	<data name="AffixShareHeader" xml:space="preserve">
+    <value>% = share in its affix table (all affixes of this gear type)</value>
+  </data>
 	<data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
     <value>Enable Epic and Legendary affixes</value>
   </data>

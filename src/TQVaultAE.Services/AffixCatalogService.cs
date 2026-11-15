@@ -66,7 +66,8 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 		if (!(item.IsArmor || item.IsWeaponShield || item.IsJewellery))
 			return null;
 
-		ItemAffixes? affixes = enableEpicLegendaryAffixes && (item.Rarity == Rarity.Epic || item.Rarity == Rarity.Legendary)
+		bool allAffixes = enableEpicLegendaryAffixes && (item.Rarity == Rarity.Epic || item.Rarity == Rarity.Legendary);
+		ItemAffixes? affixes = allAffixes
 			// Get all available affixes for an item type
 			? this._itemProvider.GetAllAvailableAffixes(item.GearType)
 			// Get affixes related to a specific item
@@ -84,6 +85,7 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 			, groups.Where(g => g.Key.TypeId == PrefixTypeId).ToList()
 			, affixes.Suffix.Count > 0
 			, groups.Where(g => g.Key.TypeId == SuffixTypeId).ToList()
+			, allAffixes
 		);
 	}
 
@@ -131,6 +133,11 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 	/// Flattens the broken, prefix and suffix tables of every DLC, keeps the highest weight of each affix,
 	/// and groups the affixes by type and name.
 	/// </summary>
+	/// <remarks>
+	/// For an item's own affixes each table is the distribution of one loot item table (see
+	/// <see cref="LootTableCollection.Mix"/>): the highest is the best chance among the item's drop sources, given the item
+	/// gets an affix of that kind. Absolute odds also depend on the kind weights, the chance and the monster, not shown.
+	/// </remarks>
 	private static List<AffixGroup> CurateAffixes(ItemAffixes affixes)
 	{
 		var affixTypes = new[] { // UNPIVOT

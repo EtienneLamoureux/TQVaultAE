@@ -366,6 +366,12 @@ public class DatabaseLoadingTests
 		return table;
 	}
 
+	/// <summary>One line per affix table of the map: loot item table, kind, affix table and weight.</summary>
+	private static string[]? Describe(IEnumerable<AffixTableMapItem>? map)
+		=> map?.SelectMany(m => m.Broken.Select(t => ("broken", t)).Concat(m.Prefix.Select(t => ("prefix", t))).Concat(m.Suffix.Select(t => ("suffix", t)))
+			.Select(k => $"{m.LootTable.Raw} {k.Item1} {k.Item2.Table.Raw} {k.Item2.Weight}"))
+			.ToArray();
+
 	/// <summary>Changes the value of a variable the record already has.</summary>
 	private static void Change(DBRecordCollection record, string name, object value)
 		=> record.First(v => v.Name == name)[0] = value;
@@ -396,12 +402,13 @@ public class DatabaseLoadingTests
 
 		var expected = new[]
 		{
-			new AffixTableMapItem(RecordId.Empty, """records\affix\prefix2.dbr""", RecordId.Empty),
-			new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", """records\affix\suffix1.dbr"""),
-			new AffixTableMapItem("""records\affix\broken3.dbr""", RecordId.Empty, RecordId.Empty),
+			"""records\loot\table_a.dbr broken records\affix\broken3.dbr 10""",
+			"""records\loot\table_a.dbr prefix records\affix\prefix2.dbr 10""",
+			"""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 10""",
+			"""records\loot\table_a.dbr suffix records\affix\suffix1.dbr 10""",
 		};
-		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().BeEquivalentTo(expected);
-		db.GetItemAffixTableMap("""records\item\axe.dbr""").Should().BeEquivalentTo(expected);
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should().BeEquivalentTo(expected);
+		Describe(db.GetItemAffixTableMap("""records\item\axe.dbr""")).Should().BeEquivalentTo(expected);
 	}
 
 	[Fact]
@@ -419,8 +426,8 @@ public class DatabaseLoadingTests
 
 		db.LoadDBFile();
 
-		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should()
-			.Equal(new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty));
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should()
+			.Equal("""records\loot\table_c.dbr prefix records\affix\prefix1.dbr 10""");
 	}
 
 	[Fact]
@@ -439,9 +446,9 @@ public class DatabaseLoadingTests
 
 		db.LoadDBFile();
 
-		var expected = new[] { new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty) };
-		db.GetItemAffixTableMap("""records\item\ring.dbr""").Should().Equal(expected);
-		db.GetItemAffixTableMap("""records\item\amulet.dbr""").Should().Equal(expected);
+		var expected = new[] { """records\loot\table_b.dbr prefix records\affix\prefix1.dbr 10""" };
+		Describe(db.GetItemAffixTableMap("""records\item\ring.dbr""")).Should().Equal(expected);
+		Describe(db.GetItemAffixTableMap("""records\item\amulet.dbr""")).Should().Equal(expected);
 	}
 
 	[Fact]
@@ -472,8 +479,8 @@ public class DatabaseLoadingTests
 
 		db.LoadDBFile();
 
-		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should()
-			.Equal(new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty));
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should()
+			.Equal("""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 10""");
 	}
 
 	[Fact]
@@ -488,8 +495,44 @@ public class DatabaseLoadingTests
 
 		db.LoadDBFile();
 
-		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should()
-			.Equal(new AffixTableMapItem(RecordId.Empty, """records\affix\prefix1.dbr""", RecordId.Empty));
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should()
+			.Equal("""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 10""");
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_SameTableInTwoSlots_AddsItsWeights()
+	{
+		this.UseAnniversaryEdition();
+		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""", """records\item\sword.dbr""");
+		AddAffixTable(table, "prefix", 1, """records\affix\prefix1.dbr""", weight: 30);
+		AddAffixTable(table, "prefix", 2, """records\affix\prefix2.dbr""", weight: 5);
+		AddAffixTable(table, "prefix", 3, """records\affix\prefix1.dbr""", weight: 20);
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		// The item named in two slots still gets the table once.
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should().BeEquivalentTo(
+			"""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 50""",
+			"""records\loot\table_a.dbr prefix records\affix\prefix2.dbr 5""");
+	}
+
+	[Fact]
+	public void GetItemAffixTableMap_ItemInTwoLootTables_KeepsEachLootTableApart()
+	{
+		this.UseAnniversaryEdition();
+		var tableA = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""");
+		AddAffixTable(tableA, "prefix", 1, """records\affix\prefix1.dbr""", weight: 3);
+		var tableB = this.AddFixedLootTable("""records\loot\table_b.dbr""", """records\item\sword.dbr""");
+		AddAffixTable(tableB, "prefix", 1, """records\affix\prefix1.dbr""", weight: 7);
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().HaveCount(2);
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should().BeEquivalentTo(
+			"""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 3""",
+			"""records\loot\table_b.dbr prefix records\affix\prefix1.dbr 7""");
 	}
 
 	[Theory]
@@ -524,9 +567,9 @@ public class DatabaseLoadingTests
 		}
 
 		var tables = map.Should().ContainSingle().Subject;
-		tables.BrokenTable.IsEmpty.Should().Be(!hasBroken);
-		tables.PrefixTable.IsEmpty.Should().Be(!hasPrefix);
-		tables.SuffixTable.IsEmpty.Should().Be(!hasSuffix);
+		tables.Broken.Should().HaveCount(hasBroken ? 1 : 0);
+		tables.Prefix.Should().HaveCount(hasPrefix ? 1 : 0);
+		tables.Suffix.Should().HaveCount(hasSuffix ? 1 : 0);
 	}
 
 	#endregion

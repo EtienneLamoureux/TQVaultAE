@@ -124,40 +124,64 @@ public class ItemProviderAffixesTests
 	{
 		this._database.Setup(d => d.GetItemAffixTableMap(It.IsAny<RecordId>())).Returns((ReadOnlyCollection<AffixTableMapItem>?)null);
 		this._database.Setup(d => d.GetItemAffixTableMap((RecordId)Relic1))
-			.Returns(new List<AffixTableMapItem> { new(RecordId.Empty, RecordId.Empty, RecordId.Empty) }.AsReadOnly());
+			.Returns(new List<AffixTableMapItem> { new("loot", [], [], []) }.AsReadOnly());
 
 		this._provider.GetItemAffixes(Helmet).Should().BeNull();
 		this._provider.GetItemAffixes(Relic1).Should().BeNull();
 	}
 
+	private static LootTableCollection Table(string id, params (string Affix, float Weight)[] entries)
+		=> new(id, entries.ToDictionary(e => (RecordId)e.Affix, e => (e.Weight, LootRandomizerItem.Default(e.Affix))));
+
 	[Fact]
-	public void GetItemAffixes_ItemWithTables_LoadsThemByKindAndDlcOnceAndSkipsMissingTables()
+	public void GetItemAffixes_LootTableWithWeightedTables_MixesThemAsTheGamePicks()
 	{
-		RecordId prefixTQ = @"records\item\lootmagicalaffixes\prefix\tablesarmor\headmelee_l01.dbr";
-		RecordId suffixRagnarok = @"records\xpack2\item\lootmagicalaffixes\suffix\tablesarmor\headmelee_l01.dbr";
-		RecordId brokenTQ = @"records\item\lootmagicalaffixes\broken\table_armor_l01.dbr";
+		// Table share x share in the table, summed over the tables; a missing table keeps its share (no affix).
+		RecordId loot = @"records\xpack2\loot\table_a.dbr";
+		RecordId prefixA = @"records\item\lootmagicalaffixes\prefix\tablesarmor\a.dbr";
+		RecordId prefixB = @"records\item\lootmagicalaffixes\prefix\tablesarmor\b.dbr";
+		RecordId missing = @"records\item\lootmagicalaffixes\prefix\tablesarmor\missing.dbr";
+		this._database.Setup(d => d.GetItemAffixTableMap((RecordId)Helmet)).Returns(new List<AffixTableMapItem>
+		{
+			new(loot, [], [new(prefixA, 60), new(prefixB, 20), new(missing, 20)], []),
+		}.AsReadOnly());
+		this._lootTables.Setup(l => l.LoadTable(prefixA)).Returns(Table("a", ("strong", 1), ("quick", 3)));
+		this._lootTables.Setup(l => l.LoadTable(prefixB)).Returns(Table("b", ("strong", 1)));
+
+		var affixes = this._provider.GetItemAffixes(Helmet)!;
+
+		affixes.Broken.Should().BeEmpty();
+		affixes.Suffix.Should().BeEmpty();
+		var mix = affixes.Prefix.Should().ContainKey(GameDlc.Ragnarok).WhoseValue.Should().ContainSingle().Subject;
+		mix.TableId.Should().Be(loot);
+		mix.Data[(RecordId)"strong"].WeightPercent.Should().BeApproximately(0.6F * 0.25F + 0.2F, 1e-6F);
+		mix.Data[(RecordId)"quick"].WeightPercent.Should().BeApproximately(0.6F * 0.75F, 1e-6F);
+	}
+
+	[Fact]
+	public void GetItemAffixes_TwoLootTables_GivesOneDistributionEachAndLoadsOnce()
+	{
+		RecordId lootA = @"records\loot\table_a.dbr";
+		RecordId lootB = @"records\loot\table_b.dbr";
+		RecordId prefix = @"records\item\lootmagicalaffixes\prefix\tablesarmor\a.dbr";
+		RecordId suffix = @"records\item\lootmagicalaffixes\suffix\tablesarmor\a.dbr";
 		RecordId missingSuffix = @"records\item\lootmagicalaffixes\suffix\tablesarmor\missing.dbr";
 		this._database.Setup(d => d.GetItemAffixTableMap((RecordId)Helmet)).Returns(new List<AffixTableMapItem>
 		{
-			new(brokenTQ, prefixTQ, missingSuffix),
-			new(RecordId.Empty, RecordId.Empty, suffixRagnarok),
+			new(lootA, [], [new(prefix, 1)], [new(missingSuffix, 1)]),
+			new(lootB, [], [new(prefix, 1)], [new(suffix, 1)]),
 		}.AsReadOnly());
-		var prefix = Table("prefix");
-		var suffix = Table("suffix");
-		var broken = Table("broken");
-		this._lootTables.Setup(l => l.LoadTable(prefixTQ)).Returns(prefix);
-		this._lootTables.Setup(l => l.LoadTable(suffixRagnarok)).Returns(suffix);
-		this._lootTables.Setup(l => l.LoadTable(brokenTQ)).Returns(broken);
+		this._lootTables.Setup(l => l.LoadTable(prefix)).Returns(Table("p", ("strong", 1)));
+		this._lootTables.Setup(l => l.LoadTable(suffix)).Returns(Table("s", ("ofLife", 1)));
 
 		var affixes = this._provider.GetItemAffixes(Helmet)!;
 		var again = this._provider.GetItemAffixes(Helmet);
 
 		again.Should().BeSameAs(affixes);
 		this._database.Verify(d => d.GetItemAffixTableMap(It.IsAny<RecordId>()), Times.Once);
-		affixes.Prefix[GameDlc.TitanQuest].Should().Equal(prefix);
-		affixes.Suffix.Keys.Should().Equal(GameDlc.Ragnarok);
-		affixes.Suffix[GameDlc.Ragnarok].Should().Equal(suffix);
-		affixes.Broken[GameDlc.TitanQuest].Should().Equal(broken);
+		affixes.Prefix[GameDlc.TitanQuest].Select(t => t.TableId).Should().Equal(lootA, lootB);
+		// Loot table A only names a missing suffix table: no distribution.
+		affixes.Suffix[GameDlc.TitanQuest].Select(t => t.TableId).Should().Equal(lootB);
 	}
 
 	#endregion

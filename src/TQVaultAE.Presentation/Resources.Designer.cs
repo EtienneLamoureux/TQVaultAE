@@ -105,6 +105,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to % = chance once the item gets this kind of affix (best drop source).
+        /// </summary>
+        public static string AffixChanceHeader {
+            get {
+                return ResourceManager.GetString("AffixChanceHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display affixes by effect.
         /// </summary>
         public static string AffixesDisplayByEffect {
@@ -119,6 +128,15 @@ namespace TQVaultAE.Presentation {
         public static string AffixesDisplayByName {
             get {
                 return ResourceManager.GetString("AffixesDisplayByName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to % = share in its affix table (all affixes of this gear type).
+        /// </summary>
+        public static string AffixShareHeader {
+            get {
+                return ResourceManager.GetString("AffixShareHeader", resourceCulture);
             }
         }
         

@@ -28,6 +28,11 @@ public sealed record BonusChoice(RecordId Id, string Label, bool Unknown, bool U
 /// <param name="Prefix">Prefix groups.</param>
 /// <param name="HasSuffix">The item has suffixes to offer.</param>
 /// <param name="Suffix">Suffix groups.</param>
+/// <param name="AllAffixesOfGearType">
+/// The affixes are every affix of the item's gear type (the Epic/Legendary setting): each percentage is the affix's share
+/// in its table. Otherwise they are the affixes the game can roll on the item: each percentage is the chance of the affix
+/// once the item gets an affix of that kind, from the drop source that gives it best.
+/// </param>
 public sealed record AffixCatalog(
 	bool HasBroken
 	, IReadOnlyList<AffixGroup> Broken
@@ -35,4 +40,5 @@ public sealed record AffixCatalog(
 	, IReadOnlyList<AffixGroup> Prefix
 	, bool HasSuffix
 	, IReadOnlyList<AffixGroup> Suffix
+	, bool AllAffixesOfGearType = false
 );

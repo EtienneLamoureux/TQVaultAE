@@ -293,6 +293,8 @@ public partial class SackPanel
 
 			var dispStl = ToolStripItemDisplayStyle.Text;
 			var tagSRemove = TranslationService.TranslateXTag("tagSRemove");
+			// What the percentages mean, shown above the choices.
+			var header = affixes.AllAffixesOfGearType ? Resources.AffixShareHeader : Resources.AffixChanceHeader;
 
 			ToolStripMenuItem currentchoicesMenu;
 
@@ -308,7 +310,7 @@ public partial class SackPanel
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
-					, affixes.Broken
+					, affixes.Broken, header
 				);
 			}
 
@@ -326,7 +328,7 @@ public partial class SackPanel
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.prefixID, currentchoicesMenu, ChangePrefixItemClicked
-					, affixes.Prefix
+					, affixes.Prefix, header
 				);
 			}
 
@@ -355,7 +357,7 @@ public partial class SackPanel
 				this.CustomContextMenu.Items.Add(currentchoicesMenu);
 
 				BuildAffixesMenuItems(focusedItem.suffixID, currentchoicesMenu, ChangeSuffixItemClicked
-					, affixes.Suffix
+					, affixes.Suffix, header
 				);
 			}
 
@@ -439,9 +441,18 @@ public partial class SackPanel
 		, ToolStripMenuItem currentchoicesMenu
 		, EventHandler handler
 		, IEnumerable<AffixGroup> currentaffixGroup
+		, string header
 	)
 	{
 		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
+
+		currentchoicesMenu.DropDownItems.Add(new ToolStripMenuItem()
+		{
+			Text = header,
+			Enabled = false,
+			DisplayStyle = ToolStripItemDisplayStyle.Text,
+		}.StyledLike(this.CustomContextMenu));
+		currentchoicesMenu.DropDownItems.Add("-");
 
 
 		if (_DisplayAffixesByEffect)// Group By Effect

@@ -75,4 +75,32 @@ public class LootTableCollectionTests
 		table.PickWeighted(0.1f).Should().Be(RecordId.Create("c"));
 		table.PickWeighted(0f).Should().Be(RecordId.Create("a"));
 	}
+
+	[Fact]
+	public void Mix_WeightedTables_SharesAreTableShareTimesEntryShareSummed()
+	{
+		// a: 1/4 strong, 3/4 quick; b: strong only. Weights 3 and 1.
+		var a = CreateTable(("strong", 1f), ("quick", 3f));
+		var b = CreateTable(("strong", 2f));
+
+		var mix = LootTableCollection.Mix(RecordId.Create("loot"), [(3f, a), (1f, b)]);
+
+		mix.TableId.Should().Be(RecordId.Create("loot"));
+		mix.Data[RecordId.Create("strong")].WeightPercent.Should().BeApproximately(0.75f * 0.25f + 0.25f, 1e-6f);
+		mix.Data[RecordId.Create("quick")].WeightPercent.Should().BeApproximately(0.75f * 0.75f, 1e-6f);
+		mix.Sum(e => e.Value.WeightPercent).Should().BeApproximately(1f, 1e-6f);
+	}
+
+	[Fact]
+	public void Mix_MissingTableOrNoWeight_MissingKeepsItsShareAndUnweightedIsIgnored()
+	{
+		// The game picks the missing table and gets no affix; a table without weight is never picked.
+		var a = CreateTable(("strong", 1f));
+		var never = CreateTable(("quick", 1f));
+
+		var mix = LootTableCollection.Mix(RecordId.Create("loot"), [(1f, a), (1f, null), (0f, never)]);
+
+		mix.Length.Should().Be(1);
+		mix.Data[RecordId.Create("strong")].WeightPercent.Should().BeApproximately(0.5f, 1e-6f);
+	}
 }

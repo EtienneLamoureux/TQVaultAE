@@ -259,6 +259,7 @@ public class AffixCatalogServiceTests
 		var catalog = this._service.GetAffixCatalog(ring, true);
 
 		catalog.Should().NotBeNull();
+		catalog!.AllAffixesOfGearType.Should().BeTrue(); // the menu then explains the percentages as table shares
 		this._itemProvider.Verify(p => p.GetAllAvailableAffixes(ring.GearType), Times.Once);
 		this._itemProvider.Verify(p => p.GetItemAffixes(It.IsAny<RecordId>()), Times.Never);
 	}
@@ -270,7 +271,7 @@ public class AffixCatalogServiceTests
 		this._itemProvider.Setup(p => p.GetItemAffixes(ring.BaseItemId))
 			.Returns(new ItemAffixes(NoTables(), NoTables(), NoTables()));
 
-		this._service.GetAffixCatalog(ring, false).Should().NotBeNull();
+		this._service.GetAffixCatalog(ring, false)!.AllAffixesOfGearType.Should().BeFalse();
 		this._itemProvider.Verify(p => p.GetAllAvailableAffixes(It.IsAny<GearType>()), Times.Never);
 	}
 

@@ -1584,6 +1584,12 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="AffixesDisplayByEffect" xml:space="preserve">
     <value>Affiche les affixes par effets</value>
   </data>
+	<data name="AffixChanceHeader" xml:space="preserve">
+    <value>% = chance quand l'objet reçoit ce type d'affixe (meilleure source de butin)</value>
+  </data>
+	<data name="AffixShareHeader" xml:space="preserve">
+    <value>% = part dans sa table d'affixes (tous les affixes de ce type d'équipement)</value>
+  </data>
 	<data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
     <value>Autorise les affixes sur Épiques et Légendaires</value>
   </data>

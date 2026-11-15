@@ -70,53 +70,39 @@ public partial class ItemProvider
 		// Per data scope: a mod may give the item other affix tables than the base game.
 		return ItemAffixesCache.GetOrAddAtomic((this.Database.DataScope ?? string.Empty, itemId), key =>
 	{
-		var k = key.Item;
-		var affixmap = this.Database.GetItemAffixTableMap(k);
+		var affixmap = this.Database.GetItemAffixTableMap(key.Item);
 		if (affixmap is null || affixmap.All(a => a.IsEmpty)) return null;
 
-		Dictionary<GameDlc, ReadOnlyCollection<LootTableCollection>> Broken, Prefix, Suffix;
-
+		// One distribution per loot item table and kind, as the game picks the affix of an item it drops: an affix table
+		// by weight, then an affix of that table by weight.
 		List<(GameDlc Dlc, LootTableCollection Table)> LBroken = [], LPrefix = [], LSuffix = [];
-
-		LootTableCollection? table;
-		GameDlc dlc;
 		foreach (var map in affixmap)
 		{
-			if (!map.BrokenTable.IsEmpty)
-			{
-				dlc = map.BrokenTable.Dlc;
-				table = this.LootTableCollectionProvider.LoadTable(map.BrokenTable);
-				if (table is not null) LBroken.Add((dlc, table));
-			}
-
-			if (!map.PrefixTable.IsEmpty)
-			{
-				dlc = map.PrefixTable.Dlc;
-				table = this.LootTableCollectionProvider.LoadTable(map.PrefixTable);
-				if (table is not null) LPrefix.Add((dlc, table));
-			}
-			if (!map.SuffixTable.IsEmpty)
-			{
-				dlc = map.SuffixTable.Dlc;
-				table = this.LootTableCollectionProvider.LoadTable(map.SuffixTable);
-				if (table is not null) LSuffix.Add((dlc, table));
-			}
+			this.AddMix(LBroken, map.LootTable, map.Broken);
+			this.AddMix(LPrefix, map.LootTable, map.Prefix);
+			this.AddMix(LSuffix, map.LootTable, map.Suffix);
 		}
 
-		Broken = LBroken.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
-			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
-		Prefix = LPrefix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
-			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
-		Suffix = LSuffix.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
-			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly());
-
-		return new ItemAffixes(
-			new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Broken)
-			, new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Prefix)
-			, new ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>>(Suffix)
-		);
+		return new ItemAffixes(PerDlc(LBroken), PerDlc(LPrefix), PerDlc(LSuffix));
 	});
 	}
+
+	/// <summary>Adds the distribution of a loot item table's affix tables of one kind, when it has any.</summary>
+	private void AddMix(List<(GameDlc Dlc, LootTableCollection Table)> mixes, RecordId lootTable, IReadOnlyList<WeightedAffixTable> tables)
+	{
+		if (tables.Count == 0)
+			return;
+
+		var mix = LootTableCollection.Mix(lootTable
+			, tables.Select(t => (t.Weight, this.LootTableCollectionProvider.LoadTable(t.Table))));
+		if (mix.Length > 0)
+			mixes.Add((lootTable.Dlc, mix));
+	}
+
+	private static ReadOnlyDictionary<GameDlc, ReadOnlyCollection<LootTableCollection>> PerDlc(List<(GameDlc Dlc, LootTableCollection Table)> tables)
+		=> new(tables.GroupBy(i => i.Dlc).OrderBy(i => i.Key)
+			.ToDictionary(i => i.Key, j => j.Select(k => k.Table).ToList().AsReadOnly()));
+
 	#region Must be a flat prop
 
 	/// <summary>
