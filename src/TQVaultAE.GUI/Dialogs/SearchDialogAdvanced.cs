@@ -470,11 +470,13 @@ public partial class SearchDialogAdvanced : VaultForm
 	}
 
 	/// <summary>
-	/// On a monitor of another DPI the fonts change: the category lists, sized from their text in code, are sized again.
-	/// Called inside the rescale, the dialog's drawing frozen; during a drag by the title bar, once the drag ends.
+	/// On a monitor of another DPI the fonts change: the category lists, sized from their text in code, are sized again,
+	/// at once, during a drag by the title bar too (sized once the drag ended, they were cut during it, and the dialog
+	/// was not ready sooner).
 	/// </summary>
-	protected override void FollowDpi()
+	protected override void OnDpiChanged(DpiChangedEventArgs e)
 	{
+		base.OnDpiChanged(e);
 		this.FitCategoriesToFont();
 		this.RescalePhase("category lists");
 	}
