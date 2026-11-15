@@ -135,6 +135,54 @@ public partial class LoadoutService(
 		return this.Write(loadouts, [.. loadouts.Loadouts.Where(l => l != loadout)]);
 	}
 
+	/// <inheritdoc/>
+	public LoadoutChange TakePieces(LoadoutSet loadouts, IReadOnlyCollection<Item> pieces)
+	{
+		if (loadouts.ReadFailed)
+			return LoadoutChange.Missing;
+
+		var taken = new HashSet<Item>(pieces, ReferenceEqualityComparer.Instance);
+		return this.Write(loadouts, [.. loadouts.Loadouts.Select(l => l.Pieces.Any(p => p is not null && taken.Contains(p))
+			? l with { Pieces = [.. l.Pieces.Select(p => p is not null && taken.Contains(p) ? null : p)] }
+			: l)]);
+	}
+
+	/// <inheritdoc/>
+	public (LoadoutChange Change, IReadOnlyList<Item> PutBack) PutBackPieces(LoadoutSet loadouts, IReadOnlyList<LoadoutPiecePlacement> pieces)
+	{
+		if (loadouts.ReadFailed)
+			return (LoadoutChange.Missing, []);
+
+		var list = loadouts.Loadouts.ToList();
+		var putBack = new List<Item>();
+		foreach (var (slot, piece) in pieces)
+		{
+			int index = list.FindIndex(l => string.Equals(l.Name, slot.Loadout, StringComparison.OrdinalIgnoreCase));
+			if (index < 0 || slot.Slot < 0)
+				continue;
+
+			var slots = list[index].Pieces.ToList();
+			while (slots.Count <= slot.Slot)
+				slots.Add(null);
+			if (slots[slot.Slot] is not null)
+				continue;
+
+			// As read from the file: in no bag, with no cell.
+			piece.InVault = false;
+			piece.PositionX = -1;
+			piece.PositionY = -1;
+			slots[slot.Slot] = piece;
+			list[index] = list[index] with { Pieces = slots };
+			putBack.Add(piece);
+		}
+
+		if (putBack.Count == 0)
+			return (LoadoutChange.Succeeded, []);
+
+		var change = this.Write(loadouts, [.. list]);
+		return (change, change.IsSuccess ? putBack : []);
+	}
+
 	/// <summary>A loadout of the worn equipment: copies of the pieces, and the weapon set in hand.</summary>
 	private static Loadout Record(string name, PlayerCollection player)
 		=> new(name, player.UseAlternate, [.. player.EquipmentSack!.Select(item => ItemKey.IsEmptyItem(item) ? null : item.Clone())]);

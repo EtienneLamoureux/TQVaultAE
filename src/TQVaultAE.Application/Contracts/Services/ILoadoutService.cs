@@ -97,4 +97,21 @@ public interface ILoadoutService
 	/// <param name="name">The loadout.</param>
 	/// <param name="player">The character.</param>
 	IReadOnlyList<Domain.Entities.Item> TakenOff(LoadoutSet loadouts, string name, PlayerCollection player);
+
+	/// <summary>
+	/// Takes pieces out of their loadouts (their slots become empty) and writes the file: the results window moved them
+	/// elsewhere. A loadout keeps its name and its other pieces, even when none is left.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="pieces">The pieces, found by reference.</param>
+	LoadoutChange TakePieces(LoadoutSet loadouts, IReadOnlyCollection<Domain.Entities.Item> pieces);
+
+	/// <summary>
+	/// Puts pieces back in loadout slots and writes the file: the results window undoes their move. A piece whose loadout
+	/// is gone or whose slot is taken is left out.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="pieces">The pieces and their slots.</param>
+	/// <returns>The change, and the pieces put back.</returns>
+	(LoadoutChange Change, IReadOnlyList<Domain.Entities.Item> PutBack) PutBackPieces(LoadoutSet loadouts, IReadOnlyList<LoadoutPiecePlacement> pieces);
 }
