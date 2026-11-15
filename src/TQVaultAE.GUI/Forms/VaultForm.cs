@@ -284,9 +284,15 @@ public partial class VaultForm : Form, IScalingControl
 
 	/// <summary>
 	/// The caption's font at <paramref name="zoom"/> (points follow the DPI by themselves), the form's own copy: the form
-	/// disposes it, and the service shares its fonts.
+	/// disposes it, and the service shares its fonts. No taller than the top border picture it is drawn on, which keeps its
+	/// own height at every DPI and zoom: at 144 dpi, or a zoom of 1.2, 9.5 pt grew past it and the caption's top was cut.
 	/// </summary>
-	private Font TitleFontAt(float zoom) => (Font)this.FontService.GetFontLight(9.5F, zoom).Clone();
+	private Font TitleFontAt(float zoom)
+	{
+		// Fonts in points are drawn for the system DPI: an em of size * DPI / 72 pixels.
+		float fitting = CustomBorderThickness.Top * 72F / (this.UIService.DESIGNDPI * this.UIService.SystemDpiScale);
+		return (Font)this.FontService.GetFontLight(Math.Min(9.5F * zoom, fitting)).Clone();
+	}
 
 	internal const int NORMAL_FORMWIDTH = 1350;
 	internal const int NORMAL_FORMHEIGHT = 910;

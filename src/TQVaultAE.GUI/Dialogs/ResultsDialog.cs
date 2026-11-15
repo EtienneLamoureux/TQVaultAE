@@ -73,18 +73,23 @@ public partial class ResultsDialog : VaultForm
 	{
 		this.Owner = instance;
 
+		// The commands under the list are made in code: inside the designer's layout suspension, so that Windows Forms
+		// scales them to the monitor's DPI with the rest of the dialog when it resumes (it scales only the controls
+		// present then: the buttons kept their 96 dpi size, their text cut at a higher DPI).
+		this.SuspendLayout();
 		this.InitializeComponent();
 
 		// Several rows (Ctrl or Shift click, Ctrl+A): Move To and Undo act on the selection.
 		this.resultsDataGridView.MultiSelect = true;
 		this.resultsDataGridView.CellMouseDown += this.ResultsDataGridViewCellMouseDown;
 		this.BuildMoveControls();
+		// Room for the marble around the frame, as in Item Properties; under the last row, black like its lists.
+		this.Padding = new Padding(this.Padding.Left + 10, this.Padding.Top + 10, this.Padding.Right + 10, this.Padding.Bottom + 6);
+		this.ResumeLayout(false);
 
 		// The look of Advanced Search and Item Properties: the main window's marble, the list in a caravan frame, its
 		// headers in gold on black (the system's light headers otherwise).
 		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow, this.movePanel, this.moveButtons);
-		// Room for the marble around the frame, as in Item Properties; under the last row, black like its lists.
-		this.Padding = new Padding(this.Padding.Left + 10, this.Padding.Top + 10, this.Padding.Right + 10, this.Padding.Bottom + 6);
 		this.resultsDataGridView.BackgroundColor = Color.Black;
 		this.resultsDataGridView.BorderStyle = BorderStyle.None;
 		CaravanFrame.FrameAround(this.resultsDataGridView);
@@ -94,18 +99,12 @@ public partial class ResultsDialog : VaultForm
 		headers.SelectionForeColor = headers.ForeColor;
 		this.resultsDataGridView.EnableHeadersVisualStyles = false;
 
-		#region Apply custom font
-
-		// The marble dialogs' text size; the item name in italics, the other columns regular.
-		var regular = FontService.GetFontLight(CaravanLook.TextSize);
-		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = regular;
-		this.columnItem.DefaultCellStyle.Font = FontService.GetFontLight(CaravanLook.TextSize, FontStyle.Italic);
-		foreach (var column in new DataGridViewColumn[] { this.columnQuality, this.columnContainerName, this.columnContainerType, this.columnSack, this.columnLevel })
-			column.DefaultCellStyle.Font = regular;
-		this.Font = regular;
-		this.reportLabel.Font = regular;
-
-		#endregion
+		this.Font = FontService.GetFontLight(CaravanLook.TextSize);
+		this.ApplyListFonts();
+		// The header row as high as its text, on one line: a fixed height did not follow the font, which grows with the DPI
+		// and the zoom.
+		headers.WrapMode = DataGridViewTriState.False;
+		this.resultsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 
 		this.resultsList = [];
 
@@ -120,6 +119,30 @@ public partial class ResultsDialog : VaultForm
 		this.DrawCustomBorder = true;
 
 		this.LastFormSize = this.Size;
+	}
+
+	/// <summary>Designed at zoom 1: scaled to the user's zoom when made (<see cref="VaultForm.ApplyUserZoom"/>).</summary>
+	protected internal override bool FollowsUserZoom => true;
+
+	/// <summary>The list's fonts are its own (not the dialog's, which the zoom grows): made again at the zoom.</summary>
+	protected override void OnUserZoomApplied()
+	{
+		base.OnUserZoomApplied();
+		this.ApplyListFonts();
+	}
+
+	/// <summary>
+	/// The fonts of the list and of the report under it, at the dialog's zoom (<see cref="VaultForm.ScaledZoom"/>): the
+	/// marble dialogs' text size, the item name in italics, the other columns regular.
+	/// </summary>
+	private void ApplyListFonts()
+	{
+		var regular = FontService.GetFontLight(CaravanLook.TextSize, this.ScaledZoom);
+		this.resultsDataGridView.ColumnHeadersDefaultCellStyle.Font = regular;
+		this.columnItem.DefaultCellStyle.Font = FontService.GetFontLight(CaravanLook.TextSize, FontStyle.Italic, this.ScaledZoom);
+		foreach (var column in new DataGridViewColumn[] { this.columnQuality, this.columnContainerName, this.columnContainerType, this.columnSack, this.columnLevel })
+			column.DefaultCellStyle.Font = regular;
+		this.reportLabel.Font = regular;
 	}
 
 	/// <summary>
@@ -167,7 +190,7 @@ public partial class ResultsDialog : VaultForm
 
 		totalWidth += this.resultsDataGridView.Margin.Horizontal;
 
-		int totalHeight = 0;
+		int totalHeight = this.resultsDataGridView.ColumnHeadersHeight;
 		foreach (DataGridViewRow row in this.resultsDataGridView.Rows)
 			totalHeight += row.Height;
 
@@ -272,7 +295,7 @@ public partial class ResultsDialog : VaultForm
 
 				// The item searched from, in bold.
 				if (isSource)
-					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.Font = FontService.GetFontLight(CaravanLook.TextSize, FontStyle.Bold | FontStyle.Italic);
+					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.Font = FontService.GetFontLight(CaravanLook.TextSize, FontStyle.Bold | FontStyle.Italic, this.ScaledZoom);
 			}
 		}
 	}
@@ -407,7 +430,8 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	private void BuildMoveControls()
 	{
-		float zoom = this.UIService.Zoom;
+		// At zoom 1, like the designer's controls: the dialog is scaled to the user's zoom once made (FollowsUserZoom).
+		const float zoom = 1.0F;
 		this.selectAllButton = CaravanDialog.Button(this.FontService, zoom, "selectAllButton", Resources.ResultsMenuSelectAll);
 		this.selectAllButton.Click += (_, _) => this.SelectAllRows();
 		this.moveButton = CaravanDialog.Button(this.FontService, zoom, "moveButton", Resources.ResultsMenuMoveTo);
