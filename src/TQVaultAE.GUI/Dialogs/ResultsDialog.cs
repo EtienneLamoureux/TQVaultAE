@@ -482,12 +482,12 @@ public partial class ResultsDialog : VaultForm
 
 		this.resultsMenu = new ContextMenuStrip() { Name = "resultsMenu", ShowImageMargin = false };
 		MenuStyle.Apply(this.resultsMenu, this.FontService, this.UIService.FontZoom);
-		this.resultsMenu.Opening += (_, _) => this.FillMenu(this.resultsMenu, full: true);
+		this.resultsMenu.FillOnOpening(() => this.FillMenu(this.resultsMenu, full: true));
 		this.resultsDataGridView.ContextMenuStrip = this.resultsMenu;
 
 		this.moveMenu = new ContextMenuStrip() { Name = "moveMenu", ShowImageMargin = false };
 		MenuStyle.Apply(this.moveMenu, this.FontService, this.UIService.FontZoom);
-		this.moveMenu.Opening += (_, _) => this.FillMenu(this.moveMenu, full: false);
+		this.moveMenu.FillOnOpening(() => this.FillMenu(this.moveMenu, full: false));
 
 		this.resultsDataGridView.SelectionChanged += (_, _) => this.UpdateMoveButtons();
 		this.UpdateMoveButtons();

@@ -21,6 +21,17 @@ internal static class MenuStyle
 	}
 
 	/// <summary>
+	/// Fills <paramref name="menu"/> with <paramref name="fill"/> each time it opens. A menu empty when asked to open gets
+	/// its opening already cancelled: without undoing that, a menu filled only here opened on the second click.
+	/// </summary>
+	public static void FillOnOpening(this ContextMenuStrip menu, Action fill)
+		=> menu.Opening += (_, e) =>
+		{
+			fill();
+			e.Cancel = menu.Items.Count == 0;
+		};
+
+	/// <summary>
 	/// Gives <paramref name="item"/> the background, font and text color of <paramref name="owner"/>, the menu it goes in.
 	/// The font is set on the entry itself, not inherited: <see cref="Scaling.FontRebaser"/> walks the entries to rebase it.
 	/// </summary>

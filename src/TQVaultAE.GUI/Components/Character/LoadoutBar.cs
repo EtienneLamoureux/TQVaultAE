@@ -103,8 +103,8 @@ public sealed class LoadoutBar : Control
 			if (e.ClickedItem?.Tag is LoadoutBarAction action)
 				this.Raise(action, action == LoadoutBarAction.Add ? null : this.Selected);
 		};
-		this.ActionMenu.Opening += (_, _) => this.FillActionMenu();
-		this.ListMenu.Opening += (_, _) => this.FillListMenu();
+		this.ActionMenu.FillOnOpening(this.FillActionMenu);
+		this.ListMenu.FillOnOpening(this.FillListMenu);
 		this.ContextMenuStrip = this.ActionMenu;
 	}
 
