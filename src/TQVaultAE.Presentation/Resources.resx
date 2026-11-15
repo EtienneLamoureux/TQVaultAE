@@ -2924,6 +2924,6 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
     <value>Put down the held item first.</value>
   </data>
   <data name="ItemNoRoom" xml:space="preserve">
-    <value>No room here for this item's size, read with its container's map: shown 1 x 1 until moved where it fits.</value>
+    <value>No room here for this item's size, read with its container's map.</value>
   </data>
 </root>

@@ -2554,6 +2554,6 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
     <value>Posez d'abord l'objet tenu.</value>
   </data>
   <data name="ItemNoRoom" xml:space="preserve">
-    <value>Pas la place ici pour la taille de cet objet, lu avec la carte de son conteneur : montré en 1 x 1 jusqu'à ce qu'il soit déplacé là où il tient.</value>
+    <value>Pas la place ici pour la taille de cet objet, lu avec la carte de son conteneur.</value>
   </data>
 </root>

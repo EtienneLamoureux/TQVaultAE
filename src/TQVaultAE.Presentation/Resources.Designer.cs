@@ -6781,7 +6781,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No room here for this item's size, read with its container's map: shown 1 x 1 until moved where it fits..
+        ///   Looks up a localized string similar to No room here for this item's size, read with its container's map..
         /// </summary>
         public static string ItemNoRoom {
             get {
