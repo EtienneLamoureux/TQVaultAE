@@ -6,6 +6,7 @@ using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Components.Character;

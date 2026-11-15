@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.GUI.Components.Character;
+namespace TQVaultAE.GUI.Tooltips;
 
 /// <summary>A line of a game tool tip: its text (game colour tags such as <c>{^y}</c> or <c>^a</c> allowed), colour and style.</summary>
 /// <param name="Text">The text; an empty text is a blank line.</param>

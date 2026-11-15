@@ -1,6 +1,7 @@
 using System.Drawing.Drawing2D;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components.Panels;
@@ -35,7 +36,7 @@ public partial class EquipmentPanel
 	/// The game-style tool tip the marks show their state in (the statistics panel's, set by the stash panel); no tool tip
 	/// without it.
 	/// </summary>
-	internal TQVaultAE.GUI.Components.Character.GameTooltip? MarkTooltip { get; set; }
+	internal TQVaultAE.GUI.Tooltips.GameTooltip? MarkTooltip { get; set; }
 
 	/// <summary>
 	/// The loadout the worn equipment is compared with, the one chosen in the loadout bar; <see langword="null"/> for no
@@ -198,7 +199,7 @@ public partial class EquipmentPanel
 			_ => (Resources.LoadoutMarkNotWorn, OneEmptyColor),
 		};
 
-		var lines = new List<TQVaultAE.GUI.Components.Character.GameTooltipLine>
+		var lines = new List<TQVaultAE.GUI.Tooltips.GameTooltipLine>
 		{
 			new(string.Format(System.Globalization.CultureInfo.CurrentCulture, format, loadout.Name), color, Title: true),
 		};

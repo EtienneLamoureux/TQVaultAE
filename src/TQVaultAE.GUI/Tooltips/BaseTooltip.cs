@@ -157,7 +157,7 @@ public class BaseTooltip : Form
 	/// </summary>
 	protected Bitmap Framed(Bitmap image, Color background)
 	{
-		var gameFrame = TQVaultAE.GUI.Components.Character.GameTooltipFrame.Load(this.UIService);
+		var gameFrame = TQVaultAE.GUI.Tooltips.GameTooltipFrame.Load(this.UIService);
 		var frame = gameFrame?.Thickness(this.UIService.Scale) ?? new Padding(1);
 		var bounds = new Rectangle(0, 0, image.Width + frame.Horizontal, image.Height + frame.Vertical);
 		var framed = new Bitmap(bounds.Width, bounds.Height);

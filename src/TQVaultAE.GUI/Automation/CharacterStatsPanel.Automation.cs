@@ -1,3 +1,5 @@
+using TQVaultAE.GUI.Tooltips;
+
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>

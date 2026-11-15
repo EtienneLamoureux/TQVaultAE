@@ -10,6 +10,7 @@ using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Layout;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation.Win32;
 
 namespace TQVaultAE.GUI.Components.Panels;
