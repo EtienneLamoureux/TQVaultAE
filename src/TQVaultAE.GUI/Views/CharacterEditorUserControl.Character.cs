@@ -7,6 +7,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Components.Character.Editor;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;

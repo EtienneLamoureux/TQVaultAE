@@ -6,7 +6,7 @@ using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
 
-namespace TQVaultAE.GUI.Components.Character;
+namespace TQVaultAE.GUI.Components.Character.Editor;
 
 /// <summary>What the side panel shows, given by the dialog.</summary>
 internal sealed record CharacterSideView

@@ -3,7 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using TQVaultAE.Presentation.Win32;
 
-namespace TQVaultAE.GUI.Components.Character;
+namespace TQVaultAE.GUI.Components.Character.Editor;
 
 /// <summary>
 /// Tabs drawn as the game's skill window: a leather tab per page (<see cref="Images.CharacterEditorTab"/>, 192x34, one

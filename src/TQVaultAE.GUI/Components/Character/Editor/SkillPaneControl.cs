@@ -9,7 +9,7 @@ using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation.Win32.Contracts;
 
-namespace TQVaultAE.GUI.Components.Character;
+namespace TQVaultAE.GUI.Components.Character.Editor;
 
 /// <summary>A click on a button of the skill pane: the skill (<see langword="null"/> for the mastery) and the change asked.</summary>
 /// <param name="Skill">The skill clicked, or <see langword="null"/> for the mastery button.</param>

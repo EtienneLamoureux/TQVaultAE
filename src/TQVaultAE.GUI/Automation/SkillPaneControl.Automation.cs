@@ -3,7 +3,7 @@ using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Automation;
 
-namespace TQVaultAE.GUI.Components.Character;
+namespace TQVaultAE.GUI.Components.Character.Editor;
 
 /// <summary>
 /// Access to the skill pane for the automation endpoint: what each button shows, and clicks that go through
