@@ -1,4 +1,4 @@
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// Rules of the shared stashes (transfer stash and relic vault): each custom map (mod) has its own.

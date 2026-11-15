@@ -1,7 +1,7 @@
 using System.Globalization;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Search;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Models.Search;
 using TQVaultAE.Presentation;

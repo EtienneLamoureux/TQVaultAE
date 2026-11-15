@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using TQVaultAE.Application;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.Presentation.Win32;

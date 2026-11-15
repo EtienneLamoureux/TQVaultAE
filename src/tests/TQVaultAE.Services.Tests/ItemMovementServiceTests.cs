@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Drawing;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
 

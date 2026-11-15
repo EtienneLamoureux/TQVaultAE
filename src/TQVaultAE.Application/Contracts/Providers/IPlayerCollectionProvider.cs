@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Application.Contracts.Providers;
+﻿using TQVaultAE.Application.Session;
+
+namespace TQVaultAE.Application.Contracts.Providers;
 
 public interface IPlayerCollectionProvider
 {

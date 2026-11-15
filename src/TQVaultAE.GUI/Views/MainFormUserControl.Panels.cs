@@ -1,4 +1,4 @@
-using TQVaultAE.Application;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components;

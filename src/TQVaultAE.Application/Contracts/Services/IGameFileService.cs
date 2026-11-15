@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Application.Contracts.Services;
+﻿using TQVaultAE.Application.Session;
+
+namespace TQVaultAE.Application.Contracts.Services;
 
 public interface IGameFileService
 {

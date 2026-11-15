@@ -4,12 +4,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Data.Dto;
 using TQVaultAE.Domain.Entities;
 

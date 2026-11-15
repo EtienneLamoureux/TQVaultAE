@@ -1,9 +1,9 @@
 using System.Globalization;
 using AwesomeAssertions;
 using Moq;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.Tests.Presentation;

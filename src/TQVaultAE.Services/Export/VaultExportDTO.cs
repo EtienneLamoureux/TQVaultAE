@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Data.Dto;
 using TQVaultAE.Domain.Entities;
 

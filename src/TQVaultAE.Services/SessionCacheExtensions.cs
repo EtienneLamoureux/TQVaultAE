@@ -4,7 +4,7 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Services;
 
 /// <summary>
-/// Reading a save file into the session caches (<see cref="Application.SessionContext"/>).
+/// Reading a save file into the session caches (<see cref="Application.Session.SessionContext"/>).
 /// </summary>
 internal static class SessionCacheExtensions
 {

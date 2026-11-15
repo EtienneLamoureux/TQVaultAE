@@ -30,7 +30,7 @@ public enum SaveDecision
 /// </summary>
 /// <param name="Step">The step that failed.</param>
 /// <param name="Name">The name of the character, vault or stash being saved; a shared stash has its neutral name
-/// (<see cref="SharedStashNames"/>), which the UI translates.</param>
+/// (<see cref="Session.SharedStashNames"/>), which the UI translates.</param>
 /// <param name="Exception">The file error: an <see cref="IOException"/> (file locked, disk full, path not found)
 /// or an <see cref="UnauthorizedAccessException"/> (read-only file, no permission, protected folder).</param>
 /// <param name="StashType">The type of the stash being saved, or null for a character or a vault.</param>

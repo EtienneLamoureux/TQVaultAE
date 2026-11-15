@@ -3,7 +3,7 @@ using System.Drawing;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// Shared data context for all services - holds only data containers.

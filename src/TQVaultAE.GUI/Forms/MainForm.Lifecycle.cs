@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
 using TQVaultAE.Application.KeyBinds;
 using TQVaultAE.Application.Results;
 using TQVaultAE.GUI.Infrastructure;

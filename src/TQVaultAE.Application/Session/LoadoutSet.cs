@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// The loadouts of one character, as read from its loadouts file.

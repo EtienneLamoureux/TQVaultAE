@@ -6,7 +6,6 @@
 
 using System.Collections.ObjectModel;
 using System.Globalization;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Search;

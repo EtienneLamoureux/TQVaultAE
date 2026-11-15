@@ -1,8 +1,8 @@
 using AwesomeAssertions;
 using Moq;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Services;
 

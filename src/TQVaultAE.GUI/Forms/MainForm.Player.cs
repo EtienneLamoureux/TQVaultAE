@@ -1,4 +1,5 @@
 using System.Globalization;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Components;
@@ -7,7 +8,6 @@ using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Presentation;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
 

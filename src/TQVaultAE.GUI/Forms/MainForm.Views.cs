@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Components;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.GUI.Components.Layout;

@@ -3,7 +3,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// Character data is saved here after reading through player.chr file

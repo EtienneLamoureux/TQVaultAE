@@ -195,7 +195,7 @@ public static class CharacterStatsCalculator
 
 	/// <summary>
 	/// A character attribute from its base value and bonuses: (base + flat) × (100 + %) / 100, not under 0. Written
-	/// "× (100 + %) / 100" so that a whole result stays whole before <see cref="CharacterPanelLayout.AttributeTotal"/>
+	/// "× (100 + %) / 100" so that a whole result stays whole before <see cref="Layout.CharacterPanelLayout.AttributeTotal"/>
 	/// truncates it (100 × 1.15 is 114.999...).
 	/// </summary>
 	public static double Attribute(double baseValue, double flatBonus, double percentBonus)

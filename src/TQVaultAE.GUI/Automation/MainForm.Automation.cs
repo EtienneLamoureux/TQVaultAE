@@ -3,7 +3,6 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using TQVaultAE.Application;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Automation;
@@ -175,7 +174,7 @@ public partial class MainForm
 	internal string? AutomationCurrentPlayerFile => this.userContext?.CurrentPlayer?.PlayerFile;
 
 	/// <summary>The character shown, as loaded.</summary>
-	internal TQVaultAE.Application.PlayerCollection? AutomationCurrentPlayer => this.userContext?.CurrentPlayer;
+	internal TQVaultAE.Application.Session.PlayerCollection? AutomationCurrentPlayer => this.userContext?.CurrentPlayer;
 
 	internal bool AutomationLoadingComplete => this.loadingComplete;
 

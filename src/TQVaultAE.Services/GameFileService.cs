@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Helpers;
 using System.IO.Compression;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Services.GitBackup;

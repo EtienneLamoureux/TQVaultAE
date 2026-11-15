@@ -1,4 +1,5 @@
 using System.Drawing;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Application.Results;
 

@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// The names the services give the stashes shared by the characters of a map: neutral names, used in the search index,

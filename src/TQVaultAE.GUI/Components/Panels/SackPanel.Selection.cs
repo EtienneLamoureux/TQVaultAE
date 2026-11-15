@@ -7,7 +7,6 @@
 using TQVaultAE.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;

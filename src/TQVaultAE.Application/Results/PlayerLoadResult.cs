@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Results;

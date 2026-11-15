@@ -481,7 +481,7 @@ public class ItemEditServiceTests
 	public void ChangeMod_BaseGameChosenInAModdedVault_IsKeptWhenTheVaultChangesItsLink()
 	{
 		// Arrange: an item inheriting the vault's Lilith link
-		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
 		var item = Placed("records/a.dbr", "Lilith", ModOrigin.Inherited);
 		sack.AddItem(item);
@@ -499,7 +499,7 @@ public class ItemEditServiceTests
 	[Fact]
 	public void ChangeVaultMod_InheritedMapsTakeTheNewOne_OwnMapsAreKept()
 	{
-		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
 		var inherited = Placed("records/b.dbr", "Lilith", ModOrigin.Inherited);
 		var own = Placed("records/d.dbr", "Lilith", ModOrigin.Own);
@@ -525,7 +525,7 @@ public class ItemEditServiceTests
 		// Arrange: an incomplete lance in a vault without link; the mod completes it
 		var lance = RecordId.Create("records/customitems/lance.dbr");
 		this.ModHasTheLance(lance);
-		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true };
 		var sack = new SackCollection();
 		var item = Placed(lance.Raw, null, ModOrigin.Inherited);
 		sack.AddItem(item);
@@ -544,7 +544,7 @@ public class ItemEditServiceTests
 	[Fact]
 	public void ChangeVaultMod_ItemWithoutRoom_KeepsItsPreviousMapAsItsOwn()
 	{
-		var vault = new TQVaultAE.Application.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("vault", "vault.json") { IsVault = true, Mod = "Lilith" };
 		var sack = new SackCollection();
 		var item = Placed("records/b.dbr", "Lilith", ModOrigin.Inherited);
 		sack.AddItem(item);

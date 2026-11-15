@@ -8,7 +8,7 @@ public interface ISettingsPersistenceService
 	/// <summary>
 	/// Records the last vault and character (when their auto load is on), the zoom and the custom map state,
 	/// clears the language and game paths that are auto detected, then saves the settings if anything changed or they
-	/// already changed in this session (<see cref="SessionContext.ConfigChanged"/>, which then stays set).
+	/// already changed in this session (<see cref="Session.SessionContext.ConfigChanged"/>, which then stays set).
 	/// </summary>
 	/// <param name="vaultName">The vault shown in the main panel, or null.</param>
 	/// <param name="characterName">The selected character, an empty string when none is selected, or null.</param>

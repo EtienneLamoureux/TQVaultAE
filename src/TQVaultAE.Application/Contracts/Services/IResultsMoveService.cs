@@ -1,5 +1,6 @@
 using System.Drawing;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Services;

@@ -2,7 +2,6 @@ using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Services;
 using System.Drawing;
 using System.Windows.Forms;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;

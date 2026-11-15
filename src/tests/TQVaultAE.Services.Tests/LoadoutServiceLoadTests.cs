@@ -1,8 +1,8 @@
 using System.Drawing;
 using AwesomeAssertions;
 using Moq;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 

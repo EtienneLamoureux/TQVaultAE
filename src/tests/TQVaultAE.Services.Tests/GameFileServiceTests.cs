@@ -1,8 +1,8 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Services;
 

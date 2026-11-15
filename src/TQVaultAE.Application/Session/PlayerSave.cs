@@ -2,7 +2,7 @@
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 public sealed class PlayerSave : IDisposable
 {

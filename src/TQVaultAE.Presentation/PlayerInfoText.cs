@@ -1,7 +1,7 @@
 using System.Globalization;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
 
 namespace TQVaultAE.Presentation;
 

@@ -447,7 +447,7 @@ public class ItemExchangeServiceTests
 		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr", Mod = "Lilith", ModOrigin = ModOrigin.Inherited });
 		sack.AddItem(new Item { BaseItemId = "records/lilith/sword.dbr", Mod = "Lilith", ModOrigin = ModOrigin.Own });
 		sack.AddItem(new Item { BaseItemId = "records/customitems/lance.dbr", Mod = "shadowchampions", ModOrigin = ModOrigin.Own });
-		var vault = new TQVaultAE.Application.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "Lilith", Sacks = [sack] };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "Lilith", Sacks = [sack] };
 
 		// Act
 		var result = service.ImportFromJson(service.SerializePlayerCollection(vault));
@@ -485,11 +485,11 @@ public class ItemExchangeServiceTests
 		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr", Mod = "shadowchampions", ModOrigin = ModOrigin.Inherited });
 		sack.AddItem(new Item { BaseItemId = "records/customitems/lance.dbr", Mod = "shadowchampions", ModOrigin = ModOrigin.Own });
 		sack.AddItem(new Item { BaseItemId = "records/lilith/sword.dbr", Mod = "Lilith", ModOrigin = ModOrigin.Own });
-		var vault = new TQVaultAE.Application.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "shadowchampions", Sacks = [sack] };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "shadowchampions", Sacks = [sack] };
 
 		var json = _service.SerializePlayerCollection(vault);
 		var result = _service.ImportFromJson(json);
-		var target = new TQVaultAE.Application.PlayerCollection("Target", "target.json") { IsVault = true, Sacks = [new SackCollection()] };
+		var target = new TQVaultAE.Application.Session.PlayerCollection("Target", "target.json") { IsVault = true, Sacks = [new SackCollection()] };
 		_service.ImportVaultInto(target, result);
 
 		JsonDocument.Parse(json).RootElement.GetProperty("data").GetProperty("mod").GetString().Should().Be("shadowchampions");
@@ -506,7 +506,7 @@ public class ItemExchangeServiceTests
 		var sack = new SackCollection { SackType = SackType.Vault };
 		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr", Mod = "shadowchampions|custommaps", ModOrigin = ModOrigin.Inherited });
 		sack.AddItem(new Item { BaseItemId = "records/customitems/lance.dbr", Mod = "shadowchampions|workshop:1949340853", ModOrigin = ModOrigin.Own });
-		var vault = new TQVaultAE.Application.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "shadowchampions|custommaps", Sacks = [sack] };
+		var vault = new TQVaultAE.Application.Session.PlayerCollection("Vault", "vault.json") { IsVault = true, Mod = "shadowchampions|custommaps", Sacks = [sack] };
 
 		var json = _service.SerializePlayerCollection(vault);
 		var result = _service.ImportFromJson(json);
@@ -534,8 +534,8 @@ public class ItemExchangeServiceTests
 	{
 		var sack = new SackCollection { SackType = SackType.Vault };
 		sack.AddItem(new Item { BaseItemId = "records/item/ring.dbr" });
-		var source = new TQVaultAE.Application.PlayerCollection("Source", "source.json") { IsVault = true, Sacks = [sack] };
-		var target = new TQVaultAE.Application.PlayerCollection("Target", "target.json") { IsVault = true, Mod = "shadowchampions", Sacks = [new SackCollection()] };
+		var source = new TQVaultAE.Application.Session.PlayerCollection("Source", "source.json") { IsVault = true, Sacks = [sack] };
+		var target = new TQVaultAE.Application.Session.PlayerCollection("Target", "target.json") { IsVault = true, Mod = "shadowchampions", Sacks = [new SackCollection()] };
 
 		_service.ImportVaultInto(target, _service.ImportFromJson(_service.SerializePlayerCollection(source)));
 

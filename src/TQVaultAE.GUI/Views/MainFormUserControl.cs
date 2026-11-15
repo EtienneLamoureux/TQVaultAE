@@ -5,8 +5,8 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;

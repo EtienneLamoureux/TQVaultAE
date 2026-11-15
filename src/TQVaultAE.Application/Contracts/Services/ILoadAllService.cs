@@ -1,4 +1,5 @@
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 
 namespace TQVaultAE.Application.Contracts.Services;
 

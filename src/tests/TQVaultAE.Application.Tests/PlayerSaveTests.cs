@@ -1,7 +1,7 @@
 using AwesomeAssertions;
 using Moq;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
 
 namespace TQVaultAE.Tests.Application;
 

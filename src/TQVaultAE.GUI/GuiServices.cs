@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.KeyBinds;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Forms;

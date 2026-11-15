@@ -1,10 +1,10 @@
 using System.Text;
 using System.Text.Json;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Data.Dto;
 using TQVaultAE.Domain.Entities;

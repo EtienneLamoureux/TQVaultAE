@@ -3,11 +3,11 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.Presentation.Win32.Contracts;

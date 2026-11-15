@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using TQVaultAE.Application;
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Panels;
 

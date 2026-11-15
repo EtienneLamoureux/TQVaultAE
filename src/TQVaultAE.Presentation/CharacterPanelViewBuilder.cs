@@ -1,9 +1,9 @@
 using System.Drawing;
 using System.Globalization;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Layout;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Presentation;

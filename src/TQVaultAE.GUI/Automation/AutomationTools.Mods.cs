@@ -2,9 +2,9 @@ using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Forms;
 
 namespace TQVaultAE.GUI.Automation;

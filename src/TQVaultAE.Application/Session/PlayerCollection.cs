@@ -8,7 +8,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// Loads, decodes, encodes and saves a Titan Quest player file.

@@ -1,6 +1,6 @@
 using AwesomeAssertions;
 using TQVaultAE.Application.Contracts.Services;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Services;
 

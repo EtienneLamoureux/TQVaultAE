@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Drawing;
 using System.Text.Json;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config.Tags;
 using TQVaultAE.Services;
 

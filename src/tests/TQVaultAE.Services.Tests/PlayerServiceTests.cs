@@ -1,12 +1,12 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;

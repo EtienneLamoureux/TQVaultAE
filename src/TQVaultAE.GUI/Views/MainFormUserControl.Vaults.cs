@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Infrastructure;

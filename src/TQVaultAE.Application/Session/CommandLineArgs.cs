@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------
 using System.Globalization;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Session;
 
 /// <summary>
 /// Class for parsing command line arguments

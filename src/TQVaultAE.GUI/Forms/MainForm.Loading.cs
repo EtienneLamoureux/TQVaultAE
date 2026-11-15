@@ -2,12 +2,12 @@ using Microsoft.Extensions.Logging;
 using System.Globalization;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
 using System.ComponentModel;
-using TQVaultAE.Application;
 using TQVaultAE.GUI.Components.Scaling;
 
 namespace TQVaultAE.GUI.Forms;
