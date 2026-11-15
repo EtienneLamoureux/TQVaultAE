@@ -6,6 +6,7 @@
 
 using System.Collections.ObjectModel;
 using System.Globalization;
+using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Actions;
@@ -62,6 +63,33 @@ public partial class SackPanel
 		this.CustomContextMenu.Items.Add(moveSubMenu);
 	}
 	
+	/// <summary>
+	/// Adds the Search sub menu: the item's copies, or the items sharing its base, prefix or suffix, among every loaded
+	/// item, shown in the results window. A prefix or suffix search is disabled for an item without one.
+	/// </summary>
+	private void AddFindCopiesMenuItems(Item focusedItem)
+	{
+		var choices = new List<ToolStripItem>();
+		foreach (var kind in ItemCopySearch.Kinds)
+		{
+			var choice = new ToolStripMenuItem(ItemCopySearchText.MenuLabel(kind), null, (_, _) => this.FindCopiesClicked(focusedItem, kind), kind.ToString())
+			{
+				Enabled = ItemCopySearch.IsAvailable(focusedItem, kind),
+			}.StyledLike(this.CustomContextMenu);
+			choices.Add(choice);
+		}
+
+		var subMenu = new ToolStripMenuItem(Resources.SackPanelMenuSearch, null, choices.ToArray())
+		{
+			DisplayStyle = ToolStripItemDisplayStyle.Text,
+		}.StyledLike(this.CustomContextMenu);
+
+		this.CustomContextMenu.Items.Add(subMenu);
+	}
+
+	private void FindCopiesClicked(Item focusedItem, CopySearchKind kind)
+		=> (this.FindForm() as MainForm)?.ShowItemCopies(focusedItem, kind);
+
 	private void AddExportMenuItems(Item? focusedItem, bool singleSelectionFocused)
 	{
 		bool single = focusedItem is not null && (this.selectedItems is null || singleSelectionFocused);

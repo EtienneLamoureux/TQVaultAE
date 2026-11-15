@@ -664,6 +664,45 @@ Are you sure you want to delete this item?</value>
 	<data name="SackPanelMenuCompare" xml:space="preserve">
     <value>Compare</value>
   </data>
+	<data name="SackPanelMenuSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+	<data name="SackPanelMenuSearchSameSeed" xml:space="preserve">
+    <value>Copies with same seed</value>
+  </data>
+	<data name="SackPanelMenuSearchAllCopies" xml:space="preserve">
+    <value>All copies</value>
+  </data>
+	<data name="SackPanelMenuSearchSameBase" xml:space="preserve">
+    <value>Same base</value>
+  </data>
+	<data name="SackPanelMenuSearchSamePrefix" xml:space="preserve">
+    <value>Same prefix</value>
+  </data>
+	<data name="SackPanelMenuSearchSameSuffix" xml:space="preserve">
+    <value>Same suffix</value>
+  </data>
+	<data name="SearchCopiesSameSeed" xml:space="preserve">
+    <value>Copies with same seed of {0}</value>
+  </data>
+	<data name="SearchCopiesAllCopies" xml:space="preserve">
+    <value>All copies of {0}</value>
+  </data>
+	<data name="SearchCopiesSameBase" xml:space="preserve">
+    <value>Same base as {0}</value>
+  </data>
+	<data name="SearchCopiesSamePrefix" xml:space="preserve">
+    <value>Same prefix as {0}</value>
+  </data>
+	<data name="SearchCopiesSameSuffix" xml:space="preserve">
+    <value>Same suffix as {0}</value>
+  </data>
+	<data name="SearchCopiesCount" xml:space="preserve">
+    <value>{0} ({1} found)</value>
+  </data>
+	<data name="ResultsSourceMark" xml:space="preserve">
+    <value>(source)</value>
+  </data>
 	<data name="SackPanelMenuCopy" xml:space="preserve">
     <value>Copy Item (Randomized seed)</value>
   </data>

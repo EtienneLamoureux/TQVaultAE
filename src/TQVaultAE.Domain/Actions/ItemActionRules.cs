@@ -61,6 +61,12 @@ public enum ItemActions
 	/// selected.
 	/// </summary>
 	ChangeMod = 1 << 15,
+
+	/// <summary>
+	/// Find the item's copies, or the items sharing its base, prefix or suffix, among every loaded item ("Search" menu).
+	/// Only reads the items: read-only sacks too.
+	/// </summary>
+	FindCopies = 1 << 16,
 }
 
 /// <summary>
@@ -160,8 +166,8 @@ public static class ItemActionRules
 
 		if (singleItem)
 		{
-			// Comparing only reads the items: read-only sacks too.
-			actions |= ItemActions.Properties | ItemActions.Compare;
+			// Comparing and searching only read the items: read-only sacks too.
+			actions |= ItemActions.Properties | ItemActions.Compare | ItemActions.FindCopies;
 
 			if (context.AllowItemCopy)
 				actions |= ItemActions.Copy | ItemActions.Duplicate;

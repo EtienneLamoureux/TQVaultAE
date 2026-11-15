@@ -55,7 +55,24 @@ public partial class MainForm
 			this.DisplayResults(null, searchDialog.QueryResults);
 	}
 
-	private void DisplayResults(string? searchString, IEnumerable<SearchResult> results)
+	/// <summary>
+	/// Shows the items matching <paramref name="item"/> for the item menu's <i>Search</i> in the results window, the item
+	/// first, marked as the source; a click on a result shows it like an Advanced Search result.
+	/// </summary>
+	/// <param name="item">The item clicked.</param>
+	/// <param name="kind">The search.</param>
+	internal void ShowItemCopies(Item item, CopySearchKind kind)
+	{
+		var results = this.Services.ItemDatabaseService.FindCopies(item, kind);
+		if (results.Count == 0)
+			return;
+
+		var source = results[0];
+		string title = ItemCopySearchText.Title(kind, source.ItemName, results.Count - 1);
+		this.DisplayResults(null, results, title, source);
+	}
+
+	private void DisplayResults(string? searchString, IEnumerable<SearchResult> results, string? title = null, SearchResult? source = null)
 	{
 		if (results is null || !results.Any())
 		{
@@ -69,6 +86,8 @@ public partial class MainForm
 		dlg.ResultsList.Clear();
 		dlg.ResultsList.AddRange(results);
 		dlg.SearchString = searchString ?? string.Empty;
+		dlg.Title = title;
+		dlg.SourceResult = source;
 		dlg.Show();
 	}
 

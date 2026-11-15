@@ -4121,6 +4121,123 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string SackPanelMenuSearch {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copies with same seed.
+        /// </summary>
+        public static string SackPanelMenuSearchSameSeed {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSameSeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All copies.
+        /// </summary>
+        public static string SackPanelMenuSearchAllCopies {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchAllCopies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same base.
+        /// </summary>
+        public static string SackPanelMenuSearchSameBase {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSameBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same prefix.
+        /// </summary>
+        public static string SackPanelMenuSearchSamePrefix {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSamePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same suffix.
+        /// </summary>
+        public static string SackPanelMenuSearchSameSuffix {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSameSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copies with same seed of {0}.
+        /// </summary>
+        public static string SearchCopiesSameSeed {
+            get {
+                return ResourceManager.GetString("SearchCopiesSameSeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All copies of {0}.
+        /// </summary>
+        public static string SearchCopiesAllCopies {
+            get {
+                return ResourceManager.GetString("SearchCopiesAllCopies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same base as {0}.
+        /// </summary>
+        public static string SearchCopiesSameBase {
+            get {
+                return ResourceManager.GetString("SearchCopiesSameBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same prefix as {0}.
+        /// </summary>
+        public static string SearchCopiesSamePrefix {
+            get {
+                return ResourceManager.GetString("SearchCopiesSamePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same suffix as {0}.
+        /// </summary>
+        public static string SearchCopiesSameSuffix {
+            get {
+                return ResourceManager.GetString("SearchCopiesSameSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1} found).
+        /// </summary>
+        public static string SearchCopiesCount {
+            get {
+                return ResourceManager.GetString("SearchCopiesCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (source).
+        /// </summary>
+        public static string ResultsSourceMark {
+            get {
+                return ResourceManager.GetString("ResultsSourceMark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy Item (Randomized seed).
         /// </summary>
         public static string SackPanelMenuCopy {

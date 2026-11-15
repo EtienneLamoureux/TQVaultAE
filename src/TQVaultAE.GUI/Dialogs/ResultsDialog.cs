@@ -105,6 +105,17 @@ public partial class ResultsDialog : VaultForm
 	}
 
 	/// <summary>
+	/// The window's title in place of the one made from <see cref="SearchString"/>, e.g. the item menu's search
+	/// ("All copies of Ring (2 found)").
+	/// </summary>
+	public string? Title { get; set; }
+
+	/// <summary>
+	/// The result searched from (the item menu's <i>Search</i>): its row is marked as the source.
+	/// </summary>
+	public SearchResult? SourceResult { get; set; }
+
+	/// <summary>
 	/// Handler for showing the results dialog.
 	/// Populates the data grid view.
 	/// </summary>
@@ -164,9 +175,11 @@ public partial class ResultsDialog : VaultForm
 			return;
 
 		// Update the dialog text.
-		this.Text = string.IsNullOrWhiteSpace(this.searchString)
-			? Resources.SearchDialogCaption
-			: string.Format(Resources.ResultsText, this.resultsList.Count, this.searchString);
+		this.Text = !string.IsNullOrWhiteSpace(this.Title)
+			? this.Title
+			: string.IsNullOrWhiteSpace(this.searchString)
+				? Resources.SearchDialogCaption
+				: string.Format(Resources.ResultsText, this.resultsList.Count, this.searchString);
 
 		// Size the columns and rows once, after the rows are added: with AllCells, every row added resized them all
 		// (minutes for a few thousand results).
@@ -201,9 +214,10 @@ public partial class ResultsDialog : VaultForm
 		for (int i = 0; i < this.resultsList.Count; i++)
 		{
 			SearchResult result = this.resultsList[i];
+			bool isSource = ReferenceEquals(result, this.SourceResult);
 			// Add the result to the DataGridView
 			int currentRow = this.resultsDataGridView.Rows.Add(
-				result.ItemName
+				isSource ? $"{result.ItemName} {Resources.ResultsSourceMark}" : result.ItemName
 				, result.ItemStyle
 				, SharedStashText.Localize(result.ContainerName, result.StashType)
 				, ItemSummaryText.ContainerTypeLabel(result.SackType, result.StashType)
@@ -217,6 +231,10 @@ public partial class ResultsDialog : VaultForm
 				this.resultsDataGridView.Rows[currentRow].Cells[0].Style.ForeColor = result.TQColor.Color();
 				this.resultsDataGridView.Rows[currentRow].Cells[1].Style.ForeColor = result.TQColor.Color();
 				this.resultsDataGridView.Rows[currentRow].Tag = i;
+
+				// The item searched from, in bold.
+				if (isSource)
+					this.resultsDataGridView.Rows[currentRow].Cells[0].Style.Font = FontService.GetFontLight(CaravanLook.TextSize, FontStyle.Bold | FontStyle.Italic);
 			}
 		}
 	}

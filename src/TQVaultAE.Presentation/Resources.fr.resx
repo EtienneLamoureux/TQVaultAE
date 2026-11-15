@@ -643,6 +643,45 @@ Voulez-vous vraiment supprimer cet objet ?</value>
 	<data name="SackPanelMenuCompare" xml:space="preserve">
     <value>Comparer</value>
   </data>
+	<data name="SackPanelMenuSearch" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+	<data name="SackPanelMenuSearchSameSeed" xml:space="preserve">
+    <value>Copies de même N° aléatoire</value>
+  </data>
+	<data name="SackPanelMenuSearchAllCopies" xml:space="preserve">
+    <value>Toutes les copies</value>
+  </data>
+	<data name="SackPanelMenuSearchSameBase" xml:space="preserve">
+    <value>Même objet de base</value>
+  </data>
+	<data name="SackPanelMenuSearchSamePrefix" xml:space="preserve">
+    <value>Même préfixe</value>
+  </data>
+	<data name="SackPanelMenuSearchSameSuffix" xml:space="preserve">
+    <value>Même suffixe</value>
+  </data>
+	<data name="SearchCopiesSameSeed" xml:space="preserve">
+    <value>Copies de même N° aléatoire de {0}</value>
+  </data>
+	<data name="SearchCopiesAllCopies" xml:space="preserve">
+    <value>Toutes les copies de {0}</value>
+  </data>
+	<data name="SearchCopiesSameBase" xml:space="preserve">
+    <value>Même objet de base que {0}</value>
+  </data>
+	<data name="SearchCopiesSamePrefix" xml:space="preserve">
+    <value>Même préfixe que {0}</value>
+  </data>
+	<data name="SearchCopiesSameSuffix" xml:space="preserve">
+    <value>Même suffixe que {0}</value>
+  </data>
+	<data name="SearchCopiesCount" xml:space="preserve">
+    <value>{0} ({1} trouvé(s))</value>
+  </data>
+	<data name="ResultsSourceMark" xml:space="preserve">
+    <value>(origine)</value>
+  </data>
 	<data name="SackPanelMenuCopy" xml:space="preserve">
     <value>Copier l'objet (Seed aléatoire)</value>
   </data>

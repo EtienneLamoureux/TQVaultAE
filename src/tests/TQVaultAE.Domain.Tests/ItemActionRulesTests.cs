@@ -84,7 +84,7 @@ public class ItemActionRulesTests
 		var context = new ItemActionContext(item, 0, false
 			, ReadOnly: ItemActionRules.IsReadOnly(SackType.Player, false, sackReadOnly: true), AllowItemEdit: true, AllowItemCopy: true);
 
-		ItemActionRules.Available(context).Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.Copy | ItemActions.Duplicate);
+		ItemActionRules.Available(context).Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.FindCopies | ItemActions.Copy | ItemActions.Duplicate);
 	}
 
 	private static ItemActions Key(ItemActions action, Item? item, bool readOnly = false, bool allowCopy = true, int selectionCount = 0)
@@ -128,7 +128,7 @@ public class ItemActionRulesTests
 	[Fact]
 	public void Available_SingleItem_OffersItsActionsAndTheEnabledOptions()
 	{
-		const ItemActions single = GroupActions | ItemActions.Properties | ItemActions.Compare;
+		const ItemActions single = GroupActions | ItemActions.Properties | ItemActions.Compare | ItemActions.FindCopies;
 		For(Sword()).Should().Be(single);
 		For(Sword(), allowCopy: true).Should().Be(single | ItemActions.Copy | ItemActions.Duplicate);
 		For(Sword(), allowEdit: true).Should().Be(single | ItemActions.Edit);
@@ -137,7 +137,7 @@ public class ItemActionRulesTests
 	[Fact]
 	public void Available_ReadOnlySack_OnlyLooksAndCopies()
 		=> For(Sword(socketed1: true), readOnly: true, allowEdit: true, allowCopy: true)
-			.Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.Copy | ItemActions.Duplicate);
+			.Should().Be(ItemActions.Properties | ItemActions.Compare | ItemActions.FindCopies | ItemActions.Copy | ItemActions.Duplicate);
 
 	[Fact]
 	public void Available_SeveralSelected_OffersOnlyTheGroupActions()
@@ -147,7 +147,7 @@ public class ItemActionRulesTests
 	[Fact]
 	public void Available_SelectionOfTheItemAlone_ActsOnTheItem()
 		=> For(Sword(), selectionCount: 1, itemIsTheSelection: true)
-			.Should().Be(GroupActions | ItemActions.Properties | ItemActions.Compare | ItemActions.ClearSelection);
+			.Should().Be(GroupActions | ItemActions.Properties | ItemActions.Compare | ItemActions.FindCopies | ItemActions.ClearSelection);
 
 	[Fact]
 	public void Available_SelectionWithoutItemUnderCursor_OffersTheGroupActions()
