@@ -2159,10 +2159,10 @@ You still have to close TQVaultAE to apply your changes.
     <value>Created new vault &quot;{0}&quot; with imported data.</value>
   </data>
   <data name="ModNoRoomShown" xml:space="preserve">
-    <value>Read with their container's map, these items have no room for their size where they lie: they are shown 1 x 1 until you move them where they fit. {0}</value>
+    <value>Read with their container's map, these items have no room for their size where they lie. {0}</value>
   </data>
   <data name="ModDropNoRoomInTab" xml:space="preserve">
-    <value>Read with the data of its map here, {0} has no room in this tab: drop it in another tab.</value>
+    <value>Read with the data of its map here, {0} has no room in this tab.</value>
   </data>
   <data name="SearchSharedStashNoCharacter" xml:space="preserve">
     <value>{0} is shown with the characters played with its map, and no listed character is.</value>

@@ -6133,7 +6133,7 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Read with their container's map, these items have no room for their size where they lie: they are shown 1 x 1 until you move them where they fit. {0}.
+        ///   Looks up a localized string similar to Read with their container's map, these items have no room for their size where they lie. {0}.
         /// </summary>
         public static string ModNoRoomShown {
             get {
@@ -6151,7 +6151,7 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Read with the data of its map here, {0} has no room in this tab: drop it in another tab..
+        ///   Looks up a localized string similar to Read with the data of its map here, {0} has no room in this tab..
         /// </summary>
         public static string ModDropNoRoomInTab {
             get {
