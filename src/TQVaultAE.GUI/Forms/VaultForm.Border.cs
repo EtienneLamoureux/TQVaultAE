@@ -260,7 +260,11 @@ public partial class VaultForm
 			}
 		}
 
-		base.WndProc(ref m);
+		// A DPI change is one rescale: Windows Forms' scaling and the window's own layout after it.
+		using (m.Msg == (int)User32.WindowMessage.DpiChanged
+			? this.BeginRescale(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"DPI {this.DeviceDpi} -> {m.WParam.ToInt32() & 0xFFFF}"))
+			: null)
+			base.WndProc(ref m);
 
 		if (m.Msg == (int)User32.WindowMessage.GetMinMaxInfo && this.ConstrainToDesignRatio && this.FormDesignRatio != 0.0F)
 			this.SetMaximizedBoundsOnItsMonitor(m.LParam);

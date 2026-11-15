@@ -60,6 +60,11 @@ internal static partial class User32
 		ExitMenuLoop = 0x212,
 
 		/// <summary>
+		/// The window moved to a monitor of another DPI (WM_DPICHANGED).
+		/// </summary>
+		DpiChanged = 0x2E0,
+
+		/// <summary>
 		/// Get System Menu Window Message
 		/// </summary>
 		/// <remarks>Undocumented message</remarks>

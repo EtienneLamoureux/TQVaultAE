@@ -118,6 +118,37 @@ public partial class VaultForm
 	/// layout is the same whatever the zooms before, and a reset gives back the layout at zoom 1.
 	/// </summary>
 	/// <param name="zoomStep">The zoom step (<see cref="ZoomSteps.Reset"/> for the design size).</param>
+	protected void ZoomTo(int zoomStep)
+	{
+		using (this.BeginRescale(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"zoom step {this.ZoomStep} -> {zoomStep}")))
+			this.ScaleForm(zoomStep);
+	}
+
+	/// <summary>The rescale running (<see cref="BeginRescale"/>); null between rescales.</summary>
+	private RescaleScope? rescale;
+
+	/// <summary>
+	/// Starts one rescale of the window (a DPI change, a zoom step), timed by phase (<see cref="RescalePhase"/>) and
+	/// logged when the window is drawn again; null, and nothing started, inside a rescale already running.
+	/// </summary>
+	/// <param name="what">What changes, for the log line.</param>
+	protected IDisposable? BeginRescale(string what)
+	{
+		if (this.rescale is not null)
+			return null;
+
+		return this.rescale = new RescaleScope(this.Log, $"{this.Name}: {what}", () => this.rescale = null);
+	}
+
+	/// <summary>Ends the phase <paramref name="name"/> of the rescale running, if any (<see cref="BeginRescale"/>).</summary>
+	protected void RescalePhase(string name)
+		=> this.rescale?.Phase(name);
+
+	/// <summary>
+	/// Gives the window the zoom of <paramref name="zoomStep"/>, as <see cref="ZoomTo"/> does; called through it, which
+	/// makes it one rescale.
+	/// </summary>
+	/// <param name="zoomStep">The zoom step (<see cref="ZoomSteps.Reset"/> for the design size).</param>
 	protected virtual void ScaleForm(int zoomStep)
 	{
 		float previous = UIService.Scale;
@@ -134,8 +165,11 @@ public partial class VaultForm
 				this.Scale(new SizeF(factor, factor));
 		}
 
+		this.RescalePhase("layout");
+
 		USettings.Scale = this.NominalZoom;
 		USettings.Save();
+		this.RescalePhase("save");
 
 		RefreshNormalizeBox();
 
@@ -191,7 +225,7 @@ public partial class VaultForm
 			if (e.ResizeDelta > 0.0F && e.ResizeDelta != 1.0F && step > this.LargestStep())
 				return;
 
-			this.ScaleForm(step);
+			this.ZoomTo(step);
 		}
 
 		this.LastFormSize = this.Size;
@@ -324,6 +358,7 @@ public partial class VaultForm
 	{
 		float factor = (float)e.DeviceDpiNew / e.DeviceDpiOld;
 		base.OnDpiChanged(e);
+		this.RescalePhase("Windows Forms scale");
 		if (e.Cancel || factor == 1.0F)
 			return;
 
@@ -376,7 +411,8 @@ public partial class VaultForm
 		if (this.followDpiPending)
 		{
 			this.followDpiPending = false;
-			this.FollowDpi();
+			using (this.BeginRescale(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"DPI {this.DeviceDpi}, after the drag")))
+				this.FollowDpi();
 			this.LastFormSize = this.Size;
 		}
 
@@ -425,7 +461,7 @@ public partial class VaultForm
 
 			// Set it back to the original size since the Scale() call in ScaleForm() will also resize the form.
 			this.Size = resizeTo;
-			this.ScaleForm(step);
+			this.ZoomTo(step);
 		}
 
 		this.LastFormSize = this.Size;
