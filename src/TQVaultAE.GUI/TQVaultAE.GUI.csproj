@@ -62,6 +62,14 @@
 		<Compile Remove="Automation\Dev\**" />
 	</ItemGroup>
 
+	<!-- The ASP.NET Core shared framework brings the IIS in-process module, a native DLL a self-contained single file
+	     leaves beside the executable. The endpoint runs on Kestrel and never loads it: keep it out of the publish. -->
+	<Target Name="DropIisModuleFromPublish" AfterTargets="ComputeResolvedFilesToPublishList">
+		<ItemGroup>
+			<ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(Filename)%(Extension)' == 'aspnetcorev2_inprocess.dll'" />
+		</ItemGroup>
+	</Target>
+
 	<ItemGroup>
 		<Content Include="..\TQVaultAE.Config\UserConfig.xml" Link="UserConfig.xml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
