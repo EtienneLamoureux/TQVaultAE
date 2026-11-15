@@ -131,7 +131,7 @@ Presentation.Win32 → Presentation
 Services           → Data, Application, Config, Domain
 Presentation       → Application, Config, Domain
 Data               → Application, Config, Domain
-Application        → Domain     (DTOs, Results, Search, service contracts)
+Application        → Domain     (DTOs, Results, service contracts, session, search, layout and character maths)
 Config             → Domain
 Domain             → GameFiles
 DbCli              → GameFiles
@@ -145,7 +145,7 @@ data (Application types), and the GUI or Presentation turns them into translated
 |---------|-----------|---------|
 | TQVaultAE.GUI | .NET 10.0 | Windows Forms UI |
 | TQVaultAE.Services | .NET 10.0 | Business logic |
-| TQVaultAE.Application | .NET 10.0 | DTOs, Results |
+| TQVaultAE.Application | .NET 10.0 | Service contracts (`Contracts/`), DTOs, Results, key binds, session (`Session/`), search (`Search/`), layout (`Layout/`) and character maths (`Character/`) |
 | TQVaultAE.Data | .NET 10.0 | Data access |
 | TQVaultAE.Domain | .NET 10.0 | Entities |
 | TQVaultAE.Presentation | .NET 10.0 | Localized UI strings (`Resources`), translation, item texts (`ItemText/ItemTextFormatter`) |
@@ -167,7 +167,7 @@ Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other W
 ## Adding New Code
 
 ### Adding a Service
-1. Create interface in `src/TQVaultAE.Application/contracts/Services/`
+1. Create interface in `src/TQVaultAE.Application/Contracts/Services/`
 2. Implement in `src/TQVaultAE.Services/`
 3. Use `IFileIO`/`IPathIO` for file operations
 4. Register in `Program.cs`
