@@ -34,7 +34,6 @@ public class ItemProviderAffixesTests
 			this._lootTables.Object,
 			new Mock<IItemAttributeProvider>().Object,
 			new TQDataService(NullLogger<TQDataService>.Instance),
-			new Mock<ITranslationService>().Object,
 			new PathIO(),
 			new UserSettings());
 	}

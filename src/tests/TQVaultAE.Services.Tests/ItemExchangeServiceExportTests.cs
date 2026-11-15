@@ -28,6 +28,7 @@ public class ItemExchangeServiceExportTests
 	private readonly Mock<IPasteBinService> _pasteBin = new();
 	private readonly Mock<IFileIO> _fileIO = new();
 	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemTextFormatter> _itemText = new();
 	private readonly ItemExchangeService _service;
 
 	public ItemExchangeServiceExportTests()
@@ -37,6 +38,7 @@ public class ItemExchangeServiceExportTests
 			this._jsonOptions
 			, this._pasteBin.Object
 			, itemProvider: this._itemProvider.Object
+			, itemText: this._itemText.Object
 			, fileIO: this._fileIO.Object);
 	}
 
@@ -101,7 +103,7 @@ public class ItemExchangeServiceExportTests
 	public async Task ExportSelectionToPasteBinAsync_WithOneItem_UploadsTheItemNamedAfterIt()
 	{
 		var item = NewItem(0, 0);
-		this._itemProvider.Setup(p => p.GetFriendlyNames(item, null, true))
+		this._itemText.Setup(p => p.GetFriendlyNames(item, null, true))
 			.Returns(new ToFriendlyNameResult(item) { BaseItemInfoDescription = "Ring of Ages" });
 
 		var url = await this._service.ExportSelectionToPasteBinAsync([item]);

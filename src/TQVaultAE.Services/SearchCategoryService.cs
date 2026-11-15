@@ -17,9 +17,9 @@ namespace TQVaultAE.Services;
 /// The result is the same: the values are in culture order, values comparing equal keep their first appearance
 /// order, and each value keeps its items in database order.
 /// </remarks>
-public class SearchCategoryService(IItemProvider itemProvider, ITranslationService translationService) : ISearchCategoryService
+public class SearchCategoryService(IItemTextFormatter itemText, ITranslationService translationService) : ISearchCategoryService
 {
-	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly IItemTextFormatter _itemText = itemText;
 	private readonly ITranslationService _translationService = translationService;
 
 	/// <summary>Styles of the equipment, the only items listed by rarity.</summary>
@@ -109,7 +109,7 @@ public class SearchCategoryService(IItemProvider itemProvider, ITranslationServi
 			case SearchCategory.Skills:
 				foreach (var r in items)
 				{
-					foreach (var skill in this._itemProvider.GetGrantedSkillNames(r.Item))
+					foreach (var skill in this._itemText.GetGrantedSkillNames(r.Item))
 						groups.Add(skill, r);
 				}
 				break;

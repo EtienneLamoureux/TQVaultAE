@@ -233,7 +233,7 @@ public partial class VaultPanel
 	/// </summary>
 	private void ItemsReadAgain(Item[] items)
 	{
-		ItemCaches.Invalidate(items, this.Services.ItemProvider);
+		ItemCaches.Invalidate(items, this.Services.ItemText);
 		this.Services.ItemDatabaseService.RefreshItems(items);
 	}
 

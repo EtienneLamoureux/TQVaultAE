@@ -15,6 +15,7 @@ namespace TQVaultAE.GUI.Tooltips;
 public class BaseTooltip : Form
 {
 	protected IItemProvider ItemProvider;
+	protected IItemTextFormatter ItemText;
 	protected IFontService FontService;
 	protected IUIService UIService;
 	protected ITranslationService TranslationService;
@@ -31,6 +32,7 @@ public class BaseTooltip : Form
 	public BaseTooltip(GuiServices services)
 	{
 		this.ItemProvider = services.ItemProvider;
+		this.ItemText = services.ItemText;
 		this.FontService = services.FontService;
 		this.UIService = services.UIService;
 		this.TranslationService = services.TranslationService;

@@ -57,7 +57,6 @@ internal sealed class SaveFixtures : IDisposable
 			new Mock<ILootTableCollectionProvider>().Object,
 			new Mock<IItemAttributeProvider>().Object,
 			this.TQData,
-			new Mock<ITranslationService>().Object,
 			pathIO,
 			new UserSettings());
 		this.SackProvider = new SackCollectionProvider(NullLogger<SackCollectionProvider>.Instance, this.ItemProvider, this.TQData);

@@ -74,7 +74,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(_ =>
 		{
 			var services = Program.ServiceProvider;
-			var provider = services.GetRequiredService<IItemProvider>();
+			var provider = services.GetRequiredService<IItemTextFormatter>();
 			var owned = services.GetRequiredService<IItemDatabaseService>().ItemDatabase;
 			var raw = new System.Text.RegularExpressions.Regex(@"\?[A-Za-z][\w ]*\?|<unknown>|\b[a-z0-9]+_[a-z0-9_]+\b");
 			var groups = new Dictionary<string, (int Count, HashSet<string> Where, string Sample)>(StringComparer.OrdinalIgnoreCase);

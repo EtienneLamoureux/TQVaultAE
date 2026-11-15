@@ -34,6 +34,7 @@ public sealed class GuiServices
 		, IBitmapService bitmapService
 		, ISoundService soundService
 		, IItemProvider itemProvider
+		, IItemTextFormatter itemText
 		, IGamePathService gamePathService
 		, IGameFileService gameFileService
 		, IHighlightService highlightService
@@ -80,6 +81,7 @@ public sealed class GuiServices
 		this.BitmapService = bitmapService;
 		this.SoundService = soundService;
 		this.ItemProvider = itemProvider;
+		this.ItemText = itemText;
 		this.GamePathService = gamePathService;
 		this.GameFileService = gameFileService;
 		this.HighlightService = highlightService;
@@ -132,13 +134,15 @@ public sealed class GuiServices
 	public IGameMapService GameMapService { get; }
 
 	/// <summary>
+	/// The items of a set, for the item tooltips.
+	/// </summary>
+	/// <remarks>The last Data provider of the GUI: <see cref="IItemProvider.GetSetItems"/>.</remarks>
+	public IItemProvider ItemProvider { get; }
+
+	/// <summary>
 	/// Item display texts and their cache, for the tooltips, the item properties dialog and the panels.
 	/// </summary>
-	/// <remarks>
-	/// The last Data provider of the GUI: <see cref="IItemProvider.GetFriendlyNames"/>,
-	/// <see cref="IItemProvider.GetSetItems"/> and <see cref="IItemProvider.InvalidateFriendlyNamesCache"/>.
-	/// </remarks>
-	public IItemProvider ItemProvider { get; }
+	public IItemTextFormatter ItemText { get; }
 
 	public IGamePathService GamePathService { get; }
 	public IGameFileService GameFileService { get; }

@@ -16,6 +16,7 @@ namespace TQVaultAE.Tests.Services;
 public class ItemSortServiceTests
 {
 	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemTextFormatter> _itemText = new();
 	private readonly Mock<IItemDatabaseService> _itemDatabase = new();
 	private readonly Dictionary<Item, int> _levels = new(ReferenceEqualityComparer.Instance);
 	private readonly ItemSortService _service;
@@ -29,6 +30,7 @@ public class ItemSortServiceTests
 			new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object)
 			, new ItemStackingService(this._itemProvider.Object)
 			, this._itemProvider.Object
+			, this._itemText.Object
 			, this._itemDatabase.Object);
 	}
 
@@ -229,7 +231,7 @@ public class ItemSortServiceTests
 		result.Changed.Should().HaveCount(2).And.Contain(first).And.Contain(second);
 		this._itemDatabase.Verify(d => d.RemoveItemFromDatabase(third), Times.Once);
 		this._itemDatabase.Verify(d => d.RefreshItems(It.Is<IReadOnlyCollection<Item>>(c => c.Count == 2 && c.Contains(first) && c.Contains(second))), Times.Once);
-		this._itemProvider.Verify(p => p.InvalidateFriendlyNamesCache(It.IsAny<IEnumerable<Item>>()), Times.Once);
+		this._itemText.Verify(p => p.InvalidateFriendlyNamesCache(It.IsAny<IEnumerable<Item>>()), Times.Once);
 	}
 
 	[Fact]

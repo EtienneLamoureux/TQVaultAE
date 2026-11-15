@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
@@ -18,7 +19,7 @@ public class LoadoutSearchTests
 	private readonly ItemDatabaseService _database;
 
 	public LoadoutSearchTests()
-		=> this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemProvider>().Object);
+		=> this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemTextFormatter>().Object);
 
 	private static Item Piece(string name) => new() { BaseItemId = RecordId.Create($"records/item/{name}.dbr") };
 

@@ -179,15 +179,15 @@ statistics panel fonts and tool tip created in both the stash panel and the edit
 
 ## What stays in the GUI
 
-`IItemProvider` is the last Data provider in `GuiServices`. Its uses read or cache the display text of an item, deep in the
-tooltip rendering; a pass-through service would only rename the dependency:
+`IItemProvider` is the last Data provider in `GuiServices`, for the members of a set (`GetSetItems`). The display texts of
+an item and their cache come from `IItemTextFormatter` (`GuiServices.ItemText`), deep in the tooltip rendering:
 
 | Where | Call | Why it stays |
 |---|---|---|
-| `Tooltips/BaseTooltip.cs` and its subclasses (`ItemTooltip`, `BagButtonTooltip`, `BagButtonLabelTooltip`, `FoundResultsTooltip`, `SearchFiltersTooltip`) | `GetFriendlyNames`, `GetSetItems` | The item and bag tooltips render the friendly names; the line content is already built in Presentation (`ItemTooltipContentBuilder`). |
-| `Dialogs/ItemProperties.cs` (through `VaultForm.ItemProvider`) | `GetFriendlyNames(item, ItemFullDisplay, filterExtra)` | Shows the raw record properties of an item; display only. |
+| `Tooltips/BaseTooltip.cs` and its subclasses (`ItemTooltip`, `BagButtonTooltip`, `BagButtonLabelTooltip`, `FoundResultsTooltip`, `SearchFiltersTooltip`) | `GetFriendlyNames` (`ItemText`), `GetSetItems` (`ItemProvider`) | The item and bag tooltips render the friendly names; the line content is already built in Presentation (`ItemTooltipContentBuilder`). |
+| `Dialogs/ItemProperties.cs` (through `VaultForm.ItemText`) | `GetFriendlyNames(item, ItemFullDisplay, filterExtra)` | Shows the raw record properties of an item; display only. |
 | `Components/Panels/SackPanel.cs` (`InvalidateItemCacheAll`, `InvalidateItemCacheItemTooltip`) | `InvalidateFriendlyNamesCache` | Goes with the tooltip caches the panel clears after an item change. |
-| `Automation/*` (Debug only) | `IItemProvider`, `IDatabase` from the container | The automation endpoint reads the app's state as it is. |
+| `Automation/*` (Debug only) | `IItemProvider`, `IItemTextFormatter`, `IDatabase` from the container | The automation endpoint reads the app's state as it is. |
 | `Program.cs` | `IDatabase.LoadDBFile` | Composition root: loads the game database once the game paths are known. |
 
 Also left in the GUI, by design: the drag state (`ItemDragInfo`), the cell and screen geometry of the panels, the equipment

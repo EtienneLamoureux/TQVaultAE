@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -36,7 +37,7 @@ public sealed class CharacterSkillsRoundTripTests : IDisposable
 		[
 			new MasterySkill(IceShard, "", "", "", 12, 1, null),
 		]));
-		this._service = new CharacterEditService(new PathIO(), this._fixtures.PlayerProvider, trees.Object, this._fixtures.ItemProvider);
+		this._service = new CharacterEditService(new PathIO(), this._fixtures.PlayerProvider, trees.Object, this._fixtures.ItemProvider, Mock.Of<IItemTextFormatter>());
 	}
 
 	public void Dispose() => this._fixtures.Dispose();

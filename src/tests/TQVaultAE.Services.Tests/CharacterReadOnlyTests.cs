@@ -242,7 +242,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 	{
 		var itemProvider = new Mock<IItemProvider>();
 		var sorting = new ItemSortService(new ItemMovementService(new Mock<ILogger<ItemMovementService>>().Object)
-			, new ItemStackingService(itemProvider.Object), itemProvider.Object, Mock.Of<IItemDatabaseService>());
+			, new ItemStackingService(itemProvider.Object), itemProvider.Object, Mock.Of<IItemTextFormatter>(), Mock.Of<IItemDatabaseService>());
 		var sack = new SackCollection();
 		var item = new Item { BaseItemId = RecordId.Create("records/item/thing.dbr"), Width = 1, Height = 1, PositionX = 3, PositionY = 3 };
 		sack.AddItem(item);
@@ -263,7 +263,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 	{
 		var provider = new Mock<IPlayerCollectionProvider>();
 		var edit = new CharacterEditService(new PathIO(), provider.Object
-			, new Mock<ISkillTreeProvider>().Object, new Mock<IItemProvider>().Object);
+			, new Mock<ISkillTreeProvider>().Object, new Mock<IItemProvider>().Object, new Mock<IItemTextFormatter>().Object);
 		var player = new PlayerCollection("HeroA", "Player.chr") { PlayerInfo = new PlayerInfo(new PathIO()) { CurrentLevel = 10 } };
 		player.IsReadOnly = true;
 		var request = new CharacterEditRequest(20, "0", null, 0, 0, 50, 50, 50, 300, 300);
@@ -282,7 +282,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 		var service = new PlayerService(new Mock<ILogger<PlayerService>>().Object, this._session, Mock.Of<IItemDatabaseService>()
 			, Mock.Of<IPlayerCollectionProvider>(), Mock.Of<IStashService>(), Mock.Of<IGameFileService>(), this._gamePath.Object
 			, Mock.Of<ITranslationService>(), Mock.Of<ITQDataService>(), Mock.Of<ITagService>(), this._fileIO, new PathIO()
-			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IGameMapService>()
+			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemTextFormatter>(), Mock.Of<IGameMapService>()
 			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>(), Mock.Of<ICharacterReadOnlyService>(), Mock.Of<ILoadoutService>());
 
 		service.GetModifiedPlayers().Should().BeEmpty();
@@ -325,7 +325,7 @@ public sealed class CharacterReadOnlyTests : IDisposable
 		var service = new PlayerService(new Mock<ILogger<PlayerService>>().Object, this._session, Mock.Of<IItemDatabaseService>()
 			, Mock.Of<IPlayerCollectionProvider>(), Mock.Of<IStashService>(), gameFiles.Object, this._gamePath.Object
 			, Mock.Of<ITranslationService>(), Mock.Of<ITQDataService>(), Mock.Of<ITagService>(), this._fileIO, new PathIO()
-			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemProvider>(), Mock.Of<IGameMapService>()
+			, new UserSettings(), Mock.Of<IDirectoryIO>(), Mock.Of<IItemTextFormatter>(), Mock.Of<IGameMapService>()
 			, Mock.Of<ICharacterStatsService>(), Mock.Of<ICharacterEditService>(), characterReadOnlyService: this._service, loadoutService: Mock.Of<ILoadoutService>());
 
 		var result = service.DuplicateCharacter(this.Save(), "HeroB");

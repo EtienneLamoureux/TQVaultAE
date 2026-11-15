@@ -14,6 +14,7 @@ public class ItemSortService(
 	IItemMovementService itemMovementService
 	, IItemStackingService itemStackingService
 	, IItemProvider itemProvider
+	, IItemTextFormatter itemText
 	, IItemDatabaseService itemDatabaseService
 ) : IItemSortService
 {
@@ -35,6 +36,7 @@ public class ItemSortService(
 	private readonly IItemMovementService _itemMovementService = itemMovementService;
 	private readonly IItemStackingService _itemStackingService = itemStackingService;
 	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly IItemTextFormatter _itemText = itemText;
 	private readonly IItemDatabaseService _itemDatabaseService = itemDatabaseService;
 
 	/// <summary>The largest items first: three times the height plus the width.</summary>
@@ -95,7 +97,7 @@ public class ItemSortService(
 			this._itemDatabaseService.RemoveItemFromDatabase(item);
 
 		var changed = merge.Changed(sack);
-		this._itemProvider.InvalidateFriendlyNamesCache(changed);
+		this._itemText.InvalidateFriendlyNamesCache(changed);
 		this._itemDatabaseService.RefreshItems(changed);
 
 		return new SackSortResult(true, changed, merge.Removed);

@@ -1,4 +1,5 @@
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Tooltips;
 
@@ -13,7 +14,7 @@ internal static class ItemCaches
 	/// Drops the item tool tips of <paramref name="items"/> and, unless <paramref name="bagTooltips"/> is false, the bag
 	/// summary tool tips that show them; given <paramref name="names"/>, their friendly names too.
 	/// </summary>
-	public static void Invalidate(Item?[] items, IItemProvider? names, bool bagTooltips = true)
+	public static void Invalidate(Item?[] items, IItemTextFormatter? names, bool bagTooltips = true)
 	{
 		ItemTooltip.InvalidateCache(items);
 		if (bagTooltips)

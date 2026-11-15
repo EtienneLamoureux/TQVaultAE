@@ -31,7 +31,7 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Ring", Int("levelRequirement", 20), Int("strengthRequirement", 100));
 		this.AddPrefix(item, Int("strengthRequirement", 150), Int("dexterityRequirement", 80), Int("levelRequirement", 10));
 
-		var (requirements, variables) = this.Provider.GetRequirements(item);
+		var (requirements, variables) = this.Formatter.GetRequirements(item);
 
 		variables.Keys.Should().Equal("Dexterity", "LevelRequirement", "Strength");
 		requirements.Should().Equal("Required Dexterity: 80", "Required Player Level: 20", "Required Strength: 150");
@@ -70,7 +70,7 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 		this.Translations.Remove("LevelRequirement");
 		var item = this.CreateItem("ArmorJewelry_Ring", Int("levelRequirement", 20));
 
-		this.Provider.GetRequirements(item).Requirements.Should().Equal("?Required? ?LevelRequirement?: 20");
+		this.Formatter.GetRequirements(item).Requirements.Should().Equal("?Required? ?LevelRequirement?: 20");
 	}
 
 	[Fact]
@@ -78,7 +78,7 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 	{
 		var item = this.CreateItem("ArmorJewelry_Ring", Ints("levelRequirement", 10, 20));
 
-		this.Provider.GetRequirements(item).Requirements.Should().ContainSingle()
+		this.Formatter.GetRequirements(item).Requirements.Should().ContainSingle()
 			.Which.Should().StartWith("LevelRequirement: ").And.Contain("20");
 	}
 
@@ -167,7 +167,7 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 			Str("setName", "tagSetTest"), Strs("setMembers", """records\test\ring.dbr""", """records\test\missing.dbr"""));
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSetName", """records\test\set.dbr"""));
 
-		var set = this.Provider.GetItemSetTranslations(item);
+		var set = this.Formatter.GetItemSetTranslations(item);
 
 		set.Should().NotBeNull();
 		set!.Translations.Should().BeEquivalentTo(new Dictionary<string, string>

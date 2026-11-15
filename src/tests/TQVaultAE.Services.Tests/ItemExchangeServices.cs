@@ -28,6 +28,7 @@ internal static class ItemExchangeServices
 		, IPasteBinService? pasteBinService = null
 		, UserSettings? userSettings = null
 		, IItemProvider? itemProvider = null
+		, IItemTextFormatter? itemText = null
 		, IItemMovementService? itemMovementService = null
 		, IFileIO? fileIO = null
 		, IVaultService? vaultService = null
@@ -37,6 +38,7 @@ internal static class ItemExchangeServices
 			, pasteBinService ?? Mock.Of<IPasteBinService>()
 			, userSettings ?? new UserSettings()
 			, itemProvider ?? Mock.Of<IItemProvider>()
+			, itemText ?? Mock.Of<IItemTextFormatter>()
 			, itemMovementService ?? Mock.Of<IItemMovementService>()
 			, fileIO ?? Mock.Of<IFileIO>()
 			, vaultService ?? Mock.Of<IVaultService>()

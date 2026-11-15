@@ -17,7 +17,7 @@ public class ItemComparisonServiceTests
 	private const FriendlyNamesExtraScopes Classic = FriendlyNamesExtraScopes.ItemFullDisplay;
 	private const FriendlyNamesExtraScopes SkillsApart = FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills;
 
-	private readonly Mock<IItemProvider> _provider = new();
+	private readonly Mock<IItemTextFormatter> _provider = new();
 	private readonly Mock<IItemAttributeProvider> _attributes = new();
 	private readonly Mock<ITranslationService> _translation = new();
 	private readonly Item _first = new();

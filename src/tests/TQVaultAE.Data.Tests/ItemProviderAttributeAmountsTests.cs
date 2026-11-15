@@ -299,7 +299,7 @@ public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
 		item.RelicInfo = this.MockDatabase.Object.GetInfo(item.relicID);
 		item.Var1 = 3;
 
-		var relicLines = this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.RelicAttributes).Relic1Attributes;
+		var relicLines = this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.RelicAttributes).Relic1Attributes;
 
 		relicLines.Should().Equal($"{Epic}+15 Strength");
 	}

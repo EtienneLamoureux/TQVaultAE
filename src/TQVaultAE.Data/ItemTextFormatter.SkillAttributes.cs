@@ -6,7 +6,7 @@ using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Data;
 
-public partial class ItemProvider
+public partial class ItemTextFormatter
 {
 	/// <summary>
 	/// Adds a line that is text, not an attribute: a line of a granted skill's description, or a header that only

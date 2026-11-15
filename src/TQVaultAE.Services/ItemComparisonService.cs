@@ -9,10 +9,10 @@ namespace TQVaultAE.Services;
 /// <summary>
 /// Compares two items stat by stat, from the values their tooltips display.
 /// </summary>
-public class ItemComparisonService(IItemProvider itemProvider, IItemAttributeProvider attributeProvider, ITranslationService translationService)
+public class ItemComparisonService(IItemTextFormatter itemText, IItemAttributeProvider attributeProvider, ITranslationService translationService)
 	: IItemComparisonService
 {
-	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly IItemTextFormatter _itemText = itemText;
 	private readonly IItemAttributeProvider _attributeProvider = attributeProvider;
 	private readonly ITranslationService _translationService = translationService;
 
@@ -23,13 +23,13 @@ public class ItemComparisonService(IItemProvider itemProvider, IItemAttributePro
 		// and never summed with the item attributes; the tooltips show the classic display, skills inline.
 		var stats = ItemStatComparer.Compare(this.SheetOf(first), this.SheetOf(second), this.LowerIsBetterSignatures());
 		return new ItemComparison(
-			this._itemProvider.GetFriendlyNames(first, FriendlyNamesExtraScopes.ItemFullDisplay)
-			, this._itemProvider.GetFriendlyNames(second, FriendlyNamesExtraScopes.ItemFullDisplay)
+			this._itemText.GetFriendlyNames(first, FriendlyNamesExtraScopes.ItemFullDisplay)
+			, this._itemText.GetFriendlyNames(second, FriendlyNamesExtraScopes.ItemFullDisplay)
 			, stats);
 	}
 
 	private ItemStatSheet SheetOf(Item item)
-		=> ItemStatSheet.From(this._itemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills));
+		=> ItemStatSheet.From(this._itemText.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills));
 
 	/// <summary>
 	/// The signatures of the labels of <see cref="LowerIsBetterStats.AttributeNames"/> in the current language, as the item

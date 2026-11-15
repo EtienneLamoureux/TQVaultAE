@@ -11,12 +11,14 @@ namespace TQVaultAE.Services;
 /// </summary>
 public class ForgeService(
 	IItemProvider itemProvider
+	, IItemTextFormatter itemText
 	, IItemDatabaseService itemDatabaseService
 ) : IForgeService
 {
 	private static readonly ForgeSlot[] MaterialSlots = [ForgeSlot.Prefix, ForgeSlot.Suffix, ForgeSlot.Relic1, ForgeSlot.Relic2];
 
 	private readonly IItemProvider ItemProvider = itemProvider;
+	private readonly IItemTextFormatter ItemText = itemText;
 	private readonly IItemDatabaseService ItemDatabaseService = itemDatabaseService;
 
 	/// <inheritdoc/>
@@ -84,7 +86,7 @@ public class ForgeService(
 		IReadOnlyList<Item> consumed = hardcore ? this.ConsumeMaterials(selection, sacks) : [];
 
 		// The search keeps the item's display data: replace its entry so it shows the forged item.
-		this.ItemProvider.InvalidateFriendlyNamesCache(forged);
+		this.ItemText.InvalidateFriendlyNamesCache(forged);
 		this.ItemDatabaseService.RemoveItemFromDatabase(forged);
 		this.ItemDatabaseService.TryAddItemToDatabase(forged);
 
@@ -102,7 +104,7 @@ public class ForgeService(
 				continue;
 
 			sack.RemoveItem(item);
-			this.ItemProvider.InvalidateFriendlyNamesCache(item);
+			this.ItemText.InvalidateFriendlyNamesCache(item);
 			this.ItemDatabaseService.RemoveItemFromDatabase(item);
 			consumed.Add(item);
 		}

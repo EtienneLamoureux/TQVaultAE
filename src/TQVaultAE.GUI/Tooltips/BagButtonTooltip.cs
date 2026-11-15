@@ -106,7 +106,7 @@ public partial class BagButtonTooltip : BaseTooltip
 				.Where(i => !RecordId.IsNullOrEmpty(i.BaseItemId))// skip empty items
 				.ToArray();
 			var friendlylist = ItemSummaryText.SummarizeByName(itemlist
-				.Select(i => ItemProvider.GetFriendlyNames(i)));
+				.Select(i => this.ItemText.GetFriendlyNames(i)));
 
 			foreach (var line in friendlylist)
 				AddRow(line.Text, line.First.Item.ExtractTextColorOrItemColor(line.First.BaseItemInfoDescription));

@@ -17,12 +17,12 @@ namespace TQVaultAE.Services;
 /// </summary>
 public class HighlightService(
     ILogger<HighlightService> log,
-    IItemProvider itemProvider,
+    IItemTextFormatter itemText,
     SessionContext sessionContext,
     ITranslationService translationService) : IHighlightService
 {
     private readonly ILogger<HighlightService> _log = log;
-    private readonly IItemProvider _itemProvider = itemProvider;
+    private readonly IItemTextFormatter _itemText = itemText;
     private readonly SessionContext _sessionContext = sessionContext;
     private readonly ITranslationService _translationService = translationService;
 
@@ -72,7 +72,7 @@ public class HighlightService(
             var availableItems = sacksplayers.Concat(sacksVault).Concat(sacksStash).SelectMany(i => i)
                 .Select(i =>
                 {
-                    var fnr = this._itemProvider.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay);
+                    var fnr = this._itemText.GetFriendlyNames(i, FriendlyNamesExtraScopes.ItemFullDisplay);
 
                     return new
                     {
@@ -125,7 +125,7 @@ public class HighlightService(
 
                 var flags = new ItemFlagFilter(filter.HavingPrefix, filter.HavingSuffix, filter.HavingRelic, filter.HavingCharm, filter.IsSetItem, filter.HavingSkill);
                 if (!flags.IsEmpty)
-                    availableItems = availableItems.Where(i => flags.Matches(i.Item, i.FriendlyNames, this._itemProvider.HasGrantedSkill));
+                    availableItems = availableItems.Where(i => flags.Matches(i.Item, i.FriendlyNames, this._itemText.HasGrantedSkill));
             }
 
             this.HighlightedItems = availableItems.Select(i => i.Item).ToList();

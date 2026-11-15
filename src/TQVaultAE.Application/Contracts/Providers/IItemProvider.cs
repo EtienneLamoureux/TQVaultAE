@@ -1,4 +1,5 @@
 ﻿using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Jitter;
 using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Application.Contracts.Providers;
@@ -68,31 +69,9 @@ public interface IItemProvider
 	/// <returns>true if the variable contains a value which is filtered.</returns>
 	bool FilterValue(Variable variable, bool allowStrings);
 	/// <summary>
-	/// Formats a string based on the formatspec
-	/// </summary>
-	/// <param name="formatSpec">format specification</param>
-	/// <param name="parameter1">first parameter</param>
-	/// <param name="parameter2">second parameter</param>
-	/// <param name="parameter3">third parameter</param>
-	/// <returns>formatted string.</returns>
-	string Format(string? formatSpec, object? parameter1, object? parameter2 = null, object? parameter3 = null);
-	/// <summary>
 	/// Pulls data out of the TQ item database for this item.
 	/// </summary>
 	void GetDBData(Item itm);
-	/// <summary>
-	/// Gets the item name and attributes.
-	/// </summary>
-	/// <param name="itm"></param>
-	/// <param name="scopes">Extra data scopes as a bitmask</param>
-	/// <param name="filterExtra">filter extra properties</param>
-	/// <returns>An object containing the item name and attributes</returns>
-	ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true);
-	/// <summary>
-	/// Shows the items in a set for the set items
-	/// </summary>
-	/// <returns>string containing the set items</returns>
-	SetItemInfo? GetItemSetTranslations(Item itm);
 	/// <summary>
 	/// Pet skills can also have multiple values so we attempt to decode it here
 	/// unfortunately the level is not in the skill record so we need to look up
@@ -103,11 +82,6 @@ public interface IItemProvider
 	/// <param name="varNum">Which variable we are using since there can be multiple values.</param>
 	/// <returns>int containing the pet skill level</returns>
 	int GetPetSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum);
-	/// <summary>
-	/// Gets the item's requirements
-	/// </summary>
-	/// <returns>A string containing the items requirements</returns>
-	(string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm);
 	SortedList<string, Variable> GetRequirementVariables(Item itm);
 
 	/// <summary>
@@ -136,6 +110,13 @@ public interface IItemProvider
 	/// their completion bonuses.
 	/// </summary>
 	AttributeSum GetAttributeSums(Item item);
+	/// <summary>
+	/// Replays the game's stat jitter for equipment (armor, jewellery, weapons, shields): the values the game rolled from
+	/// the item seed for its base record and its affixes, and their possible ranges.
+	/// </summary>
+	/// <param name="baseRecord">The item's base record, already read.</param>
+	/// <returns><see langword="null"/> when the item is not equipment or has no seed.</returns>
+	ItemRollResult? RollInGameValues(Item itm, DBRecordCollection? baseRecord);
 
 	/// <summary>
 	/// Sums the bonuses of the item sets worn: each set record read at the number of its pieces among the items.
@@ -150,27 +131,16 @@ public interface IItemProvider
 	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>
 	SetItemInfo? GetSetItems(Item itm);
 	/// <summary>
-	/// Tells whether the item grants a skill, by its base record, its affixes, its relics or their completion bonuses.
-	/// Only skills with a name count, as in the tooltip: the game's hidden helper skills do not.
-	/// </summary>
-	bool HasGrantedSkill(Item itm);
-	/// <summary>
-	/// The translated names of the skills the item grants (see <see cref="HasGrantedSkill"/>), each once.
-	/// </summary>
-	IReadOnlyList<string> GetGrantedSkillNames(Item itm);
-	/// <summary>
 	/// The skills the item grants with their level (<c>itemSkillName</c> at <c>itemSkillLevel</c>, at least 1), from its
 	/// base record, its affixes, its relics and their completion bonuses, hidden helper skills included: what the game
 	/// gives the character who wears it.
 	/// </summary>
 	IReadOnlyList<(RecordId SkillId, int Level)> GetGrantedSkillLevels(Item itm);
 	/// <summary>
-	/// Describes a skill at a level as the item tooltips describe a granted skill: name, icon, description and its effects
-	/// at that level (a buff skill takes them from its buff record, a pet skill from its pet).
+	/// The records of an item that grant a skill (<c>itemSkillName</c>): its base, its affixes, its relics and their
+	/// completion bonuses, each once, with the skill and the level they grant it at (<c>itemSkillLevel</c>, at least 1).
 	/// </summary>
-	/// <param name="context">What the character adds to the skill's own values (modifiers, recharge reduction...).</param>
-	/// <returns><see langword="null"/> when the record is missing or has no name.</returns>
-	GrantedSkill? GetSkillAtLevel(RecordId skillId, int level, SkillWindowContext? context = null);
+	IEnumerable<(DBRecordCollection Source, RecordId SkillId, int Level)> GetGrantedSkillSources(Item itm);
 	/// <summary>
 	/// Gets the level of a triggered skill
 	/// </summary>
@@ -196,10 +166,4 @@ public interface IItemProvider
 	/// </summary>
 	/// <returns>Returns the removed relic as a new Item</returns>
 	Item? RemoveRelic2(Item itm);
-
-	/// <summary>
-	/// Invalidate item data cache
-	/// </summary>
-	/// <returns>true if cache have been changed</returns>
-	bool InvalidateFriendlyNamesCache(params IEnumerable<Item> items);
 }

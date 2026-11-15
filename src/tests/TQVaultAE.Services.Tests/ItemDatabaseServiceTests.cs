@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
@@ -18,13 +19,13 @@ namespace TQVaultAE.Tests.Services;
 public class ItemDatabaseServiceTests
 {
 	private readonly Mock<ILogger<ItemDatabaseService>> _mockLogger;
-	private readonly Mock<IItemProvider> _mockItemProvider;
+	private readonly Mock<IItemTextFormatter> _mockItemProvider;
 	private readonly ItemDatabaseService _service;
 
 	public ItemDatabaseServiceTests()
 	{
 		_mockLogger = new Mock<ILogger<ItemDatabaseService>>();
-		_mockItemProvider = new Mock<IItemProvider>();
+		_mockItemProvider = new Mock<IItemTextFormatter>();
 		_service = new ItemDatabaseService(
 			_mockLogger.Object,
 			_mockItemProvider.Object

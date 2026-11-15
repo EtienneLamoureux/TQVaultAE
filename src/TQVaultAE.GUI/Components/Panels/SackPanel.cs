@@ -36,7 +36,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
-	protected readonly IItemProvider ItemProvider;
+	protected readonly IItemTextFormatter ItemText;
 	protected readonly GuiServices Services;
 	protected readonly IHighlightService HighlightService;
 	protected readonly IItemDatabaseService ItemDatabaseService;
@@ -196,7 +196,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		this.Services = services;
 		this.FontService = this.Services.FontService;
 		this.UIService = this.Services.UIService;
-		this.ItemProvider = this.Services.ItemProvider;
+		this.ItemText = this.Services.ItemText;
 		this.TranslationService = this.Services.TranslationService;
 		this.userContext = this.Services.Session;
 		this.USettings = this.Services.Settings;
@@ -326,7 +326,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// <param name="message">The message, with the item's name as <c>{0}</c>.</param>
 	internal void NotifyNoRoomInTab(Item item, string message)
 		=> this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, message
-			, this.Services.ItemProvider.GetFriendlyNames(item).FullNameClean), TQColor.Red);
+			, this.Services.ItemText.GetFriendlyNames(item).FullNameClean), TQColor.Red);
 
 	/// <summary>
 	/// The map the items of the panel's container inherit: the vault's mod, or else the shown character's map (its
@@ -345,7 +345,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		if (kept.Count == 0)
 			return;
 
-		var names = string.Join(", ", kept.Select(i => this.Services.ItemProvider.GetFriendlyNames(i).FullNameClean));
+		var names = string.Join(", ", kept.Select(i => this.Services.ItemText.GetFriendlyNames(i).FullNameClean));
 		this.Services.UIService.NotifyUser(string.Format(System.Globalization.CultureInfo.CurrentCulture, TQVaultAE.Presentation.Resources.ModMapKeptNoRoom, names));
 	}
 
@@ -651,8 +651,8 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	#endregion SackPanel Protected Methods
 
 	protected void InvalidateItemCacheAll(params Item?[] items)
-		=> ItemCaches.Invalidate(items, this.ItemProvider);
+		=> ItemCaches.Invalidate(items, this.ItemText);
 
 	private void InvalidateItemCacheItemTooltip(params Item[] items)
-		=> ItemCaches.Invalidate(items, this.ItemProvider, bagTooltips: false);
+		=> ItemCaches.Invalidate(items, this.ItemText, bagTooltips: false);
 }

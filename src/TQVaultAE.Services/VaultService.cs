@@ -19,7 +19,8 @@ public class VaultService(
 	IFileIO fileIO,
 	IPathIO pathIO,
 	UserSettings userSettings,
-	IItemProvider itemProvider) : IVaultService
+	IItemProvider itemProvider,
+	IItemTextFormatter itemText) : IVaultService
 {
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
@@ -31,6 +32,7 @@ public class VaultService(
 	private readonly IPathIO PathIO = pathIO;
 	private readonly UserSettings UserSettings = userSettings;
 	private readonly IItemProvider ItemProvider = itemProvider;
+	private readonly IItemTextFormatter ItemText = itemText;
 
 	/// <summary>
 	/// Creates a new empty vault file.
@@ -202,7 +204,7 @@ public class VaultService(
 
 		var lines = items.Select((entry, row) =>
 		{
-			var friendlyNames = this.ItemProvider.GetFriendlyNames(entry.Item, FriendlyNamesExtraScopes.Requirements);
+			var friendlyNames = this.ItemText.GetFriendlyNames(entry.Item, FriendlyNamesExtraScopes.Requirements);
 			return new CsvRow(vault.PlayerName, entry.BagId, friendlyNames, row, delimiter).ToString();
 		}).Prepend(CsvRow.GetCSVHeader(delimiter));
 

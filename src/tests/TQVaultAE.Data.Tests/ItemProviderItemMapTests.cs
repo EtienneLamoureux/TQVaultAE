@@ -59,7 +59,6 @@ public class ItemProviderItemMapTests
 			Mock.Of<ILootTableCollectionProvider>(),
 			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
 			Mock.Of<ITQDataService>(),
-			Mock.Of<ITranslationService>(),
 			Mock.Of<IPathIO>(),
 			new UserSettings { ShowInGameValues = false },
 			itemMods.Object);

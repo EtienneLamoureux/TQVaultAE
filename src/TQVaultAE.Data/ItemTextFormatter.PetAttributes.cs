@@ -4,7 +4,7 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data;
 
-public partial class ItemProvider
+public partial class ItemTextFormatter
 {
 	/// <summary>
 	/// Gets the pet bonus string

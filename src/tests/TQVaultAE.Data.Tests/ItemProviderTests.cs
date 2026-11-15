@@ -13,6 +13,7 @@ namespace TQVaultAE.Tests.Data;
 public class ItemProviderTests
 {
 	private readonly ItemProvider _provider;
+	private readonly ItemTextFormatter _formatter;
 	private readonly Mock<IDatabase> _mockDatabase;
 	private readonly Mock<IItemAttributeProvider> _mockItemAttributeProvider;
 	private readonly Mock<ILootTableCollectionProvider> _mockLootTableCollectionProvider;
@@ -38,6 +39,14 @@ public class ItemProviderTests
 			_mockLootTableCollectionProvider.Object,
 			_mockItemAttributeProvider.Object,
 			_mockTQData.Object,
+			_mockPathIO.Object,
+			mockSettings
+		);
+		_formatter = new ItemTextFormatter(
+			new Mock<ILogger<ItemTextFormatter>>().Object,
+			_mockDatabase.Object,
+			_provider,
+			_mockItemAttributeProvider.Object,
 			_mockTranslationService.Object,
 			_mockPathIO.Object,
 			mockSettings
@@ -108,7 +117,7 @@ public class ItemProviderTests
 	[InlineData("offensiveSlowFire", false)] // duration reliant
 	[InlineData("OFFENSIVESLOWRUNSPEEDX", false)]
 	public void DurationIndependentEffects_IgnoresCase(string effect, bool expected)
-		=> ItemProvider.durationIndependentEffects.Contains(effect).Should().Be(expected);
+		=> ItemTextFormatter.durationIndependentEffects.Contains(effect).Should().Be(expected);
 
 	#endregion
 
@@ -180,7 +189,7 @@ public class ItemProviderTests
 	public void Format_ReturnsCorrectFormattedString(string formatSpec, object? param1, object? param2, object? param3, string expected)
 	{
 		// Act
-		var result = _provider.Format(formatSpec, param1, param2, param3);
+		var result = _formatter.Format(formatSpec, param1, param2, param3);
 
 		// Assert
 		result.Should().Be(expected);
@@ -190,7 +199,7 @@ public class ItemProviderTests
 	public void Format_WithInvalidFormatSpecifier_ReturnsTheRawLine_InsteadOfThrowing()
 	{
 		// A malformed translation must only spoil its own line, not the whole item text.
-		var result = _provider.Format("{0} {1} {999}", "test", null);
+		var result = _formatter.Format("{0} {1} {999}", "test", null);
 
 		result.Should().Be("""FormatErr("{0} {1} {999}", 'test', 'NULL', 'NULL'>""");
 	}
@@ -199,7 +208,7 @@ public class ItemProviderTests
 	public void Format_WithGameFormatSyntax_ReturnsTheRawLine_InsteadOfThrowing()
 	{
 		// An unconverted game format, like "{%.1f0}", is not a valid .NET format.
-		var result = _provider.Format("{%.1f0}% Chance of", 12.5f);
+		var result = _formatter.Format("{%.1f0}% Chance of", 12.5f);
 
 		result.Should().StartWith("""FormatErr("{%.1f0}% Chance of", '""");
 	}

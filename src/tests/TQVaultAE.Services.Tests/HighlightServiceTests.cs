@@ -17,7 +17,7 @@ namespace TQVaultAE.Tests.Services;
 public class HighlightServiceTests
 {
 	private readonly Mock<ILogger<HighlightService>> _mockLogger;
-	private readonly Mock<IItemProvider> _mockItemProvider;
+	private readonly Mock<IItemTextFormatter> _mockItemProvider;
 	private readonly SessionContext _sessionContext;
 	private readonly Mock<ITranslationService> _mockTranslationService = new();
 	private readonly HighlightService _service;
@@ -25,7 +25,7 @@ public class HighlightServiceTests
 	public HighlightServiceTests()
 	{
 		_mockLogger = new Mock<ILogger<HighlightService>>();
-		_mockItemProvider = new Mock<IItemProvider>();
+		_mockItemProvider = new Mock<IItemTextFormatter>();
 		_sessionContext = new SessionContext();
 		_service = new HighlightService(
 			_mockLogger.Object,

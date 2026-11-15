@@ -42,7 +42,7 @@ public sealed class StashMoveSearchTests : IDisposable
 	public StashMoveSearchTests()
 	{
 		var session = new SessionContext();
-		this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemProvider>().Object);
+		this._database = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, new Mock<IItemTextFormatter>().Object);
 
 		var gamePaths = new Mock<IGamePathService>();
 		gamePaths.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
@@ -76,7 +76,7 @@ public sealed class StashMoveSearchTests : IDisposable
 			, new Mock<IGameFileService>().Object, gamePaths.Object, new Mock<ITranslationService>().Object
 			, new Mock<ITQDataService>().Object, new Mock<ITagService>().Object, new Mock<IFileIO>().Object
 			, new PathIO(), new UserSettings(), new Mock<IDirectoryIO>().Object
-			, new Mock<IItemProvider>().Object, new Mock<IGameMapService>().Object
+			, new Mock<IItemTextFormatter>().Object, new Mock<IGameMapService>().Object
 			, new Mock<ICharacterStatsService>().Object, new Mock<ICharacterEditService>().Object
 			, new Mock<ICharacterReadOnlyService>().Object, new Mock<ILoadoutService>().Object);
 

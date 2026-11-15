@@ -253,11 +253,11 @@ public class ItemExchangeServiceImportTests
 	public async Task ExportItemToPasteBinAsync_NamesThePasteAfterTheItem(string itemName, string? expectedPasteName)
 	{
 		var item = NewItem(0, 0);
-		var itemProvider = new Mock<TQVaultAE.Application.Contracts.Providers.IItemProvider>();
-		itemProvider.Setup(p => p.GetFriendlyNames(item, null, true))
+		var itemText = new Mock<IItemTextFormatter>();
+		itemText.Setup(p => p.GetFriendlyNames(item, null, true))
 			.Returns(new TQVaultAE.Domain.Results.ToFriendlyNameResult(item) { BaseItemInfoDescription = itemName });
 		this._pasteBin.Setup(p => p.UploadAsync(It.IsAny<string>(), It.IsAny<string?>())).ReturnsAsync("https://pastebin.com/x");
-		var service = ItemExchangeServices.Create(this._jsonOptions, this._pasteBin.Object, itemProvider: itemProvider.Object);
+		var service = ItemExchangeServices.Create(this._jsonOptions, this._pasteBin.Object, itemText: itemText.Object);
 
 		var url = await service.ExportItemToPasteBinAsync(item);
 

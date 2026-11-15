@@ -189,7 +189,7 @@ public class ItemTextSnapshotTests : ItemProviderTextTestBase
 			foreach (var level in new[] { 1, 3 })
 			{
 				sb.Append("== GetSkillAtLevel ").Append(level).Append('\n');
-				AppendGrantedSkill(sb, "Skill", this.Provider.GetSkillAtLevel(SkillId.ToRecordId(), level));
+				AppendGrantedSkill(sb, "Skill", this.Formatter.GetSkillAtLevel(SkillId.ToRecordId(), level));
 			}
 
 			AssertSnapshot("skill-at-level", sb.ToString());
@@ -206,9 +206,9 @@ public class ItemTextSnapshotTests : ItemProviderTextTestBase
 		// An item linked to a mod reads its records in the mod's database: the text must be built inside its scope.
 		var item = this.Ring();
 
-		this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay);
-		this.Provider.HasGrantedSkill(item);
-		this.Provider.GetGrantedSkillNames(item);
+		this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay);
+		this.Formatter.HasGrantedSkill(item);
+		this.Formatter.GetGrantedSkillNames(item);
 
 		this._itemMods.Verify(m => m.Scope(item), Times.AtLeast(3));
 	}
@@ -220,22 +220,22 @@ public class ItemTextSnapshotTests : ItemProviderTextTestBase
 		var sb = new StringBuilder();
 
 		// The tooltip and the item comparison (all the scopes, granted skills apart).
-		var full = this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills);
+		var full = this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay | FriendlyNamesExtraScopes.GrantedSkills);
 		sb.Append("== GetFriendlyNames(ItemFullDisplay | GrantedSkills)\n");
 		AppendResult(sb, full);
 
 		// The Item Properties dialog with its filter unchecked.
-		var unfiltered = this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay, filterExtra: false);
+		var unfiltered = this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay, filterExtra: false);
 		sb.Append("== GetFriendlyNames(ItemFullDisplay, filterExtra: false)\n");
 		AppendResult(sb, unfiltered);
 
 		// The search: its entries read GetFriendlyNames(ItemFullDisplay), the text matched and the attribute filters.
-		var search = this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay);
+		var search = this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay);
 		sb.Append("== Search\n");
 		AppendLines(sb, "FullText", FullText(search));
 		AppendLines(sb, "AttributesAll", search.AttributesAll.Select(a => $"{(search.IsTextLine(a.Trim()) ? "[text] " : string.Empty)}{a}"));
-		sb.Append("HasGrantedSkill: ").Append(this.Provider.HasGrantedSkill(item)).Append('\n');
-		AppendLines(sb, "GrantedSkillNames", this.Provider.GetGrantedSkillNames(item));
+		sb.Append("HasGrantedSkill: ").Append(this.Formatter.HasGrantedSkill(item)).Append('\n');
+		AppendLines(sb, "GrantedSkillNames", this.Formatter.GetGrantedSkillNames(item));
 
 		return sb.ToString();
 	}

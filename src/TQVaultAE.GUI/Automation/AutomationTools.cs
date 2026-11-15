@@ -12,6 +12,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -919,8 +920,8 @@ internal static partial class AutomationTools
 	{
 		try
 		{
-			var provider = Program.ServiceProvider.GetRequiredService<IItemProvider>();
-			return provider.GetFriendlyNames(item).FullNameClean;
+			var names = Program.ServiceProvider.GetRequiredService<IItemTextFormatter>();
+			return names.GetFriendlyNames(item).FullNameClean;
 		}
 		catch (Exception)
 		{
@@ -938,7 +939,7 @@ internal static partial class AutomationTools
 		string? baseName = null;
 		try
 		{
-			var names = Program.ServiceProvider.GetRequiredService<IItemProvider>().GetFriendlyNames(item);
+			var names = Program.ServiceProvider.GetRequiredService<IItemTextFormatter>().GetFriendlyNames(item);
 			name = names.FullNameClean;
 			baseName = names.BaseItemInfoDescription?.RemoveAllTQTags();
 		}

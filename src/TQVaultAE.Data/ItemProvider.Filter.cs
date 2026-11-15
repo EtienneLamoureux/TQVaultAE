@@ -148,35 +148,6 @@ public partial class ItemProvider
 			"STRENGTHREQUIREMENT",
 		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
-	/// <summary>
-	/// The effects the game applies at full strength for a time (slows, reduced abilities, armor and resistances, impaired
-	/// aim): their value is not multiplied by the duration, and the duration reads "for 3.0 Seconds" (the game's
-	/// <c>DamageFixed...FormatTime</c> texts), where damage over time reads "over 3.0 Seconds".
-	/// </summary>
-	internal static readonly FrozenSet<string> durationIndependentEffects = new[]
-	{
-			"OFFENSIVESLOWTOTALSPEED",
-			"OFFENSIVESLOWATTACKSPEED",
-			"OFFENSIVESLOWRUNSPEED",
-			"OFFENSIVESLOWSPELLCASTSPEED",
-			"OFFENSIVESLOWOFFENSIVEABILITY",
-			"OFFENSIVESLOWDEFENSIVEABILITY",
-			"OFFENSIVESLOWOFFENSIVEREDUCTION",
-			"OFFENSIVESLOWDEFENSIVEREDUCTION",
-			"OFFENSIVETOTALDAMAGEREDUCTIONPERCENT",
-			"OFFENSIVETOTALDAMAGEREDUCTIONABSOLUTE",
-			"OFFENSIVETOTALRESISTANCEREDUCTIONPERCENT",
-			"OFFENSIVETOTALRESISTANCEREDUCTIONABSOLUTE",
-			"OFFENSIVEFUMBLE",
-			"OFFENSIVEPROJECTILEFUMBLE",
-			"RETALIATIONSLOWATTACKSPEED",
-			"RETALIATIONSLOWRUNSPEED",
-			"RETALIATIONSLOWSPELLCASTSPEED",
-			"RETALIATIONSLOWOFFENSIVEABILITY",
-			"RETALIATIONSLOWDEFENSIVEABILITY",
-			"RETALIATIONSLOWOFFENSIVEREDUCTION",
-		}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
-
 	#endregion
 	/// <summary>
 	/// Holds all of the keys which we are filtering

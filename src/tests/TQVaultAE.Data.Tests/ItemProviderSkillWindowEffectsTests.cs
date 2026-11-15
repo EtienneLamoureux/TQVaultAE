@@ -32,7 +32,7 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 	private string[] Effects(int level, params Variable[] variables)
 	{
 		this.CreateRecord(SkillId, "Skill_Modifier", [Str("skillDisplayName", "tagSkillTest"), .. variables]);
-		return [.. this.Provider.GetSkillAtLevel(SkillId, level, SkillWindowContext.None)!.Attributes.Select(a => a.RemoveLeadingColorTag())];
+		return [.. this.Formatter.GetSkillAtLevel(SkillId, level, SkillWindowContext.None)!.Attributes.Select(a => a.RemoveLeadingColorTag())];
 	}
 
 	[Fact]
@@ -83,7 +83,7 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_Modifier", Str("skillDisplayName", "tagSkillTest"), Floats("spawnObjectsTimeToLive", 20f, 24f));
 		var context = SkillWindowContext.None with { Modifiers = [new SkillModifierLevel(ModifierId, 2)] };
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, context);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 2, context);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal("Extra Life Time 49 Seconds");
 	}
@@ -107,7 +107,7 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 			Str("skillNameCastOnDamage_Fire", """records\test\fire.dbr"""), Str("skillNameCastOnDamage_Cold", """records\test\cold.dbr"""),
 			Str("skillNameCastOnDamage_Lightning", """records\test\lightning.dbr"""));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, level, SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, level, SkillWindowContext.None);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
 			"33.0% Chance to be Used", string.Empty, "Chance for one of the following:", fire, cold, lightning);
@@ -123,7 +123,7 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_PassiveOnTargetKilled", Str("skillDisplayName", "tagSkillTest"), Floats("skillCastChance", 33f, 33f),
 			Str("skillNameCastOnDamage_Fire", """records\test\fire.dbr"""), Str("triggeringSkill", """records\test\shenpao.dbr"""));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 2, SkillWindowContext.None);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
 			"33.0% Chance to be Used : Shen Pao", string.Empty, "Chance for one of the following:", "54 Fire Damage");
@@ -136,7 +136,7 @@ public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_PassiveOnTargetKilled", Str("skillDisplayName", "tagSkillTest"), Floats("skillCastChance", 33f, 33f),
 			Str("skillNameCastOnDamage_Fire", """records\test\fire.dbr"""), Str("triggeringSkill", """records\test\missing.dbr"""));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 1, SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 1, SkillWindowContext.None);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).First().Should().Be("33.0% Chance to be Used");
 	}

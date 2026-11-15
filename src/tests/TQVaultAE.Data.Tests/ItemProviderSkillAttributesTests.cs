@@ -214,7 +214,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId));
 
 		this.BaseAttributes(item).Should().Contain($"{Mundane}Test Skill {activation}");
-		this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.GrantedSkills).GrantedSkills.Single().Activation.Should().Be(activation);
+		this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.GrantedSkills).GrantedSkills.Single().Activation.Should().Be(activation);
 	}
 
 	[Fact]
@@ -473,7 +473,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 			Float("offensiveSlowFireModifier", 44f), Float("offensiveFireModifier", 44f), Float("skillTargetRadius", 8.4f),
 			Float("skillActiveManaCost", 1f), Float("skillCooldownTime", 4f));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 1, TQVaultAE.Application.SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 1, TQVaultAE.Application.SkillWindowContext.None);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
 			"{^a}4.0 Second(s) Recharge",
@@ -492,7 +492,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 		this.CreateRecord(SkillId, "Skill_PassiveOnHitBuffSelf", Str("skillDisplayName", "tagSkillTest"),
 			Int("skillManaCost", 20), Float("skillActiveDuration", 10f), Float("onHitActivationChance", 8f), Float("skillCooldownTime", 12f));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 1, TQVaultAE.Application.SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 1, TQVaultAE.Application.SkillWindowContext.None);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
 			"{^a}12.0 Second(s) Recharge",
@@ -511,7 +511,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 			Floats("projectilePiercing", 10f, 15f), Floats("explosionRadius", 2f, 2.5f), Int("numRings", 2), Float("spacingAngle", 30f),
 			Float("distanceIncrement", 1f), Int("skipSkillLinking", 1));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, TQVaultAE.Application.SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 2, TQVaultAE.Application.SkillWindowContext.None);
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal(
 			"15% Chance to pass through Enemies",
@@ -523,7 +523,7 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 	{
 		this.CreateRecord(SkillId, "Skill_AttackRadius", Str("skillDisplayName", "tagSkillTest"), Floats("skillManaCost", 10.5f, 12.5f));
 
-		var skill = this.Provider.GetSkillAtLevel(SkillId, 2, TQVaultAE.Application.SkillWindowContext.None);
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 2, TQVaultAE.Application.SkillWindowContext.None);
 
 		skill!.Attributes.Should().Equal($"{Mundane}13 Energy Cost");
 	}

@@ -34,7 +34,7 @@ public class PlayerServiceTests
 	private readonly SessionContext _sessionContext;
 	private readonly UserSettings _userSettings;
 	private readonly Mock<IDirectoryIO> _mockDirectoryIO;
-	private readonly Mock<IItemProvider> _mockItemProvider;
+	private readonly Mock<IItemTextFormatter> _mockItemProvider;
 	private readonly Mock<IGameMapService> _mockGameMapService = new();
 	private readonly Mock<ICharacterStatsService> _mockStats = new();
 	private readonly Mock<ICharacterEditService> _mockCharacterEdit = new();
@@ -74,7 +74,7 @@ public class PlayerServiceTests
 		_mockPathIO = new Mock<PathIO> { CallBase = true };
 		_userSettings = new UserSettings();
 		_mockDirectoryIO = new Mock<IDirectoryIO>();
-		_mockItemProvider = new Mock<IItemProvider>();
+		_mockItemProvider = new Mock<IItemTextFormatter>();
 		_mockGamePathService.Setup(x => x.PlayerSaveFileName).Returns("Player.chr");
 		_mockGamePathService.Setup(x => x.PlayerStashFileNameB).Returns("winsys.dxb");
 		_mockCharacterEdit.Setup(x => x.GetMasteries(It.IsAny<PlayerInfo>())).Returns([]);

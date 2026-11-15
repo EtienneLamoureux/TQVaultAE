@@ -28,6 +28,7 @@ public class VaultServiceTests
 	private readonly Mock<IPathIO> _mockPathIO;
 	private readonly UserSettings _userSettings;
 	private readonly Mock<IItemProvider> _mockItemProvider;
+	private readonly Mock<IItemTextFormatter> _mockItemText;
 	private readonly VaultService _vaultService;
 
 	/// <summary>
@@ -44,6 +45,7 @@ public class VaultServiceTests
 		_mockPathIO = new Mock<IPathIO>();
 		_userSettings = new UserSettings();
 		_mockItemProvider = new Mock<IItemProvider>();
+		_mockItemText = new Mock<IItemTextFormatter>();
 
 		// Create SessionContext - parameterless data holder
 		_sessionContext = new SessionContext();
@@ -58,7 +60,8 @@ public class VaultServiceTests
 			_mockFileIO.Object,
 			_mockPathIO.Object,
 			_userSettings,
-			_mockItemProvider.Object
+			_mockItemProvider.Object,
+			_mockItemText.Object
 		);
 	}
 
@@ -816,7 +819,7 @@ public class VaultServiceTests
 		_userSettings.CSVDelimiter = "Semicolon";
 		var vault = CreateVaultWithItemInBag(bags: 3, filledBag: 2);
 		vault.GetSack(0)!.AddItem(new Item());
-		_mockItemProvider
+		_mockItemText
 			.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), FriendlyNamesExtraScopes.Requirements, true))
 			.Returns<Item, FriendlyNamesExtraScopes?, bool>((item, _, _) => new ToFriendlyNameResult(item));
 
@@ -833,7 +836,7 @@ public class VaultServiceTests
 	{
 		var vault = CreateVaultWithItemInBag(bags: 3, filledBag: 2);
 		vault.GetSack(0)!.AddItem(new Item());
-		_mockItemProvider
+		_mockItemText
 			.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), FriendlyNamesExtraScopes.Requirements, true))
 			.Returns<Item, FriendlyNamesExtraScopes?, bool>((item, _, _) => new ToFriendlyNameResult(item));
 
@@ -848,7 +851,7 @@ public class VaultServiceTests
 	{
 		_userSettings.CSVDelimiter = "Space";
 		var vault = CreateVaultWithItemInBag(bags: 1, filledBag: 0);
-		_mockItemProvider
+		_mockItemText
 			.Setup(x => x.GetFriendlyNames(It.IsAny<Item>(), FriendlyNamesExtraScopes.Requirements, true))
 			.Returns<Item, FriendlyNamesExtraScopes?, bool>((item, _, _) => new ToFriendlyNameResult(item));
 

@@ -17,10 +17,10 @@ namespace TQVaultAE.Services;
 /// </summary>
 public class ItemDatabaseService(
     ILogger<ItemDatabaseService> log,
-    IItemProvider itemProvider) : IItemDatabaseService
+    IItemTextFormatter itemText) : IItemDatabaseService
 {
     private readonly ILogger<ItemDatabaseService> _log = log;
-    private readonly IItemProvider _itemProvider = itemProvider;
+    private readonly IItemTextFormatter _itemText = itemText;
 
     /// <summary>
     /// The searchable items and, by reference, the items already in it. Replaced as a whole, so both always match.
@@ -67,7 +67,7 @@ public class ItemDatabaseService(
         => new(
             item,
             new Lazy<ToFriendlyNameResult>(
-                () => this._itemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay),
+                () => this._itemText.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemFullDisplay),
                 LazyThreadSafetyMode.ExecutionAndPublication
             )
         );
@@ -327,7 +327,7 @@ public class ItemDatabaseService(
         var results = flags.IsEmpty && bounds.IsEmpty
             ? request.InitialResults.ToList()
             : request.InitialResults
-                .Where(r => flags.Matches(r.Item, r.FriendlyNames, this._itemProvider.HasGrantedSkill)
+                .Where(r => flags.Matches(r.Item, r.FriendlyNames, this._itemText.HasGrantedSkill)
                     && bounds.Matches(r.FriendlyNames?.RequirementInfo))
                 .ToList();
 

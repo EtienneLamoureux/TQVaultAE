@@ -16,6 +16,7 @@ public class ItemExchangeService(
 	, IPasteBinService pasteBinService
 	, UserSettings userSettings
 	, IItemProvider itemProvider
+	, IItemTextFormatter itemText
 	, IItemMovementService itemMovementService
 	, IFileIO fileIO
 	, IVaultService vaultService
@@ -26,6 +27,7 @@ public class ItemExchangeService(
 	private readonly IPasteBinService _pasteBinService = pasteBinService;
 	private readonly UserSettings _userSettings = userSettings;
 	private readonly IItemProvider _itemProvider = itemProvider;
+	private readonly IItemTextFormatter _itemText = itemText;
 	private readonly IItemMovementService _itemMovementService = itemMovementService;
 	private readonly IFileIO _fileIO = fileIO;
 	private readonly IVaultService _vaultService = vaultService;
@@ -333,7 +335,7 @@ public class ItemExchangeService(
 	public Task<string> ExportItemToPasteBinAsync(Item item)
 	{
 		var json = this.SerializeItem(item);
-		var friendlyName = this._itemProvider.GetFriendlyNames(item).FullNameClean;
+		var friendlyName = this._itemText.GetFriendlyNames(item).FullNameClean;
 		var pasteName = string.IsNullOrWhiteSpace(friendlyName) ? null : friendlyName;
 		return this.ExportToPasteBinAsync(json, pasteName);
 	}

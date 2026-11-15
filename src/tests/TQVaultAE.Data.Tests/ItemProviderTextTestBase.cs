@@ -10,7 +10,7 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Tests.Data;
 
 /// <summary>
-/// Builds an <see cref="ItemProvider"/> with the real <see cref="ItemAttributeProvider"/>, a mocked database fed with
+/// Builds an <see cref="ItemProvider"/> and its <see cref="ItemTextFormatter"/> with the real <see cref="ItemAttributeProvider"/>, a mocked database fed with
 /// small hand-built records and translations written in the game's own format (<c>{%+.0f0}</c>...).
 /// </summary>
 public abstract class ItemProviderTextTestBase
@@ -60,6 +60,7 @@ public abstract class ItemProviderTextTestBase
 	protected readonly UserSettings Settings = new() { ShowInGameValues = false };
 	protected readonly Mock<ITranslationService> MockTranslation = new();
 	protected readonly ItemProvider Provider;
+	protected readonly ItemTextFormatter Formatter;
 
 	protected ItemProviderTextTestBase() : this(null)
 	{
@@ -91,6 +92,15 @@ public abstract class ItemProviderTextTestBase
 			Mock.Of<ILootTableCollectionProvider>(),
 			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
 			Mock.Of<ITQDataService>(),
+			mockPath.Object,
+			this.Settings,
+			itemMods
+		);
+		this.Formatter = new ItemTextFormatter(
+			Mock.Of<ILogger<ItemTextFormatter>>(),
+			this.MockDatabase.Object,
+			this.Provider,
+			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
 			mockTranslation.Object,
 			mockPath.Object,
 			this.Settings,
@@ -128,12 +138,12 @@ public abstract class ItemProviderTextTestBase
 	}
 
 	protected string[] BaseAttributes(Item item, bool filterExtra = true)
-		=> this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, filterExtra).BaseAttributes;
+		=> this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, filterExtra).BaseAttributes;
 
 	/// <summary>The base attribute lines (without tags, trimmed) marked as text, not attributes, in their order.</summary>
 	protected string[] BaseTextLines(Item item)
 	{
-		var names = this.Provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
+		var names = this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
 		return [.. names.BaseAttributes.Select(l => l.RemoveAllTQTags()!.Trim()).Where(names.IsTextLine)];
 	}
 

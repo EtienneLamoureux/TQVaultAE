@@ -130,6 +130,7 @@ public static class Program
 				.AddSingleton<IDatabase>(sp => sp.GetRequiredService<DatabaseSelector>())
 				.AddSingleton<IDatabaseMaps>(sp => sp.GetRequiredService<DatabaseSelector>())
 				.AddSingleton<IItemProvider, ItemProvider>()
+				.AddSingleton<IItemTextFormatter, ItemTextFormatter>()
 				.AddSingleton<ILootTableCollectionProvider, LootTableCollectionProvider>()
 				.AddTransient<IStashProvider, StashProvider>()
 				.AddTransient<IPlayerCollectionProvider, PlayerCollectionProvider>()
@@ -192,6 +193,7 @@ public static class Program
 		.AddSingleton<IGameMapService, GameMapService>()
 		// Caches of game data, emptied when the active custom map changes
 		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemTextFormatter>())
 		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ILootTableCollectionProvider>())
 		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ISkillTreeProvider>())
 		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IUIService>())

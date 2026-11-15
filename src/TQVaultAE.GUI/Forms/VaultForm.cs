@@ -52,7 +52,7 @@ public partial class VaultForm : Form, IScalingControl
 	protected readonly IDirectoryIO DirectoryIO;
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
-	protected readonly IItemProvider ItemProvider;
+	protected readonly IItemTextFormatter ItemText;
 	protected readonly IGamePathService GamePathResolver;
 	protected readonly IGameFileService GameFileService;
 	protected readonly ISoundService SoundService;
@@ -73,7 +73,7 @@ public partial class VaultForm : Form, IScalingControl
 		this.Services = services;
 		this.FontService = this.Services.FontService;
 		this.UIService = this.Services.UIService;
-		this.ItemProvider = this.Services.ItemProvider;
+		this.ItemText = this.Services.ItemText;
 		this.GamePathResolver = this.Services.GamePathService;
 		this.GameFileService = this.Services.GameFileService;
 		this.SoundService = this.Services.SoundService;

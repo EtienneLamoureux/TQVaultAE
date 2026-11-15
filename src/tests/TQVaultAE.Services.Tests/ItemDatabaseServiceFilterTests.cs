@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
@@ -26,7 +27,7 @@ public class ItemDatabaseServiceFilterTests
 	{
 		this._service = new ItemDatabaseService(
 			new Mock<ILogger<ItemDatabaseService>>().Object,
-			new Mock<IItemProvider>().Object);
+			new Mock<IItemTextFormatter>().Object);
 		this._a = NewResult();
 		this._b = NewResult();
 		this._c = NewResult();
@@ -124,7 +125,7 @@ public class ItemDatabaseServiceFilterTests
 	public void PrepareForSearch_LoadsItems_ReportsEachOne_AndDropsNamelessAndBrokenItems()
 	{
 		// Arrange: two named items, one without a name, one whose display data cannot be built
-		var itemProvider = new Mock<IItemProvider>();
+		var itemProvider = new Mock<IItemTextFormatter>();
 		var service = new ItemDatabaseService(new Mock<ILogger<ItemDatabaseService>>().Object, itemProvider.Object);
 		var named = new[] { new Item(), new Item() };
 		var nameless = new Item();

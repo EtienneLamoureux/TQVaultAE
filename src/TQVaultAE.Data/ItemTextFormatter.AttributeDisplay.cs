@@ -13,7 +13,7 @@ using TQVaultAE.Domain.Jitter;
 
 namespace TQVaultAE.Data;
 
-public partial class ItemProvider
+public partial class ItemTextFormatter
 {
 	/// <summary>
 	/// Gets the item's attributes from the database record.
@@ -71,16 +71,16 @@ public partial class ItemProvider
 				Log.LogDebug("{VariableName}", variable.Name);
 
 
-			if (this.FilterValue(variable, !filtering))
+			if (this.ItemProvider.FilterValue(variable, !filtering))
 				continue;
 
 			if (hiddenVariables?.Contains(variable.Name) == true)
 				continue;
 
-			if (filtering && this.FilterKey(variable.Name))
+			if (filtering && this.ItemProvider.FilterKey(variable.Name))
 				continue;
 
-			if (filtering && this.FilterRequirements(variable.Name))
+			if (filtering && this.ItemProvider.FilterRequirements(variable.Name))
 				continue;
 
 			ItemAttributesData? data = ItemAttributeProvider.GetAttributeData(variable.Name);
@@ -411,11 +411,11 @@ public partial class ItemProvider
 
 		// Pet skills can also have multiple values so we attempt to decode it here
 		if (itm.IsScroll || itm.IsRelicOrCharm)
-			variableNumber = GetPetSkillLevel(itm, record, recordId, variableNumber);
+			variableNumber = this.ItemProvider.GetPetSkillLevel(itm, record, recordId, variableNumber);
 
 		// Triggered skills can have also multiple values so we need to decode it here
 		if (record.GetString("Class", 0).StartsWith("SKILL", noCase))
-			variableNumber = GetTriggeredSkillLevel(itm, record, recordId, variableNumber);
+			variableNumber = this.ItemProvider.GetTriggeredSkillLevel(itm, record, recordId, variableNumber);
 
 		if (skillLevelIndex is int levelIndex)
 			variableNumber = levelIndex;

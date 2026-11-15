@@ -149,7 +149,7 @@ public class ItemTooltipContentBuilder
 	/// <summary>
 	/// Builds the lines of the item panel.
 	/// </summary>
-	/// <param name="data">Texts of the item, from <c>IItemProvider.GetFriendlyNames</c> with <see cref="ScopesFor"/>.</param>
+	/// <param name="data">Texts of the item, from <c>IItemTextFormatter.GetFriendlyNames</c> with <see cref="ScopesFor"/>.</param>
 	/// <param name="view">The display.</param>
 	/// <param name="setCounts">How many of each set piece are loaded, shown on the right of the set pieces; null without them.</param>
 	public ItemTooltipContent Build(ToFriendlyNameResult data, ItemTooltipView view, IReadOnlyDictionary<RecordId, int>? setCounts = null)

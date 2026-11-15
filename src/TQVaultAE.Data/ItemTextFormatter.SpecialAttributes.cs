@@ -5,7 +5,7 @@ using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Data;
 
-public partial class ItemProvider
+public partial class ItemTextFormatter
 {
 	/// <summary>
 	/// Gets the global chance string

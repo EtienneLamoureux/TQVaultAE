@@ -14,13 +14,14 @@ public class CharacterEditServiceTests
 	private readonly Mock<IPathIO> _pathIO = new();
 	private readonly Mock<IPlayerCollectionProvider> _provider = new();
 	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemTextFormatter> _itemText = new();
 	private readonly CharacterEditService _service;
 
 	public CharacterEditServiceTests()
 	{
 		this._pathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
 			.Returns((string path) => path.Substring(0, path.LastIndexOf('\\')));
-		this._service = new CharacterEditService(this._pathIO.Object, this._provider.Object, new Mock<ISkillTreeProvider>().Object, this._itemProvider.Object);
+		this._service = new CharacterEditService(this._pathIO.Object, this._provider.Object, new Mock<ISkillTreeProvider>().Object, this._itemProvider.Object, this._itemText.Object);
 	}
 
 	private PlayerInfo NewSource()

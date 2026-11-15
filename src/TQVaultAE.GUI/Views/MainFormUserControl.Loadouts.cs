@@ -248,7 +248,7 @@ public partial class MainFormUserControl
 		var takenOff = this.Services.Loadouts.TakenOff(loadouts, name, player);
 		if (takenOff.Count > 0 && !this.Services.Settings.SuppressWarnings)
 		{
-			var pieces = string.Join(Environment.NewLine, takenOff.Select(item => this.Services.ItemProvider.GetFriendlyNames(item).FullNameClean));
+			var pieces = string.Join(Environment.NewLine, takenOff.Select(item => this.Services.ItemText.GetFriendlyNames(item).FullNameClean));
 			if (!this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutReplaceConfirm, name, pieces), Resources.LoadoutTitle, MessageBoxIcon.Warning, defaultNo: true))
 				return false;
 		}

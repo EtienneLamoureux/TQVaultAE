@@ -17,7 +17,7 @@ namespace TQVaultAE.Tests.Services;
 /// </summary>
 public class SearchCategoryServiceTests
 {
-	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemTextFormatter> _itemProvider = new();
 	private readonly Mock<ITranslationService> _translation = new();
 	private readonly Dictionary<Item, string[]> _skills = new(ReferenceEqualityComparer.Instance);
 	private readonly SearchCategoryService _service;

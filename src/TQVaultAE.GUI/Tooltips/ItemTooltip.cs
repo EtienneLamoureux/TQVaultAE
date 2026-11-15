@@ -176,7 +176,7 @@ public partial class ItemTooltip : BaseTooltip
 		this.flowLayoutPanelFriendlyNames.SuspendLayout();
 		this.rangeRows.Clear();
 
-		this.Data = this.ItemProvider.GetFriendlyNames(FocusedItem, ItemTooltipContentBuilder.ScopesFor(this.View));
+		this.Data = this.ItemText.GetFriendlyNames(FocusedItem, ItemTooltipContentBuilder.ScopesFor(this.View));
 		var content = new ItemTooltipContentBuilder(this.TranslationService).Build(this.Data, this.View, setCounts);
 
 		// The relic lines may move to a column: note where their rows start and end.

@@ -125,7 +125,7 @@ internal sealed partial class ItemProperties : VaultForm
 	{
 		var filterExtra = this.checkBoxFilterExtraInfo.Checked;
 		var content = ItemPropertiesContent.Build(
-			ItemProvider.GetFriendlyNames(this.Item, FriendlyNamesExtraScopes.ItemFullDisplay, filterExtra), filterExtra);
+			this.ItemText.GetFriendlyNames(this.Item, FriendlyNamesExtraScopes.ItemFullDisplay, filterExtra), filterExtra);
 
 		this.labelItemName.ForeColor = content.NameColor;
 		this.labelItemName.Text = content.Name;

@@ -12,7 +12,7 @@ using TQVaultAE.Domain.Results;
 namespace TQVaultAE.Tests.Data;
 
 /// <summary>
-/// Tests the attribute lines that <see cref="ItemProvider.GetFriendlyNames"/> builds for item tooltips,
+/// Tests the attribute lines that <see cref="ItemTextFormatter.GetFriendlyNames"/> builds for item tooltips,
 /// with the real <see cref="ItemAttributeProvider"/> and translations in the game's own format.
 /// </summary>
 public class ItemProviderAttributeDisplayTests
@@ -48,6 +48,7 @@ public class ItemProviderAttributeDisplayTests
 
 	private readonly Mock<IDatabase> _mockDatabase = new();
 	private readonly ItemProvider _provider;
+	private readonly ItemTextFormatter _formatter;
 
 	public ItemProviderAttributeDisplayTests()
 	{
@@ -68,6 +69,14 @@ public class ItemProviderAttributeDisplayTests
 			Mock.Of<ILootTableCollectionProvider>(),
 			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
 			Mock.Of<ITQDataService>(),
+			Mock.Of<IPathIO>(),
+			new UserSettings { ShowInGameValues = false }
+		);
+		this._formatter = new ItemTextFormatter(
+			Mock.Of<ILogger<ItemTextFormatter>>(),
+			this._mockDatabase.Object,
+			this._provider,
+			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
 			mockTranslation.Object,
 			Mock.Of<IPathIO>(),
 			new UserSettings { ShowInGameValues = false }
@@ -191,7 +200,7 @@ public class ItemProviderAttributeDisplayTests
 	{
 		var item = this.CreateItem("ArmorProtective_UpperBody", Int("fireDamageQualifier", 1), Int("coldDamageQualifier", 1));
 
-		var names = this._provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
+		var names = this._formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
 
 		names.IsTextLine("Protects Against :").Should().BeTrue();
 		names.IsTextLine("Fire").Should().BeFalse();
@@ -265,8 +274,8 @@ public class ItemProviderAttributeDisplayTests
 			Str("itemSkillAutoController", """records\test\controller.dbr"""),
 			Int("itemSkillLevel", 1));
 
-		var inline = this._provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes).BaseAttributes;
-		var apart = this._provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes | FriendlyNamesExtraScopes.GrantedSkills);
+		var inline = this._formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes).BaseAttributes;
+		var apart = this._formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes | FriendlyNamesExtraScopes.GrantedSkills);
 
 		inline.Should().Contain(line => line.Contains("Heals you.", StringComparison.Ordinal));
 		apart.BaseAttributes.Should().Contain(line => line.Contains("Test Skill", StringComparison.Ordinal));
@@ -291,7 +300,7 @@ public class ItemProviderAttributeDisplayTests
 		var item = this.CreateItem("ArmorJewelry_Amulet", Int("characterLife", 40));
 		item.relicID = RecordId.Create("""records\test\relic.dbr""");
 
-		this._provider.HasGrantedSkill(item).Should().BeTrue();
+		this._formatter.HasGrantedSkill(item).Should().BeTrue();
 	}
 
 	[Fact]
@@ -301,7 +310,7 @@ public class ItemProviderAttributeDisplayTests
 		this.CreateRecord("""records\test\buff.dbr""", "SkillBuff_Passive", Str("skillDisplayName", "tagSkillTest"));
 		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", """records\test\skill.dbr"""));
 
-		this._provider.HasGrantedSkill(item).Should().BeTrue();
+		this._formatter.HasGrantedSkill(item).Should().BeTrue();
 	}
 
 	[Fact]
@@ -312,9 +321,9 @@ public class ItemProviderAttributeDisplayTests
 		var hidden = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", """records\test\hidden.dbr"""));
 		var missing = this.CreateItem("ArmorJewelry_Bracelet", Str("itemSkillName", """records\test\missing.dbr"""));
 
-		this._provider.HasGrantedSkill(plain).Should().BeFalse();
-		this._provider.HasGrantedSkill(hidden).Should().BeFalse();
-		this._provider.HasGrantedSkill(missing).Should().BeFalse();
+		this._formatter.HasGrantedSkill(plain).Should().BeFalse();
+		this._formatter.HasGrantedSkill(hidden).Should().BeFalse();
+		this._formatter.HasGrantedSkill(missing).Should().BeFalse();
 	}
 
 	[Fact]
@@ -344,11 +353,11 @@ public class ItemProviderAttributeDisplayTests
 		item.RelicBonusId = RecordId.Create("""records\test\bonus.dbr""");
 		item.prefixID = RecordId.Create("""records\test\prefix.dbr""");
 
-		this._provider.GetGrantedSkillNames(item).Should().Equal("Test Skill", "Other Skill");
+		this._formatter.GetGrantedSkillNames(item).Should().Equal("Test Skill", "Other Skill");
 	}
 
 	private GrantedSkill[] GrantedSkills(Item item)
-		=> this._provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes | FriendlyNamesExtraScopes.GrantedSkills).GrantedSkills;
+		=> this._formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes | FriendlyNamesExtraScopes.GrantedSkills).GrantedSkills;
 
 	private void CreateRecord(string id, string recordClass, params Variable[] variables)
 	{
@@ -371,7 +380,7 @@ public class ItemProviderAttributeDisplayTests
 
 	private string[] BaseAttributes(Item item, bool filterExtra = true)
 	{
-		ToFriendlyNameResult result = this._provider.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, filterExtra);
+		ToFriendlyNameResult result = this._formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, filterExtra);
 		return result.BaseAttributes;
 	}
 

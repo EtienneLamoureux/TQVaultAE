@@ -15,6 +15,7 @@ namespace TQVaultAE.Tests.Services;
 public class ForgeServiceTests
 {
 	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<IItemTextFormatter> _itemText = new();
 	private readonly Mock<IItemDatabaseService> _itemDatabase = new();
 	private readonly ForgeService _service;
 
@@ -24,7 +25,7 @@ public class ForgeServiceTests
 
 	public ForgeServiceTests()
 	{
-		this._service = new ForgeService(this._itemProvider.Object, this._itemDatabase.Object);
+		this._service = new ForgeService(this._itemProvider.Object, this._itemText.Object, this._itemDatabase.Object);
 		this._itemProvider.Setup(x => x.GetRequirementVariables(It.IsAny<Item>())).Returns([]);
 	}
 
@@ -142,7 +143,7 @@ public class ForgeServiceTests
 	{
 		var (baseItem, _, selection) = this.PrefixForge();
 		var calls = new List<string>();
-		this._itemProvider.Setup(x => x.InvalidateFriendlyNamesCache(It.IsAny<IEnumerable<Item>>()))
+		this._itemText.Setup(x => x.InvalidateFriendlyNamesCache(It.IsAny<IEnumerable<Item>>()))
 			.Callback(() => calls.Add("invalidate")).Returns(true);
 		this._itemDatabase.Setup(x => x.TryAddItemToDatabase(baseItem)).Callback(() => calls.Add("add")).Returns(true);
 

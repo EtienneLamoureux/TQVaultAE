@@ -26,7 +26,7 @@ public class PlayerService(
 	, IPathIO pathIO
 	, UserSettings userSettings
 	, IDirectoryIO directoryIO
-	, IItemProvider itemProvider
+	, IItemTextFormatter itemText
 	, IGameMapService gameMapService
 	, ICharacterStatsService characterStatsService
 	, ICharacterEditService characterEditService
@@ -50,7 +50,7 @@ public class PlayerService(
 	private readonly IPathIO PathIO = pathIO;
 	private readonly UserSettings UserSettings = userSettings;
 	private readonly IDirectoryIO DirectoryIO = directoryIO;
-	private readonly IItemProvider ItemProvider = itemProvider;
+	private readonly IItemTextFormatter ItemText = itemText;
 	private readonly IGameMapService GameMapService = gameMapService;
 	private readonly ICharacterStatsService CharacterStatsService = characterStatsService;
 	private readonly ICharacterEditService CharacterEditService = characterEditService;
@@ -372,7 +372,7 @@ public class PlayerService(
 		if (currPlayer is null)
 			return true;
 
-		var reqs = this.ItemProvider.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
+		var reqs = this.ItemText.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
 		if (reqs is null || reqs.Count == 0)
 			return true;
 
