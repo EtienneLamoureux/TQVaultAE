@@ -1593,6 +1593,12 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="AffixShareHeader" xml:space="preserve">
     <value>% = part dans sa table d'affixes (tous les affixes de ce type d'équipement)</value>
   </data>
+	<data name="AffixUnreachableHeader" xml:space="preserve">
+    <value>Jamais tirés par le jeu (—)</value>
+  </data>
+	<data name="AffixUnreachableTooltip" xml:space="preserve">
+    <value>Le jeu ne tire jamais ces affixes sur cet objet : leur emplacement ou leur table n'a pas de poids ou pas de chance. Listés car le réglage « Autorise les affixes sur Épiques et Légendaires » est coché.</value>
+  </data>
 	<data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
     <value>Autorise les affixes sur Épiques et Légendaires</value>
   </data>

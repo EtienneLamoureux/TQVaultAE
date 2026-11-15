@@ -1944,6 +1944,12 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="AffixShareHeader" xml:space="preserve">
     <value>% = share in its affix table (all affixes of this gear type)</value>
   </data>
+	<data name="AffixUnreachableHeader" xml:space="preserve">
+    <value>Never rolled by the game (—)</value>
+  </data>
+	<data name="AffixUnreachableTooltip" xml:space="preserve">
+    <value>The game never rolls these affixes on this item: their slot or table has no weight or no chance. Listed because the setting &quot;Enable Epic and Legendary affixes&quot; is on.</value>
+  </data>
 	<data name="SettingsEnableEpicLegendaryAffixes" xml:space="preserve">
     <value>Enable Epic and Legendary affixes</value>
   </data>

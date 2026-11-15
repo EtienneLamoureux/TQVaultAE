@@ -475,8 +475,9 @@ public partial class Database : IDatabase
 	/// Create a map between Items and affix loot tables
 	/// </summary>
 	/// <remarks>
-	/// Keeps only what the game can roll from each loot item table: item slots with a weight, affix tables with a weight,
-	/// and the affix kinds the table can roll at all (chance above zero and a kind weight, see <see cref="RollableKinds"/>).
+	/// Tells apart what the game can roll from each loot item table (item slots with a weight, affix tables with a weight,
+	/// and the affix kinds the table can roll at all: chance above zero and a kind weight, see <see cref="RollableKinds"/>)
+	/// from the tables it names but never rolls (<see cref="AffixTableMapItem.Unreachable"/>).
 	/// </remarks>
 	private void BuildItemAffixTableMap()
 	{
@@ -500,19 +501,26 @@ public partial class Database : IDatabase
 	}
 
 	/// <summary>
-	/// The items a loot item table can drop, each with the weighted affix tables the table can roll, per kind.
+	/// The items a loot item table names, each with the weighted affix tables the table can roll for it, per kind, and the
+	/// tables the loot item table names but never rolls for it (<see cref="AffixTableMapItem.Unreachable"/>): all of them
+	/// for an item the table never drops.
 	/// </summary>
 	private static IEnumerable<(RecordId Item, AffixTableMapItem Tables)> ReadLootItemTable(RecordId tableId, DBRecordCollection rec, string recordClass)
 	{
 		var items = new List<RecordId>();
+		var dropped = new HashSet<RecordId>();
 		if (recordClass.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
 		{
 			// lootName<N>, picked only when lootWeight<N> is above zero.
 			foreach (var slot in rec.GroupNumberedVariables(_ => true, "lootName", "lootWeight"))
 			{
 				var name = slot.Value[0]?.GetString(0);
-				if (IsSlot(slot.Key, MaxLootItemSlots) && !string.IsNullOrWhiteSpace(name) && NumberOf(slot.Value[1]) > 0)
-					items.Add(name);
+				if (string.IsNullOrWhiteSpace(name))
+					continue;
+
+				items.Add(name);
+				if (IsSlot(slot.Key, MaxLootItemSlots) && NumberOf(slot.Value[1]) > 0)
+					dropped.Add(name);
 			}
 		}
 		else // LootItemTable_DynWeight
@@ -520,23 +528,55 @@ public partial class Database : IDatabase
 			var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
 			if (itemNames is not null)
 				items.AddRange(itemNames.Select(ina => ina.ToRecordId()));
+			dropped.UnionWith(items);
 		}
 
 		if (items.Count == 0)
 			yield break;
 
 		var (broken, prefix, suffix) = RollableKinds(rec);
-		var tables = new AffixTableMapItem(tableId
+		var rolled = new AffixTableMapItem(tableId
 			, broken ? WeightedTables(rec, "broken") : []
 			, prefix ? WeightedTables(rec, "prefix") : []
 			, suffix ? WeightedTables(rec, "suffix") : []);
-
-		if (tables.IsEmpty)
-			yield break;
+		var named = new AffixTableMapItem(tableId
+			, NamedTables(rec, "broken"), NamedTables(rec, "prefix"), NamedTables(rec, "suffix"), Unreachable: true);
+		var neverRolled = named with
+		{
+			Broken = Except(named.Broken, rolled.Broken),
+			Prefix = Except(named.Prefix, rolled.Prefix),
+			Suffix = Except(named.Suffix, rolled.Suffix),
+		};
 
 		foreach (var item in items.Distinct())
-			yield return (item, tables);
+		{
+			if (!dropped.Contains(item))
+			{
+				if (!named.IsEmpty)
+					yield return (item, named);
+				continue;
+			}
+
+			if (!rolled.IsEmpty)
+				yield return (item, rolled);
+			if (!neverRolled.IsEmpty)
+				yield return (item, neverRolled);
+		}
 	}
+
+	/// <summary>Every affix table of a kind a loot item table names, whatever its slot and weight.</summary>
+	private static List<WeightedAffixTable> NamedTables(DBRecordCollection rec, string kind)
+		=> rec.GroupNumberedVariables(_ => true, kind + "RandomizerName")
+			.Select(slot => slot.Value[0]?.GetString(0))
+			.Where(name => !string.IsNullOrWhiteSpace(name))
+			.Select(name => (RecordId)name!)
+			.Distinct()
+			.Select(table => new WeightedAffixTable(table, 0))
+			.ToList();
+
+	/// <summary>The tables of <paramref name="all"/> missing from <paramref name="rolled"/>.</summary>
+	private static List<WeightedAffixTable> Except(IReadOnlyList<WeightedAffixTable> all, IReadOnlyList<WeightedAffixTable> rolled)
+		=> all.Where(t => !rolled.Any(r => r.Table == t.Table)).ToList();
 
 	/// <summary>
 	/// The affix tables of a kind a loot item table picks from: the slots <c>&lt;kind&gt;RandomizerName&lt;N&gt;</c> with a

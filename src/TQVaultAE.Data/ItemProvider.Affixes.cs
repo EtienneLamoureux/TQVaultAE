@@ -65,25 +65,36 @@ public partial class ItemProvider
 		);
 	}
 
-	public ItemAffixes? GetItemAffixes(RecordId itemId)
+	public ItemAffixes? GetItemAffixes(RecordId itemId, bool includeUnreachable = false)
 	{
 		// Per data scope: a mod may give the item other affix tables than the base game.
-		return ItemAffixesCache.GetOrAddAtomic((this.Database.DataScope ?? string.Empty, itemId), key =>
+		return ItemAffixesCache.GetOrAddAtomic((this.Database.DataScope ?? string.Empty, itemId, includeUnreachable), key =>
 	{
-		var affixmap = this.Database.GetItemAffixTableMap(key.Item);
-		if (affixmap is null || affixmap.All(a => a.IsEmpty)) return null;
+		var affixmap = this.Database.GetItemAffixTableMap(key.Item)?
+			.Where(a => !a.IsEmpty && (key.Unreachable || !a.Unreachable)).ToList();
+		if (affixmap is not { Count: > 0 }) return null;
 
 		// One distribution per loot item table and kind, as the game picks the affix of an item it drops: an affix table
 		// by weight, then an affix of that table by weight.
 		List<(GameDlc Dlc, LootTableCollection Table)> LBroken = [], LPrefix = [], LSuffix = [];
-		foreach (var map in affixmap)
+		foreach (var map in affixmap.Where(a => !a.Unreachable))
 		{
 			this.AddMix(LBroken, map.LootTable, map.Broken);
 			this.AddMix(LPrefix, map.LootTable, map.Prefix);
 			this.AddMix(LSuffix, map.LootTable, map.Suffix);
 		}
 
-		return new ItemAffixes(PerDlc(LBroken), PerDlc(LPrefix), PerDlc(LSuffix));
+		// The tables never rolled, as they are: they give no loot chance.
+		var unreachable = affixmap.Where(a => a.Unreachable)
+			.SelectMany(a => new[] { (Kind: 0, Tables: a.Broken), (Kind: 1, Tables: a.Prefix), (Kind: 2, Tables: a.Suffix) })
+			.SelectMany(k => k.Tables.Select(t => (k.Kind, t.Table)))
+			.Distinct()
+			.Select(k => (k.Kind, Table: this.LootTableCollectionProvider.LoadTable(k.Table)))
+			.Where(k => k.Table is { Length: > 0 })
+			.Select(k => (k.Kind, k.Table!))
+			.ToList();
+
+		return new ItemAffixes(PerDlc(LBroken), PerDlc(LPrefix), PerDlc(LSuffix), unreachable);
 	});
 	}
 

@@ -431,6 +431,16 @@ public partial class SackPanel
 		_DisplayAffixesByEffect = !_DisplayAffixesByEffect;
 	}
 
+	/// <summary>A grey line of an affix list that explains the entries under it; it cannot be clicked.</summary>
+	private ToolStripMenuItem HeaderLine(string text, string toolTip)
+		=> new ToolStripMenuItem()
+		{
+			Text = text,
+			ToolTipText = toolTip,
+			Enabled = false,
+			DisplayStyle = ToolStripItemDisplayStyle.Text,
+		}.StyledLike(this.CustomContextMenu).WithTextColor(ItemStyle.Broken.Color());
+
 	/// <summary>The text color of the affixes of a mod: the mod line of the item tool tip.</summary>
 	private static readonly Color ModAffixColor = ItemTooltipContentBuilder.ModColor.Color();
 
@@ -452,13 +462,8 @@ public partial class SackPanel
 		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
 
 		// What the percentages mean, a grey line above the choices.
-		currentchoicesMenu.DropDownItems.Add(new ToolStripMenuItem()
-		{
-			Text = header,
-			ToolTipText = headerTip,
-			Enabled = false,
-			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		}.StyledLike(this.CustomContextMenu).WithTextColor(ItemStyle.Broken.Color()));
+		currentchoicesMenu.DropDownItems.Add(this.HeaderLine(header, headerTip));
+		bool unreachableShown = false;
 
 
 		if (_DisplayAffixesByEffect)// Group By Effect
@@ -466,6 +471,12 @@ public partial class SackPanel
 
 		foreach (var grp in currentaffixGroup)
 		{
+			// The affixes the game never rolls on the item (setting on) come last, under their own grey line.
+			if (grp.Key.Unreachable && !unreachableShown)
+			{
+				currentchoicesMenu.DropDownItems.Add(this.HeaderLine(Resources.AffixUnreachableHeader, Resources.AffixUnreachableTooltip));
+				unreachableShown = true;
+			}
 
 			ToolStripMenuItem choicesMenu = currentchoicesMenu;// Default
 			ToolStripMenuItem? affixMenu = null;

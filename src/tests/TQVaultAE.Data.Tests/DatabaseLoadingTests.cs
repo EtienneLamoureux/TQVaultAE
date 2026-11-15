@@ -366,9 +366,12 @@ public class DatabaseLoadingTests
 		return table;
 	}
 
-	/// <summary>One line per affix table of the map: loot item table, kind, affix table and weight.</summary>
-	private static string[]? Describe(IEnumerable<AffixTableMapItem>? map)
-		=> map?.SelectMany(m => m.Broken.Select(t => ("broken", t)).Concat(m.Prefix.Select(t => ("prefix", t))).Concat(m.Suffix.Select(t => ("suffix", t)))
+	/// <summary>
+	/// One line per affix table of the map the game can roll: loot item table, kind, affix table and weight; with
+	/// <paramref name="unreachable"/>, the tables it never rolls instead.
+	/// </summary>
+	private static string[]? Describe(IEnumerable<AffixTableMapItem>? map, bool unreachable = false)
+		=> map?.Where(m => m.Unreachable == unreachable).SelectMany(m => m.Broken.Select(t => ("broken", t)).Concat(m.Prefix.Select(t => ("prefix", t))).Concat(m.Suffix.Select(t => ("suffix", t)))
 			.Select(k => $"{m.LootTable.Raw} {k.Item1} {k.Item2.Table.Raw} {k.Item2.Weight}"))
 			.ToArray();
 
@@ -452,7 +455,7 @@ public class DatabaseLoadingTests
 	}
 
 	[Fact]
-	public void GetItemAffixTableMap_ItemSlotWithoutWeight_IsNeverDroppedSoGetsNoAffixes()
+	public void GetItemAffixTableMap_ItemSlotWithoutWeight_IsNeverDroppedSoItsTablesAreUnreachable()
 	{
 		this.UseAnniversaryEdition();
 		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""", """records\item\axe.dbr""");
@@ -462,12 +465,14 @@ public class DatabaseLoadingTests
 
 		db.LoadDBFile();
 
-		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().ContainSingle();
-		db.GetItemAffixTableMap("""records\item\axe.dbr""").Should().BeNull();
+		db.GetItemAffixTableMap("""records\item\sword.dbr""").Should().ContainSingle().Which.Unreachable.Should().BeFalse();
+		Describe(db.GetItemAffixTableMap("""records\item\axe.dbr""")).Should().BeEmpty();
+		Describe(db.GetItemAffixTableMap("""records\item\axe.dbr"""), unreachable: true).Should()
+			.Equal("""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 0""");
 	}
 
 	[Fact]
-	public void GetItemAffixTableMap_AffixTableWithoutWeight_IsLeftOut()
+	public void GetItemAffixTableMap_AffixTableWithoutWeight_IsUnreachable()
 	{
 		// Weight 0 and no weight at all: the game never picks the table.
 		this.UseAnniversaryEdition();
@@ -481,10 +486,13 @@ public class DatabaseLoadingTests
 
 		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should()
 			.Equal("""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 10""");
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr"""), unreachable: true).Should().BeEquivalentTo(
+			"""records\loot\table_a.dbr suffix records\affix\suffix1.dbr 0""",
+			"""records\loot\table_a.dbr suffix records\affix\suffix2.dbr 0""");
 	}
 
 	[Fact]
-	public void GetItemAffixTableMap_KindWithoutChance_IsLeftOut()
+	public void GetItemAffixTableMap_KindWithoutChance_IsUnreachable()
 	{
 		this.UseAnniversaryEdition();
 		var table = this.AddFixedLootTable("""records\loot\table_a.dbr""", """records\item\sword.dbr""");
@@ -497,6 +505,8 @@ public class DatabaseLoadingTests
 
 		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr""")).Should()
 			.Equal("""records\loot\table_a.dbr prefix records\affix\prefix1.dbr 10""");
+		Describe(db.GetItemAffixTableMap("""records\item\sword.dbr"""), unreachable: true).Should()
+			.Equal("""records\loot\table_a.dbr suffix records\affix\suffix1.dbr 0""");
 	}
 
 	[Fact]
@@ -584,17 +594,14 @@ public class DatabaseLoadingTests
 
 		db.LoadDBFile();
 
-		var map = db.GetItemAffixTableMap("""records\item\sword.dbr""");
-		if (!(hasBroken || hasPrefix || hasSuffix))
-		{
-			map.Should().BeNull();
-			return;
-		}
-
-		var tables = map.Should().ContainSingle().Subject;
-		tables.Broken.Should().HaveCount(hasBroken ? 1 : 0);
-		tables.Prefix.Should().HaveCount(hasPrefix ? 1 : 0);
-		tables.Suffix.Should().HaveCount(hasSuffix ? 1 : 0);
+		// The kinds never rolled are kept apart, as unreachable.
+		var map = db.GetItemAffixTableMap("""records\item\sword.dbr""")!;
+		string[] Kinds(bool unreachable) => map.Where(m => m.Unreachable == unreachable)
+			.SelectMany(m => new[] { ("broken", m.Broken.Count), ("prefix", m.Prefix.Count), ("suffix", m.Suffix.Count) })
+			.Where(k => k.Item2 > 0).Select(k => k.Item1).ToArray();
+		var expected = new[] { ("broken", hasBroken), ("prefix", hasPrefix), ("suffix", hasSuffix) };
+		Kinds(false).Should().Equal(expected.Where(k => k.Item2).Select(k => k.Item1));
+		Kinds(true).Should().Equal(expected.Where(k => !k.Item2).Select(k => k.Item1));
 	}
 
 	#endregion

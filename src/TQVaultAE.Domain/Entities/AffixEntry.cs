@@ -49,6 +49,12 @@ public record AffixEntry(
 	/// Gets the loot randomizer item associated with this affix.
 	/// </summary>
 	public LootRandomizerItem LootRandomizer { get; init; } = LootRandomizer;
+
+	/// <summary>
+	/// The game never rolls this affix on the item: it is listed only because the setting for normally unreachable
+	/// affixes is on, and has no loot chance (<see cref="WeightPercent"/> is 0).
+	/// </summary>
+	public bool Unreachable { get; init; }
 }
 
 /// <summary>
@@ -95,7 +101,7 @@ public class AffixGroup : IEnumerable<AffixEntry>
 /// <summary>
 /// Represents the key for an <see cref="AffixGroup"/>.
 /// </summary>
-public record AffixGroupKey(int TypeId, string Translation)
+public record AffixGroupKey(int TypeId, string Translation, bool Unreachable = false)
 {
 	/// <summary>
 	/// Gets the type identifier (0=Broken, 1=Prefix, 2=Suffix).
@@ -106,4 +112,7 @@ public record AffixGroupKey(int TypeId, string Translation)
 	/// Gets the translation/name of the affix group.
 	/// </summary>
 	public string Translation { get; init; } = Translation;
+
+	/// <summary>The group holds affixes the game never rolls on the item (<see cref="AffixEntry.Unreachable"/>).</summary>
+	public bool Unreachable { get; init; } = Unreachable;
 }

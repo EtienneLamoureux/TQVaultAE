@@ -273,6 +273,53 @@ public class AffixCatalogServiceTests
 
 		this._service.GetAffixCatalog(ring, false)!.AllAffixesOfGearType.Should().BeFalse();
 		this._itemProvider.Verify(p => p.GetAllAvailableAffixes(It.IsAny<GearType>()), Times.Never);
+		this._itemProvider.Verify(p => p.GetItemAffixes(ring.BaseItemId, true), Times.Never); // no unreachable affixes
+	}
+
+	[Fact]
+	public void GetAffixCatalog_SettingOn_ListsTheUnreachableAffixesLastWithoutChance()
+	{
+		// Arrange: fire_01 is rolled and also sits in a table never rolled: it stays a rolled affix only.
+		var ring = MakeItem("records/ring.dbr", Item.ICLASS_RING);
+		var rolled = Table(("records/affix/prefix/fire_01.dbr", 1f, "Of Fire"));
+		var neverPrefix = Table(("records/affix/prefix/fire_01.dbr", 1f, "Of Fire"), ("records/affix/prefix/cold_01.dbr", 1f, "Arctic"));
+		var neverSuffix = Table(("records/affix/suffix/life_01.dbr", 1f, "Of Life"));
+		this._itemProvider.Setup(p => p.GetItemAffixes(ring.BaseItemId, true))
+			.Returns(new ItemAffixes(NoTables(), PerDlc(rolled), NoTables(), [(1, neverPrefix), (2, neverSuffix)]));
+
+		// Act
+		var catalog = this._service.GetAffixCatalog(ring, true)!;
+
+		// Assert: rolled first; "Arctic" after it although it sorts first, marked and without a chance
+		catalog.Prefix.Select(g => (g.Key.Translation, g.Key.Unreachable)).Should().Equal(("Of Fire", false), ("Arctic", true));
+		var arctic = catalog.Prefix[1].Single();
+		arctic.Unreachable.Should().BeTrue();
+		arctic.WeightPercent.Should().Be(0f);
+		arctic.FormattedText.Should().Contain("(—)").And.NotContain("%");
+		this._service.FormatVariantLabel(arctic, false).Should().Contain("(—)");
+		catalog.Prefix[0].Single().FormattedText.Should().Contain("%");
+		// A kind the game never rolls on the item still opens its menu.
+		catalog.HasSuffix.Should().BeTrue();
+		catalog.Suffix.Single().Key.Unreachable.Should().BeTrue();
+		catalog.HasBroken.Should().BeFalse();
+	}
+
+	[Fact]
+	public void GroupByEffect_UnreachableAffixes_StayInTheirOwnGroupsAfterTheOthers()
+	{
+		var ring = MakeItem("records/ring.dbr", Item.ICLASS_RING);
+		var rolled = Table(("records/affix/fire_02.dbr", 1f, "Burning"));
+		var never = Table(("records/affix/fire_01.dbr", 1f, "Of Fire"), ("records/affix/cold_01.dbr", 1f, "Arctic"));
+		this._itemProvider.Setup(p => p.GetItemAffixes(ring.BaseItemId, true))
+			.Returns(new ItemAffixes(NoTables(), PerDlc(rolled), NoTables(), [(1, never)]));
+
+		var byEffect = this._service.GroupByEffect(this._service.GetAffixCatalog(ring, true)!.Prefix);
+
+		var fireEffect = RecordId.Create("records/affix/fire_01.dbr").PrettyFileNameExploded.Effect;
+		var coldEffect = RecordId.Create("records/affix/cold_01.dbr").PrettyFileNameExploded.Effect;
+		byEffect.Select(g => (g.Key.Translation, g.Key.Unreachable)).Should()
+			.Equal((fireEffect, false), (coldEffect, true), (fireEffect, true));
+		byEffect.Where(g => g.Key.Unreachable).SelectMany(g => g).Should().OnlyContain(e => e.FormattedText.Contains("(—)"));
 	}
 
 	[Fact]

@@ -150,6 +150,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Never rolled by the game (—).
+        /// </summary>
+        public static string AffixUnreachableHeader {
+            get {
+                return ResourceManager.GetString("AffixUnreachableHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game never rolls these affixes on this item: their slot or table has no weight or no chance. Listed because the setting &quot;Enable Epic and Legendary affixes&quot; is on..
+        /// </summary>
+        public static string AffixUnreachableTooltip {
+            get {
+                return ResourceManager.GetString("AffixUnreachableTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] AlbertusMT {

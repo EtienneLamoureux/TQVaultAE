@@ -31,8 +31,12 @@ public interface IItemProvider
 	/// Return all affixes for <paramref name="itemId"/>
 	/// </summary>
 	/// <param name="itemId"></param>
+	/// <param name="includeUnreachable">
+	/// Also gives the affix tables the item's loot item tables name but the game never rolls for it
+	/// (<see cref="ItemAffixes.Unreachable"/>).
+	/// </param>
 	/// <returns></returns>
-	ItemAffixes? GetItemAffixes(RecordId itemId);
+	ItemAffixes? GetItemAffixes(RecordId itemId, bool includeUnreachable = false);
 	/// <summary>
 	/// Gets the artifact/charm/relic bonus loot table
 	/// </summary>

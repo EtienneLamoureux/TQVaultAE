@@ -10,11 +10,16 @@ public record WeightedAffixTable(RecordId Table, float Weight);
 /// <param name="Broken">Its broken affix tables, the game writes the broken affix in the prefix slot.</param>
 /// <param name="Prefix">Its prefix tables.</param>
 /// <param name="Suffix">Its suffix tables.</param>
+/// <param name="Unreachable">
+/// The tables the loot item table names but the game never rolls for the item: a slot or table without weight, a kind
+/// without chance or kind weight. Their weights mean nothing then.
+/// </param>
 public record AffixTableMapItem(
 	RecordId LootTable
 	, IReadOnlyList<WeightedAffixTable> Broken
 	, IReadOnlyList<WeightedAffixTable> Prefix
-	, IReadOnlyList<WeightedAffixTable> Suffix)
+	, IReadOnlyList<WeightedAffixTable> Suffix
+	, bool Unreachable = false)
 {
 	public bool IsEmpty
 		=> Broken.Count == 0

@@ -159,6 +159,47 @@ public class ItemProviderAffixesTests
 	}
 
 	[Fact]
+	public void GetItemAffixes_UnreachableTables_GivenOnlyWhenAskedAndAsTheyAre()
+	{
+		RecordId loot = @"records\loot\table_a.dbr";
+		RecordId prefix = @"records\item\lootmagicalaffixes\prefix\tablesarmor\a.dbr";
+		RecordId neverSuffix = @"records\item\lootmagicalaffixes\suffix\tablesarmor\a.dbr";
+		RecordId missing = @"records\item\lootmagicalaffixes\suffix\tablesarmor\missing.dbr";
+		this._database.Setup(d => d.GetItemAffixTableMap((RecordId)Helmet)).Returns(new List<AffixTableMapItem>
+		{
+			new(loot, [], [new(prefix, 1)], []),
+			new(loot, [], [], [new(neverSuffix, 0), new(missing, 0)], Unreachable: true),
+		}.AsReadOnly());
+		var suffixTable = Table("s", ("ofLife", 1));
+		this._lootTables.Setup(l => l.LoadTable(prefix)).Returns(Table("p", ("strong", 1)));
+		this._lootTables.Setup(l => l.LoadTable(neverSuffix)).Returns(suffixTable);
+
+		var rolledOnly = this._provider.GetItemAffixes(Helmet)!;
+		var withUnreachable = this._provider.GetItemAffixes(Helmet, includeUnreachable: true)!;
+
+		rolledOnly.Unreachable.Should().BeEmpty();
+		rolledOnly.Suffix.Should().BeEmpty();
+		withUnreachable.Prefix.Should().ContainSingle();
+		withUnreachable.Suffix.Should().BeEmpty(); // never rolled: no distribution
+		withUnreachable.Unreachable.Should().Equal((2, suffixTable)); // the missing table is left out
+	}
+
+	[Fact]
+	public void GetItemAffixes_OnlyUnreachableTables_NullUnlessAsked()
+	{
+		RecordId loot = @"records\loot\table_a.dbr";
+		RecordId neverPrefix = @"records\item\lootmagicalaffixes\prefix\tablesarmor\a.dbr";
+		this._database.Setup(d => d.GetItemAffixTableMap((RecordId)Helmet)).Returns(new List<AffixTableMapItem>
+		{
+			new(loot, [], [new(neverPrefix, 0)], [], Unreachable: true),
+		}.AsReadOnly());
+		this._lootTables.Setup(l => l.LoadTable(neverPrefix)).Returns(Table("p", ("strong", 1)));
+
+		this._provider.GetItemAffixes(Helmet).Should().BeNull();
+		this._provider.GetItemAffixes(Helmet, includeUnreachable: true)!.Unreachable.Should().ContainSingle();
+	}
+
+	[Fact]
 	public void GetItemAffixes_TwoLootTables_GivesOneDistributionEachAndLoadsOnce()
 	{
 		RecordId lootA = @"records\loot\table_a.dbr";

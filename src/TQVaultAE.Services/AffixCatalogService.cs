@@ -70,21 +70,23 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 		ItemAffixes? affixes = allAffixes
 			// Get all available affixes for an item type
 			? this._itemProvider.GetAllAvailableAffixes(item.GearType)
-			// Get affixes related to a specific item
-			: this._itemProvider.GetItemAffixes(item.BaseItemId);
+			// Get affixes related to a specific item; with the setting on, also those the game never rolls on it
+			: this._itemProvider.GetItemAffixes(item.BaseItemId, includeUnreachable: enableEpicLegendaryAffixes);
 
 		if (affixes is null)
 			return null;
 
 		var groups = CurateAffixes(affixes);
+		List<AffixGroup> OfType(int typeId) => groups.Where(g => g.Key.TypeId == typeId).ToList();
+		List<AffixGroup> broken = OfType(BrokenTypeId), prefix = OfType(PrefixTypeId), suffix = OfType(SuffixTypeId);
 
 		return new AffixCatalog(
-			affixes.Broken.Count > 0
-			, groups.Where(g => g.Key.TypeId == BrokenTypeId).ToList()
-			, affixes.Prefix.Count > 0
-			, groups.Where(g => g.Key.TypeId == PrefixTypeId).ToList()
-			, affixes.Suffix.Count > 0
-			, groups.Where(g => g.Key.TypeId == SuffixTypeId).ToList()
+			affixes.Broken.Count > 0 || broken.Count > 0
+			, broken
+			, affixes.Prefix.Count > 0 || prefix.Count > 0
+			, prefix
+			, affixes.Suffix.Count > 0 || suffix.Count > 0
+			, suffix
 			, allAffixes
 		);
 	}
@@ -102,17 +104,18 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 				av.AffixIdDlc,
 				effect,
 				av.WeightPercent,
-				string.Format("{0} : ({1}) {2} ({3:p2}) {4}"
+				string.Format("{0} : ({1}) {2} {3} {4}"
 					, effect
 					, av.AffixId.PrettyFileNameExploded.Number
 					, av.Translation
-					, av.WeightPercent
+					, ChanceText(av)
 					, av.AffixIdDlc.GetSuffix()
 				),
 				av.LootRandomizer
 			)
-			orderby flattenedAffix.Translation, flattenedAffix.AffixId.PrettyFileNameExploded.Number
-			group flattenedAffix by new AffixGroupKey(flattenedAffix.TypeId, flattenedAffix.Translation) into grp2
+			{ Unreachable = av.Unreachable }
+			orderby flattenedAffix.Unreachable, flattenedAffix.Translation, flattenedAffix.AffixId.PrettyFileNameExploded.Number
+			group flattenedAffix by new AffixGroupKey(flattenedAffix.TypeId, flattenedAffix.Translation, flattenedAffix.Unreachable) into grp2
 			select new AffixGroup(grp2.Key, grp2);
 
 		return regrouped.ToList();
@@ -120,14 +123,18 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 
 	/// <inheritdoc/>
 	public string FormatVariantLabel(AffixEntry entry, bool byEffect)
-		=> string.Format("({0}) {1} ({2:p2}) {3}"
+		=> string.Format("({0}) {1} {2} {3}"
 			, entry.AffixId.PrettyFileNameExploded.Number
 			, byEffect
 				? entry.LootRandomizer.Translation // groups are effects: show the affix name
 				: entry.AffixId.PrettyFileNameExploded.Effect // groups are affix names: show the effect
-			, entry.WeightPercent
+			, ChanceText(entry)
 			, entry.AffixIdDlc.GetSuffix()
 		);
+
+	/// <summary>The loot chance shown after an affix, "(—)" for an affix the game never rolls on the item.</summary>
+	private static string ChanceText(AffixEntry entry)
+		=> entry.Unreachable ? "(—)" : string.Format("({0:p2})", entry.WeightPercent);
 
 	/// <summary>
 	/// Flattens the broken, prefix and suffix tables of every DLC, keeps the highest weight of each affix,
@@ -137,6 +144,8 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 	/// For an item's own affixes each table is the distribution of one loot item table (see
 	/// <see cref="LootTableCollection.Mix"/>): the highest is the best chance among the item's drop sources, given the item
 	/// gets an affix of that kind. Absolute odds also depend on the kind weights, the chance and the monster, not shown.
+	/// The affixes of <see cref="ItemAffixes.Unreachable"/> the game cannot roll otherwise come after, in their own groups,
+	/// without a chance.
 	/// </remarks>
 	private static List<AffixGroup> CurateAffixes(ItemAffixes affixes)
 	{
@@ -146,18 +155,23 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 			(AffixTypeId: SuffixTypeId, AffixType: affixes.Suffix)
 		};
 
-		var curatedAffixes =
+		var reachable =
 			from types in affixTypes
 			from dlc in types.AffixType
 			from ltvalues in dlc.Value
 			from value in ltvalues
-			select new
-			{
-				TypeId = types.AffixTypeId,
-				AffixId = value.Key,
-				value.Value.WeightPercent,
-				value.Value.LootRandomizer
-			} into flat
+			select (TypeId: types.AffixTypeId, AffixId: value.Key, value.Value.WeightPercent, value.Value.LootRandomizer, Unreachable: false);
+		var reachableList = reachable.ToList();
+		var rolled = reachableList.Select(v => (v.TypeId, v.AffixId)).ToHashSet();
+
+		var unreachable =
+			from kindTable in affixes.Unreachable ?? []
+			from value in kindTable.Table
+			where !rolled.Contains((kindTable.Kind, value.Key))
+			select (TypeId: kindTable.Kind, AffixId: value.Key, WeightPercent: 0F, value.Value.LootRandomizer, Unreachable: true);
+
+		var curatedAffixes =
+			from flat in reachableList.Concat(unreachable)
 			group flat by new { flat.TypeId, flat.AffixId } into grp
 			let f = grp.First()
 			let _AffixIdDlc = grp.Key.AffixId.Dlc
@@ -169,16 +183,21 @@ public class AffixCatalogService(IItemProvider itemProvider, ITranslationService
 				_AffixIdDlc,
 				_translation,
 				_WeightPercent,
-				string.Format("{0} : {1} ({2:p2}) {3}" // Default format for Order by affix name
-					, _translation
-					, grp.Key.AffixId.PrettyFileName
-					, _WeightPercent
-					, _AffixIdDlc.GetSuffix()
-				),
+				string.Empty,
 				f.LootRandomizer
 			)
-			group affixEntry by new AffixGroupKey(affixEntry.TypeId, affixEntry.Translation) into grp2
-			orderby grp2.Key.TypeId, grp2.Key.Translation // Order by affix name
+			{ Unreachable = f.Unreachable }
+			let labelled = affixEntry with
+			{
+				FormattedText = string.Format("{0} : {1} {2} {3}" // Default format for Order by affix name
+					, _translation
+					, grp.Key.AffixId.PrettyFileName
+					, ChanceText(affixEntry)
+					, _AffixIdDlc.GetSuffix()
+				),
+			}
+			group labelled by new AffixGroupKey(labelled.TypeId, labelled.Translation, labelled.Unreachable) into grp2
+			orderby grp2.Key.TypeId, grp2.Key.Unreachable, grp2.Key.Translation // Order by affix name, the unreachable last
 			select new AffixGroup(grp2.Key, grp2);
 
 		return curatedAffixes.ToList();

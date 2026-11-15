@@ -39,7 +39,7 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 	/// The database of the item's mod for the current thread, until disposed.
 	/// </summary>
 	private IDisposable ModScope(Item? itm) => this.ItemMods.ScopeOrNone(itm);
-	private readonly LazyConcurrentDictionary<(string Scope, RecordId Item), ItemAffixes?> ItemAffixesCache = new();
+	private readonly LazyConcurrentDictionary<(string Scope, RecordId Item, bool Unreachable), ItemAffixes?> ItemAffixesCache = new();
 
 	/// <inheritdoc/>
 	public void ClearGameDataCache() => this.ItemAffixesCache.Clear();
