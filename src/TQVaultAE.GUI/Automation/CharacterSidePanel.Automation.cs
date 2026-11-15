@@ -1,6 +1,6 @@
 namespace TQVaultAE.GUI.Components.Character;
 
-/// <summary>Debug-only access to the side panel of the character editor for the automation endpoint.</summary>
+/// <summary>Access to the side panel of the character editor for the automation endpoint.</summary>
 internal sealed partial class CharacterSidePanel
 {
 	/// <summary>What the panel draws, and its editors (leveling, statistics options).</summary>

@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- Code shared by the Debug automation endpoints of TQVaultAE and ARZExplorer (headless mode, UI thread access,
-	     control walks). Both apps reference it in Debug builds only, so their Release builds carry none of it.
+	<!-- Code shared by the automation endpoints of TQVaultAE and ARZExplorer (UI thread access, control walks, headless
+	     mode). TQVaultAE references it in every build, since its Release builds serve the user tools (documentation/mcp.md);
+	     ARZExplorer in Debug builds only. The headless mode is Debug-only: Release builds leave it out.
 	     See documentation/AUTOMATION.md -->
 	<PropertyGroup>
 		<TargetFramework>net10.0-windows</TargetFramework>
@@ -15,5 +16,9 @@
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
+		<Compile Remove="HeadlessDesktop.cs" />
+	</ItemGroup>
 
 </Project>

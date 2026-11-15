@@ -1,7 +1,7 @@
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
-/// Debug-only access to the statistics panel for the automation endpoint: what it shows, and clicks on the "+" buttons
+/// Access to the statistics panel for the automation endpoint: what it shows, and clicks on the "+" buttons
 /// through its own hit test.
 /// </summary>
 internal sealed partial class CharacterStatsPanel

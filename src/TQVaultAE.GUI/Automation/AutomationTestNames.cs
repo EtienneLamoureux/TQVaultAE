@@ -1,9 +1,11 @@
 namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
-/// The names of the test characters and vaults automation may change (see Safety in AUTOMATION.md): its own
-/// <c>claude-</c> files, and the neutral test data of the documentation captures (<c>player-test*</c>,
-/// <c>player-mod*</c>, <c>vault-*</c>), whose names may show in a picture.
+/// The names of the characters, vaults and tags automation may change. Debug builds, used by the developers' agents on
+/// their own saves, take only the test ones (see Safety in AUTOMATION.md): its own <c>claude-</c> files, and the neutral
+/// test data of the documentation captures (<c>player-test*</c>, <c>player-mod*</c>, <c>vault-*</c>), whose names may show
+/// in a picture. Release builds serve the user's own agent on the user's own files (documentation/mcp.md): every name is
+/// accepted there, the operator confirms each change instead.
 /// </summary>
 internal static class AutomationTestNames
 {
@@ -15,11 +17,18 @@ internal static class AutomationTestNames
 	/// <summary>The prefix of automation's own test tags: tags are shared by every character, so only these are changed.</summary>
 	internal const string TagPrefix = "claude-";
 
-	/// <summary>Whether a tag name is a test tag's (<see cref="TagPrefix"/>).</summary>
-	internal static bool IsTestTag(string? name)
-		=> name is not null && name.StartsWith(TagPrefix, StringComparison.OrdinalIgnoreCase);
+	/// <summary>Whether automation only changes the test names: in Debug builds.</summary>
+#if DEBUG
+	internal const bool Enforced = true;
+#else
+	internal const bool Enforced = false;
+#endif
 
-	/// <summary>Whether a character or vault name is a test file's.</summary>
+	/// <summary>Whether automation may change a tag: a test tag's (<see cref="TagPrefix"/>) in Debug builds, any in Release builds.</summary>
+	internal static bool IsTestTag(string? name)
+		=> !Enforced || (name is not null && name.StartsWith(TagPrefix, StringComparison.OrdinalIgnoreCase));
+
+	/// <summary>Whether automation may change a character or vault: a test file's in Debug builds, any in Release builds.</summary>
 	internal static bool IsTestFile(string? name)
-		=> name is not null && Prefixes.Any(p => name.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+		=> !Enforced || (name is not null && Prefixes.Any(p => name.StartsWith(p, StringComparison.OrdinalIgnoreCase)));
 }

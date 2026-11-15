@@ -153,7 +153,6 @@ internal sealed class InputDialog : VaultForm
 		this.ActiveControl = this.textBox;
 	}
 
-#if DEBUG
 	/// <summary>Automation answers the dialog like a user: types the queued text and clicks OK, or clicks Cancel.</summary>
 	protected override void OnShown(EventArgs e)
 	{
@@ -170,7 +169,6 @@ internal sealed class InputDialog : VaultForm
 			this.okButton.PerformClick();
 		}
 	}
-#endif
 
 	private void OkButton_Click(object? sender, EventArgs e)
 	{

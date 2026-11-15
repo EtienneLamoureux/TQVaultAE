@@ -6,7 +6,7 @@ using TQVaultAE.GUI.Automation;
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
-/// Debug-only access to the skill pane for the automation endpoint: what each button shows, and clicks that go through
+/// Access to the skill pane for the automation endpoint: what each button shows, and clicks that go through
 /// the pane's own hit test and click event.
 /// </summary>
 internal sealed partial class SkillPaneControl

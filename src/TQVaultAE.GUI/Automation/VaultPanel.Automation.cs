@@ -12,7 +12,7 @@ using TQVaultAE.Presentation;
 namespace TQVaultAE.GUI.Components.Panels;
 
 /// <summary>
-/// Debug-only access to the bag button context menu for the automation endpoint.
+/// Access to the bag button context menu for the automation endpoint.
 /// </summary>
 public partial class VaultPanel
 {

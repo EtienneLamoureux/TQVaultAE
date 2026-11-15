@@ -10,7 +10,7 @@ using TQVaultAE.GUI.Components.Icons;
 namespace TQVaultAE.GUI.Dialogs;
 
 /// <summary>
-/// Debug-only access to the icon grids of the bag button settings for the automation endpoint.
+/// Access to the icon grids of the bag button settings for the automation endpoint.
 /// </summary>
 public partial class BagButtonSettings
 {

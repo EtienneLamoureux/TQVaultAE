@@ -5,7 +5,7 @@ using TQVaultAE.Presentation;
 namespace TQVaultAE.GUI.Tooltips;
 
 /// <summary>
-/// Debug-only entry point of <c>tooltip_text_dump</c>: builds an item tooltip without showing it
+/// Entry point of the Debug tool <c>tooltip_text_dump</c>: builds an item tooltip without showing it
 /// and records the rows its own code creates, panel by panel, before they are drawn.
 /// </summary>
 public partial class ItemTooltip

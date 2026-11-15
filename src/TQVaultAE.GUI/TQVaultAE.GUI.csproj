@@ -44,20 +44,22 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
 	</ItemGroup>
 
-	<!-- In-app MCP automation endpoint: Debug builds only. See documentation/AUTOMATION.md -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-		<!-- The ASP.NET Core shared framework already carries Microsoft.Extensions.*; keep the explicit references for Release. -->
+	<!-- In-app MCP automation endpoint. Release builds serve the user tools when the setting turns the endpoint on;
+	     Debug builds add the developer tools (Automation/Dev) and the headless mode. See documentation/mcp.md and
+	     documentation/AUTOMATION.md -->
+	<PropertyGroup>
+		<!-- The ASP.NET Core shared framework already carries Microsoft.Extensions.*; keep the explicit references. -->
 		<NoWarn>$(NoWarn);NU1510</NoWarn>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="ModelContextProtocol.AspNetCore" />
 		<ProjectReference Include="..\TQVaultAE.Automation\TQVaultAE.Automation.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
-		<Compile Remove="Automation\**" />
+		<Compile Remove="Automation\Dev\**" />
 	</ItemGroup>
 
 	<ItemGroup>

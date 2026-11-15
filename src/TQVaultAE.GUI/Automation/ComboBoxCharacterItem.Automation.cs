@@ -1,7 +1,7 @@
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
-/// Debug-only access to an entry of the character list for the automation endpoint.
+/// Access to an entry of the character list for the automation endpoint.
 /// </summary>
 public partial class ComboBoxCharacterItem
 {

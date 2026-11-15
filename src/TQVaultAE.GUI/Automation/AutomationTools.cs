@@ -26,7 +26,9 @@ using static TQVaultAE.Automation.ControlTree;
 namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
-/// MCP tools that inspect and drive the running TQVault UI.
+/// MCP tools that inspect and drive the running TQVault UI: the user tools, shipped in Release builds (reading the state,
+/// the user's actions, captures; documentation/mcp.md). The Debug-only developer tools are in the nested
+/// <see cref="DevTools"/> class, whose files (<c>Automation/Dev</c>) Release builds leave out.
 /// Every UI access is marshalled to the UI thread through <see cref="AutomationHost.OnUi{T}(Func{MainForm, T})"/>; the tools
 /// that read only thread-safe state (the log, the dialog answers, the recorded sounds, the registered forms, the game
 /// files) and the native window calls run on the request thread.
@@ -76,7 +78,7 @@ internal static partial class AutomationTools
 			};
 		});
 
-		return Serialize(new { endpoint = AutomationHost.Address, headless = HeadlessDesktop.DesktopName, windows });
+		return Serialize(new { endpoint = AutomationHost.Address, headless = AutomationHost.HeadlessDesktopName, windows });
 	}
 
 	[McpServerTool(Name = "close_dialog", Destructive = true)]
@@ -198,11 +200,6 @@ internal static partial class AutomationTools
 			});
 		});
 
-	[McpServerTool(Name = "recent_log", ReadOnly = true)]
-	[Description("Returns the last log lines written by TQVault, oldest first.")]
-	public static string RecentLog([Description("Number of lines (default 50).")] int n = 50)
-		=> string.Join(Environment.NewLine, AutomationHost.RecentLog.GetLast(Math.Clamp(n, 1, 2000)));
-
 	#endregion
 
 	#region Selection
@@ -248,7 +245,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "import_file", Destructive = true)]
-	[Description("Imports an exported JSON file like the vault menu's 'Import from file' without its file dialog: items go into the current tab; a whole vault asks to replace the vault shown or import it as a new vault (answer with queue_dialog_answers: Yes replaces, No creates a new vault, Cancel). The vault shown must be a test vault ('claude-...'), since it may be replaced. Queue the answers first: the import waits for its boxes.")]
+	[Description("Imports an exported JSON file like the vault menu's 'Import from file' without its file dialog: items go into the current tab; a whole vault asks to replace the vault shown or import it as a new vault (answer with queue_dialog_answers: Yes replaces, No creates a new vault, Cancel). The vault shown may be replaced (Debug builds: it must be a test vault, 'claude-...'). Queue the answers first: the import waits for its boxes.")]
 	public static string ImportFile([Description("Path of the exported JSON file.")] string path)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -273,7 +270,7 @@ internal static partial class AutomationTools
 			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, error });
 		});
 
-	/// <summary>Automation creates and changes only test characters and vaults (see <see cref="AutomationTestNames"/>).</summary>
+	/// <summary>Debug builds: automation creates and changes only test characters and vaults (see <see cref="AutomationTestNames"/>).</summary>
 	private static void RequireTestName(string name)
 	{
 		if (!AutomationTestNames.IsTestFile(name))
@@ -281,8 +278,8 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "create_vault", Destructive = true)]
-	[Description("Creates a test vault like the New action of 'Maintain Vault Files...', then selects and loads it. The name must start with 'claude-' (e.g. claude-vault1): automation works only in its own test files. The file is written when the vault is saved.")]
-	public static string CreateVault([Description("New vault name, starting with 'claude-'.")] string name)
+	[Description("Creates a vault like the New action of 'Maintain Vault Files...', then selects and loads it. Debug builds: the name must start with 'claude-' (e.g. claude-vault1), automation works only in its own test files. The file is written when the vault is saved.")]
+	public static string CreateVault([Description("New vault name (Debug builds: starting with 'claude-').")] string name)
 	{
 		RequireTestName(name);
 		return AutomationHost.OnUi(form =>
@@ -295,8 +292,8 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "duplicate_character", Destructive = true)]
-	[Description("Duplicates the selected character like the user (a full save set: player file, stash and all): clicks 'Duplicate Character' in the menu of the tools button next to the character list (menu_click('characterTools', 'Duplicate')), after this call returns, and types the name into its name dialog (queued first as its answer: the dialog's checks run, a refused name shows an error box, then the dialog again). The entry shows only when 'Allow character edit' is on in the settings. The name must start with 'claude-' (e.g. claude-character1). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy; dialog_answers tells a refusal.")]
-	public static string DuplicateCharacter([Description("Name of the copy, starting with 'claude-'.")] string name)
+	[Description("Duplicates the selected character like the user (a full save set: player file, stash and all): clicks 'Duplicate Character' in the menu of the tools button next to the character list (menu_click('characterTools', 'Duplicate')), after this call returns, and types the name into its name dialog (queued first as its answer: the dialog's checks run, a refused name shows an error box, then the dialog again). The entry shows only when 'Allow character edit' is on in the settings. Debug builds: the name must start with 'claude-' (e.g. claude-character1). On success TQVault restarts, as it does for a user: wait until get_state answers with loadingComplete, then select the copy; dialog_answers tells a refusal.")]
+	public static string DuplicateCharacter([Description("Name of the copy (Debug builds: starting with 'claude-').")] string name)
 	{
 		RequireTestName(name);
 		return AutomationHost.OnUi(form =>
@@ -311,7 +308,7 @@ internal static partial class AutomationTools
 
 
 	[McpServerTool(Name = "save_files", Destructive = true)]
-	[Description("Saves the modified characters, vaults and stashes like the Save button. A file error shows the Abort/Retry/Ignore box: this call then waits until the box is answered, so answer it from another call with close_dialog (button Abort, Retry or Ignore). Work only in claude-* test files. Returns whether characters were saved and the panels still modified; see recent_log for the save's log lines.")]
+	[Description("Saves the modified characters, vaults and stashes like the Save button. A file error shows the Abort/Retry/Ignore box: this call then waits until the box is answered, so answer it from another call with close_dialog (button Abort, Retry or Ignore). Debug builds: work only in claude-* test files. Returns whether characters were saved and the panels still modified; see recent_log for the save's log lines.")]
 	public static string SaveFiles()
 		=> AutomationHost.OnUi(form =>
 		{
@@ -543,30 +540,6 @@ internal static partial class AutomationTools
 			return Serialize(new { panel, bag, exported = container.AutomationExportTab(bag, path), path });
 		});
 
-	[McpServerTool(Name = "press_key", Destructive = true)]
-	[Description("Rests the cursor on a cell of a panel and presses a key there like the keyboard: the key messages go to the window that has the keyboard focus, through the message loop (ProcessCmdKey, IsInputKey, ProcessDialogKey, the main window's key preview, then the control's KeyDown), the modifiers held in the keyboard state; so the key binds apply as for the user: 'c' copies, 'd' duplicates, 'backspace' deletes the item under the cursor by default (with its confirmation: queue the answer first), 'escape' cancels a drag, 'ctrl+a', 'alt+w', 'f5'... With an empty panel the cursor does not move (the forge keys 'enter' / 'space'). Returns the control that received the key; runs after the call returns: follow with get_state, forge_state or dialog_answers.")]
-	public static string PressKey(
-		[Description("Panel id, or empty for the main window alone.")] string panel,
-		[Description("Cell column.")] int x,
-		[Description("Cell row.")] int y,
-		[Description("The key with its modifiers: a character, or a key bind gesture like 'ctrl+alt+d', 'backspace', 'escape', 'enter', 'space'.")] string key)
-		=> AutomationHost.OnUi(form =>
-		{
-			var keys = ParseKey(key);
-			static string Describe(Control target) => $"{target.GetType().Name} {target.Name}".TrimEnd();
-
-			if (string.IsNullOrEmpty(panel))
-			{
-				var focused = AutomationInput.PostKey(form, keys);
-				return Serialize(new { panel = "mainForm", key = keys.ToString(), target = Describe(focused) });
-			}
-
-			var named = ResolveShownPanel(form, panel);
-			var item = named.Panel.AutomationFindItem(new Point(x, y));
-			var target = named.Panel.AutomationKeyDown(new Point(x, y), keys, form);
-			return Serialize(new { panel = named.Id, item = DescribeItem(item, null), key = keys.ToString(), target = Describe(target) });
-		});
-
 	[McpServerTool(Name = "click_cell", Destructive = true)]
 	[Description("Left-clicks a cell of a panel like a user holding modifier keys, through the panel's mouse handler, so the key binds apply: 'ctrl+alt' duplicates the item into the cursor and 'alt' copies it by default (item copy must be allowed), 'ctrl' adds it to the selection. Returns the dragged item and the selection; put a picked item back with cancel_drag.")]
 	public static string ClickCell(
@@ -591,33 +564,6 @@ internal static partial class AutomationTools
 				modifiers = held.ToString(),
 				dragged = drag.IsActive ? DescribeItem(drag.Item, null) : null,
 				draggedIsNew = drag.IsActive && drag.Item is not null && item is not null && !ReferenceEquals(drag.Item, item),
-				selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList(),
-			});
-		});
-
-	[McpServerTool(Name = "drag_select", Destructive = true)]
-	[Description("Presses the left button on a cell of a panel with modifier keys held, moves to another cell and releases there, through the panel's mouse handlers: with the rectangle selection's modifiers (Shift by default, from the key binds) it selects the items in the rectangle. Returns the selection and the dragged item.")]
-	public static string DragSelect(
-		[Description("Panel id.")] string panel,
-		[Description("Start cell column.")] int x1,
-		[Description("Start cell row.")] int y1,
-		[Description("End cell column.")] int x2,
-		[Description("End cell row.")] int y2,
-		[Description("Modifiers held, like 'shift'; empty for none.")] string modifiers)
-		=> AutomationHost.OnUi(form =>
-		{
-			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged. Use cancel_drag first.");
-
-			var held = ClickModifiers(modifiers);
-			named.Panel.AutomationDragSelect(new Point(x1, y1), new Point(x2, y2), held);
-			var drag = form.AutomationDragInfo;
-			return Serialize(new
-			{
-				panel = named.Id,
-				modifiers = held.ToString(),
-				dragged = drag.IsActive ? DescribeItem(drag.Item, null) : null,
 				selected = named.Panel.AutomationSelectedItems.Select(i => DescribeItem(i, null)).ToList(),
 			});
 		});

@@ -16,18 +16,35 @@ using TQVaultAE.Automation;
 namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
-/// Debug-only MCP server hosted inside TQVault, listening on http://127.0.0.1:{port}/mcp (streamable HTTP).
+/// The MCP server hosted inside TQVault, listening on http://127.0.0.1:{port}/mcp (streamable HTTP), loopback only.
 /// </summary>
 /// <remarks>
-/// Environment variables:
+/// <para>
+/// Release builds start it when the user turns it on in the settings (<see cref="Config.UserSettings.EnableMcpServer"/>,
+/// off by default, on <see cref="Config.UserSettings.McpServerPort"/>) and serve the user tools; see documentation/mcp.md.
+/// </para>
+/// <para>
+/// Debug builds start it at startup whatever the settings, add the developer tools and read these environment variables:
 /// <list type="bullet">
 /// <item><c>TQVAULT_MCP_PORT</c>: listening port (default <see cref="DefaultPort"/>).</item>
 /// <item><c>TQVAULT_MCP_DISABLED=1</c>: do not start the endpoint.</item>
 /// </list>
+/// </para>
 /// </remarks>
 internal static class AutomationHost
 {
-	public const int DefaultPort = 47017;
+	public const int DefaultPort = Config.UserSettings.DefaultMcpServerPort;
+
+	/// <summary>Serializes the server's start and stop.</summary>
+	private static readonly SemaphoreSlim _serverLock = new(1, 1);
+
+	/// <summary>The port of the running server, or 0.</summary>
+	private static int _port;
+
+#if DEBUG
+	/// <summary>Whether the endpoint was started by <see cref="Start"/> (Debug): the settings then leave it alone.</summary>
+	private static bool _startedForDebug;
+#endif
 
 	private static ILogger? _log;
 
@@ -36,10 +53,31 @@ internal static class AutomationHost
 	private static WebApplication? _app;
 	private static MainForm? _mainForm;
 
+#if DEBUG
 	/// <summary>
 	/// Gets the in-memory log buffer served by <c>recent_log</c>.
 	/// </summary>
 	public static RecentLogProvider RecentLog { get; } = new();
+#endif
+
+	/// <summary>Whether the app runs in the Debug-only headless mode, where no box is ever shown.</summary>
+#if DEBUG
+	private static bool Headless => HeadlessDesktop.Enabled;
+
+	/// <summary>Gets the name of the hidden desktop in headless mode (Debug), or null.</summary>
+	public static string? HeadlessDesktopName => HeadlessDesktop.DesktopName;
+
+	/// <summary>Gets the native dialogs cancelled in headless mode because nobody could answer them (Debug).</summary>
+	public static IReadOnlyList<string> CancelledNativeDialogs => HeadlessDesktop.CancelledDialogs;
+#else
+	private static bool Headless => false;
+
+	/// <summary>Gets the name of the hidden desktop in headless mode: always null, the mode is Debug-only.</summary>
+	public static string? HeadlessDesktopName => null;
+
+	/// <summary>Gets the native dialogs cancelled in headless mode: always empty, the mode is Debug-only.</summary>
+	public static IReadOnlyList<string> CancelledNativeDialogs => [];
+#endif
 
 	/// <summary>
 	/// Gets the endpoint address, or null when the endpoint is not running.
@@ -91,7 +129,9 @@ internal static class AutomationHost
 		_dialogAnswers.Clear();
 		_dialogAnswered.Clear();
 		_dialogUnanswered.Clear();
+#if DEBUG
 		HeadlessDesktop.ClearCancelled();
+#endif
 	}
 
 	/// <summary>Gets the answers not used yet.</summary>
@@ -122,7 +162,7 @@ internal static class AutomationHost
 		}
 
 		answer = DialogResult.None;
-		if (!HeadlessDesktop.Enabled)
+		if (!Headless)
 			return false;
 
 		answer = headlessAnswer ?? HeadlessAnswer(buttons);
@@ -144,7 +184,7 @@ internal static class AutomationHost
 		text = null;
 		if (!_dialogAnswers.TryPeek(out var next) || (next.Text is null && next.Result != DialogResult.Cancel) || !_dialogAnswers.TryDequeue(out _))
 		{
-			if (HeadlessDesktop.Enabled)
+			if (Headless)
 				_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {title} (text input): no queued text, left open");
 			return false;
 		}
@@ -199,8 +239,9 @@ internal static class AutomationHost
 		_ => [],
 	};
 
+#if DEBUG
 	/// <summary>
-	/// Starts the endpoint in the background. Safe to call before the main form exists,
+	/// Debug: starts the endpoint in the background whatever the settings. Safe to call before the main form exists,
 	/// so that startup dialogs can already be listed and answered.
 	/// </summary>
 	public static void Start(ILoggerFactory loggerFactory)
@@ -215,7 +256,57 @@ internal static class AutomationHost
 
 		var port = int.TryParse(Environment.GetEnvironmentVariable("TQVAULT_MCP_PORT"), out var p) ? p : DefaultPort;
 
-		_ = Task.Run(() => StartServerAsync(port));
+		_startedForDebug = true;
+		_ = Task.Run(() => ApplyAsync(enabled: true, port));
+	}
+#endif
+
+	/// <summary>
+	/// Starts, restarts on another port or stops the endpoint as the settings say, in the background (Release: at startup
+	/// and when the settings change). Debug builds keep the endpoint started by <c>Start</c>.
+	/// </summary>
+	/// <param name="enabled">Whether the endpoint is on (<see cref="Config.UserSettings.EnableMcpServer"/>).</param>
+	/// <param name="port">Its port (<see cref="Config.UserSettings.McpServerPort"/>); an invalid one takes <see cref="DefaultPort"/>.</param>
+	/// <param name="loggerFactory">The app's logger factory, at the first call.</param>
+	public static void Apply(bool enabled, int port, ILoggerFactory? loggerFactory = null)
+	{
+		_log ??= loggerFactory?.CreateLogger(typeof(AutomationHost));
+#if DEBUG
+		if (_startedForDebug)
+		{
+			_log?.LogInformation("Automation MCP endpoint: Debug build, the endpoint started at startup stays (settings: {Enabled}, port {Port})", enabled, port);
+			return;
+		}
+#endif
+		_ = Task.Run(() => ApplyAsync(enabled, Config.UserSettings.ValidMcpServerPort(port)));
+	}
+
+	/// <summary>The address the endpoint listens on: the loopback interface only, never the network.</summary>
+	internal static IPEndPoint ListenEndPoint(int port) => new(IPAddress.Loopback, port);
+
+	private static async Task ApplyAsync(bool enabled, int port)
+	{
+		await _serverLock.WaitAsync().ConfigureAwait(false);
+		try
+		{
+			if (_app is not null && (!enabled || port != _port))
+			{
+				var running = _app;
+				_app = null;
+				_port = 0;
+				Address = null;
+				await running.StopAsync().ConfigureAwait(false);
+				await running.DisposeAsync().ConfigureAwait(false);
+				_log?.LogInformation("Automation MCP endpoint stopped");
+			}
+
+			if (enabled && _app is null)
+				await StartServerAsync(port).ConfigureAwait(false);
+		}
+		finally
+		{
+			_serverLock.Release();
+		}
 	}
 
 	/// <summary>
@@ -270,6 +361,18 @@ internal static class AutomationHost
 			return 0;
 		});
 
+	/// <summary>
+	/// The tool types the endpoint serves: the user tools (<see cref="AutomationTools"/>), plus, in Debug builds, the
+	/// developer tools (<see cref="AutomationTools.DevTools"/>), whose files Release builds leave out.
+	/// </summary>
+	internal static Type[] ToolTypes { get; } =
+	[
+		typeof(AutomationTools),
+#if DEBUG
+		typeof(AutomationTools.DevTools),
+#endif
+	];
+
 	private static async Task StartServerAsync(int port)
 	{
 		// After Application.Restart (character duplication), the new process starts while the old one still holds
@@ -286,21 +389,29 @@ internal static class AutomationHost
 					Args = [],
 				});
 
-				builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, port));
+				builder.WebHost.ConfigureKestrel(options => options.Listen(ListenEndPoint(port)));
 				builder.Logging.ClearProviders();
 				builder.Logging.SetMinimumLevel(LogLevel.Warning);
+#if DEBUG
 				builder.Logging.AddProvider(RecentLog);
+#endif
 
 				builder.Services
-					.AddMcpServer(options => options.ServerInfo = new() { Name = "tqvault", Version = "1.0.0" })
+					.AddMcpServer(options =>
+					{
+						options.ServerInfo = new() { Name = "tqvault", Version = "1.0.0" };
+						options.ServerInstructions = AutomationInstructions.Text;
+					})
 					.WithHttpTransport(options => options.Stateless = true)
-					.WithTools([typeof(AutomationTools)]);
+					// IEnumerable<Type>: an array would bind to WithTools<T>(T target), the tools of an instance of T.
+					.WithTools((IEnumerable<Type>)ToolTypes);
 
 				app = builder.Build();
 				app.MapMcp("/mcp");
 
 				await app.StartAsync().ConfigureAwait(false);
 				_app = app;
+				_port = port;
 				Address = $"http://127.0.0.1:{port}/mcp";
 				_log?.LogInformation("Automation MCP endpoint listening on {Address}", Address);
 				return;

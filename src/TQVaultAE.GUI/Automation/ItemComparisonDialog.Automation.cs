@@ -6,7 +6,7 @@
 namespace TQVaultAE.GUI.Dialogs;
 
 /// <summary>
-/// Debug-only access to the options of the item comparison dialog for the automation endpoint.
+/// Access to the options of the item comparison dialog for the automation endpoint.
 /// </summary>
 internal sealed partial class ItemComparisonDialog
 {

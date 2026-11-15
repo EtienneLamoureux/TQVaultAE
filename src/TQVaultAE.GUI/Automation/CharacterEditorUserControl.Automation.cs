@@ -1,6 +1,6 @@
 namespace TQVaultAE.GUI.Views;
 
-/// <summary>Debug-only access to the character editor for the automation endpoint.</summary>
+/// <summary>Access to the character editor for the automation endpoint.</summary>
 internal sealed partial class CharacterEditorUserControl
 {
 	/// <summary>

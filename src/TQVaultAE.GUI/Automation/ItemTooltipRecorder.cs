@@ -23,7 +23,7 @@ internal sealed record TooltipDumpRow(
 	[property: JsonPropertyName("range"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TooltipDumpSegment? Range = null);
 
 /// <summary>
-/// Reads the rows of the item tooltip panels from their controls, in display order (Debug only).
+/// Reads the rows of the item tooltip panels from their controls, in display order.
 /// It only reads what the tooltip code created: it recognizes the rows made by <c>BaseTooltip.MakeRow</c>,
 /// the range rows, and the skill blocks.
 /// </summary>

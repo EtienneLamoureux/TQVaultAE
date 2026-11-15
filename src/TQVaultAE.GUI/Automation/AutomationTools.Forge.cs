@@ -21,7 +21,7 @@ internal static partial class AutomationTools
 	public static string ForgeShow([Description("true to show the forge, false to hide it.")] bool show = true)
 		=> AutomationHost.OnUi(form =>
 		{
-			var sounds = RecordingSoundService.LastSequence;
+			var sounds = SoundSequence;
 			form.AutomationShowForge(show);
 			return Serialize(ForgeStatus(form, sounds, int.MaxValue));
 		});
@@ -29,7 +29,7 @@ internal static partial class AutomationTools
 	[McpServerTool(Name = "forge_state", ReadOnly = true)]
 	[Description("Returns the forge state: shown, mode, hardcore, the item in each slot (Base, Prefix, Suffix, Relic1, Relic2) with the parts it offers in God mode, the preview of the forged item and the last messages shown to the user (in 'newMessages').")]
 	public static string ForgeState()
-		=> AutomationHost.OnUi(form => Serialize(ForgeStatus(form, RecordingSoundService.LastSequence, 0)));
+		=> AutomationHost.OnUi(form => Serialize(ForgeStatus(form, SoundSequence, 0)));
 
 	[McpServerTool(Name = "forge_set_mode", Destructive = true)]
 	[Description("Selects the forge mode, like a click on its radio button: Game, Strict, Relax or God. Choosing a stricter mode than before clears the slots, as in the app.")]
@@ -115,7 +115,7 @@ internal static partial class AutomationTools
 		{
 			var forge = RequireForge(form);
 			var baseItem = forge.AutomationSlots.First(s => s.Slot == ForgeSlot.Base).Item;
-			var sounds = RecordingSoundService.LastSequence;
+			var sounds = SoundSequence;
 			var messages = forge.AutomationMessages.Count;
 
 			forge.AutomationForge();
@@ -129,65 +129,6 @@ internal static partial class AutomationTools
 			});
 		});
 
-	[McpServerTool(Name = "forge_drag_cursor")]
-	[Description("Runs the forge's drag cursor update, like a mouse move over the forge while an item is dragged (pick_item first). Returns whether a cursor was built from the item's bitmap, its size and hot spot (the bitmap centre).")]
-	public static string ForgeDragCursor()
-		=> AutomationHost.OnUi(form =>
-		{
-			var cursor = RequireForge(form).AutomationUpdateDragCursor();
-			return Serialize(new
-			{
-				built = cursor is not null,
-				width = cursor?.Size.Width,
-				height = cursor?.Size.Height,
-				hotSpot = cursor?.HotSpot,
-			});
-		});
-
-	[McpServerTool(Name = "forge_hover", Destructive = true)]
-	[Description("Rests the mouse on a forge slot through the slot's own MouseEnter: the item tooltip shows, for the Base slot the preview of the forged item. Returns the tooltips shown, the tooltip and forge rectangles on screen, and a PNG of the main window with the tooltip drawn at its place. hide=true ends the hover (MouseLeave), which closes the tooltip.")]
-	public static IEnumerable<ContentBlock> ForgeHover(
-		[Description("Base, Prefix, Suffix, Relic1 or Relic2.")] string slot,
-		[Description("true to end the hover instead.")] bool hide = false)
-	{
-		var (json, png) = AutomationHost.OnUi(form =>
-		{
-			var forge = RequireForge(form);
-			var value = ParseEnum<ForgeSlot>(slot, "slot");
-			if (hide)
-			{
-				forge.AutomationHoverEnd(value);
-				return (Serialize(new { slot = value.ToString(), tooltips = DescribeTooltips() }), (byte[]?)null);
-			}
-
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged: the forge shows no tooltip then. Drop it or cancel_drag first.");
-
-			forge.AutomationHover(value);
-			var tooltip = OpenTooltips().LastOrDefault();
-			var formScreen = form.RectangleToScreen(form.ClientRectangle);
-			var tooltipScreen = tooltip?.Bounds ?? Rectangle.Empty;
-			byte[]? image = null;
-			if (tooltip is { Width: > 0, Height: > 0 })
-			{
-				using var tip = AutomationImages.Render(tooltip);
-				using var bitmap = AutomationImages.RenderWithOverlays(form, (tip, tooltipScreen.Location));
-				image = AutomationImages.Png(bitmap);
-			}
-
-			return (Serialize(new
-			{
-				slot = value.ToString(),
-				tooltips = DescribeTooltips(),
-				tooltipWindow = tooltip is null ? (Rectangle?)null : tooltipScreen,
-				forgePanel = forge.RectangleToScreen(forge.ClientRectangle),
-				mainWindow = formScreen,
-			}), image);
-		});
-
-		return AutomationImages.Result(json, png);
-	}
-
 	[McpServerTool(Name = "forge_cancel", Destructive = true)]
 	[Description("Cancels the forge, like its Cancel button: clears the slots and closes the forge. Refused while the button is greyed or hidden, as for the user.")]
 	public static string ForgeCancel() => OnForge((form, forge) => forge.AutomationCancel());
@@ -196,27 +137,23 @@ internal static partial class AutomationTools
 
 	#region Sounds
 
-	[McpServerTool(Name = "recent_sounds", ReadOnly = true)]
-	[Description("Returns the last sounds TQVault played, oldest first. For a named sound, 'loaded' and 'wavBytes' tell whether its data could be loaded (an MP3 is converted to WAV by NAudio first).")]
-	public static string RecentSounds([Description("Number of sounds (default 20).")] int n = 20)
-		=> Serialize(new
-		{
-			soundsEnabled = Program.ServiceProvider.GetService(typeof(TQVaultAE.Application.Contracts.Services.ISoundService)) is RecordingSoundService recorder
-				? recorder.SoundsEnabled
-				: (bool?)null,
-			sounds = RecordingSoundService.Last(Math.Clamp(n, 1, 200)).Select(DescribeSound),
-		});
-
 	#endregion
 
 	#region Forge helpers
+
+	/// <summary>The sequence number of the last sound played: recorded in Debug builds only, 0 in Release builds.</summary>
+#if DEBUG
+	private static long SoundSequence => RecordingSoundService.LastSequence;
+#else
+	private static long SoundSequence => 0;
+#endif
 
 	/// <summary>Runs a forge action and reports the forge state with the messages and sounds it produced.</summary>
 	private static string OnForge(Action<MainForm, ForgePanel> action)
 		=> AutomationHost.OnUi(form =>
 		{
 			var forge = RequireForge(form);
-			var sounds = RecordingSoundService.LastSequence;
+			var sounds = SoundSequence;
 			var messages = forge.AutomationMessages.Count;
 			action(form, forge);
 			return Serialize(ForgeStatus(form, sounds, messages));
@@ -255,19 +192,12 @@ internal static partial class AutomationTools
 			preview = form.AutomationForgeShown ? DescribeItem(forge?.AutomationPreview, null) : null,
 			dragging = form.AutomationDragInfo.IsActive ? DescribeItem(form.AutomationDragInfo.Item, null) : null,
 			newMessages = messages.Skip(Math.Min(messagesFrom, messages.Count)).Select(m => new { message = m.Message.ToString(), text = m.Text }),
-			sounds = RecordingSoundService.Since(soundsSince).Select(DescribeSound),
+#if DEBUG
+			// The sounds played, recorded in Debug builds only.
+			sounds = RecordingSoundService.Since(soundsSince).Select(DevTools.DescribeSound),
+#endif
 		};
 	}
-
-	private static object DescribeSound(RecordingSoundService.PlayedSound sound) => new
-	{
-		time = sound.Time.ToString("HH:mm:ss.fff"),
-		call = sound.Call,
-		resource = sound.Resource,
-		loaded = sound.Loaded,
-		wavBytes = sound.WavBytes,
-		error = sound.Error,
-	};
 
 	#endregion
 }

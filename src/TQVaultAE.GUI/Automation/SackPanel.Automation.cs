@@ -10,7 +10,7 @@ using TQVaultAE.GUI.Models;
 namespace TQVaultAE.GUI.Components.Panels;
 
 /// <summary>
-/// Debug-only entry points used by the automation endpoint.
+/// Entry points used by the automation endpoint.
 /// They feed the panel's own mouse handlers with synthetic events and a <see cref="VirtualCursor"/>,
 /// so the regular pick / drag / drop logic runs without touching the real mouse.
 /// </summary>

@@ -17,10 +17,8 @@ internal static class ScreenCursor
 	{
 		get
 		{
-#if DEBUG
 			if (Automation.VirtualCursor.IsActive)
 				return Automation.VirtualCursor.ScreenPosition;
-#endif
 			return Cursor.Position;
 		}
 	}

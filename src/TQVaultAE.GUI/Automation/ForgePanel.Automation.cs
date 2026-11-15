@@ -8,7 +8,7 @@ using TQVaultAE.Presentation;
 namespace TQVaultAE.GUI.Components.Panels;
 
 /// <summary>
-/// Debug-only access to the forge for the automation endpoint. Every action goes through the forge's own code.
+/// Access to the forge for the automation endpoint. Every action goes through the forge's own code.
 /// </summary>
 public partial class ForgePanel
 {

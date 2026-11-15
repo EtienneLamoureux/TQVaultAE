@@ -63,14 +63,12 @@ public sealed class MessageBoxService : IMessageBoxService
 	{
 		this._log.LogInformation("Message box \"{Caption}\" ({Buttons}): {Message}", caption, buttons, message);
 
-#if DEBUG
 		// Automation can queue the answers, so the box is not shown and nothing waits for a click.
 		if (Automation.AutomationHost.TryTakeDialogAnswer(caption, message, buttons, out var queued))
 		{
 			this._log.LogInformation("Message box \"{Caption}\" answered {Answer} by automation", caption, queued);
 			return queued;
 		}
-#endif
 
 		var answer = owner is null
 			? MessageBox.Show(message, caption, buttons, icon, defaultButton, ReadingOptions)

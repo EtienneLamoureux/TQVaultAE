@@ -16,195 +16,7 @@ internal static partial class AutomationTools
 {
 	#region Form controls
 
-	[McpServerTool(Name = "control_values", ReadOnly = true)]
-	[Description("Reads the input controls of an open form or dialog, or of the settings shown in the main window ('Settings'), (check boxes, radio buttons, numeric boxes, track bars, combo boxes, list boxes, text boxes, check group boxes): name, type, enabled, visible and value. Use it to check the rules a dialog applies when another control changes.")]
-	public static string ControlValues(
-		[Description("Part of the form title or its type name (case-insensitive).")] string form,
-		[Description("true to also list the labels and their text.")] bool labels = false)
-		=> AutomationHost.OnUi(_ =>
-		{
-			var target = FindOpenForm(form);
-			var controls = AllControls(target)
-				.Where(c => !string.IsNullOrEmpty(c.Name) && (IsInputControl(c) || (labels && c is Label)))
-				.Select(DescribeValue)
-				.ToList();
-			return Serialize(new { form = target.Text, type = target.GetType().Name, controls });
-		});
 
-	[McpServerTool(Name = "set_control", Destructive = true)]
-	[Description("Sets the value of a control of an open form or dialog, or of the settings shown in the main window ('Settings'), like a user would, so its own events run (CheckedChanged, ValueChanged, SelectedIndexChanged...). Value: true/false for check boxes, radio buttons and check group boxes; a number for numeric boxes and track bars (then Scroll is raised, as after a drag); the item text or '#index' for combo boxes (then SelectionChangeCommitted is raised, as after a pick in the list; any text for an editable one) and list boxes; the text for text boxes (then Validating, Validated and Leave are raised, as when the user leaves the box). Other control types are refused (use click_control or mouse_click). Returns the values of the form's input controls afterwards. Changes made in a dialog are applied by its OK button (close_dialog).")]
-	public static string SetControl(
-		[Description("Part of the form title or its type name (case-insensitive).")] string form,
-		[Description("Control name, as listed by control_values.")] string control,
-		[Description("New value.")] string value)
-		=> AutomationHost.OnUi(_ =>
-		{
-			var target = FindOpenForm(form);
-			var c = FindControl(target, control, " Use control_values.");
-			if (!c.Enabled)
-				throw new McpException($"'{c.Name}' is disabled: a user could not change it.");
-
-			switch (c)
-			{
-				case NumericUpDown number:
-					var n = decimal.Parse(value, CultureInfo.InvariantCulture);
-					if (n < number.Minimum || n > number.Maximum)
-						throw new McpException($"{n} is out of range {number.Minimum}..{number.Maximum}.");
-					number.Value = n;
-					break;
-				case TrackBar track:
-					// A drag or an arrow key moves the thumb (ValueChanged), then the bar raises Scroll.
-					var position = int.Parse(value, CultureInfo.InvariantCulture);
-					if (position < track.Minimum || position > track.Maximum)
-						throw new McpException($"{position} is out of range {track.Minimum}..{track.Maximum}.");
-					track.Value = position;
-					RaiseProtected(track, "OnScroll");
-					break;
-				case ComboBox combo:
-					int index = -1;
-					for (int i = 0; i < combo.Items.Count; i++)
-					{
-						if (string.Equals(combo.GetItemText(combo.Items[i]), value, StringComparison.OrdinalIgnoreCase))
-						{
-							index = i;
-							break;
-						}
-					}
-
-					// An editable combo box takes any text, as typed.
-					if (index < 0 && combo.DropDownStyle != ComboBoxStyle.DropDownList && !value.StartsWith('#'))
-					{
-						combo.Text = value;
-						break;
-					}
-
-					if (index < 0 && value.StartsWith('#'))
-						value = value[1..];
-					if (index < 0 && !int.TryParse(value, out index))
-						throw new McpException($"No item '{value}' in '{c.Name}'. Items: {string.Join(", ", combo.Items.Cast<object>().Select(combo.GetItemText))}");
-					if (index < 0 || index >= combo.Items.Count)
-						throw new McpException($"Index {index} is out of range 0..{combo.Items.Count - 1}.");
-					// A pick in the list changes the selection, then commits it (SelectionChangeCommitted).
-					combo.SelectedIndex = index;
-					RaiseProtected(combo, "OnSelectionChangeCommitted");
-					break;
-				case ListBox list:
-					int row = -1;
-					for (int i = 0; i < list.Items.Count; i++)
-					{
-						if (string.Equals(list.GetItemText(list.Items[i]), value, StringComparison.OrdinalIgnoreCase))
-						{
-							row = i;
-							break;
-						}
-					}
-
-					if (row < 0 && !(value.StartsWith('#') && int.TryParse(value[1..], out row)))
-						throw new McpException($"No item '{value}' in '{c.Name}'. Items: {string.Join(", ", list.Items.Cast<object>().Select(list.GetItemText))}");
-					list.SelectedIndex = row;
-					break;
-				case TextBoxBase text:
-					text.Text = value;
-					// A user types, then leaves the box: some boxes apply their text on Leave or Validated.
-					RaiseProtected(text, "OnValidating", new CancelEventArgs());
-					RaiseProtected(text, "OnValidated");
-					RaiseProtected(text, "OnLeave");
-					break;
-				default:
-					var checkedProperty = c.GetType().GetProperty("Checked", typeof(bool));
-					if (checkedProperty?.CanWrite != true)
-						throw new McpException($"'{c.Name}' is a {c.GetType().Name}: set_control sets check boxes, radio buttons, check group boxes, numeric boxes, track bars, combo boxes, list boxes and text boxes. Use click_control or mouse_click for the others.");
-					checkedProperty.SetValue(c, bool.Parse(value));
-					break;
-			}
-
-			var controls = AllControls(target).Where(x => !string.IsNullOrEmpty(x.Name) && IsInputControl(x)).Select(DescribeValue).ToList();
-			return Serialize(new { set = DescribeValue(c), controls });
-		});
-
-
-	[McpServerTool(Name = "click_control", Destructive = true)]
-	[Description("Clicks a button of an open form, or of the settings shown in the main window ('Settings'), like a user (form '' for the main window, e.g. control 'configureButton' shows the settings in the main window, or leaves them as their Cancel does, asking first when they were changed). The click runs after this call returns, since a button may open a modal dialog: follow with list_windows, control_values or close_dialog.")]
-	public static string ClickControl(
-		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
-		[Description("Button name, as listed by control_values or control_tree.")] string control)
-		=> AutomationHost.OnUi(main =>
-		{
-			var target = FormOrMain(main, form);
-			var c = FindControl(target, control);
-			if (c is not IButtonControl and not ButtonBase)
-				throw new McpException($"'{c.Name}' is a {c.GetType().Name}, not a button.");
-			if (!c.Enabled || !c.Visible)
-				throw new McpException($"'{c.Name}' is disabled or hidden: a user could not click it.");
-
-			// OnClick is what a mouse click raises; every button (Button, ScalingButton, check boxes) has it.
-			var onClick = typeof(Control).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic)!;
-			main.BeginInvoke(() => onClick.Invoke(c, [EventArgs.Empty]));
-			return Serialize(new { form = target.Text, clicked = c.Name });
-		});
-
-
-	[McpServerTool(Name = "mouse_click", Destructive = true)]
-	[Description("Clicks a point of a control with mouse messages sent to the window under that point, as Windows sends them (WM_MOUSEMOVE, button down, button up; a double click adds WM_*BUTTONDBLCLK and up; the right button ends with WM_CONTEXTMENU, so a control's own context menu opens), unlike click_control, which raises OnClick: the control's own mouse handling, hit testing and repaint run as for a user's click. x and y are in the control's client coordinates (bounds from control_tree); the messages go to the deepest visible child at that point, e.g. the check box in the caption of a check group box (control 'detectGamePathsCheckBox', on its glyph or its text), the loadout bar ('loadoutBar': [+] and Load at the bounds loadouts reports), a link label, the character editor's tabs. The click runs after this call returns: read the result with control_values, list_windows or capture.")]
-	public static string MouseClick(
-		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
-		[Description("Control name, as listed by control_tree.")] string control,
-		[Description("X in the control's client coordinates.")] int x,
-		[Description("Y in the control's client coordinates.")] int y,
-		[Description("left or right.")] string button = "left",
-		[Description("1 for a click, 2 for a double click.")] int clicks = 1)
-		=> AutomationHost.OnUi(main =>
-		{
-			var mouseButton = ParseButton(button);
-			if (clicks is not (1 or 2))
-				throw new McpException("clicks must be 1 or 2.");
-
-			var target = FormOrMain(main, form);
-			var c = FindControl(target, control);
-
-			// The deepest visible child under the point, as Windows finds the window that gets the mouse.
-			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
-
-			main.BeginInvoke(() => AutomationInput.SendMouse(hit, point, mouseButton, clicks));
-			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point, button = mouseButton.ToString(), clicks });
-		});
-
-	[McpServerTool(Name = "mouse_wheel", Destructive = true)]
-	[Description("Turns the mouse wheel over a point of a control: WM_MOUSEWHEEL sent to the deepest visible window under that point, as Windows does for the window under the cursor; a window that does not use the wheel passes it to its parents, as for the user. notches > 0 turns it away from the user (scrolls up), < 0 towards (down). modifiers ('ctrl', 'shift', 'alt', 'ctrl+shift') are held during the message. Runs before this call returns, which then gives the receiver and the scroll position of each scrollable control from the receiver up to the form (AutoScroll panels: x and y; list boxes: topIndex; visible scroll bar children: value), to read the effect. Works headless: the search dialog's lists, the bag settings' icon grids, the character list.")]
-	public static string MouseWheel(
-		[Description("Part of the form title or its type name (case-insensitive); empty for the main window.")] string form,
-		[Description("Control name, as listed by control_tree.")] string control,
-		[Description("X in the control's client coordinates.")] int x,
-		[Description("Y in the control's client coordinates.")] int y,
-		[Description("Wheel notches: positive up (away from the user), negative down.")] int notches,
-		[Description("Modifier keys held: ctrl, shift, alt or a combination like ctrl+shift; empty for none.")] string? modifiers = null)
-		=> AutomationHost.OnUi(main =>
-		{
-			var target = FormOrMain(main, form);
-			var c = FindControl(target, control);
-			if (notches == 0)
-				throw new McpException("notches must not be 0.");
-
-			var held = ClickModifiers(modifiers);
-
-			var (hit, point) = AutomationInput.ChildAt(c, new Point(x, y));
-			AutomationInput.SendWheel(hit, point, notches, held);
-
-			var scroll = new List<object>();
-			for (Control? up = hit; up is not null; up = up.Parent)
-			{
-				if (up is ScrollableControl { AutoScroll: true } scrollable)
-					scroll.Add(new { control = up.Name, type = up.GetType().Name, x = -scrollable.AutoScrollPosition.X, y = -scrollable.AutoScrollPosition.Y });
-				else if (up is ListBox list)
-					scroll.Add(new { control = up.Name, type = up.GetType().Name, topIndex = list.TopIndex });
-
-				// A control drawing its own content with a scroll bar child (the bag settings' icon grids).
-				foreach (var bar in up.Controls.OfType<ScrollBar>().Where(b => b.Visible))
-					scroll.Add(new { control = up.Name, type = up.GetType().Name, scrollBar = bar.GetType().Name, value = bar.Value, maximum = bar.Maximum });
-			}
-
-			return Serialize(new { form = target.Text, control = c.Name, receiver = hit.Name, receiverType = hit.GetType().Name, point, notches, scroll });
-		});
 
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
 	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'text:<name>' answers the next text input dialog (the name asked by Duplicate Character and the loadout actions): the dialog opens, the text is typed and its OK button clicked, so its own checks run (Cancel cancels it; no comma in the text). 'clear' empties the queue and the record. Covers every message box, the startup notices included, and the vault import dialog (Yes replaces the vault, No imports it as a new vault, Cancel cancels). In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers; a text input dialog without one stays open (close_dialog, or set_control and click_control).")]
@@ -223,10 +35,10 @@ internal static partial class AutomationTools
 	public static string DialogAnswers()
 		=> Serialize(new
 		{
-			headless = HeadlessDesktop.Enabled,
+			headless = AutomationHost.HeadlessDesktopName is not null,
 			answered = AutomationHost.AnsweredDialogs,
 			unanswered = AutomationHost.UnansweredDialogs,
-			cancelledNativeDialogs = HeadlessDesktop.CancelledDialogs,
+			cancelledNativeDialogs = AutomationHost.CancelledNativeDialogs,
 			pending = AutomationHost.PendingDialogAnswers.Select(a => a.ToString()).ToList(),
 		});
 
@@ -291,7 +103,7 @@ internal static partial class AutomationTools
 	#region Character editor and tags
 
 	[McpServerTool(Name = "archive_character", Destructive = true)]
-	[Description("Archives (archived=true) or unarchives the selected character like the user: opens the menu of the tools button next to the character list and clicks 'Archived' when its tick differs (menu_click('characterTools', 'Archived')), before returning; TQVault moves its save folder to or from the archive folder. Only test characters (names starting with 'claude-', 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
+	[Description("Archives (archived=true) or unarchives the selected character like the user: opens the menu of the tools button next to the character list and clicks 'Archived' when its tick differs (menu_click('characterTools', 'Archived')), before returning; TQVault moves its save folder to or from the archive folder. Debug builds: only test characters (names starting with 'claude-', 'player-test' or 'player-mod'); the 'Archive all' entries are not driven, since they move every character.")]
 	public static string ArchiveCharacter([Description("true to archive, false to unarchive.")] bool archived)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -305,7 +117,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "character_read_only", Destructive = true)]
-	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first opens the character menu and clicks 'Read-only' like a user (menu_click('characterTools', 'Read-only')), which sets or clears that attribute (test characters only: names starting with 'claude-', 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
+	[Description("Reads the read-only state of the selected character: the 'Read-only' tick of the character menu, the badge of its entry in the character list, the read-only state of its sacks and the read-only attribute of each file TQVault writes for it. With toggle=true, first opens the character menu and clicks 'Read-only' like a user (menu_click('characterTools', 'Read-only')), which sets or clears that attribute (Debug builds: test characters only, names starting with 'claude-', 'player-test' or 'player-mod'). Returns the notification shown after the click (a refusal, an error).")]
 	public static string CharacterReadOnly([Description("true to click 'Read-only' first; false to only read.")] bool toggle = false)
 		=> AutomationHost.OnUi(form =>
 		{
@@ -363,7 +175,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "tag_archive_all", Destructive = true)]
-	[Description("Clicks 'Archive all' (archived=true) or 'Unarchive all' in the menu of a tag, like a user: TQVault moves the save folders of the characters having that tag. Only test tags starting with 'claude-' whose characters are all claude-* test characters. Returns those characters with their state and folder.")]
+	[Description("Clicks 'Archive all' (archived=true) or 'Unarchive all' in the menu of a tag, like a user: TQVault moves the save folders of the characters having that tag. Debug builds: only test tags starting with 'claude-' whose characters are all claude-* test characters. Returns those characters with their state and folder.")]
 	public static string TagArchiveAll(
 		[Description("The test tag.")] string tag,
 		[Description("true to archive, false to unarchive.")] bool archived)
@@ -375,7 +187,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_character_editor", Destructive = true)]
-	[Description("Shows the character editor of the selected character in place of the main content, like the Edit button of the stash panel, before returning. Read and change it with control_values and set_control (form 'Character Editor'), then leave it with close_dialog('Character Editor', OK or Cancel) (OK applies the changes in memory; save_files writes them). Work only on claude-* test characters.")]
+	[Description("Shows the character editor of the selected character in place of the main content, like the Edit button of the stash panel, before returning. Read and change it with control_values and set_control (form 'Character Editor'), then leave it with close_dialog('Character Editor', OK or Cancel) (OK applies the changes in memory; save_files writes them). Debug builds: work only on claude-* test characters.")]
 	public static string OpenCharacterEditor()
 		=> AutomationHost.OnUi(form =>
 		{
@@ -386,7 +198,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "tag_box", Destructive = true)]
-	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' clicks Tags > 'text' > Delete in the menu of the tools button (menu_click), after this call returns, and answers its confirmation with OK; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Names must start with 'claude-'. Read the tags with list_tags.")]
+	[Description("Types into a tag box of the character drop down's context menu and presses Enter, like a user: box 'add' (new tag, assigned to the selected character) or 'rename' (renames the tag 'tag'). A refused name shows an error box (answer it with close_dialog). Box 'delete' clicks Tags > 'text' > Delete in the menu of the tools button (menu_click), after this call returns, and answers its confirmation with OK; 'assign' and 'unassign' tick or untick the tag 'text' for the selected test character. Debug builds: names must start with 'claude-' and only test characters. Read the tags with list_tags.")]
 	public static string TagBox(
 		[Description("add, rename, delete, assign or unassign.")] string box,
 		[Description("The text typed (add, rename) or the tag to delete, assign or unassign.")] string text,

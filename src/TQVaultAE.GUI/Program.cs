@@ -100,7 +100,8 @@ public static class Program
 				Log.LogInformation("Headless mode: running on the hidden desktop {Desktop}", TQVaultAE.Automation.HeadlessDesktop.DesktopName);
 			}
 
-			// In-app MCP automation endpoint, started early so that startup dialogs can be answered. See documentation/AUTOMATION.md
+			// In-app MCP automation endpoint with the developer tools, started early whatever the settings, so that startup
+			// dialogs can be answered. See documentation/AUTOMATION.md
 			LoggerFactory.AddProvider(TQVaultAE.GUI.Automation.AutomationHost.RecentLog);
 			TQVaultAE.GUI.Automation.AutomationHost.Start(LoggerFactory);
 #endif
@@ -224,6 +225,9 @@ public static class Program
 			Program.ServiceProvider = scol.BuildServiceProvider();
 
 			var userSettings = ServiceProvider.GetRequiredService<UserSettings>();
+
+			// The MCP automation endpoint, when the user turned it on in the settings (off by default). See documentation/mcp.md
+			TQVaultAE.GUI.Automation.AutomationHost.Apply(userSettings.EnableMcpServer, userSettings.McpServerPort, LoggerFactory);
 			var startupService = ServiceProvider.GetRequiredService<IStartupService>();
 
 			try
@@ -262,9 +266,7 @@ public static class Program
 			var filterMouseButtons = new FormFilterMouseButtonGlobally(mainform);
 			System.Windows.Forms.Application.AddMessageFilter(filterMouseWheel);
 			System.Windows.Forms.Application.AddMessageFilter(filterMouseButtons);
-#if DEBUG
 			TQVaultAE.GUI.Automation.AutomationHost.AttachMainForm(mainform);
-#endif
 			System.Windows.Forms.Application.Run(mainform);
 		}
 		catch (Exception ex)
@@ -291,14 +293,12 @@ public static class Program
 	/// <param name="headlessAnswer">Debug: the answer in headless mode when none is queued, instead of the one that changes nothing.</param>
 	private static DialogResult ShowMessageBox(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxOptions options, DialogResult? headlessAnswer = null)
 	{
-#if DEBUG
 		// Queued automation answers, and never a box in headless mode.
 		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(caption, message, buttons, out var automated, headlessAnswer))
 		{
 			Log?.LogInformation("Message box \"{Caption}\" answered {Answer} by automation", caption, automated);
 			return automated;
 		}
-#endif
 		return MessageBox.Show(message, caption, buttons, icon, MessageBoxDefaultButton.Button1, options);
 	}
 

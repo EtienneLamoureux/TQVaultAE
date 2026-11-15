@@ -341,6 +341,10 @@ public partial class MainForm
 		if (settings.EnableCharacterEditChanged)
 			this.mainView.UpdatePlayerInfo();
 
+		// The MCP endpoint starts or stops at once (documentation/mcp.md).
+		if (settings.McpServerChanged)
+			Automation.AutomationHost.Apply(this.USettings.EnableMcpServer, this.USettings.McpServerPort);
+
 		this.userContext.ConfigChanged = true;
 		this.SaveConfiguration();
 

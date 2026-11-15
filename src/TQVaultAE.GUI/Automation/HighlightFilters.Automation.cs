@@ -8,7 +8,7 @@ using TQVaultAE.Automation;
 namespace TQVaultAE.GUI.Components;
 
 /// <summary>
-/// Debug-only entry points used by the automation endpoint.
+/// Entry points used by the automation endpoint.
 /// </summary>
 public partial class HighlightFilters
 {

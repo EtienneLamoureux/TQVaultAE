@@ -3,7 +3,7 @@ using TQVaultAE.GUI.Automation;
 
 namespace TQVaultAE.GUI.Components.Panels;
 
-/// <summary>Debug-only access to the loadout marks' tool tip for the automation endpoint.</summary>
+/// <summary>Access to the loadout marks' tool tip for the automation endpoint.</summary>
 public partial class EquipmentPanel
 {
 	/// <summary>

@@ -11,7 +11,7 @@ internal sealed record AutomationKeyBindRow(string Action, string Name, string K
 	, bool Greyed, string? ToolTip);
 
 /// <summary>
-/// Debug-only access to the key binds dialog for the automation endpoint: its rows as shown, and a rebind through the
+/// Access to the key binds dialog for the automation endpoint: its rows as shown, and a rebind through the
 /// dialog's own capture handlers (a click on the cell, then the key or the click with modifiers).
 /// </summary>
 internal sealed partial class KeyBindsDialog

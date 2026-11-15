@@ -6,7 +6,7 @@
 namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
-/// Debug-only replacement for <see cref="Cursor.Position"/> while automation drives a drag.
+/// Replacement for <see cref="Cursor.Position"/> while automation drives a drag.
 /// The real cursor is never moved: the panels read the cursor position from here when an override is active.
 /// </summary>
 internal static class VirtualCursor

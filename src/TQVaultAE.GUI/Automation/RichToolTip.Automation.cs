@@ -1,7 +1,7 @@
 namespace TQVaultAE.GUI.Tooltips;
 
 /// <summary>
-/// Debug-only access to the cards for the automation endpoint.
+/// Access to the cards for the automation endpoint.
 /// </summary>
 internal sealed partial class RichToolTip
 {

@@ -66,12 +66,8 @@ public partial class SackPanel : Panel, IScalingControl
 				// The cursor position is only needed to draw a dragged item.
 				if (this.DragInfo.IsActive)
 				{
-#if DEBUG
 					// Automation drives drags with a virtual cursor instead of the real one.
 					Point cursorPosition = Automation.VirtualCursor.GetClientPosition(this);
-#else
-					Point cursorPosition = this.PointToClient(Cursor.Position);
-#endif
 					if (this.ClientRectangle.Contains(cursorPosition))
 						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));
 				}

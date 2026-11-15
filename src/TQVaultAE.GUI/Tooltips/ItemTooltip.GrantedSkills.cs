@@ -98,9 +98,7 @@ public partial class ItemTooltip
 				for (int i = 0; i < blocks.Count; i++)
 				{
 					bool newColumn = columnOf[i] == columns.Count;
-#if DEBUG
 					this.AutomationRecorder?.PlaceSkill(newColumn);
-#endif
 					if (newColumn)
 						columns.Add([]);
 					columns[^1].Add(blocks[i]);
@@ -158,9 +156,7 @@ public partial class ItemTooltip
 
 		this.Controls.Add(panel);
 		panel.PerformLayout();
-#if DEBUG
 		this.AutomationRecorder?.SkillBlock(panel);
-#endif
 		try
 		{
 			return Rasterize(panel);

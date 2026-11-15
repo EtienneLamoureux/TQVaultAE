@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using TQVaultAE.GUI.Interop;
 
 /// <summary>
-/// Debug-only access to the custom border of a TQVault form for the automation endpoint.
+/// Access to the custom border of a TQVault form for the automation endpoint.
 /// </summary>
 public partial class VaultForm
 {

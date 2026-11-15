@@ -4,7 +4,7 @@ using TQVaultAE.Application.Contracts.Services;
 namespace TQVaultAE.GUI.Forms;
 
 /// <summary>
-/// Debug-only access to the mod link of the characters for the automation endpoint.
+/// Access to the mod link of the characters for the automation endpoint.
 /// </summary>
 public partial class MainForm
 {

@@ -10,7 +10,7 @@ using TQVaultAE.GUI.Components.Panels;
 namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
-/// Debug-only access to the archive toggle of the character menu for the automation endpoint.
+/// Access to the archive toggle of the character menu for the automation endpoint.
 /// </summary>
 public partial class ComboBoxCharacter
 {

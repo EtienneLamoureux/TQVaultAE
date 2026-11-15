@@ -15,7 +15,7 @@ using TQVaultAE.GUI.Models;
 namespace TQVaultAE.GUI.Forms;
 
 /// <summary>
-/// Debug-only read access to the main form state for the automation endpoint.
+/// Read access to the main form state for the automation endpoint.
 /// </summary>
 public partial class MainForm
 {

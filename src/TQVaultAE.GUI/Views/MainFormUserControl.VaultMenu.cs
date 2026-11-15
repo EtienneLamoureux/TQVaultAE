@@ -351,7 +351,6 @@ public partial class MainFormUserControl
 		};
 
 		TaskDialogButton result;
-#if DEBUG
 		// Automation answers this dialog like a message box: Yes replaces, No creates a new vault, Cancel cancels.
 		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(page.Heading, page.Text, MessageBoxButtons.YesNoCancel, out var automated))
 			result = automated switch
@@ -361,7 +360,6 @@ public partial class MainFormUserControl
 				_ => TaskDialogButton.Cancel,
 			};
 		else
-#endif
 			result = TaskDialog.ShowDialog(page);
 
 		if (result == TaskDialogButton.Cancel)

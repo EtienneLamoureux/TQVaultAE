@@ -201,7 +201,6 @@ public partial class ItemTooltip : BaseTooltip
 			&& this.flowLayoutPanelFriendlyNames.GetPreferredSize(Size.Empty).Height > this.MaxPanelHeight())
 			relicColumn = this.MoveRowsToColumn(relicRowsStart, relicRowsEnd);
 
-#if DEBUG
 		if (this.AutomationRecorder is { } recorder)
 		{
 			recorder.Panel(this.flowLayoutPanelFriendlyNames);
@@ -211,7 +210,6 @@ public partial class ItemTooltip : BaseTooltip
 				recorder.Panel(relicColumn);
 			}
 		}
-#endif
 
 		// The relic column and the granted skills go on the right, shown with the item panel as one cached image.
 		if (relicColumn is not null || this.Data.GrantedSkills.Length != 0)
