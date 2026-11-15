@@ -154,10 +154,10 @@ The size of each item in cells comes from its picture in the game files, not fro
 
 After all items are processed, a notification shows: *"Imported N of M items."*
 
-The imported items then take their map in the vault like dropped ones (see [Mod link](MODLINK.md)): an item with its
-own map keeps it, the others inherit the vault's. Read with a new map, an item may take its real size and move to a free
-spot of the tab, else of another tab; without any, it keeps its previous map. A mod named by the export that is not
-installed here is dropped, and a second notification names it.
+The imported items are then read with the vault's map like dropped ones (see [Mod link](MODLINK.md)). Read with a new
+map, an item may take another size and move to a free spot of the tab, else of another tab; without any, it is shown in
+one cell with a warning until moved where it fits. A mod named by the export that is not installed here is dropped, and
+a second notification names it.
 
 ---
 
@@ -179,8 +179,8 @@ All exports use a JSON envelope with the following structure:
   - `Item`: Single `ItemDto` object (includes `stackSize`, `seed`, `baseName`, `prefixName`, `suffixName`, `relicName`, `relicBonus`, `var1`, `relicName2`, `relicBonus2`, `var2`, `pointX`, `pointY`, `width`, `height`).
   - `width` and `height` are the item size in cells (one cell per 32 pixels of its picture). Older versions could write `0` for items whose picture had not been drawn yet; imports ignore them.
   - `MultiSelect`: Array of `ItemDto` objects (two or more: one selected item is exported as `Item`).
-  - An `ItemDto` also has the item's map (see [Mod link](MODLINK.md)): `mod` for a mod, `noMod: true` for the base game. In `Item` and `MultiSelect` exports every item writes the map it is read with, made explicit, and the import gives it as the item's own. In `Tab` and `Vault` exports an item writes only its own map; the others inherit the container's `mod`, written once. An import drops a mod that is not installed here.
-  - `Tab`: an object with `sackNumber`, `items` (array of `ItemDto`), optional `iconInfo` (bag button label, display mode, icon RecordIds) and `mod` when its vault or character is linked to a mod. Its items that inherited that mod keep it: inherited in a vault of that mod, else as their own.
+  - An `ItemDto` has no mod: an item's mod is computed from the data of the container it is put in (see [Mod link](MODLINK.md)). `width` and `height` are its real size, even when it is shown in one cell for want of room. Older exports of this branch could have an item's `mod`, `modSource` or `noMod`: imports ignore them.
+  - `Tab`: an object with `sackNumber`, `items` (array of `ItemDto`), optional `iconInfo` (bag button label, display mode, icon RecordIds) and `mod` when its vault or character is linked to a mod. Its items are read with that mod until placed, then with their target's map. An import drops a mod that is not installed here.
   - `Vault`: an object with the vault `name`, `sacks` (array of the `Tab` objects above) and `mod` when the vault is linked to a mod.
 
 ---

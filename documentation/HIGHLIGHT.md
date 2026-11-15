@@ -27,8 +27,9 @@ The popup also has check boxes (Having Prefix, Having Suffix, Having Relic, Havi
 and lists to tick: item types, rarity, origin and, when mods are installed, the installed mods. The screenshot below is
 older and shows only the first two boxes.
 
-*Modded* keeps the items that come from a mod, installed or not: the mod of the item itself, or the mod of the vault or
-character holding it ([mod links](MODLINK.md)). Ticking mods in the mod list keeps only the items of those mods.
+*Modded* keeps the items that come from a mod, installed or not: the mod whose data gave at least one of the item's
+records, read with the data of its vault, character or shared stash (see [Mods](MODS.md#ItemMod) and
+[mod links](MODLINK.md)). Ticking mods in the mod list keeps only the items of those mods.
 
 Inside a list, the ticked entries add up (an item of any of them matches); the boxes, the requirement range and the lists
 must all match.

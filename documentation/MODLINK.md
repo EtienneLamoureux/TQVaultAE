@@ -63,7 +63,7 @@ Selecting a character makes its map the active one: its database and archives, a
 the first time it is needed (about half a second for a large mod) and kept for the session, so switching back is
 immediate. Once the startup loading ends, the databases of the mods the listed characters are linked to are read in
 the background (*Load all files* has read them already), so selecting a modded character does not wait for them. A
-*Modded* choice (item or vault) of a mod whose database is not read yet reads it in the background too, under the wait
+*Modded vault* choice of a mod whose database is not read yet reads it in the background too, under the wait
 cursor, then applies the choice: the window does not freeze. A database being read only makes the users of that map wait; the maps already read stay usable. A character read with another map's database (before it was linked) is read again, unless it has unsaved
 changes.
 
@@ -71,27 +71,21 @@ changes.
 
 ## The map of an item
 
-Every item TQVault holds has a **map**: the data its records resolve in, a mod (its folder name, as in a link file:
-mod data first, then the base game's) or the base game. Its picture, size, names, tooltip and statistics all come from
-that map, and only from it: never from the selected character or from the moment its data is read. The search, a
-tooltip and a vault therefore show an item the same way whatever character is selected.
+Every item TQVault holds is read with the **map of its container**: the data its records resolve in, a mod (mod data
+first, then the base game's) or the base game. Its picture, size, names, tooltip and statistics all come from that map,
+and only from it: never from the selected character or from the moment its data is read. The search, a tooltip and a
+vault therefore show an item the same way whatever character is selected.
 
-The map has an **origin**:
-
-- **Own**: chosen for the item, read as its own from a vault file or an export, or made explicit when it left a
-  character (see below). It goes with the item wherever it goes.
-- **Inherited**: the map of the container holding it. It changes with the container's link, and with the container
-  when the item moves.
-
-A map naming a mod that is not installed is kept as it is: the item is read with the base game data and shown
-incomplete until the mod is installed or the map changed.
+An item has no map of its own, and none is saved: the map is the container's, given again each time the item is read
+or changes container (`Item.ContainerMod`). A container linked to a mod that is not installed reads its items with the
+base game data.
 
 The *active map* (the selected character's) remains only for what belongs to that character: its shared stash files,
 the pictures and texts of the window, the caps and formulas of its statistics.
 
 ### The map a container gives
 
-| Container | Inherited map |
+| Container | Map its items are read with |
 |---|---|
 | Vault linked to a mod | that mod |
 | Vault without a link | the base game |
@@ -100,110 +94,118 @@ the pictures and texts of the window, the caps and formulas of its statistics.
 | Custom map character without a link | the base game |
 | Transfer stash and relic vault | the map whose files they are (`SaveData\Sys\<mod>`, or `SaveData\Sys\` for the base game) |
 
-Each character and each shared stash is read with its own map's database, whatever map is active, and its items
-inherit that map before anything else reads them.
+Each character and each shared stash is read with its own map's database, whatever map is active.
 
-### What sets or changes an item's map
+### The mod of an item
 
-The map changes only on these events.
+An item's mod (`Item.Mod`, shown in its tooltip and used by the *Modded* and *Mod* filters) is **computed** from the
+records it was read with: it is a mod when at least one of its records (base item, prefix, suffix, relic or charm 1 and
+2, their completion bonuses) was read from that mod's database, a record of the mod's own or one the mod overrides (the
+same record id as the base game, found first in the mod's database). An item whose records all come from the game is no
+mod's, even in a linked vault.
 
-1. **A container is read** (startup, selecting a character, reading a vault). An item with an own link in a vault file
-   gets it as its own; every other item inherits the container's map. On a first start nothing is linked yet: every
-   item inherits the base game, and linking a container afterwards gives its new map to them all (event 3).
-2. **An item changes container**: dropped, equipped, *Move Item To*, imported, pasted.
-   - An own map is kept, also on a character or in a game stash: keeping the containers consistent with the game is the
-     user's responsibility. The game tolerates records it cannot resolve.
-   - **Leaving a character for a vault makes the map explicit**: an inherited map becomes the item's own, with the same
-     value. This covers the equipment, the bags, the character's stash, the transfer stash and the relic vault. The item
-     keeps the data the game reads it with: a mod's own item, and a base game item that the mod changes, alike. A vault
-     without a link may then hold items linked to a mod: the tooltip shows it, and *Modded > None (base game)* gives them
-     the base game.
-   - In any other move an inherited map becomes the new container's. On a character (or in a stash shown with it) that is
-     the shown character's map.
-3. **A vault's link changes** (*Modded vault*): its items with an inherited map take the new one; own maps are kept. A
-   character linked or unlinked (*Mod link...*) is read again when selected, unless it has unsaved changes.
-4. **The user chooses for a vault item** in its *Modded* menu: a mod, or *None (base game)*. The choice becomes the
-   item's own map. Character items have no such menu: their files cannot keep the choice.
-5. **A copy is made** (split stack, duplicate, copy of a tab, relic or charm taken out, crafted artifact, new set member,
-   forge result): it has the map and origin of its source, then event 2 applies where it lands.
+Each record read keeps the database it came from (`DBRecordCollection.Source`, carried by `Info.Source`): the base game,
+Immortal Throne, or a mod, by its identity. Never the record id, which is the same key in every map: each map's
+database (`Database`, one per map) caches its own records.
 
-There is no guess from the records: an item a vault's mod completes still only inherits it (relinking the vault to
-another mod makes it incomplete again, and the user gives it a link with *Modded*, where the mods that have its records
-are *(suggested)*), and items of a linked character are not linked one by one to its mod.
+So an item's mod follows its container: a modded item moved to a vault without a link is read with the base game data,
+loses its mod and is shown incomplete (its mod records are missing); moved back to a vault linked to its mod, it is
+whole again. **Linked vaults are the way to keep mod items resolved.**
 
-**On a character, an own map lasts for the session.** The game's character and stash files have no place for a link,
-and TQVault keeps none beside them: when they are read again, their items inherit the character's map. An item moved
-back to a vault during the session keeps its own map, which the vault file saves.
+### What reads an item again
+
+1. **A container is read** (startup, selecting a character, reading a vault): its items are read with its map.
+2. **An item changes container** (dropped, equipped, *Move Item To*, imported, pasted, results window *Move To*): it is
+   read with the new container's map when it differs. On a character, or in a stash shown with it, that is the shown
+   character's map.
+3. **A container's link changes** (*Modded vault*; a character linked or unlinked with *Mod link...* is read again when
+   selected, unless it has unsaved changes): every item of the container is read again with the new map.
+4. **A copy is made** (split stack, duplicate, copy of a tab, relic or charm taken out, crafted artifact, new set member,
+   forge result): it is read with the map of its source until placed, then event 2 applies.
+
+Nothing is guessed from the records: an item gets a mod only from the database it was read with.
 
 ### When the item's size changes
 
-Read with another map, an item may take another size: an incomplete one-cell tile becomes a 1x5 lance. The item is
-always shown with its map's data, so it is placed again when it no longer fits where it lies:
+Read with another map, an item may take another size: an incomplete one-cell tile becomes a 1x5 lance.
 
 | Event | Where it goes | No room at all |
 |---|---|---|
-| Drop by hand | where it was dropped, else the first free spot of the tab | the drop is refused: the item stays in hand, and a message invites the user to drop it in another tab |
-| *Move Item To*, import, paste, a vault's link changed | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | it keeps its previous map, as its own, and a message names it |
-| *Modded* choice | where it lies, else the first free spot of its tab | the choice is refused, and a message invites the user to move the item to another tab first |
+| Drop by hand into a container of another map | where it was dropped, else the first free spot of the tab | the drop is refused, like any drop without room: the item stays in hand, read with its previous map, and a message invites the user to drop it in another tab |
+| *Move Item To*, import, paste, results window *Move To* | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | it is shown 1 x 1 where it lies (below) |
+| A container's link changes | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | it is shown 1 x 1 where it lies (below) |
+| A vault read whose link changed since it was saved | where it lies | it is shown 1 x 1 where it lies (below) |
 
-A drop by hand and a *Modded* choice never move the item to another tab: the user chooses the tab. A drop is checked
-before anything changes (`IItemEditService.HasRoomOnceSettled`, `SackLayout.HasRoomAt`): the item is read with the map
-it would take, then with its own again. The free spot search goes row by row (`SackLayout.FitsOrMoves`). Every item
-read with a new map has its tooltip, its names and its search entry made again.
+A drop by hand never moves the item to another tab: the user chooses the tab. A drop is checked before anything changes
+(`IItemEditService.HasRoomOnceSettled`, `SackLayout.HasRoomAt`): the item is read with the map it would take, then with
+its own again. The free spot search goes row by row (`SackLayout.FitsOrMoves`). Every item read with a new map has its
+tooltip, its names and its search entry made again.
+
+### Items shown 1 x 1 for want of room
+
+An item whose real size has no room where it lies is shown **1 x 1** (`Item.LacksRoom`): its width and height give one
+cell (`RealWidth` and `RealHeight` keep the real size), so the layout, the drawing, the search and the room checks all
+see it as it lies, over no neighbour. It is drawn with the warning tile of an incomplete item, and its tooltip says that
+the problem is a lack of room for its size, not missing records. Its records are read as usual: its names, statistics
+and mod are whole.
+
+The state is never saved, and it clears:
+
+- when the item is dropped or moved where its real size fits (a drop into the same tab checks the real size at the drop
+  spot, then at a free spot; without room it stays 1 x 1);
+- when its container's link changes again and gives it room;
+- when its vault is read again and its saved place has room for its size.
+
+An export writes the item's real size.
 
 ### The identity of a mod
 
 A mod is its folder name and where it is installed from: a Steam Workshop mod and a custom map with the same folder name
-are two mods, which the dialog, the *Modded* menus and the files tell apart. Files keep the name in `"mod"` and the
-source beside it in `"modSource"` (`"source"` in a link file): `workshop:<item id>` or `custommaps`.
+are two mods, which the dialog, the *Modded vault* menu, the filters and the files tell apart. Files keep the name in
+`"mod"` and the source beside it in `"modSource"` (`"source"` in a link file): `workshop:<item id>` or `custommaps`. A
+mod's database names its records after the installed mod in its folder (`IModLinkService.ModIdOfMap`), else after the
+folder.
 
-Both are needed: a link file without its source is not read (the character is not linked), and a vault or an item that
-names a mod by its name alone names no installed mod (read with the base game data, like a mod that is not installed).
-The match is exact: the same mod installed the other way here (from the Workshop instead of the custom maps, or the
-reverse) is another mod, and a character linked to it shows its mod as not installed until it is linked again.
+Both are needed: a link file without its source is not read (the character is not linked), and a vault that names a mod
+by its name alone names no installed mod (read with the base game data, like a mod that is not installed). The match is
+exact: the same mod installed the other way here (from the Workshop instead of the custom maps, or the reverse) is
+another mod, and a character linked to it shows its mod as not installed until it is linked again.
 
 ### In the files
 
-In the vault file, the vault's mod is `"mod"` at the top. An item writes only its own map: `"mod"` for a mod,
-`"noMod": true` for the base game (older TQVault versions ignore it, and the item follows the vault's link there). An item
-without them inherits the vault's mod.
+In the vault file, the vault's mod is `"mod"` at the top. Items write no mod: older TQVault versions of this branch wrote
+an item's own `"mod"`, `"modSource"` or `"noMod"`; they are ignored when read and dropped at the next save.
 
 ```json
 {
   "mod": "shadowchampions",
   "modSource": "workshop:1949340853",
-  "sacks": [ { "items": [ { "baseName": "records\\customitems\\mi\\e_centurionlance.dbr" },
-                          { "baseName": "...", "mod": "Lilith", "modSource": "workshop:890319896" },
-                          { "baseName": "...", "noMod": true } ] } ]
+  "sacks": [ { "items": [ { "baseName": "records\\customitems\\mi\\e_centurionlance.dbr" } ] } ]
 }
 ```
 
 ### Exports and imports
 
-An export keeps the map at the level it belongs to:
+A **vault** or **tab** export writes the mod of its container once, at its top, as in the vault files. Items write no
+mod, and an **item** export (one item or a selection) none at all: an imported item takes the map of the container it is
+put in.
 
-- A **vault** or **tab** export writes the mod of its container once, at its top, and each item's own map only. A mod
-  is written as in the vault files: `"mod"` and `"modSource"`.
-- An **item** export (one item or a selection) has no container: each item writes the map it is read with, made
-  explicit (`"mod"`, or `"noMod": true` for the base game), and the import gives it as the item's own.
-
-On import, each mod named is checked against the installed mods:
+On import, the vault's or tab's mod is checked against the installed mods:
 
 - **Installed**: kept. A vault import gets it as the vault's link (an export without one keeps the target's link). The
-  items of a tab export that inherited the tab's mod keep it: inherited in a vault of that mod, else as their own.
-- **Not installed** (another computer, a mod removed): dropped, at the vault or tab level as on the items. The items
-  take their target vault's map, and an item that needs the mod's records is shown incomplete. The end message names
-  the dropped mods: the user installs the mod, then links the vault or the items.
+  items of a tab are read with it until placed, then take their target's map.
+- **Not installed** (another computer, a mod removed): dropped. The items take their target vault's map, and an item
+  that needs the mod's records is shown incomplete. The end message names the dropped mods: the user installs the mod,
+  then links the vault.
 
 ### Hand tools
 
-- **The item menu** (vault items only) has *Modded*: the base game and the installed mods, the current map checked. A
-  link to a mod that is not installed stays listed, disabled. When the submenu opens, each installed mod having records
-  of the item that the base game lacks is marked *(suggested)* on the right (*(suggested 1/3)* when it has only some of
-  them), like the dialog's Suggest button. Where each record was found is kept for the session.
-- **A whole vault**: the vault tools button next to the vault list has *Modded vault*, for the vault shown, with the same
-  hints for the records of all its items. A linked vault shows its mod after its name in the vault lists:
+- **A whole vault**: the vault tools button next to the vault list has *Modded vault*, for the vault shown. When the
+  submenu opens, each installed mod having records of the vault's items that the base game lacks is marked
+  *(suggested)* on the right (*(suggested 1/3)* when it has only some of them), like the dialog's Suggest button. Where
+  each record was found is kept for the session. A linked vault shows its mod after its name in the vault lists:
   *Main Vault [shadowchampions]*.
+- Items have no *Modded* menu: their mod comes from their container.
 - The tooltip names an item's mod last in the section of the seed and the expansion: *Mod : shadowchampions*.
 
 ### Search and preload
@@ -230,3 +232,6 @@ records while its map is the base game, or a mod that is not installed) is shown
 - its tooltip has a warning line with an icon under its name, then the missing records, one per line;
 - a missing name part (base item, prefix, suffix) shows the record's file name;
 - without its base item record it has no picture: the grid shows a warning tile in one cell, so it stays visible and can be moved.
+
+An item shown 1 x 1 for want of room (see *Items shown 1 x 1 for want of room*) has the same warning tile, but its
+tooltip warns of the lack of room instead, and lists no missing record.

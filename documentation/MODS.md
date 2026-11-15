@@ -1,11 +1,11 @@
 # Mods (custom maps)
 
-TQVaultAE shows modded characters, items and vaults with their own mod's data, next to regular ones, in one session.
+TQVaultAE shows modded characters, vaults and their items with their mod's data, next to regular ones, in one session.
 Technical details: [MODLINK.md](MODLINK.md).
 
 * [Link a character](#LinkCharacter)
 * [Incomplete items](#Incomplete)
-* [Link an item](#ItemLink)
+* [The mod of an item](#ItemMod)
 * [Link a vault](#VaultLink)
 * [Rules](#Rules)
 
@@ -32,17 +32,14 @@ An item whose records the loaded data lacks says so in its tooltip. Without its 
 
 ---
 
-### <a id="ItemLink"></a>Link an item
-Every item is read with its own map: a mod's data (then the base game's), or the base game's, whatever character is
-shown. Its tooltip names the mod. An item without a link of its own takes the map of its vault or character.
+### <a id="ItemMod"></a>The mod of an item
+Every item is read with the data of its container: its vault's link, its character's, or its shared stash's map (a mod's
+data, then the base game's), whatever character is shown. Its tooltip names its mod: the mod whose data gave at least
+one of its records. An item has no link of its own, and none is saved: put in a container of another mod, or of the base
+game, it is read with that data, and may lose its mod and show as incomplete. **Keep mod items in a vault linked to
+their mod.**
 
-![Tooltip of an item linked to a mod](mods/item-tooltip-mod.png)
-
-Right-click a vault item > **Modded** to choose it. **(suggested)** marks the mods having the item's records;
-**(suggested n/m)** marks a mod that has only n of its m records. Character items have no such menu: their files cannot
-keep the choice.
-
-![Modded menu of an item](mods/item-modded-menu.png)
+![Tooltip of an item of a mod](mods/item-tooltip-mod.png)
 
 ---
 
@@ -55,17 +52,14 @@ Vault tools button > **Modded vault**. The vault list shows the mod, and the vau
 ---
 
 ### <a id="Rules"></a>Rules
-- An item has its own link, or takes its container's: its vault's, or its character's.
-- An item taken from a character to a vault keeps the data the game reads it with: its character's map becomes its own
-  link.
-- Nothing is guessed: an item never gets a link because a mod has its records. Link it with **Modded**, where the
-  suggestions help.
-- Read with another mod, an item that takes its real size and no longer fits moves to a free spot of its tab. Dropped
-  by hand or given a link with **Modded** without room in the tab, it is refused, and a message invites you to use
-  another tab. Moved, imported or relinked, it may go to another tab of the vault; without any room, it keeps its
-  previous link, and a message names it.
-- The link follows the item (moves, copies, removed relics) and is kept by [exports](IMPORT_EXPORT.md). An import drops a
-  link to a mod that is not installed and names it.
-- Character files cannot store an item's link: it lasts until the character is read again. Keep linked items in a vault.
+- An item takes the data of its container: its vault's link, its character's, or its shared stash's map. Its mod is the
+  one its records come from, computed each time it is read.
+- Nothing is guessed: an item comes from a mod only when that mod's data gave one of its records.
+- Read with another mod, an item that takes another size and no longer fits moves to a free spot of its tab. Dropped by
+  hand without room in the tab, it is refused, and a message invites you to use another tab. Moved, imported, or in a
+  vault whose link changed, it may go to another tab of the vault; without any room, it is shown in one cell with a
+  warning, until you move it where its size fits, and a message names it.
+- [Exports](IMPORT_EXPORT.md) keep the mod of the vault or tab, never an item's. An import drops a link to a mod that is
+  not installed and names it.
 - A Steam Workshop mod and a custom map of the same folder name are two mods: the menus and the dialog show where each
   comes from.

@@ -10,7 +10,7 @@ _**Note : "Item editing feature" must be enable in the settings: tick "Allow Che
 
 The entries are in the right-click menu of an item. The affix entries only show for weapons, shields, armors and jewellery.
 
-_The screenshots of this page were taken with an older version. The menu now also has "🔗 Share Item", "Modded",
+_The screenshots of this page were taken with an older version. The menu now also has "🔗 Share Item",
 "Change Item Seed (Force)" and the "Display affixes by name/effect" entry, and the copy entries read
 "Copy Item (Randomized seed)" and "Duplicate Item (Seed unchanged)"; these two need the "Allow Item Copying" setting._
 
