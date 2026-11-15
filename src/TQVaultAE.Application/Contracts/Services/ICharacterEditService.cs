@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Character;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;

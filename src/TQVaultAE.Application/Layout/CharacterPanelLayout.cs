@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using TQVaultAE.Application.Character;
 
 namespace TQVaultAE.Application.Layout;
 

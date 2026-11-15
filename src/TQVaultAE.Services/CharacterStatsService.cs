@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;

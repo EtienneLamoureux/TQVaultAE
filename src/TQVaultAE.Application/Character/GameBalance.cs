@@ -1,4 +1,4 @@
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>
 /// What the game reads from its records to compute the character window: the player caps

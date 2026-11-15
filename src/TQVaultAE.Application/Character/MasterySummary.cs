@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>
 /// A mastery of a character as the Masteries box of the character editor shows it.

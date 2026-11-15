@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Character;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 

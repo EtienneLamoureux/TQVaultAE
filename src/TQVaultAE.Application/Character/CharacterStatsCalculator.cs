@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>The resistances of the character window: tab I (8) then tab II (8), in the game's order.</summary>
 public enum StatResistance

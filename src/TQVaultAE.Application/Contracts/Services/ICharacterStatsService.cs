@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Character;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Services;

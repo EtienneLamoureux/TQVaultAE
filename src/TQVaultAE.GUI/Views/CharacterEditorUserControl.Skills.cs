@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Services;
 using System.Drawing;
 using System.Windows.Forms;

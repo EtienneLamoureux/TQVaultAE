@@ -7,7 +7,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Frozen;
 using System.Globalization;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Character;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 

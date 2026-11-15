@@ -1,5 +1,5 @@
-using TQVaultAE.Application;
 using System.Globalization;
+using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;

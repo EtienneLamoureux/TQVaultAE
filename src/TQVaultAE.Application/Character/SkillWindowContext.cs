@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>A modifier of a skill (a child skill such as Resilience for Adrenaline) at the level it is used.</summary>
 /// <param name="Id">The modifier's record.</param>

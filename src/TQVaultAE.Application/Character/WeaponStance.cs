@@ -1,4 +1,4 @@
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>
 /// How the character holds the weapons in hand, as the game decides it: it chooses the attack

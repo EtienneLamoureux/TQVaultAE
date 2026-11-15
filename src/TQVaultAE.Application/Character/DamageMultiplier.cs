@@ -1,4 +1,4 @@
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>The attribute a damage equation scales with, as the character window names it.</summary>
 public enum MultiplierAttribute

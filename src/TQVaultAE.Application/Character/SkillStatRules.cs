@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>How a skill adds its bonuses to the character window.</summary>
 public enum SkillStatRole

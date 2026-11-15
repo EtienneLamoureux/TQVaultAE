@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>
 /// The gear as the attack damage reads it: each weapon in hand on its own (not shields), the other items and the item

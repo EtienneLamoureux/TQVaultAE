@@ -2,7 +2,7 @@ using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>
 /// Evaluates a designer equation of the game records (<c>combatequations.dbr</c>, <c>healthmanaregen.dbr</c>): its

@@ -2,7 +2,7 @@ using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Character;
 
 /// <summary>
 /// Edits the masteries and the skill points of a character for the character edit dialog, with the rules of the

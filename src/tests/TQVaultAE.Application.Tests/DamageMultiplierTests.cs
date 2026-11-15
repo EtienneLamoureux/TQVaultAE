@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Character;
 
 namespace TQVaultAE.Tests.Application;
 
