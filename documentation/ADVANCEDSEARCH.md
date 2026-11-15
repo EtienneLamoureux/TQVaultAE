@@ -26,6 +26,7 @@ _**The first load can be long but reopening the form si fast.**_
 + [Flexible visibility](#Flexible)
 + [Preview tooltip](#Preview)
 + [Category tooltip](#CategoryPreview)
++ [Find an item's copies](#FindCopies)
 
 ---
 
@@ -155,3 +156,28 @@ Hovering on a category display a tooltip with the number of related items.
 
 ![Tooltip preview](advancedsearch/tooltipitemcount.png)
 
+---
+
+### <a id="FindCopies"></a>Find an item's copies
+Right-click an item, in any vault, bag, equipment or stash, and open its **Search** menu to list the items related to it
+among every loaded item: all the vaults (not only the one shown), every character's equipment, bags and personal stash,
+the transfer stash, the relic vault and the pieces stored in the [loadouts](LOADOUTS.md).
+
+| Entry | Lists the items with |
+|-------|----------------------|
+| Copies with same seed | the same base item, prefix, suffix and seed: the same piece (socketed relics, charms and their bonus may differ) |
+| All copies | the same base item, prefix and suffix, any seed |
+| Same base | the same base item, whatever their affixes |
+| Same prefix | the same prefix, whatever their base item (disabled for an item without a prefix) |
+| Same suffix | the same suffix, whatever their base item (disabled for an item without a suffix) |
+
+![Search menu](advancedsearch/findcopies-menu.png)
+
+The results open in the search results window, its title naming the search and the number of items found. The item
+clicked comes first, in bold and marked *(source)*; the others follow by container and place. Clicking a result shows it
+like an Advanced Search result: a loadout piece selects its character and that loadout in the loadout bar.
+
+![Search results](advancedsearch/findcopies-results.png)
+
+_**Like the Advanced Search, it finds the items of the files loaded: enable "Pre-Load All Vault And Character Files" to
+search every vault and character.**_
