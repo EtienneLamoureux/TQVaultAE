@@ -128,8 +128,9 @@ public partial class VaultForm
 	private RescaleScope? rescale;
 
 	/// <summary>
-	/// Starts one rescale of the window (a DPI change, a zoom step), timed by phase (<see cref="RescalePhase"/>) and
-	/// logged when the window is drawn again; null, and nothing started, inside a rescale already running.
+	/// Starts one rescale of the window (a DPI change, a zoom step): its drawing frozen until it ends, then drawn once
+	/// (<see cref="RescaleScope"/>), timed by phase (<see cref="RescalePhase"/>) and logged when the window is drawn
+	/// again; null, and nothing started, inside a rescale already running.
 	/// </summary>
 	/// <param name="what">What changes, for the log line.</param>
 	protected IDisposable? BeginRescale(string what)
@@ -137,7 +138,7 @@ public partial class VaultForm
 		if (this.rescale is not null)
 			return null;
 
-		return this.rescale = new RescaleScope(this.Log, $"{this.Name}: {what}", () => this.rescale = null);
+		return this.rescale = new RescaleScope(this.Log, $"{this.Name}: {what}", this, () => this.rescale = null);
 	}
 
 	/// <summary>Ends the phase <paramref name="name"/> of the rescale running, if any (<see cref="BeginRescale"/>).</summary>
