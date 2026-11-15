@@ -10,9 +10,9 @@ using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation;
 using TQVaultAE.GUI.Components.Scaling;
-using TQVaultAE.GUI.Infrastructure;
 
 /// <summary>
 /// Class for About dialog box.

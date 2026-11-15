@@ -1,4 +1,5 @@
 using TQVaultAE.GUI.Components.Layout;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Infrastructure;

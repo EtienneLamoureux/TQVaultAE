@@ -1,9 +1,10 @@
 using System.Runtime.CompilerServices;
 using System.Windows.Forms.VisualStyles;
 using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32;
 
-namespace TQVaultAE.GUI.Infrastructure;
+namespace TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
 /// The black box with a thin gold frame of <see cref="Images.caravan_bg"/>, at the size of any control: drawn in nine

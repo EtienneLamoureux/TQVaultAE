@@ -3,7 +3,7 @@ using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.Presentation.Win32.Contracts;
 
-namespace TQVaultAE.GUI.Infrastructure;
+namespace TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
 /// The pieces of the marble dialogs laid out in code (Key Binds, Mod Link, Item Seed, the text input, Item Comparison):

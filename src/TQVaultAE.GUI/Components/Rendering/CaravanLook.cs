@@ -1,7 +1,8 @@
+using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.GUI.Components.Scaling;
 
-namespace TQVaultAE.GUI.Infrastructure;
+namespace TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
 /// The look of the marble dialogs and views (Vault Maintenance, Settings, Advanced Search), applied by one call.

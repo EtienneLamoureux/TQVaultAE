@@ -6,6 +6,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Tooltips;

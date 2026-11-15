@@ -2,6 +2,7 @@
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Models;

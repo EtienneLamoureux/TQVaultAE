@@ -2,6 +2,7 @@
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components.Icons;
 using TQVaultAE.GUI.Components.Panels;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.GUI.Infrastructure;

@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using TQVaultAE.Presentation.Win32;
 
-namespace TQVaultAE.GUI.Infrastructure;
+namespace TQVaultAE.GUI.Components.Rendering;
 
 /// <summary>
 /// A marble as the background of a window of any size: the character editor's (<see cref="Images.CharacterEditorMarble"/>)

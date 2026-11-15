@@ -9,9 +9,9 @@ using System;
 using System.Globalization;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
-using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 
 /// <summary>

@@ -8,9 +8,9 @@ namespace TQVaultAE.GUI.Dialogs;
 
 using System;
 using System.Windows.Forms;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
-using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 
 /// <summary>
