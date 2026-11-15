@@ -3,8 +3,9 @@ using Moq;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Presentation.ItemText;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 public class ItemAttributeListCompareTests
 {

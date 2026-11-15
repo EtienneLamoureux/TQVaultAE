@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 /// <summary>
 /// Where the game's skill window lists an effect of a skill: first the skill's own lines (recharge and chances, then

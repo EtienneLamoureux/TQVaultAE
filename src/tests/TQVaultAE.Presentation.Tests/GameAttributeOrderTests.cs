@@ -1,8 +1,9 @@
 using AwesomeAssertions;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Presentation.ItemText;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 public class GameAttributeOrderTests
 {

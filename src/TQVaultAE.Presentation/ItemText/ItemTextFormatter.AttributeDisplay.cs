@@ -11,7 +11,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Jitter;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 public partial class ItemTextFormatter
 {

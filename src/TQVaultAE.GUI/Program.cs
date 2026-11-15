@@ -17,6 +17,7 @@ using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation.Win32.Contracts;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.ItemText;
 using TQVaultAE.Services;
 using TQVaultAE.Services.Win32;
 using Microsoft.Extensions.Logging;

@@ -8,7 +8,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using System.Collections.ObjectModel;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 
 /// <summary>

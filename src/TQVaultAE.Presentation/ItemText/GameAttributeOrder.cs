@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 /// <summary>
 /// Where the game lists an attribute group in an item tooltip.

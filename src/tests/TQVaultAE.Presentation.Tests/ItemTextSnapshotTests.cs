@@ -10,8 +10,10 @@ using TQVaultAE.Domain.Comparison;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
+using TQVaultAE.Presentation.ItemText;
+using TQVaultAE.Tests.Data;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Pins the whole text of a varied set of items, as the item tooltips, the Item Properties dialog and the search read it:

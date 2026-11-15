@@ -8,14 +8,15 @@ using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Results;
+using TQVaultAE.Presentation.ItemText;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Tests the attribute lines that <see cref="ItemTextFormatter.GetFriendlyNames"/> builds for item tooltips,
 /// with the real <see cref="ItemAttributeProvider"/> and translations in the game's own format.
 /// </summary>
-public class ItemProviderAttributeDisplayTests
+public class ItemTextFormatterAttributeDisplayTests
 {
 	private delegate bool TryTranslate(string tag, out string translation, bool removeAllTQTags, bool doCleanup, bool doCleanupKeepLeadingColorTag);
 
@@ -50,7 +51,7 @@ public class ItemProviderAttributeDisplayTests
 	private readonly ItemProvider _provider;
 	private readonly ItemTextFormatter _formatter;
 
-	public ItemProviderAttributeDisplayTests()
+	public ItemTextFormatterAttributeDisplayTests()
 	{
 		var mockTranslation = new Mock<ITranslationService>();
 		mockTranslation.SetupGet(t => t.ItemSeed).Returns("Seed {0} ({1:0.00})");
@@ -324,18 +325,6 @@ public class ItemProviderAttributeDisplayTests
 		this._formatter.HasGrantedSkill(plain).Should().BeFalse();
 		this._formatter.HasGrantedSkill(hidden).Should().BeFalse();
 		this._formatter.HasGrantedSkill(missing).Should().BeFalse();
-	}
-
-	[Fact]
-	public void GetGrantedSkillLevels_ListsEverySkillWithItsLevel_HiddenOnesIncluded()
-	{
-		this.CreateRecord("""records\test\hidden.dbr""", "Skill_Passive", Ints("characterLife", 10));
-		this.CreateRecord("""records\test\prefix.dbr""", "LootRandomizer", Str("itemSkillName", """records\test\hidden.dbr"""), Int("itemSkillLevel", 3));
-		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSkillName", """records\test\skill.dbr"""));
-		item.prefixID = RecordId.Create("""records\test\prefix.dbr""");
-
-		this._provider.GetGrantedSkillLevels(item).Should().Equal(
-			(RecordId.Create("""records\test\skill.dbr"""), 1), (RecordId.Create("""records\test\hidden.dbr"""), 3));
 	}
 
 	[Fact]

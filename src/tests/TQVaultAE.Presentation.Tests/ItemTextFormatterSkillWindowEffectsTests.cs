@@ -1,18 +1,20 @@
 using AwesomeAssertions;
 using TQVaultAE.Application;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Presentation.ItemText;
+using TQVaultAE.Tests.Data;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Tests the effects of a skill at a level, as the game's skill window writes them: what the game does not load or
 /// show, the values at the level shown, and the lines the skill window writes itself.
 /// </summary>
-public class ItemProviderSkillWindowEffectsTests : ItemProviderTextTestBase
+public class ItemTextFormatterSkillWindowEffectsTests : ItemProviderTextTestBase
 {
 	private const string SkillId = """records\test\skill.dbr""";
 
-	public ItemProviderSkillWindowEffectsTests()
+	public ItemTextFormatterSkillWindowEffectsTests()
 	{
 		this.Translations["tagSkillTest"] = "Test Skill";
 		this.Translations["DamageTotalResistanceReductionAbsolute"] = "Reduced Resistances";

@@ -7,7 +7,7 @@
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 /// <summary>
 /// Used for autosorting of items within a group

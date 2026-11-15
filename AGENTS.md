@@ -148,7 +148,7 @@ data (Application types), and the GUI or Presentation turns them into translated
 | TQVaultAE.Application | .NET 10.0 | DTOs, Results |
 | TQVaultAE.Data | .NET 10.0 | Data access |
 | TQVaultAE.Domain | .NET 10.0 | Entities |
-| TQVaultAE.Presentation | .NET 10.0 | Localized UI strings (`Resources`), translation |
+| TQVaultAE.Presentation | .NET 10.0 | Localized UI strings (`Resources`), translation, item texts (`ItemText/ItemTextFormatter`) |
 | TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | `System.Drawing` bitmaps, fonts, icons, tooltip image cache, UI images (`Images`) |
 | TQVaultAE.GameFiles | .NET 10.0 | Game file readers (`.arz`, `.arc`, text), shared by Data and `tqdb` |
 | TQVaultAE.DbCli | .NET 10.0 | `tqdb` command line |

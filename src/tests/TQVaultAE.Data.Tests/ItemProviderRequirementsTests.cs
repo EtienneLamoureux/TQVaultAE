@@ -26,18 +26,6 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 	#region Requirements
 
 	[Fact]
-	public void Requirements_KeepTheHighestValueOfEachRecord()
-	{
-		var item = this.CreateItem("ArmorJewelry_Ring", Int("levelRequirement", 20), Int("strengthRequirement", 100));
-		this.AddPrefix(item, Int("strengthRequirement", 150), Int("dexterityRequirement", 80), Int("levelRequirement", 10));
-
-		var (requirements, variables) = this.Formatter.GetRequirements(item);
-
-		variables.Keys.Should().Equal("Dexterity", "LevelRequirement", "Strength");
-		requirements.Should().Equal("Required Dexterity: 80", "Required Player Level: 20", "Required Strength: 150");
-	}
-
-	[Fact]
 	public void Requirements_IncludeTheSocketedRelics()
 	{
 		var item = this.CreateItem("WeaponMelee_Sword", Int("levelRequirement", 20));
@@ -61,25 +49,6 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 		var formula = this.CreateItem("ItemArtifactFormula", Str("artifactName", """records\test\artifact.dbr"""));
 
 		this.Provider.GetRequirementInfo(formula).Lvl.Should().Be(45);
-	}
-
-	[Fact]
-	public void Requirements_WithoutTranslations_ShowTheKeysBetweenQuestionMarks()
-	{
-		this.Translations.Remove("MeetsRequirement");
-		this.Translations.Remove("LevelRequirement");
-		var item = this.CreateItem("ArmorJewelry_Ring", Int("levelRequirement", 20));
-
-		this.Formatter.GetRequirements(item).Requirements.Should().Equal("?Required? ?LevelRequirement?: 20");
-	}
-
-	[Fact]
-	public void MultiValueRequirement_IsShownRaw()
-	{
-		var item = this.CreateItem("ArmorJewelry_Ring", Ints("levelRequirement", 10, 20));
-
-		this.Formatter.GetRequirements(item).Requirements.Should().ContainSingle()
-			.Which.Should().StartWith("LevelRequirement: ").And.Contain("20");
 	}
 
 	[Fact]
@@ -158,24 +127,6 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 	#endregion
 
 	#region Sets
-
-	[Fact]
-	public void SetTranslations_NameTheSetInRare_AndEachKnownMemberIndented()
-	{
-		this.CreateRecord("""records\test\ring.dbr""", "ArmorJewelry_Ring", Str("itemNameTag", "tagSetRing"));
-		this.CreateRecord("""records\test\set.dbr""", "ItemSet",
-			Str("setName", "tagSetTest"), Strs("setMembers", """records\test\ring.dbr""", """records\test\missing.dbr"""));
-		var item = this.CreateItem("ArmorJewelry_Amulet", Str("itemSetName", """records\test\set.dbr"""));
-
-		var set = this.Formatter.GetItemSetTranslations(item);
-
-		set.Should().NotBeNull();
-		set!.Translations.Should().BeEquivalentTo(new Dictionary<string, string>
-		{
-			["tagSetTest"] = $"{Rare}Test Set",
-			["""records\test\ring.dbr"""] = $"{Common}    Test Ring",
-		});
-	}
 
 	[Fact]
 	public void SetItems_AreNull_WithoutSetNameRecordOrMembers()
@@ -272,11 +223,4 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 		=> TQVaultAE.Data.ItemProvider.CellSize((width, height)).Should().Be((cellsWide, cellsHigh));
 
 	#endregion
-
-	private void AddPrefix(Item item, params Variable[] attributes)
-	{
-		this.CreateRecord("""records\test\prefix.dbr""", "LootRandomizer", attributes);
-		item.prefixID = RecordId.Create("""records\test\prefix.dbr""");
-		item.prefixInfo = this.MockDatabase.Object.GetInfo(item.prefixID);
-	}
 }

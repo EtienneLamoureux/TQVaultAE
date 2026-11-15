@@ -1,13 +1,15 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Presentation.ItemText;
+using TQVaultAE.Tests.Data;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Tests how the amounts, durations, chances and modifiers of an attribute group are formatted into one tooltip line.
 /// </summary>
-public class ItemProviderAttributeAmountsTests : ItemProviderTextTestBase
+public class ItemTextFormatterAttributeAmountsTests : ItemProviderTextTestBase
 {
 	[Fact]
 	public void InfluenceRange_WithChance_UsesTheSecondsFormat_AfterTheChance()

@@ -1,20 +1,22 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Presentation.ItemText;
+using TQVaultAE.Tests.Data;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Tests the skill lines of the item text: + to skills, granted skills with their activation, description and effects,
 /// skill parameters (cost, duration, radius) and the level a triggered skill is shown at.
 /// </summary>
-public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
+public class ItemTextFormatterSkillAttributesTests : ItemProviderTextTestBase
 {
 	private const string SkillId = """records\test\skill.dbr""";
 	private const string BuffId = """records\test\buff.dbr""";
 	private const string ControllerId = """records\test\controller.dbr""";
 
-	public ItemProviderSkillAttributesTests()
+	public ItemTextFormatterSkillAttributesTests()
 	{
 		this.Translations["ItemAllSkillIncrement"] = "{+%d0} to all Skills";
 		this.Translations["ItemMasteryIncrement"] = "{+%d0} to all skills in {%s1}";
@@ -392,22 +394,6 @@ public class ItemProviderSkillAttributesTests : ItemProviderTextTestBase
 			Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId), Int("itemSkillLevel", 4));
 
 		this.BaseAttributes(item).Should().EndWith($"{Epic}+40 Health");
-	}
-
-	[Fact]
-	public void GetTriggeredSkillLevel_UsesTheItemLevel_OnlyForTheGrantedSkillOrItsBuff()
-	{
-		this.CreateRecord(SkillId, "Skill_BuffRadiusToggled", Str("buffSkillName", BuffId));
-		var buff = this.CreateRecord(BuffId, "SkillBuff_Passive");
-		var other = this.CreateRecord("""records\test\other.dbr""", "SkillBuff_Passive");
-		var item = this.CreateItem("ArmorJewelry_Amulet",
-			Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId), Int("itemSkillLevel", 5));
-		var skill = this.MockDatabase.Object.GetRecordFromFile(RecordId.Create(SkillId))!;
-
-		this.Provider.GetTriggeredSkillLevel(item, skill, skill.Id, 0).Should().Be(4);
-		this.Provider.GetTriggeredSkillLevel(item, buff, buff.Id, 0).Should().Be(4);
-		this.Provider.GetTriggeredSkillLevel(item, other, other.Id, 7).Should().Be(7);
-		this.Provider.GetTriggeredSkillLevel(new Item(), skill, skill.Id, 7).Should().Be(7);
 	}
 
 	#endregion

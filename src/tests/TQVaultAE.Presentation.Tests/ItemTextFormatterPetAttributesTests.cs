@@ -1,19 +1,21 @@
 using AwesomeAssertions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Presentation.ItemText;
+using TQVaultAE.Tests.Data;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Tests the pet lines of the item text: the statistics and abilities of a summoned pet, and the bonus to all pets.
 /// </summary>
-public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
+public class ItemTextFormatterPetAttributesTests : ItemProviderTextTestBase
 {
 	private const string SpawnSkillId = """records\test\summonwolf.dbr""";
 	private const string PetId = """records\test\wolf.dbr""";
 	private const string BiteId = """records\test\bite.dbr""";
 
-	public ItemProviderPetAttributesTests()
+	public ItemTextFormatterPetAttributesTests()
 	{
 		this.Translations["SkillPetLimit"] = "{%d0} Summon Limit";
 		this.Translations["SkillPetDescriptionHeading"] = "{%s0} Attributes:";
@@ -137,22 +139,6 @@ public class ItemProviderPetAttributesTests : ItemProviderTextTestBase
 		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SpawnSkillId));
 
 		this.BaseAttributes(scroll).Should().Equal($"{Mundane}3 Summon Limit");
-	}
-
-	[Fact]
-	public void GetPetSkillLevel_TakesTheLevelOfTheSkillInThePetRecord()
-	{
-		this.CreateRecord(SpawnSkillId, "Skill_SpawnPet", Str("spawnObjects", PetId));
-		this.CreateRecord(PetId, "Monster",
-			Str("skillName0", """records\test\other.dbr"""), Int("skillLevel0", 9),
-			Str("skillName1", BiteId), Int("skillLevel1", 4));
-		var bite = this.CreateRecord(BiteId, "Skill_AttackWeapon");
-		var buff = this.CreateRecord("""records\test\buff.dbr""", "SkillBuff_Passive");
-		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SpawnSkillId));
-
-		this.Provider.GetPetSkillLevel(scroll, bite, bite.Id, 0).Should().Be(3);
-		this.Provider.GetPetSkillLevel(scroll, buff, buff.Id, 7).Should().Be(7, "only attack skills are looked up");
-		this.Provider.GetPetSkillLevel(this.CreateItem("OneShot_PotionHealth"), bite, bite.Id, 7).Should().Be(7, "the item summons no pet");
 	}
 
 	[Fact]

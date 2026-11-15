@@ -17,7 +17,7 @@ using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Domain.Jitter;
 using TQVaultAE.Domain.Results;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 /// <summary>
 /// Builds the texts of an item for its tool tips, its properties and the search: names, attribute lines with their colour

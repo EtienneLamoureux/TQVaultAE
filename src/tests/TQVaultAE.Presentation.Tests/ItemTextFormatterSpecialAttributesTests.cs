@@ -1,14 +1,16 @@
 using AwesomeAssertions;
+using TQVaultAE.Presentation.ItemText;
+using TQVaultAE.Tests.Data;
 
-namespace TQVaultAE.Tests.Data;
+namespace TQVaultAE.Tests.Presentation;
 
 /// <summary>
 /// Tests the attribute lines with their own layout: global chances, racial bonuses, formulae reagents and cost,
 /// raw attributes, armor, shields, weapon speed and damage qualifiers.
 /// </summary>
-public class ItemProviderSpecialAttributesTests : ItemProviderTextTestBase
+public class ItemTextFormatterSpecialAttributesTests : ItemProviderTextTestBase
 {
-	public ItemProviderSpecialAttributesTests()
+	public ItemTextFormatterSpecialAttributesTests()
 	{
 		this.Translations["GlobalPercentChanceOfAllTag"] = "{%.0f0}% Chance of:";
 		this.Translations["GlobalPercentChanceOfOneTag"] = "{%.0f0}% Chance for one of the following:";

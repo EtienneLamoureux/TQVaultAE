@@ -12,8 +12,6 @@
 		<!-- The test character and its vault: read from Data\SaveFiles in the output, as before the split. -->
 		<None Include="SaveFiles\*.chr;SaveFiles\*.dxb;SaveFiles\*.dxg;SaveFiles\*.json" Link="Data\SaveFiles\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="Particles.arc" Link="Data\Particles.arc" CopyToOutputDirectory="PreserveNewest" />
-		<!-- The pinned item texts of ItemTextSnapshotTests. -->
-		<None Include="ItemTextSnapshots\*.txt" CopyToOutputDirectory="PreserveNewest" />
 		<!-- Synthetic .arz/.arc builders, shared with the DbCli and Services tests. -->
 		<Compile Include="..\TQVaultAE.DbCli.Tests\DbCliFixtures.cs" Link="Fixtures\DbCliFixtures.cs" />
 		<Using Include="TQVaultAE.GameFiles" />

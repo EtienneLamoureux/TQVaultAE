@@ -11,6 +11,7 @@
 	<ItemGroup>
 		<!-- ToFriendlyNameResult is filled only by ItemProvider (Data); its setters are internal. -->
 		<InternalsVisibleTo Include="TQVaultAE.Data" />
+		<InternalsVisibleTo Include="TQVaultAE.Presentation" />
 		<InternalsVisibleTo Include="TQVaultAE.Domain.Tests" />
 		<InternalsVisibleTo Include="TQVaultAE.Application.Tests" />
 		<InternalsVisibleTo Include="TQVaultAE.Data.Tests" />

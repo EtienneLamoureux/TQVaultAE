@@ -10,10 +10,10 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Tests.Data;
 
 /// <summary>
-/// Builds an <see cref="ItemProvider"/> and its <see cref="ItemTextFormatter"/> with the real <see cref="ItemAttributeProvider"/>, a mocked database fed with
+/// Builds an <see cref="ItemProvider"/> (and, in the Presentation tests, its item text formatter) with the real <see cref="ItemAttributeProvider"/>, a mocked database fed with
 /// small hand-built records and translations written in the game's own format (<c>{%+.0f0}</c>...).
 /// </summary>
-public abstract class ItemProviderTextTestBase
+public abstract partial class ItemProviderTextTestBase
 {
 	private delegate bool TryTranslate(string tag, out string translation, bool removeAllTQTags, bool doCleanup, bool doCleanupKeepLeadingColorTag);
 
@@ -60,7 +60,11 @@ public abstract class ItemProviderTextTestBase
 	protected readonly UserSettings Settings = new() { ShowInGameValues = false };
 	protected readonly Mock<ITranslationService> MockTranslation = new();
 	protected readonly ItemProvider Provider;
-	protected readonly ItemTextFormatter Formatter;
+	protected readonly ItemAttributeProvider Attributes = new(Mock.Of<ILogger<ItemAttributeProvider>>());
+	protected readonly IPathIO PathIO;
+
+	/// <summary>Gives an item linked to a mod its mod's database; none by default.</summary>
+	protected readonly IItemModService? ItemMods;
 
 	protected ItemProviderTextTestBase() : this(null)
 	{
@@ -69,6 +73,7 @@ public abstract class ItemProviderTextTestBase
 	/// <param name="itemMods">Gives an item linked to a mod its mod's database; none by default.</param>
 	protected ItemProviderTextTestBase(IItemModService? itemMods)
 	{
+		this.ItemMods = itemMods;
 		var mockTranslation = this.MockTranslation;
 		mockTranslation.SetupGet(t => t.ItemSeed).Returns("Seed {0} ({1:0.00})");
 		mockTranslation.Setup(t => t.TryTranslateXTag(It.IsAny<string>(), out It.Ref<string>.IsAny, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
@@ -85,23 +90,14 @@ public abstract class ItemProviderTextTestBase
 		var mockPath = new Mock<IPathIO>();
 		mockPath.Setup(p => p.GetFileNameWithoutExtension(It.IsAny<string>())).Returns((string path) => Path.GetFileNameWithoutExtension(path.Replace('\\', '/')));
 		mockPath.Setup(p => p.GetExtension(It.IsAny<string>())).Returns((string path) => Path.GetExtension(path));
+		this.PathIO = mockPath.Object;
 
 		this.Provider = new ItemProvider(
 			Mock.Of<ILogger<ItemProvider>>(),
 			this.MockDatabase.Object,
 			Mock.Of<ILootTableCollectionProvider>(),
-			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
+			this.Attributes,
 			Mock.Of<ITQDataService>(),
-			mockPath.Object,
-			this.Settings,
-			itemMods
-		);
-		this.Formatter = new ItemTextFormatter(
-			Mock.Of<ILogger<ItemTextFormatter>>(),
-			this.MockDatabase.Object,
-			this.Provider,
-			new ItemAttributeProvider(Mock.Of<ILogger<ItemAttributeProvider>>()),
-			mockTranslation.Object,
 			mockPath.Object,
 			this.Settings,
 			itemMods
@@ -137,14 +133,12 @@ public abstract class ItemProviderTextTestBase
 		return record;
 	}
 
-	protected string[] BaseAttributes(Item item, bool filterExtra = true)
-		=> this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, filterExtra).BaseAttributes;
-
-	/// <summary>The base attribute lines (without tags, trimmed) marked as text, not attributes, in their order.</summary>
-	protected string[] BaseTextLines(Item item)
+	/// <summary>Gives <paramref name="item"/> a prefix record with <paramref name="attributes"/>.</summary>
+	protected void AddPrefix(Item item, params Variable[] attributes)
 	{
-		var names = this.Formatter.GetFriendlyNames(item, FriendlyNamesExtraScopes.BaseAttributes, true);
-		return [.. names.BaseAttributes.Select(l => l.RemoveAllTQTags()!.Trim()).Where(names.IsTextLine)];
+		this.CreateRecord("""records\test\prefix.dbr""", "LootRandomizer", attributes);
+		item.prefixID = RecordId.Create("""records\test\prefix.dbr""");
+		item.prefixInfo = this.MockDatabase.Object.GetInfo(item.prefixID);
 	}
 
 	protected static Variable Int(string name, int value) => Ints(name, value);

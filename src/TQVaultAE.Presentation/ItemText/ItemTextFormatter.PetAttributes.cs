@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Data;
+namespace TQVaultAE.Presentation.ItemText;
 
 public partial class ItemTextFormatter
 {
