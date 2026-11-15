@@ -220,9 +220,6 @@ Może to być spowodowane złym językiem lub
 ustawieniem adresu gry.
 Chcesz zrestartować TQVault?</value>
   </data>
-  <data name="Form1bNext" xml:space="preserve">
-    <value>Wejdź do Skarbca</value>
-  </data>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Błąd Przy Ładowaniu Zasobów</value>
   </data>
@@ -768,13 +765,6 @@ wydłuża start programu.</value>
   <data name="SettingsResetTT" xml:space="preserve">
     <value>Powoduje resetowanie konfiguracji
 do ostatnio zapisanej konfiguracji.</value>
-  </data>
-  <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Automatyczne Pomijanie Ekranu Tytułowego</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Kliknięcie tego okna spowoduje automatyczne wciśnięcie
-klawisza Enter na ekranie tytułowym.</value>
   </data>
   <data name="StashNotFound" xml:space="preserve">
     <value>Nie można znaleźć pliku Worka.</value>

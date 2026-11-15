@@ -41,11 +41,6 @@ public class CommandLineArgs
 	public string? Error { get; }
 
 	/// <summary>
-	/// Gets a value indicating whether to bypass the starts screen.
-	/// </summary>
-	public bool IsAutomatic => this.Player is not null;
-
-	/// <summary>
 	/// Throws the usage message if the command line arguments are incorrect.
 	/// </summary>
 	/// <exception cref="ArgumentException">The arguments could not be parsed.</exception>

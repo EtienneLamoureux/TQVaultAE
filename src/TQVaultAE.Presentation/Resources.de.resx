@@ -217,9 +217,6 @@ Bitte überprüfen Sie den Vault-Pfad in den Optionen</value>
 Ursache kann eine falsche Sprache oder eine falsche Pfadangabe für das Spiel sein.
 Soll TQVault neu gestartet werden?</value>
   </data>
-  <data name="Form1bNext" xml:space="preserve">
-    <value>Öffne den Tresor</value>
-  </data>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Fehler beim Laden der Ressourcen</value>
   </data>
@@ -772,13 +769,6 @@ verlängert den Startvorgang.</value>
   <data name="SettingsResetTT" xml:space="preserve">
     <value>Ein Reset durchführen, um die
 aktuellen Einstellungen zu übernehmen.</value>
-  </data>
-  <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Den Titel-Screen automatisch überspringen</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Diese Option übergibt automatisch ein Enter
-um den Titel-Screen zu Schließen.</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Konfigurationseinstellungen</value>

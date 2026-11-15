@@ -134,7 +134,7 @@ public class SettingsEditorTests
 		settings.AllowItemEdit = false;
 		var editor = NewEditor(settings);
 
-		editor.Current.SkipTitle = !settings.SkipTitle;
+		editor.Current.LoadAllFiles = !settings.LoadAllFiles;
 		editor.ApplyTo(settings);
 
 		settings.EnableEpicLegendaryAffixes.Should().BeFalse();
@@ -356,23 +356,23 @@ public class SettingsEditorTests
 	{
 		// The settings dialog is kept between openings and makes a new editor from the settings at each one.
 		var settings = NewSettings();
-		settings.SkipTitle = false;
+		settings.LoadAllFiles = false;
 
 		var cancelled = NewEditor(settings);
-		cancelled.Current.SkipTitle = true;
+		cancelled.Current.LoadAllFiles = true;
 		cancelled.Current.CSVDelimiter = "Tab";
 
 		var afterCancel = NewEditor(settings);
-		afterCancel.Current.SkipTitle.Should().BeFalse();
+		afterCancel.Current.LoadAllFiles.Should().BeFalse();
 		afterCancel.Current.CSVDelimiter.Should().Be("Comma");
 		afterCancel.ConfigurationChanged.Should().BeFalse();
 
-		afterCancel.Current.SkipTitle = true;
+		afterCancel.Current.LoadAllFiles = true;
 		afterCancel.ApplyTo(settings);
 		settings.BaseFont = "Arial"; // changed elsewhere between two openings
 
 		var afterOk = NewEditor(settings);
-		afterOk.Current.SkipTitle.Should().BeTrue();
+		afterOk.Current.LoadAllFiles.Should().BeTrue();
 		afterOk.Current.BaseFont.Should().Be("Arial");
 		afterOk.ConfigurationChanged.Should().BeFalse();
 	}

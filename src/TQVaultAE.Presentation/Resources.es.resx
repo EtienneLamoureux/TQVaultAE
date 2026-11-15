@@ -228,9 +228,6 @@ Configuración para reflejar el enlace.</value>
 Esto podría estar causado por un idioma o ruta del juego mal configurada.
 ¿Deseas reiniciar TQVault?</value>
   </data>
-  <data name="Form1bNext" xml:space="preserve">
-    <value>Entrar</value>
-  </data>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>¡Error cargando recursos!</value>
   </data>
@@ -776,13 +773,6 @@ búsqueda, pero ralentiza el inicio.</value>
   <data name="SettingsResetTT" xml:space="preserve">
     <value>Cambia la configuración a la última
 guardada.</value>
-  </data>
-  <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Saltar título automáticamente</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Esto hará que la pantalla de título
-avance al programa por sí sola.</value>
   </data>
   <data name="StashNotFound" xml:space="preserve">
     <value>Archivo de almacén no encontrado.</value>

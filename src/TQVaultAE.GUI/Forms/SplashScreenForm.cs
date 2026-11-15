@@ -59,7 +59,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 		#region Apply custom font
 
 		this.label3.Font = FontService.GetFontLight(12F);
-		this.nextButton.Font = FontService.GetFontLight(12F);
 		this.exitButton.Font = FontService.GetFontLight(12F);
 		this.labelPleaseWait.Font = FontService.GetFontLight(14.25F);
 
@@ -68,10 +67,8 @@ internal sealed partial class SplashScreenForm : VaultForm
 		this.Text = Resources.Form1Text;
 		this.label3.Text = Resources.Form1Label3;
 		this.exitButton.Text = Resources.GlobalExit;
-		this.nextButton.Text = Resources.Form1bNext;
 		this.labelPleaseWait.Text = Resources.Form1LblPleaseWait;
 		this.Icon = Images.TQVIcon;
-		this.ShowMainForm = false;
 
 		this.FormBorderStyle = FormBorderStyle.None;
 
@@ -91,11 +88,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 	}
 
 	/// <summary>
-	/// Gets or sets a value indicating whether or not to show the main form.
-	/// </summary>
-	public bool ShowMainForm { get; set; }
-
-	/// <summary>
 	/// Gets or sets a value indicating whether the form will be drawn with the outer edges clipped to a rounded rectangle.
 	/// </summary>
 	public bool UseRoundedRectangle
@@ -111,18 +103,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 	{
 		get => this.progressBar.Maximum;
 		set => this.progressBar.Maximum = value;
-	}
-
-	/// <summary>
-	/// Updates text after the resources have been loaded.
-	/// </summary>
-	public void UpdateText()
-	{
-		this.progressBar.Visible = false;
-		this.labelPleaseWait.Visible = false;
-		this.nextButton.Visible = true;
-		this.waitTimer.Enabled = false;
-		this.nextButton.Focus();
 	}
 
 	/// <summary>
@@ -206,16 +186,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 	}
 
 	/// <summary>
-	/// Handles the next button
-	/// </summary>
-	/// <param name="sender">Sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void NextButtonClick(object? sender, EventArgs e)
-	{
-		this.CloseForm();
-	}
-
-	/// <summary>
 	/// Wait timer has been elapsed.
 	/// Used to signal flipping of the please wait animation.
 	/// </summary>
@@ -228,16 +198,5 @@ internal sealed partial class SplashScreenForm : VaultForm
 			this.labelPleaseWait.ForeColor = Color.FromArgb((byte)255, (byte)255, (byte)255);
 		else
 			this.labelPleaseWait.ForeColor = this.flipColor;
-	}
-
-	/// <summary>
-	/// Splash Screen Click handler
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void SplashScreen_Click(object? sender, EventArgs e)
-	{
-		if (this.ShowMainForm)
-			this.CloseForm();
 	}
 }

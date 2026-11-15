@@ -8,7 +8,6 @@ namespace TQVaultAE.Services.Settings;
 /// </summary>
 public sealed record SettingsValues
 {
-	public bool SkipTitle { get; set; }
 	public string VaultPath { get; set; } = string.Empty;
 	public bool AllowItemCopy { get; set; }
 	public bool AllowItemEdit { get; set; }
@@ -79,7 +78,6 @@ public sealed record SettingsValues
 	public static SettingsValues From(UserSettings settings, string language, string titanQuestPath, string immortalThronePath)
 		=> new()
 		{
-			SkipTitle = settings.SkipTitle,
 			VaultPath = settings.VaultPath ?? string.Empty,
 			AllowItemCopy = settings.AllowItemCopy,
 			AllowItemEdit = settings.AllowItemEdit,
@@ -128,7 +126,6 @@ public sealed record SettingsValues
 	/// </summary>
 	public void ApplyTo(UserSettings settings)
 	{
-		settings.SkipTitle = this.SkipTitle;
 		settings.VaultPath = this.VaultPath;
 		settings.AllowItemCopy = this.AllowItemCopy;
 		settings.AllowItemEdit = this.AllowItemEdit;

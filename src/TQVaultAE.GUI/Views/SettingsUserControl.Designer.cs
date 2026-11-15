@@ -29,7 +29,6 @@ internal partial class SettingsUserControl
 	/// <summary>
 	/// Check box for skipping the splash screen
 	/// </summary>
-	private ScalingCheckBox skipTitleCheckBox;
 
 	/// <summary>
 	/// Check box to auto load the last opened character when launched
@@ -165,7 +164,6 @@ internal partial class SettingsUserControl
 		System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsUserControl));
 		allowItemEditCheckBox = new ScalingCheckBox();
 		allowItemCopyCheckBox = new ScalingCheckBox();
-		skipTitleCheckBox = new ScalingCheckBox();
 		loadLastCharacterCheckBox = new ScalingCheckBox();
 		loadLastVaultCheckBox = new ScalingCheckBox();
 		vaultPathTextBox = new ScalingTextBox();
@@ -315,22 +313,6 @@ internal partial class SettingsUserControl
 		toolTip.SetToolTip(allowItemCopyCheckBox, "Enables copy selection in the context menu.");
 		allowItemCopyCheckBox.UseVisualStyleBackColor = true;
 		allowItemCopyCheckBox.CheckedChanged += AllowItemCopyCheckBoxCheckedChanged;
-		// 
-		// skipTitleCheckBox
-		// 
-		skipTitleCheckBox.AutoSize = true;
-		skipTitleCheckBox.Checked = true;
-		skipTitleCheckBox.CheckState = CheckState.Checked;
-		skipTitleCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
-		skipTitleCheckBox.ForeColor = Color.White;
-		skipTitleCheckBox.Location = new Point(3, 3);
-		skipTitleCheckBox.Name = "skipTitleCheckBox";
-		skipTitleCheckBox.Size = new Size(249, 22);
-		skipTitleCheckBox.TabIndex = 2;
-		skipTitleCheckBox.Text = "Automatically Bypass Title Screen";
-		toolTip.SetToolTip(skipTitleCheckBox, "Ticking this box will automatically hit\r\nthe Enter key on the title screen.");
-		skipTitleCheckBox.UseVisualStyleBackColor = true;
-		skipTitleCheckBox.CheckedChanged += SkipTitleCheckBoxCheckedChanged;
 		// 
 		// loadLastCharacterCheckBox
 		// 
@@ -1150,7 +1132,6 @@ internal partial class SettingsUserControl
 		// bufferedFlowLayoutPanelGeneralSettings
 		// 
 		bufferedFlowLayoutPanelGeneralSettings.AutoSize = true;
-		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(skipTitleCheckBox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(loadLastCharacterCheckBox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(loadLastVaultCheckBox);
 		bufferedFlowLayoutPanelGeneralSettings.Controls.Add(loadAllFilesCheckBox);

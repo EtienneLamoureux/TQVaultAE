@@ -1611,15 +1611,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter The Vault.
-        /// </summary>
-        public static string Form1bNext {
-            get {
-                return ResourceManager.GetString("Form1bNext", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error Loading Resources.
         /// </summary>
         public static string Form1ErrorLoadingResources {
@@ -5329,25 +5320,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsResetTT {
             get {
                 return ResourceManager.GetString("SettingsResetTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically Bypass Title Screen.
-        /// </summary>
-        public static string SettingsSkipTitle {
-            get {
-                return ResourceManager.GetString("SettingsSkipTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ticking this box will automatically hit
-        ///the Enter key on the title screen..
-        /// </summary>
-        public static string SettingsSkipTitleTT {
-            get {
-                return ResourceManager.GetString("SettingsSkipTitleTT", resourceCulture);
             }
         }
         

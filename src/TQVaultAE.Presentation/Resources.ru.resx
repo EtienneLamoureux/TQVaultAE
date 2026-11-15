@@ -215,9 +215,6 @@ Spanish translation by Kurrus.
   <data name="Form1BadLanguage" xml:space="preserve">
     <value>Это может быть вызвано неверными настройками языка или пути к игре. Перезапустить TQVault?</value>
   </data>
-  <data name="Form1bNext" xml:space="preserve">
-    <value>Войти</value>
-  </data>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Ошибка загрузки ресурсов</value>
   </data>
@@ -769,13 +766,6 @@ Titan Quest и загружать всех персонажей, которые 
   </data>
   <data name="SettingsResetTT" xml:space="preserve">
     <value>Сбрасывает конфигурацию до последней сохраненной.</value>
-  </data>
-  <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Автоматически пропускать экран приветствия</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Включение этого пунтка будет автоматически нажимать
-Enter когда появляется экран приветствия.</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Настроить параметры</value>

@@ -9,13 +9,12 @@ namespace TQVaultAE.Services;
 /// </summary>
 /// <param name="CharacterKey">The <see cref="PlayerSave.Key"/> of the last character to select, or null to keep the selection.</param>
 /// <param name="VaultName">The vault to load in the main panel.</param>
-/// <param name="SkipTitle">Whether the splash screen closes at once.</param>
-/// <param name="AutomaticPlayer">When the title is skipped, the start of the character name to select: the command line player, or empty.</param>
-public sealed record StartupSelection(string? CharacterKey, string VaultName, bool SkipTitle, string AutomaticPlayer)
+/// <param name="AutomaticPlayer">The start of the character name to select: the command line player, or empty.</param>
+public sealed record StartupSelection(string? CharacterKey, string VaultName, string AutomaticPlayer)
 {
 	/// <summary>
 	/// Applies the startup rules: the last character and vault when their auto load is on, the Main Vault when the last
-	/// vault is not set or its file is missing, and skipping the title for the command line or the setting.
+	/// vault is not set or its file is missing, and the command line player.
 	/// </summary>
 	/// <param name="settings">The user settings.</param>
 	/// <param name="characterKeys">The <see cref="PlayerSave.Key"/> of the characters in the list.</param>
@@ -27,9 +26,7 @@ public sealed record StartupSelection(string? CharacterKey, string VaultName, bo
 
 		string vaultName = ResolveVault(settings, IVaultService.MainVault, vaultExists);
 
-		var skipTitle = args.IsAutomatic || settings.SkipTitle;
-
-		return new StartupSelection(characterKey, vaultName, skipTitle, skipTitle ? args.Player ?? string.Empty : string.Empty);
+		return new StartupSelection(characterKey, vaultName, args.Player ?? string.Empty);
 	}
 
 	/// <summary>

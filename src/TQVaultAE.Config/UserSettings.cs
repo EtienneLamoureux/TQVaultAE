@@ -8,9 +8,6 @@ public class UserSettings
 {
 	#region Properties
 	
-	[XmlElement(ElementName = nameof(SkipTitle))]
-	public bool SkipTitle { get; set; } = true;
-
 	[XmlElement(ElementName = nameof(LoadLastVault))]
 	public bool LoadLastVault { get; set; } = true;
 

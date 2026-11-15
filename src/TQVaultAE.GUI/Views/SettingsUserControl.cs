@@ -178,8 +178,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.immortalThronePathLabel.Text = Resources.SettingsLabel4;
 		this.detectGamePathsCheckBox.Text = Resources.SettingsDetectGamePath;
 		this.detectLanguageCheckBox.Text = Resources.SettingsDetectLanguage;
-		this.skipTitleCheckBox.Text = Resources.SettingsSkipTitle;
-		this.toolTip.SetToolTip(this.skipTitleCheckBox, Resources.SettingsSkipTitleTT);
 		this.allowItemCopyCheckBox.Text = Resources.SettingsAllowCopy;
 		this.toolTip.SetToolTip(this.allowItemCopyCheckBox, Resources.SettingsAllowCopyTT);
 		this.allowItemEditCheckBox.Text = Resources.SettingsAllowEdit;
@@ -369,7 +367,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 
 		// The controls raise their handlers, which write back to the editor and apply its rules, as the fields did.
 		this.vaultPathTextBox.Text = values.VaultPath;
-		this.skipTitleCheckBox.Checked = values.SkipTitle;
 		this.allowItemEditCheckBox.Checked = values.AllowItemEdit;
 		this.allowItemCopyCheckBox.Checked = values.AllowItemCopy;
 		this.characterEditCheckBox.Checked = values.AllowCharacterEdit;

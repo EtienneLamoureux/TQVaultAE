@@ -161,7 +161,7 @@ public sealed class UserSettingsTests : IDisposable
 
 	[Fact]
 	public void Loadout_Missing_WornPiecesStored()
-		=> UserSettings.ParseSettings("""<UserSettings><SkipTitle>1</SkipTitle></UserSettings>""").Loadout.ReplaceWorn.Should().BeFalse();
+		=> UserSettings.ParseSettings("""<UserSettings><LoadLastVault>1</LoadLastVault></UserSettings>""").Loadout.ReplaceWorn.Should().BeFalse();
 
 	[Theory]
 	[InlineData("ReplaceWorn='1'", true)]
@@ -187,7 +187,7 @@ public sealed class UserSettingsTests : IDisposable
 	[Fact]
 	public void ItemCompare_Missing_RowsAlignedAndUnchangedShown()
 	{
-		var settings = UserSettings.ParseSettings("""<?xml version="1.0" encoding="utf-8" ?><UserSettings><SkipTitle>1</SkipTitle></UserSettings>""");
+		var settings = UserSettings.ParseSettings("""<?xml version="1.0" encoding="utf-8" ?><UserSettings><LoadLastVault>1</LoadLastVault></UserSettings>""");
 
 		settings.ItemCompare.AlignRows.Should().BeTrue();
 		settings.ItemCompare.HideUnchanged.Should().BeFalse();
@@ -234,7 +234,7 @@ public sealed class UserSettingsTests : IDisposable
 	[Fact]
 	public void Sort_Missing_NormalSortWithoutMerge()
 	{
-		var settings = UserSettings.ParseSettings("""<?xml version="1.0" encoding="utf-8" ?><UserSettings><SkipTitle>1</SkipTitle></UserSettings>""");
+		var settings = UserSettings.ParseSettings("""<?xml version="1.0" encoding="utf-8" ?><UserSettings><LoadLastVault>1</LoadLastVault></UserSettings>""");
 
 		settings.Sort.Algorithm.Should().Be(SackSortAlgorithm.Normal);
 		settings.Sort.MergeRelics.Should().BeFalse();
@@ -284,7 +284,7 @@ public sealed class UserSettingsTests : IDisposable
 	[Fact]
 	public void KeyBinds_Missing_NoChange()
 	{
-		var settings = UserSettings.ParseSettings("""<UserSettings><SkipTitle>1</SkipTitle></UserSettings>""");
+		var settings = UserSettings.ParseSettings("""<UserSettings><LoadLastVault>1</LoadLastVault></UserSettings>""");
 
 		settings.KeyBinds.Overrides.Should().BeEmpty();
 	}
@@ -496,7 +496,7 @@ public sealed class UserSettingsTests : IDisposable
 	[InlineData("tr-TR")]
 	public void Save_InAnotherCulture_WritesInvariantNumbers(string cultureName)
 	{
-		var settings = new UserSettings { Scale = 0.94945055F, ItemBGColorOpacity = -3, SkipTitle = true };
+		var settings = new UserSettings { Scale = 0.94945055F, ItemBGColorOpacity = -3 };
 
 		InCulture(cultureName, () =>
 		{
@@ -507,7 +507,6 @@ public sealed class UserSettingsTests : IDisposable
 		var root = XDocument.Load(this._xmlPath).Root!;
 		root.Element(nameof(UserSettings.Scale))!.Value.Should().Be("0.94945055");
 		root.Element(nameof(UserSettings.ItemBGColorOpacity))!.Value.Should().Be("-3");
-		root.Element(nameof(UserSettings.SkipTitle))!.Value.Should().Be("true");
 		UserSettings.Read(this._xmlPath).Should().BeEquivalentTo(settings);
 	}
 
@@ -572,9 +571,9 @@ public sealed class UserSettingsTests : IDisposable
 	[InlineData("<Scale>abc</Scale>")]
 	[InlineData("<Scale>0,95</Scale>")] // decimal comma typed by hand
 	[InlineData("<Scale />")]
-	[InlineData("<SkipTitle />")]
-	[InlineData("<SkipTitle>yes</SkipTitle>")]
-	[InlineData("<SkipTitle>True</SkipTitle>")] // xs:boolean is lower case
+	[InlineData("<LoadLastVault />")]
+	[InlineData("<LoadLastVault>yes</LoadLastVault>")]
+	[InlineData("<LoadLastVault>True</LoadLastVault>")] // xs:boolean is lower case
 	[InlineData("<ItemBGColorOpacity>1.5</ItemBGColorOpacity>")]
 	[InlineData("<ItemBGColorOpacity>99999999999</ItemBGColorOpacity>")]
 	public void Read_InvalidValue_ThrowsInsteadOfReturningDefaults(string element)

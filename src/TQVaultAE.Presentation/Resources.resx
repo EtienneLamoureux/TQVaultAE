@@ -229,9 +229,6 @@ configuration to reflect the link.</value>
 This may be caused by a bad language or game path setting.
 Would you like to restart TQVault?</value>
   </data>
-	<data name="Form1bNext" xml:space="preserve">
-    <value>Enter The Vault</value>
-  </data>
 	<data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Error Loading Resources</value>
   </data>
@@ -871,13 +868,6 @@ increases startup time.</value>
 	<data name="SettingsResetTT" xml:space="preserve">
     <value>Causes the configuration to Reset to the
 last saved configuration.</value>
-  </data>
-	<data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Automatically Bypass Title Screen</value>
-  </data>
-	<data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Ticking this box will automatically hit
-the Enter key on the title screen.</value>
   </data>
 	<data name="SettingsTitle" xml:space="preserve">
     <value>Configure Settings</value>

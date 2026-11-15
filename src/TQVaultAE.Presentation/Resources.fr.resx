@@ -219,9 +219,6 @@ Ceci peut-être causé par une mauvaise configuration de la langue ou du chemin 
 
 Voulez-vous redémarrer TQVault ?</value>
   </data>
-	<data name="Form1bNext" xml:space="preserve">
-    <value>Ouvrir le coffre</value>
-  </data>
 	<data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Erreur en chargeant les ressources</value>
   </data>
@@ -850,13 +847,6 @@ mais cela augmente le temps de démarrage.</value>
 	<data name="SettingsResetTT" xml:space="preserve">
     <value>Restaurera la dernière
 configuration sauvegardée.</value>
-  </data>
-	<data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Passer automatiquement l'écran d'accueil</value>
-  </data>
-	<data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Avec cette option, "Ouvrir le coffre" sera
-automatiquement activé sur l'écran d'accueil.</value>
   </data>
 	<data name="SettingsTitle" xml:space="preserve">
     <value>Configuration</value>

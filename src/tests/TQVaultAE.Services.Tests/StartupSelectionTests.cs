@@ -17,7 +17,6 @@ public class StartupSelectionTests
 		LastCharacterName = "IT/Main/Villain",
 		LoadLastVault = true,
 		LastVaultName = "Rings",
-		SkipTitle = false,
 	};
 
 	[Fact]
@@ -27,7 +26,7 @@ public class StartupSelectionTests
 
 		selection.CharacterKey.Should().Be("IT/Main/Villain");
 		selection.VaultName.Should().Be("Rings");
-		selection.SkipTitle.Should().BeFalse();
+		selection.AutomaticPlayer.Should().BeEmpty();
 	}
 
 	[Fact]
@@ -96,23 +95,11 @@ public class StartupSelectionTests
 	}
 
 	[Fact]
-	public void Resolve_CommandLinePlayer_SkipsTheTitleAndSelectsThePlayer()
+	public void Resolve_CommandLinePlayer_SelectsThePlayer()
 	{
 		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, new CommandLineArgs(["TQVaultAE.exe", "Hero"]));
 
-		selection.SkipTitle.Should().BeTrue();
 		selection.AutomaticPlayer.Should().Be("Hero");
-	}
-
-	[Fact]
-	public void Resolve_SkipTitleSetting_SkipsTheTitleWithAnEmptyPlayer()
-	{
-		this._settings.SkipTitle = true;
-
-		var selection = StartupSelection.Resolve(this._settings, Characters, _ => true, NoArgs);
-
-		selection.SkipTitle.Should().BeTrue();
-		selection.AutomaticPlayer.Should().BeEmpty();
 	}
 
 	[Fact]

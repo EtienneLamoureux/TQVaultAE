@@ -229,9 +229,6 @@
 这可能是由于语言或游戏路径设置错误造成的。
 您想重启TQVault吗？</value>
     </data>
-    <data name="Form1bNext" xml:space="preserve">
-    <value>进入仓库</value>
-  </data>
     <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>资源加载错误</value>
   </data>
@@ -780,12 +777,6 @@ TQVault关闭仍有物品在垃圾桶时将不会有提示信息。</value>
   </data>
     <data name="SettingsResetTT" xml:space="preserve">
     <value>将配置重置为上次保存的配置。</value>
-  </data>
-    <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>自动跳过标题界面</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>勾选此选项将会在标题界面的时候自动按下回车键。</value>
   </data>
     <data name="SettingsTitle" xml:space="preserve">
     <value>配置</value>

@@ -75,14 +75,6 @@ internal partial class SettingsUserControl
 	}
 
 	/// <summary>
-	/// Handler for clicking the skip title check box
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void SkipTitleCheckBoxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.SkipTitle = this.skipTitleCheckBox.Checked;
-
-	/// <summary>
 	/// Handler for clicking the OK button: checks the settings, applies the edits and raises <see cref="Applied"/>; an
 	/// invalid setting is told and the settings stay open.
 	/// </summary>

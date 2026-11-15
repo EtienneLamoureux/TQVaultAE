@@ -23,7 +23,6 @@ internal partial class SplashScreenForm
 	/// <summary>
 	/// Next button
 	/// </summary>
-	private ScalingButton nextButton;
 
 	/// <summary>
 	/// Exit button
@@ -79,7 +78,6 @@ internal partial class SplashScreenForm
         this.components = new System.ComponentModel.Container();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreenForm));
         this.label3 = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
-        this.nextButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.exitButton = new TQVaultAE.GUI.Components.Scaling.ScalingButton();
         this.labelPleaseWait = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
         this.waitTimer = new System.Timers.Timer();
@@ -99,30 +97,6 @@ internal partial class SplashScreenForm
         this.label3.Text = "A magical place where you can store your artifacts of power that you will need to" +
 " save the world from the Titans.";
         this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-        // 
-        // nextButton
-        // 
-        this.nextButton.BackColor = System.Drawing.Color.Transparent;
-        this.nextButton.DownBitmap = global::TQVaultAE.Presentation.Win32.Images.MainButtonDown;
-        this.nextButton.FlatAppearance.BorderSize = 0;
-        this.nextButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-        this.nextButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-        this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.nextButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
-        this.nextButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
-        this.nextButton.Image = global::TQVaultAE.Presentation.Win32.Images.MainButtonUp;
-        this.nextButton.Location = new System.Drawing.Point(286, 365);
-        this.nextButton.Name = "nextButton";
-        this.nextButton.OverBitmap = global::TQVaultAE.Presentation.Win32.Images.MainButtonOver;
-        this.nextButton.Size = new System.Drawing.Size(137, 30);
-        this.nextButton.SizeToGraphic = false;
-        this.nextButton.TabIndex = 3;
-        this.nextButton.Text = "Enter The Vault";
-        this.nextButton.UpBitmap = global::TQVaultAE.Presentation.Win32.Images.MainButtonUp;
-        this.nextButton.UseCustomGraphic = true;
-        this.nextButton.UseVisualStyleBackColor = false;
-        this.nextButton.Visible = false;
-        this.nextButton.Click += new System.EventHandler(this.NextButtonClick);
         // 
         // exitButton
         // 
@@ -181,7 +155,6 @@ internal partial class SplashScreenForm
         // 
         // SplashScreenForm
         // 
-        this.AcceptButton = this.nextButton;
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackgroundImage = global::TQVaultAE.Presentation.Win32.Images.NewSplashScreen;
@@ -189,7 +162,6 @@ internal partial class SplashScreenForm
         this.ClientSize = new System.Drawing.Size(716, 463);
         this.Controls.Add(this.labelPleaseWait);
         this.Controls.Add(this.exitButton);
-        this.Controls.Add(this.nextButton);
         this.Controls.Add(this.label3);
         this.Controls.Add(this.progressBar);
         this.DrawCustomBorder = true;
@@ -200,10 +172,8 @@ internal partial class SplashScreenForm
         this.Name = "SplashScreenForm";
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
         this.Text = "Titan Quest Item Vault";
-        this.Click += new System.EventHandler(this.SplashScreen_Click);
         this.Controls.SetChildIndex(this.progressBar, 0);
         this.Controls.SetChildIndex(this.label3, 0);
-        this.Controls.SetChildIndex(this.nextButton, 0);
         this.Controls.SetChildIndex(this.exitButton, 0);
         this.Controls.SetChildIndex(this.labelPleaseWait, 0);
         ((System.ComponentModel.ISupportInitialize)(this.waitTimer)).EndInit();

@@ -252,18 +252,11 @@ public partial class MainForm
 
 		this.mainView.SelectVault(selection.VaultName);
 
-		this.splashScreen.UpdateText();
-		this.splashScreen.ShowMainForm = true;
+		// The command line player is a character key (IT/User/HeroA) or the start of a name in the list.
+		this.mainView.SelectAutomaticPlayer(selection.AutomaticPlayer);
 
-		// Allows skipping of title screen with setting
-		if (selection.SkipTitle)
-		{
-			// The command line player is a character key (IT/User/HeroA) or the start of a name in the list.
-			this.mainView.SelectAutomaticPlayer(selection.AutomaticPlayer);
-
-			StartupTiming.Mark(this.Log, "splash close asked");
-			this.splashScreen.CloseForm();
-		}
+		StartupTiming.Mark(this.Log, "splash close asked");
+		this.splashScreen.CloseForm();
 	}
 
 	#endregion

@@ -8,21 +8,20 @@ public class CommandLineArgsTests
 	private const string Exe = "TQVaultAE.exe";
 
 	[Fact]
-	public void NoArguments_IsNotAutomatic()
+	public void NoArguments_NoPlayer()
 	{
 		var args = new CommandLineArgs([Exe]);
 
-		args.IsAutomatic.Should().BeFalse();
+		args.Player.Should().BeNull();
 		args.Error.Should().BeNull();
 	}
 
 	[Fact]
-	public void Player_IsAutomatic()
+	public void Player_IsTheArgument()
 	{
 		var args = new CommandLineArgs([Exe, "Hero"]);
 
 		args.Player.Should().Be("Hero");
-		args.IsAutomatic.Should().BeTrue();
 	}
 
 	[Fact]
