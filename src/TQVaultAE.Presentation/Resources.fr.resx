@@ -2477,4 +2477,17 @@ Continuer ?</value>
 	<data name="LoadoutMarkClickToCompare" xml:space="preserve">
     <value>Cliquer pour comparer</value>
   </data>
+	<data name="SettingsMcpServer" xml:space="preserve">
+    <value>Point d'accès MCP pour agents IA</value>
+  </data>
+	<data name="SettingsMcpServerTT" xml:space="preserve">
+    <value>Permet à un agent IA de cet ordinateur de lire et piloter TQVault par MCP, à l'adresse http://127.0.0.1:&lt;port&gt;/mcp (cet ordinateur seulement).
+Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modification, et le jeu ne doit pas utiliser les fichiers qu'il modifie.</value>
+  </data>
+	<data name="SettingsMcpServerPort" xml:space="preserve">
+    <value>Port : </value>
+  </data>
+	<data name="SettingsMcpServerPortTT" xml:space="preserve">
+    <value>Port du point d'accès MCP, sur cet ordinateur seulement (127.0.0.1) : ne l'ouvrez jamais au réseau. Par défaut : 47017.</value>
+  </data>
 </root>

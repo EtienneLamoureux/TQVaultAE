@@ -54,6 +54,8 @@ public sealed record SettingsValues
 	public bool DisableLegacyBackup { get; set; }
 	public bool GitBackupPlayerSavesEnabled { get; set; }
 	public bool EnableOriginalTQSupport { get; set; }
+	public bool EnableMcpServer { get; set; }
+	public int McpServerPort { get; set; }
 	public string PasteBinApiKey { get; set; } = string.Empty;
 	public string PasteBinExpiration { get; set; } = string.Empty;
 
@@ -113,6 +115,8 @@ public sealed record SettingsValues
 			DisableLegacyBackup = settings.DisableLegacyBackup,
 			GitBackupPlayerSavesEnabled = settings.GitBackupPlayerSavesEnabled,
 			EnableOriginalTQSupport = settings.EnableOriginalTQSupport,
+			EnableMcpServer = settings.EnableMcpServer,
+			McpServerPort = UserSettings.ValidMcpServerPort(settings.McpServerPort),
 			PasteBinApiKey = settings.PasteBinApiKey ?? string.Empty,
 			PasteBinExpiration = settings.PasteBinExpiration ?? UserSettings.DefaultPasteBinExpiration,
 			CSVDelimiter = settings.CSVDelimiter ?? string.Empty,
@@ -161,6 +165,8 @@ public sealed record SettingsValues
 		settings.GitBackupRepository = this.GitBackupRepository;
 		settings.GitBackupPlayerSavesEnabled = this.GitBackupPlayerSavesEnabled;
 		settings.EnableOriginalTQSupport = this.EnableOriginalTQSupport;
+		settings.EnableMcpServer = this.EnableMcpServer;
+		settings.McpServerPort = UserSettings.ValidMcpServerPort(this.McpServerPort);
 		settings.PasteBinApiKey = this.PasteBinApiKey;
 		settings.PasteBinExpiration = this.PasteBinExpiration;
 		settings.EnableEpicLegendaryAffixes = this.EnableEpicLegendaryAffixes;

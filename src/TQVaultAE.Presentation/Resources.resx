@@ -2847,4 +2847,17 @@ Go on?</value>
 	<data name="LoadoutMarkClickToCompare" xml:space="preserve">
     <value>Click to compare</value>
   </data>
+	<data name="SettingsMcpServer" xml:space="preserve">
+    <value>MCP endpoint for AI agents</value>
+  </data>
+	<data name="SettingsMcpServerTT" xml:space="preserve">
+    <value>Lets an AI agent on this computer read and drive TQVault through MCP, at http://127.0.0.1:&lt;port&gt;/mcp (this computer only).
+Read documentation/mcp.md first: the agent must ask before each change, and the game must not use the files it changes.</value>
+  </data>
+	<data name="SettingsMcpServerPort" xml:space="preserve">
+    <value>Port : </value>
+  </data>
+	<data name="SettingsMcpServerPortTT" xml:space="preserve">
+    <value>Port of the MCP endpoint, on this computer only (127.0.0.1): never open it to the network. Default: 47017.</value>
+  </data>
 </root>

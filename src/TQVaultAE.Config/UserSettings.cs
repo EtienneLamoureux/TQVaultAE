@@ -163,6 +163,35 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(EnableOriginalTQSupport))]
 	public bool EnableOriginalTQSupport { get; set; } = false;
 
+	/// <summary>
+	/// Serves the MCP automation endpoint, so that an AI agent on this computer can read and drive TQVault
+	/// (documentation/mcp.md). Opt-in: off by default.
+	/// </summary>
+	[XmlElement(ElementName = nameof(EnableMcpServer))]
+	public bool EnableMcpServer { get; set; } = false;
+
+	/// <summary>The default port of the MCP automation endpoint.</summary>
+	public const int DefaultMcpServerPort = 47017;
+
+	/// <summary>The lowest port the MCP endpoint takes: below are the ports reserved to the system services.</summary>
+	public const int MinMcpServerPort = 1024;
+
+	/// <summary>The highest port the MCP endpoint takes.</summary>
+	public const int MaxMcpServerPort = 65535;
+
+	/// <summary>
+	/// The port of the MCP automation endpoint, on the loopback interface only (http://127.0.0.1:port/mcp).
+	/// </summary>
+	[XmlElement(ElementName = nameof(McpServerPort))]
+	public int McpServerPort { get; set; } = DefaultMcpServerPort;
+
+	/// <summary>
+	/// <paramref name="port"/> when the MCP endpoint can take it (<see cref="MinMcpServerPort"/> to
+	/// <see cref="MaxMcpServerPort"/>), else <see cref="DefaultMcpServerPort"/>.
+	/// </summary>
+	public static int ValidMcpServerPort(int port)
+		=> port is >= MinMcpServerPort and <= MaxMcpServerPort ? port : DefaultMcpServerPort;
+
 	[XmlElement(ElementName = nameof(PasteBinApiKey))]
 	public string PasteBinApiKey { get; set; } = string.Empty;
 

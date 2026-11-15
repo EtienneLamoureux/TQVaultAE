@@ -29,6 +29,44 @@ public class SettingsEditorTests
 		=> new(SettingsValues.From(settings ?? NewSettings(), "English", """C:\TQ""", """C:\TQIT"""));
 
 	[Fact]
+	public void McpServerTurnedOn_IsAChangeAppliedWithoutRestart()
+	{
+		var editor = NewEditor();
+
+		editor.Current.EnableMcpServer = true;
+
+		editor.McpServerChanged.Should().BeTrue();
+		editor.ConfigurationChanged.Should().BeTrue();
+		editor.RestartReason.Should().Be(RestartReason.None, "the endpoint starts and stops at once");
+	}
+
+	[Fact]
+	public void McpServerPortChanged_RestartsTheEndpointOnlyWhenItIsOn()
+	{
+		var off = NewEditor();
+		off.Current.McpServerPort = 47075;
+
+		var on = NewEditor(new UserSettings { EnableMcpServer = true });
+		on.Current.McpServerPort = 47075;
+
+		off.McpServerChanged.Should().BeFalse("a stopped endpoint has nothing to restart");
+		off.ConfigurationChanged.Should().BeTrue("the port is still saved");
+		on.McpServerChanged.Should().BeTrue();
+	}
+
+	[Fact]
+	public void McpServerPort_InvalidInTheFile_TakesTheDefaultAndSavesIt()
+	{
+		var settings = new UserSettings { McpServerPort = 80 };
+		var editor = NewEditor(settings);
+
+		editor.Current.McpServerPort.Should().Be(UserSettings.DefaultMcpServerPort);
+
+		editor.ApplyTo(settings);
+		settings.McpServerPort.Should().Be(UserSettings.DefaultMcpServerPort);
+	}
+
+	[Fact]
 	public void NothingEdited_ReportsNoChangeAndNoRestart()
 	{
 		var editor = NewEditor();

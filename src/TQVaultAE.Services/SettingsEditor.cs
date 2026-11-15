@@ -165,6 +165,13 @@ public sealed class SettingsEditor
 	public bool EnableTQVaultSoundsChanged => this.Current.EnableTQVaultSounds != this.Original.EnableTQVaultSounds;
 
 	/// <summary>
+	/// The MCP automation endpoint was turned on or off, or its port changed: it starts or stops at once, without a restart.
+	/// </summary>
+	public bool McpServerChanged
+		=> this.Current.EnableMcpServer != this.Original.EnableMcpServer
+		|| (this.Current.EnableMcpServer && this.Current.McpServerPort != this.Original.McpServerPort);
+
+	/// <summary>
 	/// A key or mouse binding changed: the windows read the new ones at once, without a restart.
 	/// </summary>
 	public bool KeyBindsChanged => !this.Current.KeyBinds.Equals(this.Original.KeyBinds);

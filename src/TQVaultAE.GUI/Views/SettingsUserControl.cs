@@ -93,6 +93,11 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 	public bool EnableTQVaultSoundsChanged => this.editor.EnableTQVaultSoundsChanged;
 
 	/// <summary>
+	/// Indicates that the MCP automation endpoint was turned on or off, or that its port changed.
+	/// </summary>
+	public bool McpServerChanged => this.editor.McpServerChanged;
+
+	/// <summary>
 	/// Why the changes need a restart, if they do.
 	/// </summary>
 	public RestartReason RestartReason => this.editor.RestartReason;
@@ -238,6 +243,12 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.checkGroupBoxOriginalTQSupport.Text = Resources.SettingsOriginalTQSupport;
 		this.toolTip.SetToolTip(this.checkGroupBoxOriginalTQSupport, Resources.SettingsOriginalTQSupportTT);
 		this.linkLabelTQOriginalSupport.Text = Resources.SettingsHowToPlay;
+
+		this.checkGroupBoxMcpServer.Text = Resources.SettingsMcpServer;
+		this.toolTip.SetToolTip(this.checkGroupBoxMcpServer, Resources.SettingsMcpServerTT);
+		this.scalingLabelMcpServerPort.Text = Resources.SettingsMcpServerPort;
+		this.toolTip.SetToolTip(this.scalingLabelMcpServerPort, Resources.SettingsMcpServerPortTT);
+		this.toolTip.SetToolTip(this.numericUpDownMcpServerPort, Resources.SettingsMcpServerPortTT);
 
 		this.cancelButton.Text = Resources.GlobalCancel;
 		this.okayButton.Text = Resources.GlobalOK;
@@ -395,6 +406,8 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.scalingTextBoxGitRepository.Text = values.GitBackupRepository;
 		this.scalingCheckBoxBackupPlayerSaves.Checked = values.GitBackupPlayerSavesEnabled;
 		this.checkGroupBoxOriginalTQSupport.Checked = values.EnableOriginalTQSupport;
+		this.checkGroupBoxMcpServer.Checked = values.EnableMcpServer;
+		this.numericUpDownMcpServerPort.Value = values.McpServerPort;
 
 		this.pasteBinApiKeyTextBox.Text = values.PasteBinApiKey;
 

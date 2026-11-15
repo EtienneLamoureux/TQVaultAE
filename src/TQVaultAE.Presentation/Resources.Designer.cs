@@ -5061,6 +5061,42 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MCP endpoint for AI agents.
+        /// </summary>
+        public static string SettingsMcpServer {
+            get {
+                return ResourceManager.GetString("SettingsMcpServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lets an AI agent on this computer read and drive TQVault through MCP, at http://127.0.0.1:&lt;port&gt;/mcp (this computer only)..
+        /// </summary>
+        public static string SettingsMcpServerTT {
+            get {
+                return ResourceManager.GetString("SettingsMcpServerTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port : .
+        /// </summary>
+        public static string SettingsMcpServerPort {
+            get {
+                return ResourceManager.GetString("SettingsMcpServerPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port of the MCP endpoint, on this computer only (127.0.0.1): never open it to the network. Default: 47017..
+        /// </summary>
+        public static string SettingsMcpServerPortTT {
+            get {
+                return ResourceManager.GetString("SettingsMcpServerPortTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Git Repository Url : .
         /// </summary>
         public static string SettingsGitRepositoryUrl {

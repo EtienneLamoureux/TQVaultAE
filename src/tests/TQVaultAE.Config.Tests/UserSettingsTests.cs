@@ -345,7 +345,20 @@ public sealed class UserSettingsTests : IDisposable
 		template.Should().BeEquivalentTo(new UserSettings(), "a fresh install and a missing file must start alike");
 		template.GitBackupEnabled.Should().BeFalse("the git backup is opt-in");
 		template.VaultPath.Should().BeEmpty("an empty vault path makes the startup ask for one");
+		template.EnableMcpServer.Should().BeFalse("the MCP endpoint is opt-in");
+		template.McpServerPort.Should().Be(UserSettings.DefaultMcpServerPort);
 	}
+
+	[Theory]
+	[InlineData(1024, 1024)]
+	[InlineData(47075, 47075)]
+	[InlineData(65535, 65535)]
+	[InlineData(1023, UserSettings.DefaultMcpServerPort)]
+	[InlineData(0, UserSettings.DefaultMcpServerPort)]
+	[InlineData(-1, UserSettings.DefaultMcpServerPort)]
+	[InlineData(65536, UserSettings.DefaultMcpServerPort)]
+	public void ValidMcpServerPort_OutsideTheUserPorts_TakesTheDefault(int port, int expected)
+		=> UserSettings.ValidMcpServerPort(port).Should().Be(expected);
 
 	/// <summary>
 	/// The template of the first <c>UserConfig.xml</c> (2022, commit 18d8adb): two-space indent,

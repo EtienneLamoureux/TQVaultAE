@@ -374,6 +374,12 @@ internal partial class SettingsUserControl
 	private void checkGroupBoxOriginalTQSupport_CheckedChanged(object? sender, EventArgs e)
 		=> this.editor.Current.EnableOriginalTQSupport = this.checkGroupBoxOriginalTQSupport.Checked;
 
+	private void checkGroupBoxMcpServer_CheckedChanged(object? sender, EventArgs e)
+		=> this.editor.Current.EnableMcpServer = this.checkGroupBoxMcpServer.Checked;
+
+	private void numericUpDownMcpServerPort_ValueChanged(object? sender, EventArgs e)
+		=> this.editor.Current.McpServerPort = (int)this.numericUpDownMcpServerPort.Value;
+
 	private void PasteBinExpirationComboBoxSelectedIndexChanged(object? sender, EventArgs e)
 	{
 		if (this.pasteBinExpirationComboBox.SelectedItem is PasteBinExpirationComboBoxItem item)

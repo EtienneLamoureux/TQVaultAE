@@ -208,6 +208,10 @@ internal partial class SettingsUserControl
 		checkGroupBoxOriginalTQSupport = new CheckGroupBox();
 		bufferedFlowLayoutPanelTQOriginalSupport = new BufferedFlowLayoutPanel();
 		linkLabelTQOriginalSupport = new LinkLabel();
+		checkGroupBoxMcpServer = new CheckGroupBox();
+		bufferedFlowLayoutPanelMcpServer = new BufferedFlowLayoutPanel();
+		scalingLabelMcpServerPort = new ScalingLabel();
+		numericUpDownMcpServerPort = new NumericUpDown();
 		languageComboBox = new ScalingComboBox();
 		languageLabel = new ScalingLabel();
 		titanQuestPathTextBox = new ScalingTextBox();
@@ -251,6 +255,9 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelGitBackup.SuspendLayout();
 		checkGroupBoxOriginalTQSupport.SuspendLayout();
 		bufferedFlowLayoutPanelTQOriginalSupport.SuspendLayout();
+		checkGroupBoxMcpServer.SuspendLayout();
+		bufferedFlowLayoutPanelMcpServer.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)numericUpDownMcpServerPort).BeginInit();
 		tableLayoutPanelButtons.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)ItemBGColorOpacityTrackBar).BeginInit();
 		groupBoxGeneral.SuspendLayout();
@@ -870,6 +877,59 @@ internal partial class SettingsUserControl
 		linkLabelTQOriginalSupport.TabStop = true;
 		linkLabelTQOriginalSupport.Text = "How to play...";
 		linkLabelTQOriginalSupport.LinkClicked += linkLabelTQOriginalSupport_LinkClicked;
+		//
+		// checkGroupBoxMcpServer
+		//
+		checkGroupBoxMcpServer.AutoSize = true;
+		checkGroupBoxMcpServer.Checked = false;
+		checkGroupBoxMcpServer.CheckedBehavior = UIToolbox.CheckGroupBoxCheckedBehavior.Enable;
+		checkGroupBoxMcpServer.CheckState = CheckState.Unchecked;
+		checkGroupBoxMcpServer.Controls.Add(bufferedFlowLayoutPanelMcpServer);
+		checkGroupBoxMcpServer.ForeColor = Color.Gold;
+		checkGroupBoxMcpServer.Location = new Point(3, 386);
+		checkGroupBoxMcpServer.Name = "checkGroupBoxMcpServer";
+		checkGroupBoxMcpServer.Size = new Size(316, 59);
+		checkGroupBoxMcpServer.TabIndex = 55;
+		checkGroupBoxMcpServer.TabStop = false;
+		checkGroupBoxMcpServer.Text = "MCP endpoint for AI agents";
+		checkGroupBoxMcpServer.CheckedChanged += checkGroupBoxMcpServer_CheckedChanged;
+		//
+		// bufferedFlowLayoutPanelMcpServer
+		//
+		bufferedFlowLayoutPanelMcpServer.AutoSize = true;
+		bufferedFlowLayoutPanelMcpServer.Controls.Add(scalingLabelMcpServerPort);
+		bufferedFlowLayoutPanelMcpServer.Controls.Add(numericUpDownMcpServerPort);
+		bufferedFlowLayoutPanelMcpServer.Dock = DockStyle.Fill;
+		bufferedFlowLayoutPanelMcpServer.ForeColor = Color.White;
+		bufferedFlowLayoutPanelMcpServer.Location = new Point(3, 20);
+		bufferedFlowLayoutPanelMcpServer.Name = "bufferedFlowLayoutPanelMcpServer";
+		bufferedFlowLayoutPanelMcpServer.Size = new Size(310, 36);
+		bufferedFlowLayoutPanelMcpServer.TabIndex = 1;
+		bufferedFlowLayoutPanelMcpServer.WrapContents = false;
+		//
+		// scalingLabelMcpServerPort
+		//
+		scalingLabelMcpServerPort.Anchor = AnchorStyles.Left;
+		scalingLabelMcpServerPort.AutoSize = true;
+		scalingLabelMcpServerPort.Font = new Font("Microsoft Sans Serif", 11.25F);
+		scalingLabelMcpServerPort.ForeColor = Color.White;
+		scalingLabelMcpServerPort.Location = new Point(3, 8);
+		scalingLabelMcpServerPort.Name = "scalingLabelMcpServerPort";
+		scalingLabelMcpServerPort.Size = new Size(48, 18);
+		scalingLabelMcpServerPort.TabIndex = 0;
+		scalingLabelMcpServerPort.Text = "Port : ";
+		//
+		// numericUpDownMcpServerPort
+		//
+		numericUpDownMcpServerPort.Font = new Font("Microsoft Sans Serif", 11.25F);
+		numericUpDownMcpServerPort.Location = new Point(57, 3);
+		numericUpDownMcpServerPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+		numericUpDownMcpServerPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
+		numericUpDownMcpServerPort.Name = "numericUpDownMcpServerPort";
+		numericUpDownMcpServerPort.Size = new Size(90, 24);
+		numericUpDownMcpServerPort.TabIndex = 1;
+		numericUpDownMcpServerPort.Value = new decimal(new int[] { 47017, 0, 0, 0 });
+		numericUpDownMcpServerPort.ValueChanged += numericUpDownMcpServerPort_ValueChanged;
 		// 
 		// languageComboBox
 		// 
@@ -1279,6 +1339,7 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelSkeletonRight.Controls.Add(groupBoxGfxAndAudio);
 		bufferedFlowLayoutPanelSkeletonRight.Controls.Add(pasteBinGroupBox);
 		bufferedFlowLayoutPanelSkeletonRight.Controls.Add(checkGroupBoxOriginalTQSupport);
+		bufferedFlowLayoutPanelSkeletonRight.Controls.Add(checkGroupBoxMcpServer);
 		bufferedFlowLayoutPanelSkeletonRight.Dock = DockStyle.Fill;
 		bufferedFlowLayoutPanelSkeletonRight.FlowDirection = FlowDirection.TopDown;
 		bufferedFlowLayoutPanelSkeletonRight.Location = new Point(839, 3);
@@ -1439,6 +1500,11 @@ internal partial class SettingsUserControl
 		checkGroupBoxOriginalTQSupport.PerformLayout();
 		bufferedFlowLayoutPanelTQOriginalSupport.ResumeLayout(false);
 		bufferedFlowLayoutPanelTQOriginalSupport.PerformLayout();
+		checkGroupBoxMcpServer.ResumeLayout(false);
+		checkGroupBoxMcpServer.PerformLayout();
+		bufferedFlowLayoutPanelMcpServer.ResumeLayout(false);
+		bufferedFlowLayoutPanelMcpServer.PerformLayout();
+		((System.ComponentModel.ISupportInitialize)numericUpDownMcpServerPort).EndInit();
 		tableLayoutPanelButtons.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)ItemBGColorOpacityTrackBar).EndInit();
 		groupBoxGeneral.ResumeLayout(false);
@@ -1555,6 +1621,10 @@ internal partial class SettingsUserControl
 	private CheckGroupBox checkGroupBoxOriginalTQSupport;
 	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelTQOriginalSupport;
 	private System.Windows.Forms.LinkLabel linkLabelTQOriginalSupport;
+	private CheckGroupBox checkGroupBoxMcpServer;
+	private BufferedFlowLayoutPanel bufferedFlowLayoutPanelMcpServer;
+	private ScalingLabel scalingLabelMcpServerPort;
+	private NumericUpDown numericUpDownMcpServerPort;
 	private ScalingLabel pasteBinApiKeyLabel;
 	private ScalingTextBox pasteBinApiKeyTextBox;
 	private ScalingLabel pasteBinExpirationLabel;
