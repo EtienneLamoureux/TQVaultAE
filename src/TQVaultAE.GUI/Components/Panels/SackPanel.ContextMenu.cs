@@ -449,13 +449,13 @@ public partial class SackPanel
 	{
 		var dispStl = ToolStripItemDisplayStyle.ImageAndText;
 
+		// What the percentages mean, a grey line above the choices.
 		currentchoicesMenu.DropDownItems.Add(new ToolStripMenuItem()
 		{
 			Text = header,
 			Enabled = false,
 			DisplayStyle = ToolStripItemDisplayStyle.Text,
-		}.StyledLike(this.CustomContextMenu));
-		currentchoicesMenu.DropDownItems.Add("-");
+		}.StyledLike(this.CustomContextMenu).WithTextColor(ItemStyle.Broken.Color()));
 
 
 		if (_DisplayAffixesByEffect)// Group By Effect
