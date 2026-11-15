@@ -14,6 +14,11 @@ equipment, stashes, even in two different vaults.
 While waiting for the second item you can switch bags, vaults or characters. <kbd>Esc</kbd> or a right-click cancels;
 a left-click on the first item again cancels too; a click on an empty cell does nothing.
 
+Each comparison opens in its own window, beside the main window: several can stay open, each a step down and right of
+the previous one, and the main window stays usable. A window compares the two items as they were when it opened:
+moving, changing or deleting them afterwards does not change it. It follows the zoom of the main window and closes
+with it.
+
 ## Layout
 
 A toolbar, then four columns, left to right:

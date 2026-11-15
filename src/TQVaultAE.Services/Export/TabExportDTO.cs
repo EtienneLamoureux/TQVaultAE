@@ -17,8 +17,8 @@ public class TabExportDTO
 	public List<ItemDto> Items { get; set; } = [];
 
 	/// <summary>
-	/// The mod of the container the tab comes from, which its items without an own map inherit; absent for the base
-	/// game.
+	/// The mod of the container the tab comes from: its items are read with it until they are placed; absent for the
+	/// base game.
 	/// </summary>
 	[JsonPropertyName("mod")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

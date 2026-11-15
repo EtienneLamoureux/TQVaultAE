@@ -124,7 +124,7 @@ grep "<Version" Directory.Build.props
 Expected output (single source of truth for all projects):
 ```
 # Directory.Build.props (all projects inherit this version)
-    <Version Condition="'$(IsPackable)' != 'false'">4.4.1.0</Version>
+    <Version Condition="'$(IsPackable)' != 'false'">5.0.0.0</Version>
 ```
 
 ### After Build
@@ -152,7 +152,7 @@ Expected output (single source of truth for all projects):
 (Get-Item "src\TQVaultAE.Services.Win32\bin\Release\net10.0-windows\TQVaultAE.Services.Win32.dll").VersionInfo.FileVersion
 ```
 
-All should return: `4.4.1.0` (or current synchronized version)
+All should return: `5.0.0.0` (or current synchronized version)
 
 ### From Executable Properties
 
@@ -197,7 +197,7 @@ TQ.SaveFilesExplorer.exe: 4.4.0.0
 The sync script replaces wildcards with exact version. After running Update-Version.ps1 with `-VersionType "Sync"`, `Directory.Build.props` should have:
 
 ```xml
-<Version Condition="'$(IsPackable)' != 'false'">4.4.1.0</Version>
+<Version Condition="'$(IsPackable)' != 'false'">5.0.0.0</Version>
 ```
 
 ### Issue: Workflow Not Triggering on Version Bump
@@ -249,34 +249,34 @@ The workflow now creates ZIP archives before release. Verify:
 
 ## Next Release Preparation
 
-When ready to release version 4.5.0.0:
+When ready to release version 5.1.0.0:
 
 ```bash
 # Step 1: Edit version-info.json with new version
 # Edit version-info.json:
 # {
-#   "Major": 4,
-#   "Minor": 5,
+#   "Major": 5,
+#   "Minor": 1,
 #   "Build": 0,
 #   "Revision": 0
 # }
 
 # Step 2: Commit and push to master
 git add version-info.json
-git commit -m "chore: bump version to 4.5.0.0"
+git commit -m "chore: bump version to 5.1.0.0"
 git push origin master
 
 # Step 3: auto-version.yml workflow will automatically:
 # - Sync version to Directory.Build.props
 # - Build release artifacts
-# - Create git tag "4.5.0"
+# - Create git tag "5.1.0"
 # - Create ZIP archives
 # - Publish GitHub Release
 
 # Verify the release:
-# 1. Check GitHub → Releases → v4.5.0
+# 1. Check GitHub → Releases → 5.1.0
 # 2. Download ZIP archives
-# 3. Verify executables show version 4.5.0.0
+# 3. Verify executables show version 5.1.0.0
 ```
 
 ## Related Documentation

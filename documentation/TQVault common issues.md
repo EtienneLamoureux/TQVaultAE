@@ -16,7 +16,7 @@ Starting with version 2.2.2.0, if there is an exception it will be displayed as 
 ## Issue: TQVault debugging   
 If an issue is not known, it is helpful to turn on debugging to help isolate the issue.   
 ### Solution 
-Manually edit the config file (`UserConfig.xml`, next to `TQVaultAE.exe`) to turn on debugging. The keys below are not in the file: add them.   
+Manually edit the config file (`UserConfig.xml`, next to `TQVaultAE.exe`) to turn on debugging. Set the keys below in the file; if one is missing (TQVault has not saved its settings yet), add it.   
 Each level key works on its own. The *DebugEnabled* key adds a few more messages.   
    
 - ARCFileDebugLevel - Used for debugging the decoding of the arc files.   

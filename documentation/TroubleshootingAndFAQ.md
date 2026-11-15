@@ -18,7 +18,7 @@
 #### Can I use TQVaultAE while playing the game?
 </summary>
 
-> Only when using the "Allow hot reload features" setting, otherwise it is not safe to do so.\
+> Only when using the "Allow Hot Reload Features" setting, otherwise it is not safe to do so.\
 > Even then, be aware that any unsaved changes made in TQVaultAE will be lost when interacting with in-game inventories.
 </details>
 
@@ -64,16 +64,18 @@
 3. *Replace the following sections:*
 
 ```xml
-<AutoDetectGamePath>1</AutoDetectGamePath>
+<AutoDetectGamePath>true</AutoDetectGamePath>
 ...
 <TQITPath></TQITPath>
 <TQPath></TQPath>
 ```
 
+*(a file TQVault has never saved shows `1` instead of `true`)*
+
 *by (replace the path to the correct one for your computer)*
 
 ```xml
-<AutoDetectGamePath>0</AutoDetectGamePath>
+<AutoDetectGamePath>false</AutoDetectGamePath>
 ...
 <TQITPath>C:\examplePath\Titan Quest Anniversary Edition</TQITPath>
 <TQPath>C:\examplePath\Titan Quest Anniversary Edition</TQPath>

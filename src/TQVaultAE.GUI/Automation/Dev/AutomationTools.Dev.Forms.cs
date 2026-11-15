@@ -280,7 +280,7 @@ internal static partial class AutomationTools
 		}
 
 		[McpServerTool(Name = "move_window", Destructive = true)]
-		[Description("Moves the main window, or another open form, to a screen position (virtual screen pixels, so negative on a monitor left of the primary one), like dragging it there (the size is left to Windows): on a monitor of another DPI, Windows sends the DPI change. Returns the monitors (bounds and DPI) and the window's DPI and scales after the move. Move it back to its monitor when done.")]
+		[Description("Moves the main window, or another open form, to a screen position (virtual screen pixels, so negative on a monitor left of the primary one), like dragging it there (the size is left to Windows): on a monitor of another DPI, Windows sends the DPI change. Returns the monitors (bounds) and the window's DPI and scales after the move. Move it back to its monitor when done.")]
 		public static async Task<string> MoveWindow(
 			[Description("Left of the window in virtual screen pixels.")] int x,
 			[Description("Top of the window in virtual screen pixels.")] int y,

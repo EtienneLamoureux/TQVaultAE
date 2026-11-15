@@ -7,7 +7,7 @@ using TQVaultAE.Presentation;
 namespace TQVaultAE.GUI.Components.Menus;
 
 /// <summary>
-/// The "Modded" submenu of the item and vault menus: the base game, then the installed mods, the current one checked.
+/// The "Modded" submenu of the vault menu: the base game, then the installed mods, the current one checked.
 /// </summary>
 internal static class ModMenu
 {

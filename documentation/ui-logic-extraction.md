@@ -1,8 +1,11 @@
 # Logic trapped in the GUI: inventory and extraction plan
 
 Inventory made on 2026-11-08 over `src/TQVaultAE.GUI` (Forms, Components, Dialogs, Tooltips, Models; Designer files and the
-Debug-only `Automation` folder excluded). Line numbers are those of that date and have drifted since: check them before
-moving code.
+Debug-only `Automation` folder excluded). Line numbers and file names are those of that date and have drifted since: the
+main window's content moved from the `MainForm` partials (`MainForm.Vault/Player/Stash/Panel/Export/Clipboard.cs`) to
+`Views/MainFormUserControl*.cs` (`.Vaults`, `.Characters`, `.Panels`, `.VaultMenu`, `.Clipboard`, `.Search`,
+`.HotReload`…), `CharacterEditDialog*` became `Views/CharacterEditorUserControl*` and `SettingsDialog*`
+`Views/SettingsUserControl*`. Check them before moving code.
 
 The goal: the GUI only displays and takes input. Rules, state changes, validation and text built from game data move to
 `Application` (contracts, DTOs, results, session state), `Services` (orchestration), `Domain` (pure rules on the entities) or
@@ -10,8 +13,9 @@ The goal: the GUI only displays and takes input. Rules, state changes, validatio
 
 ## End state (lot 10 done)
 
-All ten lots are done: the commits from `7b420c1` to `e1fba5c` (`git log --oneline 7b420c1..HEAD`). Each inventory row below
-has a status: **done**, **partial** (what is left is noted) or **left**. What remains in the GUI on purpose is listed in
+All ten lots are done. The commit ids on this page come from the working branch before it was rebased and are not in the
+repository: find a row's commit with `git log --oneline --grep 'ui-logic'` or `git log -S<symbol>`. Each inventory row
+below has a status: **done**, **partial** (what is left is noted) or **left**. What remains in the GUI on purpose is listed in
 [What stays in the GUI](#what-stays-in-the-gui).
 
 ## What is already out of the GUI
@@ -158,7 +162,7 @@ tests before it moves.
 | M10 | `ForgePanel.cs` (`TextOf`, `PartText`) | Forge message and part texts | `Presentation/ForgeMessageText`, next to `ForgeModeCardText` | low | done: `Presentation/ForgeMessageText` (`Of`, `PartOf`); the panel only shows the text |
 | M11 | `VaultPanel.ContextMenu.cs` (`AdoptVaultMod`, `ChangeVaultMod`), their callers in `MainForm.Export.cs` and `MainForm.Panel.cs` | The loop settling the items just put somewhere; new items found by a set difference | `IItemEditService.SettleAll`, `PlaceImportedItems` returning the placed items | low-med | done `30ea493f`: `IItemEditService.SettleAll`; `PlaceImportedItems` returns the placed items, the caller no longer finds them by a set difference (with M21) |
 | M12 | `SackPanel.cs` (`Fits`, `MoveToFreeSpot`), used by the vault panel too | Cell checks of a sack | `Domain/Actions/SackLayout` | low | done `58751d9c`. Left: `SackLayout.MoveToFreeSpot` (rows first) and `ItemMovementService.FindOpenCells` (columns first) are two free-cell searches; the scan order decides where imports and auto-moves land |
-| M13 | `SackPanel.Input.cs:129-130` | The Modded menu is offered outside `ItemActionRules` | `ItemActions.ChangeMod` | low | done `198dbd2b`: `ItemActions.ChangeMod` |
+| M13 | `SackPanel.Input.cs:129-130` | The Modded menu is offered outside `ItemActionRules` | `ItemActions.ChangeMod` | low | done `8ec12db`: `ItemActions.ChangeMod`; removed since with the item Modded menu (`323dc50`: an item's mod is computed from its container's map) |
 | M14 | `VaultPanel.ContextMenu.cs` (`ContextMenuItemClicked`) | The bag menu finds the action by its translated text; the icon paste rule | A bag action tag, `VaultService.PasteBagIcon` | low | done: the bag menu entries carry a `BagMenuAction` tag (no translated text compared); `VaultService.CopyBagIcon` / `PasteBagIcon` (copy kept in `SessionContext`, one copy per paste, modified only on a real change) |
 | M15 | `MainForm.Player.cs` (`PlayerSaveFile_Changed`) | Which file changed decides a player or stash reload, then the mod adoption | `PlayerService.ReloadChangedFile` | medium: file watcher timing | skipped: the rule left is two file-name comparisons (player file or stash file); the rest is GUI (debounce, the drop-down entry of the folder, show, refresh of the shown character), and the mod adoption it named is gone. The parallel mod-link work changes these file watchers: revisit after it merges if they gain rules |
 | M16 | `SackPanel.ContextMenuHandlers.cs`, `VaultPanel.ContextMenu.cs`, `SackPanel.ContextMenu.cs` | English messages and export file names written in the code | Resources, `ItemExchangeService.DefaultExportFileName` | low | done: PasteBin messages in resources (`ExportItemSuccessPasteBin`, `ExportItemsSuccessPasteBin`, `ExportTabSuccessPasteBin`, `ExportFailPasteBin`, English and French), the save dialogs reuse `GlobalJsonFileFilter`; default file names `ItemExchangeService.ItemsExportFileName(count)` / `TabExportFileName` |
@@ -186,7 +190,8 @@ an item and their cache come from `IItemTextFormatter` (`GuiServices.ItemText`),
 |---|---|---|
 | `Tooltips/BaseTooltip.cs` and its subclasses (`ItemTooltip`, `BagButtonTooltip`, `BagButtonLabelTooltip`, `FoundResultsTooltip`, `SearchFiltersTooltip`) | `GetFriendlyNames` (`ItemText`), `GetSetItems` (`ItemProvider`) | The item and bag tooltips render the friendly names; the line content is already built in Presentation (`ItemTooltipContentBuilder`). |
 | `Dialogs/ItemProperties.cs` (through `VaultForm.ItemText`) | `GetFriendlyNames(item, ItemFullDisplay, filterExtra)` | Shows the raw record properties of an item; display only. |
-| `Components/Panels/SackPanel.cs` (`InvalidateItemCacheAll`, `InvalidateItemCacheItemTooltip`) | `InvalidateFriendlyNamesCache` | Goes with the tooltip caches the panel clears after an item change. |
+| `Components/Panels/ItemCaches.cs` (`Invalidate`, called by `SackPanel`, `VaultPanel`, the forge and the results moves) | `InvalidateFriendlyNamesCache` | Goes with the tooltip caches cleared after an item change. |
+| `Dialogs/ResultsDialog.cs`, `Views/MainFormUserControl.Loadouts.cs` | `GetFriendlyNames` (`ItemText`) | Item names in the results grid and the loadout messages; display only. |
 | `Automation/*` (Debug only) | `IItemProvider`, `IItemTextFormatter`, `IDatabase` from the container | The automation endpoint reads the app's state as it is. |
 | `Program.cs` | `IDatabase.LoadDBFile` | Composition root: loads the game database once the game paths are known. |
 

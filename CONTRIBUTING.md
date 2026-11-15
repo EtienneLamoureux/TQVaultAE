@@ -10,8 +10,7 @@
     + [Pull requests](#pull-requests)
 
 ## Prerequisite
-This project use DDS to PNG conversion from nuget [Magick.NET-Q8-AnyCPU](https://github.com/dlemstra/Magick.NET) so you need to install [ImageMagick](https://imagemagick.org/script/download.php#gsc.tab=0) to resolve DLL during build.<br/>
-The simple way to do that is to use command `winget install ImageMagick.Q8` before opening the solution.
+This project uses the NuGet package [Magick.NET-Q8-AnyCPU](https://github.com/dlemstra/Magick.NET) for texture (DDS/PNG) conversion; it includes the native ImageMagick binaries, so nothing else needs to be installed. You need the .NET 10 SDK.
 
 ## Game file formats
 Working on the game file readers (`src/TQVaultAE.GameFiles`, used by `src/TQVaultAE.Data` and `src/TQVaultAE.DbCli`)? The `.arc`, `.arz`, text and `.tex` formats, the known pitfalls and the item stat randomization are documented in [Titan Quest Game File Formats](documentation/tq-file-formats.md).
@@ -23,7 +22,7 @@ Debug builds start an [MCP](https://modelcontextprotocol.io) server inside TQVau
 - drag items through the panels' own code;
 - capture a panel to PNG.
 
-The repository's `.mcp.json` registers it as `tqvault`: start the Debug build, then open Claude Code at the repository root. Automation saves like a user does, so it works only in its own `claude-*` test vaults and characters. Release builds contain none of this. See [Automation endpoint](documentation/AUTOMATION.md).
+The repository's `.mcp.json` registers it as `tqvault`: start the Debug build, then open Claude Code at the repository root. Automation saves like a user does, so in Debug builds it works only in test vaults and characters (its own `claude-*` ones, and the neutral `player-test*`, `player-mod*`, `vault-*` capture data). Release builds serve only the user tools, and only when the user turns the endpoint on in the settings (see [AI agents (MCP)](documentation/mcp.md)); the developer tools and the headless mode are Debug-only. See [Automation endpoint](documentation/AUTOMATION.md).
 
 ## Style and format
 TQVaultAE follows the standard C# format and import order. Refrain from submitting white-space changes mixed-in with your functional changes. 

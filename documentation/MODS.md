@@ -56,9 +56,9 @@ Vault tools button > **Modded vault**. The vault list shows the mod, and the vau
   one its records come from, computed each time it is read.
 - Nothing is guessed: an item comes from a mod only when that mod's data gave one of its records.
 - Read with another mod, an item that takes another size and no longer fits moves to a free spot of its tab. Dropped by
-  hand without room in the tab, it is refused, and a message invites you to use another tab. Moved, imported, or in a
-  vault whose link changed, it may go to another tab of the vault; without any room, it is shown in one cell with a
-  warning, until you move it where its size fits, and a message names it.
+  hand without room in the tab, it is refused, and a message says it has no room in this tab: drop it in another tab.
+  Moved, imported, or in a vault whose link changed, it may go to another tab of the vault; without any room, it is
+  shown in one cell with a warning, until you move it where its size fits, and a message names it.
 - [Exports](IMPORT_EXPORT.md) keep the mod of the vault or tab, never an item's. An import drops a link to a mod that is
   not installed and names it.
 - A Steam Workshop mod and a custom map of the same folder name are two mods: the menus and the dialog show where each

@@ -33,7 +33,8 @@ The forge follows the screen DPI and the TQVault zoom, like the rest of the wind
 _**Note:** The Forge doesn't move your objects, however, it changes the properties of the base item used._
 
 The buttons under the slots:
-+ **Forge** merges the materials into the base item. It needs a base item and at least one material. <kbd>ENTER</kbd> or
++ **Forge** merges the materials into the base item. It needs a base item and at least one material, and a
+  material from a mod must come from the base item's mod (base game parts go with any mod). <kbd>ENTER</kbd> or
   <kbd>SPACE</kbd> press it too ([shortcuts](SHORTCUTS.md)).
 + **Reset** empties all the slots and keeps the forge open.
 + **Cancel** closes the forge without changing anything.

@@ -131,7 +131,7 @@ Read with another map, an item may take another size: an incomplete one-cell til
 
 | Event | Where it goes | No room at all |
 |---|---|---|
-| Drop by hand into a container of another map | where it was dropped, else the first free spot of the tab | the drop is refused, like any drop without room: the item stays in hand, read with its previous map, and a message invites the user to drop it in another tab |
+| Drop by hand into a container of another map | where it was dropped, else the first free spot of the tab | the drop is refused, like any drop without room: the item stays in hand, read with its previous map, and a message says it has no room in this tab; the user drops it in another tab |
 | *Move Item To*, import, paste, results window *Move To* | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | it is shown 1 x 1 where it lies (below) |
 | A container's link changes | where it lies, else the first free spot of its tab, else of the vault's other tabs, in order | it is shown 1 x 1 where it lies (below) |
 | A vault read whose link changed since it was saved | where it lies | it is shown 1 x 1 where it lies (below) |
