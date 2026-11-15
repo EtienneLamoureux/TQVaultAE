@@ -95,8 +95,9 @@ internal static class CaravanFrame
 	}
 
 	/// <summary>
-	/// Gives <paramref name="control"/> the frame as its background, made again when its size changes (zoom, DPI), with
-	/// a padding that keeps its text inside the frame.
+	/// Gives <paramref name="control"/> the frame as its background, made again when its size changes (zoom, DPI: once,
+	/// at the end of the rescale, see <see cref="RescaleScope.Defer"/>), with a padding that keeps its text inside the
+	/// frame.
 	/// </summary>
 	/// <param name="control">The control.</param>
 	/// <param name="padding">The padding of its text; by default the frame's thickness on every side.</param>
@@ -115,7 +116,7 @@ internal static class CaravanFrame
 		}
 
 		Refresh();
-		control.SizeChanged += (_, _) => Refresh();
+		control.SizeChanged += (_, _) => RescaleScope.Defer(control, Refresh);
 		control.Disposed += (_, _) => control.BackgroundImage?.Dispose();
 	}
 

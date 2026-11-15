@@ -6,11 +6,18 @@ namespace TQVaultAE.GUI.Infrastructure;
 
 /// <summary>
 /// One rescale of a window (a DPI change, a zoom step) made as one: the window's drawing is frozen until it ends
-/// (<see cref="LayoutBatch"/>), then it is drawn once. Each phase is timed, and one Debug line gives them once the
+/// (<see cref="LayoutBatch"/>), then it is drawn once; the frame pictures of the controls resized meanwhile are made once,
+/// at their final size, when it ends (<see cref="Defer"/>). Each phase is timed, and one Debug line gives them once the
 /// window is drawn again (the first time the application is idle after it).
 /// </summary>
 internal sealed class RescaleScope : IDisposable
 {
+	/// <summary>The rescales running, nested in each other (a dialog's DPI change during the main window's).</summary>
+	private static int running;
+
+	/// <summary>What waits for the end of the outermost rescale, one action per control.</summary>
+	private static readonly Dictionary<Control, Action> Deferred = [];
+
 	private readonly ILogger log;
 	private readonly string what;
 	private readonly Action ended;
@@ -29,6 +36,20 @@ internal sealed class RescaleScope : IDisposable
 		this.what = what;
 		this.ended = ended;
 		this.batch = new LayoutBatch(window);
+		running++;
+	}
+
+	/// <summary>
+	/// Runs <paramref name="update"/> for <paramref name="control"/> now, or once at the end of the rescale running, its
+	/// last request only: for work that only the final size needs (a picture of the control's size), which a control
+	/// resized several times during one rescale would otherwise do at each size.
+	/// </summary>
+	public static void Defer(Control control, Action update)
+	{
+		if (running > 0)
+			Deferred[control] = update;
+		else
+			update();
 	}
 
 	/// <summary>Ends the phase named <paramref name="name"/>, started at the end of the one before.</summary>
@@ -40,19 +61,39 @@ internal sealed class RescaleScope : IDisposable
 	}
 
 	/// <summary>
-	/// Ends the rescale, even after an exception: the window's drawing comes back on and it is drawn again; the log line
-	/// is written once it is.
+	/// Ends the rescale, even after an exception: the deferred work runs, the window's drawing comes back on and it is
+	/// drawn again; the log line is written once it is.
 	/// </summary>
 	public void Dispose()
 	{
 		this.Phase("rest");
 		try
 		{
-			this.batch.Dispose();
+			if (running == 1)
+			{
+				int count = Deferred.Count;
+				while (Deferred.Count > 0)
+				{
+					var (control, update) = Deferred.First();
+					Deferred.Remove(control);
+					if (!control.IsDisposed)
+						update();
+				}
+
+				this.Phase(string.Create(CultureInfo.InvariantCulture, $"deferred ({count})"));
+			}
 		}
 		finally
 		{
-			this.ended();
+			running--;
+			try
+			{
+				this.batch.Dispose();
+			}
+			finally
+			{
+				this.ended();
+			}
 		}
 
 		double total = this.last;
