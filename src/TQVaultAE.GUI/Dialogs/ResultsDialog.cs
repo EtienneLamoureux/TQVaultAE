@@ -39,8 +39,11 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	private string searchString = string.Empty;
 
-	/// <summary>The main window: the targets of <i>Move To</i>, and its panels shown again after a move.</summary>
-	private readonly MainForm mainForm;
+	/// <summary>
+	/// The main content: the targets of <i>Move To</i>, and its panels shown again after a move. Set by the main content
+	/// before the window is shown.
+	/// </summary>
+	internal Views.MainFormUserControl MoveHost { get; set; } = null!;
 
 	/// <summary>
 	/// The moves of this window, the last one last: <i>Undo</i> puts the items of the last one back. Lost when the window
@@ -69,7 +72,6 @@ public partial class ResultsDialog : VaultForm
 	public ResultsDialog(MainForm instance) : base(instance.Services)
 	{
 		this.Owner = instance;
-		this.mainForm = instance;
 
 		this.InitializeComponent();
 
@@ -562,7 +564,7 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	private ToolStripItem[] MoveTargetEntries(ToolStrip owner)
 	{
-		var host = this.mainForm.ResultsMoveHost;
+		var host = this.MoveHost;
 		var items = this.SelectedResults().Select(r => r.Item).ToList();
 		bool any = items.Count > 0;
 
@@ -605,7 +607,7 @@ public partial class ResultsDialog : VaultForm
 	private void FillVaultBags(ToolStripMenuItem entry, string name, ToolStrip owner)
 	{
 		entry.DropDownItems.Clear();
-		var host = this.mainForm.ResultsMoveHost;
+		var host = this.MoveHost;
 		if (host.ResultsMoveVault(name) is not { } vault)
 			return;
 
@@ -624,7 +626,7 @@ public partial class ResultsDialog : VaultForm
 	/// </summary>
 	private void MoveSelection(Func<ResultsMoveTarget?> target, string targetName)
 	{
-		var host = this.mainForm.ResultsMoveHost;
+		var host = this.MoveHost;
 		var items = this.SelectedResults().Select(r => r.Item).ToList();
 		if (items.Count == 0 || !host.ReadyForResultsMove() || target() is not { } bag)
 			return;
@@ -639,7 +641,7 @@ public partial class ResultsDialog : VaultForm
 	/// <summary>Puts the items of the last move back where they were.</summary>
 	internal void UndoLastMove()
 	{
-		var host = this.mainForm.ResultsMoveHost;
+		var host = this.MoveHost;
 		if (this.undoHistory.Count == 0 || !host.ReadyForResultsMove())
 			return;
 
@@ -650,7 +652,7 @@ public partial class ResultsDialog : VaultForm
 
 	private void AfterMove(ResultsMoveOutcome outcome, string? targetName)
 	{
-		this.mainForm.ResultsMoveHost.ResultsMoved(outcome);
+		this.MoveHost.ResultsMoved(outcome);
 		this.RefreshLocations();
 		this.reportLabel.Text = ResultsMoveText.Report(outcome, targetName, this.NameOf);
 		this.UpdateMoveButtons();

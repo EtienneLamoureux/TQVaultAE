@@ -16,11 +16,6 @@ namespace TQVaultAE.GUI.Views;
 public partial class MainFormUserControl
 {
 	/// <summary>
-	/// Raised when the mod link of a character changed: its mod's shared stash files may now be in use.
-	/// </summary>
-	internal event EventHandler? ModLinkChanged;
-
-	/// <summary>
 	/// The listed characters: each is read with its own map's database.
 	/// </summary>
 	internal PlayerSave[] ListedCharacters()
@@ -467,7 +462,7 @@ public partial class MainFormUserControl
 			return;
 
 		// A link to a mod no other character uses brings its shared stash files in use.
-		this.ModLinkChanged?.Invoke(this, EventArgs.Empty);
+		this.WatchSharedStashFiles();
 
 		if (this.comboBoxCharacter.SelectedItem == save)
 			this.LoadPlayerAndStashes(save);

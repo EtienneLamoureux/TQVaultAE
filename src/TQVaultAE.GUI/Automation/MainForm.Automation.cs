@@ -58,7 +58,7 @@ public partial class MainForm
 	internal string? AutomationSelectedVault => this.mainView.vaultListComboBox?.SelectedItem?.ToString();
 
 	/// <summary>Shows a search result like a click on its row in the results dialog.</summary>
-	internal void AutomationSelectResult(TQVaultAE.Application.Results.SearchResult result) => this.SelectResult(this, new ResultChangedEventArgs(result));
+	internal void AutomationSelectResult(TQVaultAE.Application.Results.SearchResult result) => this.mainView.ShowSearchResult(result);
 
 	/// <summary>
 	/// Reads the menu of the vault tools button (next to the vault list) as it opens; with <paramref name="path"/>,
@@ -160,7 +160,7 @@ public partial class MainForm
 
 	/// <summary>
 	/// Imports text like a paste (Ctrl+V) of the clipboard holding it, without touching the clipboard: the same parsing
-	/// (exported JSON, or a PasteBin link) and the same placement as <see cref="HandleClipboardImportAsync"/>.
+	/// (exported JSON, or a PasteBin link) and the same placement as <see cref="Views.MainFormUserControl.PasteFromClipboardAsync"/>.
 	/// </summary>
 	/// <returns>The import's error, or null when it succeeded.</returns>
 	internal string? AutomationImportText(string text)

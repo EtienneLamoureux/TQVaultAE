@@ -12,7 +12,7 @@ public partial class MainForm
 	private void GameMapService_ActiveMapChanged(object? sender, EventArgs e)
 	{
 		if (this.loadingComplete)
-			this.WatchSharedStashFiles();
+			this.mainView.WatchSharedStashFiles();
 
 		this.Invalidate(true);
 	}

@@ -33,7 +33,7 @@ container label helpers in Presentation.
   (`eae894c`), `VaultService.DeleteVault/RenameVault/GetVaultList` (`bd4a2ef`, `b993c50`) and `ItemDatabaseService.WarmUpAsync`
   are used. `PlayerService.CreatePlayerFileWatcher` and `StashService.Create*FileWatcher` are removed: they watched
   `LastWrite | Size` (several events per write) on a thread pool thread, while the GUI watchers
-  (`MainForm.Player.CreateFileWatcher`, the stash watchers of `MainForm`) watch `Attributes`, which changes once after the
+  (the character file and shared stash watchers of `MainFormUserControl.HotReload.cs`) watch `Attributes`, which changes once after the
   game writes, and raise on the UI thread.
 - Message boxes asked in the middle of a rule (`goto askAgain`, Abort/Retry/Ignore loops). **Done** for the moved code: it
   returns a result or takes a callback and the GUI asks.

@@ -3,16 +3,59 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Search;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Panels;
+using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Models.Search;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Views;
 
 /// <summary>
-/// The jump to a search result: the main content shows the result's container, bag and item.
+/// The search results of the main content: the results window, and the jump to a result, where the main content shows
+/// the result's container, bag and item.
 /// </summary>
-public partial class MainFormUserControl
+public partial class MainFormUserControl : IItemCopySearchHost
 {
+	/// <summary>
+	/// Shows the items matching <paramref name="item"/> for the item menu's <i>Search</i> in the results window, the item
+	/// first, marked as the source; a click on a result shows it like an Advanced Search result.
+	/// </summary>
+	/// <param name="item">The item clicked.</param>
+	/// <param name="kind">The search.</param>
+	public void ShowItemCopies(Item item, CopySearchKind kind)
+	{
+		var results = this.Services.ItemDatabaseService.FindCopies(item, kind);
+		if (results.Count == 0)
+			return;
+
+		var source = results[0];
+		string title = ItemCopySearchText.Title(kind, source.ItemName, results.Count - 1);
+		this.ShowResults(null, results, title, source);
+	}
+
+	/// <summary>
+	/// Shows <paramref name="results"/> in a results window over the main window, or says that nothing was found; a click
+	/// on a result shows it in the main content, and its <i>Move To</i> acts on the main content's containers.
+	/// </summary>
+	internal void ShowResults(string? searchString, IEnumerable<SearchResult> results, string? title = null, SearchResult? source = null)
+	{
+		if (results is null || !results.Any())
+		{
+			this.Services.MessageBoxes.Inform(string.Format(Resources.MainFormNoItemsFound, searchString), Resources.MainFormNoItemsFound2, MessageBoxIcon.Information);
+			return;
+		}
+
+		var dialog = this.Services.Forms.Create<ResultsDialog>();
+		dialog.MoveHost = this;
+		dialog.ResultChanged += (_, e) => this.ShowSearchResult(e.Result);
+		dialog.ResultsList.Clear();
+		dialog.ResultsList.AddRange(results);
+		dialog.SearchString = searchString ?? string.Empty;
+		dialog.Title = title;
+		dialog.SourceResult = source;
+		dialog.Show();
+	}
+
 	/// <summary>
 	/// Shows a search result: selects its vault or character (which loads it), its bag and its item.
 	/// </summary>

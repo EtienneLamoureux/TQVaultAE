@@ -56,7 +56,6 @@ public partial class MainForm
 		this.mainView.ForgeCancelled += (_, _) => this.ForgeActionCanceled();
 		this.mainView.ForgeForged += (_, _) => this.ForgeHideUI();
 		this.mainView.SaveRequested += (_, _) => this.SaveAllModifiedFiles();
-		this.mainView.ModLinkChanged += (_, _) => this.WatchSharedStashFiles();
 	}
 
 	#endregion
@@ -71,9 +70,6 @@ public partial class MainForm
 
 	/// <summary>Called once the main content is shown again in place of <see cref="shownView"/>.</summary>
 	private Action? shownViewLeft;
-
-	/// <summary>Reloads of game save files changed while the main content was hidden, scheduled again at its return.</summary>
-	private readonly Dictionary<string, Action> deferredReloads = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// Shows a view in place of the main content, put to sleep first (see the class remarks): drawn once, switched.
@@ -94,6 +90,7 @@ public partial class MainForm
 			view.Bounds = this.mainView.Bounds;
 			this.shownView = view;
 			this.shownViewLeft = left;
+			this.mainView.Sleep();
 			this.mainView.Visible = false;
 			view.Visible = true;
 			this.EnableMainViewButtons(false);
@@ -151,11 +148,7 @@ public partial class MainForm
 
 		left?.Invoke();
 
-		// The game files changed meanwhile: reloaded as if they had just changed.
-		var reloads = this.deferredReloads.ToList();
-		this.deferredReloads.Clear();
-		foreach (var (path, reload) in reloads)
-			this.ScheduleReload(path, reload);
+		this.mainView.Wake();
 	}
 
 	/// <summary>
@@ -163,25 +156,6 @@ public partial class MainForm
 	/// </summary>
 	private void EnableMainViewButtons(bool enabled)
 		=> this.showVaulButton.Enabled = this.searchButton.Enabled = this.forgeButton.Enabled = this.saveButton.Enabled = enabled;
-
-	/// <summary>
-	/// Schedules the reload of a changed game file; while the main content is hidden, the reload waits for its return
-	/// (the character editor works on the character as loaded).
-	/// </summary>
-	private void ScheduleReload(string path, Action reload)
-		=> this.FileReloadDebouncer.Schedule(path, () =>
-		{
-			if (this.shownView is null)
-			{
-				this.Log.LogDebug("Hot reload of {File}", path);
-				reload();
-			}
-			else
-			{
-				this.Log.LogDebug("Hot reload of {File} kept until the main content is shown again", path);
-				this.deferredReloads[path] = reload;
-			}
-		});
 
 	#endregion
 

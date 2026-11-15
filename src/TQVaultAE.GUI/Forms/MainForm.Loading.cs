@@ -25,14 +25,7 @@ public partial class MainForm
 	/// </summary>
 	/// <returns>Total number of files that LoadAllFiles() will load.</returns>
 	private int LoadAllFilesTotal()
-		=> ILoadAllService.CountSteps(this.mainView.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.SharedStashMaps().Count);
-
-	/// <summary>
-	/// The maps whose shared stashes (transfer stash, relic vault) LoadAllFiles reads: the base game and the map of
-	/// every listed Immortal Throne character.
-	/// </summary>
-	private List<string> SharedStashMaps()
-		=> SharedStashes.Maps(this.mainView.ListedCharacters().Where(c => c.IsImmortalThrone).Select(this.gameMapService.MapFor));
+		=> ILoadAllService.CountSteps(this.mainView.ListedCharacters().Length, GamePathResolver.GetVaultList().Length, this.mainView.SharedStashMaps().Count);
 
 	/// <summary>
 	/// Loads all of the players, stashes, and vaults.
@@ -54,7 +47,7 @@ public partial class MainForm
 			this.mainView.ListedCharacters()
 			, GamePathResolver.GetVaultList()
 			, progress
-			, this.SharedStashMaps());
+			, this.mainView.SharedStashMaps());
 
 		// Display errors
 		foreach (var error in result.Errors)
@@ -229,7 +222,7 @@ public partial class MainForm
 			.ContinueWith(_ => iconService.GetIconDatabaseAsync(), TaskScheduler.Default);
 
 		this.mainView.LoadSharedStashes();
-		this.WatchSharedStashFiles();
+		this.mainView.WatchSharedStashFiles();
 
 		var characters = this.mainView.ListedCharacters();
 

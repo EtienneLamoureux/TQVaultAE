@@ -88,7 +88,16 @@ public partial class SackPanel
 	}
 
 	private void FindCopiesClicked(Item focusedItem, CopySearchKind kind)
-		=> (this.FindForm() as MainForm)?.ShowItemCopies(focusedItem, kind);
+	{
+		for (var parent = this.Parent; parent is not null; parent = parent.Parent)
+		{
+			if (parent is IItemCopySearchHost host)
+			{
+				host.ShowItemCopies(focusedItem, kind);
+				return;
+			}
+		}
+	}
 
 	private void AddExportMenuItems(Item? focusedItem, bool singleSelectionFocused)
 	{

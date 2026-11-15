@@ -55,8 +55,7 @@ public partial class MainForm
 			}
 
 			// No hot reload may land while files are saved and the form goes away.
-			this._fileReloadDebouncer?.Dispose();
-			this._fileReloadDebouncer = null;
+			this.mainView.StopHotReload();
 
 			// Files, then configuration (added by VillageIdiot), then git backup.
 			var request = new SaveRequest(
@@ -181,10 +180,10 @@ public partial class MainForm
 		{
 			// The clipboard keys also reach the focused control: a text box still copies and pastes its text.
 			case KeyBindAction.CopyToClipboard:
-				HandleClipboardExport();
+				this.mainView.CopySelectionToClipboard();
 				return;
 			case KeyBindAction.PasteFromClipboard:
-				_ = HandleClipboardImportAsync();
+				_ = this.mainView.PasteFromClipboardAsync();
 				return;
 			case KeyBindAction.Search:
 				this.OpenSearchDialog();

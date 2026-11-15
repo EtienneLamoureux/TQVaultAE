@@ -220,7 +220,7 @@ Item Debug Level: {ItemDebugLevel}
 		// are listed.
 		this.ShowGitBackupError(this.GameFileService.GitRepositorySetup());
 
-		this.mainView.CreatePanels(this.GetPlayerList());
+		this.mainView.CreatePanels(this.mainView.WatchedCharacterSaves());
 	}
 
 	private void UIService_ShowMessageUserEvent(object? sender, ShowMessageUserEventHandlerEventArgs message)
