@@ -19,6 +19,8 @@ public class SearchCategoryServiceTests
 {
 	private readonly Mock<IItemTextFormatter> _itemProvider = new();
 	private readonly Mock<ITranslationService> _translation = new();
+	private readonly Mock<IModLinkService> _modLinks = new();
+	private readonly List<InstalledMod> _installed = [];
 	private readonly Dictionary<Item, string[]> _skills = new(ReferenceEqualityComparer.Instance);
 	private readonly SearchCategoryService _service;
 
@@ -27,7 +29,8 @@ public class SearchCategoryServiceTests
 		this._itemProvider.Setup(p => p.GetGrantedSkillNames(It.IsAny<Item>()))
 			.Returns((Item i) => this._skills.TryGetValue(i, out var s) ? s : []);
 		this._translation.Setup(t => t.Translate(It.IsAny<GameDlc>())).Returns((GameDlc d) => $"Game {d}");
-		this._service = new SearchCategoryService(this._itemProvider.Object, this._translation.Object);
+		this._modLinks.Setup(m => m.GetInstalledMods(It.IsAny<bool>())).Returns(() => this._installed);
+		this._service = new SearchCategoryService(this._itemProvider.Object, this._translation.Object, this._modLinks.Object);
 	}
 
 	#region Builders
@@ -259,7 +262,8 @@ public class SearchCategoryServiceTests
 
 	#endregion
 
-	public static TheoryData<SearchCategory> Categories => new(Enum.GetValues<SearchCategory>());
+	/// <summary>The categories the dialog had before the move; the mod category came later (tested on its own).</summary>
+	public static TheoryData<SearchCategory> Categories => new(Enum.GetValues<SearchCategory>().Where(c => c != SearchCategory.Mod));
 
 	[Theory]
 	[MemberData(nameof(Categories))]
@@ -388,5 +392,38 @@ public class SearchCategoryServiceTests
 
 		entries.Select(e => e.DisplayValue).Should().Equal("Game TitanQuest", "Game ImmortalThrone", "Game EternalEmbers");
 		entries[1].Results.Should().Equal(it, atlantis);
+	}
+
+	private static SearchResult Modded(string? mod)
+		=> Result(new Item { Mod = mod, ModOrigin = mod is null ? ModOrigin.None : ModOrigin.Own });
+
+	[Fact]
+	public void BuildCategory_Mod_ListsTheInstalledModsInTheirOrder_ThenTheOthers_LeavingOutTheBaseGame()
+	{
+		var zeta = new InstalledMod("Zeta", """C:\maps\Zeta""", ModSource.Legacy);
+		var alpha = new InstalledMod("Alpha", """C:\steam\475150\123\Alpha""", ModSource.SteamWorkshop);
+		this._installed.AddRange([zeta, alpha]);
+		var a1 = Modded(alpha.Id);
+		var a2 = Modded(alpha.Id.ToUpperInvariant());
+		var z = Modded(zeta.Id);
+		var gone = Modded("Gone|custommaps");
+		var baseGame = Modded(null);
+
+		var entries = this._service.BuildCategory(SearchCategory.Mod, [gone, a1, baseGame, z, a2]);
+
+		entries.Select(e => e.DisplayValue).Should().Equal("Zeta", "Alpha", "Gone");
+		entries[1].Results.Should().Equal(new[] { a1, a2 }, "a mod identity is compared ignoring case, as the installed mods are found");
+	}
+
+	[Fact]
+	public void BuildCategory_Mod_ModsOfTheSameName_ShowWhereTheyComeFrom()
+	{
+		var legacy = new InstalledMod("Same", """C:\maps\Same""", ModSource.Legacy);
+		var workshop = new InstalledMod("Same", """C:\steam\475150\9\Same""", ModSource.SteamWorkshop);
+		this._installed.AddRange([legacy, workshop]);
+
+		var entries = this._service.BuildCategory(SearchCategory.Mod, [Modded(workshop.Id), Modded(legacy.Id)]);
+
+		entries.Select(e => e.DisplayValue).Should().Equal(legacy.DisplayName, workshop.DisplayName);
 	}
 }

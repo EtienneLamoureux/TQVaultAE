@@ -48,6 +48,27 @@ public sealed record InstalledMod(string Name, string Folder, ModSource Source)
 	/// </summary>
 	public string Id => ModIdentity.Compose(this.Name, this.SourceKey)!;
 
+	/// <summary>
+	/// The name shown in a list of mods (menus, filters): the folder name, with where it comes from
+	/// (<see cref="DisplayName"/>) when another mod of the list has the same name.
+	/// </summary>
+	public string LabelAmong(IReadOnlyList<InstalledMod> mods)
+		=> mods.Count(m => m.Name.Equals(this.Name, StringComparison.OrdinalIgnoreCase)) > 1 ? this.DisplayName : this.Name;
+
+	/// <summary>
+	/// The name shown for a mod identity (<see cref="Item.Mod"/>) among the installed mods: <see cref="LabelAmong"/> for
+	/// an installed mod, else the folder name it keeps.
+	/// </summary>
+	/// <returns>Null for no mod.</returns>
+	public static string? LabelOf(string? mod, IReadOnlyList<InstalledMod> installed)
+	{
+		if (string.IsNullOrWhiteSpace(mod))
+			return null;
+
+		var found = installed.FirstOrDefault(m => m.Id.Equals(mod, StringComparison.OrdinalIgnoreCase));
+		return found?.LabelAmong(installed) ?? ModIdentity.NameOf(mod);
+	}
+
 	public override string ToString() => this.DisplayName;
 }
 

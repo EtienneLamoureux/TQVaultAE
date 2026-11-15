@@ -6727,6 +6727,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modded.
+        /// </summary>
+        public static string SearchModded {
+            get {
+                return ResourceManager.GetString("SearchModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod.
+        /// </summary>
+        public static string SearchMod {
+            get {
+                return ResourceManager.GetString("SearchMod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Modded vault.
         /// </summary>
         public static string VaultModded {

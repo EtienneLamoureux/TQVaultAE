@@ -360,7 +360,7 @@ public class ItemDatabaseService(
         if (request.InitialResults is null)
             return Array.Empty<SearchResult>();
 
-        var flags = new ItemFlagFilter(request.HasPrefix, request.HasSuffix, request.HasRelic, request.HasCharm, request.IsSetItem, request.HasSkill);
+        var flags = new ItemFlagFilter(request.HasPrefix, request.HasSuffix, request.HasRelic, request.HasCharm, request.IsSetItem, request.HasSkill, request.IsModded);
         var bounds = new RequirementBounds(
             request.MinLevel, request.MaxLevel,
             request.MinStrength, request.MaxStrength,

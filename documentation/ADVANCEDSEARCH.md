@@ -65,7 +65,9 @@ You can hide it.
 
 ![ShowHide](advancedsearch/showhide.png)
 
-The screenshots of this page are older: the form now also has the "Origin", "Sets" and "Item Skills" categories and a "Having Skill" quick filter.
+The screenshots of this page are older: the form now also has the "Origin", "Mod", "Sets" and "Item Skills" categories
+and the "Having Skill" and "Modded" quick filters. "Mod" lists the mods the items come from (the item's own mod, or the
+mod of the vault or character holding it), the installed mods first; "Modded" keeps every item from a mod.
 
 ---
 

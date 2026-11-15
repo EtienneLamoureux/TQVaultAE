@@ -43,6 +43,11 @@ public class AdvancedSearchRequest
 	public bool HasSkill { get; init; }
 
 	/// <summary>
+	/// Filter items that come from a mod.
+	/// </summary>
+	public bool IsModded { get; init; }
+
+	/// <summary>
 	/// Minimum item level.
 	/// </summary>
 	public int MinLevel { get; init; }

@@ -36,4 +36,17 @@ public class ModLinksTests
 		CharacterMod.BaseGame.CanLinkTo(false, ModB).Should().BeFalse();
 		CharacterMod.Unlinked.CanLinkTo(true, ModA).Should().BeTrue();
 	}
+
+	[Fact]
+	public void LabelOf_InstalledModByItsName_HomonymsWithTheirSource_OthersByTheNameTheyKeep()
+	{
+		var legacy = new InstalledMod("same", """C:\Mods\same""", ModSource.Legacy);
+		var workshop = new InstalledMod("same", """C:\Workshop\475150\42\same""", ModSource.SteamWorkshop);
+		InstalledMod[] installed = [ModA, legacy, workshop];
+
+		InstalledMod.LabelOf(ModA.Id.ToUpperInvariant(), installed).Should().Be("moda");
+		InstalledMod.LabelOf(workshop.Id, installed).Should().Be(workshop.DisplayName, "another installed mod has its name");
+		InstalledMod.LabelOf("gone|custommaps", installed).Should().Be("gone");
+		InstalledMod.LabelOf(null, installed).Should().BeNull();
+	}
 }

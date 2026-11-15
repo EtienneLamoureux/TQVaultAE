@@ -20,6 +20,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 	public SessionContext UserContext { get; internal set; } = null!;
 	public ITranslationService TranslationService { get; internal set; } = null!;
 	public IHighlightService HighlightService { get; internal set; } = null!;
+	/// <summary>The installed mods, listed in the mod section.</summary>
+	public IItemModService ItemModService { get; internal set; } = null!;
 
 	public HighlightFilters()
 	{
@@ -75,6 +77,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 
 		InitOrigin();
 
+		InitMods();
+
 		// Translate
 		scalingCheckBoxMin.Text = $"{Resources.GlobalMin} {Resources.GlobalRequirements} :";
 		scalingCheckBoxMax.Text = $"{Resources.GlobalMax} {Resources.GlobalRequirements} :";
@@ -92,6 +96,7 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		scalingCheckBoxHavingSuffix.Text = Resources.SearchHavingSuffix;
 		scalingCheckBoxSetItem.Text = Resources.SearchSetItem;
 		scalingCheckBoxHavingSkill.Text = Resources.SearchHavingSkill;
+		scalingCheckBoxModded.Text = Resources.SearchModded;
 		buttonReset.Text = TranslationService.TranslateXTag("tagSkillReset");
 		buttonApply.Text = TranslationService.TranslateXTag("tagMenuButton07");
 
@@ -125,6 +130,19 @@ public partial class HighlightFilters : UserControl, IZoomFit
 
 		scalingCheckedListBoxOrigin.Items.AddRange(list);
 		FitColumns(scalingCheckedListBoxOrigin);
+	}
+
+	/// <summary>
+	/// Lists the installed mods by the names the mod menus give them; without any installed mod the section is hidden
+	/// (the Modded check box still finds the items of a mod no longer installed).
+	/// </summary>
+	private void InitMods()
+	{
+		scalingCheckedListBoxMods.Items.Clear();// Remove design mode items
+		var mods = ItemModService.InstalledMods;
+		scalingCheckedListBoxMods.Items.AddRange([.. mods.Select(mod => new ItemMod { Value = mod.Id, DisplayName = mod.LabelAmong(mods) })]);
+		scalingCheckedListBoxMods.Visible = mods.Count != 0;
+		FitColumns(scalingCheckedListBoxMods);
 	}
 
 	private void InitType()
@@ -183,6 +201,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		int width = list.Items.Cast<object>().Max(item => TextRenderer.MeasureText(
 			list.GetItemText(item), list.Font, list.Size, TextFormatFlags.SingleLine).Width);
 		width += list.VerticalScrollBarWidth();// Room for the check box in front of the text
+		// A text wider than the list (a long mod name) is cut instead of scrolling the list sideways.
+		width = Math.Min(width, Math.Max(1, list.ClientSize.Width));
 		if (list.ColumnWidth != width)
 			list.ColumnWidth = width;
 
@@ -202,6 +222,7 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		scalingCheckBoxMin.Checked =
 		scalingCheckBoxSetItem.Checked =
 		scalingCheckBoxHavingSkill.Checked =
+		scalingCheckBoxModded.Checked =
 		scalingCheckBoxHavingCharm.Checked =
 		scalingCheckBoxHavingRelic.Checked =
 		scalingCheckBoxHavingPrefix.Checked =
@@ -210,6 +231,7 @@ public partial class HighlightFilters : UserControl, IZoomFit
 		ClearSelected(scalingCheckedListBoxTypes);
 		ClearSelected(scalingCheckedListBoxRarity);
 		ClearSelected(scalingCheckedListBoxOrigin);
+		ClearSelected(scalingCheckedListBoxMods);
 	}
 
 	private static void ClearSelected(ScalingCheckedListBox listbox)
@@ -309,6 +331,7 @@ public partial class HighlightFilters : UserControl, IZoomFit
 			FitColumns(this.scalingCheckedListBoxTypes);
 			FitColumns(this.scalingCheckedListBoxRarity);
 			FitColumns(this.scalingCheckedListBoxOrigin);
+			FitColumns(this.scalingCheckedListBoxMods);
 			this.SpreadRequirementRows();
 			this.BreakHavingRow();
 			this.PlaceOverLink(parent);
@@ -388,8 +411,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 	}
 
 	/// <summary>
-	/// Lays the Having check boxes out in even columns across the panel: six on one line, or three on two lines when they
-	/// do not fit. They wrap first with the designer's spacing to find how many lines they need, then each moves to the
+	/// Lays the Having and Modded check boxes out in even columns across the panel: seven on one line, or four then three
+	/// on two lines (more lines when they still do not fit). They wrap first with the designer's spacing to find how many lines they need, then each moves to the
 	/// start of its column, the columns lined up from line to line.
 	/// </summary>
 	private void BreakHavingRow()
@@ -477,6 +500,8 @@ public partial class HighlightFilters : UserControl, IZoomFit
 			HavingCharm = scalingCheckBoxHavingCharm.Checked,
 			IsSetItem = scalingCheckBoxSetItem.Checked,
 			HavingSkill = scalingCheckBoxHavingSkill.Checked,
+			Modded = scalingCheckBoxModded.Checked,
+			Mods = scalingCheckedListBoxMods.CheckedItems.OfType<ItemMod>().Select(x => x.Value).ToList(),
 		};
 
 		// An empty filter clears the highlight filter.

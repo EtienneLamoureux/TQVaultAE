@@ -166,15 +166,35 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "highlight_filters", Destructive = true)]
-	[Description("Opens the highlight filters panel of the main window (the 'Highlight items having' link), ticks or unticks its check boxes by text or name, and applies the filters when asked. Returns the check boxes and how many items are highlighted. See it with capture('main'); 'Reset' in the panel, or highlight_filters(uncheck=...) then apply, clears the highlight.")]
+	[Description("Opens the highlight filters panel of the main window (the 'Highlight items having' link), ticks or unticks its check boxes by text or name and the entries of its lists (Types, Rarity, Origin, Mods), and applies the filters when asked. Returns the check boxes, the lists with their entries, and how many items are highlighted. See it with capture('main'); 'Reset' in the panel, or highlight_filters(uncheck=...) then apply, clears the highlight.")]
 	public static string HighlightFilters(
-		[Description("Comma separated check box texts or names to tick, e.g. 'Having Skill,Set Item'.")] string? check = null,
+		[Description("Comma separated check box texts or names to tick, e.g. 'Having Skill,Set Item,Modded'.")] string? check = null,
 		[Description("Comma separated check box texts or names to untick.")] string? uncheck = null,
-		[Description("true to apply the filters like the Apply button.")] bool apply = false)
+		[Description("true to apply the filters like the Apply button.")] bool apply = false,
+		[Description("Semicolon separated list entries to tick, as list:entry (the text shown), e.g. 'Mods:shadowchampions;Origin:Atlantis'.")] string? checkItems = null,
+		[Description("Semicolon separated list entries to untick, as list:entry.")] string? uncheckItems = null)
 		=> AutomationHost.OnUi(main =>
 		{
 			var panel = main.AutomationShowHighlightFilters();
 			var boxes = panel.AutomationCheckBoxes;
+			var lists = panel.AutomationLists;
+
+			void SetItems(string? entries, bool value)
+			{
+				foreach (var wanted in (entries ?? string.Empty).Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				{
+					int colon = wanted.IndexOf(':');
+					if (colon <= 0 || !lists.TryGetValue(wanted[..colon].Trim(), out var list))
+						throw new McpException($"'{wanted}' names no list: list:entry with a list among {string.Join(", ", lists.Keys)}.");
+
+					string text = wanted[(colon + 1)..].Trim();
+					int index = Enumerable.Range(0, list.Items.Count).FirstOrDefault(i => string.Equals(list.GetItemText(list.Items[i]), text, StringComparison.OrdinalIgnoreCase), -1);
+					if (index < 0)
+						throw new McpException($"No entry '{text}' in the list {wanted[..colon]}.");
+
+					list.SetItemChecked(index, value);
+				}
+			}
 
 			void Set(string? list, bool value)
 			{
@@ -188,6 +208,8 @@ internal static partial class AutomationTools
 
 			Set(check, true);
 			Set(uncheck, false);
+			SetItems(checkItems, true);
+			SetItems(uncheckItems, false);
 			if (apply)
 				panel.AutomationApply();
 
@@ -196,6 +218,12 @@ internal static partial class AutomationTools
 			{
 				shown = panel.Visible,
 				checkBoxes = boxes.Select(b => new { b.Name, b.Text, b.Checked }),
+				lists = lists.Select(l => new
+				{
+					name = l.Key,
+					visible = l.Value.Visible,
+					entries = l.Value.Items.Cast<object>().Select((item, i) => new { text = l.Value.GetItemText(item), @checked = l.Value.GetItemChecked(i) }),
+				}),
 				highlighted = highlighted.Count,
 			});
 		});

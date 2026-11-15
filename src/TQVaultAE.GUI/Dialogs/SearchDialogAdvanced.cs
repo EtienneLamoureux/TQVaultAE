@@ -30,7 +30,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	/// </summary>
 	private sealed record CategoryView(SearchCategory Category, ScalingButton Button, FlowLayoutPanel Panel, ScalingLabel Label, VirtualCheckedListBox List, Func<string> Title);
 
-	/// <summary>The 17 categories, in the order of their navigation buttons.</summary>
+	/// <summary>The 18 categories, in the order of their navigation buttons.</summary>
 	private readonly CategoryView[] NavMap;
 	private readonly List<BoxItem> SelectedFilters = [];
 	private readonly HashSet<BoxItem> SelectedFiltersSet = [];
@@ -70,10 +70,10 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		#region Apply custom font
 
-		// The marble dialogs' font rule, in the dense text size: the 17 category lists fit on one screen.
+		// The marble dialogs' font rule, in the dense text size: the 18 category lists fit on one screen.
 		CaravanLook.ApplyFonts(this, this.FontService, CaravanLook.DenseTextSize);
 
-		// The 17 category buttons, with the designer's 3 px margins, need more height than the column gets,
+		// The 18 category buttons, with the designer's 3 px margins, need more height than the column gets,
 		// so the last one ("Suffix") wrapped into a second column, out of sight.
 		// They take the look of Collapse All and Expand All: flat light gold buttons with dark text.
 		foreach (Control button in this.flowLayoutPanelLeftColumn.Controls)
@@ -134,6 +134,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		scalingCheckBoxHavingSuffix.Text = Resources.SearchHavingSuffix;
 		scalingCheckBoxIsSetItem.Text = Resources.SearchSetItem;
 		scalingCheckBoxHavingSkill.Text = Resources.SearchHavingSkill;
+		scalingCheckBoxModded.Text = Resources.SearchModded;
 
 		#endregion
 
@@ -213,6 +214,7 @@ public partial class SearchDialogAdvanced : VaultForm
 		new(SearchCategory.WithRelic, this.scalingButtonMenuWithRelic, this.flowLayoutPanelWithRelic, this.scalingLabelWithRelic, this.scalingCheckedListBoxWithRelic, () => Resources.SearchHavingRelic),
 		new(SearchCategory.Quality, this.scalingButtonMenuQuality, this.flowLayoutPanelQuality, this.scalingLabelQuality, this.scalingCheckedListBoxQuality, () => Resources.ResultsQuality),
 		new(SearchCategory.Origin, this.scalingButtonMenuOrigin, this.flowLayoutPanelOrigin, this.scalingLabelOrigin, this.scalingCheckedListBoxOrigin, () => Resources.GlobalOrigin),
+		new(SearchCategory.Mod, this.scalingButtonMenuMod, this.flowLayoutPanelMod, this.scalingLabelMod, this.scalingCheckedListBoxMod, () => Resources.SearchMod),
 		new(SearchCategory.SetItems, this.scalingButtonMenuSetItems, this.flowLayoutPanelSetItems, this.scalingLabelSetItems, this.scalingCheckedListBoxSetItems, () => Resources.SearchSetItem),
 		new(SearchCategory.Skills, this.scalingButtonMenuSkills, this.flowLayoutPanelSkills, this.scalingLabelSkills, this.scalingCheckedListBoxSkills, () => Resources.SearchItemSkills),
 	];
@@ -676,6 +678,7 @@ public partial class SearchDialogAdvanced : VaultForm
 	{
 		scalingCheckBoxIsSetItem.Checked =
 		scalingCheckBoxHavingSkill.Checked =
+		scalingCheckBoxModded.Checked =
 		scalingCheckBoxHavingCharm.Checked =
 		scalingCheckBoxHavingRelic.Checked =
 		scalingCheckBoxHavingPrefix.Checked =

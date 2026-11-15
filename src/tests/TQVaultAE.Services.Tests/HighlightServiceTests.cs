@@ -207,6 +207,8 @@ public class HighlightServiceTests
 		new HighlightFilterValues { MinRequierement = true }.IsEmpty.Should().BeFalse();
 		new HighlightFilterValues { HavingSkill = true }.IsEmpty.Should().BeFalse();
 		new HighlightFilterValues { Origin = [GameDlc.Atlantis] }.IsEmpty.Should().BeFalse();
+		new HighlightFilterValues { Modded = true }.IsEmpty.Should().BeFalse();
+		new HighlightFilterValues { Mods = ["A|custommaps"] }.IsEmpty.Should().BeFalse();
 	}
 
 	[Fact]
@@ -245,6 +247,28 @@ public class HighlightServiceTests
 
 		active.Should().BeTrue();
 		_service.HighlightedItems.Should().BeEquivalentTo([health, mana]);
+	}
+
+	[Fact]
+	public void ApplyFilter_Mods_KeepsTheItemsOfTheTickedMods_AndAddsToTheOtherSections()
+	{
+		var swordA = ItemOfClass(Item.ICLASS_SWORD);
+		swordA.Mod = "A|custommaps";
+		var ringA = ItemOfClass(Item.ICLASS_RING);
+		ringA.Mod = "A|custommaps";
+		var swordB = ItemOfClass(Item.ICLASS_SWORD);
+		swordB.Mod = "B|workshop:7";
+		var swordBase = ItemOfClass(Item.ICLASS_SWORD);
+		AddPlayerItems(swordA, ringA, swordB, swordBase);
+
+		_service.ApplyFilter(new HighlightFilterValues { Mods = ["A|custommaps", "B|workshop:7"] }).Should().BeTrue();
+		_service.HighlightedItems.Should().BeEquivalentTo([swordA, ringA, swordB], "the mods of one section add up");
+
+		_service.ApplyFilter(new HighlightFilterValues { Mods = ["A|custommaps"], ClassItem = [Item.ICLASS_SWORD] });
+		_service.HighlightedItems.Should().BeEquivalentTo([swordA], "the sections must all match");
+
+		_service.ApplyFilter(new HighlightFilterValues { Modded = true, ClassItem = [Item.ICLASS_SWORD] });
+		_service.HighlightedItems.Should().BeEquivalentTo([swordA, swordB]);
 	}
 
 	[Fact]

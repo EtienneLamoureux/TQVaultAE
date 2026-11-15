@@ -3,6 +3,7 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Search;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -17,10 +18,11 @@ namespace TQVaultAE.Services;
 /// The result is the same: the values are in culture order, values comparing equal keep their first appearance
 /// order, and each value keeps its items in database order.
 /// </remarks>
-public class SearchCategoryService(IItemTextFormatter itemText, ITranslationService translationService) : ISearchCategoryService
+public class SearchCategoryService(IItemTextFormatter itemText, ITranslationService translationService, IModLinkService modLinks) : ISearchCategoryService
 {
 	private readonly IItemTextFormatter _itemText = itemText;
 	private readonly ITranslationService _translationService = translationService;
+	private readonly IModLinkService _modLinks = modLinks;
 
 	/// <summary>Styles of the equipment, the only items listed by rarity.</summary>
 	private static readonly ItemStyle[] EquipmentStyles = [
@@ -99,6 +101,8 @@ public class SearchCategoryService(IItemTextFormatter itemText, ITranslationServ
 				break;
 			case SearchCategory.Origin:
 				return this.BuildOrigin(items);
+			case SearchCategory.Mod:
+				return this.BuildMod(items);
 			case SearchCategory.SetItems:
 				foreach (var r in items)
 				{
@@ -174,6 +178,47 @@ public class SearchCategoryService(IItemTextFormatter itemText, ITranslationServ
 				continue;
 
 			var name = this._translationService.Translate(dlc);
+			foreach (var r in list)
+				groups.Add(name, r);
+		}
+
+		return groups.ToEntries();
+	}
+
+	/// <summary>
+	/// Groups the items from a mod by the mod's name as the mod lists show it (<see cref="InstalledMod.LabelOf"/>): the
+	/// installed mods in their order, then the mods not installed by name. Base game items are in no entry.
+	/// </summary>
+	private SearchCategoryEntry[] BuildMod(IEnumerable<SearchResult> items)
+	{
+		var byMod = new Dictionary<string, List<SearchResult>>(StringComparer.OrdinalIgnoreCase);
+		foreach (var r in items)
+		{
+			var item = r.Item;
+			if (item is null || !ItemMods.IsModded(item))
+				continue;
+
+			if (!byMod.TryGetValue(item.Mod!, out var list))
+				byMod[item.Mod!] = list = [];
+			list.Add(r);
+		}
+
+		if (byMod.Count == 0)
+			return [];
+
+		var installed = this._modLinks.GetInstalledMods();
+		var order = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+		for (int k = 0; k < installed.Count; k++)
+			order.TryAdd(installed[k].Id, k);
+		int Rank(string mod) => order.TryGetValue(mod, out int at) ? at : int.MaxValue;
+
+		// Two mods shown alike share one entry.
+		var groups = new Groups();
+		foreach (var (mod, list) in byMod
+			.OrderBy(p => Rank(p.Key))
+			.ThenBy(p => InstalledMod.LabelOf(p.Key, installed), StringComparer.CurrentCultureIgnoreCase))
+		{
+			var name = InstalledMod.LabelOf(mod, installed)!;
 			foreach (var r in list)
 				groups.Add(name, r);
 		}

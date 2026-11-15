@@ -35,13 +35,14 @@ public readonly record struct RequirementBounds(
 
 /// <summary>
 /// The item kinds both the advanced search and the highlight filter can require: an item must have each one set.
+/// <see cref="Modded"/> keeps the items from a mod (<see cref="ItemMods.IsModded"/>).
 /// </summary>
-public readonly record struct ItemFlagFilter(bool Prefix, bool Suffix, bool Relic, bool Charm, bool SetItem, bool Skill)
+public readonly record struct ItemFlagFilter(bool Prefix, bool Suffix, bool Relic, bool Charm, bool SetItem, bool Skill, bool Modded = false)
 {
 	/// <summary>
 	/// Gets whether no flag is set, so every item passes.
 	/// </summary>
-	public bool IsEmpty => !(this.Prefix || this.Suffix || this.Relic || this.Charm || this.SetItem || this.Skill);
+	public bool IsEmpty => !(this.Prefix || this.Suffix || this.Relic || this.Charm || this.SetItem || this.Skill || this.Modded);
 
 	/// <summary>
 	/// Gets whether an item has every flag set.
@@ -57,6 +58,29 @@ public readonly record struct ItemFlagFilter(bool Prefix, bool Suffix, bool Reli
 			&& (!this.Relic || named?.HasRelic == true)
 			&& (!this.Charm || named?.HasCharm == true)
 			&& (!this.SetItem || names?.ItemSet is not null)
+			&& (!this.Modded || ItemMods.IsModded(item))
 			&& (!this.Skill || hasGrantedSkill(item));
 	}
+}
+
+/// <summary>
+/// Which mod an item comes from, the rule the advanced search and the highlight filter share: its map
+/// (<see cref="Item.Mod"/>, the mod's identity <c>name|source</c>, its own or the container's), null for the base game.
+/// Mods are compared as the installed mods are found (<c>IModLinkService.FindMod</c>): ignoring case.
+/// </summary>
+public static class ItemMods
+{
+	/// <summary>True when the item comes from a mod, installed or not.</summary>
+	public static bool IsModded(Item item) => !string.IsNullOrWhiteSpace(item.Mod);
+
+	/// <summary>True when the item comes from the mod <paramref name="mod"/> (its identity); false for no mod.</summary>
+	public static bool IsFrom(Item item, string? mod)
+		=> !string.IsNullOrWhiteSpace(mod) && string.Equals(item.Mod, mod, StringComparison.OrdinalIgnoreCase);
+
+	/// <summary>
+	/// True when the item comes from one of <paramref name="mods"/> (identities); every item passes an empty list, as
+	/// every section of the filters does when nothing is ticked in it.
+	/// </summary>
+	public static bool IsFromAny(Item item, IReadOnlyCollection<string> mods)
+		=> mods.Count == 0 || mods.Any(mod => IsFrom(item, mod));
 }

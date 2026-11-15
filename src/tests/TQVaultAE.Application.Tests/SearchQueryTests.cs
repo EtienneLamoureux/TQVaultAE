@@ -30,6 +30,7 @@ public class SearchQueryTests
 		HavingCharm = true,
 		IsSetItem = true,
 		HavingSkill = true,
+		Modded = true,
 	};
 
 	[Fact]

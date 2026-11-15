@@ -59,6 +59,45 @@ public class ItemFiltersTests
 	}
 
 	[Fact]
+	public void FlagFilter_Modded_KeepsTheItemsFromAMod_InstalledOrNot()
+	{
+		var modded = new ItemFlagFilter(false, false, false, false, false, false, Modded: true);
+
+		modded.IsEmpty.Should().BeFalse();
+		modded.Matches(new Item { Mod = "Mod|custommaps" }, null, _ => false).Should().BeTrue();
+		modded.Matches(new Item { Mod = "Gone" }, null, _ => false).Should().BeTrue("a mod not installed is still a mod");
+		modded.Matches(new Item(), null, _ => false).Should().BeFalse("a base game item has no mod");
+		modded.Matches(new Item { Mod = "  " }, null, _ => false).Should().BeFalse();
+	}
+
+	[Fact]
+	public void ItemMods_IsFrom_ComparesTheModIdentityIgnoringCase_AndNoModMatchesNothing()
+	{
+		var item = new Item { Mod = "ShadowChampions|workshop:1" };
+
+		ItemMods.IsFrom(item, "shadowchampions|WORKSHOP:1").Should().BeTrue();
+		ItemMods.IsFrom(item, "shadowchampions|custommaps").Should().BeFalse("the same name from another source is another mod");
+		ItemMods.IsFrom(item, null).Should().BeFalse();
+		ItemMods.IsFrom(new Item(), null).Should().BeFalse("a base game item is from no mod");
+	}
+
+	[Fact]
+	public void ItemMods_IsFromAny_IsAnOrInsideTheSection_AndAnEmptySectionKeepsEverything()
+	{
+		var a = new Item { Mod = "A|custommaps" };
+		var b = new Item { Mod = "B|custommaps" };
+		var none = new Item();
+		string[] onlyA = ["A|custommaps"];
+		string[] both = ["A|custommaps", "B|custommaps"];
+
+		ItemMods.IsFromAny(a, onlyA).Should().BeTrue();
+		ItemMods.IsFromAny(b, onlyA).Should().BeFalse();
+		ItemMods.IsFromAny(b, both).Should().BeTrue();
+		ItemMods.IsFromAny(none, both).Should().BeFalse();
+		ItemMods.IsFromAny(none, []).Should().BeTrue();
+	}
+
+	[Fact]
 	public void FlagFilter_ItemWithoutNames_HasNoSetOrAffix()
 	{
 		new ItemFlagFilter(false, false, false, false, true, false).Matches(new Item(), null, _ => true).Should().BeFalse();

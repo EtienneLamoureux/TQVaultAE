@@ -124,7 +124,13 @@ public class HighlightService(
                         filter.Origin.Contains(i.Item.GameDlc));
                 }
 
-                var flags = new ItemFlagFilter(filter.HavingPrefix, filter.HavingSuffix, filter.HavingRelic, filter.HavingCharm, filter.IsSetItem, filter.HavingSkill);
+                if (filter.Mods.Count != 0)
+                {
+                    availableItems = availableItems.Where(i =>
+                        ItemMods.IsFromAny(i.Item, filter.Mods));
+                }
+
+                var flags = new ItemFlagFilter(filter.HavingPrefix, filter.HavingSuffix, filter.HavingRelic, filter.HavingCharm, filter.IsSetItem, filter.HavingSkill, filter.Modded);
                 if (!flags.IsEmpty)
                     availableItems = availableItems.Where(i => flags.Matches(i.Item, i.FriendlyNames, this._itemText.HasGrantedSkill));
             }

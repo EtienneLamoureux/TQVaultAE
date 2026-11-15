@@ -373,6 +373,29 @@ public class ItemDatabaseServiceTests
 	}
 
 	[Fact]
+	public void ExecuteAdvancedSearch_WithIsModded_KeepsOnlyTheItemsFromAMod()
+	{
+		// Arrange
+		var modded = CreateTestItem();
+		modded.Mod = "Mod|custommaps";
+		modded.ModOrigin = ModOrigin.Inherited;
+		var baseGame = CreateTestItem();
+		_service.TryAddItemToDatabase(modded);
+		_service.TryAddItemToDatabase(baseGame);
+		var request = new AdvancedSearchRequest
+		{
+			InitialResults = _service.ItemDatabase.ToList(),
+			IsModded = true,
+		};
+
+		// Act
+		var result = _service.ExecuteAdvancedSearch(request);
+
+		// Assert
+		result.Should().ContainSingle().Which.Item.Should().BeSameAs(modded);
+	}
+
+	[Fact]
 	public void ExecuteAdvancedSearch_WithNullInitialResults_ReturnsEmpty()
 	{
 		// Arrange

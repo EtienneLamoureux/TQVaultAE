@@ -137,15 +137,18 @@ public class SearchQueryServiceTests
 	}
 
 	[Fact]
-	public void Save_WritesTheFormatOfEarlierVersions()
+	public void Save_WritesTheFormatOfEarlierVersions_WithTheModdedFlagLast()
 	{
 		this._files[FilePath] = FileOfEarlierVersions;
 		var charms = this._service.Queries[1];
 
-		// Saving a query again unchanged rewrites the same file
+		// Saving a query again unchanged rewrites the same file, each query ending with the Modded flag added later
+		// (a file without it reads false; earlier versions skip it).
 		this._service.Save("charms", charms);
 
-		Normalized(this._files[FilePath]).Should().Be(Normalized(FileOfEarlierVersions));
+		Normalized(this._files[FilePath]).Should().Be(Normalized(FileOfEarlierVersions)
+			.Replace("\"HavingSkill\": false\n", "\"HavingSkill\": false,\n    \"Modded\": false\n", StringComparison.Ordinal));
+		this._service.Queries.Should().OnlyContain(q => !q.Modded);
 	}
 
 	[Fact]
@@ -191,6 +194,7 @@ public class SearchQueryServiceTests
 		{ new SearchQuery { MaxRequirement = true, MaxDex = 5 }, true },
 		{ new SearchQuery { HavingSkill = true }, true },
 		{ new SearchQuery { IsSetItem = true }, true },
+		{ new SearchQuery { Modded = true }, true },
 		// Display settings filter nothing
 		{ new SearchQuery { Reduce = true, Filter = "fire", MaxElement = 3, Logic = SearchOperator.Or }, false },
 	};

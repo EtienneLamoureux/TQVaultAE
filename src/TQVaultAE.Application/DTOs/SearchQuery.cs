@@ -52,6 +52,8 @@ public class SearchQuery
 	public bool HavingCharm { get; set; }
 	public bool IsSetItem { get; set; }
 	public bool HavingSkill { get; set; }
+	/// <summary>Only the items from a mod. Missing from the files of earlier versions: false.</summary>
+	public bool Modded { get; set; }
 
 	/// <summary>
 	/// The query filters something: a filter is selected, a quick filter ticked, or a requirement bound set and enabled.
@@ -65,7 +67,8 @@ public class SearchQuery
 			|| this.HavingPrefix
 			|| this.HavingSuffix
 			|| this.IsSetItem
-			|| this.HavingSkill;
+			|| this.HavingSkill
+			|| this.Modded;
 
 	/// <summary>
 	/// A copy keeping only the dialog settings (shown categories, category filter, values per category, reduce, operator):

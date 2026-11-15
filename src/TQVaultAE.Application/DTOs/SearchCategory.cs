@@ -41,6 +41,8 @@ public enum SearchCategory
 	SuffixName,
 	/// <summary>Attribute lines of the suffix.</summary>
 	SuffixAttributes,
+	/// <summary>Mod the item comes from (<c>Item.Mod</c>).</summary>
+	Mod,
 }
 
 /// <summary>

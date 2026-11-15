@@ -67,6 +67,8 @@ partial class HighlightFilters
         this.toolTip = new System.Windows.Forms.ToolTip(this.components);
         this.scalingCheckBoxSetItem = new TQVaultAE.GUI.Components.Scaling.ScalingCheckBox();
         this.scalingCheckBoxHavingSkill = new TQVaultAE.GUI.Components.Scaling.ScalingCheckBox();
+        this.scalingCheckBoxModded = new TQVaultAE.GUI.Components.Scaling.ScalingCheckBox();
+        this.scalingCheckedListBoxMods = new TQVaultAE.GUI.Components.Scaling.ScalingCheckedListBox();
         this.tableLayoutPanelHighlight.SuspendLayout();
         this.flowLayoutPanelMax.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxLvl)).BeginInit();
@@ -96,13 +98,15 @@ partial class HighlightFilters
         this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckedListBoxTypes, 0, 3);
         this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckedListBoxRarity, 0, 4);
         this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckedListBoxOrigin, 0, 5);
-        this.tableLayoutPanelHighlight.Controls.Add(this.buttonApply, 1, 6);
-        this.tableLayoutPanelHighlight.Controls.Add(this.buttonReset, 0, 6);
+        this.tableLayoutPanelHighlight.Controls.Add(this.scalingCheckedListBoxMods, 0, 6);
+        this.tableLayoutPanelHighlight.Controls.Add(this.buttonApply, 1, 7);
+        this.tableLayoutPanelHighlight.Controls.Add(this.buttonReset, 0, 7);
         this.tableLayoutPanelHighlight.Controls.Add(this.bufferedFlowLayoutPanelPrefixSuffix, 0, 2);
         this.tableLayoutPanelHighlight.Location = new System.Drawing.Point(10, 10);
         this.tableLayoutPanelHighlight.Margin = new System.Windows.Forms.Padding(0);
         this.tableLayoutPanelHighlight.Name = "tableLayoutPanelHighlight";
-        this.tableLayoutPanelHighlight.RowCount = 7;
+        this.tableLayoutPanelHighlight.RowCount = 8;
+        this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
         this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
         this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
         this.tableLayoutPanelHighlight.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -545,6 +549,26 @@ partial class HighlightFilters
         this.scalingCheckedListBoxOrigin.Size = new System.Drawing.Size(631, 57);
         this.scalingCheckedListBoxOrigin.TabIndex = 29;
         // 
+        // scalingCheckedListBoxMods
+        // 
+        this.scalingCheckedListBoxMods.BackColor = System.Drawing.Color.Black;
+        this.scalingCheckedListBoxMods.CheckOnClick = true;
+        this.tableLayoutPanelHighlight.SetColumnSpan(this.scalingCheckedListBoxMods, 2);
+        this.scalingCheckedListBoxMods.ColumnWidth = 100;
+        this.scalingCheckedListBoxMods.Dock = System.Windows.Forms.DockStyle.Fill;
+        this.scalingCheckedListBoxMods.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+        this.scalingCheckedListBoxMods.ForeColor = System.Drawing.Color.White;
+        this.scalingCheckedListBoxMods.Items.AddRange(new object[] {
+        "Mod 1",
+        "Mod 2"});
+        this.scalingCheckedListBoxMods.IntegralHeight = false;
+        this.scalingCheckedListBoxMods.Location = new System.Drawing.Point(4, 401);
+        this.scalingCheckedListBoxMods.Margin = new System.Windows.Forms.Padding(4);
+        this.scalingCheckedListBoxMods.MultiColumn = true;
+        this.scalingCheckedListBoxMods.Name = "scalingCheckedListBoxMods";
+        this.scalingCheckedListBoxMods.Size = new System.Drawing.Size(631, 30);
+        this.scalingCheckedListBoxMods.TabIndex = 30;
+        // 
         // buttonApply
         // 
         this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -564,7 +588,7 @@ partial class HighlightFilters
         this.buttonApply.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.OverBitmap")));
         this.buttonApply.Size = new System.Drawing.Size(88, 28);
         this.buttonApply.SizeToGraphic = false;
-        this.buttonApply.TabIndex = 30;
+        this.buttonApply.TabIndex = 31;
         this.buttonApply.Text = "Apply";
         this.buttonApply.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonApply.UpBitmap")));
         this.buttonApply.UseCustomGraphic = true;
@@ -589,7 +613,7 @@ partial class HighlightFilters
         this.buttonReset.OverBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.OverBitmap")));
         this.buttonReset.Size = new System.Drawing.Size(88, 28);
         this.buttonReset.SizeToGraphic = false;
-        this.buttonReset.TabIndex = 31;
+        this.buttonReset.TabIndex = 32;
         this.buttonReset.Text = "Reset";
         this.buttonReset.UpBitmap = ((System.Drawing.Bitmap)(resources.GetObject("buttonReset.UpBitmap")));
         this.buttonReset.UseCustomGraphic = true;
@@ -606,6 +630,7 @@ partial class HighlightFilters
         this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxHavingCharm);
         this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxSetItem);
         this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxHavingSkill);
+        this.bufferedFlowLayoutPanelPrefixSuffix.Controls.Add(this.scalingCheckBoxModded);
         this.bufferedFlowLayoutPanelPrefixSuffix.Dock = System.Windows.Forms.DockStyle.Fill;
         this.bufferedFlowLayoutPanelPrefixSuffix.Location = new System.Drawing.Point(0, 66);
         this.bufferedFlowLayoutPanelPrefixSuffix.Margin = new System.Windows.Forms.Padding(0, 4, 4, 4);
@@ -691,6 +716,19 @@ partial class HighlightFilters
         this.scalingCheckBoxHavingSkill.Text = "Having Skill";
         this.scalingCheckBoxHavingSkill.UseVisualStyleBackColor = true;
         // 
+        // scalingCheckBoxModded
+        // 
+        this.scalingCheckBoxModded.AutoSize = true;
+        this.scalingCheckBoxModded.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+        this.scalingCheckBoxModded.ForeColor = System.Drawing.Color.White;
+        this.scalingCheckBoxModded.Location = new System.Drawing.Point(4, 20);
+        this.scalingCheckBoxModded.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+        this.scalingCheckBoxModded.Name = "scalingCheckBoxModded";
+        this.scalingCheckBoxModded.Size = new System.Drawing.Size(74, 20);
+        this.scalingCheckBoxModded.TabIndex = 6;
+        this.scalingCheckBoxModded.Text = "Modded";
+        this.scalingCheckBoxModded.UseVisualStyleBackColor = true;
+        // 
         // HighlightFilters
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -761,4 +799,6 @@ partial class HighlightFilters
     private ScalingCheckBox scalingCheckBoxHavingCharm;
     private ScalingCheckBox scalingCheckBoxSetItem;
     private ScalingCheckBox scalingCheckBoxHavingSkill;
+    private ScalingCheckBox scalingCheckBoxModded;
+    private ScalingCheckedListBox scalingCheckedListBoxMods;
 }

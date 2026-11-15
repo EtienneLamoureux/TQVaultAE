@@ -53,8 +53,7 @@ internal static class ModMenu
 		foreach (var mod in mods)
 		{
 			// A Steam Workshop mod and a custom map of the same name show where they come from.
-			bool homonym = mods.Count(m => m.Name.Equals(mod.Name, StringComparison.OrdinalIgnoreCase)) > 1;
-			var entry = Styled(owner, homonym ? mod.DisplayName : mod.Name);
+			var entry = Styled(owner, mod.LabelAmong(mods));
 			entry.Tag = mod;
 			entry.ToolTipText = mod.DisplayName;
 			entry.Checked = mod == currentMod;

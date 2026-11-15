@@ -125,6 +125,7 @@ public partial class SearchDialogAdvanced
 			HavingCharm = this.scalingCheckBoxHavingCharm.Checked,
 			IsSetItem = this.scalingCheckBoxIsSetItem.Checked,
 			HavingSkill = this.scalingCheckBoxHavingSkill.Checked,
+			Modded = this.scalingCheckBoxModded.Checked,
 		};
 
 	private void scalingButtonQuerySave_Click(object? sender, EventArgs e)

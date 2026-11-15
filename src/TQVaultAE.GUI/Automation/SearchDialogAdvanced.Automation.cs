@@ -42,6 +42,7 @@ public partial class SearchDialogAdvanced
 				charm = this.scalingCheckBoxHavingCharm.Checked,
 				setItem = this.scalingCheckBoxIsSetItem.Checked,
 				skill = this.scalingCheckBoxHavingSkill.Checked,
+				modded = this.scalingCheckBoxModded.Checked,
 			},
 			requirements = new
 			{

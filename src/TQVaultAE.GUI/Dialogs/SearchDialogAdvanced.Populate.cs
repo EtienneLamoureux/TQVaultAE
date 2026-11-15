@@ -33,7 +33,7 @@ public partial class SearchDialogAdvanced
 	/// <summary>The order the categories are filled in (the progress bar's steps), which is not the buttons' order.</summary>
 	private static readonly SearchCategory[] FillOrder = [
 		SearchCategory.Characters, SearchCategory.ItemType, SearchCategory.Rarity, SearchCategory.Style, SearchCategory.Quality,
-		SearchCategory.Vaults, SearchCategory.WithCharm, SearchCategory.WithRelic, SearchCategory.Origin, SearchCategory.SetItems,
+		SearchCategory.Vaults, SearchCategory.WithCharm, SearchCategory.WithRelic, SearchCategory.Origin, SearchCategory.Mod, SearchCategory.SetItems,
 		SearchCategory.Skills, SearchCategory.ItemAttributes, SearchCategory.BaseAttributes, SearchCategory.PrefixName,
 		SearchCategory.PrefixAttributes, SearchCategory.SuffixName, SearchCategory.SuffixAttributes,
 	];

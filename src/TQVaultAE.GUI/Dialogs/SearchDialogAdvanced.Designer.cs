@@ -84,6 +84,9 @@ public partial class SearchDialogAdvanced
 		flowLayoutPanelOrigin = new FlowLayoutPanel();
 		scalingLabelOrigin = new ScalingLabel();
 		scalingCheckedListBoxOrigin = new VirtualCheckedListBox();
+		flowLayoutPanelMod = new FlowLayoutPanel();
+		scalingLabelMod = new ScalingLabel();
+		scalingCheckedListBoxMod = new VirtualCheckedListBox();
 		flowLayoutPanelQuality = new FlowLayoutPanel();
 		scalingLabelQuality = new ScalingLabel();
 		scalingCheckedListBoxQuality = new VirtualCheckedListBox();
@@ -126,6 +129,7 @@ public partial class SearchDialogAdvanced
 		scalingCheckBoxHavingCharm = new ScalingCheckBox();
 		scalingCheckBoxIsSetItem = new ScalingCheckBox();
 		scalingCheckBoxHavingSkill = new ScalingCheckBox();
+		scalingCheckBoxModded = new ScalingCheckBox();
 		flowLayoutPanelMisc = new FlowLayoutPanel();
 		scalingLabelMaxVisibleElement = new ScalingLabel();
 		numericUpDownMaxElement = new NumericUpDown();
@@ -165,6 +169,7 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuType = new ScalingButton();
 		scalingButtonMenuRarity = new ScalingButton();
 		scalingButtonMenuOrigin = new ScalingButton();
+		scalingButtonMenuMod = new ScalingButton();
 		scalingButtonMenuQuality = new ScalingButton();
 		scalingButtonMenuStyle = new ScalingButton();
 		scalingButtonMenuSetItems = new ScalingButton();
@@ -190,6 +195,7 @@ public partial class SearchDialogAdvanced
 		flowLayoutPanelMain.SuspendLayout();
 		flowLayoutPanelInVaults.SuspendLayout();
 		flowLayoutPanelOrigin.SuspendLayout();
+		flowLayoutPanelMod.SuspendLayout();
 		flowLayoutPanelQuality.SuspendLayout();
 		flowLayoutPanelStyle.SuspendLayout();
 		flowLayoutPanelSetItems.SuspendLayout();
@@ -663,6 +669,7 @@ public partial class SearchDialogAdvanced
 		flowLayoutPanelMain.Controls.Add(flowLayoutPanelItemType);
 		flowLayoutPanelMain.Controls.Add(flowLayoutPanelRarity);
 		flowLayoutPanelMain.Controls.Add(flowLayoutPanelOrigin);
+		flowLayoutPanelMain.Controls.Add(flowLayoutPanelMod);
 		flowLayoutPanelMain.Controls.Add(flowLayoutPanelQuality);
 		flowLayoutPanelMain.Controls.Add(flowLayoutPanelStyle);
 		flowLayoutPanelMain.Controls.Add(flowLayoutPanelSetItems);
@@ -777,6 +784,54 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxOrigin.TabIndex = 7;
 		scalingCheckedListBoxOrigin.SelectedValueChanged += scalingCheckedListBox_SelectedValueChanged;
 		scalingCheckedListBoxOrigin.MouseMove += scalingCheckedListBox_MouseMove;
+		// 
+		// flowLayoutPanelMod
+		// 
+		flowLayoutPanelMod.AutoSize = true;
+		flowLayoutPanelMod.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+		flowLayoutPanelMod.BorderStyle = BorderStyle.FixedSingle;
+		flowLayoutPanelMod.Controls.Add(scalingLabelMod);
+		flowLayoutPanelMod.Controls.Add(scalingCheckedListBoxMod);
+		flowLayoutPanelMod.FlowDirection = FlowDirection.TopDown;
+		flowLayoutPanelMod.Location = new Point(923, 3);
+		flowLayoutPanelMod.MinimumSize = new Size(50, 10);
+		flowLayoutPanelMod.Name = "flowLayoutPanelMod";
+		flowLayoutPanelMod.Padding = new Padding(1, 2, 0, 0);
+		flowLayoutPanelMod.Size = new Size(224, 102);
+		flowLayoutPanelMod.TabIndex = 34;
+		// 
+		// scalingLabelMod
+		// 
+		scalingLabelMod.AutoSize = true;
+		scalingLabelMod.Font = new Font("Microsoft Sans Serif", 9F);
+		scalingLabelMod.ForeColor = Color.Gold;
+		scalingLabelMod.Location = new Point(4, 2);
+		scalingLabelMod.Name = "scalingLabelMod";
+		scalingLabelMod.Size = new Size(47, 18);
+		scalingLabelMod.TabIndex = 0;
+		scalingLabelMod.Text = "Mod";
+		scalingLabelMod.UseMnemonic = false;
+		scalingLabelMod.MouseClick += scalingLabelCategory_MouseClick;
+		// 
+		// scalingCheckedListBoxMod
+		// 
+		scalingCheckedListBoxMod.BackColor = Color.FromArgb(46, 31, 21);
+		scalingCheckedListBoxMod.BorderStyle = BorderStyle.None;
+		scalingCheckedListBoxMod.CheckOnClick = true;
+		scalingCheckedListBoxMod.Font = new Font("Microsoft Sans Serif", 9F);
+		scalingCheckedListBoxMod.ForeColor = Color.White;
+		scalingCheckedListBoxMod.FormattingEnabled = true;
+		scalingCheckedListBoxMod.HorizontalScrollbar = true;
+		scalingCheckedListBoxMod.IntegralHeight = false;
+		scalingCheckedListBoxMod.Items.AddRange(new object[] { "Mod 1", "Mod 2" });
+		scalingCheckedListBoxMod.Location = new Point(4, 20);
+		scalingCheckedListBoxMod.Margin = new Padding(3, 0, 3, 0);
+		scalingCheckedListBoxMod.MultiColumn = true;
+		scalingCheckedListBoxMod.Name = "scalingCheckedListBoxMod";
+		scalingCheckedListBoxMod.Size = new Size(215, 80);
+		scalingCheckedListBoxMod.TabIndex = 7;
+		scalingCheckedListBoxMod.SelectedValueChanged += scalingCheckedListBox_SelectedValueChanged;
+		scalingCheckedListBoxMod.MouseMove += scalingCheckedListBox_MouseMove;
 		// 
 		// flowLayoutPanelQuality
 		// 
@@ -1366,6 +1421,7 @@ public partial class SearchDialogAdvanced
 		bufferedFlowLayoutPanelQuickFilters.Controls.Add(scalingCheckBoxHavingCharm);
 		bufferedFlowLayoutPanelQuickFilters.Controls.Add(scalingCheckBoxIsSetItem);
 		bufferedFlowLayoutPanelQuickFilters.Controls.Add(scalingCheckBoxHavingSkill);
+		bufferedFlowLayoutPanelQuickFilters.Controls.Add(scalingCheckBoxModded);
 		bufferedFlowLayoutPanelQuickFilters.Dock = DockStyle.Fill;
 		bufferedFlowLayoutPanelQuickFilters.Location = new Point(3, 126);
 		bufferedFlowLayoutPanelQuickFilters.Name = "bufferedFlowLayoutPanelQuickFilters";
@@ -1455,6 +1511,20 @@ public partial class SearchDialogAdvanced
 		scalingCheckBoxHavingSkill.Text = "Having Skill";
 		scalingCheckBoxHavingSkill.UseVisualStyleBackColor = true;
 		scalingCheckBoxHavingSkill.CheckedChanged += scalingCheckBoxQuickFilters_CheckedChanged;
+		// 
+		// scalingCheckBoxModded
+		// 
+		scalingCheckBoxModded.AutoSize = true;
+		scalingCheckBoxModded.Font = new Font("Microsoft Sans Serif", 9F);
+		scalingCheckBoxModded.ForeColor = Color.Gold;
+		scalingCheckBoxModded.Location = new Point(674, 0);
+		scalingCheckBoxModded.Margin = new Padding(3, 0, 3, 0);
+		scalingCheckBoxModded.Name = "scalingCheckBoxModded";
+		scalingCheckBoxModded.Size = new Size(84, 22);
+		scalingCheckBoxModded.TabIndex = 6;
+		scalingCheckBoxModded.Text = "Modded";
+		scalingCheckBoxModded.UseVisualStyleBackColor = true;
+		scalingCheckBoxModded.CheckedChanged += scalingCheckBoxQuickFilters_CheckedChanged;
 		// 
 		// flowLayoutPanelMisc
 		// 
@@ -1912,6 +1982,7 @@ public partial class SearchDialogAdvanced
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuType);
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuRarity);
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuOrigin);
+		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuMod);
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuQuality);
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuStyle);
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuSetItems);
@@ -1926,9 +1997,9 @@ public partial class SearchDialogAdvanced
 		flowLayoutPanelLeftColumn.Controls.Add(scalingButtonMenuSuffixAttribute);
 		flowLayoutPanelLeftColumn.FlowDirection = FlowDirection.TopDown;
 		flowLayoutPanelLeftColumn.Location = new Point(3, 156);
-		flowLayoutPanelLeftColumn.MinimumSize = new Size(128, 578);
+		flowLayoutPanelLeftColumn.MinimumSize = new Size(128, 612);
 		flowLayoutPanelLeftColumn.Name = "flowLayoutPanelLeftColumn";
-		flowLayoutPanelLeftColumn.Size = new Size(128, 578);
+		flowLayoutPanelLeftColumn.Size = new Size(128, 612);
 		flowLayoutPanelLeftColumn.TabIndex = 19;
 		// 
 		// scalingButtonMenuCharacters
@@ -2045,6 +2116,29 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuOrigin.UseCustomGraphic = true;
 		scalingButtonMenuOrigin.UseVisualStyleBackColor = false;
 		scalingButtonMenuOrigin.Click += scalingButtonMenu_Click;
+		// 
+		// scalingButtonMenuMod
+		// 
+		scalingButtonMenuMod.BackColor = Color.Transparent;
+		scalingButtonMenuMod.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.DownBitmap");
+		scalingButtonMenuMod.FlatAppearance.BorderSize = 0;
+		scalingButtonMenuMod.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
+		scalingButtonMenuMod.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
+		scalingButtonMenuMod.FlatStyle = FlatStyle.Flat;
+		scalingButtonMenuMod.Font = new Font("Microsoft Sans Serif", 7.5F);
+		scalingButtonMenuMod.ForeColor = Color.FromArgb(51, 44, 28);
+		scalingButtonMenuMod.Image = (Image)resources.GetObject("scalingButtonMenuOrigin.Image");
+		scalingButtonMenuMod.Location = new Point(3, 147);
+		scalingButtonMenuMod.Name = "scalingButtonMenuMod";
+		scalingButtonMenuMod.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.OverBitmap");
+		scalingButtonMenuMod.Size = new Size(120, 30);
+		scalingButtonMenuMod.SizeToGraphic = false;
+		scalingButtonMenuMod.TabIndex = 34;
+		scalingButtonMenuMod.Text = "Mod";
+		scalingButtonMenuMod.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.UpBitmap");
+		scalingButtonMenuMod.UseCustomGraphic = true;
+		scalingButtonMenuMod.UseVisualStyleBackColor = false;
+		scalingButtonMenuMod.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuQuality
 		// 
@@ -2377,6 +2471,8 @@ public partial class SearchDialogAdvanced
 		flowLayoutPanelInVaults.PerformLayout();
 		flowLayoutPanelOrigin.ResumeLayout(false);
 		flowLayoutPanelOrigin.PerformLayout();
+		flowLayoutPanelMod.ResumeLayout(false);
+		flowLayoutPanelMod.PerformLayout();
 		flowLayoutPanelQuality.ResumeLayout(false);
 		flowLayoutPanelQuality.PerformLayout();
 		flowLayoutPanelStyle.ResumeLayout(false);
@@ -2555,5 +2651,10 @@ public partial class SearchDialogAdvanced
     private ScalingLabel scalingLabelSkills;
     private VirtualCheckedListBox scalingCheckedListBoxSkills;
     private ScalingButton scalingButtonMenuSkills;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMod;
+    private ScalingLabel scalingLabelMod;
+    private VirtualCheckedListBox scalingCheckedListBoxMod;
+    private ScalingButton scalingButtonMenuMod;
+    private ScalingCheckBox scalingCheckBoxModded;
     private BufferedFlowLayoutPanel bufferedFlowLayoutPanelRequierements;
 }

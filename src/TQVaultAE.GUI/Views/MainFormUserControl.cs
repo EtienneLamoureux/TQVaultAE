@@ -227,6 +227,7 @@ public partial class MainFormUserControl : UserControl
 			highlightFilters.UserContext = userContext;
 			highlightFilters.TranslationService = translationService;
 			highlightFilters.HighlightService = highlightService;
+			highlightFilters.ItemModService = this.Services.ItemModService;
 			highlightFilters.ResetAll();
 			highlightFilters.InitializeFilters();
 			highlightFilters.Link = link;

@@ -2044,6 +2044,12 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="ItemModNone" xml:space="preserve">
     <value>Aucun (jeu de base)</value>
   </data>
+	<data name="SearchModded" xml:space="preserve">
+    <value>Moddé</value>
+  </data>
+	<data name="SearchMod" xml:space="preserve">
+    <value>Mod</value>
+  </data>
 	<data name="VaultModded" xml:space="preserve">
     <value>Coffre moddé</value>
   </data>
