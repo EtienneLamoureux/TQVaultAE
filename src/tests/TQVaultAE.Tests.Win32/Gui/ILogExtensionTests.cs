@@ -10,67 +10,50 @@ namespace TQVaultAE.Tests.Win32.Gui;
 /// </summary>
 public class ILogExtensionTests
 {
-	#region FormatException Tests
+	private readonly ILogger log = new Mock<ILogger>().Object;
 
 	[Fact]
-	public void FormatException_WithValidException_ReturnsFormattedString()
+	public void FormatException_WithValidException_ReturnsTypeAndMessage()
 	{
-		// Arrange
-		var ex = new InvalidOperationException("Test error message");
-		var mockLogger = new Mock<ILogger>();
+		var result = this.log.FormatException(new InvalidOperationException("Test error message"));
 
-		// Act
-		var result = mockLogger.Object.FormatException(ex);
-
-		// Assert
-		result.Should().NotBeNullOrEmpty();
-		result.Should().Contain("InvalidOperationException");
+		result.Should().Contain("System.InvalidOperationException");
 		result.Should().Contain("Test error message");
+	}
+
+	[Fact]
+	public void FormatException_WithoutData_IsTheRuntimeText()
+	{
+		var ex = Thrown(() => throw new InvalidOperationException("Outer error", new ArgumentException("Inner error")));
+
+		this.log.FormatException(ex).Should().Be(ex.ToString());
 	}
 
 	[Fact]
 	public void FormatException_WithInnerException_IncludesInnerException()
 	{
-		// Arrange
-		var innerException = new ArgumentException("Inner error");
-		var ex = new InvalidOperationException("Outer error", innerException);
-		var mockLogger = new Mock<ILogger>();
+		var ex = new InvalidOperationException("Outer error", new ArgumentException("Inner error"));
 
-		// Act
-		var result = mockLogger.Object.FormatException(ex);
+		var result = this.log.FormatException(ex);
 
-		// Assert
-		result.Should().Contain("Inner Exception");
-		result.Should().Contain("ArgumentException");
+		result.Should().Contain("---> System.ArgumentException: Inner error");
 	}
 
 	[Fact]
-	public void FormatException_WhenFormatterFails_ReturnsFallbackMessage()
+	public void FormatException_WithStackTrace_IncludesIt()
 	{
-		// Arrange - create an exception that might cause issues
-		var ex = new Exception("Test");
-		var mockLogger = new Mock<ILogger>();
+		var ex = Thrown(() => throw new InvalidOperationException("Thrown"));
 
-		// Act
-		var result = mockLogger.Object.FormatException(ex);
+		var result = this.log.FormatException(ex);
 
-		// Assert - should return formatted string, not fallback
-		result.Should().NotContain("failed");
-		result.Should().Contain("Test");
+		result.Should().Contain(nameof(Thrown));
 	}
 
 	[Fact]
-	public void FormatException_WithArgumentException_ReturnsProperFormat()
+	public void FormatException_WithArgumentException_IncludesParamName()
 	{
-		// Arrange
-		var ex = new ArgumentException("Invalid argument", "paramName");
-		var mockLogger = new Mock<ILogger>();
+		var result = this.log.FormatException(new ArgumentException("Invalid argument", "paramName"));
 
-		// Act
-		var result = mockLogger.Object.FormatException(ex);
-
-		// Assert
-		result.Should().Contain("ArgumentException");
 		result.Should().Contain("Invalid argument");
 		result.Should().Contain("paramName");
 	}
@@ -78,37 +61,64 @@ public class ILogExtensionTests
 	[Fact]
 	public void FormatException_WithFileNotFoundException_IncludesFileName()
 	{
-		// Arrange
-		var ex = new FileNotFoundException("File not found", "test.txt");
-		var mockLogger = new Mock<ILogger>();
+		var result = this.log.FormatException(new FileNotFoundException("File not found", "test.txt"));
 
-		// Act
-		var result = mockLogger.Object.FormatException(ex);
-
-		// Assert
 		result.Should().Contain("FileNotFoundException");
 		result.Should().Contain("test.txt");
 	}
 
-	#endregion
-
-	#region Edge Cases
-
 	[Fact]
 	public void FormatException_WithAggregateException_FormatsAllInnerExceptions()
 	{
-		// Arrange
-		var ex1 = new InvalidOperationException("Error 1");
-		var ex2 = new ArgumentException("Error 2");
-		var aggregateException = new AggregateException(ex1, ex2);
-		var mockLogger = new Mock<ILogger>();
+		var ex = new AggregateException(new InvalidOperationException("Error 1"), new ArgumentException("Error 2"));
 
-		// Act
-		var result = mockLogger.Object.FormatException(aggregateException);
+		var result = this.log.FormatException(ex);
 
-		// Assert
 		result.Should().Contain("AggregateException");
+		result.Should().Contain("Error 1");
+		result.Should().Contain("Error 2");
 	}
 
-	#endregion
+	[Fact]
+	public void FormatException_WithData_ListsItsEntries()
+	{
+		var ex = new InvalidOperationException("With data");
+		ex.Data["File"] = "player.chr";
+		ex.Data["Offset"] = null;
+
+		var result = this.log.FormatException(ex);
+
+		result.Should().StartWith(ex.ToString());
+		result.Should().Contain("Data:");
+		result.Should().Contain("File : player.chr");
+		result.Should().Contain("Offset : {null}");
+	}
+
+	[Fact]
+	public void FormatException_DoesNotShowTheMachineName()
+	{
+		var result = this.log.FormatException(new InvalidOperationException("Test"));
+
+		result.Should().NotContain(Environment.MachineName);
+	}
+
+	[Fact]
+	public void FormatException_WithNullException_Throws()
+	{
+		this.Invoking(_ => this.log.FormatException(null!)).Should().Throw<ArgumentNullException>();
+	}
+
+	private static Exception Thrown(Action action)
+	{
+		try
+		{
+			action();
+		}
+		catch (Exception ex)
+		{
+			return ex;
+		}
+
+		throw new InvalidOperationException("No exception thrown.");
+	}
 }

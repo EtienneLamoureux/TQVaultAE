@@ -32,7 +32,7 @@ Windows-only projects. To check a change, run the test projects of the layers it
 | TQVaultAE.Services | TQVaultAE.Services.Tests (and TQVaultAE.Services.Git.Tests for `GitBackup`, slow: real git, about 3 min) |
 | TQVaultAE.Presentation | TQVaultAE.Presentation.Tests |
 | TQVaultAE.DbCli | TQVaultAE.DbCli.Tests |
-| TQVaultAE.Presentation.Win32, TQVaultAE.Services.Win32, ARZExplorer, TQSaveFilesExplorer, the GUI's exception formatter (`GUI/Infrastructure/TextExceptionFormatter.cs`) | TQVaultAE.Tests.Win32 |
+| TQVaultAE.Presentation.Win32, TQVaultAE.Services.Win32, ARZExplorer, TQSaveFilesExplorer, the GUI's exception formatting (`GUI/Infrastructure/ILogExtension.cs`) | TQVaultAE.Tests.Win32 |
 
 The test projects share their settings through `src/tests/TestProject.props`. A lower layer's change can break the tests of
 the layers above it: run the whole solution before a commit that changes a shared API.
