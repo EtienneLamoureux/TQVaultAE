@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
+using TQVaultAE.Application.Layout;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Components.Scaling;
 
@@ -74,14 +74,14 @@ public partial class MainForm
 	{
 		if (this.WindowState == FormWindowState.Normal)
 		{
-			var client = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.Scale);
-			client = TQVaultAE.Application.WindowLayout.GrowToFit(
+			var client = TQVaultAE.Application.Layout.WindowLayout.Scaled(DesignClientSize, UIService.Scale);
+			client = TQVaultAE.Application.Layout.WindowLayout.GrowToFit(
 				client, this.ContentAreaOf(client), this.mainView.Location, this.mainView.PanelsPreferredSize);
 
 			// Never larger than Windows lets the window be (the zoom stops before, LargestZoom): Windows would cut it
 			// itself, the resize would then be read as the user's and constrained to the design ratio, down to a 4 x 4
 			// window before the startup set the resizing bounds, and the next zooms would start from the wrong width.
-			client = TQVaultAE.Application.WindowLayout.Within(client, this.MaxClientSize);
+			client = TQVaultAE.Application.Layout.WindowLayout.Within(client, this.MaxClientSize);
 			if (client != this.ClientSize)
 			{
 				// The size before the next resize: the change is not a resize by the user to keep in the design ratio.
@@ -108,7 +108,7 @@ public partial class MainForm
 		if (this.mainView is null)
 			return;
 
-		var size = TQVaultAE.Application.WindowLayout.FillTo(this.ContentArea, this.mainView.Location);
+		var size = TQVaultAE.Application.Layout.WindowLayout.FillTo(this.ContentArea, this.mainView.Location);
 		if (this.mainView.Size != size)
 			this.mainView.Size = size;
 
@@ -136,7 +136,7 @@ public partial class MainForm
 		if (this.openingScreen is { } opening && MonitorDpi.Of(opening) is int openingDpi)
 			workingArea = new Rectangle(
 				opening.WorkingArea.Location,
-				TQVaultAE.Application.WindowLayout.Scaled(opening.WorkingArea.Size, (float)this.DeviceDpi / openingDpi));
+				TQVaultAE.Application.Layout.WindowLayout.Scaled(opening.WorkingArea.Size, (float)this.DeviceDpi / openingDpi));
 
 		// Windows Forms already scaled the designer layout to the screen DPI (AutoScaleMode.Dpi); the code-built panels and
 		// the drawing follow UIService.Scale, which gets the same factor on top of the user's zoom.
@@ -149,7 +149,7 @@ public partial class MainForm
 
 		this.ScaleOnResize = false;
 
-		this.ClientSize = TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.DpiScale);
+		this.ClientSize = TQVaultAE.Application.Layout.WindowLayout.Scaled(DesignClientSize, UIService.DpiScale);
 
 		this.ScaleOnResize = true;
 
@@ -182,7 +182,7 @@ public partial class MainForm
 			return null;
 
 		this.StartPosition = FormStartPosition.Manual;
-		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(creation.WorkingArea, this.Size);
+		this.Location = TQVaultAE.Application.Layout.WindowLayout.CenteredIn(creation.WorkingArea, this.Size);
 		return opening;
 	}
 
@@ -204,10 +204,10 @@ public partial class MainForm
 
 		this.openingScreen = null;
 		var size = MonitorDpi.Of(opening) is int dpi
-			? TQVaultAE.Application.WindowLayout.Scaled(this.Size, (float)dpi / this.DeviceDpi)
+			? TQVaultAE.Application.Layout.WindowLayout.Scaled(this.Size, (float)dpi / this.DeviceDpi)
 			: this.Size;
-		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(opening.WorkingArea, size);
-		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(Screen.FromControl(this).WorkingArea, this.Size);
+		this.Location = TQVaultAE.Application.Layout.WindowLayout.CenteredIn(opening.WorkingArea, size);
+		this.Location = TQVaultAE.Application.Layout.WindowLayout.CenteredIn(Screen.FromControl(this).WorkingArea, this.Size);
 	}
 
 	/// <summary>
@@ -227,14 +227,14 @@ public partial class MainForm
 
 		// The bounds of the user's resizing: the window at its design size at the largest and the smallest zoom, not from
 		// its size at the zoom it opens at (a start at zoom 0.5 allowed a window only as large as zoom 1).
-		var designWindow = this.SizeFromClientSize(TQVaultAE.Application.WindowLayout.Scaled(DesignClientSize, UIService.DpiScale));
-		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MaxZoom);
-		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MinZoom);
+		var designWindow = this.SizeFromClientSize(TQVaultAE.Application.Layout.WindowLayout.Scaled(DesignClientSize, UIService.DpiScale));
+		this.FormMaximumSize = TQVaultAE.Application.Layout.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MaxZoom);
+		this.FormMinimumSize = TQVaultAE.Application.Layout.WindowLayout.Scaled(designWindow, Presentation.Win32.UIService.MinZoom);
 
 
 		this.LastFormSize = this.Size;
 
 		// A maximize keeps the aspect ratio on the monitor the window is on then (VaultForm, WM_GETMINMAXINFO).
-		this.Location = TQVaultAE.Application.WindowLayout.CenteredIn(Screen.FromControl(this).WorkingArea, this.Size);
+		this.Location = TQVaultAE.Application.Layout.WindowLayout.CenteredIn(Screen.FromControl(this).WorkingArea, this.Size);
 	}
 }

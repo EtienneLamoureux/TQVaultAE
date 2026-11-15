@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Layout;
 
 /// <summary>
 /// How the game's character window shows its statistics (records <c>xpack\ui\character\tab1new..tab3new</c>): attribute

@@ -268,7 +268,7 @@ public partial class StashPanel
 		var button = this._editButton!;
 		var buttonBounds = new Rectangle(
 			new Point(location.X, barBounds.Bottom + gap),
-			TQVaultAE.Application.WindowLayout.Scaled(EditButtonDesignSize, scale));
+			TQVaultAE.Application.Layout.WindowLayout.Scaled(EditButtonDesignSize, scale));
 		if (button.Bounds != buttonBounds)
 			button.Bounds = buttonBounds;
 	}

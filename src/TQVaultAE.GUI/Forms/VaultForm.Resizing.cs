@@ -3,10 +3,10 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.KeyBinds;
+using TQVaultAE.Application.Layout;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.GUI.Interop;
@@ -331,8 +331,8 @@ public partial class VaultForm
 		// changed: fit again once it is applied.
 		this.FitToContent();
 
-		this.FormMaximumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMaximumSize, factor);
-		this.FormMinimumSize = TQVaultAE.Application.WindowLayout.Scaled(this.FormMinimumSize, factor);
+		this.FormMaximumSize = TQVaultAE.Application.Layout.WindowLayout.Scaled(this.FormMaximumSize, factor);
+		this.FormMinimumSize = TQVaultAE.Application.Layout.WindowLayout.Scaled(this.FormMinimumSize, factor);
 		// The layout made again for the new DPI; during a drag by the title bar, once the drag ends: Windows gives the
 		// window its suggested size during its move loop, over a size set here, and the end of the drag then read the
 		// difference as a resize by the user.

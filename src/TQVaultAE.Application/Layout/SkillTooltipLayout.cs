@@ -1,4 +1,4 @@
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Layout;
 
 /// <summary>
 /// Which effect lines the game's skill tool tip shows, and in which order, for the current level and for the next

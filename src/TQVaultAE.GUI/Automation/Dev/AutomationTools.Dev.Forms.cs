@@ -231,7 +231,7 @@ internal static partial class AutomationTools
 					nominalZoom = main.NominalZoom,
 					cell = ui.ItemUnitSize,
 					largestStep = main.AutomationZoomLimit.LargestStep,
-					largestZoom = TQVaultAE.Application.ZoomSteps.Nominal(main.AutomationZoomLimit.LargestStep),
+					largestZoom = TQVaultAE.Application.Layout.ZoomSteps.Nominal(main.AutomationZoomLimit.LargestStep),
 					// The window sizes a resize by the user is kept between.
 					resizeBounds = new
 					{

@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Layout;
 
 /// <summary>
 /// Where the content of a window drawn with the TQ border may go: inside the border pictures, and clear of the resize

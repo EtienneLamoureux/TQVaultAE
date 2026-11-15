@@ -154,7 +154,7 @@ public partial class MainFormUserControl
 		// Built in code at its design size: the scale gives it the zoom and the DPI.
 		float scale = this.Services.UIService.Scale;
 		vaultExportButton.Location = new Point((int)Math.Round(vaultExportButton.Left * scale), (int)Math.Round(vaultExportButton.Top * scale));
-		vaultExportButton.Size = TQVaultAE.Application.WindowLayout.Scaled(vaultExportButton.Size, scale);
+		vaultExportButton.Size = TQVaultAE.Application.Layout.WindowLayout.Scaled(vaultExportButton.Size, scale);
 	}
 
 	private void ExportVaultToFileClicked(object? sender, EventArgs e)

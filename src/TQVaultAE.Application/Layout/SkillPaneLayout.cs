@@ -1,6 +1,6 @@
 using TQVaultAE.Domain.Entities;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Layout;
 
 /// <summary>The border the skill window draws around a skill button, telling what can be done with it.</summary>
 public enum SkillButtonState

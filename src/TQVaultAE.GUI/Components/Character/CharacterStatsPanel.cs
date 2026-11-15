@@ -1,8 +1,8 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using TQVaultAE.Application;
 using TQVaultAE.Application.KeyBinds;
+using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Infrastructure;

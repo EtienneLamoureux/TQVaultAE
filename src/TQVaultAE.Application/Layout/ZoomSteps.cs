@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace TQVaultAE.Application;
+namespace TQVaultAE.Application.Layout;
 
 /// <summary>
 /// The zoom steps of the main window: 0.4 to 2.0 by 0.1 (nominal zooms), each made exact by a whole item cell size. At a
