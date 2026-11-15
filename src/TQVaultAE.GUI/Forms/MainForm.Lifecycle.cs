@@ -85,6 +85,8 @@ public partial class MainForm
 	/// <param name="e">EventArgs data</param>
 	private async void MainFormLoad(object? sender, EventArgs e)
 	{
+		StartupTiming.Mark(this.Log, "main form load");
+
 		// async void event handler: nothing may escape it.
 		try
 		{
@@ -116,6 +118,7 @@ public partial class MainForm
 		this.splashScreen.Show();
 		this.splashScreen.Update();
 		this.splashScreen.BringToFront();
+		StartupTiming.Mark(this.Log, "splash shown");
 
 		await this.LoadResourcesAsync();
 	}
@@ -228,7 +231,14 @@ public partial class MainForm
 	private void FadeInTimerTick(object? sender, EventArgs e)
 	{
 		if (this.Opacity < 1)
+		{
 			this.Opacity = Math.Min(1.0F, this.Opacity + this.fadeInterval);
+			if (this.Opacity >= 1)
+			{
+				StartupTiming.Mark(this.Log, "main opaque");
+				StartupTiming.MarkWhenIdle(this.Log, "main ready");
+			}
+		}
 		else
 			this.fadeInTimer.Stop();
 	}

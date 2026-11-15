@@ -120,6 +120,7 @@ public partial class MainForm
 	/// <param name="e">FormClosedEventArgs data</param>
 	private void SplashScreenClosed(object? sender, FormClosedEventArgs e)
 	{
+		StartupTiming.Mark(this.Log, "splash closed");
 		if (this.resourcesLoaded)
 		{
 			if (!this.loadingComplete)
@@ -142,6 +143,7 @@ public partial class MainForm
 		this.Show();
 		this.MoveToOpeningScreen();
 		this.Activate();
+		StartupTiming.Mark(this.Log, "main shown");
 	}
 
 	#endregion
@@ -209,6 +211,7 @@ public partial class MainForm
 	/// </summary>
 	private void ResourcesLoaded()
 	{
+		StartupTiming.Mark(this.Log, "resources loaded");
 		this.loadingComplete = true;
 		this.Enabled = true;
 
@@ -251,6 +254,7 @@ public partial class MainForm
 			// The command line player is a character key (IT/User/HeroA) or the start of a name in the list.
 			this.mainView.SelectAutomaticPlayer(selection.AutomaticPlayer);
 
+			StartupTiming.Mark(this.Log, "splash close asked");
 			this.splashScreen.CloseForm();
 		}
 	}
