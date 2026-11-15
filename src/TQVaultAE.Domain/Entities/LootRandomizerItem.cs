@@ -16,6 +16,11 @@ public record LootRandomizerItem(
 	/// </summary>
 	public bool Unknown { get; init; }
 
+	/// <summary>
+	/// The record comes from the custom map (mod) database: an affix the mod adds or overrides. Set per data scope.
+	/// </summary>
+	public bool FromMod { get; init; }
+
 	public bool TranslationTagIsEmpty => string.IsNullOrWhiteSpace(this.Tag);
 
 	public static LootRandomizerItem Default(RecordId rawRecordId)

@@ -31,6 +31,8 @@ internal sealed class CustomProfessionalRenderer : ToolStripProfessionalRenderer
 		{
 			if (e.Item?.Name?.StartsWith(ComboBoxCharacter.TAGKEY, StringComparison.Ordinal) ?? false)
 				e.TextColor = Color.Black;
+			else if (e.Item is not null && MenuStyle.HasOwnTextColor(e.Item))
+				e.TextColor = e.Item.ForeColor;
 			else
 				e.TextColor = Theme.MenuText;
 		}

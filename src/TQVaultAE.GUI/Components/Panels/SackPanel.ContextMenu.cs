@@ -430,6 +430,9 @@ public partial class SackPanel
 		_DisplayAffixesByEffect = !_DisplayAffixesByEffect;
 	}
 
+	/// <summary>The text color of the affixes of a mod: the mod line of the item tool tip.</summary>
+	private static readonly Color ModAffixColor = ItemTooltipContentBuilder.ModColor.Color();
+
 	/// <summary>
 	/// <c>false</c> Group By AffixName;
 	/// <c>true</c> Group By Effect 
@@ -491,6 +494,13 @@ public partial class SackPanel
 
 				bool current = val.AffixId == currentSelectedAffix;
 				this.DecorateChoice(choice, val.LootRandomizer.Unknown, val.LootRandomizer.TranslationTagIsEmpty, current);
+
+				// An affix the item's mod adds or overrides, in the mod color of the item tool tip.
+				if (val.LootRandomizer.FromMod)
+				{
+					choice.WithTextColor(ModAffixColor);
+					affixMenu?.WithTextColor(ModAffixColor); // the variants' menu shows that one of them is the mod's
+				}
 
 				// The variants' menu of the current affix looks like it.
 				if (current && affixMenu is not null)

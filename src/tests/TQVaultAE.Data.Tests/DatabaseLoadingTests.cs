@@ -535,6 +535,31 @@ public class DatabaseLoadingTests
 			"""records\loot\table_b.dbr prefix records\affix\prefix1.dbr 7""");
 	}
 
+	[Fact]
+	public void AllLootRandomizer_CustomMap_FlagsTheAffixRecordsOfTheModDatabase()
+	{
+		// New and overridden affixes alike come from the mod database; the others from the game's.
+		this.UseAnniversaryEdition();
+		this.UseCustomMap();
+		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
+		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
+		this.AddArz(modArz);
+		this.AddRecord(gameArz, """records\affixase.dbr""", "LootRandomizer");
+		this.AddRecord(gameArz, """records\affix\overridden.dbr""", "LootRandomizer");
+		this.AddRecord(modArz, """records\affix\overridden.dbr""", "LootRandomizer");
+		this.AddRecord(modArz, """records\affix\modonly.dbr""", "LootRandomizer");
+		var db = this.CreateDatabase();
+
+		db.LoadDBFile();
+
+		db.AllLootRandomizer.ToDictionary(a => a.Key.Raw, a => a.Value.FromMod).Should().BeEquivalentTo(new Dictionary<string, bool>
+		{
+			["""records\affixase.dbr"""] = false,
+			["""records\affix\overridden.dbr"""] = true,
+			["""records\affix\modonly.dbr"""] = true,
+		});
+	}
+
 	[Theory]
 	[InlineData(0, 0, 0, 0, 0, false, true, true)] // all zero: the game rolls a prefix and a suffix
 	[InlineData(0, 10, 0, 0, 0, false, false, false)] // only "no affix"

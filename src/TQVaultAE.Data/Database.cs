@@ -445,7 +445,10 @@ public partial class Database : IDatabase
 					, ItemClass
 					, FileDescription
 					, r.RecordInfo.Key.PrettyFileName
-				);
+				)
+				{
+					FromMod = r.Priority == 0, // the custom map's database
+				};
 
 				return (RecordInfoKey: r.RecordInfo.Key, LootRandomizerItem: val, r.Priority);
 			}

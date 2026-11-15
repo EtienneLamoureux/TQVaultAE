@@ -34,6 +34,25 @@ internal static class MenuStyle
 		return item;
 	}
 
+	/// <summary>The entries drawn in their own text color instead of the menu's.</summary>
+	private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ToolStripItem, object> OwnTextColor = [];
+
+	/// <summary>
+	/// Draws <paramref name="item"/> in <paramref name="color"/> while it is not selected (the selected entry stays black),
+	/// for example the affixes of a mod in the mod color of the item tool tip.
+	/// </summary>
+	/// <returns><paramref name="item"/>, for use in an expression.</returns>
+	public static T WithTextColor<T>(this T item, Color color)
+		where T : ToolStripItem
+	{
+		item.ForeColor = color;
+		OwnTextColor.AddOrUpdate(item, color);
+		return item;
+	}
+
+	/// <summary>True when <paramref name="item"/> is drawn in its own text color (<see cref="WithTextColor"/>).</summary>
+	public static bool HasOwnTextColor(ToolStripItem item) => OwnTextColor.TryGetValue(item, out _);
+
 	/// <summary>
 	/// An export sub menu for <paramref name="owner"/>, with its clipboard, file and PasteBin entries. Without a PasteBin
 	/// API key the PasteBin entry is disabled, or left out with <paramref name="hidePasteBinWithoutKey"/>.
