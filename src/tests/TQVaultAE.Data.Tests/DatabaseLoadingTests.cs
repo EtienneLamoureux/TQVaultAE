@@ -544,7 +544,7 @@ public class DatabaseLoadingTests
 		var gameArz = Path.Combine(GameAE, "Database", "database.arz");
 		var modArz = Path.Combine(ModFolder, "database", "shadowchampions.arz");
 		this.AddArz(modArz);
-		this.AddRecord(gameArz, """records\affixase.dbr""", "LootRandomizer");
+		this.AddRecord(gameArz, """records\affix\base.dbr""", "LootRandomizer");
 		this.AddRecord(gameArz, """records\affix\overridden.dbr""", "LootRandomizer");
 		this.AddRecord(modArz, """records\affix\overridden.dbr""", "LootRandomizer");
 		this.AddRecord(modArz, """records\affix\modonly.dbr""", "LootRandomizer");
@@ -554,7 +554,7 @@ public class DatabaseLoadingTests
 
 		db.AllLootRandomizer.ToDictionary(a => a.Key.Raw, a => a.Value.FromMod).Should().BeEquivalentTo(new Dictionary<string, bool>
 		{
-			["""records\affixase.dbr"""] = false,
+			["""records\affix\base.dbr"""] = false,
 			["""records\affix\overridden.dbr"""] = true,
 			["""records\affix\modonly.dbr"""] = true,
 		});
