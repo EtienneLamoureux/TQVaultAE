@@ -27,6 +27,7 @@ _**The first load can be long but reopening the form si fast.**_
 + [Preview tooltip](#Preview)
 + [Category tooltip](#CategoryPreview)
 + [Find an item's copies](#FindCopies)
++ [Move the results](#MoveResults)
 
 ---
 
@@ -181,3 +182,32 @@ like an Advanced Search result: a loadout piece selects its character and that l
 
 _**Like the Advanced Search, it finds the items of the files loaded: enable "Pre-Load All Vault And Character Files" to
 search every vault and character.**_
+
+### <a id="MoveResults"></a>Move the results
+The search results window, of the Advanced Search or of an item's **Search**, can move the items it lists. Select rows
+with <kbd>CTRL</kbd> or <kbd>SHIFT</kbd> clicks, or all of them with **Select All** (or <kbd>CTRL</kbd>+<kbd>A</kbd>),
+then pick a target in **Move To**, under the list or in the list's right-click menu:
+
+| Target | Moves the selected items to |
+|--------|-----------------------------|
+| Transfer Stash | the transfer stash shown with the selected character (its map's, for a modded character) |
+| Player Stash | the selected character's own stash (storage area) |
+| Relic Vault | the relic vault shown with the selected character; available only when every selected item is one it takes (relics, charms, artifacts, formulae) |
+| Vaults > *vault* > *bag* | that bag of any vault, read when its entry opens if no vault panel shows it |
+
+![Move To in the right-click menu](advancedsearch/results-move-menu.png)
+
+Each item takes the first free cells of the target, as **Move Item To** places one. Worn pieces and the pieces stored in
+the [loadouts](LOADOUTS.md) move too: a worn piece leaves its slot empty, a loadout piece leaves its loadout slot empty
+(the loadouts file is written at once, as every loadout change). The items that cannot move stay where they are, and the
+line under the buttons tells which and why: no room left in the target, a read-only character, the equipment locked by
+the *Player Equipment ReadOnly* setting, an item the relic vault does not take, or an item no longer where the search
+found it. The rows then show where their items are, and the main window shows the new contents.
+
+![Results after a move](advancedsearch/results-move.png)
+
+**Undo** puts the items of the last move back where they were: their cell, equipment slot or loadout slot. Each click
+undoes one more move. An item moved again since, or whose place is taken, stays and is reported. The history belongs to
+the window: closing it forgets it.
+
+_**Moves are saved like any other change, with the Save button or when leaving TQVault.**_
