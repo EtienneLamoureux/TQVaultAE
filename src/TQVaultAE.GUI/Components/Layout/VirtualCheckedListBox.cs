@@ -102,7 +102,11 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 
 	/// <summary>Height of one row.</summary>
 	[Browsable(false)]
-	public int ItemHeight => Math.Max(this.Font.Height, CheckBoxGlyph.RendererSize.Height) + 2;
+	/// <remarks>
+	/// From <see cref="Control.FontHeight"/>, which Windows Forms keeps per font: each read of <see cref="Font.Height"/>
+	/// asks GDI, and the rows read the height several times each at every paint.
+	/// </remarks>
+	public int ItemHeight => Math.Max(this.FontHeight, CheckBoxGlyph.RendererSize.Height) + 2;
 
 	public int GetItemHeight(int index) => this.ItemHeight;
 
@@ -181,10 +185,27 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 	/// estimate order until the estimate falls below the widest measured width by more than the estimate can be off
 	/// (see <see cref="EstimateMargin"/>): no text left can then be wider.
 	/// </remarks>
-	public int GetMaxTextWidth() => this.MeasureMaxTextWidth().Width;
+	/// <remarks>
+	/// Kept per font until the items change: a move to a monitor of another DPI and back gives the list the fonts it had
+	/// before, which are then not measured again.
+	/// </remarks>
+	public int GetMaxTextWidth()
+	{
+		var font = this.Font;
+		var key = (font.Name, font.Size, font.Style, font.Unit);
+		if (!this._maxTextWidths.TryGetValue(key, out int width))
+			this._maxTextWidths[key] = width = this.MeasureMaxTextWidth().Width;
+		return width;
+	}
+
+	/// <summary>The widths <see cref="GetMaxTextWidth"/> measured, per font, cleared when the items change.</summary>
+	private readonly Dictionary<(string Name, float Size, FontStyle Style, GraphicsUnit Unit), int> _maxTextWidths = [];
+
+	/// <summary>The items changed: the widths measured for the old ones are dropped.</summary>
+	private void ItemsChanged() => this._maxTextWidths.Clear();
 
 	/// <summary>How far below a text's real width its estimate may be: kerning, ligatures and rounding.</summary>
-	private int EstimateMargin(int width) => this.Font.Height + width / 10;
+	private int EstimateMargin(int width) => this.FontHeight + width / 10;
 
 	/// <summary><see cref="GetMaxTextWidth"/>, with the number of texts it measured for real.</summary>
 	private (int Width, int Measured) MeasureMaxTextWidth()
@@ -228,7 +249,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 	#region Layout
 
 	/// <summary>Space between the check box and the text: a third of the font height, so it follows the zoom.</summary>
-	private int GlyphTextGap => Math.Max(4, this.Font.Height / 3);
+	private int GlyphTextGap => Math.Max(4, this.FontHeight / 3);
 
 	/// <summary>Where the item text starts, from the left of its column: the check box and the space after it.</summary>
 	public int TextLeft => 1 + CheckBoxGlyph.RendererSize.Width + this.GlyphTextGap;
@@ -529,7 +550,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 		public object this[int index]
 		{
 			get => this._owner._items[index];
-			set { this._owner._items[index] = value; this._owner.InvalidateItem(index); }
+			set { this._owner._items[index] = value; this._owner.ItemsChanged(); this._owner.InvalidateItem(index); }
 		}
 
 		public int Add(object item) => this.Add(item, false);
@@ -538,6 +559,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 		{
 			this._owner._items.Add(item);
 			this._owner._checked.Add(isChecked);
+			this._owner.ItemsChanged();
 			this._owner.UpdateLayout();
 			return this._owner._items.Count - 1;
 		}
@@ -548,6 +570,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 		{
 			int before = this._owner._items.Count;
 			this._owner._items.AddRange(items);
+			this._owner.ItemsChanged();
 			this._owner._checked.AddRange(Enumerable.Repeat(false, this._owner._items.Count - before));
 			this._owner.UpdateLayout();
 		}
@@ -559,6 +582,7 @@ public partial class VirtualCheckedListBox : Control, IScalingControl, IZoomedFo
 				this._owner._pendingFocus = (this._owner._items[this._owner._focusIndex], this._owner._focusIndex);
 			this._owner._items.Clear();
 			this._owner._checked.Clear();
+			this._owner.ItemsChanged();
 			this._owner._focusIndex = NoMatches;
 			this._owner.UpdateLayout();
 		}
