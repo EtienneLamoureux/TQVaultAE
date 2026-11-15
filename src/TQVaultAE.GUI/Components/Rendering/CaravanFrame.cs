@@ -403,11 +403,23 @@ internal static class CaravanFrame
 	}
 
 	/// <summary>The frame drawn for one control, made again only when its size changes, disposed with the control.</summary>
-	private sealed class FrameCache
+	internal sealed class FrameCache
 	{
 		private Bitmap? frame;
 
 		public FrameCache(Control owner) => owner.Disposed += (_, _) => this.frame?.Dispose();
+
+		/// <summary>
+		/// Draws only the frame's edges at <paramref name="size"/> from the corner, the inside left as it is: for a control
+		/// that paints its own content inside the frame (an item grid).
+		/// </summary>
+		public void DrawEdges(Graphics graphics, Size size)
+		{
+			var state = graphics.Save();
+			graphics.ExcludeClip(new Rectangle(Border, Border, size.Width - (2 * Border), size.Height - (2 * Border)));
+			graphics.DrawImageUnscaled(this.Get(size), 0, 0);
+			graphics.Restore(state);
+		}
 
 		public Bitmap Get(Size size)
 		{

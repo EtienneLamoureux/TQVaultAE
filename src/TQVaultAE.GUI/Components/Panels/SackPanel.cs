@@ -257,7 +257,26 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// <summary>
 	/// Gets the width of the border pen.  Scaled by the DB scale.
 	/// </summary>
-	public float BorderWidth => Math.Max((4.0F * UIService.Scale), 1.0F);
+	public float BorderWidth => this.CaravanFramed ? CaravanFrame.Border : this.GoldBorderWidth;
+
+	/// <summary>The width of the gold border line drawn without the caravan frame. Scaled by the DB scale.</summary>
+	private float GoldBorderWidth => Math.Max((4.0F * UIService.Scale), 1.0F);
+
+	/// <summary>
+	/// Whether the sack is drawn in the caravan frame (<see cref="CaravanFrame"/>) instead of its gold border line. The
+	/// frame keeps its thickness at every zoom; the panel holding the sack lays it out again (<see cref="FrameGrowth"/>).
+	/// </summary>
+	internal bool CaravanFramed { get; set; }
+
+	/// <summary>The caravan frame drawn instead of the gold border (<see cref="CaravanFramed"/>), made on first use.</summary>
+	private CaravanFrame.FrameCache? caravanFrame;
+
+	/// <summary>
+	/// How much wider and higher the sack is in the caravan frame than with its gold border line, in pixels; 0 without the
+	/// frame. The panel holding the sack grows as much, so that the room it keeps around the sack stays the same.
+	/// </summary>
+	internal int FrameGrowth
+		=> this.CaravanFramed ? 2 * (CaravanFrame.Border - Convert.ToInt32(this.GoldBorderWidth)) : 0;
 
 	/// <summary>
 	/// Gets or sets the Clear selected items event handler

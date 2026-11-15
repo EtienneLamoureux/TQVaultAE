@@ -182,9 +182,10 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 		int sortRoom = this.hasSortRoom ? Convert.ToInt32(27.0F * UIService.Scale) : 0;
 
 		this.BagSackPanel.FollowScale();
+		int frame = this.BagSackPanel.FrameGrowth;
 		this.Size = new Size(
-			(this.PanelCells.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + sortRoom + BorderPad,
-			(this.PanelCells.Height * UIService.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.Scale) + BorderPad);
+			(this.PanelCells.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + sortRoom + BorderPad + frame,
+			(this.PanelCells.Height * UIService.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.Scale) + BorderPad + frame);
 		this.BagSackPanel.Location = new Point(sortRoom + BorderPad, this.Height - (this.BagSackPanel.Height + BorderPad));
 
 		this.PlaceBagButtons(this.BagSackPanel.Location, this.BagSackPanel.Width, this.BagButtons.Count);
@@ -195,6 +196,20 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 			button.Location = new Point(this.BagSackPanel.Left - button.Width, this.BagSackPanel.Top);
 		}
 	}
+
+	/// <summary>
+	/// Draws the panel's item grids in the caravan frame instead of their gold border, the bag and sort buttons outside
+	/// it, and lays the panel out again for the frame's thickness.
+	/// </summary>
+	internal void UseCaravanFrame()
+	{
+		foreach (var sack in this.FramedSacks)
+			sack.CaravanFramed = true;
+		this.LayOut();
+	}
+
+	/// <summary>The item grids <see cref="UseCaravanFrame"/> draws in the frame: the bag's.</summary>
+	protected virtual IEnumerable<SackPanel> FramedSacks => [this.BagSackPanel];
 
 	/// <summary>
 	/// Event for signaling that a property has changed.

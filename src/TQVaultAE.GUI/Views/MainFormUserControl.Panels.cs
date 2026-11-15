@@ -115,11 +115,9 @@ public partial class MainFormUserControl
 		this.secondaryVaultPanel.Visible = false;
 		this.lastBag = -1;
 
-		this.itemTextPanel.Size = new Size(this.vaultPanel.Width, Convert.ToInt32(22.0F * this.Services.UIService.Scale));
-
-		// The highlight row is as wide as the vault, and scales with it. Docked to fill its cell, it would set the width
-		// of that auto-sized column itself: a column it had widened (a maximize) would never narrow again.
-		this.tableLayoutPanelHighlight.Width = this.vaultPanel.Width;
+		this.itemTextPanel.Height = Convert.ToInt32(22.0F * this.Services.UIService.Scale);
+		this.FitRowsToVault();
+		this.vaultPanel.SizeChanged += (_, _) => this.FitRowsToVault();
 		this.GetVaultList(false);
 
 		// Now we always create the stash panel since everyone can have equipment
@@ -133,6 +131,18 @@ public partial class MainFormUserControl
 	}
 
 	/// <summary>
+	/// Makes the highlight row and the notification line as wide as the vault at each of its sizes (zoom, DPI): scaled
+	/// from their own width, they would drift from it, since the vault's grid frame keeps its thickness. Docked to fill
+	/// its cell, the highlight row would set the width of that auto-sized column itself: a column it had widened (a
+	/// maximize) would never narrow again.
+	/// </summary>
+	private void FitRowsToVault()
+	{
+		this.tableLayoutPanelHighlight.Width = this.vaultPanel.Width;
+		this.itemTextPanel.Width = this.vaultPanel.Width;
+	}
+
+	/// <summary>
 	/// Creates a vault panel of 12 bags.
 	/// </summary>
 	/// <param name="location">Where its items go on an automatic move: the vault or the secondary vault.</param>
@@ -140,6 +150,7 @@ public partial class MainFormUserControl
 	private VaultPanel CreateVaultPanel(AutoMoveLocation location, Action<Control> place)
 	{
 		var panel = new VaultPanel(this.DragInfo, 12, new Size(18, 20), 1, location, this.Services);
+		panel.UseCaravanFrame();
 		this.WirePanel(panel, place);
 		return panel;
 	}
@@ -150,6 +161,7 @@ public partial class MainFormUserControl
 	private void CreatePlayerPanel()
 	{
 		this.playerPanel = new PlayerPanel(this.DragInfo, 4, new Size(12, 5), new Size(8, 5), this.Services);
+		this.playerPanel.UseCaravanFrame();
 		this.WirePanel(this.playerPanel, this.flowLayoutPanelRightPanels.Controls.Add);
 	}
 

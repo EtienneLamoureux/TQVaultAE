@@ -78,6 +78,9 @@ public class PlayerPanel : VaultPanel
 		get => (this.mainSackPanel is not null) ? this.mainSackPanel : this.BagSackPanel;
 	}
 
+	/// <summary>The item grids drawn in the caravan frame: the main inventory and the bags.</summary>
+	protected override IEnumerable<SackPanel> FramedSacks => [this.mainSackPanel, this.BagSackPanel];
+
 	/// <summary>The summary tool tips of the character's bags are always shown.</summary>
 	protected override bool ShowsBagSummary(int bag) => true;
 
@@ -106,8 +109,10 @@ public class PlayerPanel : VaultPanel
 		main.FollowScale();
 		bags.FollowScale();
 		this.Size = new Size(
-			((main.SackSize.Width + this.PanelCells.Width) * UIService.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.Scale),
-			(Math.Max(main.SackSize.Height, this.PanelCells.Height) * UIService.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.Scale));
+			((main.SackSize.Width + this.PanelCells.Width) * UIService.ItemUnitSize) + Convert.ToInt32(24.0F * UIService.Scale)
+				+ main.FrameGrowth + bags.FrameGrowth,
+			(Math.Max(main.SackSize.Height, this.PanelCells.Height) * UIService.ItemUnitSize) + Convert.ToInt32(58.0F * UIService.Scale)
+				+ Math.Max(main.FrameGrowth, bags.FrameGrowth));
 
 		int borderPad = Convert.ToInt32(2.0F * UIService.Scale);
 		main.Location = new Point(borderPad, this.Height - main.Height - borderPad);

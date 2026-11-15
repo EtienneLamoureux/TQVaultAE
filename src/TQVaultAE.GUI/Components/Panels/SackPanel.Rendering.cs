@@ -7,6 +7,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;
@@ -440,6 +441,13 @@ public partial class SackPanel : Panel, IScalingControl
 	{
 		if (this.DisableBorder || graphics is null)
 			return;
+
+		if (this.CaravanFramed)
+		{
+			this.caravanFrame ??= new CaravanFrame.FrameCache(this);
+			this.caravanFrame.DrawEdges(graphics, this.Size);
+			return;
+		}
 
 		graphics.DrawRectangle(this.borderPen, 0, 0, this.Size.Width, this.Size.Height);
 	}
