@@ -96,6 +96,9 @@ public class ItemDropServiceTests
 
 		service.Decide(sword, null, Sack(null), SackType.Equipment, canCancelDrag: true).Should().Be(DropDecision.Refused);
 		service.Decide(sword, null, Sack(null), SackType.Player, canCancelDrag: true).Should().Be(DropDecision.Drop);
+
+		// The loadouts file is apart from the save: a loadout is composed even with the equipment locked.
+		service.Decide(sword, null, Sack(null), SackType.Loadout, canCancelDrag: true).Should().Be(DropDecision.Drop);
 	}
 
 	[Theory]
@@ -125,10 +128,11 @@ public class ItemDropServiceTests
 	[Theory]
 	[InlineData(SackType.Player, DropDecision.Refused)]
 	[InlineData(SackType.Equipment, DropDecision.Refused)]
+	[InlineData(SackType.Loadout, DropDecision.Refused)]
 	[InlineData(SackType.Vault, DropDecision.Drop)]
 	[InlineData(SackType.Stash, DropDecision.Drop)]
 	[InlineData(SackType.Trash, DropDecision.Drop)]
-	public void Decide_ItemTheCharacterCannotUse_RefusedOnlyByThePlayerAndEquipment(SackType sackType, DropDecision expected)
+	public void Decide_ItemTheCharacterCannotUse_RefusedOnlyByThePlayerEquipmentAndLoadouts(SackType sackType, DropDecision expected)
 	{
 		var item = MakeItem(Item.ICLASS_SWORD);
 		this.PlayerCannotUse(item);
@@ -302,6 +306,27 @@ public class ItemDropServiceTests
 		ring.Location.Should().Be(SackCollection.GetEquipmentLocationOffset(EquipmentRules.Ring1Slot));
 		ring.Place.Should().Be(place);
 		this._itemDatabaseService.Verify(d => d.TryAddItemToDatabase(ring), Times.Once);
+	}
+
+	[Fact]
+	public void Equip_InALoadout_TheItemTakesTheLoadoutsPlace()
+	{
+		// The search follows a piece moved into a loadout: it is found in the loadouts file, under the loadout's name.
+		var sack = Equipment();
+		var ring = MakeItem(Item.ICLASS_RING);
+		var place = new ContainerPlace
+		{
+			SackType = SackType.Loadout,
+			Path = """C:\Saves\_HeroA\TQVaultAE.Loadouts.json""",
+			Name = "HeroA",
+			SackNumber = 0,
+			Loadout = "Fire set",
+		};
+
+		this._service.Equip(ring, null, sack, EquipmentRules.Ring2Slot, Cell, place, disableAutoStacking: false);
+
+		sack.GetItem(EquipmentRules.Ring2Slot).Should().BeSameAs(ring);
+		ring.Place.Should().Be(place);
 	}
 
 	[Fact]

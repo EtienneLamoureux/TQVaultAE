@@ -7717,7 +7717,16 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Read-only character: its loadouts are only listed.
+        ///   Looks up a localized string similar to Back to the statistics.
+        /// </summary>
+        public static string LoadoutBack {
+            get {
+                return ResourceManager.GetString("LoadoutBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read-only character: its loadouts can only be shown and composed.
         /// </summary>
         public static string LoadoutReadOnly {
             get {

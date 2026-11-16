@@ -2416,8 +2416,11 @@ Quitter l'éditeur sans appliquer les changements ?</value>
 	<data name="LoadoutDelete" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+	<data name="LoadoutBack" xml:space="preserve">
+    <value>Retour aux statistiques</value>
+  </data>
 	<data name="LoadoutReadOnly" xml:space="preserve">
-    <value>Personnage en lecture seule : ses tenues sont seulement listées</value>
+    <value>Personnage en lecture seule : ses tenues peuvent seulement être affichées et composées</value>
   </data>
 	<data name="LoadoutTitle" xml:space="preserve">
     <value>Tenues</value>

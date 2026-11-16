@@ -36,7 +36,8 @@ public class ItemDropService(
 		if (!this._itemMovementService.IsItemValidForStashType(dragItem, sack.StashType))
 			return DropDecision.Refused;
 
-		if ((panelSackType == SackType.Player || panelSackType == SackType.Equipment)
+		// A loadout is worn gear too: the same rules as the equipment.
+		if (panelSackType is SackType.Player or SackType.Equipment or SackType.Loadout
 			&& !this._playerService.IsSuitableForCurrentPlayer(dragItem))
 		{
 			return DropDecision.Refused;

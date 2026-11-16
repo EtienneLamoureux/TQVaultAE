@@ -133,9 +133,9 @@ public partial class MainFormUserControl : IItemCopySearchHost
 				break;
 
 			case ResultPanelKind.Loadout:
-				// No panel shows a loadout's pieces: the equipment tab with the loadout selected in its bar.
+				// The equipment tab with the loadout selected in its bar and shown in the loadout panel.
 				this.stashPanel.CurrentBag = location.Bag;
-				this.stashPanel.RefreshLoadouts(selectedResult.LoadoutName);
+				this.stashPanel.ShowLoadoutPanel(selectedResult.LoadoutName);
 				break;
 
 			default:

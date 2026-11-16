@@ -59,6 +59,35 @@ public partial class StashPanel
 	/// <summary>The loadout to select once the bar is built (a search result shown before the equipment tab was).</summary>
 	private string? _loadoutToSelect;
 
+	/// <summary>The loadout chosen in the bar as a second equipment panel, in place of the statistics panel.</summary>
+	private LoadoutView? _loadoutView;
+
+	/// <summary>
+	/// True from the moment the user chooses a loadout in the bar until the Back arrow (or another character): the
+	/// loadout panel then shows in place of the statistics panel.
+	/// </summary>
+	private bool _loadoutPanelOpen;
+
+	/// <summary>The view of the loadout panel, once the statistics panel was shown.</summary>
+	internal LoadoutView? LoadoutView => this._loadoutView;
+
+	/// <summary>The loadout panel, once the statistics panel was shown.</summary>
+	internal LoadoutPanel? LoadoutPanel => this._loadoutView?.Panel;
+
+	/// <summary>Whether the loadout panel is asked in place of the statistics panel.</summary>
+	internal bool LoadoutPanelOpen
+	{
+		get => this._loadoutPanelOpen;
+		set
+		{
+			if (this._loadoutPanelOpen == value)
+				return;
+
+			this._loadoutPanelOpen = value;
+			this.DisplayPlayerInfo();
+		}
+	}
+
 	/// <summary>Raised for each action asked on the loadout bar (add, load, update, rename, copy, delete, select).</summary>
 	public event EventHandler<LoadoutBarEventArgs>? OnLoadoutAction;
 
@@ -77,6 +106,9 @@ public partial class StashPanel
 				this._editButton.Visible = false;
 			if (this._loadoutBar is not null)
 				this._loadoutBar.Visible = false;
+			// Hidden, the loadout panel keeps its slots: a piece held from them may go to another tab.
+			if (this._loadoutView is not null)
+				this._loadoutView.Visible = false;
 			// No bar shown, no loadout to compare with (another character may come without its statistics).
 			this.equipmentPanel.ComparedLoadout = null;
 			this._statsTooltip?.Hide();
@@ -85,13 +117,13 @@ public partial class StashPanel
 
 		var panel = this.EnsureStatsPanel();
 		this.LayoutStatsPanel(panel);
-		panel.Visible = true;
 		this._editButton!.Visible = this.USettings.AllowCharacterEdit;
 		this._loadoutBar!.Visible = true;
 
 		// The loadouts may have changed (read again) or the character turned read-only: the bar follows, drawn again
-		// only when it changes.
+		// only when it changes; the loadout panel, when open, takes the place of the statistics.
 		this.RefreshLoadouts();
+		panel.Visible = this._loadoutView?.Visible != true;
 
 		if (DisplayPlayerInfoLastName == this.Player!.PlayerName)
 			return;
@@ -141,6 +173,55 @@ public partial class StashPanel
 			: null;
 		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly, loadLocked);
 		this.CompareWithSelectedLoadout();
+		this.ShowSelectedLoadout(set);
+	}
+
+	/// <summary>
+	/// Shows the loadout selected in the bar in the loadout panel, in place of the statistics panel, while the panel is
+	/// open; the statistics panel otherwise. A read-only character's loadouts are composed too (their file is apart from
+	/// the save), never those of a file that could not be read.
+	/// </summary>
+	/// <param name="set">The shown character's loadouts.</param>
+	private void ShowSelectedLoadout(TQVaultAE.Application.Session.LoadoutSet? set)
+	{
+		if (this._loadoutView is not { } view || this._loadoutBar is not { } bar)
+			return;
+
+		var loadout = set is { ReadFailed: false } ? set.Find(bar.Selected) : null;
+		bool show = this._loadoutPanelOpen && bar.Visible && loadout is not null;
+
+		// The slots follow the selected loadout even while the statistics show: a piece held from them stays valid.
+		view.Panel.ShowLoadout(loadout is null ? null : set, loadout?.Name, this.Player);
+		if (view.Visible != show)
+		{
+			view.Visible = show;
+
+			// Over the equipment panel, whose empty cells reach under the statistics' room.
+			if (show)
+				view.BringToFront();
+			if (this._statsPanel is not null)
+				this._statsPanel.Visible = !show;
+			if (!show)
+				this._statsTooltip?.Hide();
+		}
+	}
+
+	/// <summary>
+	/// Selects a loadout in the bar and shows it in the loadout panel, in place of the statistics panel (a search result
+	/// of a loadout piece); once the statistics panel is built when the Equipment tab was not shown yet.
+	/// </summary>
+	/// <param name="name">The loadout.</param>
+	public void ShowLoadoutPanel(string? name)
+	{
+		this._loadoutPanelOpen = true;
+		this.RefreshLoadouts(name);
+	}
+
+	/// <summary>The loadout panel gave the loadout new pieces: the marks of the equipment compare with them.</summary>
+	private void LoadoutPiecesChanged(object? sender, EventArgs e)
+	{
+		this.CompareWithSelectedLoadout();
+		this.equipmentPanel.Invalidate();
 	}
 
 	/// <summary>
@@ -181,14 +262,26 @@ public partial class StashPanel
 		this._loadoutBar.ActionRequested += (_, e) =>
 		{
 			if (e.Action == LoadoutBarAction.Select)
+			{
+				// Choosing a loadout shows it in the loadout panel, in place of the statistics.
 				this.CompareWithSelectedLoadout();
+				this._loadoutPanelOpen = true;
+				this.RefreshLoadouts();
+			}
 			this.OnLoadoutAction?.Invoke(this, e);
 		};
 
+		this._loadoutView = new LoadoutView(this.DragInfo, this.Services) { Visible = false };
+		this._loadoutView.BackRequested += (_, _) => this.LoadoutPanelOpen = false;
+		this._loadoutView.Panel.PiecesChanged += this.LoadoutPiecesChanged;
+		this.ForwardEvents(this._loadoutView.Panel);
+
 		this.Controls.Add(this._statsPanel);
+		this.Controls.Add(this._loadoutView);
 		this.Controls.Add(editButton);
 		this.Controls.Add(this._loadoutBar);
 		this._statsPanel.BringToFront();
+		this._loadoutView.BringToFront();
 		editButton.BringToFront();
 		this._loadoutBar.BringToFront();
 		this.Disposed += (_, _) =>
@@ -256,6 +349,15 @@ public partial class StashPanel
 		var location = new Point(PLAYERINFO_TOPRIGHT - PLAYERINFO_WIDTH, PLAYERINFO_TOPHEIGHT);
 		if (panel.Location != location)
 			panel.Location = location;
+
+		// The loadout panel takes the room of the statistics panel.
+		if (this._loadoutView is { } view)
+		{
+			if (view.Bounds != panel.Bounds)
+				view.Bounds = panel.Bounds;
+			if (this.EquipmentSlotsPicture() is var (picture, source, target))
+				view.LayOut(picture, source, target, this.equipmentPanel.SizeFor(LoadoutPanel.SlotCells));
+		}
 
 		// The loadout bar: the whole width of the statistics panel, under its gold bar; the Edit button on the line below.
 		int gap = Convert.ToInt32(4 * scale);

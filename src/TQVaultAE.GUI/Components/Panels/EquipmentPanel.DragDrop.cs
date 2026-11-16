@@ -87,7 +87,7 @@ public partial class EquipmentPanel
 		base.PickupItem(sender, e);
 
 		// Recalculate the character stat bonuses.
-		GetGearStatBonus();
+		this.SlotsChanged();
 	}
 
 	/// <summary>
@@ -164,7 +164,7 @@ public partial class EquipmentPanel
 
 			// Equipped, an item takes the character's map; a slot holds any size.
 			if (!drop.Stacked
-				&& this.Services.ItemEditService.SettleIn(dragItem, this.Services.GameMapService.ActiveCharacterMod, _ => true) != SettleOutcome.Unchanged)
+				&& this.Services.ItemEditService.SettleIn(dragItem, this.SlotMap, _ => true) != SettleOutcome.Unchanged)
 				this.InvalidateItemCacheAll(dragItem);
 
 			this.PickUpAfterDrop(itemUnderUs);
@@ -176,7 +176,7 @@ public partial class EquipmentPanel
 			this.MouseMoveCallback(sender, e);
 
 			// Recalculate the character stat bonuses.
-			GetGearStatBonus();
+			this.SlotsChanged();
 
 			ItemTooltip.HideTooltip();
 			BagButtonTooltip.InvalidateCache(this.Sack);

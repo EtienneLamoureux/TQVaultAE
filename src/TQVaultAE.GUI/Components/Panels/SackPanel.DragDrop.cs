@@ -306,7 +306,7 @@ public partial class SackPanel
 	/// Gets the place of the shown sack: container, sack number and type.
 	/// </summary>
 	/// <remarks>A stash sack belongs to its stash file, as at load, not to the character of the panel.</remarks>
-	internal ContainerPlace PlaceHere()
+	internal virtual ContainerPlace PlaceHere()
 		=> this.SackType == SackType.Stash && this.ShownSack.StashType is { } stashType && this.ShownStash?.Invoke() is { } stash
 			? this.Services.ItemMovementService.PlaceIn(stash, stashType)
 			: this.PlaceInPlayerCollection();

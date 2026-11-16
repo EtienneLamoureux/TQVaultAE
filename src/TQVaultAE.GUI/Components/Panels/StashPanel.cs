@@ -253,6 +253,10 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		get => base.Player;
 		set
 		{
+			// Another character shows its statistics first.
+			if (!ReferenceEquals(value, base.Player))
+				this._loadoutPanelOpen = false;
+
 			base.Player = value;
 			this.equipmentPanel.PlayerCollection = value;
 		}
@@ -590,6 +594,27 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		this.wideEquipmentBackground = wide;
 		return wide;
+	}
+
+	/// <summary>
+	/// The part of the equipment background with the slots, and where the equipment draws it, relative to the equipment
+	/// panel's corner: the loadout panel draws the same part under the same slots, at its own factor.
+	/// </summary>
+	/// <returns>The picture, its slots part and where it lands; null before the panel is laid out.</returns>
+	private (Bitmap Picture, Rectangle Source, Rectangle Target)? EquipmentSlotsPicture()
+	{
+		var rect = this.GetBackgroundRect();
+		if (this.equipmentBackground is not { } source || rect.Width <= 0 || rect.Height <= 0)
+			return null;
+
+		// As WideEquipmentBackground draws it: the slot columns at the width of the whole picture, the full height.
+		float scale = rect.Width / (float)source.Width;
+		var target = new Rectangle(
+			rect.X - this.equipmentPanel.Left,
+			rect.Y - this.equipmentPanel.Top,
+			(int)Math.Round(EquipmentSlotsEnd * scale),
+			rect.Height);
+		return (source, new Rectangle(0, 0, EquipmentSlotsEnd, source.Height), target);
 	}
 
 	/// <summary>

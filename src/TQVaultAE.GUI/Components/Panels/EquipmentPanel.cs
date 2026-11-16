@@ -91,10 +91,21 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 		OnEquipmentChanged?.Invoke(this, new SackPanelEventArgs(null, null));
 	}
 
+	/// <summary>
+	/// The slots changed: an item was put in, taken out (wherever it went), picked up or put back. The equipment sums the
+	/// bonuses again; the loadout panel gives the loadout its new pieces.
+	/// </summary>
+	public virtual void SlotsChanged() => this.GetGearStatBonus();
+
 	#endregion EquipmentPanel Public Methods
 
+	/// <summary>
+	/// The map an item takes once dropped in a slot (MODLINK.md): the shown character's. A slot holds any size.
+	/// </summary>
+	protected virtual string? SlotMap => this.Services.GameMapService.ActiveCharacterMod;
+
 	/// <summary>An equipped item deleted or changed in place: the bonuses are summed again.</summary>
-	protected override void OnShownItemsChanged() => this.GetGearStatBonus();
+	protected override void OnShownItemsChanged() => this.SlotsChanged();
 
 	#region EquipmentPanel Protected Methods
 

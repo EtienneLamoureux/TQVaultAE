@@ -118,7 +118,7 @@ public partial class SackPanel
 				int selectionCount = this.selectedItems?.Count ?? 0;
 				bool singleSelectionFocused = selectionCount == 1 && focusedItem == this.selectedItems![0];
 
-				var actions = ItemActionRules.Available(this.ActionContext(focusedItem, selectionCount, singleSelectionFocused));
+				var actions = ItemActionRules.Available(this.ActionContext(focusedItem, selectionCount, singleSelectionFocused)) & ~this.UnavailableActions;
 
 				this.CustomContextMenu.Items.Clear();
 
@@ -193,6 +193,9 @@ public partial class SackPanel
 	/// What the item actions of this sack may do, for the context menu and the keys: the equipment of a read-only
 	/// player cannot change.
 	/// </summary>
+	/// <summary>The item actions this panel never offers, whatever the rules allow (none by default).</summary>
+	protected virtual ItemActions UnavailableActions => ItemActions.None;
+
 	private ItemActionContext ActionContext(Item? focusedItem, int selectionCount, bool singleSelectionFocused)
 		=> new(
 			focusedItem
@@ -304,7 +307,7 @@ public partial class SackPanel
 			return false;
 
 		Item? focusedItem = this.FindItem(this.LastCellWithFocus);
-		var action = ItemActionRules.KeyAction(requested, this.ActionContext(focusedItem, 0, false));
+		var action = ItemActionRules.KeyAction(requested, this.ActionContext(focusedItem, 0, false)) & ~this.UnavailableActions;
 		if (action == ItemActions.None)
 			return false;
 

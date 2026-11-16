@@ -154,11 +154,14 @@ public class ItemDragInfo
 		=> new ReadOnlyCollection<AutoMoveLocation>(this.autoMoveLocationsList);
 
 	/// <summary>
-	/// Adds an automovelocation to the list
+	/// Adds an automovelocation to the list; a panel without one (the loadout panel) is no "Move to" destination.
 	/// </summary>
 	/// <param name="autoMoveLocation">AutoMoveLocation to add to the list.</param>
-	public void AddAutoMoveLocationToList(AutoMoveLocation autoMoveLocation) 
-		=> this.autoMoveLocationsList.Add(autoMoveLocation);
+	public void AddAutoMoveLocationToList(AutoMoveLocation autoMoveLocation)
+	{
+		if (autoMoveLocation != AutoMoveLocation.NotSet)
+			this.autoMoveLocationsList.Add(autoMoveLocation);
+	}
 
 	/// <summary>
 	/// Marks the item as placed removing it from the original container.
@@ -189,8 +192,9 @@ public class ItemDragInfo
 		this.DestIndex = -1;
 		this.IsBeingCancelled = false;
 
-		// Wherever the item was put (inventory, vault, stash, another slot), the bonuses are summed again without it.
-		unequippedFrom?.GetGearStatBonus();
+		// Wherever the item was put (inventory, vault, stash, another slot), the bonuses are summed again without it (a
+		// loadout loses the piece).
+		unequippedFrom?.SlotsChanged();
 	}
 
 	/// <summary>
@@ -210,7 +214,7 @@ public class ItemDragInfo
 		// recalcuate the gear stats before clearing out the sackPanel.
 		// The item needs to be cleared at this point to get the correct calculation.
 		EquipmentPanel? equipmentPanel = srcSackPanel as EquipmentPanel;
-		equipmentPanel?.GetGearStatBonus();
+		equipmentPanel?.SlotsChanged();
 
 		this.srcSack = null;
 		this.srcSackPanel = null;

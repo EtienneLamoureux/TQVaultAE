@@ -2786,8 +2786,11 @@ Leave the editor without applying the changes?</value>
 	<data name="LoadoutDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
+	<data name="LoadoutBack" xml:space="preserve">
+    <value>Back to the statistics</value>
+  </data>
 	<data name="LoadoutReadOnly" xml:space="preserve">
-    <value>Read-only character: its loadouts are only listed</value>
+    <value>Read-only character: its loadouts can only be shown and composed</value>
   </data>
 	<data name="LoadoutTitle" xml:space="preserve">
     <value>Loadouts</value>
