@@ -19,6 +19,34 @@ button of the character editor, when it shows, is on the line below):
 - A right click on the bar gives every action: **Load**, **Update with the gear worn now** (asks first), **Rename**,
   **Copy** (the same pieces under another name), **Delete** (asks first) and **Add**.
 
+## Composing a loadout
+
+Choose a loadout in the box: it shows as a second equipment panel in place of the character statistics, with the same
+slots as the equipment, both weapon sets included, and the loadout's pieces in them. Compose it by drag and drop, as
+the equipment:
+
+![The loadout panel in place of the statistics](loadouts/loadout_panel.png)
+
+- Drop a piece on a slot: it **moves** into the loadout and leaves where it came from (a vault, a bag, the stash, the
+  equipment). To keep the piece where it is, make a copy first (item menu **Copy Item** or **Duplicate Item**) and
+  drop the copy.
+- Pick a piece up from a slot: it goes to the hand, like any drag; drop it in a vault, a bag, the equipment or another
+  slot. The piece under a drop goes to the hand too.
+- The rules of the equipment apply: each slot takes its kind of item, a two-handed weapon takes both hands of its weapon
+  set, and with the setting **Enable Item Requirement Restriction** a piece the character cannot use yet is refused.
+- The item menu works on the pieces (properties, compare, search, copy, edit when allowed), except **Move Item To**.
+- The comparison marks stay beside the equipment slots: they follow the pieces you move.
+- The small gold arrow in the upper right corner of the panel (**Back to the statistics**) shows the statistics again.
+  The loadout stays chosen in the box; choose it (or another one) to show the panel again.
+
+The changes are kept until you save, as for the other files: the **Save** button, or the save when TQVault closes. Any
+action of the bar that writes the loadouts file (add, update, rename, copy, delete) writes the loadouts as they are
+then, the composed pieces included. **Update with the gear worn now** replaces the chosen loadout's pieces with copies
+of the worn gear: the pieces you had moved into it are gone with it, as with **Delete**, so take them out first.
+
+A read-only character, or the setting **Player Equipment ReadOnly**, does not keep you from composing its loadouts: the
+loadouts file is apart from the character's save.
+
 ## Comparing with the chosen loadout
 
 While a loadout is chosen in the box, a small button beside each equipment slot tells how the piece you wear there
@@ -66,10 +94,13 @@ the vault instead when you want only one.
 
 - The game keeps the character it plays in memory and writes over the save: TQVault asks before **Load** and **Update**
   while the game runs. Change a character only while the game does not play it.
-- A **read-only** character only lists its loadouts.
-- Modded characters: the pieces are read with the character's mod, like its other items.
+- A **read-only** character lists its loadouts and they can be composed in the loadout panel; the other actions are
+  refused.
+- Modded characters: the pieces are read with the character's mod, like its other items. A piece moved into a loadout
+  takes the character's mod (a slot holds any size); taken out into a bag of another mod, it takes that bag's mod, as
+  any drop (see [mod links](MODLINK.md)).
 - The loadouts are in the [search](ADVANCEDSEARCH.md): a result says the character and the loadout (type *Loadout*);
-  clicking it shows the character's equipment with that loadout chosen.
+  clicking it shows the character's equipment with that loadout chosen, in the loadout panel.
 - The loadouts are kept in `TQVaultAE.Loadouts.json` in the character's save folder (`SaveData\Main\_<name>` or
   `SaveData\User\_<name>`), next to `Player.chr`. They follow the character when it is archived, duplicated by
   TQVault (**Duplicate Character**) or backed up with the [Git backup](GITBACKUP.md).
