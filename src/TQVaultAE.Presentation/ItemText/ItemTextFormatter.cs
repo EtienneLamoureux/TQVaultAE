@@ -106,8 +106,10 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 	{
 		try
 		{
-			// A null format throws ArgumentNullException, reported below like a bad format.
-			return string.Format(CultureInfo.CurrentCulture, formatSpec!, parameter1, parameter2, parameter3);
+			// A null format throws ArgumentNullException, reported below like a bad format. A non-zero value keeps the
+			// decimals it needs to show (never "+0" nor "-+0").
+			var format = formatSpec is null ? null : GameNumberFormat.KeepNonZero(formatSpec, parameter1, parameter2, parameter3);
+			return string.Format(CultureInfo.CurrentCulture, format!, parameter1, parameter2, parameter3);
 		}
 		// A malformed format (often a translation) shows this one line raw instead of failing the whole item text.
 		catch (Exception ex) when (ex is ArgumentException or FormatException)
