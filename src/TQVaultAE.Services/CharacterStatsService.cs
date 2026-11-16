@@ -158,10 +158,15 @@ public partial class CharacterStatsService(IDatabase database, IItemProvider ite
 	/// <summary>The role of a skill from its record and the record of the buff it casts (<c>buffSkillName</c>).</summary>
 	private SkillStatRole RoleOf(DBRecordCollection? record)
 	{
-		var buff = record?.GetString(BuffSkillName, 0);
-		var buffClass = string.IsNullOrEmpty(buff) ? null : this._database.GetRecordFromFile(buff.ToRecordId())?.RecordType;
-		return SkillStatRules.RoleOf(record?.RecordType, buffClass);
+		var buffId = record?.GetString(BuffSkillName, 0);
+		var buff = string.IsNullOrEmpty(buffId) ? null : this._database.GetRecordFromFile(buffId.ToRecordId());
+		return SkillStatRules.RoleOf(record?.RecordType, buff?.RecordType, MarkedDebuff(record) || MarkedDebuff(buff));
 	}
+
+	/// <summary>True for a skill or buff record marked as a debuff (<c>debufSkill</c>): it goes on monsters.</summary>
+	private static bool MarkedDebuff(DBRecordCollection? record)
+		=> record?.FirstOrDefault(v => v.Name.Equals("debufSkill", StringComparison.OrdinalIgnoreCase)) is { NumberOfValues: > 0 } flag
+			&& Convert.ToDouble(flag[0], System.Globalization.CultureInfo.InvariantCulture) != 0;
 
 	/// <summary>The bonuses of a skill at a level: a buff skill keeps them in the buff it casts (<c>buffSkillName</c>).</summary>
 	private AttributeSum SkillRecordAttributes(RecordId id, DBRecordCollection? record, int level)

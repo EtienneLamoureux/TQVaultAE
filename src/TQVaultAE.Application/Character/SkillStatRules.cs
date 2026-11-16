@@ -26,14 +26,20 @@ public static class SkillStatRules
 	/// <summary>
 	/// The role of a skill from the class of its record and, for a skill that casts a buff (<c>buffSkillName</c>), the
 	/// class of that buff's record. What goes on monsters never counts: an attack's buff (Freezing Blast casts on what it
-	/// hits a buff of -100% physical resistance), and a buff whose record is a debuff (an aura that weakens the monsters
-	/// around, a contagion).
+	/// hits a buff of -100% physical resistance), an aura that strikes the monsters around (<c>Skill_BuffAttackRadius</c>:
+	/// Ring of Flame burns them, Trance of Wrath weakens them), a buff whose record is a debuff (an aura that weakens the
+	/// monsters around, a contagion) or is marked as one (<c>debufSkill</c>: Triumph's banner).
 	/// </summary>
 	/// <param name="recordClass">The class of the skill's record.</param>
 	/// <param name="buffRecordClass">The class of the record of the buff it casts, or <see langword="null"/> when it casts none.</param>
-	public static SkillStatRole RoleOf(string? recordClass, string? buffRecordClass = null)
+	/// <param name="markedDebuff">True when the skill or its buff is marked as a debuff (<c>debufSkill</c>).</param>
+	public static SkillStatRole RoleOf(string? recordClass, string? buffRecordClass = null, bool markedDebuff = false)
 	{
-		if (string.IsNullOrEmpty(recordClass))
+		if (string.IsNullOrEmpty(recordClass) || markedDebuff)
+			return SkillStatRole.None;
+
+		// Skill_BuffAttackRadiusToggled, Skill_BuffAttackRadiusDuration: its bonuses go on the monsters in its radius.
+		if (recordClass.StartsWith("Skill_BuffAttack", StringComparison.OrdinalIgnoreCase))
 			return SkillStatRole.None;
 
 		// Skill_AttackBuff, Skill_AttackBuffRadius...: the buff goes on the targets of the attack.

@@ -41,8 +41,15 @@ public class SkillStatRulesTests
 	[InlineData("Skill_BuffRadiusToggled", "SkillBuff_Passive", SkillStatRole.Buff)] // Heart of Oak
 	[InlineData("Skill_BuffOther", "SkillBuff_PassiveShield", SkillStatRole.Buff)] // Elemental Shielding
 	[InlineData("Skill_BuffSelfToggled", null, SkillStatRole.Buff)] // Storm Nimbus: its bonuses in its own record
+	[InlineData("Skill_BuffAttackRadiusToggled", null, SkillStatRole.None)] // Ring of Flame, Trance of Wrath: on the monsters around
+	[InlineData("Skill_BuffAttackRadiusDuration", null, SkillStatRole.None)] // Forged by Fire
 	public void RoleOf_WithTheBuffItCasts_WhatGoesOnMonstersNeverCounts(string recordClass, string? buffRecordClass, SkillStatRole expected)
 		=> SkillStatRules.RoleOf(recordClass, buffRecordClass).Should().Be(expected);
+
+	[Fact]
+	public void RoleOf_MarkedDebuff_NeverCounts()
+		=> SkillStatRules.RoleOf("Skill_BuffRadius", "SkillBuff_Passive", markedDebuff: true).Should().Be(SkillStatRole.None,
+			"Triumph's banner casts a SkillBuff_Passive marked debufSkill: it weakens the monsters around");
 
 	[Theory]
 	[InlineData(SkillStatRole.Passive, SkillStatRole.Passive)]
