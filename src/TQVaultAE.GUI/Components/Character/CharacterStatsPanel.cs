@@ -173,6 +173,13 @@ internal sealed partial class CharacterStatsPanel : Control
 		}
 	}
 
+	/// <summary>
+	/// The panel takes its size from <see cref="PanelScale"/>, never from its size before: a DPI change does not scale
+	/// it again.
+	/// </summary>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+		=> this.PanelScale = this._panelScale;
+
 	/// <summary>The "+" button of an attribute on screen.</summary>
 	public Rectangle PlusBounds(int attribute) => this.ScaledRect(new Rectangle(15, AttributeY[attribute] + 3, 12, 12));
 

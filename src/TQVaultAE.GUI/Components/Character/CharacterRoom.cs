@@ -32,6 +32,7 @@ internal sealed class CharacterRoom : UserControl
 		this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 		this.BackColor = Color.Black;
 		this.Name = "characterRoom";
+		this.AutoScaleMode = AutoScaleMode.None;
 		this.Stats = stats;
 		this.Loadout = loadout;
 		this.Bar = bar;
@@ -95,6 +96,18 @@ internal sealed class CharacterRoom : UserControl
 		this._gap = gap;
 		this.Arrange();
 	}
+
+	/// <summary>
+	/// The stash panel places the room and the room its parts, from the scale (<see cref="Arrange(Point, Size, int)"/>):
+	/// scaled by Windows Forms from their sizes before, a DPI change scaled them again after that layout (the statistics
+	/// panel, the bar and the loadout panel shrank at each lower DPI).
+	/// </summary>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+	{
+	}
+
+	/// <inheritdoc cref="ScaleControl"/>
+	protected override bool ScaleChildren => false;
 
 	/// <summary>The room was resized: its parts follow.</summary>
 	protected override void OnResize(EventArgs e)
