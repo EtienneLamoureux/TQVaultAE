@@ -184,10 +184,10 @@ public partial class EquipmentPanel
 	private Point WeaponTopLeft(int x, int y, int width, int height)
 	{
 		Point val = new Point();
-		int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * UIService.ItemUnitSize) / 2;
-		int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * UIService.ItemUnitSize) / 2;
-		val.X = Convert.ToInt32(BorderWidth) + (x * UIService.ItemUnitSize) + offsetX;
-		val.Y = Convert.ToInt32(BorderWidth) + (y * UIService.ItemUnitSize) + offsetY;
+		int offsetX = ((SackCollection.WeaponLocationSize.Width - width) * this.UnitSize) / 2;
+		int offsetY = ((SackCollection.WeaponLocationSize.Height - height) * this.UnitSize) / 2;
+		val.X = Convert.ToInt32(BorderWidth) + (x * this.UnitSize) + offsetX;
+		val.Y = Convert.ToInt32(BorderWidth) + (y * this.UnitSize) + offsetY;
 
 		return val;
 	}
@@ -222,15 +222,15 @@ public partial class EquipmentPanel
 		// Adjust the weapon slot for graphic
 		if (weaponSlot)
 		{
-			ul.Y += UIService.HalfUnitSize;
+			ul.Y += this.HalfUnit;
 			offset = 1;
 		}
 
 		return new Rectangle(
 			ul.X,
 			ul.Y,
-			slotSize.Width * UIService.ItemUnitSize,
-			(slotSize.Height - offset) * UIService.ItemUnitSize);
+			slotSize.Width * this.UnitSize,
+			(slotSize.Height - offset) * this.UnitSize);
 	}
 
 	/// <summary>
@@ -274,7 +274,7 @@ public partial class EquipmentPanel
 			height = SackCollection.GetEquipmentLocationSize(slot).Height;
 		}
 
-		return new Rectangle(screenLocation.X, screenLocation.Y, width * UIService.ItemUnitSize, height * UIService.ItemUnitSize);
+		return new Rectangle(screenLocation.X, screenLocation.Y, width * this.UnitSize, height * this.UnitSize);
 	}
 
 	/// <summary>

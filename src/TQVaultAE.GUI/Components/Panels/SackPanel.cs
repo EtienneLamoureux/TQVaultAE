@@ -255,12 +255,42 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	#region SackPanel Properties
 
 	/// <summary>
+	/// The size of this panel's cells and item pictures relative to the window's scale: 1 for the panels laid out at the
+	/// window's scale, less for a panel fitted in a smaller room (the loadout panel in place of the statistics panel).
+	/// </summary>
+	public float CellScaleFactor
+	{
+		get => this.cellScaleFactor;
+		set
+		{
+			if (value <= 0 || value == this.cellScaleFactor)
+				return;
+
+			this.cellScaleFactor = value;
+			this.FollowScale();
+		}
+	}
+
+	private float cellScaleFactor = 1F;
+
+	/// <summary>The scale of this panel's cells, borders and item pictures: the window's times <see cref="CellScaleFactor"/>.</summary>
+	public float CellScale => this.UIService.Scale * this.cellScaleFactor;
+
+	/// <summary>The size in pixels of a cell of this panel (the window's item unit at a factor of 1).</summary>
+	public int UnitSize => this.cellScaleFactor == 1F
+		? this.UIService.ItemUnitSize
+		: Convert.ToInt32(this.UIService.ItemUnitSize * this.cellScaleFactor);
+
+	/// <summary>Half a cell of this panel, in pixels.</summary>
+	public int HalfUnit => this.UnitSize / 2;
+
+	/// <summary>
 	/// Gets the width of the border pen.  Scaled by the DB scale.
 	/// </summary>
 	public float BorderWidth => this.CaravanFramed ? CaravanFrame.Border : this.GoldBorderWidth;
 
 	/// <summary>The width of the gold border line drawn without the caravan frame. Scaled by the DB scale.</summary>
-	private float GoldBorderWidth => Math.Max((4.0F * UIService.Scale), 1.0F);
+	private float GoldBorderWidth => Math.Max((4.0F * this.CellScale), 1.0F);
 
 	/// <summary>
 	/// Whether the sack is drawn in the caravan frame (<see cref="CaravanFrame"/>) instead of its gold border line. The
@@ -564,7 +594,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	internal Size SizeFor(Size cells)
 	{
 		int border = Convert.ToInt32(this.BorderWidth) * 2;
-		return new Size(border + (UIService.ItemUnitSize * cells.Width), border + (UIService.ItemUnitSize * cells.Height));
+		return new Size(border + (this.UnitSize * cells.Width), border + (this.UnitSize * cells.Height));
 	}
 
 	/// <summary>
@@ -588,7 +618,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		=> FontRebaser.RebaseMenu(this.CustomContextMenu, fontService);
 
 	/// <summary>The font of the stack quantities drawn over the items, at the current scale; owned by the panel.</summary>
-	private Font NumberFont() => new("Arial", 10.0F * UIService.Scale, GraphicsUnit.Pixel);
+	private Font NumberFont() => new("Arial", 10.0F * this.CellScale, GraphicsUnit.Pixel);
 
 	/// <summary>
 	/// Override of ScaleControl: the sack takes its border, fonts and size from the current scale

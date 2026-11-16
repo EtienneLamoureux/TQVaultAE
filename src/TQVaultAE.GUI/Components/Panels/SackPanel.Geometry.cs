@@ -47,7 +47,7 @@ public partial class SackPanel
 		if (location.X < this.borderPen.Width)
 			x = -1;
 		else
-			x = (location.X - (int)this.borderPen.Width) / UIService.ItemUnitSize;
+			x = (location.X - (int)this.borderPen.Width) / this.UnitSize;
 
 		if (x >= this.SackSize.Width)
 			x = -2;
@@ -56,7 +56,7 @@ public partial class SackPanel
 		if (location.Y < this.borderPen.Width)
 			y = -1;
 		else
-			y = (location.Y - (int)this.borderPen.Width) / UIService.ItemUnitSize;
+			y = (location.Y - (int)this.borderPen.Width) / this.UnitSize;
 
 		if (y >= this.SackSize.Height)
 			y = -2;
@@ -121,8 +121,8 @@ public partial class SackPanel
 	protected Point CellTopLeft(Point location)
 	{
 		return new Point(
-			Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.ItemUnitSize),
-			Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.ItemUnitSize));
+			Convert.ToInt32(this.borderPen.Width) + (location.X * this.UnitSize),
+			Convert.ToInt32(this.borderPen.Width) + (location.Y * this.UnitSize));
 	}
 
 	/// <summary>
@@ -133,8 +133,8 @@ public partial class SackPanel
 	protected Point CellTopRight(Point location)
 	{
 		return new Point(
-			Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.ItemUnitSize) - 1,
-			Convert.ToInt32(this.borderPen.Width) + (location.Y * UIService.ItemUnitSize));
+			Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * this.UnitSize) - 1,
+			Convert.ToInt32(this.borderPen.Width) + (location.Y * this.UnitSize));
 	}
 
 	/// <summary>
@@ -145,8 +145,8 @@ public partial class SackPanel
 	protected Point CellBottomLeft(Point location)
 	{
 		return new Point(
-			Convert.ToInt32(this.borderPen.Width) + (location.X * UIService.ItemUnitSize),
-			Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.ItemUnitSize) - 1);
+			Convert.ToInt32(this.borderPen.Width) + (location.X * this.UnitSize),
+			Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * this.UnitSize) - 1);
 	}
 
 	/// <summary>
@@ -164,8 +164,8 @@ public partial class SackPanel
 	protected Point CellBottomRight(Point location)
 	{
 		return new Point(
-			Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * UIService.ItemUnitSize) - 1,
-			Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * UIService.ItemUnitSize) - 1);
+			Convert.ToInt32(this.borderPen.Width) + ((location.X + 1) * this.UnitSize) - 1,
+			Convert.ToInt32(this.borderPen.Width) + ((location.Y + 1) * this.UnitSize) - 1);
 	}
 
 	/// <summary>
@@ -215,6 +215,6 @@ public partial class SackPanel
 			return Rectangle.Empty;
 
 		Point screenLocation = this.CellTopLeft(item.Location);
-		return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width * UIService.ItemUnitSize, item.Size.Height * UIService.ItemUnitSize);
+		return new Rectangle(screenLocation.X, screenLocation.Y, item.Size.Width * this.UnitSize, item.Size.Height * this.UnitSize);
 	}
 }

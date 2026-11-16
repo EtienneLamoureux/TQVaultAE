@@ -103,8 +103,8 @@ public partial class SackPanel
 			case "right": offsetX = 1; break;
 		}
 
-		// Disable feature in the equipment panel
-		if (this.SackType == SackType.Equipment)
+		// Disable feature in the equipment and loadout panels
+		if (this is EquipmentPanel)
 			return;
 
 		// Make sure we are not holding an item.

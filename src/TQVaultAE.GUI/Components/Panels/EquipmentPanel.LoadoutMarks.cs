@@ -75,7 +75,7 @@ public partial class EquipmentPanel
 	public Rectangle MarkScreenBounds(LoadoutSlotMark mark)
 	{
 		var origin = this.CellTopLeft(Point.Empty);
-		float unit = this.UIService.ItemUnitSize;
+		float unit = this.UnitSize;
 		return Rectangle.Round(new RectangleF(
 			origin.X + (mark.Bounds.X * unit),
 			origin.Y + (mark.Bounds.Y * unit),

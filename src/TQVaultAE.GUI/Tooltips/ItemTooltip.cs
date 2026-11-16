@@ -343,7 +343,7 @@ public partial class ItemTooltip : BaseTooltip
 
 	private void ItemTooltip_Load(object? sender, EventArgs e)
 	{
-		var usize = UIService.ItemUnitSize;
+		var usize = this.SackPanel?.UnitSize ?? UIService.ItemUnitSize;
 		var wa = Screen.FromControl(this).WorkingArea;
 
 		// Windows Forms scaled the designer padding to the DPI of this window, made out of view on the primary monitor, while
@@ -361,7 +361,7 @@ public partial class ItemTooltip : BaseTooltip
 			var y = loc.Y + (this.FocusedItem.PositionY * usize);
 
 			// Adjust for Equipment panel weapon slot
-			if (this.SackPanel.SackType == SackType.Equipment)
+			if (this.SackPanel is EquipmentPanel)
 			{
 				if (this.FocusedItem.IsInWeaponSlot)
 				{

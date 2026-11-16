@@ -195,8 +195,8 @@ public partial class EquipmentPanel
 		if (this.DragInfo.Item is not { } dragged || this.UIService.GetBitmap(dragged) is not { } ibmp)
 			return Rectangle.Empty;
 
-		int width = Convert.ToInt32(ibmp.Width * UIService.Scale);
-		int height = Convert.ToInt32(ibmp.Height * UIService.Scale);
+		int width = Convert.ToInt32(ibmp.Width * this.CellScale);
+		int height = Convert.ToInt32(ibmp.Height * this.CellScale);
 
 		// We also know we need to wipe out any cells under the old drag point
 		// This is used to restore the background after highlighting the cells underneath

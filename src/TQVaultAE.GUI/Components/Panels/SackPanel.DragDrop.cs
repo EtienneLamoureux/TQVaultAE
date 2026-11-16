@@ -202,8 +202,8 @@ public partial class SackPanel
 		{
 			// set our mouse offset to be the center of the item.
 			Point mouseOffset = new Point(
-				itemUnderUs.Width * UIService.HalfUnitSize,
-				itemUnderUs.Height * UIService.HalfUnitSize);
+				itemUnderUs.Width * this.HalfUnit,
+				itemUnderUs.Height * this.HalfUnit);
 			this.DragInfo.Set(this, this.ShownSack, itemUnderUs, mouseOffset);
 
 			// since we have dropped something in this location, we can no longer put this item here.
@@ -233,8 +233,8 @@ public partial class SackPanel
 		if (this.DragInfo.Item is not { } dragged || this.UIService.GetBitmap(dragged) is not { } ibmp)
 			return Rectangle.Empty;
 
-		int width = Convert.ToInt32(ibmp.Width * UIService.Scale);
-		int height = Convert.ToInt32(ibmp.Height * UIService.Scale);
+		int width = Convert.ToInt32(ibmp.Width * this.CellScale);
+		int height = Convert.ToInt32(ibmp.Height * this.CellScale);
 
 		// We also know we need to wipe out any cells under the old drag point
 		// This is used to restore the background after highlighting the cells underneath

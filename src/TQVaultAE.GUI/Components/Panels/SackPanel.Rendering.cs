@@ -241,8 +241,8 @@ public partial class SackPanel : Panel, IScalingControl
 		Rectangle itemRect = new Rectangle(
 			screenLocation.X
 			, screenLocation.Y
-			, Convert.ToInt32(ibmp.Width * UIService.Scale)
-			, Convert.ToInt32(ibmp.Height * UIService.Scale)
+			, Convert.ToInt32(ibmp.Width * this.CellScale)
+			, Convert.ToInt32(ibmp.Height * this.CellScale)
 		);
 
 		graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
@@ -254,12 +254,12 @@ public partial class SackPanel : Panel, IScalingControl
 			if (relicOverlay is not null)
 			{
 				// draw it in the bottom-right most cell of this item
-				int x2 = screenLocation.X + ((item.Width - 1) * UIService.ItemUnitSize);
-				int y2 = screenLocation.Y + ((item.Height - 1) * UIService.ItemUnitSize);
+				int x2 = screenLocation.X + ((item.Width - 1) * this.UnitSize);
+				int y2 = screenLocation.Y + ((item.Height - 1) * this.UnitSize);
 
 				Rectangle overlayRect = new Rectangle(x2, y2
-					, Convert.ToInt32(relicOverlay.Width * UIService.Scale)
-					, Convert.ToInt32(relicOverlay.Height * UIService.Scale)
+					, Convert.ToInt32(relicOverlay.Width * this.CellScale)
+					, Convert.ToInt32(relicOverlay.Height * this.CellScale)
 				);
 
 				graphics.DrawImage(relicOverlay, overlayRect, 0, 0, relicOverlay.Width, relicOverlay.Height, GraphicsUnit.Pixel, imageAttributes);
@@ -274,9 +274,9 @@ public partial class SackPanel : Panel, IScalingControl
 			string numberString = item.Number.ToString(CultureInfo.CurrentCulture);
 
 			// Draw the number along the bottom of the cell
-			Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * UIService.ItemUnitSize) - 1);
-			float height = (float)this.numberFont.Height * UIService.Scale;
-			float width = (float)item.Width * UIService.ItemUnitSize;
+			Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * this.UnitSize) - 1);
+			float height = (float)this.numberFont.Height * this.CellScale;
+			float width = (float)item.Width * this.UnitSize;
 			float fy = (float)(loc.Y - (0.75F * this.numberFont.Height) - 1.0F);
 			float fx = (float)loc.X;
 
@@ -298,7 +298,7 @@ public partial class SackPanel : Panel, IScalingControl
 			return;
 
 		Point screenLocation = this.CellTopLeft(item.Location);
-		this.DrawItemAccent(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), accentColor, alpha);
+		this.DrawItemAccent(graphics, new Rectangle(screenLocation, new Size(item.Width * this.UnitSize, item.Height * this.UnitSize)), accentColor, alpha);
 	}
 
 	/// <summary>
@@ -341,7 +341,7 @@ public partial class SackPanel : Panel, IScalingControl
 			return;
 
 		Point screenLocation = this.CellTopLeft(item.Location);
-		this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * UIService.ItemUnitSize, item.Height * UIService.ItemUnitSize)), backgroundColor, alpha, highlight);
+		this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * this.UnitSize, item.Height * this.UnitSize)), backgroundColor, alpha, highlight);
 	}
 
 	/// <summary>
@@ -402,7 +402,7 @@ public partial class SackPanel : Panel, IScalingControl
 		// Identify all the cells and items under the drag item.  We want the actual cells that we will
 		// drop into so we add 1/2 a cell to the drag location so that we pick the cells closest
 		// to the center of the item.
-		Point topLeftCell = this.FindCell(new Point(location.X + UIService.HalfUnitSize, location.Y + UIService.HalfUnitSize));
+		Point topLeftCell = this.FindCell(new Point(location.X + this.HalfUnit, location.Y + this.HalfUnit));
 		if (topLeftCell.X < 0 || topLeftCell.Y < 0)
 		{
 			// out of area

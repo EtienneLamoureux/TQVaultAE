@@ -186,10 +186,10 @@ public partial class EquipmentPanel
 							// Draw additional weapon box area
 							e.Graphics.FillRectangle(
 								brush,
-								tl.X + UIService.HalfUnitSize,
-								tl.Y - UIService.HalfUnitSize,
-								UIService.ItemUnitSize,
-								5 * UIService.ItemUnitSize);
+								tl.X + this.HalfUnit,
+								tl.Y - this.HalfUnit,
+								this.UnitSize,
+								5 * this.UnitSize);
 						}
 					}
 				}
@@ -243,7 +243,7 @@ public partial class EquipmentPanel
 
 		if (item.IsInWeaponSlot)
 			// Adjust the accent to appear in the center 2x4 area of the weapon slot.
-			rect = new Rectangle(rect.X, rect.Y + UIService.HalfUnitSize, rect.Width, rect.Height - UIService.ItemUnitSize);
+			rect = new Rectangle(rect.X, rect.Y + this.HalfUnit, rect.Width, rect.Height - this.UnitSize);
 
 		base.DrawItemAccent(graphics, rect, accentColor, alpha);
 	}
@@ -273,37 +273,37 @@ public partial class EquipmentPanel
 		{
 			// Since the weapon box is not a single rectangle, it needs to be drawn using CompositingMode.SourceCopy
 			// so that the alpha values remain consistent for the combined image.
-			using (Bitmap weaponBmp = new Bitmap(2 * UIService.ItemUnitSize, 5 * UIService.ItemUnitSize))
+			using (Bitmap weaponBmp = new Bitmap(2 * this.UnitSize, 5 * this.UnitSize))
 			using (Brush brush = new SolidBrush(Color.FromArgb(alpha, backgroundColor)))
 			using (Graphics weaponBmpGraphics = Graphics.FromImage(weaponBmp))
 			{
 				weaponBmpGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 
-				weaponBmpGraphics.FillRectangle(brush, UIService.HalfUnitSize, 0, UIService.ItemUnitSize, UIService.ItemUnitSize * 5);
+				weaponBmpGraphics.FillRectangle(brush, this.HalfUnit, 0, this.UnitSize, this.UnitSize * 5);
 				if (highlight)
 				{
 					// Add Highlight border
 					weaponBmpGraphics.DrawRectangle(this.HighlightSearchItemBorder
-						, UIService.HalfUnitSize
+						, this.HalfUnit
 						, 0
-						, UIService.ItemUnitSize, UIService.ItemUnitSize * 5);
+						, this.UnitSize, this.UnitSize * 5);
 				}
 
-				weaponBmpGraphics.FillRectangle(brush, 0, UIService.HalfUnitSize, UIService.ItemUnitSize * 2, UIService.ItemUnitSize * 4);
+				weaponBmpGraphics.FillRectangle(brush, 0, this.HalfUnit, this.UnitSize * 2, this.UnitSize * 4);
 				if (highlight)
 				{
 					// Add Highlight border
 					weaponBmpGraphics.DrawRectangle(this.HighlightSearchItemBorder
 						, 0
-						, UIService.HalfUnitSize
-						, UIService.ItemUnitSize * 2, UIService.ItemUnitSize * 4);
+						, this.HalfUnit
+						, this.UnitSize * 2, this.UnitSize * 4);
 
 					// Cover inner borders
 					weaponBmpGraphics.FillRectangle(brush
-						, UIService.HalfUnitSize + this.HighlightSearchItemBorder.Width
+						, this.HalfUnit + this.HighlightSearchItemBorder.Width
 						, this.HighlightSearchItemBorder.Width
-						, UIService.ItemUnitSize - (this.HighlightSearchItemBorder.Width * 2)
-						, (UIService.ItemUnitSize * 5) - (this.HighlightSearchItemBorder.Width * 2)
+						, this.UnitSize - (this.HighlightSearchItemBorder.Width * 2)
+						, (this.UnitSize * 5) - (this.HighlightSearchItemBorder.Width * 2)
 					);
 				}
 
@@ -347,7 +347,7 @@ public partial class EquipmentPanel
 
 		if (item.IsAmulet)
 			// Adjust the amulet to center it in the equipment box.
-			screenLocation.X += (SackCollection.GetEquipmentLocationSize(1).Width - item.Width) * UIService.HalfUnitSize;
+			screenLocation.X += (SackCollection.GetEquipmentLocationSize(1).Width - item.Width) * this.HalfUnit;
 
 		this.DrawItem(graphics, item, screenLocation);
 	}

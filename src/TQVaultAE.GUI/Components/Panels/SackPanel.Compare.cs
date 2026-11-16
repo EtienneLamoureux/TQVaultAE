@@ -102,7 +102,7 @@ public partial class SackPanel
 		if (rect.IsEmpty)
 			return;
 
-		float width = Math.Max(2F, 3F * this.UIService.Scale);
+		float width = Math.Max(2F, 3F * this.CellScale);
 		using var pen = new Pen(selection.Purpose == ItemPairPurpose.Compare ? CompareFrameColor : SocketFrameColor, width) { Alignment = System.Drawing.Drawing2D.PenAlignment.Inset };
 		graphics.DrawRectangle(pen, rect);
 	}
