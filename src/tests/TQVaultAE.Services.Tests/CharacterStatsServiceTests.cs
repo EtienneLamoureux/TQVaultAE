@@ -275,11 +275,11 @@ public class CharacterStatsServiceTests
 			sum.Add(item.ItemClass, 1);
 			return sum;
 		});
-		this._items.Setup(p => p.GetSetBonuses(It.IsAny<IEnumerable<Item>>())).Returns(() =>
+		this._items.Setup(p => p.GetSetBonusSources(It.IsAny<IEnumerable<Item>>())).Returns(() =>
 		{
 			var sum = new AttributeSum();
 			sum.Add("set", 1);
-			return sum;
+			return [new SetBonus("""records\item\sets\set01.dbr""".ToRecordId(), "tagSet01", [], sum)];
 		});
 
 		var empty = new Item { PositionX = Item.WeaponSlotIndicator, PositionY = 1 }; // an empty slot saved as an item

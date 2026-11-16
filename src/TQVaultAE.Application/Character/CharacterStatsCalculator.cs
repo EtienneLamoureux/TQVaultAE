@@ -205,6 +205,20 @@ public static class CharacterStatsCalculator
 	private static double Scaled(AttributeSum sum, string field)
 		=> sum[field] * (1 + sum[field + "Modifier"] / 100);
 
+	/// <summary>The variables a resistance reads: its flat value, its % modifier, and the elemental resistance for fire, cold and lightning.</summary>
+	public static IReadOnlyList<string> ResistanceVariables(StatResistance resistance)
+	{
+		var (flat, elemental) = ResistanceFields[resistance];
+		return elemental ? [flat, flat + "Modifier", "defensiveElementalResistance"] : [flat, flat + "Modifier"];
+	}
+
+	/// <summary>The difficulty penalty of a resistance, added to its flat sum.</summary>
+	public static double ResistancePenalty(StatResistance resistance, GameBalance balance, int difficulty)
+	{
+		ArgumentNullException.ThrowIfNull(balance);
+		return balance.Penalty(ResistanceFields[resistance].Flat, difficulty);
+	}
+
 	/// <summary>
 	/// A resistance: (flat + difficulty penalty) × (1 + % / 100), capped at <c>playerDefenseCap</c>. The penalty is part
 	/// of the flat sum, so the % scales it too.

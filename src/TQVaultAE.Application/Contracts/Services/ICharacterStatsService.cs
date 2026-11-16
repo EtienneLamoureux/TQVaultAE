@@ -10,6 +10,17 @@ namespace TQVaultAE.Application.Contracts.Services;
 public interface ICharacterStatsService
 {
 	/// <summary>
+	/// Every source of bonuses or maluses the Buffs tab offers for a character, each with its own sum: one per equipped
+	/// item with bonuses and per item set (gear), per learned passive or buff skill (its modifiers in it), per skill the
+	/// items grant, the temple curses (the saved ones on), the world shrine buffs, the pet auras, the Tartarus effects
+	/// and the buff of the scroll picked. Passive sources start on, the others off.
+	/// </summary>
+	IReadOnlyList<BuffSource> GetBuffSources(BuffSourceRequest request);
+
+	/// <summary>The scrolls whose skill is a buff on the character, for the Buffs tab's choice; read once per map.</summary>
+	IReadOnlyList<BuffScroll> GetBuffScrolls();
+
+	/// <summary>
 	/// Sums the equipped items (not the weapons of the set not in hand) and the bonuses of the item sets they make.
 	/// </summary>
 	/// <param name="useAlternate">True when the second weapon set is in hand (<see cref="Session.PlayerCollection.UseAlternate"/>).</param>

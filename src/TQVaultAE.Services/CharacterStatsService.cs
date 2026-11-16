@@ -8,7 +8,7 @@ using TQVaultAE.Domain.Helpers;
 namespace TQVaultAE.Services;
 
 /// <inheritdoc/>
-public class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService> log
+public partial class CharacterStatsService(IDatabase database, IItemProvider itemProvider, ILogger<CharacterStatsService> log
 	, IItemModService itemMods) : ICharacterStatsService, IGameDataCache
 {
 	private const string BuffSkillName = "buffSkillName";
@@ -40,22 +40,49 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 		this._balance = null;
 		this._maleAnimations = null;
 		this._femaleAnimations = null;
+		this.ClearBuffPools();
 	}
 
 	/// <inheritdoc/>
 	public AttributeSum GetGearAttributes(IEnumerable<Item> equipment, bool useAlternate)
 	{
-		var worn = equipment.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
 		var sum = new AttributeSum();
-		foreach (var item in worn)
-			sum.Add(this._itemProvider.GetAttributeSums(item));
+		foreach (var source in this.GearSources(equipment, useAlternate))
+			sum.Add(source.Sum);
 
-		sum.Add(this._itemProvider.GetSetBonuses(worn));
 		return sum;
 	}
 
 	/// <inheritdoc/>
 	public AttributeSum GetSkillAttributes(IEnumerable<SkillRecord> skills, IReadOnlyList<SkillAugment> augments, IReadOnlyList<MasteryTree> trees, bool includeBuffs)
+	{
+		var sum = new AttributeSum();
+		foreach (var skill in this.LearnedSkills(skills, augments, trees).Where(s => SkillStatRules.Counts(s.Role, includeBuffs)))
+			sum.Add(skill.Sum);
+
+		return sum;
+	}
+
+	/// <inheritdoc/>
+	public AttributeSum GetItemSkillAttributes(IEnumerable<Item> equipment, bool useAlternate, bool includeBuffs)
+	{
+		var sum = new AttributeSum();
+		foreach (var skill in this.GrantedSkills(equipment, useAlternate).Where(s => SkillStatRules.Counts(s.Role, includeBuffs)))
+			sum.Add(skill.Sum);
+
+		return sum;
+	}
+
+	/// <summary>A skill that adds to the character window: its record, its role resolved, its level and its sum there.</summary>
+	/// <param name="ParentId">The skill a modifier modifies, null for any other skill.</param>
+	/// <param name="Origins">The items granting it, none for a learned skill.</param>
+	private sealed record CountedSkill(RecordId Id, DBRecordCollection? Record, RecordId? ParentId, SkillStatRole Role, int Level, AttributeSum Sum, IReadOnlyList<Item> Origins);
+
+	/// <summary>
+	/// The learned skills that add to the character window (passives, masteries, buffs, modifiers of those), each at its
+	/// level plus the levels the equipped items add.
+	/// </summary>
+	private List<CountedSkill> LearnedSkills(IEnumerable<SkillRecord> skills, IReadOnlyList<SkillAugment> augments, IReadOnlyList<MasteryTree> trees)
 	{
 		var learned = skills
 			.Where(s => s.skillLevel > 0 && !string.IsNullOrEmpty(s.skillName))
@@ -71,32 +98,36 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 			roles[id] = this.RoleOf(record);
 		}
 
-		var sum = new AttributeSum();
+		var counted = new List<CountedSkill>();
 		foreach (var (id, savedLevel) in learned)
 		{
 			var tree = trees.FirstOrDefault(t => t.Contains(id));
 			var parentId = tree?.Skills.FirstOrDefault(s => s.Id == id)?.ParentId;
 			SkillStatRole? parentRole = parentId is not null && roles.TryGetValue(parentId, out var p) ? p : null;
 			var role = SkillStatRules.Resolve(roles[id], parentRole);
-			if (!SkillStatRules.Counts(role, includeBuffs))
+			if (role is SkillStatRole.None)
 				continue;
 
 			int level = SkillStatRules.EffectiveLevel(savedLevel, id, tree, augments);
-			sum.Add(this.SkillRecordAttributes(id, records[id], level));
+			counted.Add(new CountedSkill(id, records[id], roles[id] == SkillStatRole.Modifier ? parentId : null, role, level,
+				this.SkillRecordAttributes(id, records[id], level), []));
 		}
 
-		return sum;
+		return counted;
 	}
 
-	/// <inheritdoc/>
-	public AttributeSum GetItemSkillAttributes(IEnumerable<Item> equipment, bool useAlternate, bool includeBuffs)
+	/// <summary>
+	/// The skills the equipped items grant (not the weapons of the set not in hand) that add to the character window,
+	/// each once at the level an item grants (<see cref="SkillStatRules.ItemSkills"/>).
+	/// </summary>
+	private List<CountedSkill> GrantedSkills(IEnumerable<Item> equipment, bool useAlternate)
 	{
 		var granted = equipment
 			.Where(item => !item.IsInInactiveWeaponSlot(useAlternate))
 			.SelectMany(item => this._itemProvider.GetGrantedSkillLevels(item).Select(s => (Item: item, s.SkillId, s.Level)))
 			.ToList();
 
-		var sum = new AttributeSum();
+		var counted = new List<CountedSkill>();
 		foreach (var (id, level) in SkillStatRules.ItemSkills(granted.Select(g => (g.SkillId, g.Level))))
 		{
 			// The skill and its buff are read in the map of the item granting it at that level, like the item itself: a
@@ -107,11 +138,14 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 
 			// A granted skill modifies nothing of the character's: a modifier never counts.
 			var role = SkillStatRules.Resolve(this.RoleOf(record), null);
-			if (SkillStatRules.Counts(role, includeBuffs))
-				sum.Add(this.SkillRecordAttributes(id, record, level));
+			if (role is SkillStatRole.None)
+				continue;
+
+			var origins = granted.Where(g => g.SkillId.Equals(id)).Select(g => g.Item).Distinct().ToList();
+			counted.Add(new CountedSkill(id, record, null, role, level, this.SkillRecordAttributes(id, record, level), origins));
 		}
 
-		return sum;
+		return counted;
 	}
 
 	/// <summary>The role of a skill from its record and the record of the buff it casts (<c>buffSkillName</c>).</summary>
@@ -186,25 +220,9 @@ public class CharacterStatsService(IDatabase database, IItemProvider itemProvide
 
 	/// <inheritdoc/>
 	public OffenseGear GetOffenseGear(IEnumerable<Item> equipment, bool useAlternate)
-	{
-		var worn = equipment.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
-
 		// The game adds the flat damage of the armor and jewelry to every attack, and of the weapon in hand to its own; a
 		// shield is neither: its flat damage never reaches the attack (its % modifiers do, with every item's).
-		var weapons = worn
-			// An empty weapon slot can be saved as an item without record: it is no weapon (bare hands then).
-			.Where(item => item.IsInWeaponSlot && !string.IsNullOrEmpty(item.ItemClass)
-				&& !item.ItemClass.Equals("WeaponArmor_Shield", StringComparison.OrdinalIgnoreCase))
-			.Select(this._itemProvider.GetAttributeSums)
-			.ToList();
-
-		var other = new AttributeSum();
-		foreach (var item in worn.Where(item => !item.IsInWeaponSlot))
-			other.Add(this._itemProvider.GetAttributeSums(item));
-
-		other.Add(this._itemProvider.GetSetBonuses(worn));
-		return new OffenseGear(weapons, other);
-	}
+		=> BuffSums.Offense(this.GearSources(equipment, useAlternate), _ => true);
 
 	/// <inheritdoc/>
 	public WeaponStance GetWeaponStance(IEnumerable<Item> equipment, bool useAlternate)
