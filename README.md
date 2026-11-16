@@ -43,7 +43,7 @@ Works with all expansions!
     - Window zoom (<kbd>CTRL</kbd>+<kbd>+</kbd>, <kbd>CTRL</kbd>+<kbd>-</kbd>, <kbd>CTRL</kbd>+<kbd>Home</kbd>), sharp on high DPI screens
     - Tool tips with the values the item has in game (the "Show In-Game Values" setting, on by default)
 - [Character management](documentation/CHARMANAGE.md)
-- [Loadouts](documentation/LOADOUTS.md) — save the gear a character wears and wear it again in a click.
+- [Loadouts](documentation/LOADOUTS.md) — compose equipment sets per character and switch builds in a click.
 - [AI agents (MCP)](documentation/mcp.md) — let an AI agent on your computer read and drive TQVault, and take pictures of it for your game documentation (off by default: read its rules first).
 - [Mods (custom maps)](documentation/MODS.md) — modded characters, items and vaults shown with their own mod's data, next to the regular ones. See also [how the mod link works](documentation/MODLINK.md).
 - Character backups
