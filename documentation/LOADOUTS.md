@@ -16,8 +16,8 @@ button of the character editor, when it shows, is on the line below):
 - The gold arrow (**Load**) wears the loadout chosen in the box; it is grey when there is nothing to load, the
   character is read-only, or the setting **Player Equipment ReadOnly** is on (its tool tip then says so; the other
   actions stay).
-- A right click on the bar gives every action: **Load**, **Update with the gear worn now** (asks first), **Rename**,
-  **Copy** (the same pieces under another name), **Delete** (asks first) and **Add**.
+- A right click on the bar gives every action: **Load**, **Gear swap**, **Update with the gear worn now** (asks first),
+  **Rename**, **Copy** (the same pieces under another name), **Delete** (asks first) and **Add**.
 
 ## Composing a loadout
 
@@ -86,14 +86,30 @@ read-only character nor when no loadout is chosen. An item you hold counts as ou
 - No requirement is checked: like the game, a piece you cannot use yet stays in its slot without its bonuses.
 - Save as usual to write the character and the vault.
 
-A loadout keeps **copies**: an item has nothing that tells it apart from an identical copy, so a loadout does not point
-to "your" sword in a vault. Load a loadout while its sword lies in a vault and you get a second sword; take the one in
-the vault instead when you want only one.
+A loadout keeps **copies** for **Load** and **Update**: an item has nothing that tells it apart from an identical
+copy, so a loadout does not point to "your" sword in a vault. Load a loadout while its sword lies in a vault and you
+get a second sword; take the one in the vault instead when you want only one, or use **Gear swap**, which moves the
+pieces.
+
+## Gear swap
+
+**Gear swap** (right click on the bar) exchanges the chosen loadout and the gear you wear, slot by slot, instead of
+copying:
+
+- The loadout's pieces go on the character, and the pieces you wore take their place in the loadout. No piece is
+  copied: each item stays in one place only. The weapon sets in hand change places too.
+- A slot empty in the loadout: the piece you wear there goes into the loadout, and the character's slot becomes empty.
+  A slot empty on the character takes the loadout's piece and leaves the loadout's slot empty.
+- **Gear swap** again swaps back.
+- No vault is needed: nothing is stored or deleted. Pieces keep the character's mod, and a slot holds any size.
+- It is refused like **Load**: for a read-only character, with the setting **Player Equipment ReadOnly** on (the entry
+  is greyed), and TQVault asks first while the game runs. Composing the loadout in the loadout panel stays allowed.
+- Save as usual: the character and its loadouts are written together.
 
 ## Good to know
 
-- The game keeps the character it plays in memory and writes over the save: TQVault asks before **Load** and **Update**
-  while the game runs. Change a character only while the game does not play it.
+- The game keeps the character it plays in memory and writes over the save: TQVault asks before **Load**, **Gear swap**
+  and **Update** while the game runs. Change a character only while the game does not play it.
 - A **read-only** character lists its loadouts and they can be composed in the loadout panel; the other actions are
   refused.
 - Modded characters: the pieces are read with the character's mod, like its other items. A piece moved into a loadout

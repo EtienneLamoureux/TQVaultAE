@@ -36,6 +36,9 @@ public partial class MainFormUserControl
 			case LoadoutBarAction.Load when e.Name is not null:
 				this.LoadLoadout(e.Name);
 				break;
+			case LoadoutBarAction.Swap when e.Name is not null:
+				this.SwapLoadout(e.Name);
+				break;
 		}
 	}
 
@@ -270,6 +273,44 @@ public partial class MainFormUserControl
 
 		this.stashPanel.EquipmentReplaced();
 		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoadedReplaced, name, result.Replaced.Count, result.Copied));
+		return true;
+	}
+
+	/// <summary>
+	/// Gear swap: the loadout's pieces go on the character and the worn ones take their place in the loadout, none copied.
+	/// Refused as a load is (a read-only character, the PlayerReadonly setting); asks first when the game runs.
+	/// </summary>
+	/// <param name="name">The loadout.</param>
+	private bool SwapLoadout(string name)
+	{
+		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
+			return false;
+
+		if (this.Services.Settings.PlayerReadonly)
+		{
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
+			return false;
+		}
+
+		if (!this.GoOnThoughGameRuns())
+			return false;
+
+		this.PutBackHeldItem();
+		var result = this.Services.Loadouts.Swap(loadouts, loadout.Name, player);
+		switch (result.Outcome)
+		{
+			case LoadoutSwapOutcome.NothingToSwap:
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutSwapNothing, loadout.Name));
+				return false;
+			case LoadoutSwapOutcome.Refused:
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
+				return false;
+		}
+
+		// Both panels show the new pieces: the equipment (statistics, marks) and the loadout panel.
+		this.stashPanel.EquipmentReplaced();
+		this.stashPanel.RefreshLoadouts(loadout.Name);
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutSwapped, loadout.Name, result.PutOn, result.TakenOff));
 		return true;
 	}
 

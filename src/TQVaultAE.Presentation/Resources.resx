@@ -2789,6 +2789,15 @@ Leave the editor without applying the changes?</value>
 	<data name="LoadoutBack" xml:space="preserve">
     <value>Back to the statistics</value>
   </data>
+	<data name="LoadoutSwap" xml:space="preserve">
+    <value>Gear swap</value>
+  </data>
+	<data name="LoadoutSwapped" xml:space="preserve">
+    <value>Gear swap with "{0}": {1} piece(s) put on, {2} piece(s) now in the loadout. Swap again to swap back.</value>
+  </data>
+	<data name="LoadoutSwapNothing" xml:space="preserve">
+    <value>The loadout "{0}" and the equipment are both empty: nothing to swap.</value>
+  </data>
 	<data name="LoadoutReadOnly" xml:space="preserve">
     <value>Read-only character: its loadouts can only be shown and composed</value>
   </data>

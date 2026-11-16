@@ -63,6 +63,25 @@ public enum LoadoutLoadOutcome
 	Refused,
 }
 
+/// <summary>How a gear swap ended.</summary>
+public enum LoadoutSwapOutcome
+{
+	/// <summary>The pieces were exchanged.</summary>
+	Swapped,
+
+	/// <summary>The loadout and the equipment are both empty, with the same weapon set in hand: nothing changed.</summary>
+	NothingToSwap,
+
+	/// <summary>No such loadout, a file that could not be read, or a character or equipment that cannot change: nothing changed.</summary>
+	Refused,
+}
+
+/// <summary>Outcome of a gear swap (<see cref="Contracts.Services.ILoadoutService.Swap"/>).</summary>
+/// <param name="Outcome">How it ended.</param>
+/// <param name="PutOn">Loadout pieces now worn.</param>
+/// <param name="TakenOff">Worn pieces now in the loadout.</param>
+public sealed record LoadoutSwapResult(LoadoutSwapOutcome Outcome, int PutOn = 0, int TakenOff = 0);
+
 /// <summary>Outcome of loading a loadout.</summary>
 /// <param name="Outcome">How it ended.</param>
 /// <param name="ToBag">Pieces taken off and stored in the bag (or that would have been, for <see cref="LoadoutLoadOutcome.NoRoom"/>).</param>

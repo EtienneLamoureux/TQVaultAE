@@ -2419,6 +2419,15 @@ Quitter l'éditeur sans appliquer les changements ?</value>
 	<data name="LoadoutBack" xml:space="preserve">
     <value>Retour aux statistiques</value>
   </data>
+	<data name="LoadoutSwap" xml:space="preserve">
+    <value>Échanger l'équipement</value>
+  </data>
+	<data name="LoadoutSwapped" xml:space="preserve">
+    <value>Échange avec la tenue « {0} » : {1} pièce(s) portée(s), {2} pièce(s) désormais dans la tenue. Échangez de nouveau pour revenir en arrière.</value>
+  </data>
+	<data name="LoadoutSwapNothing" xml:space="preserve">
+    <value>La tenue « {0} » et l'équipement sont vides : rien à échanger.</value>
+  </data>
 	<data name="LoadoutReadOnly" xml:space="preserve">
     <value>Personnage en lecture seule : ses tenues peuvent seulement être affichées et composées</value>
   </data>

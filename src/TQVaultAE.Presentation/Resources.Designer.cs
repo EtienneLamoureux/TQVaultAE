@@ -7726,6 +7726,33 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gear swap.
+        /// </summary>
+        public static string LoadoutSwap {
+            get {
+                return ResourceManager.GetString("LoadoutSwap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadout "{0}" and the equipment are both empty: nothing to swap.
+        /// </summary>
+        public static string LoadoutSwapNothing {
+            get {
+                return ResourceManager.GetString("LoadoutSwapNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gear swap with "{0}": {1} piece(s) put on, {2} piece(s) now in the loadout. Swap again to swap back.
+        /// </summary>
+        public static string LoadoutSwapped {
+            get {
+                return ResourceManager.GetString("LoadoutSwapped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Read-only character: its loadouts can only be shown and composed.
         /// </summary>
         public static string LoadoutReadOnly {

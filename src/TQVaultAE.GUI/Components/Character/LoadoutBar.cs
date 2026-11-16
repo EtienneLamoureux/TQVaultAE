@@ -30,6 +30,9 @@ public enum LoadoutBarAction
 
 	/// <summary>Deletes the selected loadout.</summary>
 	Delete,
+
+	/// <summary>Gear swap: the selected loadout's pieces and the worn ones change places (menu).</summary>
+	Swap,
 }
 
 /// <summary>An action of the loadout bar, on the loadout it names.</summary>
@@ -213,7 +216,7 @@ public sealed class LoadoutBar : Control
 	{
 		LoadoutBarAction.Select => this.Names.Count > 0,
 		LoadoutBarAction.Add => this.CanChange,
-		LoadoutBarAction.Load => this.CanChange && this.Selected is not null && this.LoadLocked is null,
+		LoadoutBarAction.Load or LoadoutBarAction.Swap => this.CanChange && this.Selected is not null && this.LoadLocked is null,
 		_ => this.CanChange && this.Selected is not null,
 	};
 
@@ -255,6 +258,7 @@ public sealed class LoadoutBar : Control
 		this.ActionMenu.Items.AddRange(
 		[
 			Entry(Resources.LoadoutLoad, LoadoutBarAction.Load),
+			Entry(Resources.LoadoutSwap, LoadoutBarAction.Swap),
 			Entry(Resources.LoadoutUpdate, LoadoutBarAction.Update),
 			Entry(Resources.LoadoutRename, LoadoutBarAction.Rename),
 			Entry(Resources.LoadoutCopy, LoadoutBarAction.Copy),

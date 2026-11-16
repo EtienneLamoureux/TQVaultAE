@@ -91,6 +91,18 @@ public interface ILoadoutService
 	LoadoutLoadResult LoadReplacing(LoadoutSet loadouts, string name, PlayerCollection player);
 
 	/// <summary>
+	/// Gear swap: exchanges the loadout's pieces and the worn ones, slot by slot, and the weapon set in hand. Every item
+	/// stays one item, never copied: the loadout's pieces go on the character, the worn pieces take their place in the
+	/// loadout; a slot empty on one side becomes empty on the other. Swapping again swaps back. The character's equipment
+	/// changes as for a load (saved with it); the loadouts are marked modified and written with the other files. The
+	/// pieces keep the character's map, a slot holds any size. The search follows both sides.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="name">The loadout.</param>
+	/// <param name="player">The character.</param>
+	LoadoutSwapResult Swap(LoadoutSet loadouts, string name, PlayerCollection player);
+
+	/// <summary>
 	/// The worn pieces a load of the loadout would take off, in slot order (none when the loadout or the equipment is
 	/// missing): what <see cref="LoadReplacing"/> deletes, to show before it.
 	/// </summary>
