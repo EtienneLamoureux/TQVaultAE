@@ -9,7 +9,7 @@ public enum LoadoutSlotMatch
 	/// <summary>Nothing on either side: no mark.</summary>
 	BothEmpty,
 
-	/// <summary>The worn piece is the loadout's (<see cref="ItemKey"/>, the identity Load keeps worn pieces by).</summary>
+	/// <summary>The worn piece is the loadout's (<see cref="ItemKey"/>: the same piece, not a lookalike).</summary>
 	Same,
 
 	/// <summary>Both sides hold a piece, and they are not identical.</summary>
@@ -58,7 +58,7 @@ public static class LoadoutComparison
 
 	/// <summary>
 	/// The marks of the worn equipment against a loadout, slot for slot (a piece worn in another slot, rings or weapon
-	/// sets swapped, counts as different here: the marks tell what Load changes in each slot), in slot order; the slots
+	/// sets swapped, counts as different here: the marks tell what a gear swap changes in each slot), in slot order; the slots
 	/// empty on both sides have none.
 	/// </summary>
 	/// <param name="worn">The worn equipment, one item per slot (an empty item or <see langword="null"/> for an empty slot).</param>

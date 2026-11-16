@@ -15,6 +15,26 @@ public sealed partial class LoadoutServiceTests
 {
 	private static readonly ContainerPlace InventoryPlace = new() { Path = "Player.chr", Name = "HeroA", SackNumber = 0, SackType = SackType.Player };
 
+	/// <summary>An empty vault bag, or one whose cells are all taken but <paramref name="freeSlots"/> (1x2 slots, left to right).</summary>
+	private static SackCollection Bag(Size size, int? freeSlots = null)
+	{
+		var bag = new SackCollection { SackType = SackType.Vault };
+		if (freeSlots is { } free)
+		{
+			// Fill the bag with 1x2 items, leaving the last `free` columns of the top row pair empty.
+			for (int x = 0; x < size.Width; x++)
+				for (int y = 0; y < size.Height; y += 2)
+				{
+					if (y == 0 && x >= size.Width - free)
+						continue;
+					bag.AddItem(new Item { BaseItemId = RecordId.Create("records/item/filler.dbr"), PositionX = x, PositionY = y, Width = 1, Height = 2 });
+				}
+		}
+
+		bag.IsModified = false;
+		return bag;
+	}
+
 	[Fact]
 	public void Empty_AllFit_MovesThePiecesThemselvesAndEmptiesTheLoadout()
 	{

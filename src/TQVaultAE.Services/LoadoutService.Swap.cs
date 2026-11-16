@@ -23,7 +23,7 @@ public partial class LoadoutService
 		if (!anyPiece && player.UseAlternate == loadout.UseAlternate)
 			return new LoadoutSwapResult(LoadoutSwapOutcome.NothingToSwap);
 
-		// The equipment's place in the search, for the pieces put on (as a load gives them).
+		// The equipment's place in the search, for the pieces put on.
 		var equipmentPlace = worn[0].Place;
 
 		// The slots past the character's equipment (an artifact for a character of the base game) keep their piece.

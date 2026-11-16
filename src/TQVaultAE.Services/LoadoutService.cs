@@ -131,7 +131,7 @@ public partial class LoadoutService(
 		if (this.ValidateName(loadouts, newName) is var error and not LoadoutNameError.None)
 			return LoadoutChange.Refused(error);
 
-		// The copy has its own items: each search entry and each load works on its own pieces.
+		// The copy has its own items: each search entry and each gear swap works on its own pieces.
 		var copy = new Loadout(newName.Trim(), loadout.UseAlternate, [.. loadout.Pieces.Select(p => p?.Clone())]);
 		return this.Write(loadouts, [.. loadouts.Loadouts, copy]);
 	}

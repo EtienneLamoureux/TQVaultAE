@@ -47,22 +47,6 @@ public sealed class LoadoutChange
 	public static LoadoutChange Failed(Exception error) => new(LoadoutNameError.None, error, false);
 }
 
-/// <summary>How a loadout load ended.</summary>
-public enum LoadoutLoadOutcome
-{
-	/// <summary>The equipment is the loadout's.</summary>
-	Loaded,
-
-	/// <summary>The equipment already was the loadout's: nothing changed.</summary>
-	AlreadyWorn,
-
-	/// <summary>The bag lacks room for the pieces taken off: nothing changed.</summary>
-	NoRoom,
-
-	/// <summary>No such loadout, or a character, equipment or bag that cannot change: nothing changed.</summary>
-	Refused,
-}
-
 /// <summary>How a gear swap ended.</summary>
 public enum LoadoutSwapOutcome
 {
@@ -110,17 +94,3 @@ public sealed record LoadoutEmptyResult(LoadoutEmptyOutcome Outcome, int Pieces 
 /// <param name="PutOn">Loadout pieces now worn.</param>
 /// <param name="TakenOff">Worn pieces now in the loadout.</param>
 public sealed record LoadoutSwapResult(LoadoutSwapOutcome Outcome, int PutOn = 0, int TakenOff = 0);
-
-/// <summary>Outcome of loading a loadout.</summary>
-/// <param name="Outcome">How it ended.</param>
-/// <param name="ToBag">Pieces taken off and stored in the bag (or that would have been, for <see cref="LoadoutLoadOutcome.NoRoom"/>).</param>
-/// <param name="Moved">Worn pieces that changed slot.</param>
-/// <param name="Copied">Loadout pieces copied in.</param>
-public sealed record LoadoutLoadResult(LoadoutLoadOutcome Outcome, int ToBag = 0, int Moved = 0, int Copied = 0)
-{
-	/// <summary>The pieces stored in the bag.</summary>
-	public IReadOnlyList<Domain.Entities.Item> Stored { get; init; } = [];
-
-	/// <summary>The pieces taken off and deleted (<see cref="Contracts.Services.ILoadoutService.LoadReplacing"/>).</summary>
-	public IReadOnlyList<Domain.Entities.Item> Replaced { get; init; } = [];
-}

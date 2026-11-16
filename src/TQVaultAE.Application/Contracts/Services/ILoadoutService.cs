@@ -71,33 +71,10 @@ public interface ILoadoutService
 	LoadoutChange Delete(LoadoutSet loadouts, string name);
 
 	/// <summary>
-	/// Wears a loadout: a worn piece identical to a loadout piece stays worn (moved to its loadout slot when worn in
-	/// another), the other loadout pieces are copied in, and the worn pieces the loadout does not use go to the bag. The
-	/// loadout's weapon set is put in hand. Without room in the bag for every piece taken off, nothing changes. No
-	/// requirement is checked: the game keeps a piece out of reach in its slot and ignores its bonuses.
-	/// </summary>
-	/// <param name="loadouts">The character's loadouts.</param>
-	/// <param name="name">The loadout.</param>
-	/// <param name="player">The character.</param>
-	/// <param name="bag">The vault bag receiving the pieces taken off.</param>
-	/// <param name="bagSize">Its size in cells.</param>
-	/// <param name="bagPlace">Its place, given to the pieces stored (the search follows them).</param>
-	LoadoutLoadResult Load(LoadoutSet loadouts, string name, PlayerCollection player, Domain.Entities.SackCollection bag, System.Drawing.Size bagSize, Domain.Entities.ContainerPlace bagPlace);
-
-	/// <summary>
-	/// Wears a loadout as <see cref="Load"/> does, but the worn pieces the loadout does not use are deleted instead of
-	/// stored (a loadout keeps copies: this saves piling up duplicates). They leave the search too.
-	/// </summary>
-	/// <param name="loadouts">The character's loadouts.</param>
-	/// <param name="name">The loadout.</param>
-	/// <param name="player">The character.</param>
-	LoadoutLoadResult LoadReplacing(LoadoutSet loadouts, string name, PlayerCollection player);
-
-	/// <summary>
 	/// Gear swap: exchanges the loadout's pieces and the worn ones, slot by slot, and the weapon set in hand. Every item
 	/// stays one item, never copied: the loadout's pieces go on the character, the worn pieces take their place in the
 	/// loadout; a slot empty on one side becomes empty on the other. Swapping again swaps back. The character's equipment
-	/// changes as for a load (saved with it); the loadouts are marked modified and written with the other files. The
+	/// changes (saved with it); the loadouts are marked modified and written with the other files. The
 	/// pieces keep the character's map, a slot holds any size. The search follows both sides.
 	/// </summary>
 	/// <param name="loadouts">The character's loadouts.</param>
@@ -117,15 +94,6 @@ public interface ILoadoutService
 	/// <param name="bagSize">Its size in cells.</param>
 	/// <param name="bagPlace">Its place, given to the pieces (the search follows them).</param>
 	LoadoutEmptyResult Empty(LoadoutSet loadouts, string name, Domain.Entities.SackCollection bag, System.Drawing.Size bagSize, Domain.Entities.ContainerPlace bagPlace);
-
-	/// <summary>
-	/// The worn pieces a load of the loadout would take off, in slot order (none when the loadout or the equipment is
-	/// missing): what <see cref="LoadReplacing"/> deletes, to show before it.
-	/// </summary>
-	/// <param name="loadouts">The character's loadouts.</param>
-	/// <param name="name">The loadout.</param>
-	/// <param name="player">The character.</param>
-	IReadOnlyList<Domain.Entities.Item> TakenOff(LoadoutSet loadouts, string name, PlayerCollection player);
 
 	/// <summary>
 	/// Takes pieces out of their loadouts (their slots become empty) and writes the file: the results window moved them
