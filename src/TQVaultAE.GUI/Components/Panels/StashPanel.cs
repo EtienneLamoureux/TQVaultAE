@@ -103,6 +103,12 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	private const int EquipmentSlotsEnd = 354;
 	private const int EquipmentRightBorder = 11;
 
+	/// <summary>
+	/// The stone of the slots in the equipment background picture, its thin gold edge included, without the caravan frame
+	/// (the double gold line and the black gap) around it: the loadout panel draws only this part.
+	/// </summary>
+	private static readonly Rectangle EquipmentSlotsStone = Rectangle.FromLTRB(14, 18, 350, 521);
+
 	/// <summary>The equipment background drawn wider, without the old box, at the size it was last asked for.</summary>
 	private Bitmap? wideEquipmentBackground;
 
@@ -608,13 +614,15 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			return null;
 
 		// As WideEquipmentBackground draws it: the slot columns at the width of the whole picture, the full height.
-		float scale = rect.Width / (float)source.Width;
-		var target = new Rectangle(
-			rect.X - this.equipmentPanel.Left,
-			rect.Y - this.equipmentPanel.Top,
-			(int)Math.Round(EquipmentSlotsEnd * scale),
-			rect.Height);
-		return (source, new Rectangle(0, 0, EquipmentSlotsEnd, source.Height), target);
+		float scaleX = rect.Width / (float)source.Width;
+		float scaleY = rect.Height / (float)source.Height;
+		var stone = EquipmentSlotsStone;
+		var target = Rectangle.FromLTRB(
+			rect.X - this.equipmentPanel.Left + (int)Math.Round(stone.Left * scaleX),
+			rect.Y - this.equipmentPanel.Top + (int)Math.Round(stone.Top * scaleY),
+			rect.X - this.equipmentPanel.Left + (int)Math.Round(stone.Right * scaleX),
+			rect.Y - this.equipmentPanel.Top + (int)Math.Round(stone.Bottom * scaleY));
+		return (source, stone, target);
 	}
 
 	/// <summary>

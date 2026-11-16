@@ -85,7 +85,7 @@ public sealed class LoadoutView : Control
 		var pictureLocation = Scaled(target.Location);
 		this._pictureBounds = new Rectangle(pictureLocation, new Size(Convert.ToInt32(target.Width * factor), Convert.ToInt32(target.Height * factor)));
 
-		// The game's "next" arrow turned left, at the height of the loadout bar's Load arrow.
+		// The game's "back" arrow, at the height of the loadout bar's Load arrow.
 		float scale = this._uiService.Scale;
 		var arrow = new Size(Convert.ToInt32(BackArrow.DesignSize.Width * scale), Convert.ToInt32(BackArrow.DesignSize.Height * scale));
 		int margin = Convert.ToInt32(4 * scale);
@@ -113,12 +113,12 @@ public sealed class LoadoutView : Control
 		g.DrawImage(picture, this._pictureBounds, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
 	}
 
-	/// <summary>The Back arrow: the game's gold "next" arrow mirrored, with its hover and pressed pictures.</summary>
+	/// <summary>The Back arrow: the game's gold "back" arrow, with its hover and pressed pictures.</summary>
 	private sealed class BackArrow : Control
 	{
-		private const string Up = """InGameUI\tutorial\buttonnextup01.tex""";
-		private const string Over = """InGameUI\tutorial\buttonnextover01.tex""";
-		private const string Down = """InGameUI\tutorial\buttonnextdown01.tex""";
+		private const string Up = """InGameUI\tutorial\buttonbackup01.tex""";
+		private const string Over = """InGameUI\tutorial\buttonbackover01.tex""";
+		private const string Down = """InGameUI\tutorial\buttonbackdown01.tex""";
 
 		/// <summary>The size at scale 1: the 16 x 20 picture, a little larger than the loadout bar's Load arrow.</summary>
 		internal static readonly Size DesignSize = new(20, 25);
@@ -180,7 +180,7 @@ public sealed class LoadoutView : Control
 		{
 			base.OnPaint(e);
 			string resource = this._pressed ? Down : this._hovered ? Over : Up;
-			GamePicture.Draw(e.Graphics, this._uiService.LoadBitmap(resource.ToRecordId()), this.ClientRectangle, mirror: true);
+			GamePicture.Draw(e.Graphics, this._uiService.LoadBitmap(resource.ToRecordId()), this.ClientRectangle);
 		}
 
 		protected override void Dispose(bool disposing)

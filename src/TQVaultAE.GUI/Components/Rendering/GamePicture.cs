@@ -15,8 +15,7 @@ internal static class GamePicture
 	/// <param name="to">Where to draw it.</param>
 	/// <param name="greyed">Drawn faded, for a disabled button.</param>
 	/// <param name="flip">Upside down.</param>
-	/// <param name="mirror">Left to right, for an arrow pointing the other way.</param>
-	internal static void Draw(Graphics g, Bitmap? picture, Rectangle to, bool greyed = false, bool flip = false, bool mirror = false)
+	internal static void Draw(Graphics g, Bitmap? picture, Rectangle to, bool greyed = false, bool flip = false)
 	{
 		if (picture is null)
 		{
@@ -25,14 +24,10 @@ internal static class GamePicture
 			return;
 		}
 
-		if (flip || mirror)
+		if (flip)
 		{
 			// The upper left, upper right and lower left corners of the picture, where they land.
-			int left = mirror ? to.Right : to.Left;
-			int right = mirror ? to.Left : to.Right;
-			int top = flip ? to.Bottom : to.Top;
-			int bottom = flip ? to.Top : to.Bottom;
-			g.DrawImage(picture, [new Point(left, top), new Point(right, top), new Point(left, bottom)]);
+			g.DrawImage(picture, [new Point(to.Left, to.Bottom), new Point(to.Right, to.Bottom), new Point(to.Left, to.Top)]);
 			return;
 		}
 
