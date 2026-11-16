@@ -65,7 +65,9 @@ public class CharacterStatsServiceBuffTests
 	public CharacterStatsServiceBuffTests()
 	{
 		Record(Mastery, "Skill_Mastery");
-		Record(Passive, "Skill_Passive").Set(Text("skillDisplayName", "tagToughness"));
+		var passive = Record(Passive, "Skill_Passive");
+		passive.Set(Text("skillDisplayName", "tagToughness"));
+		passive.Set(Text("skillUpBitmapName", """UI\SkillButtons\FrostStrikeUp.tex"""));
 		Record(PassiveModifier, "Skill_Modifier");
 		Record(Aura, "Skill_BuffRadiusToggled").Set(Text("buffSkillName", AuraBuff.Raw));
 		Record(AuraBuff, "SkillBuff_Passive").Set(Text("skillUpBitmapName", """InGameUI\aura.tex"""));
@@ -166,6 +168,7 @@ public class CharacterStatsServiceBuffTests
 		passive.Group.Should().Be(BuffGroup.Passive);
 		passive.DefaultOn.Should().BeTrue();
 		passive.NameTag.Should().Be("tagToughness");
+		passive.Icon.Should().Be("""InGameUI\icons\skills\buffgreenfup01.tex""", """a prototype icon (UI\SkillButtons) reads as none""");
 		passive.Sum.Values.Should().BeEquivalentTo(new Dictionary<string, double> { [Passive.Raw] = 3, [PassiveModifier.Raw] = 2 },
 			"a modifier adds to the skill it modifies and toggles with it");
 		sources.Should().NotContain(s => s.Id == "skill:" + PassiveModifier.Normalized);

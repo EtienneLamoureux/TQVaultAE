@@ -15,6 +15,12 @@ public partial class CharacterStatsService
 	/// <summary>The icon of a source whose records have none (most quest rewards).</summary>
 	private const string FallbackIcon = """InGameUI\icons\skills\buffgreenfup01.tex""";
 
+	/// <summary>
+	/// The prototype's icon folder: placeholder pictures, not square, still named by a few records (expansion quest rewards,
+	/// monster skills); read as no icon.
+	/// </summary>
+	private const string PrototypeIconFolder = """UI\SkillButtons\""";
+
 	/// <summary>The fixed-item skill that casts a buff, from a shrine or a quest (<c>skillActiveDuration</c> -1 for the curses).</summary>
 	private const string FixedItemBuffClass = "FixedItemSkill_Buff";
 
@@ -208,7 +214,8 @@ public partial class CharacterStatsService
 			: id.PrettyFileName;
 
 	private string? Icon(DBRecordCollection? record)
-		=> record?.GetString(SkillIcon, 0) is { Length: > 0 } icon ? icon : null;
+		=> record?.GetString(SkillIcon, 0) is { Length: > 0 } icon
+			&& !icon.Replace('/', '\\').StartsWith(PrototypeIconFolder, StringComparison.OrdinalIgnoreCase) ? icon : null;
 
 	/// <summary>
 	/// The temple curses: the buffs of the fixed-item skills that never end (<c>skillActiveDuration</c> -1), the only
