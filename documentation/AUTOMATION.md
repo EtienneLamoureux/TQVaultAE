@@ -117,6 +117,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
   - diagnostics: `recent_log`, `recent_sounds`, `load_resource`, `player_stats_fonts`, `stash_background_switch`,
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
+  - the statistics panels' Buffs tab: `character_buffs`, `character_buff_toggle`;
   - test aids: `create_item`, `picture_fault`, the `gameRunning` and `realGame` parameters of `loadouts`;
   - the headless mode.
 
@@ -643,28 +644,38 @@ General rules:
     follows a move to a monitor of another DPI, edits kept. `capture("Character Editor")` draws it.
   - Left, always shown: the statistics panel of the game's character window (`character_panel`,
     `character_attribute_click`; the attribute boxes stay as hidden models). Under it the side panel
-    `CharacterSidePanel`: the statistics options `StatsDifficultyComboBox` and `StatsIncludeBuffsCheckBox`
-    (`set_control`), the leveling editors (shown while they can be changed), the masteries.
+    `CharacterSidePanel`: the statistics option `StatsDifficultyComboBox` (`set_control`), the leveling editors (shown
+    while they can be changed), the masteries.
   - Right: a frame drawn like the game's skill window (`EditorTabs`, pages chosen with `select_tab`), one page per
     mastery slot: `SkillsMasteryNComboBox`, `SkillsMasteryNLevelUpDown`, and the skill pane `SkillsMasteryNPane`
     (N = 1, 2), read and clicked with `skill_panel` / `skill_panel_click`.
-- **`character_panel(tab?, capture?)`**: reads the character editor's statistics panel on tab 1, 2 or 3.
+- **`character_panel(tab?, capture?)`**: reads the character editor's statistics panel on tab 1, 2, 3 or 4 (Buffs).
   - `stats`: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the `+`
     buttons and Undo show, tab III statistics, gold and Electrum; `Stats`, the values computed like the game (combined
     armor, the 16 resistances, tab II rows, tab III damage and race bonuses with their tool tips).
-  - `side` (the side panel): leveling rows, masteries, statistics options and their editors.
+  - `side` (the side panel): leveling rows, masteries, the statistics option and its editor.
   - `capture=true` adds a PNG of the panel.
-- **`character_tooltip(tab, index?)`**: renders a rollover of the editor's statistics panel (tab 1, 2 or 3) as the
+- **`character_tooltip(tab, index?)`**: renders a rollover of the editor's statistics panel (tab 1 to 4) as the
   game-style tool tip shows it on hover: lines (text, colour, title) and a PNG. Without `index`, lists the tab's
   rollovers by number with their first line.
-- **`character_stat_sources(filter?)`**: the sums behind those computed values in the open editor, with the racial
-  bonuses (pet bonus records summed under `pet:` names); `filter` keeps the variable names containing it.
-  - `gear`: variables of the equipped items and item sets.
-  - `skills`: variables of the skills that count, at their level: passives, masteries, modifiers of counted skills,
-    buffs when Include buffs is ticked, and the skills the equipped items grant at their granted level (passives always,
-    buffs with Include buffs).
+- **`character_stat_sources(filter?, sources?)`**: the sums behind those computed values in the open editor, with the
+  racial bonuses (pet bonus records summed under `pet:` names); `filter` keeps the variable names containing it.
+  - `gear`: variables of the gear sources turned on in the Buffs tab (equipped items, item sets).
+  - `skills`: variables of the other sources turned on: skills at their level (a modifier with its skill), skills the
+    equipped items grant, curses, shrine buffs, pet auras, Tartarus effects, the scroll's buff.
+  - `buffsOn`: the keys of the sources turned on; `sources=true` adds each source (key, section, name, on, level, gear
+    role, its own variables).
   - `offense`: tab I's average damage, DPS and attack speed with their inputs: stance, each weapon in hand, the other
     items, bare-hands damage.
+- **`character_buffs(panel?, scroll?, capture?)`** *(Debug)*: shows the Buffs tab (tab 4) of the editor's statistics panel, or
+  of the main window's with `panel="main"`, and reads it: the scroll choice (title, selected, drop-down), then each
+  section (`Gear`, `Passive`, `Active`, `Pet`, `Curse`, `Shrine`, `Tartarus`, `Scroll`) with its sources: key, name,
+  icon, on, bounds in client pixels when in sight, tool tip lines. `scroll` first scrolls the list by game pixels, as the
+  wheel. `capture=true` adds a PNG of the panel.
+- **`character_buff_toggle(id?, panel?, scrollIndex?)`** *(Debug)*: clicks a source of the Buffs tab through the panel's hit test
+  (scrolled into sight first); `/` is accepted for `\` in the key. `scrollIndex` picks a scroll in the drop-down (0 for
+  none; the choices are listed when out of range). Toggles are memory only and never saved: allowed on any character.
+  Returns the tab's state.
 - **`character_attribute_click(attribute, button?, shift?, modifiers?)`**: clicks the `+` button of an attribute
   (`health`, `energy`, `strength`, `intelligence`, `dexterity`, or 0-4) through the panel's hit test and mouse handler,
   `modifiers` held in the keyboard state (`shift=true` adds Shift). Test characters only.
@@ -688,9 +699,9 @@ General rules:
   III, gold, Electrum.
   - `requirementAttributes`: the attributes item requirements are checked against (strength, dexterity, intelligence,
     health, energy with the gear and skill bonuses: the panel's sums).
-  - `tab` (1 to 3) shows that tab first. `visible` is false with no character selected or another stash tab shown.
+  - `tab` (1 to 4) shows that tab first. `visible` is false with no character selected or another stash tab shown.
 - **`player_stats_hover(tab, index?, hide?)`** *(Debug)*: rests the virtual cursor on a rollover of that statistics
-  panel (tab 1 to 3; without `index`, the list of its rollovers); the panel's own mouse move shows the game tool tip,
+  panel (tab 1 to 4; without `index`, the list of its rollovers); the panel's own mouse move shows the game tool tip,
   placed from the virtual cursor as a hover places it.
   - Returns its lines, its window rectangle on screen, the hovered area, the statistics and equipment panels, the main
     window and the working area on screen, `insideWorkingArea`, `coversHoveredArea`, and a PNG of the main window with

@@ -18,7 +18,7 @@ internal static partial class AutomationTools
 		[McpServerTool(Name = "player_stats_hover", ReadOnly = true)]
 		[Description("Rests the virtual cursor on a rollover of the statistics panel next to the equipment (main window, stash bag 0) and lets the panel's own mouse move show its game tool tip, placed from that cursor as a user's hover places it. Returns the tool tip lines, its window rectangle on screen (from the window itself), the hovered area, the equipment panel and the statistics panel on screen, the working area of the screen, whether the tool tip is inside it and whether it covers the hovered area, and a PNG of the main window with the tool tip drawn at its place (the tool tip window cannot be captured headless). Without index, lists the tab's rollovers by number with their first line. hide=true ends the hover (the tool tip closes).")]
 		public static IEnumerable<ContentBlock> PlayerStatsHover(
-			[Description("Tab of the panel: 1 (I), 2 (II) or 3 (III).")] int tab = 1,
+			[Description("Tab of the panel: 1 (I), 2 (II), 3 (III) or 4 (Buffs).")] int tab = 1,
 			[Description("Rollover number from 0; omit for the list.")] int? index = null,
 			[Description("End the hover instead.")] bool hide = false)
 		{
@@ -35,7 +35,7 @@ internal static partial class AutomationTools
 				if (hide)
 					return (Serialize(new { hidden = true }), (byte[]?)null);
 
-				panel.Tab = Math.Clamp(tab, 1, 3) - 1;
+				panel.Tab = Math.Clamp(tab, 1, 4) - 1;
 				var tips = panel.AutomationToolTips();
 				if (index is null)
 					return (Serialize(tips.Select((t, i) => new { index = i, first = t.Count > 0 ? t[0].Text : null }).ToList()), (byte[]?)null);

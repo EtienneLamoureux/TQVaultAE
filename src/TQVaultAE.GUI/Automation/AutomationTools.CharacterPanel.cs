@@ -13,15 +13,15 @@ internal static partial class AutomationTools
 	#region Character panel
 
 	[McpServerTool(Name = "character_panel", ReadOnly = true)]
-	[Description("In the open character editor, reads its statistics panel (drawn like the game's character window) on tab 1, 2 or 3: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, tab III statistics, gold and Electrum, the values computed like the game (armor, resistances, tab II rows, tab III damage and race bonuses with their tool tips), and the side panel next to it (leveling rows, masteries, the statistics options Difficulty and Include buffs, and their editors: visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
+	[Description("In the open character editor, reads its statistics panel (drawn like the game's character window) on tab 1, 2, 3 or 4 (Buffs, see character_buffs): name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, tab III statistics, gold and Electrum, the values computed like the game (armor, resistances, tab II rows, tab III damage and race bonuses with their tool tips), and the side panel next to it (leveling rows, masteries, the statistics option Difficulty, and their editors: visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
 	public static IEnumerable<ContentBlock> CharacterPanel(
-		[Description("Tab of the panel: 1 (I), 2 (II) or 3 (III).")] int tab = 1,
+		[Description("Tab of the panel: 1 (I), 2 (II), 3 (III) or 4 (Buffs).")] int tab = 1,
 		[Description("true to return a PNG of the panel too.")] bool capture = false)
 	{
 		var (state, png) = AutomationHost.OnUi(_ =>
 		{
 			var panel = ShowCharacterPanel();
-			panel.Tab = Math.Clamp(tab, 1, 3) - 1;
+			panel.Tab = Math.Clamp(tab, 1, 4) - 1;
 			var side = AllControls(FindCharacterEditor()).OfType<CharacterSidePanel>().FirstOrDefault();
 			var state = Serialize(new { stats = panel.AutomationState(), side = side?.AutomationState() });
 			if (!capture)
@@ -35,15 +35,15 @@ internal static partial class AutomationTools
 	}
 
 	[McpServerTool(Name = "character_tooltip", ReadOnly = true)]
-	[Description("In the open character editor, renders a rollover of the statistics panel's tab 1, 2 or 3 as the game-style tool tip shows it on hover: its lines (text, colour, title) and a PNG (saved under %TEMP%). The rollovers are numbered in the order of character_panel's areas with a tool tip on that tab (attribute rows, armor, icons, rows); without index, the list of their first lines.")]
+	[Description("In the open character editor, renders a rollover of the statistics panel's tab 1, 2, 3 or 4 as the game-style tool tip shows it on hover: its lines (text, colour, title) and a PNG (saved under %TEMP%). The rollovers are numbered in the order of character_panel's areas with a tool tip on that tab (attribute rows, armor, icons, rows); without index, the list of their first lines.")]
 	public static IEnumerable<ContentBlock> CharacterTooltip(
-		[Description("Tab of the panel: 1 (I), 2 (II) or 3 (III).")] int tab,
+		[Description("Tab of the panel: 1 (I), 2 (II), 3 (III) or 4 (Buffs).")] int tab,
 		[Description("Rollover number from 0; omit for the list.")] int? index = null)
 	{
 		var (text, png) = AutomationHost.OnUi(_ =>
 		{
 			var panel = ShowCharacterPanel();
-			panel.Tab = Math.Clamp(tab, 1, 3) - 1;
+			panel.Tab = Math.Clamp(tab, 1, 4) - 1;
 			var tips = panel.AutomationToolTips();
 			if (index is null)
 				return (Serialize(tips.Select((t, i) => new { index = i, first = t.Count > 0 ? t[0].Text : null }).ToList()), (byte[]?)null);
@@ -92,12 +92,13 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "character_stat_sources", ReadOnly = true)]
-	[Description("In the open character editor, returns the sums behind the statistics the editor computes like the game: the variables of the equipped items and item sets (gear), of the skills that count (skills: passives, masteries, modifiers of counted skills, buffs when 'Include buffs' is ticked), both at their level, and the racial bonuses; plus the difficulty and buffs options. 'filter' keeps the variables whose name contains it (e.g. 'defensive').")]
+	[Description("In the open character editor, returns the sums behind the statistics the editor computes like the game: the variables of the gear sources turned on in the Buffs tab (equipped items and item sets), of the other sources turned on (skills with their modifiers, granted skills, curses, shrines, pets, Tartarus, scroll), and the racial bonuses; the difficulty and the keys of the sources on; tab I's offense inputs. With sources=true, also each buff source on its own: key, section, name, on, level, gear role and its variables. 'filter' keeps the variables whose name contains it (e.g. 'defensive').")]
 	public static string CharacterStatSources(
-		[Description("Part of the variable names to keep; empty for all.")] string filter = "")
+		[Description("Part of the variable names to keep; empty for all.")] string filter = "",
+		[Description("true to list each buff source with its own variables.")] bool sources = false)
 		=> AutomationHost.OnUi(_ =>
 		{
-			return Serialize(FindCharacterEditor().AutomationStatSources(filter));
+			return Serialize(FindCharacterEditor().AutomationStatSources(filter, sources));
 		});
 
 	/// <summary>The character editor shown in the main window.</summary>
