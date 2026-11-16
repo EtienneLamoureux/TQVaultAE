@@ -2820,7 +2820,8 @@ Leave the editor without applying the changes?</value>
     <value>{0} already has a loadout named "{1}".</value>
   </data>
 	<data name="LoadoutUpdateConfirm" xml:space="preserve">
-    <value>Replace the pieces of the loadout "{0}" with the gear worn now?</value>
+    <value>Put the gear worn now into the loadout "{0}"?
+The slots empty on the character keep the loadout's pieces.</value>
   </data>
 	<data name="LoadoutDeleteConfirm" xml:space="preserve">
     <value>Delete the loadout "{0}"?</value>

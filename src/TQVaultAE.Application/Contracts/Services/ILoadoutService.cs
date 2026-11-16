@@ -44,7 +44,11 @@ public interface ILoadoutService
 	/// <param name="player">The character, whose equipment and weapon set in hand are recorded.</param>
 	LoadoutChange Add(LoadoutSet loadouts, string name, PlayerCollection player);
 
-	/// <summary>Records the worn equipment over a loadout and writes the file.</summary>
+	/// <summary>
+	/// Merges the worn equipment into a loadout (copies of the worn pieces replace the loadout's, slots empty on the
+	/// character keep the loadout's piece; see <c>EquipmentRules.MergeWorn</c>), records the weapon set in hand and
+	/// writes the file.
+	/// </summary>
 	/// <param name="loadouts">The character's loadouts.</param>
 	/// <param name="name">The loadout.</param>
 	/// <param name="player">The character.</param>

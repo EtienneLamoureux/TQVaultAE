@@ -13,8 +13,8 @@ On the **Equipment** tab, under the character statistics (the **Edit** button go
 - **[+]** records the gear worn now as a new loadout, under a name you type (unique per character, case ignored).
 - The gold arrow (**Load**) wears the chosen loadout. Grey with nothing to load, for a read-only character, or with the
   setting **Player Equipment ReadOnly** (its tool tip says why).
-- Right click: **Load**, **Gear swap**, **Update with the gear worn now** (asks first), **Rename**, **Copy**, **Delete**
-  (asks first), **Add**.
+- Right click: **Load**, **Gear swap**, **Update with the gear worn now** ([below](#update), asks first), **Rename**,
+  **Copy**, **Delete** (asks first), **Add**.
 
 ## Composing a loadout
 
@@ -34,8 +34,8 @@ moves down meanwhile.
   - Under the rings: **Gear swap** (below). Greyed, its tool tip says why.
 
 Changes are written with the other files (**Save**, or on closing), or when a bar action writes the loadouts file
-(add, update, rename, copy, delete). **Update** and **Delete** discard the pieces moved into the loadout: take them
-out first.
+(add, update, rename, copy, delete). **Delete** discards the pieces moved into the loadout, **Update** those it
+replaces: take them out first.
 
 The loadouts file is apart from the save: a read-only character, or **Player Equipment ReadOnly**, still allows
 composing.
@@ -65,6 +65,15 @@ as out of its slot.
 
 A loadout keeps **copies** for **Load** and **Update**: loading it while its sword lies in a vault gives a second
 sword. Use **Gear swap** to move pieces instead.
+
+## Update
+
+**Update with the gear worn now** merges the worn gear into the loadout, slot by slot, weapon sets included:
+
+- A worn piece replaces the loadout's (as a copy).
+- A slot empty on the character keeps the loadout's piece.
+- A two-handed weapon cannot stay beside another piece: its weapon set is then taken whole from the worn gear.
+- The weapon set in hand is recorded.
 
 ## Gear swap
 

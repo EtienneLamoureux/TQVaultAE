@@ -5,6 +5,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Data.Dto;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Services.Export;
 
@@ -105,7 +106,9 @@ public partial class LoadoutService(
 		if (loadouts.ReadFailed || loadouts.Find(name) is not { } loadout || player.EquipmentSack is null)
 			return LoadoutChange.Missing;
 
-		return this.Write(loadouts, [.. loadouts.Loadouts.Select(l => l == loadout ? Record(loadout.Name, player) : l)]);
+		var worn = player.EquipmentSack.Select(item => ItemKey.IsEmptyItem(item) ? null : item.Clone()).ToList();
+		var merged = new Loadout(loadout.Name, player.UseAlternate, EquipmentRules.MergeWorn(loadout.Pieces, worn));
+		return this.Write(loadouts, [.. loadouts.Loadouts.Select(l => l == loadout ? merged : l)]);
 	}
 
 	/// <inheritdoc/>

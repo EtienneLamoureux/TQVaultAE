@@ -529,4 +529,101 @@ public class EquipmentRulesTests
 	}
 
 	#endregion
+
+	#region MergeWorn
+
+	/// <summary>Twelve slots, null where not given.</summary>
+	private static Item?[] Slots(params (int Slot, Item Item)[] pieces)
+	{
+		var slots = new Item?[12];
+		foreach (var (slot, item) in pieces)
+			slots[slot] = item;
+		return slots;
+	}
+
+	[Fact]
+	public void MergeWorn_AWornPiece_ReplacesTheLoadoutsPiece()
+	{
+		var wornHelm = ItemOf(Item.ICLASS_HEAD, "worn-helm");
+
+		var merged = EquipmentRules.MergeWorn(Slots((Head, ItemOf(Item.ICLASS_HEAD, "old-helm"))), Slots((Head, wornHelm)));
+
+		merged[Head].Should().BeSameAs(wornHelm);
+	}
+
+	[Fact]
+	public void MergeWorn_ASlotEmptyOnTheCharacter_KeepsTheLoadoutsPiece()
+	{
+		var ring = ItemOf(Item.ICLASS_RING, "ring");
+		var worn = Slots();
+		worn[Ring1] = EmptyItem();
+
+		var merged = EquipmentRules.MergeWorn(Slots((Ring1, ring)), worn);
+
+		merged[Ring1].Should().BeSameAs(ring, "an empty item in the save is an empty slot");
+	}
+
+	[Fact]
+	public void MergeWorn_Mixed_TakesEachSlotFromWhereThePieceIs()
+	{
+		var oldHelm = ItemOf(Item.ICLASS_HEAD, "old-helm");
+		var ring = ItemOf(Item.ICLASS_RING, "ring");
+		var wornHelm = ItemOf(Item.ICLASS_HEAD, "worn-helm");
+		var wornArtifact = ItemOf(Item.ICLASS_ARTIFACT, "artifact");
+
+		var merged = EquipmentRules.MergeWorn(Slots((Head, oldHelm), (Ring2, ring)), Slots((Head, wornHelm), (Artifact, wornArtifact)));
+
+		merged.Should().Equal(Slots((Head, wornHelm), (Ring2, ring), (Artifact, wornArtifact)));
+	}
+
+	[Fact]
+	public void MergeWorn_WeaponSets_FollowTheSameRuleSlotBySlot()
+	{
+		var oldSword = Sword("old-sword");
+		var shield = Shield();
+		var wornSword = Sword("worn-sword");
+		var sword2 = Sword("sword2");
+
+		var merged = EquipmentRules.MergeWorn(Slots((Weapon1, oldSword), (Shield1, shield), (Weapon2, sword2)), Slots((Weapon1, wornSword)));
+
+		merged[Weapon1].Should().BeSameAs(wornSword);
+		merged[Shield1].Should().BeSameAs(shield);
+		merged[Weapon2].Should().BeSameAs(sword2);
+		merged[Shield2].Should().BeNull();
+	}
+
+	[Fact]
+	public void MergeWorn_AWornTwoHandedWeapon_TakesItsPairWhole()
+	{
+		var bow = Bow();
+
+		var merged = EquipmentRules.MergeWorn(Slots((Weapon1, Sword()), (Shield1, Shield())), Slots((Shield1, bow)));
+
+		merged[Weapon1].Should().BeNull("the bow's shadow slot cannot keep the loadout's sword");
+		merged[Shield1].Should().BeSameAs(bow);
+	}
+
+	[Fact]
+	public void MergeWorn_ALoadoutsTwoHandedWeaponBesideAWornPiece_GivesThePairWorn()
+	{
+		var wornSword = Sword("worn-sword");
+		var staff = Staff();
+
+		var merged = EquipmentRules.MergeWorn(Slots((Shield2, staff)), Slots((Weapon2, wornSword)));
+
+		merged[Weapon2].Should().BeSameAs(wornSword);
+		merged[Shield2].Should().BeNull("the loadout's staff cannot stay beside the worn sword");
+	}
+
+	[Fact]
+	public void MergeWorn_ALoadoutsTwoHandedWeaponWithItsPairEmptyOnTheCharacter_IsKept()
+	{
+		var staff = Staff();
+
+		var merged = EquipmentRules.MergeWorn(Slots((Shield2, staff)), Slots((Head, ItemOf(Item.ICLASS_HEAD, "helm"))));
+
+		merged[Shield2].Should().BeSameAs(staff);
+	}
+
+	#endregion
 }

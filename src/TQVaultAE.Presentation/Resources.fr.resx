@@ -2450,7 +2450,8 @@ Quitter l'éditeur sans appliquer les changements ?</value>
     <value>{0} a déjà une tenue nommée « {1} ».</value>
   </data>
 	<data name="LoadoutUpdateConfirm" xml:space="preserve">
-    <value>Remplacer les pièces de la tenue « {0} » par l'équipement porté ?</value>
+    <value>Mettre l'équipement porté dans la tenue « {0} » ?
+Les emplacements vides sur le personnage gardent les pièces de la tenue.</value>
   </data>
 	<data name="LoadoutDeleteConfirm" xml:space="preserve">
     <value>Supprimer la tenue « {0} » ?</value>

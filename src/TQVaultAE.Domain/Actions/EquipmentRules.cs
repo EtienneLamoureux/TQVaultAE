@@ -50,6 +50,44 @@ public static class EquipmentRules
 	public const int ArtifactSlot = 11;
 
 	/// <summary>
+	/// Merges the worn pieces into a loadout, slot by slot: a worn piece replaces the loadout's, an empty slot of the
+	/// character keeps the loadout's piece.
+	/// </summary>
+	/// <remarks>
+	/// A weapon pair that would hold a two-handed weapon beside another piece (a worn bow and the loadout's sword in its
+	/// shadow slot, or the reverse) is taken whole from the worn gear. Slots past <paramref name="worn"/> keep the
+	/// loadout's piece.
+	/// </remarks>
+	/// <param name="loadout">The loadout's pieces, slot by slot; null for an empty slot.</param>
+	/// <param name="worn">The worn pieces, slot by slot; null for an empty slot.</param>
+	/// <returns>The merged pieces: items of <paramref name="worn"/> or of <paramref name="loadout"/>.</returns>
+	public static Item?[] MergeWorn(IReadOnlyList<Item?> loadout, IReadOnlyList<Item?> worn)
+	{
+		static Item? At(IReadOnlyList<Item?> pieces, int slot)
+			=> slot < pieces.Count && pieces[slot] is { } piece && !Item.IsNullOrEmpty(piece) ? piece : null;
+
+		var merged = new Item?[Math.Max(loadout.Count, worn.Count)];
+		for (int slot = 0; slot < merged.Length; slot++)
+			merged[slot] = At(worn, slot) ?? At(loadout, slot);
+
+		foreach (var (first, second) in new[] { (Weapon1Slot, Shield1Slot), (Weapon2Slot, Shield2Slot) })
+		{
+			if (second >= merged.Length)
+				continue;
+
+			bool twoHandedBeside = (merged[second]?.Is2HWeapon == true && merged[first] is not null)
+				|| (merged[first]?.Is2HWeapon == true && merged[second] is not null);
+			if (twoHandedBeside)
+			{
+				merged[first] = At(worn, first);
+				merged[second] = At(worn, second);
+			}
+		}
+
+		return merged;
+	}
+
+	/// <summary>
 	/// Tells whether an item may go in an equipment slot.
 	/// </summary>
 	/// <remarks>

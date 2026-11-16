@@ -7816,7 +7816,8 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace the pieces of the loadout "{0}" with the gear worn now?.
+        ///   Looks up a localized string similar to Put the gear worn now into the loadout "{0}"?
+        ///The slots empty on the character keep the loadout's pieces..
         /// </summary>
         public static string LoadoutUpdateConfirm {
             get {

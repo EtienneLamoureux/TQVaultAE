@@ -143,7 +143,7 @@ public partial class MainFormUserControl
 		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Add(loadouts, name, player), name.Trim(), name);
 	}
 
-	/// <summary>Records the worn equipment over a loadout, once confirmed.</summary>
+	/// <summary>Merges the worn equipment into a loadout, once confirmed.</summary>
 	/// <param name="name">The loadout.</param>
 	private bool UpdateLoadout(string name)
 	{

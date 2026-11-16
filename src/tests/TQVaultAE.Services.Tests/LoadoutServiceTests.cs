@@ -128,18 +128,23 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		=> this._service.Add(this.Read(), "  ", Wearing(false)).NameError.Should().Be(LoadoutNameError.Empty);
 
 	[Fact]
-	public void Update_RecordsTheGearWornNow()
+	public void Update_MergesTheWornPiecesAsCopies_AndKeepsTheLoadoutsPiecesOfTheEmptySlots()
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false, (0, Piece("helm", 1))));
+		this._service.Add(set, "A", Wearing(false, (0, Piece("helm", 1)), (2, Piece("torso", 2))));
+		var wornTorso = Piece("torso", 3);
+		var player = Wearing(true, (2, wornTorso), (EquipmentRules.Ring1Slot, Piece("ring", 4)));
 
-		this._service.Update(set, "a", Wearing(true, (2, Piece("torso", 2)))).IsSuccess.Should().BeTrue();
+		this._service.Update(set, "a", player).IsSuccess.Should().BeTrue();
 
+		set.Loadouts.Single().Pieces[2].Should().NotBeSameAs(wornTorso, "the worn piece stays on: the loadout gets a copy");
 		var loadout = this.Read().Loadouts.Single();
 		loadout.Name.Should().Be("A", "the loadout keeps its name");
-		loadout.UseAlternate.Should().BeTrue();
-		loadout.Pieces[0].Should().BeNull();
-		loadout.Pieces[2]!.Seed.Should().Be(2);
+		loadout.UseAlternate.Should().BeTrue("the weapon set in hand is recorded");
+		loadout.Pieces[0]!.Seed.Should().Be(1, "the head is empty on the character: the loadout keeps its helm");
+		loadout.Pieces[2]!.Seed.Should().Be(3, "the worn torso replaces the loadout's");
+		loadout.Pieces[EquipmentRules.Ring1Slot]!.Seed.Should().Be(4);
+		player.EquipmentSack!.GetItem(2).Should().BeSameAs(wornTorso);
 	}
 
 	[Fact]
