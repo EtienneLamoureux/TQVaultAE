@@ -24,6 +24,7 @@ public class SkillStatRulesTests
 	[InlineData("Skill_BuffSelfDuration", SkillStatRole.Buff)]
 	[InlineData("Skill_PassiveOnHitBuffSelf", SkillStatRole.Buff)]
 	[InlineData("Skill_PassiveOnTargetKilled", SkillStatRole.Buff)]
+	[InlineData("Skill_PassiveOnItemUsedBuffSelf", SkillStatRole.Passive)] // Inner Equilibrium: its own bonuses until a potion
 	[InlineData("SkillBuff_Debuf", SkillStatRole.None)]
 	[InlineData("Skill_AttackProjectile", SkillStatRole.None)]
 	[InlineData("", SkillStatRole.None)]

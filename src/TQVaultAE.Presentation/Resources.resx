@@ -2884,4 +2884,10 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="BuffsSkillDuration" xml:space="preserve">
     <value>{0}% Skill Duration</value>
   </data>
+  <data name="BuffsPotionTrigger" xml:space="preserve">
+    <value>On a health or energy potion, for {0} s</value>
+  </data>
+  <data name="BuffsPotionTriggerChance" xml:space="preserve">
+    <value>On a health or energy potion: {0}% chance, for {1} s</value>
+  </data>
 </root>

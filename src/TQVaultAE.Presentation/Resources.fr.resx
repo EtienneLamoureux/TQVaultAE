@@ -2712,4 +2712,10 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="BuffsSkillDuration" xml:space="preserve">
     <value>{0} % de durée des compétences</value>
   </data>
+  <data name="BuffsPotionTrigger" xml:space="preserve">
+    <value>Sur une potion de santé ou d'énergie, pendant {0} s</value>
+  </data>
+  <data name="BuffsPotionTriggerChance" xml:space="preserve">
+    <value>Sur une potion de santé ou d'énergie : {0} % de chances, pendant {1} s</value>
+  </data>
 </root>

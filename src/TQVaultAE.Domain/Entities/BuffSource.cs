@@ -12,7 +12,7 @@ public enum BuffGroup
 	/// <summary>Auras and buffs of the character's skills or granted by items: off by default.</summary>
 	Active,
 
-	/// <summary>Auras a pet casts on the character (a pet skill the character learned): off by default.</summary>
+	/// <summary>Auras the character's pets cast on those around them: off by default.</summary>
 	Pet,
 
 	/// <summary>The temple curses: the saved ones on, the others off.</summary>
@@ -72,6 +72,12 @@ public sealed record BuffSource
 
 	/// <summary>A granted skill the item casts by itself when worn (a toggled buff that stays on).</summary>
 	public bool OnEquip { get; init; }
+
+	/// <summary>
+	/// A buff a health or energy potion triggers (Potent Elixir): its chance in % and how long it lasts in seconds; null
+	/// for any other source.
+	/// </summary>
+	public (float Chance, float Duration)? PotionTrigger { get; init; }
 
 	/// <summary>How the item counts for the attack; <see cref="BuffGearRole.None"/> for what is not gear.</summary>
 	public BuffGearRole GearRole { get; init; }

@@ -211,6 +211,43 @@ public class CharacterStatsServiceBuffTests
 		aura.Origins.Should().Equal(item);
 	}
 
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void GetBuffSources_BuffAPotionTriggers_ASourceOfItsOwn_TheSkillOnlyWithBonusesOfItsOwn(bool ownBonuses)
+	{
+		var elixir = """records\xpack4\skills\neidan\potionbuf.dbr""".ToRecordId();
+		var elixirBuff = """records\xpack4\skills\neidan\potionbuf_bonus.dbr""".ToRecordId();
+		var record = Record(elixir, "Skill_PassiveOnItemUsedBuffSelf");
+		record.Set(Text("skillDisplayName", "tagElixir"));
+		record.Set(Text("skillCastName", elixirBuff.Raw));
+		record.Set(new Variable("skillCastLevel", VariableDataType.Float, 3) { [0] = 1f, [1] = 2f, [2] = 3f });
+		record.Set(new Variable("skillCastChance", VariableDataType.Float, 1) { [0] = 100f });
+		record.Set(new Variable("skillCastDuration", VariableDataType.Float, 1) { [0] = 7f });
+		Record(elixirBuff, "SkillBuff_Passive");
+		if (!ownBonuses)
+		{
+			// Only the skill's own parameters: no bonus of the character.
+			var parameters = new AttributeSum();
+			parameters.Add("skillCastChance", 100);
+			parameters.Add("skillMaxLevel", 12);
+			this._items.Setup(p => p.GetRecordAttributes(elixir, It.IsAny<int>())).Returns(parameters);
+		}
+
+		var sources = this._service.GetBuffSources(new BuffSourceRequest([], false, [Skill(elixir, 2)], [], [], [], 0, null));
+
+		var potion = sources.Single(s => s.Id == "potion:" + elixir.Normalized);
+		potion.Group.Should().Be(BuffGroup.Active);
+		potion.DefaultOn.Should().BeFalse();
+		potion.RecordId.Should().Be(elixirBuff);
+		potion.Level.Should().Be(2, "the buff cast at the skill's level of skillCastLevel");
+		potion.NameTag.Should().Be("tagElixir");
+		potion.PotionTrigger.Should().Be((100f, 7f));
+		potion.Sum[elixirBuff.Raw].Should().Be(2);
+		sources.Any(s => s.Id == "skill:" + elixir.Normalized).Should().Be(ownBonuses,
+			"the skill's own bonuses (Inner Equilibrium) are a passive; without any (Potent Elixir) only its buff is a source");
+	}
+
 	[Fact]
 	public void GetBuffSources_Curses_AllOffered_TheSavedOnesOn()
 	{

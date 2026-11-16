@@ -241,7 +241,7 @@ public partial class ItemTextFormatter
 
 		// A skill that only casts another one (skillCastName, e.g. "Potion Blast" casts "Shadow Surge" on a potion):
 		// the chance and the cast skill, with its effects at its own level. Its description stands in for a missing one.
-		if (this.GetCastSkill(itm, skillRecord, level, levelFormat, attributes) is { Length: > 0 } castDescription && description.Length == 0)
+		if (this.GetCastSkill(itm, skillRecord, level, levelFormat, attributes, out var cast) is { Length: > 0 } castDescription && description.Length == 0)
 			description = castDescription;
 
 		this.GetCastOnDamageType(skillRecord, level, attributes);
@@ -265,6 +265,10 @@ public partial class ItemTextFormatter
 		)
 		{
 			ModifiedLines = modifiedLines,
+			CastLines = cast is var (chanceLine, levelLine, lastLine, chance)
+				? (Array.FindIndex(effects, a => ReferenceEquals(a, chanceLine)), Array.FindIndex(effects, a => ReferenceEquals(a, levelLine)),
+					Array.FindIndex(effects, a => ReferenceEquals(a, lastLine)), chance)
+				: (-1, -1, -1, 0),
 		};
 	}
 
@@ -290,9 +294,13 @@ public partial class ItemTextFormatter
 	/// Adds the skill a granted skill casts (<c>skillCastName</c>, with <c>skillCastChance</c> at <c>skillCastLevel</c>):
 	/// a line with the chance and its name, its level, then its effects at that level.
 	/// </summary>
+	/// <param name="cast">The chance line (null when none is written), the level line, the last line of the effects and the
+	/// chance; null without cast skill.</param>
 	/// <returns>The description of the cast skill; empty when there is none or no cast skill.</returns>
-	private string[] GetCastSkill(Item itm, DBRecordCollection skillRecord, int level, string levelFormat, List<string> attributes)
+	private string[] GetCastSkill(Item itm, DBRecordCollection skillRecord, int level, string levelFormat, List<string> attributes,
+		out (string? ChanceLine, string LevelLine, string LastLine, float Chance)? cast)
 	{
+		cast = null;
 		var castId = skillRecord.GetString("skillCastName", 0).ToRecordId();
 		if (RecordId.IsNullOrEmpty(castId) || Database.GetRecordFromFile(castId) is not { } castRecord)
 			return [];
@@ -310,17 +318,22 @@ public partial class ItemTextFormatter
 		if (attributes.Count != 0)
 			attributes.Add(string.Empty);
 
+		string? chanceLine = null;
 		if (castName is null)
 		{
 			if (chance > 0 && TranslationService.TryTranslateXTag("GlobalPercentChanceOfAllTag", out var chanceOfAll))
-				attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceOfAll), chance)}");
+				chanceLine = $"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceOfAll), chance)}";
 		}
 		else if (chance > 0 && TranslationService.TryTranslateXTag("ChanceOfTag", out var chanceFormat))
-			attributes.Add($"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)} {name}{castName}");
+			chanceLine = $"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)} {name}{castName}";
 		else
-			attributes.Add($"{name}{castName}");
+			chanceLine = $"{name}{castName}";
 
-		attributes.Add($"{ItemStyle.Broken.TQColor().ColorTag()}{Format(levelFormat, castLevel)}");
+		if (chanceLine is not null)
+			attributes.Add(chanceLine);
+
+		var levelLine = $"{ItemStyle.Broken.TQColor().ColorTag()}{Format(levelFormat, castLevel)}";
+		attributes.Add(levelLine);
 
 		// On a kill, the cast skill can appear at the slain enemy instead of the player: an area effect lands there.
 		if (skillRecord.GetString("Class", 0).Equals("Skill_PassiveOnTargetKilled", noCase)
@@ -328,6 +341,7 @@ public partial class ItemTextFormatter
 			&& TranslationService.TryTranslateXTag("tqvSkillCastOnTargetLocation", out var onTarget))
 			attributes.Add($"{text}{onTarget}");
 		this.GetAttributesFromRecord(itm, castRecord, true, castId, attributes, skillLevelIndex: castLevel - 1);
+		cast = (chanceLine, levelLine, attributes[^1], chance);
 		return this.GetSkillDescription(castRecord);
 	}
 

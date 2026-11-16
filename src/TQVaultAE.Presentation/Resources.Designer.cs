@@ -7941,5 +7941,23 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("BuffsSkillDuration", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On a health or energy potion, for {0} s.
+        /// </summary>
+        public static string BuffsPotionTrigger {
+            get {
+                return ResourceManager.GetString("BuffsPotionTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On a health or energy potion: {0}% chance, for {1} s.
+        /// </summary>
+        public static string BuffsPotionTriggerChance {
+            get {
+                return ResourceManager.GetString("BuffsPotionTriggerChance", resourceCulture);
+            }
+        }
     }
 }

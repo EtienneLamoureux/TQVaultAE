@@ -51,7 +51,12 @@ public partial class CharacterStatsService
 				sum.Add(modifier.Sum);
 
 			var group = skill.Role == SkillStatRole.Passive ? BuffGroup.Passive : BuffGroup.Active;
-			sources.Add(this.SkillSource("skill:", skill, group, sum));
+			var potionBuff = this.PotionBuffSource(skill);
+			// Potent Elixir adds nothing until a potion triggers its buff: only that buff is a source.
+			if (potionBuff is null || HasCharacterBonus(sum))
+				sources.Add(this.SkillSource("skill:", skill, group, sum));
+			if (potionBuff is not null)
+				sources.Add(potionBuff);
 		}
 
 		foreach (var skill in this.GrantedSkills(request.Equipment, request.UseAlternate))

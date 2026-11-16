@@ -176,6 +176,10 @@ public sealed partial class CharacterPanelViewBuilder
 			head.Add(string.Format(culture, Resources.BuffsLevel, source.Level));
 		if (source.OnEquip)
 			head.Add(Resources.BuffsOnEquip);
+		if (source.PotionTrigger is var (chance, duration))
+			head.Add(chance >= 100
+				? string.Format(culture, Resources.BuffsPotionTrigger, duration.ToString("0.##", culture))
+				: string.Format(culture, Resources.BuffsPotionTriggerChance, chance.ToString("0.##", culture), duration.ToString("0.##", culture)));
 
 		List<StatToolTipBlock> blocks = [new StatToolTipBlock(this.SourceName(source), head)];
 		if (this.Description(source) is { Count: > 0 } description)
@@ -205,7 +209,16 @@ public sealed partial class CharacterPanelViewBuilder
 				text = names.BaseAttributes.Concat(names.PrefixAttributes).Concat(names.SuffixAttributes);
 		}
 		else if (source.Group != BuffGroup.Gear && source.RecordId is { } id && this._editService?.DescribeSkill(id, Math.Max(1, source.Level)) is { } skill)
-			text = skill.Attributes;
+		{
+			// A skill that casts another (Blessing of Jin Chan on a kill): the skill window's "Level:   2" of the skill cast
+			// repeats the source's level, and "100.0% Chance of ..." says nothing; a lower chance stays, it tells how
+			// often. A passive whose buff a potion triggers shows that buff as a source of its own: its block goes.
+			var (chanceLine, levelLine, lastLine, chance) = skill.CastLines;
+			int first = chanceLine >= 0 ? chanceLine : levelLine;
+			text = source.Group == BuffGroup.Passive && levelLine >= 0
+				? skill.Attributes.Where((_, i) => i < first || i > lastLine)
+				: skill.Attributes.Where((_, i) => i != levelLine && (i != chanceLine || chance < 100));
+		}
 
 		// Plain text: the rollover writes every line in grey. Only what is not zero: a line whose numbers are all 0 says
 		// nothing. A variable the game has no text for gets ours when it tells the player something, else it is left out;

@@ -23,6 +23,9 @@ public enum SkillStatRole
 /// </summary>
 public static class SkillStatRules
 {
+	/// <summary>A skill that casts a buff on the character when a health or energy potion is used (Neidan).</summary>
+	public const string PotionTriggerClass = "Skill_PassiveOnItemUsedBuffSelf";
+
 	/// <summary>
 	/// The role of a skill from the class of its record and, for a skill that casts a buff (<c>buffSkillName</c>), the
 	/// class of that buff's record. What goes on monsters never counts: an attack's buff (Freezing Blast casts on what it
@@ -55,6 +58,11 @@ public static class SkillStatRules
 
 		if (recordClass.Equals("Skill_Modifier", StringComparison.OrdinalIgnoreCase))
 			return SkillStatRole.Modifier;
+
+		// The bonuses of its own record hold until a potion is used (Inner Equilibrium); the buff the potion triggers is
+		// another record (skillCastName).
+		if (recordClass.Equals(PotionTriggerClass, StringComparison.OrdinalIgnoreCase))
+			return SkillStatRole.Passive;
 
 		// Skill_BuffSelfToggled, Skill_BuffRadiusToggled, Skill_BuffSelfDuration, Skill_PassiveOnHitBuffSelf...; not the
 		// debuffs, which go on monsters.

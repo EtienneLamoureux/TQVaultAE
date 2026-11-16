@@ -142,4 +142,31 @@ public class ItemTextFormatterSkillWindowEffectsTests : ItemProviderTextTestBase
 
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).First().Should().Be("33.0% Chance to be Used");
 	}
+
+	[Fact]
+	public void SkillCast_MarksTheChanceAndLevelLinesOfTheSkillCast()
+	{
+		// Potent Elixir casts its buff on a potion: "100.0% Chance of Potent Elixir", "Level:   2", then the buff's effects.
+		this.Translations["tagElixir"] = "Potent Elixir";
+		this.CreateRecord("""records\test\elixirbuff.dbr""", "Skill_BuffSelfDuration", Str("skillDisplayName", "tagElixir"), Floats("defensivePoison", 4f, 8f));
+		this.CreateRecord(SkillId, "Skill_PassiveOnItemUsedBuffSelf", Str("skillDisplayName", "tagSkillTest"), Floats("skillCastChance", 100f, 100f),
+			Floats("skillCastLevel", 1f, 2f), Str("skillCastName", """records\test\elixirbuff.dbr"""));
+
+		var skill = this.Formatter.GetSkillAtLevel(SkillId, 2, SkillWindowContext.None)!;
+
+		var lines = skill.Attributes.Select(a => a.RemoveLeadingColorTag()).ToList();
+		var (chanceLine, levelLine, lastLine, chance) = skill.CastLines;
+		lines[chanceLine].Should().StartWith("100.0% Chance of").And.EndWith("Potent Elixir");
+		lines[levelLine].Should().Contain("2");
+		lines[lastLine].Should().Contain("Poison", "the cast block ends with the buff's effects");
+		chance.Should().Be(100);
+	}
+
+	[Fact]
+	public void SkillCast_None_NoLinesMarked()
+	{
+		this.CreateRecord(SkillId, "Skill_BuffSelfDuration", Str("skillDisplayName", "tagSkillTest"), Floats("defensivePoison", 4f, 8f));
+
+		this.Formatter.GetSkillAtLevel(SkillId, 1, SkillWindowContext.None)!.CastLines.Should().Be((-1, -1, -1, 0f));
+	}
 }

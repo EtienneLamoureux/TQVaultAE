@@ -120,6 +120,54 @@ public class BuffRolloverTests
 			"Reserves 55% of the energy");
 	}
 
+	[Theory]
+	[InlineData(100f, new[] { "8% Poison Resistance" })]
+	[InlineData(1.5f, new[] { "1.5% Chance of Elixir", "8% Poison Resistance" })]
+	public void BuffToolTip_SkillCastByAnother_NoLevelLine_TheChanceOnlyBelow100(float chance, string[] expected)
+	{
+		var skill = Source("skill:a", BuffGroup.Active, false, ("defensivePoison", 8));
+		this._sources = [skill];
+		this._edit.Setup(e => e.DescribeSkill(skill.RecordId!, 1, null)).Returns(new GrantedSkill(skill.RecordId!, "Elixir", 1, "1", null, null, [],
+			[$"{chance.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}% Chance of Elixir", "Level:   2", "8% Poison Resistance"])
+		{
+			CastLines = (0, 1, 2, chance),
+		});
+
+		var tip = this._builder.Build(Input()).Buffs.Sections.Single().Entries.Single().ToolTip;
+
+		tip.Blocks[1].Lines.Should().Equal(expected);
+	}
+
+	[Fact]
+	public void BuffToolTip_PassiveWhosePotionBuffIsASourceOfItsOwn_LeavesThatBlockOut()
+	{
+		// Inner Equilibrium: its own bonuses, then the maluses a potion casts, shown by the potion's source.
+		var skill = Source("skill:a", BuffGroup.Passive, true, ("characterRunSpeedModifier", 3));
+		this._sources = [skill];
+		this._edit.Setup(e => e.DescribeSkill(skill.RecordId!, 1, null)).Returns(new GrantedSkill(skill.RecordId!, "Inner Equilibrium", 1, "1", null, null, [],
+			["+3% Movement Speed", "100.0% Chance of Inner Equilibrium", "Level:   1", "-3% Movement Speed"])
+		{
+			CastLines = (1, 2, 3, 100),
+		});
+
+		var tip = this._builder.Build(Input()).Buffs.Sections.Single().Entries.Single().ToolTip;
+
+		tip.Blocks[1].Lines.Should().Equal("+3% Movement Speed");
+	}
+
+	[Theory]
+	[InlineData(100f, "On a health or energy potion, for 7 s")]
+	[InlineData(4.5f, "On a health or energy potion: 4.5% chance, for 30 s")]
+	public void BuffToolTip_BuffAPotionTriggers_SaysWhenAndHowLong(float chance, string expected)
+	{
+		var duration = chance >= 100 ? 7f : 30f;
+		this._sources = [Source("potion:a", BuffGroup.Active, false, ("defensivePoison", 8)) with { PotionTrigger = (chance, duration) }];
+
+		var tip = this._builder.Build(Input()).Buffs.Sections.Single().Entries.Single().ToolTip;
+
+		tip.Blocks[0].Lines.Should().Contain(expected);
+	}
+
 	[Fact]
 	public void BuffToolTip_ToggleAnItemCastsWhenWorn_SaysItIsAlwaysOn()
 	{

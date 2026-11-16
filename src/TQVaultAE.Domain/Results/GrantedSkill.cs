@@ -29,4 +29,12 @@ public sealed record GrantedSkill(
 	/// raised by Flush Out), which the skill window repeats at the next level even when they do not change there.
 	/// </summary>
 	public IReadOnlyList<int> ModifiedLines { get; init; } = [];
+
+	/// <summary>
+	/// For a skill that casts another one (<c>skillCastName</c>): indexes in <see cref="Attributes"/> of the line with the
+	/// chance and the name of the skill cast ("100.0% Chance of Potent Elixir"; -1 when the game writes none), of its
+	/// level ("Level:   2") and of the last line of its effects, and that chance in %. -1 and 0 for a skill that casts
+	/// none.
+	/// </summary>
+	public (int ChanceLine, int LevelLine, int LastLine, float Chance) CastLines { get; init; } = (-1, -1, -1, 0);
 }
