@@ -8445,5 +8445,68 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("BuffsDifficultyLine", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        public static string BuffsSourceRawLine {
+            get {
+                return ResourceManager.GetString("BuffsSourceRawLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sources: {0}.
+        /// </summary>
+        public static string BuffsSourcesOf {
+            get {
+                return ResourceManager.GetString("BuffsSourcesOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to duration.
+        /// </summary>
+        public static string BuffsDuration {
+            get {
+                return ResourceManager.GetString("BuffsDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cast by the item when worn: always on..
+        /// </summary>
+        public static string BuffsOnEquip {
+            get {
+                return ResourceManager.GetString("BuffsOnEquip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reserves {0}% of the energy.
+        /// </summary>
+        public static string BuffsEnergyReserve {
+            get {
+                return ResourceManager.GetString("BuffsEnergyReserve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Energy reserved.
+        /// </summary>
+        public static string BuffsEnergyReservedTitle {
+            get {
+                return ResourceManager.GetString("BuffsEnergyReservedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}% reserved: {1} energy, {2} usable.
+        /// </summary>
+        public static string BuffsEnergyReservedTotal {
+            get {
+                return ResourceManager.GetString("BuffsEnergyReservedTotal", resourceCulture);
+            }
+        }
     }
 }

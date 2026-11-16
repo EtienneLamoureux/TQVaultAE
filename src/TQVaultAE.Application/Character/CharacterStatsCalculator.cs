@@ -181,7 +181,7 @@ public static class CharacterStatsCalculator
 			AttackDamageToHealth = Round(all["offensiveLifeLeechMin"]),
 			PhysicalToElemental = 0,
 			DamageBonuses = Enum.GetValues<StatDamage>().Where(DamageFields.ContainsKey).ToDictionary(d => d, d => Damage(d, all)),
-			RaceBonuses = Enum.GetValues<StatRace>().ToDictionary(r => r, r => Race(r, all)),
+			RaceBonuses = Enum.GetValues<StatRace>().ToDictionary(r => r, r => RaceBonus(r, all)),
 			PetBonuses = PetBonuses(all),
 		};
 	}
@@ -210,6 +210,20 @@ public static class CharacterStatsCalculator
 	{
 		var (flat, elemental) = ResistanceFields[resistance];
 		return elemental ? [flat, flat + "Modifier", "defensiveElementalResistance"] : [flat, flat + "Modifier"];
+	}
+
+	/// <summary>
+	/// The variables a damage bonus of tab III reads: its damage %, its damage over time % and its duration %, each with
+	/// the total damage % (and the elemental % for fire, cold and lightning) when it has that part.
+	/// </summary>
+	public static (IReadOnlyList<string> Damage, IReadOnlyList<string> OverTime, IReadOnlyList<string> Duration) DamageVariables(StatDamage damage)
+	{
+		if (!DamageFields.TryGetValue(damage, out var fields))
+			return ([], [], []);
+
+		var (direct, overTime, duration, elemental) = fields;
+		string[] common = elemental ? ["offensiveTotalDamageModifier", "offensiveElementalModifier"] : ["offensiveTotalDamageModifier"];
+		return (direct is null ? [] : [direct, .. common], overTime is null ? [] : [overTime, .. common], duration is null ? [] : [duration]);
 	}
 
 	/// <summary>The difficulty penalty of a resistance, added to its flat sum.</summary>
@@ -306,9 +320,10 @@ public static class CharacterStatsCalculator
 			Round(Pet("offensivePhysicalAverage")), Round(Pet("offensiveElementalAverage")), Round(Pet("offensiveLifeAverage")));
 	}
 
-	/// <summary>The racial bonuses of every race name an icon stands for; the defense % capped as the game caps it.</summary>
-	private static RacialBonus Race(StatRace race, AttributeSum sum)
+	/// <summary>The racial bonuses of every race name an icon stands for.</summary>
+	public static RacialBonus RaceBonus(StatRace race, AttributeSum sum)
 	{
+		ArgumentNullException.ThrowIfNull(sum);
 		var bonus = default(RacialBonus);
 		foreach (var name in RaceNames[race])
 			if (sum.Races.TryGetValue(name, out var found))

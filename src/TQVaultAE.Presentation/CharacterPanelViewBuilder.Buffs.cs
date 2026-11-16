@@ -49,34 +49,53 @@ public sealed partial class CharacterPanelViewBuilder
 		/// A rollover with a block listing the sources of a value; a source that has none of <paramref name="variables"/>
 		/// shows when it changes the value (a strength bonus changes the damage).
 		/// </summary>
-		/// <param name="shown">The value as shown, from an evaluation.</param>
+		/// <param name="shown">The value as shown, from an evaluation; null for a plain sum, listed without effect.</param>
 		/// <param name="penalty">The difficulty penalty the value includes, listed last when not 0.</param>
-		public StatToolTip Append(StatToolTip tip, Func<Evaluation, double> shown, IReadOnlyList<string> variables, double penalty = 0)
+		/// <param name="title">The block's title; "Sources" by default.</param>
+		public StatToolTip Append(StatToolTip tip, Func<Evaluation, double>? shown, IReadOnlyList<string> variables, double penalty = 0, string? title = null)
 		{
 			var culture = CultureInfo.CurrentCulture;
-			var lines = new List<string>();
-			double value = shown(this.Total);
+			IReadOnlyList<string> last = penalty == 0 ? [] : [string.Format(culture, Resources.BuffsDifficultyLine, Signed(penalty, culture))];
+			return this.Append(tip, shown, sum => variables.Where(v => sum[v] != 0).Select(v => Raw(v, sum[v], culture)), title, last: last);
+		}
+
+		/// <summary>A rollover with a block listing the sources of a value, each source's raw part given by <paramref name="raw"/>.</summary>
+		/// <param name="first">Lines put before the sources (a total).</param>
+		/// <param name="last">Lines put after them (the difficulty penalty).</param>
+		public StatToolTip Append(StatToolTip tip, Func<Evaluation, double>? shown, Func<AttributeSum, IEnumerable<string>> raw, string? title = null,
+			IReadOnlyList<string>? first = null, IReadOnlyList<string>? last = null)
+		{
+			var culture = CultureInfo.CurrentCulture;
+			var lines = new List<string>(first ?? []);
+			double value = shown?.Invoke(this.Total) ?? 0;
 			foreach (var share in shares)
 			{
-				var raw = variables.Where(v => share.Source.Sum[v] != 0).Select(v => Raw(v, share.Source.Sum[v], culture)).ToList();
+				var parts = raw(share.Source.Sum).ToList();
+				if (shown is null)
+				{
+					if (parts.Count != 0)
+						lines.Add(string.Format(culture, Resources.BuffsSourceRawLine, share.Name, string.Join(" ", parts)));
+					continue;
+				}
+
 				double effect = value - shown(share.Without);
-				if (raw.Count == 0 && Math.Abs(effect) < 0.005)
+				if (parts.Count == 0 && Math.Abs(effect) < 0.005)
 					continue;
 
-				lines.Add(string.Format(culture, Resources.BuffsSourceLine, share.Name, string.Join(" ", raw), Signed(effect, culture)).Replace(":  (", ": (", StringComparison.Ordinal));
+				lines.Add(string.Format(culture, Resources.BuffsSourceLine, share.Name, string.Join(" ", parts), Signed(effect, culture))
+					.Replace(":  (", ": (", StringComparison.Ordinal));
 			}
 
-			if (penalty != 0)
-				lines.Add(string.Format(culture, Resources.BuffsDifficultyLine, Signed(penalty, culture)));
-
-			return lines.Count == 0 ? tip : new StatToolTip([.. tip.Blocks, new StatToolTipBlock(Resources.BuffsSourcesTitle, lines)]);
+			lines.AddRange(last ?? []);
+			return lines.Count == (first?.Count ?? 0) && (last?.Count ?? 0) == 0 ? tip
+				: new StatToolTip([.. tip.Blocks, new StatToolTipBlock(title ?? Resources.BuffsSourcesTitle, lines)]);
 		}
 
 		/// <summary>A variable's value, signed, with % for a modifier.</summary>
-		private static string Raw(string variable, double value, CultureInfo culture)
+		public static string Raw(string variable, double value, CultureInfo culture)
 			=> Signed(value, culture) + (variable.EndsWith("Modifier", StringComparison.OrdinalIgnoreCase) ? "%" : string.Empty);
 
-		private static string Signed(double value, CultureInfo culture)
+		public static string Signed(double value, CultureInfo culture)
 			=> (value > 0 ? "+" : string.Empty) + Math.Round(value, 2).ToString("0.##", culture);
 	}
 
@@ -155,6 +174,8 @@ public sealed partial class CharacterPanelViewBuilder
 		var head = new List<string> { on ? Resources.BuffsOn : Resources.BuffsOff };
 		if (source.Group is BuffGroup.Passive or BuffGroup.Active or BuffGroup.Pet && source.Item is null)
 			head.Add(string.Format(culture, Resources.BuffsLevel, source.Level));
+		if (source.OnEquip)
+			head.Add(Resources.BuffsOnEquip);
 
 		List<StatToolTipBlock> blocks = [new StatToolTipBlock(this.SourceName(source), head)];
 		if (this.Description(source) is { Count: > 0 } description)
@@ -186,9 +207,46 @@ public sealed partial class CharacterPanelViewBuilder
 		else if (source.Group != BuffGroup.Gear && source.RecordId is { } id && this._editService?.DescribeSkill(id, Math.Max(1, source.Level)) is { } skill)
 			text = skill.Attributes;
 
-		// Plain text: the rollover writes every line in grey. A variable the game has no text for ("?name?: 1.0") is left out.
-		lines = [.. text.Select(l => l.RemoveAllTQTags() ?? string.Empty).Where(l => !string.IsNullOrWhiteSpace(l) && !l.StartsWith('?'))];
+		// Plain text: the rollover writes every line in grey. Only what is not zero: a line whose numbers are all 0 says
+		// nothing. A variable the game has no text for ("?name?: 5") is written by its name; the energy reserve, which has
+		// none, gets its own line.
+		var culture = CultureInfo.CurrentCulture;
+		var reserve = source.Sum[EnergyReserve];
+		lines = [.. text
+			.Select(l => l.RemoveAllTQTags() ?? string.Empty)
+			.Where(l => !string.IsNullOrWhiteSpace(l) && !l.Contains(EnergyReserve, StringComparison.OrdinalIgnoreCase))
+			.Select(UnknownVariableLine)
+			.Where(HasNonZeroNumberOrNone),
+			.. reserve == 0 ? [] : new[] { string.Format(culture, Resources.BuffsEnergyReserve, Composition.Signed(reserve, culture).TrimStart('+')) }];
 		this._descriptions[source.Id] = lines;
 		return lines;
+	}
+
+	/// <summary>The variable the game reserves a part of the energy with (curses, Tartarus).</summary>
+	private const string EnergyReserve = "characterManaLimitReservePercentage";
+
+	/// <summary>"?potionCooldownIncrease?: 5.000000, 10.000000" as "potionCooldownIncrease: 5, 10".</summary>
+	private static string UnknownVariableLine(string line)
+	{
+		var match = UnknownVariableRegex().Match(line);
+		if (!match.Success)
+			return line;
+
+		var values = match.Groups["values"].Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+			.Select(v => double.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out var d) ? d.ToString("0.##", CultureInfo.CurrentCulture) : v);
+		return $"{match.Groups["name"].Value}: {string.Join(", ", values)}";
+	}
+
+	[System.Text.RegularExpressions.GeneratedRegex(@"^\?(?<name>[^?]+)\?:\s*(?<values>.*)$")]
+	private static partial System.Text.RegularExpressions.Regex UnknownVariableRegex();
+
+	[System.Text.RegularExpressions.GeneratedRegex(@"\d+(?:[.,]\d+)?")]
+	private static partial System.Text.RegularExpressions.Regex NumberRegex();
+
+	/// <summary>False for a line whose numbers are all 0 ("+0% Total Damage"); true for one without number.</summary>
+	private static bool HasNonZeroNumberOrNone(string line)
+	{
+		var numbers = NumberRegex().Matches(line);
+		return numbers.Count == 0 || numbers.Any(n => n.Value.Any(c => c is >= '1' and <= '9'));
 	}
 }

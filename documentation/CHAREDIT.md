@@ -75,8 +75,10 @@ Computed with the game's formulas from the attributes, equipped items, item sets
 
 ![Tab II](charedit/stats_tab2.png) ![Tab III](charedit/stats_tab3.png)
 
-Hover an icon or a value for its details, as in the game. Tabs I and II also list the **sources** of a value: per
-source its own bonus, then in parentheses what it changes in the value shown (the value without that source subtracted).
+Hover an icon or a value for its details, as in the game. The rollovers also list the **sources** of a value: per
+source its own bonus, then in parentheses what it changes in the value shown (the value without that source subtracted);
+plain sums (pet and race bonuses, durations) list the bonuses only. Hovering Energy also tells the energy reserved
+(temple curses, Tartarus) and by what.
 
 ![Statistics tool tip](charedit/stats_tooltip.png)
 
@@ -93,7 +95,7 @@ toggles are kept in memory only, never saved, back to their defaults for another
 |---|---|---|
 | Equipment | Each equipped item and item set with bonuses (text rows) | On |
 | Passive | Masteries, passive skills (a modifier with its skill), quest rewards, passive skills granted by items | On |
-| Active | Auras and buffs of the skills or granted by items | Off |
+| Active | Auras and buffs of the skills or granted by items | Off; on for a toggle an item casts when worn |
 | Pets | Auras a pet casts on the character | Off |
 | Curses | The 8 temple curses ("Heracles' way") | Saved ones on |
 | Shrines | World shrine buffs and quest blessings, the difficulty's variant | Off |

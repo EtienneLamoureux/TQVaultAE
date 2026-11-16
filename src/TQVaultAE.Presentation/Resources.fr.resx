@@ -2682,4 +2682,25 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="BuffsDifficultyLine" xml:space="preserve">
     <value>Difficulté : {0}</value>
   </data>
+  <data name="BuffsSourceRawLine" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="BuffsSourcesOf" xml:space="preserve">
+    <value>Sources : {0}</value>
+  </data>
+  <data name="BuffsDuration" xml:space="preserve">
+    <value>durée</value>
+  </data>
+  <data name="BuffsOnEquip" xml:space="preserve">
+    <value>Lancé par l'objet quand il est porté : toujours actif.</value>
+  </data>
+  <data name="BuffsEnergyReserve" xml:space="preserve">
+    <value>Réserve {0} % de l'énergie</value>
+  </data>
+  <data name="BuffsEnergyReservedTitle" xml:space="preserve">
+    <value>Énergie réservée</value>
+  </data>
+  <data name="BuffsEnergyReservedTotal" xml:space="preserve">
+    <value>{0} % réservés : {1} d'énergie, {2} utilisables</value>
+  </data>
 </root>

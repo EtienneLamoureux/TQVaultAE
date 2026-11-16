@@ -311,8 +311,19 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			// Health and energy show "current / maximum", full outside the game.
 			var shown = index is CharacterPanelInput.Health or CharacterPanelInput.Energy ? $"{total} / {total}" : total.ToString(culture);
 			var tip = string.Format(culture, input.Editable ? Resources.CEAttributeToolTip : Resources.CEAttributeBaseToolTip, value, total - value);
-			return new CharacterAttributeView(Game(tag, label), shown, color,
-				composition.Append(StatToolTip.Sentence(tip), e => Total(e.Bonuses), [field, field + "Modifier"]));
+			var toolTip = composition.Append(StatToolTip.Sentence(tip), e => Total(e.Bonuses), [field, field + "Modifier"]);
+
+			// The energy some sources reserve (curses, Tartarus): the part of the energy that cannot be used, and who
+			// reserves it.
+			if (index == CharacterPanelInput.Energy && bonuses[EnergyReserve] is var reserve and not 0)
+			{
+				var percent = Composition.Signed(reserve, culture).TrimStart('+');
+				var amount = (int)Math.Round(total * Math.Clamp(reserve, 0, 100) / 100);
+				toolTip = composition.Append(toolTip, null, sum => sum[EnergyReserve] is var r and not 0 ? [Composition.Signed(r, culture).TrimStart('+') + "%"] : [],
+					Resources.BuffsEnergyReservedTitle, first: [string.Format(culture, Resources.BuffsEnergyReservedTotal, percent, amount, total - amount)]);
+			}
+
+			return new CharacterAttributeView(Game(tag, label), shown, color, toolTip);
 		}
 
 		var points = input.AttributePoints;
@@ -455,6 +466,27 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				yield return CharacterPanelLayout.FormatGameText(Game(kind.Tag, kind.Fallback).Replace("{%+.0f0}%", "{%.0f0}", StringComparison.Ordinal), kind.Flat);
 		}
 
+		// The sources of a damage bonus: one block for the damage %, one for the damage over time %, one for its duration %
+		// (a plain sum); life leech adds energy leech's.
+		string Of(string part) => string.Format(culture, Resources.BuffsSourcesOf, part);
+		StatToolTip DamageSources(StatToolTip tip, StatDamage damage, string name, string overName)
+		{
+			var (direct, overTime, duration) = CharacterStatsCalculator.DamageVariables(damage);
+			if (direct.Count != 0)
+				tip = composition.Append(tip, e => e.Stats.DamageBonuses[damage].Damage, direct, title: Of(name));
+			if (overTime.Count != 0)
+				tip = composition.Append(tip, e => e.Stats.DamageBonuses[damage].DurationDamage, overTime, title: Of(overName));
+			if (duration.Count != 0)
+				tip = composition.Append(tip, null, duration, title: Of($"{overName} ({Resources.BuffsDuration})"));
+			if (damage == StatDamage.LifeLeech)
+			{
+				var mana = Game("DamageDurationManaLeach", "Energy Leech");
+				tip = DamageSources(tip, StatDamage.ManaLeech, mana, mana);
+			}
+
+			return tip;
+		}
+
 		return new CharacterStatsView
 		{
 			DefenseTitle = Game("tagCDefense", "Defense"),
@@ -496,7 +528,13 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			{
 				var name = Game(d.Tag, d.Damage.ToString());
 				if (d.Damage == StatDamage.Pet)
-					return new StatIconView(d.Icon, string.Empty, new StatToolTip([new StatToolTipBlock(name, [.. PetLines(stats.PetBonuses)])]));
+				{
+					// The pet bonuses are plain sums: each source with its own values.
+					string[] petVariables = [.. new[] { "offensivePhysicalModifier", "offensiveElementalModifier", "offensiveLifeModifier",
+						"offensivePhysicalAverage", "offensiveElementalAverage", "offensiveLifeAverage" }.Select(v => AttributeSum.PetBonusPrefix + v)];
+					return new StatIconView(d.Icon, string.Empty, composition.Append(
+						new StatToolTip([new StatToolTipBlock(name, [.. PetLines(stats.PetBonuses)])]), null, petVariables));
+				}
 
 				var blocks = DamageBlocks(d.Damage, d.DamageTag, d.DurationDamageTag, name);
 
@@ -504,11 +542,13 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				if (d.Damage == StatDamage.LifeLeech)
 					blocks.AddRange(DamageBlocks(StatDamage.ManaLeech, null, "DamageDurationModifierManaLeach", Game("DamageDurationManaLeach", "Energy Leech")));
 
-				return new StatIconView(d.Icon, string.Empty, new StatToolTip(blocks.Count == 0 ? [new StatToolTipBlock(name, [])] : blocks));
+				var tip = new StatToolTip(blocks.Count == 0 ? [new StatToolTipBlock(name, [])] : blocks);
+				return new StatIconView(d.Icon, string.Empty, DamageSources(tip, d.Damage, name, d.DurationDamageTag is { } over && d.DamageTag is not null
+					? Game(over.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal), name) : name));
 			})],
 			Tab3Rows =
 			[
-				Row("x4tagCADctH", "Weapon Damage as Health", Percent(stats.AttackDamageToHealth)),
+				Sourced("x4tagCADctH", "Weapon Damage as Health", Percent(stats.AttackDamageToHealth), e => e.Stats.AttackDamageToHealth, ["offensiveLifeLeechMin"]),
 				Row("x4tagCEleConversion", "Weapon Base as Elemental", Percent(stats.PhysicalToElemental)),
 			],
 			RaceTitle = Game("x4tagCMonsterStats", "Monster Race Bonuses"),
@@ -516,15 +556,27 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			{
 				var (icon, tag, fallback) = RaceIcons[(int)r];
 				var name = Game(tag, fallback);
-				var bonus = stats.RaceBonuses[r];
 				string Line(string lineTag, string lineFallback, double value)
 					=> CharacterPanelLayout.FormatGameText(Game(lineTag, lineFallback), (long)Math.Round(value), name);
-				return new StatIconView(icon, string.Empty, new StatToolTip([new StatToolTipBlock(name,
+				IEnumerable<string> Lines(RacialBonus bonus) =>
 				[
 					Line("RacialBonusPercentDamage", "{%+.0f0}% Damage to {%s1}", bonus.PercentDamage),
 					Line("RacialBonusAbsoluteDamage", "{%+.0f0} Damage to {%s1}", bonus.AbsoluteDamage),
 					Line("RacialBonusPercentDefense", "{%+.0f0}% Less Damage from {%s1}", bonus.PercentDefense),
-				])]));
+				];
+
+				// Plain sums too: each source with its non-zero lines.
+				var tip = new StatToolTip([new StatToolTipBlock(name, [.. Lines(stats.RaceBonuses[r])])]);
+				return new StatIconView(icon, string.Empty, composition.Append(tip, null, sum =>
+				{
+					var bonus = CharacterStatsCalculator.RaceBonus(r, sum);
+					return bonus == default ? [] : [string.Join(", ", Lines(bonus).Where((_, i) => i switch
+					{
+						0 => bonus.PercentDamage != 0,
+						1 => bonus.AbsoluteDamage != 0,
+						_ => bonus.PercentDefense != 0,
+					}))];
+				}));
 			})],
 		};
 	}
