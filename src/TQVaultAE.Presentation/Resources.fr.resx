@@ -2628,9 +2628,6 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="ItemNoRoom" xml:space="preserve">
     <value>Pas la place ici pour la taille de cet objet, lu avec la carte de son conteneur.</value>
   </data>
-  <data name="BuffsTab" xml:space="preserve">
-    <value>Effets</value>
-  </data>
   <data name="BuffsGear" xml:space="preserve">
     <value>Équipement</value>
   </data>

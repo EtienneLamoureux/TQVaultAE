@@ -7691,15 +7691,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Buffs.
-        /// </summary>
-        public static string BuffsTab {
-            get {
-                return ResourceManager.GetString("BuffsTab", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Equipment.
         /// </summary>
         public static string BuffsGear {

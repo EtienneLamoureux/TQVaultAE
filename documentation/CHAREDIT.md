@@ -71,7 +71,7 @@ Computed with the game's formulas from the attributes, equipped items, item sets
 | I | Attributes, combined armor, main resistances, average damage, attack speed, DPS |
 | II | Secondary resistances, offensive and defensive ability, chances to dodge, to avoid projectiles and to block, regeneration, energy cost and recharge reduction, casting and movement speed |
 | III | Damage and duration bonuses, monster race bonuses, play statistics |
-| Buffs | Every source of bonuses or maluses, each toggled on its own (see below) |
+| IV | Every source of bonuses or maluses, each toggled on its own (see below) |
 
 ![Tab II](charedit/stats_tab2.png) ![Tab III](charedit/stats_tab3.png)
 
@@ -84,12 +84,12 @@ plain sums (pet and race bonuses, durations) list the bonuses only. Hovering Ene
 
 Option under the statistics: **Difficulty**, the difficulty played; Epic and Legendary lower the resistances.
 
-### Buffs tab
+### Tab IV: buffs
 
 One section per kind of source; a click turns a source on or off (greyed when off) and the statistics follow. The
 toggles are kept in memory only, never saved, back to their defaults for another character.
 
-![Buffs tab](charedit/stats_buffs.png)
+![Tab IV](charedit/stats_buffs.png)
 
 | Section | Sources | At the start |
 |---|---|---|

@@ -2800,9 +2800,6 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="ItemNoRoom" xml:space="preserve">
     <value>No room here for this item's size, read with its container's map.</value>
   </data>
-  <data name="BuffsTab" xml:space="preserve">
-    <value>Buffs</value>
-  </data>
   <data name="BuffsGear" xml:space="preserve">
     <value>Equipment</value>
   </data>

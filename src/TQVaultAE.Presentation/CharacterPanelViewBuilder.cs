@@ -362,7 +362,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				(Game("tagCTime", "Elapsed Time"), CharacterPanelLayout.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
 				(Game("tagCDeaths", "Total Deaths"), info.NumberOfDeaths.ToString("N0", culture)),
 			],
-			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III"), Resources.BuffsTab],
+			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III"), "IV"],
 			Money = info.Money.ToString("N0", culture),
 			Electrum = info.Electrum?.ToString("N0", culture) ?? string.Empty,
 		};

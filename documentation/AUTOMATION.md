@@ -649,7 +649,7 @@ General rules:
   - Right: a frame drawn like the game's skill window (`EditorTabs`, pages chosen with `select_tab`), one page per
     mastery slot: `SkillsMasteryNComboBox`, `SkillsMasteryNLevelUpDown`, and the skill pane `SkillsMasteryNPane`
     (N = 1, 2), read and clicked with `skill_panel` / `skill_panel_click`.
-- **`character_panel(tab?, capture?)`**: reads the character editor's statistics panel on tab 1, 2, 3 or 4 (Buffs).
+- **`character_panel(tab?, capture?)`**: reads the character editor's statistics panel on tab 1, 2, 3 or 4 (IV, buffs).
   - `stats`: name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the `+`
     buttons and Undo show, tab III statistics, gold and Electrum; `Stats`, the values computed like the game (combined
     armor, the 16 resistances, tab II rows, tab III damage and race bonuses with their tool tips).
