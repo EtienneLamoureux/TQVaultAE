@@ -22,6 +22,23 @@ public class PlayerInfoTests
 		_playerInfo = new PlayerInfo(_mockPathIO.Object);
 	}
 
+	#region Class
+
+	[Fact]
+	public void ClassTag_TheSavesClass_ElseTheOneTheMasteriesMake()
+	{
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Warfare\WarfareMastery.dbr""", skillLevel = 40 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Xpack4\Skills\Neidan\NeidanMastery.dbr""", skillLevel = 40 });
+
+		_playerInfo.Class = "tagCClass08";
+		_playerInfo.ClassTag.Should().Be("tagCClass08");
+
+		_playerInfo.Class = string.Empty;
+		_playerInfo.ClassTag.Should().Be("x4tagNeidanWarfare", "a change of masteries clears the save's class until the game sets it again");
+	}
+
+	#endregion
+
 	#region Stat Calculation Tests
 
 	/// <summary>The sums of the statistics panel with the given variables.</summary>

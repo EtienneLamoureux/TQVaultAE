@@ -142,8 +142,8 @@ public class PlayerService(
 		// The character's own map, the one rule for any of its data: its linked mod when installed, else the base game.
 		using (this.GameMapService.ReadWith(save))
 		{
-			string className = info.Class is { } tag ? this.TranslationService.TranslateXTag(tag, true, true) : string.Empty;
-			save.ClassLabel = info.Class is null ? null : (info.Class, className);
+			string className = info.ClassTag is { } tag ? this.TranslationService.TranslateXTag(tag, true, true) : string.Empty;
+			save.ClassLabel = info.ClassTag is { } classTag ? (classTag, className) : null;
 			return new CharacterLabels(className, CharacterLabels.JoinMasteryNames(this.CharacterEditService.GetMasteries(info), this.TranslationService));
 		}
 	}

@@ -111,14 +111,10 @@ public class TranslationService : ITranslationService
 
 	public string TranslateMastery(string characterXtagClass)
 	{
-		var tags = Resources.ResourceManager.GetString($"Masteries{characterXtagClass}", CultureInfo.CurrentUICulture);
-		if (string.IsNullOrEmpty(tags))
-			return TranslateXTag(characterXtagClass);
-
-		var dualclass = tags.Split('-');
-		return dualclass.Length > 1
-			? $"{TranslateXTag(dualclass.First())}-{TranslateXTag(dualclass.Last())}"
-			: TranslateXTag(dualclass.First());
+		var masteries = CharacterClasses.MasteriesOf(characterXtagClass);
+		return masteries.Count == 0
+			? TranslateXTag(characterXtagClass)
+			: string.Join("-", masteries.Select(m => TranslateXTag(CharacterClasses.BriefTag(m))));
 	}
 
 	public string ItemIT => Resources.ItemIT;

@@ -116,7 +116,7 @@ Choose the mastery and its level with the two boxes at the top right, or with th
 - A new mastery starts at level 1, so it needs one free skill point. The other page's mastery is refused.
 - Changing or removing a mastery gives back all its points.
 - Lowering the mastery level resets the skills of the tiers it closes.
-- Changing the masteries clears the class name; the game sets it again.
+- Changing the masteries clears the class saved; the game sets it again. Until then the class shown is the one the masteries make.
 
 | Click on a skill | Effect |
 |---|---|

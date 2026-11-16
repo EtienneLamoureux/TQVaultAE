@@ -33,8 +33,8 @@ public static class PlayerInfoText
 	/// <returns>The lines keyed by label. The Electrum line is left out when the save has no Electrum.</returns>
 	public static IReadOnlyDictionary<string, string> BuildLines(PlayerInfo info, ITranslationService translations)
 	{
-		var pclass = translations.TranslateXTag(info.Class ?? string.Empty, true, true) ?? string.Empty;
-		var mclass = translations.TranslateMastery(info.Class ?? string.Empty) ?? string.Empty;
+		var pclass = translations.TranslateXTag(info.ClassTag ?? string.Empty, true, true) ?? string.Empty;
+		var mclass = translations.TranslateMastery(info.ClassTag ?? string.Empty) ?? string.Empty;
 		// No mastery found: the translation falls back to the label itself, shown as nothing.
 		mclass = mclass == Resources.Masteries ? string.Empty : mclass;
 

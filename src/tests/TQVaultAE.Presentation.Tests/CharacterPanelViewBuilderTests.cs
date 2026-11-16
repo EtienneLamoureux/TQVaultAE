@@ -4,6 +4,7 @@ using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
 
@@ -34,7 +35,8 @@ public class CharacterPanelViewBuilderTests
 		this._builder = new CharacterPanelViewBuilder(this._stats.Object, this._translation.Object);
 	}
 
-	private static CharacterPanelInput Input(int level = 30, long xp = 1000, int points = 0, bool editable = true, bool canUndo = false, bool classCleared = false)
+	private static CharacterPanelInput Input(int level = 30, long xp = 1000, int points = 0, bool editable = true, bool canUndo = false, bool classCleared = false,
+		IReadOnlyList<MasteryTree>? trees = null)
 	{
 		var info = new PlayerInfo(new PathIO()) { CurrentLevel = 12, Class = "tagCClassName001" };
 		return new CharacterPanelInput
@@ -46,7 +48,7 @@ public class CharacterPanelViewBuilderTests
 			Level = level,
 			Xp = xp,
 			Skills = [],
-			Trees = [],
+			Trees = trees ?? [],
 			Augments = [],
 			Editable = editable,
 			CanUndo = canUndo,
@@ -98,12 +100,14 @@ public class CharacterPanelViewBuilderTests
 	}
 
 	[Fact]
-	public void Build_MasteriesChanged_ShowsNoClass()
+	public void Build_MasteriesChanged_ShowsTheClassTheNewMasteriesMake()
 	{
 		this._translation.Setup(t => t.TranslateXTag("tagCClassName001", true, true)).Returns("Warrior");
+		this._translation.Setup(t => t.TranslateXTag("x4tagNeidanWarfare", true, true)).Returns("Daoist");
+		MasteryTree Tree(Masteries mastery) => new(mastery, """records\mastery.dbr""".ToRecordId(), "", "", "", 40, []);
 
 		this._builder.Build(Input()).ClassName.Should().Be("Warrior");
-		this._builder.Build(Input(classCleared: true)).ClassName.Should().BeEmpty();
+		this._builder.Build(Input(classCleared: true, trees: [Tree(Masteries.Warfare), Tree(Masteries.Neidan)])).ClassName.Should().Be("Daoist");
 	}
 
 	[Fact]

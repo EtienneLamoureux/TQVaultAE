@@ -69,7 +69,7 @@ public sealed record CharacterPanelInput
 	/// <summary>Which buff sources count: the Buffs tab's toggles, kept by the panel's owner for the character shown.</summary>
 	public BuffSelection Buffs { get; init; } = new();
 
-	/// <summary>True when the masteries changed: the class no longer applies.</summary>
+	/// <summary>True when the masteries changed: the class is the one <see cref="Trees"/> make, not the save's.</summary>
 	public bool ClassCleared { get; init; }
 
 	/// <summary>True when the attributes can be changed in the panel: "+" buttons while points are left, and their tool tip.</summary>
@@ -330,9 +330,9 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		return new CharacterPanelView
 		{
 			Name = input.Player.PlayerName,
-			// The class goes with the masteries: a change of masteries clears it when it is applied, as the game sets it again.
-			ClassName = input.ClassCleared ? string.Empty
-				: this._translation.TranslateXTag(info.Class ?? string.Empty, true, true) ?? string.Empty,
+			// The class goes with the masteries: after a change, the one the new masteries make.
+			ClassName = this._translation.TranslateXTag(
+				(input.ClassCleared ? CharacterClasses.TagOf(input.Trees.Select(t => t.Mastery)) : info.ClassTag) ?? string.Empty, true, true) ?? string.Empty,
 			LevelText = CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), input.Level),
 			XpText = CharacterPanelLayout.FormatGameText(Game("xtagCXP", "XP : {%t0}"), input.Xp),
 			AttributesTitle = Game("tagCAttributes", Resources.CEAttributes),
