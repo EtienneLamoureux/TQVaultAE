@@ -76,6 +76,31 @@ public enum LoadoutSwapOutcome
 	Refused,
 }
 
+/// <summary>How emptying a loadout into a bag ended.</summary>
+public enum LoadoutEmptyOutcome
+{
+	/// <summary>The pieces are in the bag; the loadout is empty.</summary>
+	Emptied,
+
+	/// <summary>The loadout holds no piece: nothing changed.</summary>
+	NothingToEmpty,
+
+	/// <summary>The bag lacks room for every piece (or does not take one of them): nothing changed.</summary>
+	NoRoom,
+
+	/// <summary>No such loadout, a file that could not be read, or a bag that cannot change: nothing changed.</summary>
+	Refused,
+}
+
+/// <summary>Outcome of emptying a loadout (<see cref="Contracts.Services.ILoadoutService.Empty"/>).</summary>
+/// <param name="Outcome">How it ended.</param>
+/// <param name="Pieces">Pieces moved to the bag (or that would have been, for <see cref="LoadoutEmptyOutcome.NoRoom"/>).</param>
+public sealed record LoadoutEmptyResult(LoadoutEmptyOutcome Outcome, int Pieces = 0)
+{
+	/// <summary>The pieces now in the bag.</summary>
+	public IReadOnlyList<Domain.Entities.Item> Moved { get; init; } = [];
+}
+
 /// <summary>Outcome of a gear swap (<see cref="Contracts.Services.ILoadoutService.Swap"/>).</summary>
 /// <param name="Outcome">How it ended.</param>
 /// <param name="PutOn">Loadout pieces now worn.</param>

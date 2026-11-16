@@ -33,6 +33,15 @@ public enum LoadoutBarAction
 
 	/// <summary>Gear swap: the selected loadout's pieces and the worn ones change places (menu).</summary>
 	Swap,
+
+	/// <summary>Empty loadout: its pieces move to the character's inventory (menu).</summary>
+	EmptyToInventory,
+
+	/// <summary>Empty loadout: its pieces move to the stash (menu).</summary>
+	EmptyToStash,
+
+	/// <summary>Empty loadout: its pieces move to the bag of the vault shown (menu).</summary>
+	EmptyToVault,
 }
 
 /// <summary>An action of the loadout bar, on the loadout it names.</summary>
@@ -102,11 +111,7 @@ public sealed class LoadoutBar : Control
 			if (e.ClickedItem?.Tag is string name)
 				this.Raise(LoadoutBarAction.Select, name);
 		};
-		this.ActionMenu.ItemClicked += (_, e) =>
-		{
-			if (e.ClickedItem?.Tag is LoadoutBarAction action)
-				this.Raise(action, action == LoadoutBarAction.Add ? null : this.Selected);
-		};
+		this.ActionMenu.ItemClicked += this.ActionClicked;
 		this.ActionMenu.FillOnOpening(this.FillActionMenu);
 		this.ListMenu.FillOnOpening(this.FillListMenu);
 		this.ContextMenuStrip = this.ActionMenu;
@@ -131,8 +136,8 @@ public sealed class LoadoutBar : Control
 	public bool CanChange { get; private set; }
 
 	/// <summary>
-	/// Why the equipment cannot change (the PlayerReadonly setting), or null: Load is then greyed and its tool tip says
-	/// why; the loadouts can still be added, updated, renamed, copied and deleted.
+	/// Why the equipment cannot change (the PlayerReadonly setting), or null: Load, Gear swap and Empty to inventory are
+	/// then greyed and their tool tip says why; the loadouts can still be added, updated, renamed, copied and deleted.
 	/// </summary>
 	public string? LoadLocked { get; private set; }
 
@@ -216,7 +221,7 @@ public sealed class LoadoutBar : Control
 	{
 		LoadoutBarAction.Select => this.Names.Count > 0,
 		LoadoutBarAction.Add => this.CanChange,
-		LoadoutBarAction.Load or LoadoutBarAction.Swap => this.CanChange && this.Selected is not null && this.LoadLocked is null,
+		LoadoutBarAction.Load or LoadoutBarAction.Swap or LoadoutBarAction.EmptyToInventory => this.CanChange && this.Selected is not null && this.LoadLocked is null,
 		_ => this.CanChange && this.Selected is not null,
 	};
 
@@ -226,14 +231,23 @@ public sealed class LoadoutBar : Control
 
 	/// <summary>
 	/// Why an action is greyed, for its tool tip, or null when the bar offers it: a read-only character, then the
-	/// PlayerReadonly setting for Load and Gear swap.
+	/// PlayerReadonly setting for Load, Gear swap and Empty to inventory.
 	/// </summary>
 	/// <param name="action">The action.</param>
 	internal string? LockedReason(LoadoutBarAction action)
 		=> this.CanAct(action) ? null
 		: !this.CanChange ? Resources.LoadoutReadOnly
-		: action is LoadoutBarAction.Load or LoadoutBarAction.Swap && this.LoadLocked is { } locked ? locked
+		: this.LoadLocked is null ? null
+		: action is LoadoutBarAction.EmptyToInventory ? string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutInventoryLocked, Resources.SettingsPlayerReadonly)
+		: action is LoadoutBarAction.Load or LoadoutBarAction.Swap ? this.LoadLocked
 		: null;
+
+	/// <summary>An entry of the action menu or of its Empty loadout submenu: the action it carries.</summary>
+	private void ActionClicked(object? sender, ToolStripItemClickedEventArgs e)
+	{
+		if (e.ClickedItem?.Tag is LoadoutBarAction action)
+			this.Raise(action, action == LoadoutBarAction.Add ? null : this.Selected);
+	}
 
 	private void Raise(LoadoutBarAction action, string? name)
 	{
@@ -270,10 +284,31 @@ public sealed class LoadoutBar : Control
 		ToolStripMenuItem Entry(string text, LoadoutBarAction action)
 			=> new(text) { Tag = action, Enabled = this.CanAct(action) };
 
+		// A greyed target says why (the PlayerReadonly setting for the inventory).
+		ToolStripMenuItem Target(string text, LoadoutBarAction action)
+		{
+			var entry = Entry(text, action);
+			entry.ToolTipText = this.LockedReason(action);
+			return entry;
+		}
+
+		var empty = new ToolStripMenuItem(Resources.LoadoutEmpty);
+		empty.DropDown.Font = this.ActionMenu.Font;
+		CustomProfessionalRenderer.Apply(empty.DropDown);
+		empty.DropDownItems.AddRange(
+		[
+			Target(Resources.LoadoutEmptyToInventory, LoadoutBarAction.EmptyToInventory),
+			Target(Resources.LoadoutEmptyToStash, LoadoutBarAction.EmptyToStash),
+			Target(Resources.LoadoutEmptyToVault, LoadoutBarAction.EmptyToVault),
+		]);
+		empty.DropDownItemClicked += this.ActionClicked;
+		empty.Enabled = empty.DropDownItems.OfType<ToolStripMenuItem>().Any(entry => entry.Enabled);
+
 		this.ActionMenu.Items.AddRange(
 		[
 			Entry(Resources.LoadoutLoad, LoadoutBarAction.Load),
 			Entry(Resources.LoadoutSwap, LoadoutBarAction.Swap),
+			empty,
 			Entry(Resources.LoadoutUpdate, LoadoutBarAction.Update),
 			Entry(Resources.LoadoutRename, LoadoutBarAction.Rename),
 			Entry(Resources.LoadoutCopy, LoadoutBarAction.Copy),

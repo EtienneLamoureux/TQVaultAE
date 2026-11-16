@@ -14,8 +14,8 @@ On the **Equipment** tab, under the character statistics (the **Edit** button go
   [loadout panel](#composing-a-loadout) or with **Update with the gear worn now**.
 - The gold arrow (**Load**) wears the chosen loadout. Grey with nothing to load, for a read-only character, or with the
   setting **Player Equipment ReadOnly** (its tool tip says why).
-- Right click: **Load**, **Gear swap**, **Update with the gear worn now** ([below](#update), asks first), **Rename**,
-  **Copy**, **Delete** (asks first), **Add**.
+- Right click: **Load**, **Gear swap**, **Empty loadout** ([below](#empty-loadout)), **Update with the gear worn now**
+  ([below](#update), asks first), **Rename**, **Copy**, **Delete** (asks first), **Add**.
 
 ## Composing a loadout
 
@@ -83,6 +83,17 @@ sword. Use **Gear swap** to move pieces instead.
 - Nothing is copied, stored or deleted; no vault needed. Empty slots exchange too. The weapon set in hand follows.
 - **Gear swap** again swaps back.
 - Refused like **Load** (read-only character, **Player Equipment ReadOnly**); asks first while the game runs.
+
+## Empty loadout
+
+**Empty loadout** (bar menu) moves the loadout's pieces out, none copied; the loadout stays, empty:
+
+- **To inventory**: the character's main bag. Greyed with **Player Equipment ReadOnly**.
+- **To stash**: the stash a *Move to the stash* finds (the **Transfer Area** while the equipment shows).
+- **To vault**: the bag of the vault shown.
+
+Without room for every piece, nothing changes (status line). Refused for a read-only character or bag. Saved like a
+move by hand: **Save**, or on closing.
 
 ## Good to know
 

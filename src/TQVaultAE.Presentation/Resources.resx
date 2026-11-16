@@ -2853,6 +2853,45 @@ The slots empty on the character keep the loadout's pieces.</value>
 	<data name="LoadoutEquipmentLocked" xml:space="preserve">
     <value>The setting "{0}" is on: the equipment cannot change.</value>
   </data>
+	<data name="LoadoutEmpty" xml:space="preserve">
+    <value>Empty loadout</value>
+  </data>
+	<data name="LoadoutEmptyToInventory" xml:space="preserve">
+    <value>To inventory</value>
+  </data>
+	<data name="LoadoutEmptyToStash" xml:space="preserve">
+    <value>To stash</value>
+  </data>
+	<data name="LoadoutEmptyToVault" xml:space="preserve">
+    <value>To vault</value>
+  </data>
+	<data name="LoadoutBagOf" xml:space="preserve">
+    <value>bag {0} of {1}</value>
+  </data>
+	<data name="LoadoutInventoryOf" xml:space="preserve">
+    <value>the inventory of {0}</value>
+  </data>
+	<data name="LoadoutInventoryLocked" xml:space="preserve">
+    <value>The setting "{0}" is on: the inventory cannot change.</value>
+  </data>
+	<data name="LoadoutNoStash" xml:space="preserve">
+    <value>No stash to receive the loadout's pieces.</value>
+  </data>
+	<data name="LoadoutNoVaultForPieces" xml:space="preserve">
+    <value>Show a vault to receive the loadout's pieces.</value>
+  </data>
+	<data name="LoadoutEmptyNothing" xml:space="preserve">
+    <value>The loadout "{0}" is already empty.</value>
+  </data>
+	<data name="LoadoutEmptyNoRoom" xml:space="preserve">
+    <value>Not enough room in {0} for the {1} piece(s) of the loadout: nothing was changed.</value>
+  </data>
+	<data name="LoadoutEmptyRefused" xml:space="preserve">
+    <value>Nothing was moved: {0} is read-only.</value>
+  </data>
+	<data name="LoadoutEmptied" xml:space="preserve">
+    <value>Loadout "{0}" emptied: {1} piece(s) moved to {2}.</value>
+  </data>
 	<data name="SettingsLoadoutReplaceWorn" xml:space="preserve">
     <value>Replace the worn pieces instead of storing them in the vault</value>
   </data>

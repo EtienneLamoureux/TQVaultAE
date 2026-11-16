@@ -333,13 +333,19 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	/// <summary>
 	/// Gets the stash of the selected bag, null for the equipment.
 	/// </summary>
-	internal Stash? ShownStash => this.currentBag switch
+	internal Stash? ShownStash => this.StashOf(this.currentBag);
+
+	/// <summary>The stash of a bag (a <c>BAGID_*</c> constant), shown or not; null for the equipment or a stash not loaded.</summary>
+	internal Stash? StashOf(int bagId) => bagId switch
 	{
 		BagIdConstants.BAGID_PLAYERSTASH => this.stash,
 		BagIdConstants.BAGID_TRANSFERSTASH => this.transferStash,
 		BagIdConstants.BAGID_RELICVAULTSTASH => this.relicVaultStash,
 		_ => null,
 	};
+
+	/// <summary>The tab name of a bag (a <c>BAGID_*</c> constant).</summary>
+	internal static string BagName(int bagId) => buttonNames[bagId];
 
 	/// <summary>
 	/// Gets or sets the transfer stash instance

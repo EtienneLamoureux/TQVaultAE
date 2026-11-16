@@ -902,7 +902,7 @@ Every forge tool returns the forge state, with the `newMessages` and, in Debug b
 The loadout bar, the loadout panel and the marks (see `documentation/LOADOUTS.md`). Bounds are in the stash panel's
 pixels unless noted.
 
-`loadouts(action?, name?, newName?, menu?, gameRunning?, realGame?, slot?)` reads:
+`loadouts(action?, name?, newName?, menu?, to?, gameRunning?, realGame?, slot?)` reads:
 
 - `bar`: `bounds`, `field`, `add`, `load`, `names`, `selected`, `canChange`, `loadLocked` (why Load is greyed), font.
 - `layout`: `statsPanel`, `editButton` (visibility, font), `stashClient`.
@@ -911,7 +911,7 @@ pixels unless noted.
 - `marks`: `slot`, `match` (`Same`, `Different`, `OneEmpty`), `canCompare`, `bounds` (equipment panel pixels).
 - `panel` (the loadout panel): `visible`, `bounds`, `loadout`, `panelBounds`, `cellScaleFactor`, `unitSize`, the
   `back`, `previous`, `next` and `swap` buttons (view pixels), `canTurn`, `canSwap`, `swapLocked` (the greyed button's tool tip), `statsPanelVisible`, `slots`.
-- `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu.
+- `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu (a submenu's `items`, with `tip`).
 
 `action`, through the bar's and panel's own handlers:
 
@@ -920,6 +920,7 @@ pixels unless noted.
 | `select` (`name`) | Picks the loadout in the box; opens the loadout panel | test characters |
 | `add` (`name`), `load` | Clicks [+] or Load | test characters |
 | `update`, `rename` / `copy` (`newName`), `delete`, `swap` | Clicks the right-click menu entry, on `name` or the selected loadout | test characters |
+| `empty` (`to`: `inventory`, `stash`, `vault`) | Clicks the entry of the Empty loadout submenu, on `name` or the selected loadout | test characters |
 | `swapButton` | Clicks the panel's Gear swap button | test characters |
 | `back`, `previous`, `next` | Clicks the panel's arrows | any character |
 | `compare` (`slot`) | Clicks a mark: Item Comparison in a new window | any character |

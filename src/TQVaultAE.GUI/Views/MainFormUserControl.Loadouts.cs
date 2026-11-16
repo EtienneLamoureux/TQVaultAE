@@ -1,8 +1,10 @@
 using System.Globalization;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Session;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Components.Panels;
 using TQVaultAE.GUI.Dialogs;
 using TQVaultAE.GUI.Tooltips;
 using TQVaultAE.Presentation;
@@ -38,6 +40,9 @@ public partial class MainFormUserControl
 				break;
 			case LoadoutBarAction.Swap when e.Name is not null:
 				this.SwapLoadout(e.Name);
+				break;
+			case LoadoutBarAction.EmptyToInventory or LoadoutBarAction.EmptyToStash or LoadoutBarAction.EmptyToVault when e.Name is not null:
+				this.EmptyLoadout(e.Name, e.Action);
 				break;
 		}
 	}
@@ -206,8 +211,7 @@ public partial class MainFormUserControl
 		if (this.Services.Settings.Loadout.ReplaceWorn)
 			return this.LoadLoadoutReplacing(player, loadouts, loadout.Name);
 
-		int bagNumber = this.vaultPanel.CurrentBag;
-		if (this.vaultPanel.Player is not { } vault || vault.GetSack(bagNumber) is not { } bag)
+		if (this.ShownVaultBag() is not { } target)
 		{
 			this.Services.UIService.NotifyUser(Resources.LoadoutNoVault, TQColor.Red);
 			return false;
@@ -217,8 +221,7 @@ public partial class MainFormUserControl
 			return false;
 
 		this.PutBackHeldItem();
-		var bagSize = this.vaultPanel.SackPanel.SackSize;
-		var place = this.Services.ItemMovementService.PlaceIn(vault, SackType.Vault, bagNumber);
+		var (vault, bagNumber, bag, bagSize, place) = (this.vaultPanel.Player!, this.vaultPanel.CurrentBag, target.Sack, target.Size, target.Place);
 		var result = this.Services.Loadouts.Load(loadouts, loadout.Name, player, bag, bagSize, place);
 		switch (result.Outcome)
 		{
@@ -311,6 +314,103 @@ public partial class MainFormUserControl
 		this.stashPanel.EquipmentReplaced();
 		this.stashPanel.RefreshLoadouts(loadout.Name);
 		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutSwapped, loadout.Name, result.PutOn, result.TakenOff));
+		return true;
+	}
+
+	/// <summary>A bag receiving loadout pieces: its panel, sack, size in cells, place, and its name for the status line.</summary>
+	private sealed record LoadoutBag(VaultPanel Panel, SackCollection Sack, Size Size, ContainerPlace Place, string Name);
+
+	/// <summary>The bag shown in the vault panel, or null without a vault.</summary>
+	private LoadoutBag? ShownVaultBag()
+	{
+		int bagNumber = this.vaultPanel.CurrentBag;
+		if (this.vaultPanel.Player is not { } vault || vault.GetSack(bagNumber) is not { } bag)
+			return null;
+
+		return new LoadoutBag(this.vaultPanel, bag, this.vaultPanel.SackPanel.SackSize
+			, this.Services.ItemMovementService.PlaceIn(vault, SackType.Vault, bagNumber)
+			, string.Format(CultureInfo.CurrentCulture, Resources.LoadoutBagOf, bagNumber + 1, vault.PlayerName));
+	}
+
+	/// <summary>
+	/// The bag an Empty loadout entry sends the pieces to, or null (told to the user): the character's inventory (refused
+	/// with the PlayerReadonly setting), the stash as an auto-move finds it (the transfer stash while the equipment shows),
+	/// or the bag of the vault shown.
+	/// </summary>
+	private LoadoutBag? LoadoutEmptyTarget(PlayerCollection player, LoadoutBarAction target)
+	{
+		switch (target)
+		{
+			case LoadoutBarAction.EmptyToInventory:
+				if (this.Services.Settings.PlayerReadonly)
+				{
+					this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutInventoryLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
+					return null;
+				}
+
+				// The main bag, as the auto-move to the player panel.
+				return player.GetSack(0) is { } inventory
+					? new LoadoutBag(this.playerPanel, inventory, this.playerPanel.SackPanel.SackSize
+						, this.Services.ItemMovementService.PlaceIn(player, SackType.Player, 0)
+						, string.Format(CultureInfo.CurrentCulture, Resources.LoadoutInventoryOf, player.PlayerName))
+					: null;
+
+			case LoadoutBarAction.EmptyToStash:
+				var stashTarget = AutoMovePlanner.StashTarget(this.stashPanel.CurrentBag, this.stashPanel.Stash is not null
+					, this.stashPanel.TransferStash is not null, this.stashPanel.RelicVaultStash is not null);
+				if (!stashTarget.IsAvailable || this.stashPanel.StashOf(stashTarget.Bag) is not { Sack: { } sack } stash)
+				{
+					this.Services.UIService.NotifyUser(Resources.LoadoutNoStash, TQColor.Red);
+					return null;
+				}
+
+				return new LoadoutBag(this.stashPanel, sack, new Size(stash.Width, stash.Height)
+					, this.Services.ItemMovementService.PlaceIn(stash, (StashType)stashTarget.Bag), StashPanel.BagName(stashTarget.Bag));
+
+			default:
+				if (this.ShownVaultBag() is { } vaultBag)
+					return vaultBag;
+
+				this.Services.UIService.NotifyUser(Resources.LoadoutNoVaultForPieces, TQColor.Red);
+				return null;
+		}
+	}
+
+	/// <summary>
+	/// Empty loadout: moves the loadout's pieces (none copied) to the inventory, the stash or the vault bag shown; without
+	/// room for all of them, nothing changes and the user is told. The bag and the loadouts are saved as after a move by
+	/// hand.
+	/// </summary>
+	/// <param name="name">The loadout.</param>
+	/// <param name="target">The menu entry: <see cref="LoadoutBarAction.EmptyToInventory"/>, <see cref="LoadoutBarAction.EmptyToStash"/>
+	/// or <see cref="LoadoutBarAction.EmptyToVault"/>.</param>
+	private bool EmptyLoadout(string name, LoadoutBarAction target)
+	{
+		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout
+			|| this.LoadoutEmptyTarget(player, target) is not { } bag)
+			return false;
+
+		this.PutBackHeldItem();
+		var result = this.Services.Loadouts.Empty(loadouts, loadout.Name, bag.Sack, bag.Size, bag.Place);
+		switch (result.Outcome)
+		{
+			case LoadoutEmptyOutcome.NothingToEmpty:
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyNothing, loadout.Name));
+				return false;
+			case LoadoutEmptyOutcome.NoRoom:
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyNoRoom, bag.Name, result.Pieces), TQColor.Red);
+				return false;
+			case LoadoutEmptyOutcome.Refused:
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyRefused, bag.Name), TQColor.Red);
+				return false;
+		}
+
+		// The pieces take the map rules of their new place, as dropped items; then the bag and the loadout panel show it.
+		bag.Panel.AdoptVaultMod(bag.Sack, result.Moved, bag.Size);
+		BagButtonTooltip.InvalidateCache(bag.Sack);
+		bag.Panel.Refresh();
+		this.stashPanel.RefreshLoadouts(loadout.Name);
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptied, loadout.Name, result.Pieces, bag.Name));
 		return true;
 	}
 

@@ -7916,6 +7916,123 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empty loadout.
+        /// </summary>
+        public static string LoadoutEmpty {
+            get {
+                return ResourceManager.GetString("LoadoutEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To inventory.
+        /// </summary>
+        public static string LoadoutEmptyToInventory {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyToInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To stash.
+        /// </summary>
+        public static string LoadoutEmptyToStash {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyToStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To vault.
+        /// </summary>
+        public static string LoadoutEmptyToVault {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyToVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bag {0} of {1}.
+        /// </summary>
+        public static string LoadoutBagOf {
+            get {
+                return ResourceManager.GetString("LoadoutBagOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the inventory of {0}.
+        /// </summary>
+        public static string LoadoutInventoryOf {
+            get {
+                return ResourceManager.GetString("LoadoutInventoryOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The setting "{0}" is on: the inventory cannot change..
+        /// </summary>
+        public static string LoadoutInventoryLocked {
+            get {
+                return ResourceManager.GetString("LoadoutInventoryLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No stash to receive the loadout's pieces..
+        /// </summary>
+        public static string LoadoutNoStash {
+            get {
+                return ResourceManager.GetString("LoadoutNoStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show a vault to receive the loadout's pieces..
+        /// </summary>
+        public static string LoadoutNoVaultForPieces {
+            get {
+                return ResourceManager.GetString("LoadoutNoVaultForPieces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadout "{0}" is already empty..
+        /// </summary>
+        public static string LoadoutEmptyNothing {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not enough room in {0} for the {1} piece(s) of the loadout: nothing was changed..
+        /// </summary>
+        public static string LoadoutEmptyNoRoom {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing was moved: {0} is read-only..
+        /// </summary>
+        public static string LoadoutEmptyRefused {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout "{0}" emptied: {1} piece(s) moved to {2}..
+        /// </summary>
+        public static string LoadoutEmptied {
+            get {
+                return ResourceManager.GetString("LoadoutEmptied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replace the worn pieces instead of storing them in the vault.
         /// </summary>
         public static string SettingsLoadoutReplaceWorn {

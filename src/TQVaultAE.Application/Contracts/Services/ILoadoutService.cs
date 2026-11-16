@@ -106,6 +106,19 @@ public interface ILoadoutService
 	LoadoutSwapResult Swap(LoadoutSet loadouts, string name, PlayerCollection player);
 
 	/// <summary>
+	/// Moves every piece of a loadout to a bag, at the first free spots as an auto-move places them; the loadout keeps its
+	/// name and ends empty. The pieces themselves move, none is copied. Without room in the bag for all of them (or with a
+	/// piece the bag does not take), nothing changes. The bag is modified (saved with its file) and the loadouts are marked
+	/// modified (written with the other files). The search follows the pieces.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="name">The loadout.</param>
+	/// <param name="bag">The bag receiving the pieces: inventory, stash or vault bag.</param>
+	/// <param name="bagSize">Its size in cells.</param>
+	/// <param name="bagPlace">Its place, given to the pieces (the search follows them).</param>
+	LoadoutEmptyResult Empty(LoadoutSet loadouts, string name, Domain.Entities.SackCollection bag, System.Drawing.Size bagSize, Domain.Entities.ContainerPlace bagPlace);
+
+	/// <summary>
 	/// The worn pieces a load of the loadout would take off, in slot order (none when the loadout or the equipment is
 	/// missing): what <see cref="LoadReplacing"/> deletes, to show before it.
 	/// </summary>
