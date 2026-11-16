@@ -1,5 +1,6 @@
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
@@ -393,31 +394,7 @@ public sealed class LoadoutBar : Control
 
 	/// <summary>A game picture stretched to the bounds; a grey frame without the game files.</summary>
 	private void DrawPicture(Graphics g, string resource, Rectangle to, bool greyed = false, bool flip = false)
-	{
-		if (this.Picture(resource) is not { } picture)
-		{
-			using var pen = new Pen(Grey);
-			g.DrawRectangle(pen, to.X, to.Y, to.Width - 1, to.Height - 1);
-			return;
-		}
-
-		if (flip)
-		{
-			g.DrawImage(picture, [new Point(to.Left, to.Bottom), new Point(to.Right, to.Bottom), new Point(to.Left, to.Top)]);
-			return;
-		}
-
-		if (!greyed)
-		{
-			g.DrawImage(picture, to);
-			return;
-		}
-
-		using var attributes = new System.Drawing.Imaging.ImageAttributes();
-		var dim = new System.Drawing.Imaging.ColorMatrix { Matrix33 = 0.4F };
-		attributes.SetColorMatrix(dim);
-		g.DrawImage(picture, to, 0, 0, picture.Width, picture.Height, GraphicsUnit.Pixel, attributes);
-	}
+		=> GamePicture.Draw(g, this.Picture(resource), to, greyed, flip);
 
 	protected override void Dispose(bool disposing)
 	{
