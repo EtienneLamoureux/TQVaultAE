@@ -661,6 +661,33 @@ Are you sure you want to delete this item?</value>
 	<data name="SackPanelMenuCompare" xml:space="preserve">
     <value>Compare</value>
   </data>
+	<data name="SackPanelMenuSocket" xml:space="preserve">
+    <value>Insert into item</value>
+  </data>
+	<data name="SackPanelMenuSocketGameRules" xml:space="preserve">
+    <value>Game rules</value>
+  </data>
+	<data name="SackPanelMenuSocketNoRules" xml:space="preserve">
+    <value>No rules</value>
+  </data>
+	<data name="SackPanelSocketSelectionStarted" xml:space="preserve">
+    <value>Insert into item: left-click the item that receives it, in any panel. Escape or right-click cancels.</value>
+  </data>
+	<data name="SackPanelSocketSlot" xml:space="preserve">
+    <value>Slot {0}</value>
+  </data>
+	<data name="SackPanelSocketSlotReplace" xml:space="preserve">
+    <value>Slot {0}: replace {1}</value>
+  </data>
+	<data name="SackPanelSocketDone" xml:space="preserve">
+    <value>{0} inserted into slot {1}.</value>
+  </data>
+	<data name="SackPanelSocketReadOnly" xml:space="preserve">
+    <value>This item cannot change here: its place is read-only.</value>
+  </data>
+	<data name="SackPanelSocketItemMoved" xml:space="preserve">
+    <value>The relic or the item is no longer where it was: nothing inserted.</value>
+  </data>
 	<data name="SackPanelMenuSearch" xml:space="preserve">
     <value>Search</value>
   </data>

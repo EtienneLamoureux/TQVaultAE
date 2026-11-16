@@ -396,6 +396,130 @@ public class ForgeRulesTests
 		target.Var1.Should().Be(1);
 	}
 
+	private static Item ShieldItem(string? suffix = null) => Make(Shield, @"records\item\shield01.dbr", suffix: suffix);
+
+	/// <summary>The item with a relic in its first (and second) slot.</summary>
+	private static Item Socketed(Item item, bool slot1 = true, bool slot2 = false)
+	{
+		if (slot1)
+			item.relicID = RecordId.Create(@"records\item\relics\old1.dbr");
+		if (slot2)
+			item.relic2ID = RecordId.Create(@"records\item\relics\old2.dbr");
+		return item;
+	}
+
+	[Fact]
+	public void PlanSocket_GameRules_FreeFirstSlotOnly_IsDirect()
+	{
+		// A shield without "of the Tinkerer": only the first slot exists for the game.
+		var plan = this._rules.PlanSocket(ForgeMode.Game, Relic(ShieldRelic), ShieldItem());
+
+		plan.Options.Should().Equal(new SocketOption(ForgeSlot.Relic1, Replaces: false));
+		plan.Direct.Should().Be(new SocketOption(ForgeSlot.Relic1, false));
+		plan.Refusal.Should().BeNull();
+	}
+
+	[Fact]
+	public void PlanSocket_GameRules_Tinkerer_OffersBothSlots_SoTheUserChooses()
+	{
+		var plan = this._rules.PlanSocket(ForgeMode.Game, Relic(ShieldRelic), ShieldItem(TinkererSuffix));
+
+		plan.Options.Select(o => o.Slot).Should().Equal(ForgeSlot.Relic1, ForgeSlot.Relic2);
+		plan.Direct.Should().BeNull("two slots take the relic");
+	}
+
+	[Fact]
+	public void PlanSocket_OccupiedSlot_IsOfferedAsAReplacement_NeverDirect()
+	{
+		var plan = this._rules.PlanSocket(ForgeMode.Game, Relic(ShieldRelic), Socketed(ShieldItem()));
+
+		plan.Options.Should().Equal(new SocketOption(ForgeSlot.Relic1, Replaces: true));
+		plan.Direct.Should().BeNull("replacing a relic must be chosen explicitly");
+	}
+
+	[Fact]
+	public void PlanSocket_Tinkerer_FirstSlotTaken_OffersTheFreeSecondAndTheReplacement()
+	{
+		var plan = this._rules.PlanSocket(ForgeMode.Game, Relic(ShieldRelic), Socketed(ShieldItem(TinkererSuffix)));
+
+		plan.Options.Should().Equal(new SocketOption(ForgeSlot.Relic1, true), new SocketOption(ForgeSlot.Relic2, false));
+		plan.Direct.Should().BeNull();
+	}
+
+	[Fact]
+	public void PlanSocket_GameRules_RelicNotForThatGear_IsRefusedWithTheReason()
+	{
+		var plan = this._rules.PlanSocket(ForgeMode.Game, Relic(ShieldRelic), SwordItem());
+
+		plan.IsRefused.Should().BeTrue();
+		plan.Refusal.Should().Be(ForgeMessage.RelicNotAllowed);
+	}
+
+	[Fact]
+	public void PlanSocket_GameRules_ANonRelic_IsRefused()
+		=> this._rules.PlanSocket(ForgeMode.Game, SwordItem(), ShieldItem()).Refusal.Should().Be(ForgeMessage.MustBeRelic);
+
+	[Fact]
+	public void PlanSocket_GameRules_EpicTarget_TakesARelic()
+	{
+		// The game sockets relics into Epic and Legendary items: only the forge's affix crafting refuses them.
+		var epicShield = Make(Shield, @"records\item\shield01.dbr", classification: "EPIC");
+
+		this._rules.PlanSocket(ForgeMode.Game, Relic(ShieldRelic), epicShield).Direct.Should().NotBeNull();
+	}
+
+	[Fact]
+	public void PlanSocket_NoRules_AnyRelicIntoBothSlotsOfAnyItem()
+	{
+		var plan = this._rules.PlanSocket(ForgeMode.God, Relic(ShieldRelic), Socketed(SwordItem()));
+
+		plan.Options.Should().Equal(new SocketOption(ForgeSlot.Relic1, true), new SocketOption(ForgeSlot.Relic2, false));
+	}
+
+	[Theory]
+	[InlineData(ForgeMode.Game)]
+	[InlineData(ForgeMode.God)]
+	public void PlanSocket_RelicOfAnotherMod_IsRefusedInBothRules(ForgeMode mode)
+	{
+		var target = ReadFrom(ShieldItem(), "modA");
+		var relic = Relic(ShieldRelic);
+		relic.RelicBonusId = RecordId.Create(@"records\item\relics\bonus.dbr");
+		relic.RelicBonusInfo = TestRecords.InfoFrom(relic.RelicBonusId, "modB", "LootRandomizerTable");
+
+		this._rules.PlanSocket(mode, relic, target).Refusal.Should().Be(ForgeMessage.PartOfAnotherMod);
+	}
+
+	[Fact]
+	public void CheckSocket_SameAnswersAsTheForgeGameMode()
+	{
+		var relic = Relic(ShieldRelic);
+		foreach (var target in new[] { ShieldItem(), ShieldItem(TinkererSuffix), SwordItem() })
+		{
+			foreach (var slot in new[] { ForgeSlot.Relic1, ForgeSlot.Relic2 })
+			{
+				var forge = this._rules.CheckDrop(ForgeMode.Game, slot, relic, With(target));
+				this._rules.CheckSocket(ForgeMode.Game, slot, relic, target)
+					.Should().Be(forge.Accepted ? null : forge.Rejection, $"{target.ItemClass} {slot}");
+			}
+		}
+	}
+
+	[Fact]
+	public void Merge_SocketsTheRelicWithItsShardsAndBonus_IntoTheChosenSlot()
+	{
+		var target = ShieldItem(TinkererSuffix);
+		var relic = Relic(ShieldRelic);
+		relic.Var1 = 3;
+		relic.RelicBonusId = RecordId.Create(@"records\item\relics\bonus.dbr");
+
+		ForgeMerge.Apply(target, With(target, relic2: relic), godMode: false, _ => null);
+
+		target.relic2ID.Should().Be(ShieldRelic);
+		target.Var2.Should().Be(3);
+		target.RelicBonus2Id.Should().Be(relic.RelicBonusId);
+		target.HasSocketedSlot1.Should().BeFalse("the other slot is left alone");
+	}
+
 	[Fact]
 	public void RawOf_NullRecord_IsEmpty()
 	{

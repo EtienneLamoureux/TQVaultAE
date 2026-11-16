@@ -144,7 +144,7 @@ public partial class EquipmentPanel
 	/// <summary>A left click on a blue or red mark opens the comparison; the other clicks go on as usual.</summary>
 	private bool LoadoutMarkMouseDown(MouseEventArgs e)
 	{
-		if (e.Button != MouseButtons.Left || this.DragInfo.IsActive || this.DragInfo.Compare.IsActive)
+		if (e.Button != MouseButtons.Left || this.DragInfo.IsActive || this.DragInfo.PairSelection.IsActive)
 			return false;
 
 		if (this.MarkAt(e.Location) is not { CanCompare: true } mark)
@@ -157,7 +157,7 @@ public partial class EquipmentPanel
 	/// <summary>The hand cursor over a mark that opens a comparison, and the tool tip of the mark under the pointer.</summary>
 	private void LoadoutMarkMouseMove(object? sender, MouseEventArgs e)
 	{
-		if (this.DragInfo.Compare.IsActive)
+		if (this.DragInfo.PairSelection.IsActive)
 			return;
 
 		var mark = this.DragInfo.IsActive ? null : this.MarkAt(e.Location);

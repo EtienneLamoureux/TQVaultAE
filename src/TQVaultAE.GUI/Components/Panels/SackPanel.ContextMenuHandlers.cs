@@ -396,6 +396,13 @@ public partial class SackPanel
 	/// <param name="e">ToolStripItemClickedEventArgs data</param>
 	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
+		// A slot of the Insert into item menu, shown in place of the item menu.
+		if (e.ClickedItem?.Tag is SocketSlotChoice choice)
+		{
+			this.Socket(choice);
+			return;
+		}
+
 		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
 		if (focusedItem is not null || this.selectedItems is not null)
 		{

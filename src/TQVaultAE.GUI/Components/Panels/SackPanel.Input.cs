@@ -62,8 +62,9 @@ public partial class SackPanel
 		if (this.Sack is null)
 			return;
 
-		// The compare selection takes the click, read-only equipment included: comparing only reads the items.
-		if (this.CompareSelectionMouseDown(e))
+		// The pair selection takes the click, read-only equipment included: comparing only reads the items (socketing
+		// into a read-only sack is refused with a notice).
+		if (this.PairSelectionMouseDown(e))
 			return;
 
 		// The copy and duplicate clicks act like their keys, by the context menu's rules: a copy changes nothing in a
@@ -171,6 +172,10 @@ public partial class SackPanel
 					this.CustomContextMenu.Items.Add("-");
 					this.AddActionMenuItem(Resources.SackPanelMenuCompare, ItemActions.Compare);
 				}
+
+				// Insert into item implies a single relic or charm, item editing on.
+				if (actions.HasFlag(ItemActions.Socket))
+					this.AddSocketMenuItems(focusedItem!);
 
 				if (actions.HasFlag(ItemActions.FindCopies))
 					this.AddFindCopiesMenuItems(focusedItem!);
@@ -380,7 +385,7 @@ public partial class SackPanel
 		}
 	}
 
-	/// <summary>Cancels the compare selection, else the drag of an item that can go back.</summary>
+	/// <summary>Cancels the pair selection (Compare, Insert into item), else the drag of an item that can go back.</summary>
 	/// <returns>true when something was cancelled.</returns>
 	private bool CancelDragOrCompare()
 	{
@@ -388,7 +393,7 @@ public partial class SackPanel
 			return false;
 
 		bool cancelled = false;
-		if (!this.DragInfo.IsActive && this.DragInfo.Compare.Cancel())
+		if (!this.DragInfo.IsActive && this.DragInfo.PairSelection.Cancel())
 			cancelled = true;
 		else if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
 		{

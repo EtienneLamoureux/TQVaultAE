@@ -214,7 +214,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(main =>
 		{
 			var named = ResolveShownPanel(main, panel);
-			var selection = main.AutomationDragInfo.Compare;
+			var selection = main.AutomationDragInfo.PairSelection;
 			var before = new { active = selection.IsActive, first = selection.First is { } f ? DescribeItem(f, null) : null };
 			var item = named.Panel.AutomationFindItem(new Point(x, y));
 			var mouse = ParseButton(button);

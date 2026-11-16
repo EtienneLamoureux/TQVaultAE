@@ -42,6 +42,8 @@ Every shortcut below can be changed: see [Changing the shortcuts](#changing-the-
 | <kbd>ESC</kbd> or right-click, while dragging | Cancels the drag: the item goes back where it was |
 | Left-click, after the item menu's **Compare** | Compares the item clicked, in any panel, with the first one (see [Item comparison](ITEMCOMPARE.md)) |
 | <kbd>ESC</kbd> or right-click, after **Compare** | Cancels the comparison selection |
+| Left-click, after the item menu's **Insert into item** | Inserts the relic or charm into the item clicked, in any panel (see [Insert a relic or charm into an item](FORGE.md#Socket)) |
+| <kbd>ESC</kbd> or right-click, after **Insert into item** | Cancels the insertion |
 
 "Currently highlighted item" is the item under the mouse cursor. <kbd>BACKSPACE</kbd>, <kbd>C</kbd> and <kbd>D</kbd> act on that item only, never on the selection.
 <kbd>C</kbd>, <kbd>D</kbd> and their clicks need the "Allow Item Copying" setting; without it the clicks pick up the item as a

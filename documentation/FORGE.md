@@ -16,6 +16,7 @@ TQVaultAE provide a dedicated crafting system that helps you create the item of 
     + [Relax](#RelaxMode)
     + [Hephaestus](#GodMode)
     + [Hardcore](#Hardcore)
+* [Insert a relic or charm into an item](#Socket)
 
 ---
 
@@ -127,6 +128,33 @@ _**Note:** Here's an example of a useless quest item with offensive properties._
 #### <a id="Hardcore"></a>*Hardcore*
 For purist only.
 _**If checked the materials used are destroyed during the process**_.
+
+---
+
+### <a id="Socket"></a>Insert a relic or charm into an item
+Without opening the forge, a relic or charm can go straight into an item, with the forge's rules.
+**_Like the forge, it needs "Allow Item Editing Features" in the settings; without it the entry is hidden._**
+
+1. Right-click a relic or charm (vault, bags, stash), then **Insert into item** and choose:
+   + **Game rules**: only what the game allows, the same checks as the [Game mode](#GameMode) relic slots: the relic must
+     suit the item (e.g. a "shield only" relic on an axe is refused), the second slot needs the "Of the Tinkerer" suffix,
+     and a relic from a mod only goes into an item of that mod. Unlike the forge's base item, an Epic or Legendary item
+     takes relics, as in the game.
+   + **No rules**: any relic or charm into either slot of any item, like the [God mode](#GodMode) (the mod rule stays).
+
+   The relic gets an orange frame, the cursor becomes a hand, and the status line says what to do.
+2. Left-click the item that receives it, in any panel. As for [Compare](ITEMCOMPARE.md), you can switch bags, vaults or
+   characters first; <kbd>Esc</kbd>, a right-click or a click on the relic itself cancels.
+3. The slot:
+   + when only one empty slot takes the relic, it goes there at once;
+   + when both slots take it, or the only slot that takes it already holds a relic, a menu at the click asks:
+     "Slot 1", "Slot 2", or "Slot 1: replace *the relic it holds*". The relic it replaces is lost. Closing the menu
+     inserts nothing.
+
+   A refusal says why in the status line, with the forge's messages.
+
+The relic leaves its place and goes in whole: its shards and its completion bonus. The item is marked modified and is
+saved like any edit. A read-only character, and the equipment when "Player Equipment ReadOnly" is set, refuse it.
 
 ---
 

@@ -176,6 +176,21 @@ public class ItemActionRulesTests
 		return new Item { BaseItemId = id, baseItemInfo = new Info(record), Var1 = shards };
 	}
 
+	[Theory]
+	[InlineData(Item.ICLASS_RELIC, true, false, true)]
+	[InlineData(Item.ICLASS_CHARM, true, false, true)]
+	[InlineData(Item.ICLASS_RELIC, false, false, false)]  // item editing off: the entry is hidden
+	[InlineData(Item.ICLASS_RELIC, true, true, false)]    // a read-only sack: the relic cannot leave it
+	[InlineData(Item.ICLASS_SWORD, true, false, false)]   // only a relic or charm is socketed
+	public void Available_Socket_ARelicOrCharmWhenEditing(string itemClass, bool allowEdit, bool readOnly, bool expected)
+		=> For(WithClass(itemClass, shards: 1, completedLevel: 5), allowEdit: allowEdit, readOnly: readOnly)
+			.HasFlag(ItemActions.Socket).Should().Be(expected);
+
+	[Fact]
+	public void Available_Socket_NotForASelectionOfSeveralItems()
+		=> For(WithClass(Item.ICLASS_RELIC, 1, 5), selectionCount: 2, allowEdit: true)
+			.HasFlag(ItemActions.Socket).Should().BeFalse();
+
 	private const ItemActions SeedActions = ItemActions.Seed | ItemActions.ForceSeed;
 
 	[Fact]

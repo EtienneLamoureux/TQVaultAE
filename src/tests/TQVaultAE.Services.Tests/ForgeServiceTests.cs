@@ -6,6 +6,7 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Forge;
 using TQVaultAE.Services;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Services;
 
@@ -150,6 +151,56 @@ public class ForgeServiceTests
 		this.Forge(selection, hardcore: false);
 
 		calls.Should().Equal("invalidate", "add");
+	}
+
+	/// <summary>A relic of <paramref name="shards"/> shards, in the material sack; the sword in the base sack. Both saved.</summary>
+	private (Item Target, Item Relic) SocketPair(int shards)
+	{
+		var relicId = RecordId.Create(@"records\item\relics\01_act1_aegisofathena.dbr");
+		var relic = new Item { BaseItemId = relicId, baseItemInfo = TestRecords.InfoFrom(relicId, null, Item.ICLASS_RELIC), Var1 = shards };
+		var target = Sword();
+		this._baseSack.AddItem(target);
+		this._materialSack.AddItem(relic);
+		this._baseSack.IsModified = this._materialSack.IsModified = false;
+		return (target, relic);
+	}
+
+	private ForgeResult Socket(ForgeMode mode, ForgeSlot slot, Item relic, Item target)
+		=> this._service.Socket(this._service.CreateRules(), mode, slot, relic, this._materialSack, target, this._baseSack);
+
+	[Fact]
+	public void Socket_PutsTheRelicInTheSlot_AndTakesItFromItsSack()
+	{
+		var (target, relic) = this.SocketPair(shards: 2);
+
+		var result = this.Socket(ForgeMode.God, ForgeSlot.Relic2, relic, target);
+
+		result.IsSuccess.Should().BeTrue();
+		result.Forged.Should().BeSameAs(target);
+		result.Consumed.Should().Equal(relic);
+		target.relic2ID.Should().Be(relic.BaseItemId);
+		target.Var2.Should().Be(2, "the relic goes in with its shards");
+		target.IsModified.Should().BeTrue();
+		this._baseSack.IsModified.Should().BeTrue();
+		this._materialSack.Should().NotContain(relic);
+		this._materialSack.IsModified.Should().BeTrue();
+		this._itemDatabase.Verify(x => x.RemoveItemFromDatabase(relic), Times.Once);
+		this._itemDatabase.Verify(x => x.TryAddItemToDatabase(target), Times.Once);
+	}
+
+	[Fact]
+	public void Socket_Refused_ChangesNothing()
+	{
+		// The relic record allows no gear: the game rules refuse it on the sword.
+		var (target, relic) = this.SocketPair(shards: 1);
+
+		var result = this.Socket(ForgeMode.Game, ForgeSlot.Relic1, relic, target);
+
+		result.Problem.Should().Be(ForgeMessage.RelicNotAllowed);
+		target.HasSocketedSlot1.Should().BeFalse();
+		this._baseSack.IsModified.Should().BeFalse();
+		this._materialSack.Should().Contain(relic);
+		this._itemDatabase.Verify(x => x.RemoveItemFromDatabase(It.IsAny<Item>()), Times.Never);
 	}
 
 	[Fact]

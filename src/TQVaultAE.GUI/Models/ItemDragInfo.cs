@@ -68,10 +68,10 @@ public class ItemDragInfo
 	}
 
 	/// <summary>
-	/// The compare selection shared by every panel: while it is on, a left click on an item picks the second item to
-	/// compare instead of taking the item.
+	/// The pair selection shared by every panel (Compare, Insert into item): while it is on, a left click on an item
+	/// picks the second item instead of taking the item.
 	/// </summary>
-	public ItemCompareSelection Compare { get; } = new();
+	public ItemPairSelection PairSelection { get; } = new();
 
 	/// <summary>
 	/// Gets a value indicating whether an item is currently being dragged around.

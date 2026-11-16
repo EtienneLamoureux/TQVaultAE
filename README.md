@@ -22,6 +22,7 @@ Works with all expansions!
         - [Change item seed](documentation/AFFIXES.md#item-seed-change)
         - [Create missing set pieces](documentation/AFFIXES.md#create-missing-set-pieces)
         - [Craft custom items](documentation/FORGE.md)
+        - [Insert a relic/charm into an item, with the game's rules or none](documentation/FORGE.md#Socket)
         - [Change items affixes](documentation/AFFIXES.md#prefix-change)
         - Duplicate any item
     - [Characters](documentation/CHAREDIT.md)

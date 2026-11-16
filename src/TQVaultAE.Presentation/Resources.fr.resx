@@ -640,6 +640,33 @@ Voulez-vous vraiment supprimer cet objet ?</value>
 	<data name="SackPanelMenuCompare" xml:space="preserve">
     <value>Comparer</value>
   </data>
+	<data name="SackPanelMenuSocket" xml:space="preserve">
+    <value>Insérer dans un objet</value>
+  </data>
+	<data name="SackPanelMenuSocketGameRules" xml:space="preserve">
+    <value>Règles du jeu</value>
+  </data>
+	<data name="SackPanelMenuSocketNoRules" xml:space="preserve">
+    <value>Sans règles</value>
+  </data>
+	<data name="SackPanelSocketSelectionStarted" xml:space="preserve">
+    <value>Insérer dans un objet : cliquez sur l'objet qui la reçoit, dans n'importe quel panneau. Échap ou clic droit pour annuler.</value>
+  </data>
+	<data name="SackPanelSocketSlot" xml:space="preserve">
+    <value>Emplacement {0}</value>
+  </data>
+	<data name="SackPanelSocketSlotReplace" xml:space="preserve">
+    <value>Emplacement {0} : remplacer {1}</value>
+  </data>
+	<data name="SackPanelSocketDone" xml:space="preserve">
+    <value>{0} inséré dans l'emplacement {1}.</value>
+  </data>
+	<data name="SackPanelSocketReadOnly" xml:space="preserve">
+    <value>Cet objet ne peut pas changer ici : son emplacement est en lecture seule.</value>
+  </data>
+	<data name="SackPanelSocketItemMoved" xml:space="preserve">
+    <value>La relique ou l'objet n'est plus à sa place : rien n'a été inséré.</value>
+  </data>
 	<data name="SackPanelMenuSearch" xml:space="preserve">
     <value>Rechercher</value>
   </data>

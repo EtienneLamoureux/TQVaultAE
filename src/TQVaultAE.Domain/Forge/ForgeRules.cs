@@ -274,6 +274,53 @@ public sealed class ForgeRules
 	}
 
 	/// <summary>
+	/// Checks socketing <paramref name="relic"/> into <paramref name="slot"/> of <paramref name="target"/> outside the
+	/// forge: the same answers as dropping <paramref name="target"/> on the base slot of an empty forge, then
+	/// <paramref name="relic"/> on <paramref name="slot"/>, then forging. Whatever <paramref name="slot"/> holds is replaced.
+	/// </summary>
+	/// <param name="mode">The rules: <see cref="ForgeMode.Game"/> for the game's, <see cref="ForgeMode.God"/> for none.</param>
+	/// <param name="slot"><see cref="ForgeSlot.Relic1"/> or <see cref="ForgeSlot.Relic2"/>.</param>
+	/// <param name="relic">The relic or charm to socket.</param>
+	/// <param name="target">The item that receives it.</param>
+	/// <returns>Why it is refused, or <c>null</c> when it is allowed.</returns>
+	public ForgeMessage? CheckSocket(ForgeMode mode, ForgeSlot slot, Item relic, Item target)
+	{
+		if (slot is not (ForgeSlot.Relic1 or ForgeSlot.Relic2))
+			throw new ArgumentOutOfRangeException(nameof(slot), slot, null);
+
+		var selection = new ForgeSelection { [ForgeSlot.Base] = target };
+		var decision = this.CheckDrop(mode, slot, relic, selection);
+		if (!decision.Accepted)
+			return decision.Rejection;
+
+		selection[slot] = relic;
+		return this.CheckForge(selection);
+	}
+
+	/// <summary>
+	/// The relic slots of <paramref name="target"/> that can take <paramref name="relic"/> (<see cref="CheckSocket"/>),
+	/// first slot first, each telling whether it would replace what the slot holds.
+	/// </summary>
+	/// <param name="mode">The rules: <see cref="ForgeMode.Game"/> for the game's, <see cref="ForgeMode.God"/> for none.</param>
+	/// <param name="relic">The relic or charm to socket.</param>
+	/// <param name="target">The item that receives it.</param>
+	public SocketPlan PlanSocket(ForgeMode mode, Item relic, Item target)
+	{
+		var options = new List<SocketOption>();
+		ForgeMessage? refusal = null;
+
+		foreach (var slot in (ReadOnlySpan<ForgeSlot>)[ForgeSlot.Relic1, ForgeSlot.Relic2])
+		{
+			if (this.CheckSocket(mode, slot, relic, target) is { } problem)
+				refusal ??= problem;
+			else
+				options.Add(new SocketOption(slot, Replaces: slot == ForgeSlot.Relic1 ? target.HasSocketedSlot1 : target.HasSocketedSlot2));
+		}
+
+		return new SocketPlan(options, options.Count == 0 ? refusal : null);
+	}
+
+	/// <summary>
 	/// Whether the parts taken from <paramref name="material"/> resolve with the data <paramref name="target"/> is read
 	/// with (its map): a mod affix or relic on an item read with other data shows unknown records. Base game parts
 	/// resolve with any mod (a mod's data falls back on the base game's).

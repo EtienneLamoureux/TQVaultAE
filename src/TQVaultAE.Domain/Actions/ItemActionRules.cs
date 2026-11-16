@@ -51,10 +51,16 @@ public enum ItemActions
 	CraftArtifact = 1 << 13,
 
 	/// <summary>
-	/// Compare the item with another one: starts the compare selection (<see cref="ItemCompareSelection"/>), where the
+	/// Compare the item with another one: starts the pair selection (<see cref="ItemPairSelection"/>), where the
 	/// next left click on an item, in any panel, picks the second item.
 	/// </summary>
 	Compare = 1 << 14,
+
+	/// <summary>
+	/// Socket the item, a relic or charm, into another item: starts the pair selection (<see cref="ItemPairSelection"/>),
+	/// where the next left click on an item, in any panel, picks the item that receives it. Part of item editing.
+	/// </summary>
+	Socket = 1 << 15,
 
 	/// <summary>
 	/// Find the item's copies, or the items sharing its base, prefix or suffix, among every loaded item ("Search" menu).
@@ -176,6 +182,9 @@ public static class ItemActionRules
 
 					if (item.HasSocketedSlot2)
 						actions |= ItemActions.RemoveRelic2;
+
+					if (item.IsRelicOrCharm)
+						actions |= ItemActions.Socket;
 				}
 			}
 		}

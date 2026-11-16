@@ -47,4 +47,20 @@ public interface IForgeService
 		, bool godMode
 		, Func<ForgeSlot, ForgePart?> godPart
 		, bool hardcore);
+
+	/// <summary>
+	/// Sockets <paramref name="relic"/> into <paramref name="slot"/> of <paramref name="target"/>, outside the forge:
+	/// checks it with <see cref="ForgeRules.CheckSocket"/>, merges the relic (its shards and completion bonus) like the
+	/// forge, replacing what the slot held, marks the item and its sack modified, removes the relic from its sack, and
+	/// replaces the search entries.
+	/// </summary>
+	/// <param name="rules">Rules checking the socketing.</param>
+	/// <param name="mode"><see cref="ForgeMode.Game"/> for the game's rules, <see cref="ForgeMode.God"/> for none.</param>
+	/// <param name="slot"><see cref="ForgeSlot.Relic1"/> or <see cref="ForgeSlot.Relic2"/>.</param>
+	/// <param name="relic">The relic or charm.</param>
+	/// <param name="relicSack">The sack holding <paramref name="relic"/>.</param>
+	/// <param name="target">The item that receives it.</param>
+	/// <param name="targetSack">The sack holding <paramref name="target"/>.</param>
+	/// <returns>The refusal, or the changed item and the relic consumed, whose caches must be refreshed.</returns>
+	ForgeResult Socket(ForgeRules rules, ForgeMode mode, ForgeSlot slot, Item relic, SackCollection relicSack, Item target, SackCollection targetSack);
 }

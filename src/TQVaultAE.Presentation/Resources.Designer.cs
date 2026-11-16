@@ -4148,6 +4148,87 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert into item.
+        /// </summary>
+        public static string SackPanelMenuSocket {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSocket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game rules.
+        /// </summary>
+        public static string SackPanelMenuSocketGameRules {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSocketGameRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No rules.
+        /// </summary>
+        public static string SackPanelMenuSocketNoRules {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSocketNoRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert into item: left-click the item that receives it, in any panel. Escape or right-click cancels..
+        /// </summary>
+        public static string SackPanelSocketSelectionStarted {
+            get {
+                return ResourceManager.GetString("SackPanelSocketSelectionStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slot {0}.
+        /// </summary>
+        public static string SackPanelSocketSlot {
+            get {
+                return ResourceManager.GetString("SackPanelSocketSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slot {0}: replace {1}.
+        /// </summary>
+        public static string SackPanelSocketSlotReplace {
+            get {
+                return ResourceManager.GetString("SackPanelSocketSlotReplace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} inserted into slot {1}..
+        /// </summary>
+        public static string SackPanelSocketDone {
+            get {
+                return ResourceManager.GetString("SackPanelSocketDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item cannot change here: its place is read-only..
+        /// </summary>
+        public static string SackPanelSocketReadOnly {
+            get {
+                return ResourceManager.GetString("SackPanelSocketReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The relic or the item is no longer where it was: nothing inserted..
+        /// </summary>
+        public static string SackPanelSocketItemMoved {
+            get {
+                return ResourceManager.GetString("SackPanelSocketItemMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compare.
         /// </summary>
         public static string SackPanelMenuCompare {

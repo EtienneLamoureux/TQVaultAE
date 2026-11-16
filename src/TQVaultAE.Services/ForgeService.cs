@@ -76,21 +76,49 @@ public class ForgeService(
 		if (rules.CheckForge(selection) is { } problem)
 			return ForgeResult.Refused(problem);
 
-		// Merge item properties into Base item
+		var forged = this.Merge(selection, sacks[ForgeSlot.Base]!, godMode, godPart);
+		IReadOnlyList<Item> consumed = hardcore ? this.ConsumeMaterials(selection, sacks) : [];
+		this.ReplaceSearchEntry(forged);
+
+		return ForgeResult.Succeeded(forged, consumed);
+	}
+
+	/// <inheritdoc/>
+	public ForgeResult Socket(ForgeRules rules, ForgeMode mode, ForgeSlot slot, Item relic, SackCollection relicSack, Item target, SackCollection targetSack)
+	{
+		if (rules.CheckSocket(mode, slot, relic, target) is { } problem)
+			return ForgeResult.Refused(problem);
+
+		// The relic or charm itself goes in whole (its shards and bonus): the same merge as the forge's relic slots.
+		var selection = new ForgeSelection { [ForgeSlot.Base] = target, [slot] = relic };
+		var socketed = this.Merge(selection, targetSack, godMode: false, _ => null);
+		this.Consume(relic, relicSack);
+		this.ReplaceSearchEntry(socketed);
+
+		return ForgeResult.Succeeded(socketed, [relic]);
+	}
+
+	/// <summary>
+	/// Merges the material items of <paramref name="selection"/> into its base item, reads the item's record data again
+	/// and marks it and <paramref name="baseSack"/> modified.
+	/// </summary>
+	/// <returns>The base item, changed.</returns>
+	private Item Merge(ForgeSelection selection, SackCollection baseSack, bool godMode, Func<ForgeSlot, ForgePart?> godPart)
+	{
 		var forged = selection.Base!;
 		ForgeMerge.Apply(forged, selection, godMode, godPart);
 		this.ItemProvider.GetDBData(forged);
 
-		sacks[ForgeSlot.Base]!.IsModified = forged.IsModified = true;
+		baseSack.IsModified = forged.IsModified = true;
+		return forged;
+	}
 
-		IReadOnlyList<Item> consumed = hardcore ? this.ConsumeMaterials(selection, sacks) : [];
-
-		// The search keeps the item's display data: replace its entry so it shows the forged item.
-		this.ItemText.InvalidateFriendlyNamesCache(forged);
-		this.ItemDatabaseService.RemoveItemFromDatabase(forged);
-		this.ItemDatabaseService.TryAddItemToDatabase(forged);
-
-		return ForgeResult.Succeeded(forged, consumed);
+	/// <summary>The search keeps the item's display data: replace its entry so it shows the changed item.</summary>
+	private void ReplaceSearchEntry(Item changed)
+	{
+		this.ItemText.InvalidateFriendlyNamesCache(changed);
+		this.ItemDatabaseService.RemoveItemFromDatabase(changed);
+		this.ItemDatabaseService.TryAddItemToDatabase(changed);
 	}
 
 	/// <summary>Hardcore mode: the material items are removed from their sacks and from the search.</summary>
@@ -103,12 +131,18 @@ public class ForgeService(
 			if (selection[slot] is not { } item || sacks.GetValueOrDefault(slot) is not { } sack)
 				continue;
 
-			sack.RemoveItem(item);
-			this.ItemText.InvalidateFriendlyNamesCache(item);
-			this.ItemDatabaseService.RemoveItemFromDatabase(item);
+			this.Consume(item, sack);
 			consumed.Add(item);
 		}
 
 		return consumed;
+	}
+
+	/// <summary>Removes a material item from its sack and from the search.</summary>
+	private void Consume(Item item, SackCollection sack)
+	{
+		sack.RemoveItem(item);
+		this.ItemText.InvalidateFriendlyNamesCache(item);
+		this.ItemDatabaseService.RemoveItemFromDatabase(item);
 	}
 }

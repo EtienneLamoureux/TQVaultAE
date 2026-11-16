@@ -108,6 +108,9 @@ It try to suck all known Prefix/Suffix per gear type (e.g, all affixes for axe i
 
 ![Relics removal](affixes/removerelic.png)
 
+To put a relic or charm into an item, right-click the relic and use **Insert into item** (see
+[Insert a relic or charm into an item](FORGE.md#Socket)).
+
 
 ---
 

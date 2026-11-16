@@ -5,11 +5,11 @@ using TQVaultAE.Domain.Entities;
 namespace TQVaultAE.Tests.Domain;
 
 /// <summary>
-/// <see cref="ItemCompareSelection"/>: the compare selection mode shared by the item panels.
+/// <see cref="ItemPairSelection"/>: the "pick a second item" mode shared by the item panels (Compare, Insert into item).
 /// </summary>
-public class ItemCompareSelectionTests
+public class ItemPairSelectionTests
 {
-	private readonly ItemCompareSelection _selection = new();
+	private readonly ItemPairSelection _selection = new();
 	private readonly Item _first = new();
 	private readonly Item _second = new();
 
@@ -18,9 +18,39 @@ public class ItemCompareSelectionTests
 	{
 		this._selection.Start(this._first);
 
-		this._selection.Pick(this._second).Should().Be((this._first, this._second));
+		var pair = this._selection.Pick(this._second);
+
+		pair.Should().NotBeNull();
+		pair!.First.Should().BeSameAs(this._first);
+		pair.Second.Should().BeSameAs(this._second);
+		pair.Purpose.Should().Be(ItemPairPurpose.Compare);
 		this._selection.IsActive.Should().BeFalse();
 		this._selection.First.Should().BeNull();
+	}
+
+	[Fact]
+	public void Pick_KeepsThePurposeAndSackTheModeStartedWith_ThenForgetsThem()
+	{
+		var sack = new SackCollection();
+		this._selection.Start(this._first, ItemPairPurpose.SocketGameRules, sack);
+
+		var pair = this._selection.Pick(this._second);
+
+		pair!.Purpose.Should().Be(ItemPairPurpose.SocketGameRules);
+		pair.FirstSack.Should().BeSameAs(sack);
+		this._selection.FirstSack.Should().BeNull();
+		this._selection.Purpose.Should().Be(ItemPairPurpose.Compare, "a later Compare must not inherit the socket purpose");
+	}
+
+	[Fact]
+	public void Start_AgainWithAnotherPurpose_ReplacesTheFirstSelection()
+	{
+		this._selection.Start(this._first, ItemPairPurpose.SocketNoRules, new SackCollection());
+		this._selection.Start(this._second);
+
+		this._selection.First.Should().BeSameAs(this._second);
+		this._selection.Purpose.Should().Be(ItemPairPurpose.Compare);
+		this._selection.FirstSack.Should().BeNull();
 	}
 
 	[Fact]
@@ -33,9 +63,9 @@ public class ItemCompareSelectionTests
 	}
 
 	[Fact]
-	public void Pick_TheFirstItemItself_EndsTheModeWithoutComparing()
+	public void Pick_TheFirstItemItself_EndsTheModeWithoutAPair()
 	{
-		this._selection.Start(this._first);
+		this._selection.Start(this._first, ItemPairPurpose.SocketGameRules);
 
 		this._selection.Pick(this._first).Should().BeNull();
 		this._selection.IsActive.Should().BeFalse();
