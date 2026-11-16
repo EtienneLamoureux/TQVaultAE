@@ -220,6 +220,10 @@ public sealed class LoadoutBar : Control
 		_ => this.CanChange && this.Selected is not null,
 	};
 
+	/// <summary>Raises an action on the selected loadout, as its menu entry does (nothing while it is greyed).</summary>
+	/// <param name="action">The action.</param>
+	internal void Request(LoadoutBarAction action) => this.Raise(action, this.Selected);
+
 	private void Raise(LoadoutBarAction action, string? name)
 	{
 		if (!this.CanAct(action))

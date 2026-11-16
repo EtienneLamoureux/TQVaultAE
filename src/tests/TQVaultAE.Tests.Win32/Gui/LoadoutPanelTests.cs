@@ -104,10 +104,10 @@ public sealed class LoadoutPanelTests
 	[Fact]
 	public void ButtonCells_SitInTheGapsOfTheStone_OverNoSlot()
 	{
-		var (back, previous, next) = LoadoutPanel.ButtonCells();
+		var (back, previous, next, swap) = LoadoutPanel.ButtonCells();
 		var grid = new RectangleF(PointF.Empty, LoadoutPanel.SlotCells);
 
-		foreach (var button in new[] { back, previous, next })
+		foreach (var button in new[] { back, previous, next, swap })
 		{
 			grid.Contains(button).Should().BeTrue($"{button} stays on the stone of the slots");
 			for (int slot = 0; slot <= EquipmentRules.ArtifactSlot; slot++)
@@ -121,5 +121,7 @@ public sealed class LoadoutPanelTests
 		previous.Top.Should().Be(next.Top);
 		previous.Left.Should().BeLessThan(LoadoutComparison.MiddleColumnFirst);
 		next.Left.Should().BeGreaterThan(LoadoutComparison.MiddleColumnLast + 1);
+		swap.Top.Should().BeGreaterThanOrEqualTo(13F, "Gear swap is under the rings");
+		(swap.Left + (swap.Width / 2F)).Should().BeApproximately(5F, 0.001F, "centred under the two rings");
 	}
 }

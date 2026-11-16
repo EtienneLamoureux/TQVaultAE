@@ -9,8 +9,8 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// The loadout panel in place of the statistics panel: the slot half of the equipment background and the
 /// <see cref="LoadoutPanel"/> over it, both the main equipment's geometry times one factor so that the slots fall on
-/// their frames at every zoom and DPI, with the game's small gold buttons in the gaps of the stone: Back (returns to the
-/// statistics) in the upper right, previous and next loadout in the lower left and right.
+/// their frames at every zoom and DPI, with the game's small buttons in the gaps of the stone: Back (returns to the
+/// statistics) in the upper right, previous and next loadout in the lower left and right, Gear swap under the rings.
 /// </summary>
 public sealed class LoadoutView : Control
 {
@@ -18,6 +18,7 @@ public sealed class LoadoutView : Control
 	private readonly GameButton _back;
 	private readonly GameButton _previous;
 	private readonly GameButton _next;
+	private readonly GameButton _swap;
 
 	/// <summary>The equipment background picture, the part of it with the slots, and where the main equipment draws that
 	/// part, relative to the equipment panel and at the window's scale.</summary>
@@ -46,8 +47,15 @@ public sealed class LoadoutView : Control
 		this._previous.Pressed += (_, _) => this.TurnRequested?.Invoke(this, -1);
 		this._next = new GameButton(this._uiService, """InGameUI\characterscreen\characterrotateright{0}01.tex""", Resources.LoadoutNext) { Name = "loadoutNextButton" };
 		this._next.Pressed += (_, _) => this.TurnRequested?.Invoke(this, 1);
+
+		// The game has no disable picture of this tile (greyed instead); its lighter over picture shows at rest, the up one under the mouse.
+		this._swap = new GameButton(this._uiService, """InGameUI\characterscreen\weaponswapbtn{0}01.tex""", Resources.LoadoutSwap, hasDisable: false, restState: "over", hoverState: "up")
+		{
+			Name = "loadoutSwapButton",
+		};
+		this._swap.Pressed += (_, _) => this.SwapRequested?.Invoke(this, EventArgs.Empty);
 		this.Controls.Add(this.Panel);
-		foreach (var button in new[] { this._back, this._previous, this._next })
+		foreach (var button in new[] { this._back, this._previous, this._next, this._swap })
 		{
 			this.Controls.Add(button);
 			button.BringToFront();
@@ -65,6 +73,19 @@ public sealed class LoadoutView : Control
 
 	/// <summary>The arrow that shows the next loadout.</summary>
 	internal Control NextButton => this._next;
+
+	/// <summary>The Gear swap button, which exchanges the loadout's pieces and the worn ones.</summary>
+	internal Control SwapButton => this._swap;
+
+	/// <summary>Raised when the user clicks the Gear swap button.</summary>
+	public event EventHandler? SwapRequested;
+
+	/// <summary>Whether the Gear swap button can be clicked: greyed when the loadout bar's Gear swap is.</summary>
+	public bool CanSwap
+	{
+		get => this._swap.Enabled;
+		set => this._swap.Enabled = value;
+	}
 
 	/// <summary>Raised when the user clicks the Back arrow.</summary>
 	public event EventHandler? BackRequested;
@@ -122,7 +143,7 @@ public sealed class LoadoutView : Control
 		this._pictureBounds = new Rectangle(pictureLocation, new Size(Convert.ToInt32(target.Width * factor), Convert.ToInt32(target.Height * factor)));
 
 		// The buttons in the gaps of the stone, at the panel's cell size.
-		var (back, previous, next) = LoadoutPanel.ButtonCells();
+		var (back, previous, next, swap) = LoadoutPanel.ButtonCells();
 		void Place(Control button, RectangleF cells)
 		{
 			var bounds = this.Panel.CellsToPixels(cells);
@@ -134,6 +155,7 @@ public sealed class LoadoutView : Control
 		Place(this._back, back);
 		Place(this._previous, previous);
 		Place(this._next, next);
+		Place(this._swap, swap);
 
 		this.Invalidate();
 	}
@@ -171,6 +193,9 @@ public sealed class LoadoutView : Control
 	{
 		private readonly IUIService _uiService;
 		private readonly string _resource;
+		private readonly bool _hasDisable;
+		private readonly string _restState;
+		private readonly string _hoverState;
 		private readonly ToolTip _toolTip = new();
 		private bool _hovered;
 		private bool _pressed;
@@ -181,10 +206,16 @@ public sealed class LoadoutView : Control
 		/// <param name="uiService">The UI service, which loads the pictures.</param>
 		/// <param name="resource">The pictures' id, with {0} for the state: up, over, down or disable.</param>
 		/// <param name="text">The tool tip and accessible name.</param>
-		internal GameButton(IUIService uiService, string resource, string text)
+		/// <param name="hasDisable">False when the game has no disable picture: the rest picture is greyed instead.</param>
+		/// <param name="restState">The state whose picture shows at rest.</param>
+		/// <param name="hoverState">The state whose picture shows under the mouse.</param>
+		internal GameButton(IUIService uiService, string resource, string text, bool hasDisable = true, string restState = "up", string hoverState = "over")
 		{
 			this._uiService = uiService;
 			this._resource = resource;
+			this._hasDisable = hasDisable;
+			this._restState = restState;
+			this._hoverState = hoverState;
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			this.BackColor = Color.Transparent;
 			this.Cursor = Cursors.Hand;
@@ -238,9 +269,11 @@ public sealed class LoadoutView : Control
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			string state = !this.Enabled ? "disable" : this._pressed ? "down" : this._hovered ? "over" : "up";
+			bool greyed = !this.Enabled && !this._hasDisable;
+			string state = !this.Enabled ? (greyed ? this._restState : "disable") : this._pressed ? "down" : this._hovered ? this._hoverState : this._restState;
 			string resource = string.Format(System.Globalization.CultureInfo.InvariantCulture, this._resource, state);
-			GamePicture.Draw(e.Graphics, this._uiService.LoadBitmap(resource.ToRecordId()), this.ClientRectangle);
+			e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			GamePicture.Draw(e.Graphics, this._uiService.LoadBitmap(resource.ToRecordId()), this.ClientRectangle, greyed);
 		}
 
 		protected override void Dispose(bool disposing)

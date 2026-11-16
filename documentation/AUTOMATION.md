@@ -269,15 +269,43 @@ produced.
 
 ### Loadouts
 
-The loadout bar under the statistics panel of the Equipment tab (see `documentation/LOADOUTS.md`).
+The loadout bar, the loadout panel and the marks (see `documentation/LOADOUTS.md`). Bounds are in the stash panel's
+pixels unless noted.
 
-| Tool | What it does |
-|---|---|
-| `loadouts(action?, name?, newName?, menu?, gameRunning?, realGame?, slot?)` | Reads the loadouts of the character shown: the bar (visible, `bounds`, `field`, `add`, `load` as rectangles in the stash panel, names, selected, `canChange`, `loadLocked` (why Load is greyed: the PlayerReadonly setting), font), its neighbours (`layout`: `statsPanel`, `editButton` with its visibility and font, `stashClient`, the stash panel's client area the bar and the button must stay inside), the loadouts file (`file`, `fileExists`, `readFailed`), each loadout's pieces by slot (record, seed, `worn` when the piece worn in that slot is identical) and the worn pieces. `marks` lists the marks beside the equipment slots against the selected loadout (`slot`, `match`: `Same`, `Different` or `OneEmpty`, `canCompare`, `bounds` in the equipment panel's pixels, whose own `equipmentPanel` box is in the stash panel); none without a selected loadout or when the loadouts cannot change. `menu` = `list` or `actions` reads the entries of the drop-down or of the right-click menu (text, enabled, checked). `action` first does it like the user, through the bar's own handlers: `select` (name) clicks the name box and the name in its list; `add` and `load` click the [+] and Load buttons with mouse messages; `update`, `rename`, `copy`, `delete` and `swap` (*Gear swap*) click their entry of the right-click menu (opened by a right click); on the selected loadout unless `name` is given, then picked in the list first. A greyed action is refused as the bar refuses it (Load and swap while `loadLocked`). `add` (name), `rename` (newName) and `copy` (newName) type the name into the name dialog, queued first as its `text:` answer (`queue_dialog_answers`): a used or empty name shows the error box, then the dialog again. `compare` (`slot`) clicks that slot's mark through the panel's mouse handler: on a blue or red mark the Item Comparison opens in a new modeless window after the call returns (worn piece first; `capture("Item Comparison")`, `comparison_windows`), any character, refused while a modal dialog is open. The other actions run after the call returns: queue the answers of their boxes first (update and delete confirm; load confirms the pieces it deletes when the setting *Replace the worn pieces instead of storing them in the vault* is on, unless confirmations are bypassed; load, swap and update ask while the game runs). Test characters only. `gameRunning=true/false` makes the next actions take the game as running or not, `realGame=true` goes back to the real processes. `hover` (`slot`) rests the pointer on a slot's mark through the panel's mouse move handling and returns its tool tip in `markTooltip` (text and colour: the state against the loadout, then "Click to compare" on a blue or red mark); `hover` without `slot` leaves the panel. Choosing a loadout (`select`) opens the loadout panel in place of the statistics panel; `panel` reports it: `visible`, `bounds` (stash panel), `loadout`, `panelBounds` (the item grid in the view), `cellScaleFactor` and `unitSize` (its cells against the window's), `back`, `previous` and `next` (its arrows, in the view), `canTurn` (false with a single loadout), `statsPanelVisible` and its `slots` (slot, record, seed, `search` (the sack type the search gives the piece), size). `back` clicks the Back arrow with mouse messages (any character): the statistics panel shows again, the loadout stays selected (marks); `previous` and `next` click the curved arrows: the previous or next loadout of the list shows (the last followed by the first), refused while greyed. The bounds of the statistics panel, the loadout panel, the bar and the Edit button are given in the stash panel's pixels, though they sit in the room right of the equipment (`CharacterRoom`). `modified` tells whether the loadouts changed in the panel since the file was written. The panel's items are driven as panel `loadout` with `pick_item`, `drop_item`, `cancel_drag`, `get_state` (its `isModified` is the loadouts'), `hover_item`, `context_menu`: a piece dropped there leaves its vault, bag or slot; one picked up there goes to the hand; `save_files` writes the loadouts file with the other files. |
+`loadouts(action?, name?, newName?, menu?, gameRunning?, realGame?, slot?)` reads:
 
-`select_search_result` also gives the result's `loadout`: a loadout piece selects its character, the Equipment tab and
-that loadout in the bar, shown in the loadout panel. `search_containers("Loadouts")` lists the loadout pieces in the search, one container per
-character's loadouts file.
+- `bar`: `bounds`, `field`, `add`, `load`, `names`, `selected`, `canChange`, `loadLocked` (why Load is greyed), font.
+- `layout`: `statsPanel`, `editButton` (visibility, font), `stashClient`.
+- The loadouts file (`file`, `fileExists`, `readFailed`, `modified`), each loadout's pieces (record, seed, `worn` when
+  identical to the worn piece) and the worn pieces.
+- `marks`: `slot`, `match` (`Same`, `Different`, `OneEmpty`), `canCompare`, `bounds` (equipment panel pixels).
+- `panel` (the loadout panel): `visible`, `bounds`, `loadout`, `panelBounds`, `cellScaleFactor`, `unitSize`, the
+  `back`, `previous`, `next` and `swap` buttons (view pixels), `canTurn`, `canSwap`, `statsPanelVisible`, `slots`.
+- `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu.
+
+`action`, through the bar's and panel's own handlers:
+
+| Action | Does | Who |
+|---|---|---|
+| `select` (`name`) | Picks the loadout in the box; opens the loadout panel | test characters |
+| `add` (`name`), `load` | Clicks [+] or Load | test characters |
+| `update`, `rename` / `copy` (`newName`), `delete`, `swap` | Clicks the right-click menu entry, on `name` or the selected loadout | test characters |
+| `swapButton` | Clicks the panel's Gear swap button | test characters |
+| `back`, `previous`, `next` | Clicks the panel's arrows | any character |
+| `compare` (`slot`) | Clicks a mark: Item Comparison in a new window | any character |
+| `hover` (`slot`) | Hovers a mark, returns `markTooltip`; no `slot` leaves the panel | any character |
+
+- Greyed actions are refused, as the user would be.
+- Names are typed into the name dialog as its queued `text:` answer.
+- Actions other than `select`, `compare`, `hover` and the arrows run after the call returns: queue the answers of their
+  boxes first (`queue_dialog_answers`).
+- `gameRunning=true/false` makes the next actions take the game as running or not; `realGame=true` restores the real
+  check.
+- The panel's items are driven as panel `loadout` (`pick_item`, `drop_item`, `cancel_drag`, `get_state`, `hover_item`,
+  `context_menu`); `save_files` writes the loadouts file.
+
+`select_search_result` gives a loadout result's `loadout` and opens it in the panel. `search_containers("Loadouts")`
+lists the loadout pieces, one container per loadouts file.
 
 ### How drags are simulated
 

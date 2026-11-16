@@ -195,6 +195,7 @@ public partial class StashPanel
 		// The slots follow the selected loadout even while the statistics show: a piece held from them stays valid.
 		view.Panel.ShowLoadout(loadout is null ? null : set, loadout?.Name, this.Player);
 		view.CanTurn = set is { ReadFailed: false, Loadouts.Count: > 1 };
+		view.CanSwap = bar.CanAct(LoadoutBarAction.Swap);
 		if (room.LoadoutShown != show)
 		{
 			room.LoadoutShown = show;
@@ -292,6 +293,7 @@ public partial class StashPanel
 		this._loadoutView = new LoadoutView(this.DragInfo, this.Services);
 		this._loadoutView.BackRequested += (_, _) => this.LoadoutPanelOpen = false;
 		this._loadoutView.TurnRequested += (_, step) => this.TurnLoadout(step);
+		this._loadoutView.SwapRequested += (_, _) => this._loadoutBar.Request(LoadoutBarAction.Swap);
 		this._loadoutView.Panel.PiecesChanged += this.LoadoutPiecesChanged;
 		this.ForwardEvents(this._loadoutView.Panel);
 
