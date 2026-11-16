@@ -73,7 +73,7 @@ internal sealed partial class CharacterStatsPanel
 		return true;
 	}
 
-	/// <summary>Picks a scroll in the Buffs tab's drop-down, as the user does (its selection event).</summary>
+	/// <summary>Picks a scroll in the Buffs tab's drop-down, as the user's commit does.</summary>
 	/// <returns>false when there is no such choice.</returns>
 	internal bool AutomationPickScroll(int index)
 	{
@@ -83,6 +83,7 @@ internal sealed partial class CharacterStatsPanel
 			return false;
 
 		box.SelectedIndex = index;
+		this.RaiseScrollPicked(index);
 		return true;
 	}
 

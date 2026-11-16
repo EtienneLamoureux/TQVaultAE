@@ -142,11 +142,20 @@ internal sealed partial class CharacterStatsPanel
 		this.Invalidate();
 	}
 
+	/// <summary>
+	/// The wheel scrolls the list a row per notch (a message can carry several notches); it is handled here, so the main
+	/// window does not also scroll its vault list.
+	/// </summary>
 	protected override void OnMouseWheel(MouseEventArgs e)
 	{
 		base.OnMouseWheel(e);
-		if (this._tab == BuffsTab)
-			this.ScrollBuffs(-Math.Sign(e.Delta) * BuffStep);
+		if (this._tab != BuffsTab || e.Delta == 0)
+			return;
+
+		var rows = e.Delta / 120 is var notches and not 0 ? notches : Math.Sign(e.Delta);
+		this.ScrollBuffs(-rows * BuffStep);
+		if (e is HandledMouseEventArgs handled)
+			handled.Handled = true;
 	}
 
 	/// <summary>The scroll choice: a drop-down over the panel, shown on the Buffs tab only.</summary>
@@ -163,16 +172,23 @@ internal sealed partial class CharacterStatsPanel
 			Visible = false,
 		};
 		DarkComboBox.Apply(this._scrollBox);
-		this._scrollBox.SelectedIndexChanged += (_, _) =>
-		{
-			if (!this._syncingScrollBox && this.View?.Invoke() is { } view && this._scrollBox.SelectedIndex is var i && i >= 0 && i < view.Buffs.Scrolls.Count)
-				this.ScrollPicked?.Invoke(this, view.Buffs.Scrolls[i].Id);
-		};
+		// Only the user's choice (a click in the list, Enter): the selection the panel sets itself raises nothing.
+		this._scrollBox.SelectionChangeCommitted += (_, _) => this.RaiseScrollPicked(this._scrollBox.SelectedIndex);
 		this.Controls.Add(this._scrollBox);
 		return this._scrollBox;
 	}
 
-	/// <summary>Shows the scroll choice on the Buffs tab with the scrolls of the view, at its place for the scale.</summary>
+	/// <summary>Raises <see cref="ScrollPicked"/> for the scroll at <paramref name="index"/> of the view's choices.</summary>
+	private void RaiseScrollPicked(int index)
+	{
+		if (!this._syncingScrollBox && this.View?.Invoke() is { } view && index >= 0 && index < view.Buffs.Scrolls.Count)
+			this.ScrollPicked?.Invoke(this, view.Buffs.Scrolls[index].Id);
+	}
+
+	/// <summary>
+	/// Shows the scroll choice on the Buffs tab with the scrolls of the view, at its place for the scale. Left alone while
+	/// its list is open: setting its selection then would undo what the user is choosing.
+	/// </summary>
 	private void SyncScrollBox(CharacterPanelView? view)
 	{
 		if (this._tab != BuffsTab || view is null || view.Buffs.Scrolls.Count == 0)
@@ -183,6 +199,9 @@ internal sealed partial class CharacterStatsPanel
 		}
 
 		var box = this.ScrollBox();
+		if (box.DroppedDown)
+			return;
+
 		this._syncingScrollBox = true;
 		try
 		{
@@ -211,6 +230,11 @@ internal sealed partial class CharacterStatsPanel
 				box.SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.Location | BoundsSpecified.Width);
 				DarkComboBox.FitHeight(box, bounds.Height);
 			}
+
+			// The open list as wide as its longest name (the box is narrow), within the screen.
+			var widest = names.Max(n => TextRenderer.MeasureText(n, box.Font).Width) + SystemInformation.VerticalScrollBarWidth + 8;
+			var screen = Screen.FromControl(this).WorkingArea.Width / 2;
+			box.DropDownWidth = Math.Clamp(widest, box.Width, Math.Max(box.Width, screen));
 			box.Visible = true;
 		}
 		finally
