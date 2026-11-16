@@ -10,7 +10,8 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// The loadout panel in place of the statistics panel: the slot half of the equipment background and the
 /// <see cref="LoadoutPanel"/> over it, both the main equipment's geometry times one factor so that the slots fall on
 /// their frames at every zoom and DPI, with the game's small buttons in the gaps of the stone: Back (returns to the
-/// statistics) in the upper right, previous and next loadout in the lower left and right, Gear swap under the rings.
+/// statistics) in the upper right, previous and next loadout in the lower left and right, Gear swap and Empty loadout
+/// under the rings.
 /// </summary>
 public sealed class LoadoutView : Control
 {
@@ -19,6 +20,7 @@ public sealed class LoadoutView : Control
 	private readonly GameButton _previous;
 	private readonly GameButton _next;
 	private readonly GameButton _swap;
+	private readonly GameButton _empty;
 
 	/// <summary>The equipment background picture, the part of it with the slots, and where the main equipment draws that
 	/// part, relative to the equipment panel and at the window's scale.</summary>
@@ -54,8 +56,15 @@ public sealed class LoadoutView : Control
 			Name = "loadoutSwapButton",
 		};
 		this._swap.Pressed += (_, _) => this.SwapRequested?.Invoke(this, EventArgs.Empty);
+
+		// The game's inventory button of the HUD (no disable picture: greyed instead); it opens the menu of destinations.
+		this._empty = new GameButton(this._uiService, """InGameUI\hudinventorybutton{0}01.tex""", Resources.LoadoutEmpty, hasDisable: false)
+		{
+			Name = "loadoutEmptyButton",
+		};
+		this._empty.Pressed += (_, _) => this.EmptyRequested?.Invoke(this, EventArgs.Empty);
 		this.Controls.Add(this.Panel);
-		foreach (var button in new[] { this._back, this._previous, this._next, this._swap })
+		foreach (var button in new[] { this._back, this._previous, this._next, this._swap, this._empty })
 		{
 			this.Controls.Add(button);
 			button.BringToFront();
@@ -93,6 +102,25 @@ public sealed class LoadoutView : Control
 		{
 			this._swap.LockedText = value;
 			this._swap.Available = value is null;
+		}
+	}
+
+	/// <summary>The Empty loadout button, which opens the menu of destinations (inventory, stash, vault).</summary>
+	internal Control EmptyButton => this._empty;
+
+	/// <summary>Raised when the user clicks the Empty loadout button: the owner shows the menu of destinations under it.</summary>
+	public event EventHandler? EmptyRequested;
+
+	/// <summary>
+	/// Why Empty loadout is greyed (the loadout bar's reason, shown as the button's tool tip), or null when it can be clicked.
+	/// </summary>
+	public string? EmptyLocked
+	{
+		get => this._empty.Available ? null : this._empty.LockedText;
+		set
+		{
+			this._empty.LockedText = value;
+			this._empty.Available = value is null;
 		}
 	}
 
@@ -152,7 +180,7 @@ public sealed class LoadoutView : Control
 		this._pictureBounds = new Rectangle(pictureLocation, new Size(Convert.ToInt32(target.Width * factor), Convert.ToInt32(target.Height * factor)));
 
 		// The buttons in the gaps of the stone, at the panel's cell size.
-		var (back, previous, next, swap) = LoadoutPanel.ButtonCells();
+		var (back, previous, next, swap, empty) = LoadoutPanel.ButtonCells();
 		void Place(Control button, RectangleF cells)
 		{
 			var bounds = this.Panel.CellsToPixels(cells);
@@ -165,6 +193,7 @@ public sealed class LoadoutView : Control
 		Place(this._previous, previous);
 		Place(this._next, next);
 		Place(this._swap, swap);
+		Place(this._empty, empty);
 
 		this.Invalidate();
 	}

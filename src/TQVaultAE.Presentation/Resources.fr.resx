@@ -2514,10 +2514,13 @@ Les emplacements vides sur le personnage gardent les pièces de la tenue.</value
     <value>La tenue « {0} » est déjà vide.</value>
   </data>
 	<data name="LoadoutEmptyNoRoom" xml:space="preserve">
-    <value>Pas assez de place dans {0} pour les {1} pièce(s) de la tenue : rien n'a été changé.</value>
+    <value>Pas assez de place dans {0} : les {1} pièce(s) restent dans la tenue.</value>
   </data>
 	<data name="LoadoutEmptyRefused" xml:space="preserve">
     <value>Rien n'a été déplacé : {0} est en lecture seule.</value>
+  </data>
+	<data name="LoadoutEmptyPartly" xml:space="preserve">
+    <value>Tenue « {0} » : {1} pièce(s) déplacée(s) vers {2} ; {3} pièce(s) restent dans la tenue, faute de place.</value>
   </data>
 	<data name="LoadoutEmptied" xml:space="preserve">
     <value>Tenue « {0} » vidée : {1} pièce(s) déplacée(s) vers {2}.</value>

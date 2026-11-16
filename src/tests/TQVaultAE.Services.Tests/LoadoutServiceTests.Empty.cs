@@ -8,8 +8,8 @@ using TQVaultAE.Domain.Entities;
 namespace TQVaultAE.Tests.Services;
 
 /// <summary>
-/// <see cref="TQVaultAE.Services.LoadoutService.Empty"/>: the loadout's pieces themselves move to a bag, all or nothing,
-/// and the loadout ends empty.
+/// <see cref="TQVaultAE.Services.LoadoutService.Empty"/>: the loadout's pieces themselves move to a bag; a piece without
+/// room stays in the loadout.
 /// </summary>
 public sealed partial class LoadoutServiceTests
 {
@@ -65,7 +65,7 @@ public sealed partial class LoadoutServiceTests
 	}
 
 	[Fact]
-	public void Empty_NoRoomForEveryPiece_ChangesNothing()
+	public void Empty_RoomForSomePieces_MovesThoseAndTheOthersStayInTheLoadout()
 	{
 		var set = this.WithLoadoutB(out var helm, out var torso);
 		var size = new Size(4, 4);
@@ -73,8 +73,27 @@ public sealed partial class LoadoutServiceTests
 
 		var result = this._service.Empty(set, "B", bag, size, InventoryPlace);
 
+		result.Outcome.Should().Be(LoadoutEmptyOutcome.PartlyEmptied);
+		result.Pieces.Should().Be(1);
+		result.Left.Should().Be(1);
+		result.Moved.Should().Equal(helm);
+		bag.Should().Contain(helm).And.NotContain(torso);
+		set.Loadouts[0].Pieces[EquipmentRules.HeadSlot].Should().BeNull();
+		set.Loadouts[0].Pieces[EquipmentRules.BodySlot].Should().BeSameAs(torso, "a piece without room stays in the loadout");
+		set.IsModified.Should().BeTrue();
+	}
+
+	[Fact]
+	public void Empty_NoRoomForAnyPiece_ChangesNothing()
+	{
+		var set = this.WithLoadoutB(out var helm, out var torso);
+		var size = new Size(4, 4);
+		var bag = Bag(size, freeSlots: 0);
+
+		var result = this._service.Empty(set, "B", bag, size, InventoryPlace);
+
 		result.Outcome.Should().Be(LoadoutEmptyOutcome.NoRoom);
-		result.Pieces.Should().Be(2);
+		result.Left.Should().Be(2);
 		result.Moved.Should().BeEmpty();
 		bag.Should().NotContain(helm).And.NotContain(torso);
 		bag.IsModified.Should().BeFalse();

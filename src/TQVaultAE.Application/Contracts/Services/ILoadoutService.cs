@@ -106,10 +106,10 @@ public interface ILoadoutService
 	LoadoutSwapResult Swap(LoadoutSet loadouts, string name, PlayerCollection player);
 
 	/// <summary>
-	/// Moves every piece of a loadout to a bag, at the first free spots as an auto-move places them; the loadout keeps its
-	/// name and ends empty. The pieces themselves move, none is copied. Without room in the bag for all of them (or with a
-	/// piece the bag does not take), nothing changes. The bag is modified (saved with its file) and the loadouts are marked
-	/// modified (written with the other files). The search follows the pieces.
+	/// Moves the pieces of a loadout to a bag, one by one in slot order at the first free spot as an auto-move places
+	/// them; the loadout keeps its name. The pieces themselves move, none is copied. A piece without room (or that the bag
+	/// does not take) stays in the loadout. The bag is modified (saved with its file) and the loadouts are marked modified
+	/// (written with the other files). The search follows the pieces.
 	/// </summary>
 	/// <param name="loadouts">The character's loadouts.</param>
 	/// <param name="name">The loadout.</param>

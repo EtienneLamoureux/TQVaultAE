@@ -2884,10 +2884,13 @@ The slots empty on the character keep the loadout's pieces.</value>
     <value>The loadout "{0}" is already empty.</value>
   </data>
 	<data name="LoadoutEmptyNoRoom" xml:space="preserve">
-    <value>Not enough room in {0} for the {1} piece(s) of the loadout: nothing was changed.</value>
+    <value>Not enough room in {0}: the {1} piece(s) stay in the loadout.</value>
   </data>
 	<data name="LoadoutEmptyRefused" xml:space="preserve">
     <value>Nothing was moved: {0} is read-only.</value>
+  </data>
+	<data name="LoadoutEmptyPartly" xml:space="preserve">
+    <value>Loadout "{0}": {1} piece(s) moved to {2}; {3} piece(s) stay in the loadout for want of room.</value>
   </data>
 	<data name="LoadoutEmptied" xml:space="preserve">
     <value>Loadout "{0}" emptied: {1} piece(s) moved to {2}.</value>

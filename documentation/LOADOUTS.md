@@ -32,7 +32,8 @@ moves down meanwhile.
   - Upper right arrow: **Back to the statistics** (the loadout stays chosen).
   - Lower corner arrows: **Previous loadout**, **Next loadout**, in the box's order, wrapping around; grey with a single
     loadout.
-  - Under the rings: **Gear swap** (below). Greyed, its tool tip says why.
+  - Under the rings: **Gear swap** (below), and **Empty loadout** (the inventory bag), which opens the menu of
+    destinations ([below](#empty-loadout)). Greyed, their tool tip says why.
 
 Changes are written with the other files (**Save**, or on closing), or when a bar action writes the loadouts file
 (add, update, rename, copy, delete). **Delete** discards the pieces moved into the loadout, **Update** those it
@@ -86,14 +87,15 @@ sword. Use **Gear swap** to move pieces instead.
 
 ## Empty loadout
 
-**Empty loadout** (bar menu) moves the loadout's pieces out, none copied; the loadout stays, empty:
+**Empty loadout** (bar menu, or the button under the rings) moves the loadout's pieces out, none copied; the loadout
+stays:
 
 - **To inventory**: the character's main bag. Greyed with **Player Equipment ReadOnly**.
 - **To stash**: the stash a *Move to the stash* finds (the **Transfer Area** while the equipment shows).
 - **To vault**: the bag of the vault shown.
 
-Without room for every piece, nothing changes (status line). Refused for a read-only character or bag. Saved like a
-move by hand: **Save**, or on closing.
+A piece without room stays in the loadout; the status line says how many. Refused for a read-only character or bag.
+Saved like a move by hand: **Save**, or on closing.
 
 ## Good to know
 

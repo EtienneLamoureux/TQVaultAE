@@ -82,10 +82,13 @@ public enum LoadoutEmptyOutcome
 	/// <summary>The pieces are in the bag; the loadout is empty.</summary>
 	Emptied,
 
+	/// <summary>Some pieces are in the bag; the others, without room, stay in the loadout.</summary>
+	PartlyEmptied,
+
 	/// <summary>The loadout holds no piece: nothing changed.</summary>
 	NothingToEmpty,
 
-	/// <summary>The bag lacks room for every piece (or does not take one of them): nothing changed.</summary>
+	/// <summary>No piece has room in the bag (or the bag takes none of them): they all stay in the loadout.</summary>
 	NoRoom,
 
 	/// <summary>No such loadout, a file that could not be read, or a bag that cannot change: nothing changed.</summary>
@@ -94,8 +97,9 @@ public enum LoadoutEmptyOutcome
 
 /// <summary>Outcome of emptying a loadout (<see cref="Contracts.Services.ILoadoutService.Empty"/>).</summary>
 /// <param name="Outcome">How it ended.</param>
-/// <param name="Pieces">Pieces moved to the bag (or that would have been, for <see cref="LoadoutEmptyOutcome.NoRoom"/>).</param>
-public sealed record LoadoutEmptyResult(LoadoutEmptyOutcome Outcome, int Pieces = 0)
+/// <param name="Pieces">Pieces moved to the bag.</param>
+/// <param name="Left">Pieces left in the loadout for want of room.</param>
+public sealed record LoadoutEmptyResult(LoadoutEmptyOutcome Outcome, int Pieces = 0, int Left = 0)
 {
 	/// <summary>The pieces now in the bag.</summary>
 	public IReadOnlyList<Domain.Entities.Item> Moved { get; init; } = [];

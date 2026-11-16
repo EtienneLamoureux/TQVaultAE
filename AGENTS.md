@@ -209,7 +209,7 @@ Loadouts (saved equipment sets, `documentation/LOADOUTS.md`):
 
 | Purpose | Tools |
 |---|---|
-| Loadout bar | `loadouts(action?, name?, newName?, menu?, to?, gameRunning?, slot?)` reads the bar, its menus, the loadouts file and each loadout's pieces (identical to the worn one or not) and the `marks` beside the equipment slots; actions `select`, `add`, `update`, `rename`, `copy`, `delete`, `load`, `swap`, `empty` (`to`: inventory, stash, vault) on test characters, `compare` (`slot`) clicks a mark (opens Item Comparison), `hover` (`slot`) returns a mark's tool tip (`markTooltip`), `gameRunning` stands for the game process; `select_search_result` gives a loadout result's `loadout` |
+| Loadout bar | `loadouts(action?, name?, newName?, menu?, to?, gameRunning?, slot?)` reads the bar, its menus, the loadouts file and each loadout's pieces (identical to the worn one or not) and the `marks` beside the equipment slots; actions `select`, `add`, `update`, `rename`, `copy`, `delete`, `load`, `swap`, `empty` and `emptyButton` (`to`: inventory, stash, vault) on test characters, `compare` (`slot`) clicks a mark (opens Item Comparison), `hover` (`slot`) returns a mark's tool tip (`markTooltip`), `gameRunning` stands for the game process; `select_search_result` gives a loadout result's `loadout` |
 
 Rules:
 - Nothing blocks saves: work only in your own test files, vaults `vault-test1`, `vault-test2`, ... and characters `player-test1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).

@@ -196,6 +196,7 @@ public partial class StashPanel
 		view.Panel.ShowLoadout(loadout is null ? null : set, loadout?.Name, this.Player);
 		view.CanTurn = set is { ReadFailed: false, Loadouts.Count: > 1 };
 		view.SwapLocked = bar.CanAct(LoadoutBarAction.Swap) ? null : bar.LockedReason(LoadoutBarAction.Swap) ?? Resources.LoadoutSwap;
+		view.EmptyLocked = bar.CanEmpty ? null : bar.LockedReason(LoadoutBarAction.EmptyToStash) ?? Resources.LoadoutEmpty;
 		if (room.LoadoutShown != show)
 		{
 			room.LoadoutShown = show;
@@ -223,6 +224,13 @@ public partial class StashPanel
 		int next = (((index < 0 ? 0 : index + step) % names.Count) + names.Count) % names.Count;
 		this._loadoutPanelOpen = true;
 		this.RefreshLoadouts(names[next]);
+	}
+
+	/// <summary>The Empty loadout button of the loadout panel: the bar's menu of destinations, under the button.</summary>
+	private void ShowEmptyMenu()
+	{
+		if (this._loadoutBar is { } bar && this._loadoutView is { } view)
+			bar.EmptyMenu.Show(view.EmptyButton, new Point(0, view.EmptyButton.Height));
 	}
 
 	/// <summary>
@@ -294,6 +302,7 @@ public partial class StashPanel
 		this._loadoutView.BackRequested += (_, _) => this.LoadoutPanelOpen = false;
 		this._loadoutView.TurnRequested += (_, step) => this.TurnLoadout(step);
 		this._loadoutView.SwapRequested += (_, _) => this._loadoutBar.Request(LoadoutBarAction.Swap);
+		this._loadoutView.EmptyRequested += (_, _) => this.ShowEmptyMenu();
 		this._loadoutView.Panel.PiecesChanged += this.LoadoutPiecesChanged;
 		this.ForwardEvents(this._loadoutView.Panel);
 

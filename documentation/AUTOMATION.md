@@ -910,7 +910,8 @@ pixels unless noted.
   identical to the worn piece) and the worn pieces.
 - `marks`: `slot`, `match` (`Same`, `Different`, `OneEmpty`), `canCompare`, `bounds` (equipment panel pixels).
 - `panel` (the loadout panel): `visible`, `bounds`, `loadout`, `panelBounds`, `cellScaleFactor`, `unitSize`, the
-  `back`, `previous`, `next` and `swap` buttons (view pixels), `canTurn`, `canSwap`, `swapLocked` (the greyed button's tool tip), `statsPanelVisible`, `slots`.
+  `back`, `previous`, `next`, `swap` and `empty` buttons (view pixels), `canTurn`, `canSwap`, `swapLocked` and
+  `emptyLocked` (the greyed button's tool tip), `statsPanelVisible`, `slots`.
 - `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu (a submenu's `items`, with `tip`).
 
 `action`, through the bar's and panel's own handlers:
@@ -922,6 +923,7 @@ pixels unless noted.
 | `update`, `rename` / `copy` (`newName`), `delete`, `swap` | Clicks the right-click menu entry, on `name` or the selected loadout | test characters |
 | `empty` (`to`: `inventory`, `stash`, `vault`) | Clicks the entry of the Empty loadout submenu, on `name` or the selected loadout | test characters |
 | `swapButton` | Clicks the panel's Gear swap button | test characters |
+| `emptyButton` (`to`) | Clicks the panel's Empty loadout button, then the destination in its menu | test characters |
 | `back`, `previous`, `next` | Clicks the panel's arrows | any character |
 | `compare` (`slot`) | Clicks a mark: Item Comparison in a new window | any character |
 | `hover` (`slot`) | Hovers a mark, returns `markTooltip`; no `slot` leaves the panel | any character |

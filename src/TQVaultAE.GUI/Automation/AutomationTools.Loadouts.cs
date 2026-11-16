@@ -22,13 +22,13 @@ internal static partial class AutomationTools
 #endif
 
 	[McpServerTool(Name = "loadouts", Destructive = true)]
-	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked, and a submenu's items with their tip). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy, delete and swap (Gear swap: the loadout's pieces and the worn ones change places) click the entry of the bar's right-click menu, and empty (to: inventory, stash or vault) the entry of its Empty loadout submenu (the pieces move to the main inventory bag, the stash an auto-move finds (the transfer stash while the equipment shows) or the bag of the vault shown; all or nothing) — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load, swap and empty to inventory when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison of the worn piece and the loadout's in a new modeless window (after the call returns; comparison_windows lists and closes them). hover (slot) rests the pointer on the mark of a slot through the panel's mouse handling and returns its tool tip (markTooltip: the state against the loadout, then 'Click to compare' when a click compares); hover without slot leaves the panel. Choosing a loadout (select) opens the loadout panel in place of the statistics panel (panel: visible, bounds in the stash panel's pixels, the loadout shown, cellScaleFactor and unitSize of its cells, the bounds of its Back, previous, next and Gear swap (swap) buttons in the view's pixels, canTurn (false with a single loadout), canSwap, swapLocked (why Gear swap is greyed: its tool tip), modified when its pieces changed since the file was written, and its slots with their pieces); its items are driven as panel 'loadout' with pick_item, drop_item, cancel_drag, get_state and the other panel tools. back clicks the panel's Back arrow (any character), which shows the statistics again; previous and next click its arrows, which show the previous or next loadout of the list (the last followed by the first); swapButton clicks its Gear swap button (test characters). Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load, swap and update ask when the game runs) (Debug builds: only on test characters, names starting with 'player-test' or 'player-mod')." + LoadoutsDebugNote)]
+	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked, and a submenu's items with their tip). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy, delete and swap (Gear swap: the loadout's pieces and the worn ones change places) click the entry of the bar's right-click menu, and empty (to: inventory, stash or vault) the entry of its Empty loadout submenu (the pieces move to the main inventory bag, the stash an auto-move finds (the transfer stash while the equipment shows) or the bag of the vault shown; a piece without room stays in the loadout) — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load, swap and empty to inventory when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison of the worn piece and the loadout's in a new modeless window (after the call returns; comparison_windows lists and closes them). hover (slot) rests the pointer on the mark of a slot through the panel's mouse handling and returns its tool tip (markTooltip: the state against the loadout, then 'Click to compare' when a click compares); hover without slot leaves the panel. Choosing a loadout (select) opens the loadout panel in place of the statistics panel (panel: visible, bounds in the stash panel's pixels, the loadout shown, cellScaleFactor and unitSize of its cells, the bounds of its Back, previous, next, Gear swap (swap) and Empty loadout (empty) buttons in the view's pixels, canTurn (false with a single loadout), canSwap, swapLocked (why Gear swap is greyed: its tool tip), emptyLocked (why Empty loadout is greyed), modified when its pieces changed since the file was written, and its slots with their pieces); its items are driven as panel 'loadout' with pick_item, drop_item, cancel_drag, get_state and the other panel tools. back clicks the panel's Back arrow (any character), which shows the statistics again; previous and next click its arrows, which show the previous or next loadout of the list (the last followed by the first); swapButton clicks its Gear swap button and emptyButton (to) its Empty loadout button then the destination in the menu it opens (test characters). Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load, swap and update ask when the game runs) (Debug builds: only on test characters, names starting with 'player-test' or 'player-mod')." + LoadoutsDebugNote)]
 	public static string Loadouts(
-		[Description("select, add, update, rename, copy, delete, load, swap, empty, swapButton, compare, hover, back, previous or next; none to only read.")] string? action = null,
+		[Description("select, add, update, rename, copy, delete, load, swap, empty, swapButton, emptyButton, compare, hover, back, previous or next; none to only read.")] string? action = null,
 		[Description("The loadout (select, and the others instead of the selected one); the new loadout's name for add.")] string? name = null,
 		[Description("The new name for rename and copy.")] string? newName = null,
 		[Description("'list' or 'actions' to read that menu of the bar.")] string? menu = null,
-		[Description("The target of empty: inventory, stash or vault.")] string? to = null,
+		[Description("The target of empty and emptyButton: inventory, stash or vault.")] string? to = null,
 #if DEBUG
 		[Description("true or false to take the game as running or not for the next actions; omit to keep the current choice.")] bool? gameRunning = null,
 		[Description("true to go back to the real game processes.")] bool realGame = false,
@@ -103,7 +103,21 @@ internal static partial class AutomationTools
 
 				if (!bar.Visible)
 					throw new McpException("The loadout bar is hidden: show the Equipment tab first.");
-				if (string.Equals(action.Trim(), "swapButton", StringComparison.OrdinalIgnoreCase))
+					if (string.Equals(action.Trim(), "emptyButton", StringComparison.OrdinalIgnoreCase))
+				{
+					// The Empty loadout button of the loadout panel opens the menu of destinations; the entry is clicked
+					// after the call returns.
+					if (stash.LoadoutView is not { Visible: true } view2)
+						throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
+					if (view2.EmptyLocked is { } emptyLocked)
+						throw new McpException($"Empty loadout is greyed: {emptyLocked}");
+					var target = EmptyTarget(to);
+					var emptyButton = view2.EmptyButton;
+					AutomationInput.SendClick(emptyButton, new Point(emptyButton.Width / 2, emptyButton.Height / 2), MouseButtons.Left, Keys.None);
+					var entry = bar.EmptyMenu.Items.OfType<ToolStripItem>().First(i => i.Tag is LoadoutBarAction tagged && tagged == target);
+					AutomationMenus.ClickLater(form, AutomationMenus.Clickable([entry]));
+				}
+				else if (string.Equals(action.Trim(), "swapButton", StringComparison.OrdinalIgnoreCase))
 				{
 					// The Gear swap button of the loadout panel, clicked after the call returns (it may ask when the game runs).
 					if (stash.LoadoutView is not { Visible: true } view1)
@@ -116,13 +130,7 @@ internal static partial class AutomationTools
 				else
 				{
 					var barAction = string.Equals(action.Trim(), "empty", StringComparison.OrdinalIgnoreCase)
-						? to?.Trim().ToLowerInvariant() switch
-						{
-							"inventory" => LoadoutBarAction.EmptyToInventory,
-							"stash" => LoadoutBarAction.EmptyToStash,
-							"vault" => LoadoutBarAction.EmptyToVault,
-							_ => throw new McpException("empty needs to: inventory, stash or vault."),
-						}
+						? EmptyTarget(to)
 						: ParseEnum<LoadoutBarAction>(action, "action");
 
 					// Another loadout than the selected one: picked in the bar's list first, as the user does.
@@ -210,6 +218,8 @@ internal static partial class AutomationTools
 					swap = view.SwapButton.Bounds,
 					canSwap = view.CanSwap,
 					swapLocked = view.SwapLocked,
+					empty = view.EmptyButton.Bounds,
+					emptyLocked = view.EmptyLocked,
 					statsPanelVisible = stash.AutomationPlayerStatsPanel?.Visible,
 					slots = view.Panel.Sack?.Take(view.Panel.Sack.NumberOfSlots).Select((item, index) => ItemKey.IsEmptyItem(item) ? null : new
 					{
@@ -242,6 +252,15 @@ internal static partial class AutomationTools
 			});
 		});
 
+
+	/// <summary>The Empty loadout entry of a destination: inventory, stash or vault.</summary>
+	private static LoadoutBarAction EmptyTarget(string? to) => to?.Trim().ToLowerInvariant() switch
+	{
+		"inventory" => LoadoutBarAction.EmptyToInventory,
+		"stash" => LoadoutBarAction.EmptyToStash,
+		"vault" => LoadoutBarAction.EmptyToVault,
+		_ => throw new McpException("to must be inventory, stash or vault."),
+	};
 
 	/// <summary>Selects a loadout like the user: a click on the bar's name box opens its list, then a click on the name.</summary>
 	private static void PickLoadout(LoadoutBar bar, string name)

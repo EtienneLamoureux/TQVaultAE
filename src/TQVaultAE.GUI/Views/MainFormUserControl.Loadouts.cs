@@ -377,9 +377,8 @@ public partial class MainFormUserControl
 	}
 
 	/// <summary>
-	/// Empty loadout: moves the loadout's pieces (none copied) to the inventory, the stash or the vault bag shown; without
-	/// room for all of them, nothing changes and the user is told. The bag and the loadouts are saved as after a move by
-	/// hand.
+	/// Empty loadout: moves the loadout's pieces (none copied) to the inventory, the stash or the vault bag shown; a piece
+	/// without room stays in the loadout and the user is told. The bag and the loadouts are saved as after a move by hand.
 	/// </summary>
 	/// <param name="name">The loadout.</param>
 	/// <param name="target">The menu entry: <see cref="LoadoutBarAction.EmptyToInventory"/>, <see cref="LoadoutBarAction.EmptyToStash"/>
@@ -398,7 +397,7 @@ public partial class MainFormUserControl
 				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyNothing, loadout.Name));
 				return false;
 			case LoadoutEmptyOutcome.NoRoom:
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyNoRoom, bag.Name, result.Pieces), TQColor.Red);
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyNoRoom, bag.Name, result.Left), TQColor.Red);
 				return false;
 			case LoadoutEmptyOutcome.Refused:
 				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyRefused, bag.Name), TQColor.Red);
@@ -410,7 +409,10 @@ public partial class MainFormUserControl
 		BagButtonTooltip.InvalidateCache(bag.Sack);
 		bag.Panel.Refresh();
 		this.stashPanel.RefreshLoadouts(loadout.Name);
-		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptied, loadout.Name, result.Pieces, bag.Name));
+		if (result.Outcome == LoadoutEmptyOutcome.PartlyEmptied)
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptyPartly, loadout.Name, result.Pieces, bag.Name, result.Left), TQColor.Red);
+		else
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEmptied, loadout.Name, result.Pieces, bag.Name));
 		return true;
 	}
 

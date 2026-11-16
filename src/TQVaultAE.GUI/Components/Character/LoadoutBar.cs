@@ -112,6 +112,10 @@ public sealed class LoadoutBar : Control
 				this.Raise(LoadoutBarAction.Select, name);
 		};
 		this.ActionMenu.ItemClicked += this.ActionClicked;
+		this.EmptyMenu = new ContextMenuStrip { ShowImageMargin = false, ShowItemToolTips = true };
+		CustomProfessionalRenderer.Apply(this.EmptyMenu);
+		this.EmptyMenu.ItemClicked += this.ActionClicked;
+		this.EmptyMenu.FillOnOpening(this.FillEmptyMenu);
 		this.ActionMenu.FillOnOpening(this.FillActionMenu);
 		this.ListMenu.FillOnOpening(this.FillListMenu);
 		this.ContextMenuStrip = this.ActionMenu;
@@ -125,6 +129,15 @@ public sealed class LoadoutBar : Control
 
 	/// <summary>The right-click menu: every action.</summary>
 	internal ContextMenuStrip ActionMenu { get; }
+
+	/// <summary>The menu of destinations of Empty loadout, opened by the loadout panel's button.</summary>
+	internal ContextMenuStrip EmptyMenu { get; }
+
+	/// <summary>Whether Empty loadout offers a destination now (the loadout panel's button is greyed otherwise).</summary>
+	internal bool CanEmpty => EmptyActions.Any(this.CanAct);
+
+	/// <summary>The destinations of Empty loadout, in menu order.</summary>
+	private static readonly LoadoutBarAction[] EmptyActions = [LoadoutBarAction.EmptyToInventory, LoadoutBarAction.EmptyToStash, LoadoutBarAction.EmptyToVault];
 
 	/// <summary>The loadout names, in the order of the file.</summary>
 	public IReadOnlyList<string> Names { get; private set; } = [];
@@ -284,25 +297,11 @@ public sealed class LoadoutBar : Control
 		ToolStripMenuItem Entry(string text, LoadoutBarAction action)
 			=> new(text) { Tag = action, Enabled = this.CanAct(action) };
 
-		// A greyed target says why (the PlayerReadonly setting for the inventory).
-		ToolStripMenuItem Target(string text, LoadoutBarAction action)
-		{
-			var entry = Entry(text, action);
-			entry.ToolTipText = this.LockedReason(action);
-			return entry;
-		}
-
-		var empty = new ToolStripMenuItem(Resources.LoadoutEmpty);
+		var empty = new ToolStripMenuItem(Resources.LoadoutEmpty) { Enabled = this.CanEmpty };
 		empty.DropDown.Font = this.ActionMenu.Font;
 		CustomProfessionalRenderer.Apply(empty.DropDown);
-		empty.DropDownItems.AddRange(
-		[
-			Target(Resources.LoadoutEmptyToInventory, LoadoutBarAction.EmptyToInventory),
-			Target(Resources.LoadoutEmptyToStash, LoadoutBarAction.EmptyToStash),
-			Target(Resources.LoadoutEmptyToVault, LoadoutBarAction.EmptyToVault),
-		]);
+		empty.DropDownItems.AddRange(this.EmptyEntries());
 		empty.DropDownItemClicked += this.ActionClicked;
-		empty.Enabled = empty.DropDownItems.OfType<ToolStripMenuItem>().Any(entry => entry.Enabled);
 
 		this.ActionMenu.Items.AddRange(
 		[
@@ -316,6 +315,30 @@ public sealed class LoadoutBar : Control
 			new ToolStripSeparator(),
 			Entry(Resources.LoadoutAddMenu, LoadoutBarAction.Add),
 		]);
+	}
+
+	private void FillEmptyMenu()
+	{
+		this.EmptyMenu.Font = this.MenuFont();
+		this.EmptyMenu.Items.Clear();
+		this.EmptyMenu.Items.AddRange(this.EmptyEntries());
+	}
+
+	/// <summary>
+	/// The destinations of Empty loadout, for the right-click menu's submenu and the loadout panel's button menu; a greyed
+	/// one says why (the PlayerReadonly setting for the inventory).
+	/// </summary>
+	private ToolStripItem[] EmptyEntries()
+	{
+		ToolStripMenuItem Target(string text, LoadoutBarAction action)
+			=> new(text) { Tag = action, Enabled = this.CanAct(action), ToolTipText = this.LockedReason(action) };
+
+		return
+		[
+			Target(Resources.LoadoutEmptyToInventory, LoadoutBarAction.EmptyToInventory),
+			Target(Resources.LoadoutEmptyToStash, LoadoutBarAction.EmptyToStash),
+			Target(Resources.LoadoutEmptyToVault, LoadoutBarAction.EmptyToVault),
+		];
 	}
 
 	/// <summary>The menu font of every menu, at the zoom of now: the menus are filled at each opening.</summary>

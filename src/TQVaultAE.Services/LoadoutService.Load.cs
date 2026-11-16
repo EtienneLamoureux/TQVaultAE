@@ -111,15 +111,12 @@ public partial class LoadoutService
 
 	/// <summary>
 	/// Whether every item fits in the bag, placed one after the other at the first free spot as
-	/// <see cref="Application.Contracts.Services.IItemMovementService.TryPlace"/> places them, and the bag takes each
-	/// (the relic vault takes only relics, charms, artifacts and formulae).
+	/// <see cref="Application.Contracts.Services.IItemMovementService.TryPlace"/> places them.
 	/// </summary>
 	private bool HasRoom(SackCollection bag, Size bagSize, List<Item> items)
 	{
 		if (items.Count == 0)
 			return true;
-		if (!items.TrueForAll(item => this.ItemMovementService.IsItemValidForStashType(item, bag.StashType)))
-			return false;
 
 		// Stand-ins of the same cells: the real bag is not touched.
 		var trial = new SackCollection { SackType = bag.SackType, StashType = bag.StashType };

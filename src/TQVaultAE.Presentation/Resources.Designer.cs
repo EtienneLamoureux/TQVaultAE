@@ -8006,7 +8006,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not enough room in {0} for the {1} piece(s) of the loadout: nothing was changed..
+        ///   Looks up a localized string similar to Not enough room in {0}: the {1} piece(s) stay in the loadout..
         /// </summary>
         public static string LoadoutEmptyNoRoom {
             get {
@@ -8020,6 +8020,15 @@ namespace TQVaultAE.Presentation {
         public static string LoadoutEmptyRefused {
             get {
                 return ResourceManager.GetString("LoadoutEmptyRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout "{0}": {1} piece(s) moved to {2}; {3} piece(s) stay in the loadout for want of room..
+        /// </summary>
+        public static string LoadoutEmptyPartly {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyPartly", resourceCulture);
             }
         }
         

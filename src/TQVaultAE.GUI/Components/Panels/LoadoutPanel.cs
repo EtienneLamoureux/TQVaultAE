@@ -31,12 +31,19 @@ public sealed class LoadoutPanel : EquipmentPanel
 	/// <summary>The size of the Gear swap button's picture, 26 x 34 pixels at the cell size of 32 pixels.</summary>
 	private static readonly Size SwapPicture = new(26, 34);
 
+	/// <summary>The size of the Empty loadout button's picture, 25 x 32 pixels at the cell size of 32 pixels.</summary>
+	private static readonly Size EmptyPicture = new(25, 32);
+
+	/// <summary>The gap between the Gear swap and Empty loadout buttons, in cells.</summary>
+	private const float ButtonGap = 0.125F;
+
 	/// <summary>
 	/// Where the panel's buttons sit, in cells, in the gaps of the stone as the marks of the equipment do: the Back arrow
 	/// right of the right column, level with its top; the previous and next arrows left of the left column and right of
-	/// the right column, level with their bottom; the Gear swap button under the rings, centred.
+	/// the right column, level with their bottom; the Gear swap and Empty loadout buttons side by side under the rings,
+	/// centred as a pair.
 	/// </summary>
-	public static (RectangleF Back, RectangleF Previous, RectangleF Next, RectangleF Swap) ButtonCells()
+	public static (RectangleF Back, RectangleF Previous, RectangleF Next, RectangleF Swap, RectangleF Empty) ButtonCells()
 	{
 		float rightTop = float.MaxValue, leftBottom = 0F, rightBottom = 0F, rightEnd = 0F;
 		for (int slot = 0; slot <= EquipmentRules.ArtifactSlot; slot++)
@@ -61,13 +68,17 @@ public sealed class LoadoutPanel : EquipmentPanel
 		float swapTop = ring1.Y + ringSize.Height + LoadoutComparison.FrameMargin;
 		float swapHeight = Math.Min(SwapPicture.Height / 32F, SlotCells.Height - swapTop);
 		float swapWidth = swapHeight * SwapPicture.Width / SwapPicture.Height;
+		float emptyHeight = swapHeight * EmptyPicture.Height / SwapPicture.Height;
+		float emptyWidth = emptyHeight * EmptyPicture.Width / EmptyPicture.Height;
 		float ringsCentre = (ring1.X + ring2.X + ringSize.Width) / 2F;
+		float pairLeft = ringsCentre - ((swapWidth + ButtonGap + emptyWidth) / 2F);
 
 		return (
 			new RectangleF(Centred(rightEnd, BackCells.Width), rightTop, BackCells.Width, BackCells.Height),
 			new RectangleF(Centred(0F, TurnCells.Width), leftBottom - TurnCells.Height, TurnCells.Width, TurnCells.Height),
 			new RectangleF(Centred(rightEnd, TurnCells.Width), rightBottom - TurnCells.Height, TurnCells.Width, TurnCells.Height),
-			new RectangleF(ringsCentre - (swapWidth / 2F), swapTop, swapWidth, swapHeight));
+			new RectangleF(pairLeft, swapTop, swapWidth, swapHeight),
+			new RectangleF(pairLeft + swapWidth + ButtonGap, swapTop + ((swapHeight - emptyHeight) / 2F), emptyWidth, emptyHeight));
 	}
 
 	/// <summary>The pieces shown, as the loadout held them when the sack was built or last composed here.</summary>

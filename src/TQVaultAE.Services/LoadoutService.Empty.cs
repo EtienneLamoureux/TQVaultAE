@@ -18,20 +18,13 @@ public partial class LoadoutService
 		if (pieces.Count == 0)
 			return new LoadoutEmptyResult(LoadoutEmptyOutcome.NothingToEmpty);
 
-		// All or nothing, as a load storing the pieces it takes off: then they go at the spots the room check found.
-		if (!this.HasRoom(bag, bagSize, pieces))
-			return new LoadoutEmptyResult(LoadoutEmptyOutcome.NoRoom, pieces.Count);
+		// Piece by piece, in slot order, at the first free spot as an auto-move places it: one without room (or that the
+		// bag does not take) stays in the loadout.
+		var moved = pieces.Where(item => this.ItemMovementService.TryPlace(item, bag, bagSize, bagPlace)).ToList();
+		int left = pieces.Count - moved.Count;
+		if (moved.Count == 0)
+			return new LoadoutEmptyResult(LoadoutEmptyOutcome.NoRoom, Left: left);
 
-		var moved = new List<Item>();
-		foreach (var item in pieces)
-		{
-			if (this.ItemMovementService.TryPlace(item, bag, bagSize, bagPlace))
-				moved.Add(item);
-			else
-				this.Log.LogError("Loadout {Name}: no room for {Item} after the room check", loadout.Name, item.BaseItemId);
-		}
-
-		// A piece not placed stays in the loadout: nothing is lost.
 		var taken = new HashSet<Item>(moved, ReferenceEqualityComparer.Instance);
 		var emptied = loadout with { Pieces = [.. loadout.Pieces.Select(p => p is not null && taken.Contains(p) ? null : p)] };
 		loadouts.Loadouts = [.. loadouts.Loadouts.Select(l => l == loadout ? emptied : l)];
@@ -40,8 +33,8 @@ public partial class LoadoutService
 		// The pieces keep their search entries, now at the bag's place; the loadout's entries are made again without them.
 		this.Changed(loadouts);
 
-		this.Log.LogInformation("Loadout {Name} of {Character} emptied: {Moved} piece(s) moved to {Bag} sack {SackNumber}",
-			loadout.Name, loadouts.CharacterName, moved.Count, bagPlace.Name, bagPlace.SackNumber);
-		return new LoadoutEmptyResult(LoadoutEmptyOutcome.Emptied, moved.Count) { Moved = moved };
+		this.Log.LogInformation("Loadout {Name} of {Character} emptied: {Moved} piece(s) moved to {Bag} sack {SackNumber}, {Left} left for want of room",
+			loadout.Name, loadouts.CharacterName, moved.Count, bagPlace.Name, bagPlace.SackNumber, left);
+		return new LoadoutEmptyResult(left == 0 ? LoadoutEmptyOutcome.Emptied : LoadoutEmptyOutcome.PartlyEmptied, moved.Count, left) { Moved = moved };
 	}
 }
