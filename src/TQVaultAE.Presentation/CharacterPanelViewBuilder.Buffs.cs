@@ -208,14 +208,15 @@ public sealed partial class CharacterPanelViewBuilder
 			text = skill.Attributes;
 
 		// Plain text: the rollover writes every line in grey. Only what is not zero: a line whose numbers are all 0 says
-		// nothing. A variable the game has no text for ("?name?: 5") is written by its name; the energy reserve, which has
-		// none, gets its own line.
+		// nothing. A variable the game has no text for gets ours when it tells the player something, else it is left out;
+		// the energy reserve, which has none, gets its own line.
 		var culture = CultureInfo.CurrentCulture;
 		var reserve = source.Sum[EnergyReserve];
 		lines = [.. text
 			.Select(l => l.RemoveAllTQTags() ?? string.Empty)
 			.Where(l => !string.IsNullOrWhiteSpace(l) && !l.Contains(EnergyReserve, StringComparison.OrdinalIgnoreCase))
 			.Select(UnknownVariableLine)
+			.OfType<string>()
 			.Where(HasNonZeroNumberOrNone),
 			.. reserve == 0 ? [] : new[] { string.Format(culture, Resources.BuffsEnergyReserve, Composition.Signed(reserve, culture).TrimStart('+')) }];
 		this._descriptions[source.Id] = lines;
@@ -225,16 +226,33 @@ public sealed partial class CharacterPanelViewBuilder
 	/// <summary>The variable the game reserves a part of the energy with (curses, Tartarus).</summary>
 	private const string EnergyReserve = "characterManaLimitReservePercentage";
 
-	/// <summary>"?potionCooldownIncrease?: 5.000000, 10.000000" as "potionCooldownIncrease: 5, 10".</summary>
-	private static string UnknownVariableLine(string line)
+	/// <summary>
+	/// A variable the game has no text for ("?potionCooldownIncrease?: 5.000000, 10.000000"): our own text when it tells the
+	/// player something, else null (left out: enemyScaleModifier and the like). Any other line is kept as it is.
+	/// </summary>
+	private static string? UnknownVariableLine(string line)
 	{
 		var match = UnknownVariableRegex().Match(line);
 		if (!match.Success)
 			return line;
 
 		var values = match.Groups["values"].Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
-			.Select(v => double.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out var d) ? d.ToString("0.##", CultureInfo.CurrentCulture) : v);
-		return $"{match.Groups["name"].Value}: {string.Join(", ", values)}";
+			.Select(v => double.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out var d) ? d : 0).ToList();
+		if (values.Count == 0 || values.All(v => v == 0))
+			return null;
+
+		var culture = CultureInfo.CurrentCulture;
+		string Number(double value) => value.ToString("0.##", culture);
+		return match.Groups["name"].Value switch
+		{
+			// Seconds added to the potions' recharge, drawn between the two values (Tartarus).
+			"potionCooldownIncrease" => values.Min() == values.Max()
+				? string.Format(culture, Resources.BuffsPotionRecharge, Number(values[0]))
+				: string.Format(culture, Resources.BuffsPotionRechargeRange, Number(values.Min()), Number(values.Max())),
+			// % added to the duration of skills (a Neidan passive).
+			"skillDurationModifier" => string.Format(culture, Resources.BuffsSkillDuration, Composition.Signed(values[0], culture)),
+			_ => null,
+		};
 	}
 
 	[System.Text.RegularExpressions.GeneratedRegex(@"^\?(?<name>[^?]+)\?:\s*(?<values>.*)$")]

@@ -8508,5 +8508,32 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("BuffsEnergyReservedTotal", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} s Potion Recharge.
+        /// </summary>
+        public static string BuffsPotionRecharge {
+            get {
+                return ResourceManager.GetString("BuffsPotionRecharge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to {1} s Potion Recharge.
+        /// </summary>
+        public static string BuffsPotionRechargeRange {
+            get {
+                return ResourceManager.GetString("BuffsPotionRechargeRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}% Skill Duration.
+        /// </summary>
+        public static string BuffsSkillDuration {
+            get {
+                return ResourceManager.GetString("BuffsSkillDuration", resourceCulture);
+            }
+        }
     }
 }

@@ -99,7 +99,7 @@ public class BuffRolloverTests
 	}
 
 	[Fact]
-	public void BuffToolTip_OnlyNonZeroValues_UnknownVariablesByName_TheReserveInWords()
+	public void BuffToolTip_OnlyNonZeroValues_UnknownVariablesInWordsOrLeftOut_TheReserveInWords()
 	{
 		var effect = Source("tartarus:a", BuffGroup.Tartarus, false, ("characterManaLimitReservePercentage", 55), ("characterAttackSpeed", -0.35));
 		this._sources = [effect];
@@ -108,12 +108,16 @@ public class BuffRolloverTests
 			"-0.35 Base Attack Speed",
 			"+0% Total Damage",
 			"?potionCooldownIncrease?: 5.000000, 10.000000",
+			"?enemyScaleModifier?: 1.000000",
+			"?skillDurationModifier?: 13.000000",
+			"?someOtherVariable?: 2.000000",
 			"?characterManaLimitReservePercentage?: 55.000000",
 		]));
 
 		var tip = this._builder.Build(Input()).Buffs.Sections.Single().Entries.Single().ToolTip;
 
-		tip.Blocks[1].Lines.Should().Equal("-0.35 Base Attack Speed", "potionCooldownIncrease: 5, 10", "Reserves 55% of the energy");
+		tip.Blocks[1].Lines.Should().Equal("-0.35 Base Attack Speed", "+5 to 10 s Potion Recharge", "+13% Skill Duration",
+			"Reserves 55% of the energy");
 	}
 
 	[Fact]

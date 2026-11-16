@@ -2703,4 +2703,13 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="BuffsEnergyReservedTotal" xml:space="preserve">
     <value>{0} % réservés : {1} d'énergie, {2} utilisables</value>
   </data>
+  <data name="BuffsPotionRecharge" xml:space="preserve">
+    <value>+{0} s de recharge des potions</value>
+  </data>
+  <data name="BuffsPotionRechargeRange" xml:space="preserve">
+    <value>+{0} à {1} s de recharge des potions</value>
+  </data>
+  <data name="BuffsSkillDuration" xml:space="preserve">
+    <value>{0} % de durée des compétences</value>
+  </data>
 </root>
