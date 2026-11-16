@@ -156,6 +156,9 @@ internal sealed partial class CharacterStatsPanel
 		this.ScrollBuffs(-rows * BuffStep);
 		if (e is HandledMouseEventArgs handled)
 			handled.Handled = true;
+
+		// Another source lies under the cursor now: its tool tip, not the one of the source scrolled away.
+		this.OnMouseMove(new MouseEventArgs(MouseButtons.None, 0, e.X, e.Y, 0));
 	}
 
 	/// <summary>The scroll choice: a drop-down over the panel, shown on the Buffs tab only.</summary>
