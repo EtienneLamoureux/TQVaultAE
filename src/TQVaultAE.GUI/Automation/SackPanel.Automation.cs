@@ -154,6 +154,34 @@ public partial class SackPanel
 	/// <summary>Closes the context menu a right click may have opened.</summary>
 	internal void AutomationCloseContextMenu() => this.CustomContextMenu.Close();
 
+#if DEBUG
+	/// <summary>
+	/// The slot entries of the Insert into item menu, when the last click showed it (in place of the item menu): the
+	/// slot and the text of each entry. Empty when no slot menu is shown.
+	/// </summary>
+	internal IReadOnlyList<(Domain.Forge.ForgeSlot Slot, string Text)> AutomationSocketSlotMenu()
+		=> this.CustomContextMenu.Visible
+			? this.CustomContextMenu.Items.Cast<ToolStripItem>()
+				.Where(i => i.Tag is SocketSlotChoice)
+				.Select(i => (((SocketSlotChoice)i.Tag!).Slot, i.Text ?? string.Empty))
+				.ToList()
+			: [];
+
+	/// <summary>
+	/// Clicks the entry of <paramref name="slot"/> in the Insert into item menu like the user (the menu's own click
+	/// handler), then closes the menu.
+	/// </summary>
+	/// <returns><see langword="false"/> when the menu has no entry for that slot.</returns>
+	internal bool AutomationClickSocketSlot(Domain.Forge.ForgeSlot slot)
+	{
+		var entry = this.CustomContextMenu.Items.Cast<ToolStripItem>()
+			.FirstOrDefault(i => i.Tag is SocketSlotChoice choice && choice.Slot == slot);
+		entry?.PerformClick();
+		this.CustomContextMenu.Close();
+		return entry is not null;
+	}
+#endif
+
 	/// <summary>The items selected in this panel, in selection order.</summary>
 	internal IReadOnlyList<Item> AutomationSelectedItems => this.selectedItems ?? [];
 

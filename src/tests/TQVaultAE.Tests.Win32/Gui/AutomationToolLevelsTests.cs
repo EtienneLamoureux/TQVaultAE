@@ -46,7 +46,7 @@ public sealed class AutomationToolLevelsTests
 		"item_properties_dump", "key_binds_dialog", "list_forms", "list_items", "list_keys", "list_state", "load_resource",
 		"mouse_click", "mouse_wheel", "move_window", "open_form", "open_input_dialog", "picture_fault", "player_stats_fonts",
 		"player_stats_hover", "press_key", "raw_tooltip_lines", "recent_log", "results_move", "recent_sounds", "search_dialog_scroll",
-		"search_dialog_state", "search_tooltip", "set_control", "set_grid_cell", "stash_background_switch", "text_fit",
+		"search_dialog_state", "search_tooltip", "set_control", "set_grid_cell", "socket_click", "stash_background_switch", "text_fit",
 		"tooltip_text_dump", "window_bounds", "window_state", "zoom",
 	];
 
