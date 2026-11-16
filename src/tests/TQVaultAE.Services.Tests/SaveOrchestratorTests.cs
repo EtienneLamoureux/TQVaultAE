@@ -14,13 +14,15 @@ public class SaveOrchestratorTests
 	private readonly Mock<IPlayerService> _playerService = new(MockBehavior.Strict);
 	private readonly Mock<IVaultService> _vaultService = new(MockBehavior.Strict);
 	private readonly Mock<IStashService> _stashService = new(MockBehavior.Strict);
+	private readonly Mock<ILoadoutService> _loadoutService = new(MockBehavior.Strict);
 	private readonly Mock<ISettingsPersistenceService> _settingsPersistence = new(MockBehavior.Strict);
 	private readonly Mock<IGameFileService> _gameFileService = new(MockBehavior.Strict);
 	private readonly UserSettings _settings = new() { GitBackupEnabled = true };
 	private readonly SaveOrchestrator _orchestrator;
 
 	/// <summary>
-	/// The writes and calls, in order: "player:Hero", "vault:Main Vault", "stash:Hero - Immortal Throne", "configuration", "git".
+	/// The writes and calls, in order: "player:Hero", "vault:Main Vault", "stash:Hero - Immortal Throne", "loadouts:Hero",
+	/// "configuration", "git".
 	/// </summary>
 	private readonly List<string> _calls = [];
 
@@ -40,6 +42,7 @@ public class SaveOrchestratorTests
 		this.ModifiedPlayers("Hero");
 		this.ModifiedVaults("Main Vault", "Secondary Vault");
 		this.ModifiedStashes("Hero");
+		this.ModifiedLoadouts();
 
 		this._playerService
 			.Setup(s => s.SaveModifiedPlayer(It.IsAny<string>(), It.IsAny<PlayerCollection>()))
@@ -50,6 +53,9 @@ public class SaveOrchestratorTests
 		this._stashService
 			.Setup(s => s.SaveModifiedStash(It.IsAny<string>(), It.IsAny<Stash>()))
 			.Callback<string, Stash>((_, s) => this.Write("stash", s.PlayerName));
+		this._loadoutService
+			.Setup(s => s.SaveModified(It.IsAny<LoadoutSet>()))
+			.Callback<LoadoutSet>(l => this.Write("loadouts", l.CharacterName));
 		this._settingsPersistence
 			.Setup(s => s.SaveConfiguration(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<float>()))
 			.Callback(() => this._calls.Add("configuration"))
@@ -63,6 +69,7 @@ public class SaveOrchestratorTests
 			this._playerService.Object
 			, this._vaultService.Object
 			, this._stashService.Object
+			, this._loadoutService.Object
 			, this._settingsPersistence.Object
 			, this._gameFileService.Object
 			, this._settings);
@@ -79,6 +86,60 @@ public class SaveOrchestratorTests
 	private void ModifiedStashes(params string[] names)
 		=> this._stashService.Setup(s => s.GetModifiedStashes())
 			.Returns([.. names.Select(n => ($"{n}.dxb", new Stash(n, $"{n}.dxb")))]);
+
+	private void ModifiedLoadouts(params string[] characters)
+		=> this._loadoutService.Setup(s => s.GetModified())
+			.Returns([.. characters.Select(c => new LoadoutSet($"_{c}/{ILoadoutService.FileName}", c, null) { IsModified = true })]);
+
+	[Fact]
+	public void Save_ComposedLoadouts_WrittenAfterTheVaultsAndStashes()
+	{
+		// A piece moved from a vault into a loadout is written on both sides by the same save.
+		this.ModifiedLoadouts("Hero");
+
+		var result = this._orchestrator.Save(new SaveRequest(true, Configuration, true), NeverAsked);
+
+		this._calls.Should().Equal("player:Hero", "vault:Main Vault", "vault:Secondary Vault", "stash:Hero - Immortal Throne", "loadouts:Hero", "configuration", "git");
+		result.LoadoutsSaved.Should().Be(1);
+	}
+
+	[Fact]
+	public void Save_OnlyLoadoutsComposed_ReportsSomethingSaved()
+	{
+		this.ModifiedPlayers();
+		this.ModifiedVaults();
+		this.ModifiedStashes();
+		this.ModifiedLoadouts("Hero");
+
+		var result = this._orchestrator.Save(SaveRequest.FilesOnly, NeverAsked);
+
+		result.AnythingSaved.Should().BeTrue();
+		this._calls.Should().Equal("loadouts:Hero");
+	}
+
+	[Fact]
+	public void Save_LoadoutsFileLocked_AsksWithTheCharacterAndTheLoadoutsStep()
+	{
+		this.ModifiedLoadouts("Hero");
+		var locked = new IOException("locked");
+		this.Fails("loadouts:Hero", n => n == 1 ? locked : null);
+
+		var result = this._orchestrator.Save(SaveRequest.FilesOnly, this.Answer(SaveDecision.Retry));
+
+		this._asked.Should().ContainSingle();
+		(this._asked[0].Step, this._asked[0].Name).Should().Be((SaveStep.Loadouts, "Hero"));
+		result.LoadoutsSaved.Should().Be(1);
+	}
+
+	[Fact]
+	public void Save_FilesRefused_LeavesTheLoadoutsUnwritten()
+	{
+		this.ModifiedLoadouts("Hero");
+
+		this._orchestrator.Save(new SaveRequest(false, Configuration), NeverAsked);
+
+		this._loadoutService.Verify(s => s.SaveModified(It.IsAny<LoadoutSet>()), Times.Never);
+	}
 
 	/// <summary>
 	/// Records the write of <paramref name="name"/>, then throws when <see cref="_failures"/> says this attempt fails.

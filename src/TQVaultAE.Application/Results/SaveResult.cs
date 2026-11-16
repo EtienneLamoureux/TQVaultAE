@@ -8,6 +8,9 @@ public enum SaveStep
 	Players,
 	Vaults,
 	Stashes,
+
+	/// <summary>The loadouts files whose pieces were composed in the loadout panel.</summary>
+	Loadouts,
 }
 
 /// <summary>
@@ -29,7 +32,7 @@ public enum SaveDecision
 /// A file that could not be written during a save.
 /// </summary>
 /// <param name="Step">The step that failed.</param>
-/// <param name="Name">The name of the character, vault or stash being saved; a shared stash has its neutral name
+/// <param name="Name">The name of the character, vault or stash being saved (the character for its loadouts); a shared stash has its neutral name
 /// (<see cref="Session.SharedStashNames"/>), which the UI translates.</param>
 /// <param name="Exception">The file error: an <see cref="IOException"/> (file locked, disk full, path not found)
 /// or an <see cref="UnauthorizedAccessException"/> (read-only file, no permission, protected folder).</param>
@@ -79,9 +82,14 @@ public sealed class SaveResult
 	public int StashesSaved { get; init; }
 
 	/// <summary>
-	/// Gets whether a character, a vault or a stash was saved.
+	/// Gets the number of loadouts files saved; the ignored ones are not counted.
 	/// </summary>
-	public bool AnythingSaved => this.PlayersSaved || this.VaultsSaved > 0 || this.StashesSaved > 0;
+	public int LoadoutsSaved { get; init; }
+
+	/// <summary>
+	/// Gets whether a character, a vault, a stash or a loadouts file was saved.
+	/// </summary>
+	public bool AnythingSaved => this.PlayersSaved || this.VaultsSaved > 0 || this.StashesSaved > 0 || this.LoadoutsSaved > 0;
 
 	/// <summary>
 	/// Gets the file errors, one per failed attempt, in the order they happened.

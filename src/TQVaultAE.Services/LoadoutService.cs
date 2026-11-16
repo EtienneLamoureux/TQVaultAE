@@ -50,6 +50,11 @@ public partial class LoadoutService(
 	public LoadoutSet Read(string saveFolder, string characterName, string? characterMod)
 	{
 		string file = this.FileOf(saveFolder);
+
+		// Pieces moved in the loadout panel and not saved yet stay: a reload of the character does not undo them.
+		if (this.Session.Loadouts.TryGetValue(file, out var kept) && kept.IsModified)
+			return kept;
+
 		var set = new LoadoutSet(file, characterName, characterMod);
 		if (this.FileIO.Exists(file))
 		{
@@ -187,21 +192,51 @@ public partial class LoadoutService(
 	private static Loadout Record(string name, PlayerCollection player)
 		=> new(name, player.UseAlternate, [.. player.EquipmentSack!.Select(item => ItemKey.IsEmptyItem(item) ? null : item.Clone())]);
 
-	/// <summary>Writes the loadouts (or deletes the file when none is left), then keeps them for the session.</summary>
+	/// <inheritdoc/>
+	public bool Compose(LoadoutSet loadouts, string name, IReadOnlyList<Item?> pieces)
+	{
+		if (loadouts.ReadFailed || loadouts.Find(name) is not { } loadout)
+			return false;
+
+		int slots = Math.Max(loadout.Pieces.Count, pieces.Count);
+		bool same = Enumerable.Range(0, slots).All(slot => ReferenceEquals(PieceAt(loadout.Pieces, slot), PieceAt(pieces, slot)));
+		if (same)
+			return false;
+
+		var composed = loadout with { Pieces = [.. pieces.Select(p => p is null || ItemKey.IsEmptyItem(p) ? null : p)] };
+		loadouts.Loadouts = [.. loadouts.Loadouts.Select(l => l == loadout ? composed : l)];
+		loadouts.IsModified = true;
+		this.Changed(loadouts);
+		return true;
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyList<LoadoutSet> GetModified()
+		=> [.. this.Session.Loadouts.Values.Where(set => set.IsModified && !set.ReadFailed)];
+
+	/// <inheritdoc/>
+	public void SaveModified(LoadoutSet loadouts)
+	{
+		if (!loadouts.IsModified || loadouts.ReadFailed)
+			return;
+
+		this.WriteFile(loadouts.FilePath, loadouts.Loadouts);
+		loadouts.IsModified = false;
+	}
+
+	/// <summary>The piece of a slot, null for an empty slot or one past the list.</summary>
+	private static Item? PieceAt(IReadOnlyList<Item?> pieces, int slot)
+		=> slot < pieces.Count && pieces[slot] is { } piece && !ItemKey.IsEmptyItem(piece) ? piece : null;
+
+	/// <summary>
+	/// Writes the loadouts (or deletes the file when none is left), then keeps them for the session. The pieces composed in
+	/// the loadout panel and not saved yet are written too: the file holds the loadouts as they are now.
+	/// </summary>
 	private LoadoutChange Write(LoadoutSet target, IReadOnlyList<Loadout> list)
 	{
 		try
 		{
-			if (list.Count == 0)
-			{
-				if (this.FileIO.Exists(target.FilePath))
-					this.FileIO.Delete(target.FilePath);
-			}
-			else
-			{
-				var dto = new LoadoutFileDto { version = FileVersion, loadouts = [.. list.Select(ToDto)] };
-				this.FileIO.WriteAllText(target.FilePath, JsonSerializer.Serialize(dto, JsonOptions));
-			}
+			this.WriteFile(target.FilePath, list);
 		}
 		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 		{
@@ -210,8 +245,23 @@ public partial class LoadoutService(
 		}
 
 		target.Loadouts = list;
+		target.IsModified = false;
 		this.Changed(target);
 		return LoadoutChange.Succeeded;
+	}
+
+	/// <summary>Writes a loadouts file, or deletes it when no loadout is left; file errors are thrown.</summary>
+	private void WriteFile(string file, IReadOnlyList<Loadout> list)
+	{
+		if (list.Count == 0)
+		{
+			if (this.FileIO.Exists(file))
+				this.FileIO.Delete(file);
+			return;
+		}
+
+		var dto = new LoadoutFileDto { version = FileVersion, loadouts = [.. list.Select(ToDto)] };
+		this.FileIO.WriteAllText(file, JsonSerializer.Serialize(dto, JsonOptions));
 	}
 
 	/// <summary>Once the loadouts of a character are read or changed: the search shows their pieces.</summary>

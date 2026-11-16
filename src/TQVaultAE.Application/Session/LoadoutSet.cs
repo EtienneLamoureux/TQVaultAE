@@ -28,6 +28,12 @@ public sealed class LoadoutSet(string filePath, string characterName, string? mo
 	/// </summary>
 	public bool ReadFailed { get; set; }
 
+	/// <summary>
+	/// True when pieces were moved in or out of a loadout (the loadout panel) since the file was read or written: the
+	/// file is written with the other modified files (<see cref="Contracts.Services.ILoadoutService.SaveModified"/>).
+	/// </summary>
+	public bool IsModified { get; set; }
+
 	/// <summary>The loadout of that name (case ignored), or null.</summary>
 	/// <param name="name">The name.</param>
 	public Loadout? Find(string? name)

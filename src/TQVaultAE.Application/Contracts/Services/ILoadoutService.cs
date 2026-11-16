@@ -115,4 +115,27 @@ public interface ILoadoutService
 	/// <param name="pieces">The pieces and their slots.</param>
 	/// <returns>The change, and the pieces put back.</returns>
 	(LoadoutChange Change, IReadOnlyList<Domain.Entities.Item> PutBack) PutBackPieces(LoadoutSet loadouts, IReadOnlyList<LoadoutPiecePlacement> pieces);
+
+	/// <summary>
+	/// Gives a loadout the pieces composed in the loadout panel, in memory: the loadouts are marked modified and written
+	/// with the other modified files (<see cref="SaveModified"/>), or by the next change written at once (add, update,
+	/// rename, copy, delete). The search follows the pieces at once.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <param name="name">The loadout.</param>
+	/// <param name="pieces">One entry per equipment slot, <see langword="null"/> for an empty slot; the items themselves are
+	/// kept (moved, not copied).</param>
+	/// <returns>True when a slot changed; false when the pieces are the same items as before, or the loadout is missing.</returns>
+	bool Compose(LoadoutSet loadouts, string name, IReadOnlyList<Domain.Entities.Item?> pieces);
+
+	/// <summary>The loadouts read in this session whose pieces changed and are not written yet.</summary>
+	IReadOnlyList<LoadoutSet> GetModified();
+
+	/// <summary>
+	/// Writes modified loadouts to their file (deleted when no loadout is left), as a save writes a character.
+	/// </summary>
+	/// <param name="loadouts">The character's loadouts.</param>
+	/// <exception cref="IOException">The file could not be written.</exception>
+	/// <exception cref="UnauthorizedAccessException">The file or its folder is read-only or protected.</exception>
+	void SaveModified(LoadoutSet loadouts);
 }

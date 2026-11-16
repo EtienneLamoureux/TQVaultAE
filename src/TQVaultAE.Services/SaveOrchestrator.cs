@@ -6,12 +6,14 @@ using TQVaultAE.Domain.Entities;
 namespace TQVaultAE.Services;
 
 /// <summary>
-/// Runs the save of the session: modified characters, vaults and stashes, then the configuration, then the git backup.
+/// Runs the save of the session: modified characters, vaults, stashes and loadouts, then the configuration, then the git
+/// backup.
 /// </summary>
 public class SaveOrchestrator(
 	IPlayerService playerService
 	, IVaultService vaultService
 	, IStashService stashService
+	, ILoadoutService loadoutService
 	, ISettingsPersistenceService settingsPersistenceService
 	, IGameFileService gameFileService
 	, UserSettings userSettings
@@ -20,6 +22,7 @@ public class SaveOrchestrator(
 	private readonly IPlayerService _playerService = playerService;
 	private readonly IVaultService _vaultService = vaultService;
 	private readonly IStashService _stashService = stashService;
+	private readonly ILoadoutService _loadoutService = loadoutService;
 	private readonly ISettingsPersistenceService _settingsPersistenceService = settingsPersistenceService;
 	private readonly IGameFileService _gameFileService = gameFileService;
 	private readonly UserSettings _userSettings = userSettings;
@@ -30,6 +33,7 @@ public class SaveOrchestrator(
 		bool playersSaved = false;
 		int vaultsSaved = 0;
 		int stashesSaved = 0;
+		int loadoutsSaved = 0;
 
 		if (request.Files)
 		{
@@ -41,6 +45,10 @@ public class SaveOrchestrator(
 
 			stashesSaved = SaveFiles(SaveStep.Stashes, this._stashService.GetModifiedStashes(), s => s.Stash.PlayerName
 				, s => this._stashService.SaveModifiedStash(s.File, s.Stash), onError, errors, s => s.Stash.Sack?.StashType);
+
+			// After the vaults: a piece moved from a vault into a loadout is written on both sides by the same save.
+			loadoutsSaved = SaveFiles(SaveStep.Loadouts, this._loadoutService.GetModified(), l => l.CharacterName
+				, l => this._loadoutService.SaveModified(l), onError, errors);
 		}
 
 		bool? configChanged = null;
@@ -57,6 +65,7 @@ public class SaveOrchestrator(
 			PlayersSaved = playersSaved,
 			VaultsSaved = vaultsSaved,
 			StashesSaved = stashesSaved,
+			LoadoutsSaved = loadoutsSaved,
 			Errors = errors,
 			ConfigChanged = configChanged,
 			GitPushed = git?.Pushed ?? false,
