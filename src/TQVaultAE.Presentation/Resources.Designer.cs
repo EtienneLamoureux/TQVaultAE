@@ -7051,24 +7051,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Load.
-        /// </summary>
-        public static string LoadoutLoad {
-            get {
-                return ResourceManager.GetString("LoadoutLoad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Wear the selected loadout; the pieces taken off go to the vault bag shown.
-        /// </summary>
-        public static string LoadoutLoadTip {
-            get {
-                return ResourceManager.GetString("LoadoutLoadTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update with the gear worn now.
         /// </summary>
         public static string LoadoutUpdate {
@@ -7250,42 +7232,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show a vault to receive the pieces taken off..
-        /// </summary>
-        public static string LoadoutNoVault {
-            get {
-                return ResourceManager.GetString("LoadoutNoVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not enough room in bag {0} of {1} for the {2} piece(s) taken off: nothing was[rest of string was truncated].
-        /// </summary>
-        public static string LoadoutNoRoom {
-            get {
-                return ResourceManager.GetString("LoadoutNoRoom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loadout "{0}" worn: {1} piece(s) stored in bag {2} of {3}, {4} copied in..
-        /// </summary>
-        public static string LoadoutLoaded {
-            get {
-                return ResourceManager.GetString("LoadoutLoaded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The loadout "{0}" is already worn..
-        /// </summary>
-        public static string LoadoutAlreadyWorn {
-            get {
-                return ResourceManager.GetString("LoadoutAlreadyWorn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Loadout.
         /// </summary>
         public static string LoadoutResultsContainer {
@@ -7444,24 +7390,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsLoadoutReplaceWornTT {
             get {
                 return ResourceManager.GetString("SettingsLoadoutReplaceWornTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loading "{0}" deletes these worn pieces:[rest of string was truncated].
-        /// </summary>
-        public static string LoadoutReplaceConfirm {
-            get {
-                return ResourceManager.GetString("LoadoutReplaceConfirm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loadout "{0}" worn: {1} piece(s) replaced, {2} copied in..
-        /// </summary>
-        public static string LoadoutLoadedReplaced {
-            get {
-                return ResourceManager.GetString("LoadoutLoadedReplaced", resourceCulture);
             }
         }
         

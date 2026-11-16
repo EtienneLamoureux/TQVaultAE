@@ -238,7 +238,7 @@ General rules:
   - `button="right"` ends with the `WM_CONTEXTMENU` Windows sends after a right click: the control's own
     `ContextMenuStrip` opens (its `Opening`, `SourceControl`).
   - `x`, `y` in the control's client coordinates (bounds from `control_tree`). E.g. the glyph or text of the check box
-    in a check group box's caption (`detectGamePathsCheckBox`), the loadout bar (`loadoutBar`: [+], Load and the name box
+    in a check group box's caption (`detectGamePathsCheckBox`), the loadout bar (`loadoutBar`: [+] and the name box
     at the bounds `loadouts` reports), the statistics panel (`PlayerStatsPanel`), the character editor's tabs
     (`EditorTabs`), the search dialog's category labels, link labels.
   - Works headless. Runs after the call returns: read the result with `control_values`, `list_windows` or `capture`. A
@@ -915,7 +915,7 @@ pixels unless noted.
 
 `loadouts(action?, name?, newName?, menu?, to?, gameRunning?, realGame?, slot?)` reads:
 
-- `bar`: `bounds`, `field`, `add`, `load`, `names`, `selected`, `canChange`, `loadLocked` (why Load is greyed), font.
+- `bar`: `bounds`, `field`, `add`, `names`, `selected`, `canChange`, `equipmentLocked` (why Gear swap is greyed), font.
 - `layout`: `statsPanel`, `editButton` (visibility, font), `stashClient`.
 - The loadouts file (`file`, `fileExists`, `readFailed`, `modified`), each loadout's pieces (record, seed, `worn` when
   identical to the worn piece) and the worn pieces.
@@ -930,7 +930,7 @@ pixels unless noted.
 | Action | Does | Who |
 |---|---|---|
 | `select` (`name`) | Picks the loadout in the box; opens the loadout panel | test characters |
-| `add` (`name`), `load` | Clicks [+] or Load | test characters |
+| `add` (`name`) | Clicks [+] | test characters |
 | `update`, `rename` / `copy` (`newName`), `delete`, `swap` | Clicks the right-click menu entry, on `name` or the selected loadout | test characters |
 | `empty` (`to`: `inventory`, `stash`, `vault`) | Clicks the entry of the Empty loadout submenu, on `name` or the selected loadout | test characters |
 | `swapButton` | Clicks the panel's Gear swap button | test characters |

@@ -2392,12 +2392,6 @@ Quitter l'éditeur sans appliquer les changements ?</value>
 	<data name="LoadoutAddMenu" xml:space="preserve">
     <value>Ajouter...</value>
   </data>
-	<data name="LoadoutLoad" xml:space="preserve">
-    <value>Charger</value>
-  </data>
-	<data name="LoadoutLoadTip" xml:space="preserve">
-    <value>Porter la tenue choisie ; les pièces retirées vont dans le sac du coffre affiché</value>
-  </data>
 	<data name="LoadoutUpdate" xml:space="preserve">
     <value>Mettre à jour avec l'équipement porté</value>
   </data>
@@ -2459,18 +2453,6 @@ Les emplacements vides sur le personnage gardent les pièces de la tenue.</value
 	<data name="LoadoutGameRunning" xml:space="preserve">
     <value>Le jeu est lancé. S'il joue ce personnage, il le garde en mémoire et sa prochaine sauvegarde remplace les changements faits ici. Continuer ?</value>
   </data>
-	<data name="LoadoutNoVault" xml:space="preserve">
-    <value>Affichez un coffre pour recevoir les pièces retirées.</value>
-  </data>
-	<data name="LoadoutNoRoom" xml:space="preserve">
-    <value>Pas assez de place dans le sac {0} de {1} pour les {2} pièce(s) retirée(s) : rien n'a été changé.</value>
-  </data>
-	<data name="LoadoutLoaded" xml:space="preserve">
-    <value>Tenue « {0} » portée : {1} pièce(s) rangée(s) dans le sac {2} de {3}, {4} copiée(s).</value>
-  </data>
-	<data name="LoadoutAlreadyWorn" xml:space="preserve">
-    <value>La tenue « {0} » est déjà portée.</value>
-  </data>
 	<data name="LoadoutResultsContainer" xml:space="preserve">
     <value>Tenue</value>
   </data>
@@ -2526,16 +2508,6 @@ Les emplacements vides sur le personnage gardent les pièces de la tenue.</value
     <value>Porter une tenue retire les pièces portées qu'elle n'utilise pas et les supprime, au lieu de les ranger dans le sac du coffre affiché.
 Une tenue garde des copies de ses pièces : cela évite d'accumuler des doublons.
 TQVault liste les pièces et demande d'abord, sauf si « Ignorer les messages de confirmation » est coché.</value>
-  </data>
-	<data name="LoadoutReplaceConfirm" xml:space="preserve">
-    <value>Porter « {0} » supprime ces pièces portées :
-
-{1}
-
-Continuer ?</value>
-  </data>
-	<data name="LoadoutLoadedReplaced" xml:space="preserve">
-    <value>Tenue « {0} » portée : {1} pièce(s) remplacée(s), {2} copiée(s).</value>
   </data>
 	<data name="LoadoutMarkSame" xml:space="preserve">
     <value>Identique à la tenue « {0} »</value>

@@ -85,7 +85,7 @@ inventory), `playerBag`, `stash`, `equipment`.
 | Navigate | `select_character`, `select_vault`, `select_bag`, `select_tab` |
 | Move items | `pick_item`, `move_drag`, `drop_item`, `cancel_drag`, `click_cell` (modifier clicks: copy, duplicate), `select_items` |
 | Menus | `context_menu` / `context_menu_click` (item right-click menu), `bag_menu`, `vault_menu`, `menu_click` (character tools, loadout menus), `sort_menu` / `sort_click`, `open_bag_settings` / `bag_settings_pick_icon` (bag icons) |
-| Loadouts | `loadouts` (read, select, add, update, rename, copy, delete, load; [Loadouts](LOADOUTS.md)) |
+| Loadouts | `loadouts` (read, select, add, update, rename, copy, delete, swap, empty; [Loadouts](LOADOUTS.md)) |
 | Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_set_hardcore`, `forge_drop`, `forge_select_part`, `forge_reset`, `forge_forge`, `forge_cancel`, `forge_mode_card` ([Forge](FORGE.md)) |
 | Characters | `open_character_editor`, `character_panel`, `character_tooltip`, `character_stat_sources`, `character_attribute_click`, `skill_panel`, `skill_tooltip`, `skill_panel_click` (with *Allow character edit* on), `duplicate_character`, `archive_character`, `character_read_only`, `tag_box`, `tag_archive_all`, `open_mod_link` |
 | Files | `save_files` (Save button), `create_vault`, `export_vault`, `export_tab`, `export_items`, `export_csv`, `import_file`, `import_text` |

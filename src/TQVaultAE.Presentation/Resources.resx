@@ -2564,12 +2564,6 @@ Leave the editor without applying the changes?</value>
 	<data name="LoadoutAddMenu" xml:space="preserve">
     <value>Add...</value>
   </data>
-	<data name="LoadoutLoad" xml:space="preserve">
-    <value>Load</value>
-  </data>
-	<data name="LoadoutLoadTip" xml:space="preserve">
-    <value>Wear the selected loadout; the pieces taken off go to the vault bag shown</value>
-  </data>
 	<data name="LoadoutUpdate" xml:space="preserve">
     <value>Update with the gear worn now</value>
   </data>
@@ -2631,18 +2625,6 @@ The slots empty on the character keep the loadout's pieces.</value>
 	<data name="LoadoutGameRunning" xml:space="preserve">
     <value>The game is running. If it plays this character, it keeps it in memory and its next save replaces the changes made here. Continue?</value>
   </data>
-	<data name="LoadoutNoVault" xml:space="preserve">
-    <value>Show a vault to receive the pieces taken off.</value>
-  </data>
-	<data name="LoadoutNoRoom" xml:space="preserve">
-    <value>Not enough room in bag {0} of {1} for the {2} piece(s) taken off: nothing was changed.</value>
-  </data>
-	<data name="LoadoutLoaded" xml:space="preserve">
-    <value>Loadout "{0}" worn: {1} piece(s) stored in bag {2} of {3}, {4} copied in.</value>
-  </data>
-	<data name="LoadoutAlreadyWorn" xml:space="preserve">
-    <value>The loadout "{0}" is already worn.</value>
-  </data>
 	<data name="LoadoutResultsContainer" xml:space="preserve">
     <value>Loadout</value>
   </data>
@@ -2698,16 +2680,6 @@ The slots empty on the character keep the loadout's pieces.</value>
     <value>Loading a loadout takes off the worn pieces it does not use and deletes them, instead of storing them in the vault bag shown.
 A loadout keeps copies of its pieces: this saves piling up duplicates.
 TQVault lists the pieces and asks first, unless "Bypass Confirmation Messages" is on.</value>
-  </data>
-	<data name="LoadoutReplaceConfirm" xml:space="preserve">
-    <value>Loading "{0}" deletes these worn pieces:
-
-{1}
-
-Go on?</value>
-  </data>
-	<data name="LoadoutLoadedReplaced" xml:space="preserve">
-    <value>Loadout "{0}" worn: {1} piece(s) replaced, {2} copied in.</value>
   </data>
 	<data name="LoadoutMarkSame" xml:space="preserve">
     <value>Same as in loadout "{0}"</value>

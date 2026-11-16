@@ -174,11 +174,11 @@ public partial class StashPanel
 			select = bar.Selected;
 
 		this._loadoutsShown = set?.FilePath;
-		// The PlayerReadonly setting keeps the equipment as it is: Load is greyed, the other actions stay.
-		string? loadLocked = this.USettings.PlayerReadonly
+		// The PlayerReadonly setting keeps the equipment as it is: Gear swap is greyed, the other actions stay.
+		string? equipmentLocked = this.USettings.PlayerReadonly
 			? string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly)
 			: null;
-		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly, loadLocked);
+		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly, equipmentLocked);
 		this.CompareWithSelectedLoadout();
 		this.ShowSelectedLoadout(set);
 	}

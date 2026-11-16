@@ -16,9 +16,6 @@ public enum LoadoutBarAction
 	/// <summary>Adds an empty loadout ([+] button).</summary>
 	Add,
 
-	/// <summary>Loads the selected loadout (Load button or menu).</summary>
-	Load,
-
 	/// <summary>Merges the worn equipment into the selected loadout.</summary>
 	Update,
 
@@ -56,8 +53,7 @@ public sealed class LoadoutBarEventArgs(LoadoutBarAction action, string? name) :
 
 /// <summary>
 /// The loadouts of the shown character, under the gold of the statistics panel: a drop-down of their names in the gold
-/// box of the character window, the [+] button of the attributes to add one, and the game's gold "next" arrow to load
-/// the chosen one. The right-click menu holds every action. Everything is drawn at the panel's scale.
+/// box of the character window and the [+] button of the attributes to add one. The right-click menu holds every action. Everything is drawn at the panel's scale.
 /// </summary>
 public sealed class LoadoutBar : Control
 {
@@ -67,13 +63,6 @@ public sealed class LoadoutBar : Control
 	private const string PlusUp = """InGameUI\CharacterScreen\StatIncrementButtonUp01.tex""";
 	private const string PlusOver = """InGameUI\CharacterScreen\StatIncrementButtonOver01.tex""";
 	private const string PlusDown = """InGameUI\CharacterScreen\StatIncrementButtonDown01.tex""";
-	private const string LoadUp = """InGameUI\tutorial\buttonnextup01.tex""";
-	private const string LoadOver = """InGameUI\tutorial\buttonnextover01.tex""";
-	private const string LoadDown = """InGameUI\tutorial\buttonnextdown01.tex""";
-	private const string LoadDisabled = """InGameUI\tutorial\buttonnextdisable01.tex""";
-
-	/// <summary>Width over height of the "next" arrow pictures (16 x 20).</summary>
-	private const float LoadAspect = 16F / 20F;
 
 	/// <summary>Height of the bar at scale 1: the gold box of the character window.</summary>
 	public const int ReferenceHeight = 22;
@@ -88,7 +77,7 @@ public sealed class LoadoutBar : Control
 	private readonly Bitmap _box = Images.CharacterNumberBox;
 	private readonly ToolTip _toolTip = new();
 
-	private enum Part { None, Field, Add, Load }
+	private enum Part { None, Field, Add }
 
 	private Part _hovered;
 	private Part _pressed;
@@ -149,10 +138,10 @@ public sealed class LoadoutBar : Control
 	public bool CanChange { get; private set; }
 
 	/// <summary>
-	/// Why the equipment cannot change (the PlayerReadonly setting), or null: Load, Gear swap and Empty to inventory are
-	/// then greyed and their tool tip says why; the loadouts can still be added, updated, renamed, copied and deleted.
+	/// Why the equipment cannot change (the PlayerReadonly setting), or null: Gear swap and Empty to inventory are then
+	/// greyed and their tool tip says why; the loadouts can still be added, updated, renamed, copied and deleted.
 	/// </summary>
-	public string? LoadLocked { get; private set; }
+	public string? EquipmentLocked { get; private set; }
 
 	/// <summary>The font of the name, made by the owner at the panel's scale (not disposed here).</summary>
 	public Font? TextFont { get; set; }
@@ -172,17 +161,17 @@ public sealed class LoadoutBar : Control
 	/// <param name="names">Their names.</param>
 	/// <param name="selected">The one to select; the first one when null or unknown.</param>
 	/// <param name="canChange">False for a character whose loadouts are only listed.</param>
-	/// <param name="loadLocked">Why the equipment cannot change, or null when Load can wear a loadout.</param>
-	public void ShowLoadouts(IReadOnlyList<string> names, string? selected, bool canChange, string? loadLocked = null)
+	/// <param name="equipmentLocked">Why the equipment cannot change, or null when Gear swap can change it.</param>
+	public void ShowLoadouts(IReadOnlyList<string> names, string? selected, bool canChange, string? equipmentLocked = null)
 	{
 		selected = names.FirstOrDefault(n => string.Equals(n, selected, StringComparison.OrdinalIgnoreCase)) ?? (names.Count > 0 ? names[0] : null);
-		if (canChange == this.CanChange && loadLocked == this.LoadLocked && selected == this.Selected && names.SequenceEqual(this.Names, StringComparer.Ordinal))
+		if (canChange == this.CanChange && equipmentLocked == this.EquipmentLocked && selected == this.Selected && names.SequenceEqual(this.Names, StringComparer.Ordinal))
 			return;
 
 		this.Names = names;
 		this.Selected = selected;
 		this.CanChange = canChange;
-		this.LoadLocked = loadLocked;
+		this.EquipmentLocked = equipmentLocked;
 		this._toolTip.SetToolTip(this, canChange ? null : Resources.LoadoutReadOnly);
 		this.Invalidate();
 	}
@@ -192,27 +181,16 @@ public sealed class LoadoutBar : Control
 
 	private int Gap => Math.Max(1, Convert.ToInt32(4 * this._scale));
 
-	/// <summary>Height of the picture buttons ([+] and Load): the bar's height less a margin.</summary>
+	/// <summary>Height of the [+] button: the bar's height less a margin.</summary>
 	private int IconHeight => Math.Max(1, this.Height - Convert.ToInt32(4 * this._scale));
 
-	/// <summary>The Load button, the "next" arrow at the height of the [+] button, at the right end.</summary>
-	internal Rectangle LoadBounds
-	{
-		get
-		{
-			int height = this.IconHeight;
-			int width = Math.Max(1, Convert.ToInt32(height * LoadAspect));
-			return new Rectangle(this.Width - width, (this.Height - height) / 2, width, height);
-		}
-	}
-
-	/// <summary>The [+] button, left of the Load button.</summary>
+	/// <summary>The [+] button, at the right end.</summary>
 	internal Rectangle AddBounds
 	{
 		get
 		{
 			int size = this.IconHeight;
-			return new Rectangle(this.LoadBounds.Left - this.Gap - size, (this.Height - size) / 2, size, size);
+			return new Rectangle(this.Width - size, (this.Height - size) / 2, size, size);
 		}
 	}
 
@@ -234,7 +212,7 @@ public sealed class LoadoutBar : Control
 	{
 		LoadoutBarAction.Select => this.Names.Count > 0,
 		LoadoutBarAction.Add => this.CanChange,
-		LoadoutBarAction.Load or LoadoutBarAction.Swap or LoadoutBarAction.EmptyToInventory => this.CanChange && this.Selected is not null && this.LoadLocked is null,
+		LoadoutBarAction.Swap or LoadoutBarAction.EmptyToInventory => this.CanChange && this.Selected is not null && this.EquipmentLocked is null,
 		_ => this.CanChange && this.Selected is not null,
 	};
 
@@ -244,15 +222,15 @@ public sealed class LoadoutBar : Control
 
 	/// <summary>
 	/// Why an action is greyed, for its tool tip, or null when the bar offers it: a read-only character, then the
-	/// PlayerReadonly setting for Load, Gear swap and Empty to inventory.
+	/// PlayerReadonly setting for Gear swap and Empty to inventory.
 	/// </summary>
 	/// <param name="action">The action.</param>
 	internal string? LockedReason(LoadoutBarAction action)
 		=> this.CanAct(action) ? null
 		: !this.CanChange ? Resources.LoadoutReadOnly
-		: this.LoadLocked is null ? null
+		: this.EquipmentLocked is null ? null
 		: action is LoadoutBarAction.EmptyToInventory ? string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutInventoryLocked, Resources.SettingsPlayerReadonly)
-		: action is LoadoutBarAction.Load or LoadoutBarAction.Swap ? this.LoadLocked
+		: action is LoadoutBarAction.Swap ? this.EquipmentLocked
 		: null;
 
 	/// <summary>An entry of the action menu or of its Empty loadout submenu: the action it carries.</summary>
@@ -305,7 +283,6 @@ public sealed class LoadoutBar : Control
 
 		this.ActionMenu.Items.AddRange(
 		[
-			Entry(Resources.LoadoutLoad, LoadoutBarAction.Load),
 			Entry(Resources.LoadoutSwap, LoadoutBarAction.Swap),
 			empty,
 			Entry(Resources.LoadoutUpdate, LoadoutBarAction.Update),
@@ -345,8 +322,7 @@ public sealed class LoadoutBar : Control
 	private Font MenuFont() => MenuStyle.MenuFont(this._fontService, this._uiService.FontZoom);
 
 	private Part PartAt(Point point)
-		=> this.LoadBounds.Contains(point) ? Part.Load
-		: this.AddBounds.Contains(point) ? Part.Add
+		=> this.AddBounds.Contains(point) ? Part.Add
 		: this.FieldBounds.Contains(point) ? Part.Field
 		: Part.None;
 
@@ -361,7 +337,6 @@ public sealed class LoadoutBar : Control
 		this._toolTip.SetToolTip(this, part switch
 		{
 			Part.Add => Resources.LoadoutAdd,
-			Part.Load => this.LockedReason(LoadoutBarAction.Load) ?? Resources.LoadoutLoadTip,
 			_ => this.CanChange ? this.Selected : Resources.LoadoutReadOnly,
 		});
 		this.Invalidate();
@@ -401,8 +376,6 @@ public sealed class LoadoutBar : Control
 
 		if (pressed == Part.Add)
 			this.Raise(LoadoutBarAction.Add, null);
-		else if (pressed == Part.Load)
-			this.Raise(LoadoutBarAction.Load, this.Selected);
 	}
 
 	private Bitmap? Picture(string resource) => this._uiService.LoadBitmap(resource.ToRecordId());
@@ -428,18 +401,17 @@ public sealed class LoadoutBar : Control
 			, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
 
 		this.DrawIconButton(g, Part.Add, this.AddBounds, this.CanAct(LoadoutBarAction.Add), PlusUp, PlusOver, PlusDown);
-		this.DrawIconButton(g, Part.Load, this.LoadBounds, this.CanAct(LoadoutBarAction.Load), LoadUp, LoadOver, LoadDown, LoadDisabled);
 	}
 
 	/// <summary>
-	/// One of the bar's picture buttons, with the game picture of its state: pressed, under the mouse, or up; when it
-	/// cannot be used, its disabled picture, or the up picture dimmed for a button that has none.
+	/// A picture button of the bar, with the game picture of its state: pressed, under the mouse, or up; dimmed when it
+	/// cannot be used.
 	/// </summary>
-	private void DrawIconButton(Graphics g, Part part, Rectangle bounds, bool enabled, string up, string over, string down, string? disabled = null)
+	private void DrawIconButton(Graphics g, Part part, Rectangle bounds, bool enabled, string up, string over, string down)
 	{
 		if (!enabled)
 		{
-			this.DrawPicture(g, disabled ?? up, bounds, greyed: disabled is null);
+			this.DrawPicture(g, up, bounds, greyed: true);
 			return;
 		}
 

@@ -35,9 +35,6 @@ public partial class MainFormUserControl
 			case LoadoutBarAction.Delete when e.Name is not null:
 				this.DeleteLoadout(e.Name);
 				break;
-			case LoadoutBarAction.Load when e.Name is not null:
-				this.LoadLoadout(e.Name);
-				break;
 			case LoadoutBarAction.Swap when e.Name is not null:
 				this.SwapLoadout(e.Name);
 				break;
@@ -115,7 +112,7 @@ public partial class MainFormUserControl
 		return this.Services.GameProcess.IsGameRunning();
 	}
 
-	/// <summary>An item held from the equipment would be left out of the recorded or loaded gear: it goes back first.</summary>
+	/// <summary>An item held from the equipment would be left out of the recorded or swapped gear: it goes back first.</summary>
 	private void PutBackHeldItem()
 	{
 		if (this.DragInfo.IsActive && this.DragInfo.CanBeCanceled)
@@ -192,96 +189,8 @@ public partial class MainFormUserControl
 	}
 
 	/// <summary>
-	/// Wears a loadout: the pieces taken off go to the bag shown in the vault panel; without room for all of them, nothing
-	/// changes and the user is told. With the setting to replace them, they are deleted instead, once confirmed. Asks
-	/// first when the game runs.
-	/// </summary>
-	/// <param name="name">The loadout.</param>
-	private bool LoadLoadout(string name)
-	{
-		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
-			return false;
-
-		if (this.Services.Settings.PlayerReadonly)
-		{
-			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutEquipmentLocked, Resources.SettingsPlayerReadonly), TQColor.Red);
-			return false;
-		}
-
-		if (this.Services.Settings.Loadout.ReplaceWorn)
-			return this.LoadLoadoutReplacing(player, loadouts, loadout.Name);
-
-		if (this.ShownVaultBag() is not { } target)
-		{
-			this.Services.UIService.NotifyUser(Resources.LoadoutNoVault, TQColor.Red);
-			return false;
-		}
-
-		if (!this.GoOnThoughGameRuns())
-			return false;
-
-		this.PutBackHeldItem();
-		var (vault, bagNumber, bag, bagSize, place) = (this.vaultPanel.Player!, this.vaultPanel.CurrentBag, target.Sack, target.Size, target.Place);
-		var result = this.Services.Loadouts.Load(loadouts, loadout.Name, player, bag, bagSize, place);
-		switch (result.Outcome)
-		{
-			case LoadoutLoadOutcome.NoRoom:
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutNoRoom, bagNumber + 1, vault.PlayerName, result.ToBag), TQColor.Red);
-				return false;
-			case LoadoutLoadOutcome.AlreadyWorn:
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, loadout.Name));
-				return false;
-			case LoadoutLoadOutcome.Refused:
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
-				return false;
-		}
-
-		// The pieces stored take the vault's map rules, as a dropped item; then the panels show the new state.
-		this.vaultPanel.AdoptVaultMod(bag, result.Stored, bagSize);
-		BagButtonTooltip.InvalidateCache(bag);
-		this.vaultPanel.Refresh();
-		this.stashPanel.EquipmentReplaced();
-		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoaded, loadout.Name, result.ToBag, bagNumber + 1, vault.PlayerName, result.Copied));
-		return true;
-	}
-
-	/// <summary>
-	/// Wears a loadout deleting the worn pieces it does not use: they are listed and confirmed first, unless the
-	/// confirmation messages are bypassed.
-	/// </summary>
-	private bool LoadLoadoutReplacing(PlayerCollection player, LoadoutSet loadouts, string name)
-	{
-		var takenOff = this.Services.Loadouts.TakenOff(loadouts, name, player);
-		if (takenOff.Count > 0 && !this.Services.Settings.SuppressWarnings)
-		{
-			var pieces = string.Join(Environment.NewLine, takenOff.Select(item => this.Services.ItemText.GetFriendlyNames(item).FullNameClean));
-			if (!this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutReplaceConfirm, name, pieces), Resources.LoadoutTitle, MessageBoxIcon.Warning, defaultNo: true))
-				return false;
-		}
-
-		if (!this.GoOnThoughGameRuns())
-			return false;
-
-		this.PutBackHeldItem();
-		var result = this.Services.Loadouts.LoadReplacing(loadouts, name, player);
-		switch (result.Outcome)
-		{
-			case LoadoutLoadOutcome.AlreadyWorn:
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutAlreadyWorn, name));
-				return false;
-			case LoadoutLoadOutcome.Refused or LoadoutLoadOutcome.NoRoom:
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.CharacterReadOnlyRefused, loadouts.CharacterName), TQColor.Red);
-				return false;
-		}
-
-		this.stashPanel.EquipmentReplaced();
-		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutLoadedReplaced, name, result.Replaced.Count, result.Copied));
-		return true;
-	}
-
-	/// <summary>
 	/// Gear swap: the loadout's pieces go on the character and the worn ones take their place in the loadout, none copied.
-	/// Refused as a load is (a read-only character, the PlayerReadonly setting); asks first when the game runs.
+	/// Refused for a read-only character or with the PlayerReadonly setting; asks first when the game runs.
 	/// </summary>
 	/// <param name="name">The loadout.</param>
 	private bool SwapLoadout(string name)
