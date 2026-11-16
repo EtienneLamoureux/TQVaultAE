@@ -39,6 +39,12 @@ public class PlayerInfo
 	/// </summary>
 	public readonly List<SkillRecord> SkillRecordList = [];
 
+	/// <summary>
+	/// The buffs the save keeps from one game to the next (<c>buffSkillName</c> after <c>hasSkillServices</c>): the
+	/// temple curses. Read only: the save keeps its own copy.
+	/// </summary>
+	public List<RecordId> SavedBuffs { get; } = [];
+
 	public bool MasteryDefensiveEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Defensive.AsString(EnumFormat.Description), noCase));
 	public bool MasteryStormEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Storm.AsString(EnumFormat.Description), noCase));
 	public bool MasteryEarthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Earth.AsString(EnumFormat.Description), noCase));

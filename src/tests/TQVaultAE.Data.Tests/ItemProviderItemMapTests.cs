@@ -105,6 +105,22 @@ public class ItemProviderItemMapTests
 	}
 
 	[Fact]
+	public void GetSetBonusSources_OnePerSet_WithItsNameItsPiecesAndItsBonus()
+	{
+		this.Add(ModName, SetRecord, "ItemSet", ("characterStrength", 5), ("setName", "tagSetTest"));
+		var sword = this.Add(ModName, Sword, "WeaponMelee_Sword", ("itemSetName", SetRecord.Raw));
+		var piece = this.Equipped(ModName);
+		piece.baseItemInfo = new Info(sword);
+
+		var set = this._provider.GetSetBonusSources([piece]).Should().ContainSingle().Subject;
+
+		set.SetId.Should().Be(SetRecord);
+		set.NameTag.Should().Be("tagSetTest");
+		set.Pieces.Should().Equal(piece);
+		set.Sum["characterStrength"].Should().Be(5);
+	}
+
+	[Fact]
 	public void GetGrantedSkillLevels_ReadsTheItemsMap()
 	{
 		var skill = """records\test\skill.dbr""";

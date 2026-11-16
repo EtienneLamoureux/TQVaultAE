@@ -44,7 +44,15 @@ public partial class ItemProvider
 	public AttributeSum GetSetBonuses(IEnumerable<Item> equipped)
 	{
 		var sum = new AttributeSum();
+		foreach (var set in this.GetSetBonusSources(equipped))
+			sum.Add(set.Sum);
 
+		return sum;
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyList<SetBonus> GetSetBonusSources(IEnumerable<Item> equipped)
+	{
 		// The game counts the pieces of each set the character wears and
 		// reads the set record at that number of pieces.
 		var pieces = equipped
@@ -53,16 +61,21 @@ public partial class ItemProvider
 			.Where(p => !string.IsNullOrWhiteSpace(p.Set))
 			.GroupBy(p => p.Set, StringComparer.OrdinalIgnoreCase);
 
+		var sets = new List<SetBonus>();
 		foreach (var set in pieces)
 		{
 			int worn = set.Select(p => p.Item.BaseItemId).Distinct().Count();
 
 			// The set record is read in the map of its pieces (the first one's when they are of several maps).
 			using var modScope = this.ModScope(set.First().Item);
-			AddAttributesFromRecord(sum, Database.GetRecordFromFile(set.Key.ToRecordId()), worn, this.PetBonusRecord);
+			var id = set.Key.ToRecordId();
+			var record = Database.GetRecordFromFile(id);
+			var sum = new AttributeSum();
+			AddAttributesFromRecord(sum, record, worn, this.PetBonusRecord);
+			sets.Add(new SetBonus(id, record?.GetString("setName", 0) ?? string.Empty, [.. set.Select(p => p.Item)], sum));
 		}
 
-		return sum;
+		return sets;
 	}
 
 	/// <inheritdoc/>

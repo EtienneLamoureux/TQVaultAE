@@ -127,6 +127,12 @@ public interface IItemProvider
 	/// </summary>
 	AttributeSum GetSetBonuses(IEnumerable<Item> equipped);
 
+	/// <summary>
+	/// The item sets worn, one by one: each set record, its name tag (<c>setName</c>), the pieces worn and its bonuses at
+	/// that number of pieces. <see cref="GetSetBonuses"/> is their sum.
+	/// </summary>
+	IReadOnlyList<SetBonus> GetSetBonusSources(IEnumerable<Item> equipped);
+
 	/// <summary>Sums the numeric variables of one record at a level (arrays read at level - 1, the last value past their end).</summary>
 	AttributeSum GetRecordAttributes(RecordId? recordId, int level);
 	/// <summary>

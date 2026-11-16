@@ -407,6 +407,12 @@ The file is modified by:
 - Item segments
 - Skill segments
 
+### Saved buffs (temple curses)
+The skill block ends with `masteriesAllowed`, `skillReclamationPointsUsed`, `hasSkillServices` (u32, 1), then
+`version` (u32, 0), `size` (u32) and `size` times `buffSkillName` (a string: the buff record). The game applies these
+buffs again when the character loads: the temple curses of "Heracles' way" (`records\item\heraclesway\buffs\`). TQVault
+reads the list for the statistics and keeps it as it is when writing the file.
+
 ---
 
 ## <a id="Pitfalls"></a>Common pitfalls

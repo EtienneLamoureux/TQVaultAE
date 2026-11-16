@@ -665,7 +665,42 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			nextOffset = skillTransition.nextOffset;
 		}
 
+		pi.SavedBuffs.AddRange(this.ReadSavedBuffs(pc.rawData, nextOffset));
 		return pi;
+	}
+
+	/// <summary>
+	/// The buffs the save keeps from one game to the next (the temple curses): after <c>hasSkillServices</c> (1) of the
+	/// skill block come <c>version</c>, <c>size</c>, then <c>size</c> times <c>buffSkillName</c>. Each key must follow
+	/// the value before it; any other layout (a save without the list) gives none. Read only: the save keeps the list.
+	/// </summary>
+	private List<RecordId> ReadSavedBuffs(byte[] data, int offset)
+	{
+		const int MaxBuffs = 64;
+		var services = TQData.ReadIntAfter(data, "hasSkillServices", offset);
+		if (services.indexOf == -1 || services.valueAsInt == 0)
+			return [];
+
+		// A key is its length (4 bytes) then its text: indexOf is where the text starts.
+		var version = TQData.ReadIntAfter(data, "version", services.nextOffset);
+		var size = TQData.ReadIntAfter(data, "size", version.nextOffset);
+		if (version.indexOf != services.nextOffset + sizeof(int) || size.indexOf != version.nextOffset + sizeof(int)
+			|| size.valueAsInt is < 0 or > MaxBuffs)
+			return [];
+
+		var buffs = new List<RecordId>();
+		int next = size.nextOffset;
+		for (int i = 0; i < size.valueAsInt; i++)
+		{
+			var name = TQData.ReadCStringAfter(data, "buffSkillName", next);
+			if (name.indexOf != next + sizeof(int) || string.IsNullOrWhiteSpace(name.valueAsString))
+				return [];
+
+			buffs.Add(name.valueAsString);
+			next = name.nextOffset;
+		}
+
+		return buffs;
 	}
 
 	/// <summary>
