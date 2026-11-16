@@ -224,6 +224,17 @@ public sealed class LoadoutBar : Control
 	/// <param name="action">The action.</param>
 	internal void Request(LoadoutBarAction action) => this.Raise(action, this.Selected);
 
+	/// <summary>
+	/// Why an action is greyed, for its tool tip, or null when the bar offers it: a read-only character, then the
+	/// PlayerReadonly setting for Load and Gear swap.
+	/// </summary>
+	/// <param name="action">The action.</param>
+	internal string? LockedReason(LoadoutBarAction action)
+		=> this.CanAct(action) ? null
+		: !this.CanChange ? Resources.LoadoutReadOnly
+		: action is LoadoutBarAction.Load or LoadoutBarAction.Swap && this.LoadLocked is { } locked ? locked
+		: null;
+
 	private void Raise(LoadoutBarAction action, string? name)
 	{
 		if (!this.CanAct(action))
@@ -292,7 +303,7 @@ public sealed class LoadoutBar : Control
 		this._toolTip.SetToolTip(this, part switch
 		{
 			Part.Add => Resources.LoadoutAdd,
-			Part.Load => this.LoadLocked ?? Resources.LoadoutLoadTip,
+			Part.Load => this.LockedReason(LoadoutBarAction.Load) ?? Resources.LoadoutLoadTip,
 			_ => this.CanChange ? this.Selected : Resources.LoadoutReadOnly,
 		});
 		this.Invalidate();

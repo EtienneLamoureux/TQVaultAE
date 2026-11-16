@@ -280,7 +280,7 @@ pixels unless noted.
   identical to the worn piece) and the worn pieces.
 - `marks`: `slot`, `match` (`Same`, `Different`, `OneEmpty`), `canCompare`, `bounds` (equipment panel pixels).
 - `panel` (the loadout panel): `visible`, `bounds`, `loadout`, `panelBounds`, `cellScaleFactor`, `unitSize`, the
-  `back`, `previous`, `next` and `swap` buttons (view pixels), `canTurn`, `canSwap`, `statsPanelVisible`, `slots`.
+  `back`, `previous`, `next` and `swap` buttons (view pixels), `canTurn`, `canSwap`, `swapLocked` (the greyed button's tool tip), `statsPanelVisible`, `slots`.
 - `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu.
 
 `action`, through the bar's and panel's own handlers:

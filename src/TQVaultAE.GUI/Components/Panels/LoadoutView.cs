@@ -80,11 +80,20 @@ public sealed class LoadoutView : Control
 	/// <summary>Raised when the user clicks the Gear swap button.</summary>
 	public event EventHandler? SwapRequested;
 
-	/// <summary>Whether the Gear swap button can be clicked: greyed when the loadout bar's Gear swap is.</summary>
-	public bool CanSwap
+	/// <summary>Whether the Gear swap button can be clicked.</summary>
+	public bool CanSwap => this._swap.Available;
+
+	/// <summary>
+	/// Why Gear swap is greyed (the loadout bar's reason, shown as the button's tool tip), or null when it can be clicked.
+	/// </summary>
+	public string? SwapLocked
 	{
-		get => this._swap.Enabled;
-		set => this._swap.Enabled = value;
+		get => this._swap.Available ? null : this._swap.LockedText;
+		set
+		{
+			this._swap.LockedText = value;
+			this._swap.Available = value is null;
+		}
 	}
 
 	/// <summary>Raised when the user clicks the Back arrow.</summary>
@@ -96,11 +105,11 @@ public sealed class LoadoutView : Control
 	/// <summary>Whether the previous and next arrows can be clicked: greyed with a single loadout.</summary>
 	public bool CanTurn
 	{
-		get => this._next.Enabled;
+		get => this._next.Available;
 		set
 		{
-			this._previous.Enabled = value;
-			this._next.Enabled = value;
+			this._previous.Available = value;
+			this._next.Available = value;
 		}
 	}
 
@@ -187,7 +196,8 @@ public sealed class LoadoutView : Control
 
 	/// <summary>
 	/// A small button drawn with one of the game's button pictures, in its up, over, down and disable states; its action
-	/// is raised from the mouse up (a synthetic click from the automation endpoint works too).
+	/// is raised from the mouse up (a synthetic click from the automation endpoint works too). Greyed, it stays enabled
+	/// so that its tool tip can tell why (a disabled control gets no mouse messages).
 	/// </summary>
 	private sealed class GameButton : Control
 	{
@@ -197,8 +207,11 @@ public sealed class LoadoutView : Control
 		private readonly string _restState;
 		private readonly string _hoverState;
 		private readonly ToolTip _toolTip = new();
+		private readonly string _text;
 		private bool _hovered;
 		private bool _pressed;
+		private bool _available = true;
+		private string? _lockedText;
 
 		/// <summary>Raised when the left button is released over the button it went down on.</summary>
 		internal event EventHandler? Pressed;
@@ -219,17 +232,41 @@ public sealed class LoadoutView : Control
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			this.BackColor = Color.Transparent;
 			this.Cursor = Cursors.Hand;
+			this._text = text;
 			this.AccessibleName = text;
 			this._toolTip.SetToolTip(this, text);
 		}
 
-		protected override void OnEnabledChanged(EventArgs e)
+		/// <summary>Whether a click raises the action; greyed otherwise.</summary>
+		internal bool Available
 		{
-			base.OnEnabledChanged(e);
-			this.Cursor = this.Enabled ? Cursors.Hand : Cursors.Default;
-			this._hovered = this._pressed = false;
-			this.Invalidate();
+			get => this._available;
+			set
+			{
+				if (value == this._available)
+					return;
+
+				this._available = value;
+				this.Cursor = value ? Cursors.Hand : Cursors.Default;
+				this._pressed = false;
+				this.UpdateToolTip();
+				this.Invalidate();
+			}
 		}
+
+		/// <summary>The tool tip while greyed (why), or null to keep the button's text.</summary>
+		internal string? LockedText
+		{
+			get => this._lockedText;
+			set
+			{
+				this._lockedText = value;
+				this.UpdateToolTip();
+			}
+		}
+
+		private void UpdateToolTip()
+			=> this._toolTip.SetToolTip(this, !this._available && this._lockedText is { } locked ? locked : this._text);
 
 		protected override void OnMouseEnter(EventArgs e)
 		{
@@ -259,7 +296,7 @@ public sealed class LoadoutView : Control
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
-			bool clicked = this._pressed && this.Enabled && e.Button == MouseButtons.Left && this.ClientRectangle.Contains(e.Location);
+			bool clicked = this._pressed && this._available && e.Button == MouseButtons.Left && this.ClientRectangle.Contains(e.Location);
 			this._pressed = false;
 			this.Invalidate();
 			if (clicked)
@@ -269,8 +306,8 @@ public sealed class LoadoutView : Control
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			bool greyed = !this.Enabled && !this._hasDisable;
-			string state = !this.Enabled ? (greyed ? this._restState : "disable") : this._pressed ? "down" : this._hovered ? this._hoverState : this._restState;
+			bool greyed = !this._available && !this._hasDisable;
+			string state = !this._available ? (greyed ? this._restState : "disable") : this._pressed ? "down" : this._hovered ? this._hoverState : this._restState;
 			string resource = string.Format(System.Globalization.CultureInfo.InvariantCulture, this._resource, state);
 			e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			GamePicture.Draw(e.Graphics, this._uiService.LoadBitmap(resource.ToRecordId()), this.ClientRectangle, greyed);

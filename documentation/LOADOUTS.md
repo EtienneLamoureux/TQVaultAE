@@ -31,7 +31,7 @@ moves down meanwhile.
   - Upper right arrow: **Back to the statistics** (the loadout stays chosen).
   - Lower corner arrows: **Previous loadout**, **Next loadout**, in the box's order, wrapping around; grey with a single
     loadout.
-  - Under the rings: **Gear swap** (below).
+  - Under the rings: **Gear swap** (below). Greyed, its tool tip says why.
 
 Changes are written with the other files (**Save**, or on closing), or when a bar action writes the loadouts file
 (add, update, rename, copy, delete). **Update** and **Delete** discard the pieces moved into the loadout: take them
