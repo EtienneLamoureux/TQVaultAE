@@ -45,10 +45,11 @@ Every shortcut below can be changed: see [Changing the shortcuts](#changing-the-
 | Left-click, after the item menu's **Insert into item** | Inserts the relic or charm into the item clicked, in any panel (see [Insert a relic or charm into an item](FORGE.md#Socket)) |
 | <kbd>ESC</kbd> or right-click, after **Insert into item** | Cancels the insertion |
 
-"Currently highlighted item" is the item under the mouse cursor. <kbd>BACKSPACE</kbd>, <kbd>C</kbd> and <kbd>D</kbd> act on that item only, never on the selection.
-<kbd>C</kbd>, <kbd>D</kbd> and their clicks need the "Allow Item Copying" setting; without it the clicks pick up the item as a
-plain click does.
-While the secondary vault is shown, <kbd>&#8594;</kbd> sends to the secondary vault and <kbd>&#8595;</kbd> does nothing.
+- "Currently highlighted item": the item under the mouse cursor. <kbd>BACKSPACE</kbd>, <kbd>C</kbd> and <kbd>D</kbd> act
+  on it only, never on the selection.
+- <kbd>C</kbd>, <kbd>D</kbd> and their clicks need the "Allow Item Copying" setting; without it the clicks pick the item
+  up as a plain click does.
+- While the secondary vault is shown, <kbd>&#8594;</kbd> sends to it and <kbd>&#8595;</kbd> does nothing.
 
 ## Forge
 
@@ -56,7 +57,7 @@ While the secondary vault is shown, <kbd>&#8594;</kbd> sends to the secondary va
 |---|---|
 | <kbd>ENTER</kbd> or <kbd>SPACE</kbd> | Forges, like the Forge button (see [Forge](FORGE.md)) |
 
-The character editor has its own mouse shortcuts, see [Character editor](CHAREDIT.md); the <kbd>SHIFT</kbd> of its
+The character editor has its own mouse shortcuts ([Character editor](CHAREDIT.md)); the <kbd>SHIFT</kbd> of its
 "every point at once" clicks can be changed too.
 
 ## Sorting
@@ -66,10 +67,11 @@ The character editor has its own mouse shortcuts, see [Character editor](CHAREDI
 | Click a sort button | Sorts its bag with the chosen order (rows and columns alternate at each click) |
 | Right-click a sort button | Chooses the order (size, required level, type or rarity) and sorts at once |
 
-Sort buttons: left of the vault's bag, above the character's main inventory and bags, and upright against the right edge of
-the stash's golden frame (shown on the Transfer Area, Storage Area and Relic Vault, not on the Equipment). These two clicks are fixed. With the "Merge relic
-shards when sorting" setting on, relic and charm shards are merged first. A read-only character's bags and Storage Area
-are not sorted.
+- Sort buttons: left of the vault's bag, above the character's main inventory and bags, and upright against the right
+  edge of the stash's golden frame (on the Transfer Area, Storage Area and Relic Vault, not on the Equipment).
+- These two clicks are fixed.
+- With "Merge relic shards when sorting" on, relic and charm shards are merged first.
+- A read-only character's bags and Storage Area are not sorted.
 
 ## Bulk Transfer
 
@@ -78,8 +80,7 @@ are not sorted.
 
 ## Changing the shortcuts
 
-**Configure** → **Key binds...** lists every key and mouse binding of TQVaultAE. Each action has a shortcut and an
-alternate:
+**Configure** → **Key binds...** lists every key and mouse binding. Each action has a shortcut and an alternate:
 
 - Click a shortcut, then press the new key (with <kbd>CTRL</kbd>, <kbd>SHIFT</kbd> or <kbd>ALT</kbd> if you want).
 - For a click action (copy or duplicate by click, selection, "every point at once"), click the shortcut, then click it
@@ -87,11 +88,11 @@ alternate:
 - Right-click the shortcut to stop, **Clear** to remove it, **Defaults** to bring every shortcut back.
 - Two actions that share a shortcut are shown in red and **OK** stays disabled until one is changed.
 - The mouse buttons, the mouse wheel and <kbd>ALT</kbd>+<kbd>F4</kbd> are shown greyed: they cannot be changed.
-- Actions turned off by a setting are greyed too, with the setting to tick in their tool tip and under the list: copy and
-  duplicate need "Allow Item Copying", the character editor's clicks need "Allow Character Editing Features". Their
-  shortcuts can still be changed; they work once the setting is ticked.
+- Actions turned off by a setting are greyed too, the setting to tick in their tool tip and under the list: copy and
+  duplicate need "Allow Item Copying", the character editor's clicks "Allow Character Editing Features". Their shortcuts
+  can still be changed and work once the setting is ticked.
 
-The changes take effect when you press **OK** in the settings, without a restart. They are saved in `UserConfig.xml` as
-one element listing only the changed actions, for example `<KeyBinds ItemDuplicateClick="Ctrl+Shift+Click" />`.
+Changes apply on **OK** in the settings, without restart. `UserConfig.xml` keeps one element listing only the changed
+actions, e.g. `<KeyBinds ItemDuplicateClick="Ctrl+Shift+Click" />`.
 
 ![Key binds dialog](shortcuts/keybinds.png)

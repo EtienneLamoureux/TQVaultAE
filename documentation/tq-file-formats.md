@@ -37,7 +37,8 @@ Figures quoted below come from that install.
 * `u32`/`i32` are 4 bytes and `u16`/`i16` are 2 bytes.
 * `FILETIME` is the Windows 64-bit count of 100 ns intervals since 1601-01-01 UTC.
 * `adler32` is the zlib Adler-32 checksum.
-* Strings are **cp1252** (Windows-1252), never UTF-8 or Latin-1 (`0x92` is `’` in cp1252 but a control character in Latin-1), except the UTF-16 text files described [below](#Text) and the UTF-16 strings of the save files.
+* Strings are **cp1252** (Windows-1252), never UTF-8 or Latin-1 (`0x92` is `’` in cp1252, a control character in
+  Latin-1). Exceptions: the UTF-16 text files ([below](#Text)) and the UTF-16 strings of the save files.
 
 ---
 
@@ -55,9 +56,8 @@ Figures quoted below come from that install.
 | `Text\Text_XX.arc` | Localized text in 13 languages: BR CH CZ DE EN ES FR IT JA KO PL RU UK. |
 | `Toolset\*.arc` | Editor templates and tutorials. |
 
-**Resource ids.** Records reference assets by a *resource id*: `<archive stem>\<path inside the archive>`,
-for example `Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The first segments give the archive, as the
-archives of the game install hold them:
+**Resource ids.** Records reference assets by a *resource id*: `<archive stem>\<path inside the archive>`, e.g.
+`Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex`. The first segments give the archive of the game install:
 
 | Resource id | Archive | Entry path |
 |---|---|---|
@@ -66,17 +66,20 @@ archives of the game install hold them:
 | other `.wav` / `.mp3`: `Sounds\...`, `Dialog\...`, `PlayerSounds\...`, `Music\...` | `Audio\<name>.arc` | after `<name>\` |
 | anything else (`<name>\...`) | `Resources\<name>.arc` | after `<name>\` |
 
-The resource ids never start with `XPack\Sounds\`: there is no `Resources\XPack\Sounds.arc`. One exception to the
-table: the Eternal Embers drop sounds (`Sounds\item\embers*.mp3` / `.wav`) are in `Resources\Sounds.arc`, not in
-`Audio\Sounds.arc`. The `Audio\*_XX.arc` and `Resources\XPackN\*_XX.arc` archives (`Dialog_DE`, `Sounds_FR`...) hold
-the localized versions.
+* No resource id starts with `XPack\Sounds\`: there is no `Resources\XPack\Sounds.arc`.
+* Exception to the table: the Eternal Embers drop sounds (`Sounds\item\embers*.mp3` / `.wav`) are in
+  `Resources\Sounds.arc`, not `Audio\Sounds.arc`.
+* The `Audio\*_XX.arc` and `Resources\XPackN\*_XX.arc` archives (`Dialog_DE`, `Sounds_FR`...) hold the localized
+  versions.
 
-TQVaultAE's mapping is `GameArchives.ArcFileSegments` (`src/TQVaultAE.Domain/Helpers/GameArchives.cs`), the table
-above. When the first archive does not hold the entry, `GameArchives.ArcFileCandidates` tries the archive of the same
-name in the expansion folders and in `Resources` (which finds the Eternal Embers drop sounds). The other way,
-`ArchiveLayout.ResourcePrefix` (`src/TQVaultAE.GameFiles/ArchiveLayout.cs`) gives the first segments of the ids of an
-archive's entries: its path relative to `Resources` or `Audio`, without extension and without the `_XX` language
-suffix (`XPack2\Items`, `Dialog` for `Audio\Dialog_DE.arc`). tqdb's `resourceId` column uses it.
+In the code:
+
+* `GameArchives.ArcFileSegments` (`src/TQVaultAE.Domain/Helpers/GameArchives.cs`) is the table above.
+* `GameArchives.ArcFileCandidates`: when the first archive lacks the entry, tries the archive of the same name in the
+  expansion folders and in `Resources` (this finds the Eternal Embers drop sounds).
+* `ArchiveLayout.ResourcePrefix` (`src/TQVaultAE.GameFiles/ArchiveLayout.cs`), the other way: the first segments of the
+  ids of an archive's entries, i.e. its path relative to `Resources` or `Audio`, without extension or `_XX` language
+  suffix (`XPack2\Items`, `Dialog` for `Audio\Dialog_DE.arc`). tqdb's `resourceId` column uses it.
 
 ---
 
@@ -130,11 +133,16 @@ At `tocOffset`:
 
 ### Data
 
-* **Type 3:** the file is the concatenation of `numParts` consecutive parts. Each part is a complete zlib stream (header `78 DA` or `78 9C`) of at most 262,144 uncompressed bytes. Some parts have `compressedSize == size` but are **still zlib-compressed** (`Toolset\Tutorials.arc`).
-* **Type 1:** raw bytes at `offset`, with `compressedSize == size`. Nearly all of them are `.mp3` dialog files. `Audio\Dialog_DE`, `_FR` and `_RU` contain only stored entries.
-* **Inactive entries:** type 3 with `numParts == 0` and size 0 (15 in `Tutorials.arc`). They still occupy a name in the blob, so names must be read through `nameOffset`/`nameLength`, never sequentially.
+* **Type 3:** `numParts` consecutive parts, concatenated.
+  * Each part is a complete zlib stream (header `78 DA` or `78 9C`) of at most 262,144 uncompressed bytes.
+  * Some parts have `compressedSize == size` but are **still zlib-compressed** (`Toolset\Tutorials.arc`).
+* **Type 1:** raw bytes at `offset`, `compressedSize == size`. Nearly all are `.mp3` dialog files; `Audio\Dialog_DE`,
+  `_FR` and `_RU` hold only stored entries.
+* **Inactive entries:** type 3, `numParts == 0`, size 0 (15 in `Tutorials.arc`). They still take a name in the blob:
+  read names through `nameOffset`/`nameLength`, never sequentially.
 * Names are unique within an archive, even ignoring case. All offsets fit in a signed 32-bit integer.
-* The largest entry is `world/world01.map` in `Resources\Levels.arc`: 2,004,303,764 bytes across 7,646 parts. Stream it part by part instead of allocating the whole file.
+* Largest entry: `world/world01.map` in `Resources\Levels.arc`, 2,004,303,764 bytes in 7,646 parts. Stream it part by
+  part instead of allocating the whole file.
 
 ### Content (extension histogram)
 
@@ -276,7 +284,11 @@ A `.tex` wraps one or more DirectDraw Surface frames. All 25,278 files in the ga
 
 `BitmapService.LoadFromTexMemory` and `TexConverter` (DbCli) both apply these fix-ups.
 
-**Item size.** An item takes one inventory cell per 32 pixels of its picture. `TexHeader.TryReadSize` reads the size from the DDS header (height at byte 12, width at byte 16, counted from the start of the DDS data, magic included) without decoding, so `ItemProvider.GetDBData` knows the size of every item when it is loaded, before its picture is drawn.
+**Item size.** An item takes one inventory cell per 32 pixels of its picture.
+
+* `TexHeader.TryReadSize` reads the size from the DDS header without decoding: height at byte 12, width at byte 16,
+  counted from the start of the DDS data, magic included.
+* So `ItemProvider.GetDBData` knows every item's size when it is loaded, before its picture is drawn.
 
 ---
 
@@ -299,7 +311,11 @@ All of these export as **byte-for-byte copies**: the raw entry is the native for
 
 ## <a id="Jitter"></a>Item stat randomization (jitter)
 
-The values in the database are not always the values shown in game. When an item is created, the game rolls part of its stats from the **item seed** saved with the item. Issue [#552](https://github.com/EtienneLamoureux/TQVaultAE/issues/552) describes it. It is implemented in `src/TQVaultAE.Domain/Jitter/` and reproduces the in-game tooltips exactly.
+Database values are not always the in-game values: when an item is created, the game rolls part of its stats from the
+**item seed** saved with it.
+
+* Described in issue [#552](https://github.com/EtienneLamoureux/TQVaultAE/issues/552).
+* Implemented in `src/TQVaultAE.Domain/Jitter/`; reproduces the in-game tooltips exactly.
 
 ### Random number generator
 
@@ -340,7 +356,8 @@ Inside each store, attributes roll in a fixed order (246 attributes, listed in `
 
 ### After the rolls: `attributeScalePercent`
 
-When the **base item** has `attributeScalePercent = p`, every store is scaled once all the rolls are done. This concerns 152 rings and amulets (20–25%, some amulets up to 100%) and 8 weapons:
+When the **base item** has `attributeScalePercent = p`, every store is scaled after all the rolls (152 rings and
+amulets at 20–25%, some amulets up to 100%, and 8 weapons):
 
 ```
 v = v + (int)(v × p / 100)        (single precision, truncation toward zero)
@@ -361,7 +378,8 @@ The base Skill values (`skillCooldownReduction`, `skillManaCostReduction`…) ar
 
 ### Socketed relics and charms
 
-Relics and charms socketed in an item are **neither jittered nor scaled** by the item's `attributeScalePercent`. The game shows the raw database values:
+Socketed relics and charms are **neither jittered nor scaled** by the item's `attributeScalePercent`: the game shows
+the raw database values.
 * Their arrays are indexed by the number of shards: `var1` / `var2` in the save file. A completed relic uses the last entry.
 * The completion bonus (`relicBonus`) also keeps its database value.
 

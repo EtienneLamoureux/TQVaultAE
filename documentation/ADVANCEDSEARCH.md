@@ -65,9 +65,12 @@ You can hide it.
 
 ![ShowHide](advancedsearch/showhide.png)
 
-The screenshots of this page are older: the form now also has the "Origin", "Mod", "Sets" and "Item Skills" categories
-and the "Having Skill" and "Modded" quick filters. "Mod" lists the mods the items come from (the mod whose data gave at
-least one of the item's records, read with the data of its vault, character or shared stash), the installed mods first; "Modded" keeps every item from a mod.
+The screenshots of this page are older. The form now also has:
+
+- the "Origin", "Mod", "Sets" and "Item Skills" categories. "Mod" lists the mods the items come from (the mod whose
+  data gave at least one of the item's records, read with the data of its vault, character or shared stash), installed
+  mods first;
+- the "Having Skill" and "Modded" quick filters. "Modded" keeps every item from a mod.
 
 ---
 
@@ -162,23 +165,26 @@ Hovering on a category display a tooltip with the number of related items.
 ---
 
 ### <a id="FindCopies"></a>Find an item's copies
-Right-click an item, in any vault, bag, equipment or stash, and open its **Search** menu to list the items related to it
-among every loaded item: all the vaults (not only the one shown), every character's equipment, bags and personal stash,
-the transfer stash, the relic vault and the pieces stored in the [loadouts](LOADOUTS.md).
+Right-click an item (any vault, bag, equipment or stash) > **Search** lists the related items among every loaded item:
+all the vaults (not only the one shown), every character's equipment, bags and personal stash, the transfer stash, the
+relic vault, and the pieces stored in the [loadouts](LOADOUTS.md).
 
 | Entry | Lists the items with |
 |-------|----------------------|
 | Copies with same seed | the same base item, prefix, suffix and seed: the same piece (socketed relics, charms and their bonus may differ) |
 | All copies | the same base item, prefix and suffix, any seed |
 | Same base | the same base item, whatever their affixes |
-| Same prefix | the same prefix, whatever their base item (disabled for an item without a prefix) |
-| Same suffix | the same suffix, whatever their base item (disabled for an item without a suffix) |
+| Same prefix | the same prefix, any base item (disabled for an item without a prefix) |
+| Same suffix | the same suffix, any base item (disabled for an item without a suffix) |
 
 ![Search menu](advancedsearch/findcopies-menu.png)
 
-The results open in the search results window, its title naming the search and the number of items found. The item
-clicked comes first, in bold and marked *(source)*; the others follow by container and place. Clicking a result shows it
-like an Advanced Search result: a loadout piece selects its character and that loadout in the loadout bar.
+The results open in the search results window:
+
+- The title names the search and the number of items found.
+- The item clicked comes first, in bold, marked *(source)*; the others follow by container and place.
+- Clicking a result shows it like an Advanced Search result; a loadout piece selects its character and that loadout in
+  the loadout bar.
 
 ![Search results](advancedsearch/findcopies-results.png)
 
@@ -186,30 +192,35 @@ _**Like the Advanced Search, it finds the items of the files loaded: enable "Pre
 search every vault and character.**_
 
 ### <a id="MoveResults"></a>Move the results
-The search results window, of the Advanced Search or of an item's **Search**, can move the items it lists. Select rows
-with <kbd>CTRL</kbd> or <kbd>SHIFT</kbd> clicks, or all of them with **Select All** (or <kbd>CTRL</kbd>+<kbd>A</kbd>),
-then pick a target in **Move To**, under the list or in the list's right-click menu:
+The search results window (Advanced Search or an item's **Search**) moves the items it lists:
+
+1. Select rows with <kbd>CTRL</kbd> or <kbd>SHIFT</kbd> clicks, or all with **Select All** (or
+   <kbd>CTRL</kbd>+<kbd>A</kbd>).
+2. Pick a target in **Move To**, under the list or in the list's right-click menu:
 
 | Target | Moves the selected items to |
 |--------|-----------------------------|
 | Transfer Stash | the transfer stash shown with the selected character (its map's, for a modded character) |
 | Player Stash | the selected character's own stash (storage area) |
-| Relic Vault | the relic vault shown with the selected character; available only when every selected item is one it takes (relics, charms, artifacts, formulae) |
-| Vaults > *vault* > *bag* | that bag of any vault, read when its entry opens if no vault panel shows it |
+| Relic Vault | the relic vault shown with the selected character; only when every selected item is one it takes (relics, charms, artifacts, formulae) |
+| Vaults > *vault* > *bag* | that bag of any vault (read when its entry opens, if no vault panel shows it) |
 
 ![Move To in the right-click menu](advancedsearch/results-move-menu.png)
 
-Each item takes the first free cells of the target, as **Move Item To** places one. Worn pieces and the pieces stored in
-the [loadouts](LOADOUTS.md) move too: a worn piece leaves its slot empty, a loadout piece leaves its loadout slot empty
-(the loadouts file is written at once, as every loadout change). The items that cannot move stay where they are, and the
-line under the buttons tells which and why: no room left in the target, a read-only character, the equipment locked by
-the *Player Equipment ReadOnly* setting, an item the relic vault does not take, or an item no longer where the search
-found it. The rows then show where their items are, and the main window shows the new contents.
+- Each item takes the target's first free cells, as **Move Item To** places one.
+- Worn pieces and [loadout](LOADOUTS.md) pieces move too, leaving their slot empty (the loadouts file is written at
+  once, as for every loadout change).
+- Items that cannot move stay; the line under the buttons tells which and why: no room in the target, a read-only
+  character, the equipment locked by *Player Equipment ReadOnly*, an item the relic vault does not take, an item no
+  longer where the search found it.
+- The rows then show where their items are; the main window shows the new contents.
 
 ![Results after a move](advancedsearch/results-move.png)
 
-**Undo** puts the items of the last move back where they were: their cell, equipment slot or loadout slot. Each click
-undoes one more move. An item moved again since, or whose place is taken, stays and is reported. The history belongs to
-the window: closing it forgets it.
+**Undo** puts the items of the last move back in their cell, equipment slot or loadout slot.
+
+- Each click undoes one more move.
+- An item moved again since, or whose place is taken, stays and is reported.
+- The history belongs to the window: closing it forgets it.
 
 _**Moves are saved like any other change, with the Save button or when leaving TQVault.**_

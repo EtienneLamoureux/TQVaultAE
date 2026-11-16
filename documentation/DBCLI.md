@@ -1,10 +1,19 @@
 # DB CLI (`tqdb`) - Titan Quest database command line
 
-`tqdb` searches the Titan Quest Anniversary Edition game database (`Database\database.arz`) and the game archives (`*.arc`), and exports what it finds as JSON, TSV, ARZExplorer-style `.dbr` text or raw asset files (sounds, meshes, textures, optionally converted to `.dds` / `.png`).
+`tqdb` searches the Titan Quest Anniversary Edition game database (`Database\database.arz`) and archives (`*.arc`), and
+exports what it finds as JSON, TSV, ARZExplorer-style `.dbr` text or raw asset files (sounds, meshes, textures,
+optionally converted to `.dds` / `.png`).
 
-It is the scriptable counterpart of [ARZ Explorer](ARZEXPLORER.md): no UI, fast, pipe-friendly. The file formats it reads are described in [Titan Quest Game File Formats](tq-file-formats.md). Typical uses: find the record behind an in-game item, compare items or affixes, feed spreadsheets and scripts, extract icons and sounds for a wiki or a mod.
+The scriptable counterpart of [ARZ Explorer](ARZEXPLORER.md): no UI, fast, pipe-friendly. File formats:
+[Titan Quest Game File Formats](tq-file-formats.md). Typical uses:
 
-> **Usage notice.** `tqdb` only reads *your own* game installation. Assets and data extracted from the game remain the property of their owners: use them for personal, modding or reference purposes and do not redistribute them.
+- find the record behind an in-game item;
+- compare items or affixes;
+- feed spreadsheets and scripts;
+- extract icons and sounds for a wiki or a mod.
+
+> **Usage notice.** `tqdb` only reads *your own* game installation. Extracted assets and data remain their owners'
+> property: use them for personal, modding or reference purposes; do not redistribute them.
 
 ---
 
@@ -28,33 +37,35 @@ It is the scriptable counterpart of [ARZ Explorer](ARZEXPLORER.md): no UI, fast,
 ---
 
 ## <a id="Exec"></a>Executable
-`tqdb` is built from `src/TQVaultAE.DbCli`. Run it from a terminal (`cmd`, PowerShell, Windows Terminal, a Linux shell...).
+Built from `src/TQVaultAE.DbCli`. Run it from a terminal (`cmd`, PowerShell, Windows Terminal, a Linux shell...).
 
-Each GitHub Release ships it as a self-contained single-file executable, which needs no .NET runtime:
+Each GitHub Release ships a self-contained single-file executable (no .NET runtime needed):
 
 | Archive | Platform | Executable |
 |---|---|---|
 | `tqdb-win-x64-<version>.zip` | Windows x64 | `tqdb.exe`, next to `Magick.Native-Q8-x64.dll` |
-| `tqdb-linux-x64-<version>.zip` | Linux x64 | `tqdb` (run `chmod +x tqdb` once: zip archives do not keep the executable bit), next to `Magick.Native-Q8-x64.dll.so` |
+| `tqdb-linux-x64-<version>.zip` | Linux x64 | `tqdb`, next to `Magick.Native-Q8-x64.dll.so`; run `chmod +x tqdb` once (zip archives drop the executable bit) |
 
-Keep the two files of the archive together: the Magick.NET native library is loaded from the executable's folder.
+Keep the archive's two files together: the Magick.NET native library loads from the executable's folder.
 
-To build it yourself (needs the .NET 10 SDK; the result needs the .NET 10 runtime):
+Build it yourself (needs the .NET 10 SDK; the result needs the .NET 10 runtime):
 
 ```
 dotnet build src/TQVaultAE.DbCli/TQVaultAE.DbCli.csproj --configuration Release
 src\TQVaultAE.DbCli\bin\Release\net10.0\tqdb.exe --help
 ```
 
-To publish the same single files as the releases:
+Publish the same single files as the releases:
 
 ```
 pwsh -File .github/scripts/Publish-Release.ps1 -OutputDir publish
 ```
 
-The game is found automatically (in this order): `--game <path>`, the `TQ_GAME_PATH` environment variable, Steam (app 475150, every Steam library), GOG, well-known install folders. A `TQ_GAME_PATH` that is set but is not a game install is an error (exit code 3): the other places are not tried.
+The game is found in this order: `--game <path>`, the `TQ_GAME_PATH` environment variable, Steam (app 475150, every
+Steam library), GOG, well-known install folders. A `TQ_GAME_PATH` set to a non-game folder is an error (exit code 3);
+the other places are not tried.
 
-Every command has its own help: `tqdb <command> --help` (or `tqdb help <command>`).
+Each command has its own help: `tqdb <command> --help` (or `tqdb help <command>`).
 
 ---
 
@@ -73,7 +84,8 @@ tqdb extract --archive Items --ext tex --convert png --out .\textures
 
 ## <a id="Recipes"></a>Recipes
 
-**Identify an in-game item from its tooltip.** Base armor is never randomized, so it pins the base item; affixes are then found by their values:
+**Identify an in-game item from its tooltip.** Base armor is never randomized, so it pins the base item; affixes are
+then found by their values:
 ```
 tqdb records --class ArmorProtective_Head --where defensiveProtection=210 --fields id,displayName,characterDexterity,defensivePierce
 tqdb records --class LootRandomizer --where characterDefensiveAbility=35 --fields id,displayName,lootRandomizerJitter
@@ -84,7 +96,7 @@ tqdb records --class LootRandomizer --where characterDefensiveAbility=35 --field
 tqdb records --class "Weapon*" --where "offensiveFireMin>50" --sort offensiveFireMax:desc --fields id,displayName,itemLevel,offensiveFireMin,offensiveFireMax --out fire.tsv
 ```
 
-**Everything about one item, with the records it references inlined:**
+**Everything about one item, referenced records inlined:**
 ```
 tqdb record records/item/equipmenthelm/mi_e_gorgonmelee.dbr --resolve --follow "*" --format json
 ```
@@ -95,7 +107,7 @@ tqdb text --key tagItemHookedBlade --lang FR
 tqdb text --value "*de la chasse*" --lang FR
 ```
 
-**Item icons as PNG, from the `bitmap` path of a record:**
+**Item icons as PNG, from a record's `bitmap` path:**
 ```
 tqdb extract --resource "Items\EquipmentHelm\UIBitmaps\mi_n_gorgonmelee.tex" --convert png --out .\icons
 ```
@@ -118,18 +130,24 @@ Accepted before or after the command name.
 | `--version` | Print the version. |
 | `-h, --help` | Help. |
 
-Option syntax: `--name value`, `--name=value`, `-n value`, `-nvalue`; combined short flags (`-qr`); repeatable options may be given several times; list options also accept commas (`--fields id,class --fields itemLevel`); `--` ends the options.
+Option syntax:
+
+- `--name value`, `--name=value`, `-n value`, `-nvalue`; combined short flags (`-qr`).
+- Repeatable options may be given several times; list options also accept commas (`--fields id,class --fields itemLevel`).
+- `--` ends the options.
 
 ---
 
 ## <a id="Patterns"></a>Patterns
-Options documented as `glob|/re/` accept:
-* a **glob**, matched against the whole value: `*` any text, `?` one character, `[abc]` / `[!abc]` character sets. Example: `--class "Item*"`.
+Options shown as `glob|/re/` accept:
+* a **glob**, matched against the whole value: `*` any text, `?` one character, `[abc]` / `[!abc]` character sets.
+  Example: `--class "Item*"`.
 * a **regular expression** between slashes, searched anywhere in the value: `--id "/sword0[1-3]/"`.
 
-Matching is always case-insensitive. For paths (record ids, `templateName`, archive entry names, resource ids) `/` and `\` are equivalent, so `records/item/*` and `records\item\*` are the same pattern; inside a regex write `/`.
-
-Repeating the same filter ORs the patterns (`--class ItemRelic --class ItemCharm`); different filters are ANDed.
+- Matching is always case-insensitive.
+- In paths (record ids, `templateName`, archive entry names, resource ids) `/` and `\` are equivalent: `records/item/*`
+  and `records\item\*` are the same pattern. Inside a regex, write `/`.
+- The same filter repeated ORs its patterns (`--class ItemRelic --class ItemCharm`); different filters are ANDed.
 
 ---
 
@@ -155,7 +173,7 @@ Search records.
 | `-c, --class <glob>` | Record class. Filtered on the record table, before decompression. |
 | `--template <glob\|/re/>` | `templateName` value. |
 | `-n, --name <glob\|/re/>` | Resolved display name, in `--lang`. |
-| `--tag <glob\|/re/>` | The name tag itself (`tagItemHookedBlade`). The name tag comes from `itemNameTag`, `description`, `skillDisplayName`, `lootRandomizerName`, `setName`... |
+| `--tag <glob\|/re/>` | The name tag itself (`tagItemHookedBlade`), from `itemNameTag`, `description`, `skillDisplayName`, `lootRandomizerName`, `setName`... |
 | `-w, --where <expr>` | Field predicate (repeatable, ANDed), see below. |
 | `-t, --text <substring>` | Case-insensitive substring in any string value. |
 | `-l, --lang <code>` | Language of display names and `--resolve` (default `EN`; see `tqdb info`). |
@@ -164,14 +182,17 @@ Search records.
 
 | Expression | Meaning |
 |---|---|
-| `field=value` | Equal. Numbers compare numerically (floats with single-precision tolerance), strings ignore case and treat `/` and `\` alike. |
+| `field=value` | Equal. Numbers compare numerically (floats with single-precision tolerance); strings ignore case and treat `/` and `\` alike. |
 | `field!=value` | No value equals (true when the field is absent). |
-| `field>n` `field>=n` `field<n` `field<=n` | Numeric comparison when both sides are numbers, else ordinal case-insensitive text comparison. |
+| `field>n` `field>=n` `field<n` `field<=n` | Numeric when both sides are numbers, else ordinal case-insensitive text. |
 | `field~pattern` | Glob or `/regex/` on the value text. |
 | `field?` | Field exists and is non-zero / non-empty. |
 | `!expr` | Negation, e.g. `!levelRequirement?`. |
 
-Field names are case-insensitive and may be globs (`offensive*Min>10` = any matching field). Multi-value fields match when **any** value matches. Pseudo fields `id`, `class`, `displayName` and `nameTag` can be used too. Quote expressions in the shell (`"itemLevel>=40"`): `>` and `<` are redirections otherwise.
+- Field names are case-insensitive and may be globs (`offensive*Min>10`: any matching field).
+- Multi-value fields match when **any** value matches.
+- Pseudo fields `id`, `class`, `displayName` and `nameTag` work too.
+- Quote expressions in the shell (`"itemLevel>=40"`): `>` and `<` are redirections otherwise.
 
 **Output**
 
@@ -185,7 +206,7 @@ Field names are case-insensitive and may be globs (`offensive*Min>10` = any matc
 | `--count` | Print only the number of matches; `--limit` is ignored. |
 | `--format json\|jsonl\|tsv\|dbr` | Default `tsv`, or inferred from the `--out` extension. |
 | `--compact` | Non-indented JSON. |
-| `-o, --out <path>` | Output file; with `--format dbr`, a **directory** receiving one `.dbr` per record (path mirrored, like ARZ Explorer), unless the path ends with `.dbr`/`.txt`. |
+| `-o, --out <path>` | Output file. With `--format dbr`, a **directory** receiving one `.dbr` per record (path mirrored, like ARZ Explorer), unless the path ends with `.dbr`/`.txt`. |
 
 Examples:
 ```
@@ -198,7 +219,8 @@ tqdb records --tag tagItemHookedBlade --fields "*" --resolve --format json
 ```
 
 ### <a id="record"></a>record
-`tqdb record <id> [<id>...]`: one record (or a few) with every field. The id accepts `/` or `\` and any case. An unknown id exits with code 3 and suggests records with the same file name.
+`tqdb record <id> [<id>...]`: one record (or a few) with every field. The id accepts `/` or `\` and any case. An
+unknown id exits with code 3 and suggests records with the same file name.
 
 | Option | Description |
 |---|---|
@@ -223,7 +245,7 @@ Search localization tags (`Text\Text_XX.arc`): tag code <-> display text.
 | `-v, --value <glob\|/re/>` | Text (`"*hooked*"`). |
 | `-l, --lang <code>` | Default `EN`. |
 | `--limit`, `--count` | As for `records`, except that the count stops at `--limit`. |
-| `--format json\|jsonl\|tsv` | Default `tsv`. Columns `tag`, `text`; sorted by tag. The `tag` column spells the tag as the game does, whatever the case given to `--key`. |
+| `--format json\|jsonl\|tsv` | Default `tsv`. Columns `tag`, `text`, sorted by tag. `tag` spells the tag as the game does, whatever the case given to `--key`. |
 
 ```
 tqdb text --value "*of the hunt*" --lang FR
@@ -231,13 +253,23 @@ tqdb text --key "/^tagSkill/" --format json --out skills.json
 ```
 
 ### <a id="files"></a>files
-List archive entries. Columns: `archive` (path relative to the game root without extension, e.g. `Resources/XPack/Items`), `name` (entry path), `resourceId` (as the database references it: the archive's path relative to `Resources` or `Audio` without extension, then the entry name, e.g. `Items\weapons\x.tex` in `Resources/Items`, `XPack2\Items\weapons\x.tex` in `Resources/XPack2/Items`; a localized archive such as `Audio/Dialog_DE` has the ids of the archive it replaces, `Dialog\...`; see [resource ids](tq-file-formats.md#Layout)), `size`, `compressed`, `storage` (1 stored, 3 zlib), `type` (texture, mesh, animation, sound, font, text, effect...), `lastWrite` (UTC).
+List archive entries. Columns:
+
+| Column | Content |
+|---|---|
+| `archive` | Path relative to the game root, without extension (`Resources/XPack/Items`) |
+| `name` | Entry path |
+| `resourceId` | As the database references it: the archive's path relative to `Resources` or `Audio` without extension, then the entry name (`Items\weapons\x.tex` in `Resources/Items`, `XPack2\Items\weapons\x.tex` in `Resources/XPack2/Items`). A localized archive such as `Audio/Dialog_DE` has the ids of the archive it replaces, `Dialog\...` ([resource ids](tq-file-formats.md#Layout)) |
+| `size`, `compressed` | Sizes |
+| `storage` | 1 stored, 3 zlib |
+| `type` | texture, mesh, animation, sound, font, text, effect... |
+| `lastWrite` | UTC |
 
 | Option | Description |
 |---|---|
 | `-a, --archive <glob\|/re/>` | Archive key (`Resources/XPack/Items`), file name (`Items.arc`) or stem (`Items`). Only matching archives are opened. |
 | `-p, --path <glob\|/re/>` | Entry name. |
-| `--resource <glob\|/re/>` | Resource id, e.g. the `bitmap` / `baseTexture` / `mesh` value of a record. |
+| `--resource <glob\|/re/>` | Resource id, e.g. a record's `bitmap` / `baseTexture` / `mesh` value. |
 | `-e, --ext <list>` | Extensions: `tex,mp3,msh`. |
 | `--limit`, `--count`, `--format json\|jsonl\|tsv`, `-o, --out` | |
 
@@ -253,14 +285,17 @@ Copy archive entries to a folder. Same selectors as `files`.
 | Option | Description |
 |---|---|
 | `-o, --out <dir>` | Destination folder (required). |
-| `--convert none\|dds\|png` | Textures only (`.tex`). `none` (default) copies the raw `.tex`. `dds` writes a valid DirectDraw Surface, `png` a PNG. A texture that cannot be converted is written raw, with a warning. |
+| `--convert none\|dds\|png` | Textures (`.tex`) only. `none` (default) copies the raw `.tex`; `dds` writes a valid DirectDraw Surface, `png` a PNG. A texture that cannot be converted is written raw, with a warning. |
 | `--frames first\|all` | Animated textures with `--convert`: first frame (default) or every frame as `name_frameN.ext`. |
 | `--verify` | Check Adler-32 checksums. |
 | `--parallel <N>` | Concurrent extractions (default `--threads`). |
-| `--flat` | `<out>/<name>` instead of `<out>/<archive>/<name>`. When several archives hold the same name, only the entry of the last archive in path order is written (expansions such as `Resources/XPack*` win over the base game). |
+| `--flat` | `<out>/<name>` instead of `<out>/<archive>/<name>`. When several archives hold a name, only the last archive's entry in path order is written (expansions such as `Resources/XPack*` win over the base game). |
 | `--skip-existing` | Keep existing files of the same size (raw copies). |
 
-Raw copies are the native form of every non-texture asset (`.mp3`, `.wav`, `.msh`, `.anm`, `.fnt`, `.pfx`...). Paths are `<out>/<archive key>/<entry name>`; names are sanitized (`..` and rooted names rejected, characters invalid on Windows replaced by `_`, accented letters kept). Progress is shown on stderr, a summary at the end; the exit code is 1 when any entry failed.
+- Raw copies are the native form of every non-texture asset (`.mp3`, `.wav`, `.msh`, `.anm`, `.fnt`, `.pfx`...).
+- Paths are `<out>/<archive key>/<entry name>`. Names are sanitized: `..` and rooted names rejected, characters invalid
+  on Windows replaced by `_`, accented letters kept.
+- Progress on stderr, a summary at the end; exit code 1 when any entry failed.
 
 ```
 tqdb extract --archive Items --ext tex --convert png --out .\textures
@@ -278,12 +313,21 @@ tqdb extract --resource "Creatures\Monster\Boarman\*" --out .\boarman
    "resolved": {"itemNameTag": "Hooked Blade"},
    "linked": {"lootName1": [ { ...record... } ]}}
   ```
-  Values are typed (int, float, bool, string); one value is a scalar, several an array. `displayName` / `nameTag` appear when projected (`null` when the record has none); `fields` when variables are projected; `resolved` with `--resolve`; `linked` with `--follow`.
+  - Values are typed (int, float, bool, string): one value is a scalar, several an array.
+  - `displayName` / `nameTag` when projected (`null` when the record has none); `fields` when variables are projected;
+    `resolved` with `--resolve`; `linked` with `--follow`.
 * **jsonl**: one compact object per line (streams well into `jq`, scripts, databases).
-* **tsv**: a header row, one row per record; multi-values joined by `;`; tab, CR and LF inside values written as `\t`, `\r`, `\n`. With `--resolve` each variable column gets a `<name>:text` column. When the projection is dynamic (`*` or a field glob) the TSV switches to **long format**: one row per variable with columns `id`, `class`, [`displayName`], `field`, `type`, `value`[, `text`].
-* **dbr**: ARZ Explorer text format, one `name,value1;value2,` line per variable (floats with 6 decimals, booleans `1`/`0`). To stdout, each record is preceded by a `// <id>` line when several records can be written.
+* **tsv**: a header row, one row per record.
+  - Multi-values joined by `;`; tab, CR and LF inside values written `\t`, `\r`, `\n`.
+  - With `--resolve`, each variable column gets a `<name>:text` column.
+  - With a dynamic projection (`*` or a field glob), **long format**: one row per variable, columns `id`, `class`,
+    [`displayName`], `field`, `type`, `value`[, `text`].
+* **dbr**: ARZ Explorer text format, one `name,value1;value2,` line per variable (floats with 6 decimals, booleans
+  `1`/`0`). To stdout, each record is preceded by a `// <id>` line when several records can be written.
 
-Output goes to stdout unless `--out` is given; messages go to stderr, so `tqdb records ... > out.tsv` keeps the file clean. The `--out` extension (`.json`, `.jsonl` or `.ndjson`, `.tsv` or `.tab`, `.dbr`) selects the format when `--format` is omitted; `--out -` is stdout.
+- Output goes to stdout unless `--out` is given; messages go to stderr, so `tqdb records ... > out.tsv` keeps the file
+  clean. `--out -` is stdout.
+- Without `--format`, the `--out` extension selects it: `.json`, `.jsonl` or `.ndjson`, `.tsv` or `.tab`, `.dbr`.
 
 ---
 
@@ -296,13 +340,13 @@ Output goes to stdout unless `--out` is given; messages go to stderr, so `tqdb r
 | 3 | Not found (game install, record id, text language). |
 | 130 | Cancelled (Ctrl+C). |
 
-Set `TQDB_DEBUG=1` to print stack traces on failures.
+`TQDB_DEBUG=1` prints stack traces on failures.
 
 ---
 
 ## <a id="Performance"></a>Performance notes
 * `--id` and `--class` run on the record table and never decompress non-matching records: put them first when you can.
 * Other filters decode the candidate records in parallel (`--threads`).
-* Display names are only resolved when a name filter, column or sort needs them.
+* Display names are resolved only when a name filter, column or sort needs them.
 * Results stream as they are found; only `--sort` buffers matches.
-* Archives are opened lazily and in parallel; only the archives selected by `--archive` are opened.
+* Archives open lazily and in parallel; only those selected by `--archive` are opened.

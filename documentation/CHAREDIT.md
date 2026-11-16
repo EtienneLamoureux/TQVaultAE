@@ -3,40 +3,40 @@
 Edit a character's attributes, masteries and skills in a window drawn like the game's, and read the statistics of the
 game's character window without starting the game.
 
-> **Note:** this is a "character editing" feature. Enable it in the settings window: tick **Allow Cheats**, then
-> **Allow Character Editing Features**. Do not edit a character that is loaded in the game.
+> **Note:** a "character editing" feature. Enable it in the settings: tick **Allow Cheats**, then **Allow Character
+> Editing Features**. Do not edit a character loaded in the game.
 
 ## In the main window
 
-The **Equipment** tab shows the same statistics panel next to the equipment, read only: tabs **I**, **II** and **III**,
-with the gold and the Electrum under it. Hover an icon or a value for its details. It follows the equipment: equip or
-remove an item and the values change. Nothing can be changed there; the **Edit** button under it opens the editor.
+The **Equipment** tab shows the statistics panel next to the equipment, read only:
 
-The panel shows whether or not character editing is enabled; only the **Edit** button needs the setting. It counts
-the resistances for the highest difficulty the character has unlocked, and no buffs.
+- Tabs **I**, **II** and **III**, the gold and the Electrum under them. Hover an icon or a value for details.
+- It follows the equipment: equip or remove an item and the values change.
+- Resistances for the highest difficulty unlocked, no buffs.
+- Shown with or without character editing; only its **Edit** button, which opens the editor, needs the setting.
 
 ![Statistics panel in the main window](charedit/main_window_stats.png)
 
 ## Open it
 
-1. Select a character.
-2. Click **Edit** under the statistics panel of the **Equipment** tab.
+Select a character, then click **Edit** under the statistics panel of the **Equipment** tab. The editor shows in place
+of the main content.
 
-The editor shows in place of the main content. Nothing changes before **OK**. **Cancel** (or Escape) drops every
-change. **OK** changes the character loaded in TQVault; the file is written when TQVault saves, as for any other change.
+- Nothing changes before **OK**; **Cancel** (or Escape) drops every change.
+- **OK** changes the character loaded in TQVault; the file is written when TQVault saves, as any other change.
 
 ## The editor
 
 ![Character editor](charedit/editor.png)
 
-On the left, the game's character window with its three tabs **I**, **II** and **III**, and under it the editing
-options: the statistics options, the leveling and the masteries. On the right, one page per mastery. The statistics
-stay in sight while skill points are spent: they change at each click on a skill.
+- Left: the game's character window (tabs **I**, **II**, **III**), and under it the editing options: statistics,
+  leveling, masteries.
+- Right: one page per mastery. The statistics stay in sight and change at each click on a skill.
 
 ### Attributes
 
-While attribute points are left, a `+` button shows next to each attribute. The clicks below are on that button:
-once the last point is spent it goes away, and **Undo** or **Reset Attributes** are the way to get points back.
+While attribute points are left, a `+` button shows next to each attribute. Once the last point is spent it goes away:
+use **Undo** or **Reset Attributes** to get points back.
 
 | Click on `+` | Effect |
 |---|---|
@@ -45,25 +45,26 @@ once the last point is spent it goes away, and **Undo** or **Reset Attributes** 
 | Shift + left | Spends all the points |
 | Shift + right | Back to the starting value |
 
-**Undo** puts the attributes back as they were when the editor opened. It is the game's button: it takes the place
-of the "Attributes" title once an attribute has changed.
-**Reset Attributes**, under the mastery pages, gives back every point spent since level 1.
+- **Undo**: attributes as when the editor opened. The game's button, in place of the "Attributes" title once an
+  attribute has changed.
+- **Reset Attributes** (under the mastery pages): gives back every point spent since level 1.
 
 ### Leveling
 
-Tick **Enable Leveling** to change the level and the unlocked difficulty. The XP is set to the first XP of the
-level, and a level change adds or removes the attribute and skill points that go with it. The option is hidden for a
-character that has never been in the game.
+Tick **Enable Leveling** to change the level and the unlocked difficulty.
+
+- The XP is set to the level's first XP.
+- A level change adds or removes its attribute and skill points.
+- Hidden for a character never played in the game.
 
 ### Masteries
 
-The list shows each mastery with its number of skills and points; the mastery itself counts as one skill.
-**Reset Masteries**, under the mastery pages, removes both masteries and refunds their points.
+The list shows each mastery with its number of skills and points (the mastery counts as one skill). **Reset
+Masteries** (under the mastery pages) removes both masteries and refunds their points.
 
 ## Statistics
 
-The values are computed with the game's formulas from the attributes, the equipped items, the item sets and the
-skills.
+Computed with the game's formulas from the attributes, equipped items, item sets and skills.
 
 | Tab | Shows |
 |---|---|
@@ -77,23 +78,21 @@ Hover an icon or a value for its details, as in the game:
 
 ![Statistics tool tip](charedit/stats_tooltip.png)
 
-Two options, right under the statistics, change what is counted:
+Options under the statistics:
 
-| Option | Effect |
-|---|---|
-| **Difficulty** | The difficulty played: Epic and Legendary lower the resistances |
-| **Include buffs** | Counts the auras and buffs of the skills as if they were active; else only the passive skills count. What a skill casts on monsters (an attack's freeze, an aura that weakens the monsters around) never counts |
+- **Difficulty**: the difficulty played; Epic and Legendary lower the resistances.
+- **Include buffs**: counts skill auras and buffs as active; otherwise only passive skills count. What a skill casts on
+  monsters (an attack's freeze, an aura weakening nearby monsters) never counts.
 
 ## Mastery pages
 
-One page per mastery, laid out like the game's skill window, right of the statistics (see the picture above).
+One page per mastery, laid out like the game's skill window, right of the statistics (picture above).
 
-Choose the mastery and its level with the two boxes at the top right, or click the `+` button under the mastery bar,
-which takes the same four clicks as a skill.
+Choose the mastery and its level with the two boxes at the top right, or with the `+` button under the mastery bar
+(same four clicks as a skill).
 
-- An empty slot is a page named "Mastery 1" or "Mastery 2", with "(None)" in the list: it shows the skill window
-  without a tree.
-- A new mastery starts at level 1, so it needs one free skill point. The mastery of the other page is refused.
+- An empty slot is a page named "Mastery 1" or "Mastery 2", "(None)" in the list: the skill window without a tree.
+- A new mastery starts at level 1, so it needs one free skill point. The other page's mastery is refused.
 - Changing or removing a mastery gives back all its points.
 - Lowering the mastery level resets the skills of the tiers it closes.
 - Changing the masteries clears the class name; the game sets it again.
@@ -105,12 +104,9 @@ which takes the same four clicks as a skill.
 | Shift + left | Highest level the points allow |
 | Shift + right | Lowest level |
 
-The game's rules apply: a skill needs its mastery tier and the skill before it.
-
-The number under a skill reads `level / maximum`. The level includes the bonuses of the equipment, so it can exceed
-the maximum.
-
-The border of a skill tells its state:
+- The game's rules apply: a skill needs its mastery tier and the skill before it.
+- Under a skill: `level / maximum`. The level includes equipment bonuses, so it can exceed the maximum.
+- The bar at the bottom shows the unused skill points.
 
 | Border | Meaning |
 |---|---|
@@ -120,8 +116,6 @@ The border of a skill tells its state:
 | Gray | Mastery level too low |
 | Red | Needs the skill before it |
 
-Hover a skill for the game's tool tip, with the bonus coming from the equipment:
+Hover a skill for the game's tool tip, with the equipment's bonus:
 
 ![Skill tool tip](charedit/skill_tooltip.png)
-
-The bar at the bottom shows the unused skill points.
