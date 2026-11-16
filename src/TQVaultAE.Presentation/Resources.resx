@@ -2673,14 +2673,6 @@ The slots empty on the character keep the loadout's pieces.</value>
 	<data name="LoadoutEmptied" xml:space="preserve">
     <value>Loadout "{0}" emptied: {1} piece(s) moved to {2}.</value>
   </data>
-	<data name="SettingsLoadoutReplaceWorn" xml:space="preserve">
-    <value>Replace the worn pieces instead of storing them in the vault</value>
-  </data>
-	<data name="SettingsLoadoutReplaceWornTT" xml:space="preserve">
-    <value>Loading a loadout takes off the worn pieces it does not use and deletes them, instead of storing them in the vault bag shown.
-A loadout keeps copies of its pieces: this saves piling up duplicates.
-TQVault lists the pieces and asks first, unless "Bypass Confirmation Messages" is on.</value>
-  </data>
 	<data name="LoadoutMarkSame" xml:space="preserve">
     <value>Same as in loadout "{0}"</value>
   </data>

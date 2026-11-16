@@ -2501,14 +2501,6 @@ Les emplacements vides sur le personnage gardent les pièces de la tenue.</value
 	<data name="LoadoutEmptied" xml:space="preserve">
     <value>Tenue « {0} » vidée : {1} pièce(s) déplacée(s) vers {2}.</value>
   </data>
-	<data name="SettingsLoadoutReplaceWorn" xml:space="preserve">
-    <value>Remplacer les pièces portées au lieu de les ranger dans le coffre</value>
-  </data>
-	<data name="SettingsLoadoutReplaceWornTT" xml:space="preserve">
-    <value>Porter une tenue retire les pièces portées qu'elle n'utilise pas et les supprime, au lieu de les ranger dans le sac du coffre affiché.
-Une tenue garde des copies de ses pièces : cela évite d'accumuler des doublons.
-TQVault liste les pièces et demande d'abord, sauf si « Ignorer les messages de confirmation » est coché.</value>
-  </data>
 	<data name="LoadoutMarkSame" xml:space="preserve">
     <value>Identique à la tenue « {0} »</value>
   </data>
