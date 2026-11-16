@@ -191,7 +191,7 @@ internal static partial class AutomationTools
 					bagCount = p.Container?.BagButtons?.Count,
 					gridSize = p.Panel.SackSize,
 					itemCount = p.Panel.Sack?.Count(i => !RecordId.IsNullOrEmpty(i.BaseItemId)),
-					isModified = p.Panel.Sack?.IsModified,
+					isModified = AutomationPanels.IsModified(p.Panel),
 					// The sack belongs to a read-only character.
 					isReadOnly = p.Panel.Sack?.IsReadOnly,
 				}),
@@ -316,7 +316,7 @@ internal static partial class AutomationTools
 			return Serialize(new
 			{
 				playersSaved,
-				stillModified = AutomationPanels.List(form).Where(p => p.Panel.Sack?.IsModified == true).Select(p => p.Id).ToList(),
+				stillModified = AutomationPanels.List(form).Where(p => AutomationPanels.IsModified(p.Panel) == true).Select(p => p.Id).ToList(),
 			});
 		});
 

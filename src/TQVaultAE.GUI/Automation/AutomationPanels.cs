@@ -26,6 +26,7 @@ internal static class AutomationPanels
 	public const string PlayerBag = "playerBag";
 	public const string Stash = "stash";
 	public const string Equipment = "equipment";
+	public const string Loadout = "loadout";
 
 	/// <summary>
 	/// Lists the item grids that currently exist. Must run on the UI thread.
@@ -60,6 +61,9 @@ internal static class AutomationPanels
 		{
 			Add(Stash, stash.BagSackPanel, stash);
 			Add(Equipment, stash.EquipmentPanel, stash);
+
+			// The loadout panel, once the statistics panel was shown (a loadout chosen in the bar shows it).
+			Add(Loadout, stash.LoadoutPanel, stash);
 		}
 
 		return result;
@@ -80,6 +84,13 @@ internal static class AutomationPanels
 	/// </summary>
 	public static string? IdOf(MainForm form, SackPanel? panel)
 		=> panel is null ? null : List(form).FirstOrDefault(p => ReferenceEquals(p.Panel, panel))?.Id;
+
+	/// <summary>
+	/// Whether a panel's items changed since they were saved: its sack's flag, the loadouts' for the loadout panel (its
+	/// sack is built from the loadout, the loadouts file is what the save writes).
+	/// </summary>
+	public static bool? IsModified(SackPanel panel)
+		=> panel is LoadoutPanel loadout ? loadout.Loadouts?.IsModified : panel.Sack?.IsModified;
 
 	/// <summary>
 	/// Gets a value indicating whether the control and all its parents are visible.
