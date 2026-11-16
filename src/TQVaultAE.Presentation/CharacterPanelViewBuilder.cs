@@ -22,7 +22,8 @@ public sealed record CharacterPanelInput
 	/// <paramref name="equipment"/> are the items worn, the ones the item requirements count
 	/// (<see cref="IPlayerService.GetWornEquipment"/>), and <paramref name="augments"/> their skill bonuses.
 	/// </summary>
-	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<Item> equipment, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments)
+	/// <param name="buffs">The toggles of the Buffs tab for this character, kept by the panel's owner; none for the defaults.</param>
+	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<Item> equipment, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments, BuffSelection? buffs = null)
 		=> new()
 		{
 			Player = player,
@@ -36,6 +37,7 @@ public sealed record CharacterPanelInput
 			Trees = trees,
 			Augments = augments,
 			Difficulty = CharacterPanelLayout.ShownDifficulty(info.DifficultyUnlocked),
+			Buffs = buffs ?? new(),
 		};
 
 	public required PlayerCollection Player { get; init; }
@@ -64,8 +66,8 @@ public sealed record CharacterPanelInput
 	/// <summary>The difficulty the statistics are computed for, 0 (Normal) to 2 (Legendary).</summary>
 	public int Difficulty { get; init; }
 
-	/// <summary>Whether the auras and buffs count.</summary>
-	public bool IncludeBuffs { get; init; }
+	/// <summary>Which buff sources count: the Buffs tab's toggles, kept by the panel's owner for the character shown.</summary>
+	public BuffSelection Buffs { get; init; } = new();
 
 	/// <summary>True when the masteries changed: the class no longer applies.</summary>
 	public bool ClassCleared { get; init; }
@@ -80,22 +82,30 @@ public sealed record CharacterPanelInput
 /// <summary>
 /// Builds what <see cref="CharacterStatsPanel"/> shows of a character: the statistics computed like the game
 /// (<see cref="CharacterStatsCalculator"/>: defense on tab I, tab II, the damage and race bonuses of tab III) from the
-/// equipped items, the skills, the attributes, the difficulty and the buffs option, with the game's texts. The sums of
-/// the equipped items and of the skills are kept until they change.
+/// equipped items, the skills, the attributes, the difficulty and the buff sources turned on (the Buffs tab), with the
+/// game's texts. The buff sources are kept until the equipment, the skills or the difficulty change.
 /// </summary>
-public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, ITranslationService translation)
+/// <param name="editService">Describes the skills and buffs of the Buffs tab's tool tips; none leaves them out.</param>
+/// <param name="itemText">Names the items of the Buffs tab; none names them by their record.</param>
+public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService service, ITranslationService translation,
+	ICharacterEditService? editService = null, IItemTextFormatter? itemText = null)
 {
 	private readonly ICharacterStatsService _service = service;
 	private readonly ITranslationService _translation = translation;
+	private readonly ICharacterEditService? _editService = editService;
+	private readonly IItemTextFormatter? _itemText = itemText;
 
 	private string? _gearKey;
-	private (string Key, AttributeSum Sum)? _skillSum;
+	private (string Key, IReadOnlyList<BuffSource> Sources)? _sources;
 
-	/// <summary>The sum of the equipped items, once computed.</summary>
+	/// <summary>The sum of the gear sources turned on, once computed.</summary>
 	public AttributeSum? GearSum { get; private set; }
 
-	/// <summary>The sum of the skills, once computed.</summary>
-	public AttributeSum? SkillSum => this._skillSum?.Sum;
+	/// <summary>The sum of the other sources turned on (skills, curses, shrines...), once computed.</summary>
+	public AttributeSum? SkillSum { get; private set; }
+
+	/// <summary>The buff sources of the character, once computed.</summary>
+	public IReadOnlyList<BuffSource> BuffSources => this._sources?.Sources ?? [];
 
 	/// <summary>The weapons in hand and the other items for the attack damage, once computed.</summary>
 	public OffenseGear? OffenseGear { get; private set; }
@@ -179,7 +189,7 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 	private static IEnumerable<Item> Equipment(CharacterPanelInput input)
 		=> (IEnumerable<Item>?)input.Equipment ?? input.Player.EquipmentSack ?? Enumerable.Empty<Item>();
 
-	/// <summary>Forgets the sums of the equipped items when the equipment or the weapon set in hand changed.</summary>
+	/// <summary>Forgets the stance in hand when the equipment or the weapon set in hand changed.</summary>
 	private void TrackGear(CharacterPanelInput input)
 	{
 		var key = (input.Player.UseAlternate ? "+" : "-") + string.Join(";", Equipment(input).Select(i =>
@@ -189,61 +199,98 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 			return;
 
 		this._gearKey = key;
-		this.GearSum = null;
-		this.OffenseGear = null;
 		this.Stance = null;
 	}
 
-	/// <summary>The statistics of the character.</summary>
-	public CharacterStats ComputeStats(CharacterPanelInput input)
-	{
-		this.TrackGear(input);
-		this.GearSum ??= this._service.GetGearAttributes(Equipment(input), input.Player.UseAlternate);
+	private static int Difficulty(CharacterPanelInput input) => Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary);
 
-		// The sum of the skills, with the ones the items grant, is kept until a point, the equipment or the buffs option
-		// changes.
-		var key = (input.IncludeBuffs ? "+" : "-") + this._gearKey + "|"
-			+ string.Join(";", input.Skills.Select(r => r.skillName + "=" + r.skillLevel.ToString(CultureInfo.InvariantCulture)));
-		if (this._skillSum?.Key != key)
+	/// <summary>
+	/// The buff sources of the character (<see cref="ICharacterStatsService.GetBuffSources"/>), kept until the equipment,
+	/// a skill point, the saved buffs, the difficulty or the scroll picked change.
+	/// </summary>
+	public IReadOnlyList<BuffSource> Sources(CharacterPanelInput input)
+	{
+		ArgumentNullException.ThrowIfNull(input);
+		this.TrackGear(input);
+		int difficulty = Difficulty(input);
+		var key = string.Join("|", this._gearKey,
+			string.Join(";", input.Skills.Select(r => r.skillName + "=" + r.skillLevel.ToString(CultureInfo.InvariantCulture))),
+			string.Join(";", input.Info.SavedBuffs.Select(b => b.Normalized)),
+			difficulty.ToString(CultureInfo.InvariantCulture), input.Buffs.Scroll?.Normalized);
+		if (this._sources?.Key != key)
 		{
-			var skills = this._service.GetSkillAttributes(input.Skills, input.Augments, input.Trees, input.IncludeBuffs);
-			skills.Add(this._service.GetItemSkillAttributes(Equipment(input), input.Player.UseAlternate, input.IncludeBuffs));
-			this._skillSum = (key, skills);
+			this._sources = (key, this._service.GetBuffSources(new BuffSourceRequest([.. Equipment(input)], input.Player.UseAlternate,
+				input.Skills, input.Augments, input.Trees, input.Info.SavedBuffs, difficulty, input.Buffs.Scroll)));
+			this._names.Clear();
+			this._descriptions.Clear();
 		}
 
-		return CharacterStatsCalculator.Compute(new CharacterStatsInput(
-			input.Attributes[CharacterPanelInput.Strength], input.Attributes[CharacterPanelInput.Dexterity], input.Attributes[CharacterPanelInput.Intelligence], this.GearSum, this._skillSum.Value.Sum, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary), this._service.GetGameBalance()));
+		return this._sources.Value.Sources;
 	}
 
 	/// <summary>
-	/// Tab I's offense: attack speed from the stance in hand and its animations, the average damage and DPS (after
-	/// <see cref="ComputeStats"/>, which keeps the sums up to date).
+	/// Toggles a buff source of the character in <paramref name="selection"/> (a click in the Buffs tab).
 	/// </summary>
-	public (double AttackSpeed, OffenseValues Values) ComputeOffense(CharacterPanelInput input)
+	/// <returns>false when the character has no such source.</returns>
+	public bool ToggleBuff(BuffSelection selection, string id)
 	{
-		this.TrackGear(input);
-		var equipment = Equipment(input);
-		bool useAlternate = input.Player.UseAlternate;
-		this.OffenseGear ??= this._service.GetOffenseGear(equipment, useAlternate);
-		this.Stance ??= this._service.GetWeaponStance(equipment, useAlternate);
+		ArgumentNullException.ThrowIfNull(selection);
+		if (this.BuffSources.FirstOrDefault(s => s.Id.Equals(id, StringComparison.OrdinalIgnoreCase)) is not { } source)
+			return false;
 
+		selection.Toggle(source);
+		return true;
+	}
+
+	/// <summary>What the panel computes for a set of sources: the statistics, the bonuses summed, tab I's offense.</summary>
+	private sealed record Evaluation(CharacterStats Stats, AttributeSum Bonuses, double AttackSpeed, OffenseValues Offense);
+
+	/// <summary>The statistics with the sources turned on, without <paramref name="without"/> when given.</summary>
+	private Evaluation Evaluate(CharacterPanelInput input, IReadOnlyList<BuffSource> sources, BuffSource? without = null)
+	{
+		var isOn = input.Buffs.IsOn;
+		var (gear, skills) = BuffSums.Sum(sources, isOn, without);
+		int difficulty = Difficulty(input);
 		var balance = this._service.GetGameBalance();
-		var gear = this.GearSum ?? new AttributeSum();
-		var skills = this._skillSum?.Sum ?? new AttributeSum();
+		var stats = CharacterStatsCalculator.Compute(new CharacterStatsInput(input.Attributes[CharacterPanelInput.Strength],
+			input.Attributes[CharacterPanelInput.Dexterity], input.Attributes[CharacterPanelInput.Intelligence], gear, skills, difficulty, balance));
+
 		var all = new AttributeSum();
 		all.Add(gear);
 		all.Add(skills);
 
+		// The attack: the stance of the weapons worn (a weapon turned off keeps its animation), the gear turned on.
+		this.Stance ??= this._service.GetWeaponStance(Equipment(input), input.Player.UseAlternate);
 		var durations = this._service.GetAttackAnimationDurations(input.Info.IsFemale);
-		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this.Stance.Value, balance, Math.Clamp(input.Difficulty, 0, CharacterPanelLayout.Legendary),
+		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this.Stance.Value, balance, difficulty,
 			durations.GetValueOrDefault(WeaponStance.Unarmed), durations.GetValueOrDefault(this.Stance.Value));
 
 		double Total(int attribute, string field) => CharacterStatsCalculator.Total(input.Attributes[attribute], all, field);
-		var values = CharacterOffenseCalculator.Damage(new OffenseInput(this.OffenseGear, gear, skills,
+		var offenseGear = BuffSums.Offense(sources, isOn, without);
+		var offense = CharacterOffenseCalculator.Damage(new OffenseInput(offenseGear, gear, skills,
 			Total(CharacterPanelInput.Strength, "characterStrength"), Total(CharacterPanelInput.Dexterity, "characterDexterity"),
 			Total(CharacterPanelInput.Intelligence, "characterIntelligence"),
 			input.Level, attackSpeed, balance));
-		return (attackSpeed, values);
+
+		if (without is null)
+		{
+			this.GearSum = gear;
+			this.SkillSum = skills;
+			this.OffenseGear = offenseGear;
+		}
+
+		return new Evaluation(stats, all, attackSpeed, offense);
+	}
+
+	/// <summary>The statistics of the character, with the buff sources turned on.</summary>
+	public CharacterStats ComputeStats(CharacterPanelInput input)
+		=> this.Evaluate(input, this.Sources(input)).Stats;
+
+	/// <summary>Tab I's offense: attack speed from the stance in hand and its animations, the average damage and DPS.</summary>
+	public (double AttackSpeed, OffenseValues Values) ComputeOffense(CharacterPanelInput input)
+	{
+		var evaluation = this.Evaluate(input, this.Sources(input));
+		return (evaluation.AttackSpeed, evaluation.Offense);
 	}
 
 	/// <summary>What the statistics panel shows of the character.</summary>
@@ -254,18 +301,18 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 
 		// The bonuses as the statistics sum them, unrounded: the game adds 13.5 strength of a mastery as is.
-		this.ComputeStats(input);
-		var bonuses = new AttributeSum();
-		bonuses.Add(this.GearSum ?? new AttributeSum());
-		bonuses.Add(this._skillSum?.Sum ?? new AttributeSum());
+		var composition = this.Compose(input);
+		var bonuses = composition.Total.Bonuses;
 		CharacterAttributeView Attribute(int index, string tag, string label, string field, Color color)
 		{
 			var value = input.Attributes[index];
-			var total = CharacterPanelLayout.AttributeTotal(value, bonuses[field], bonuses[field + "Modifier"]);
+			int Total(AttributeSum sum) => CharacterPanelLayout.AttributeTotal(value, sum[field], sum[field + "Modifier"]);
+			var total = Total(bonuses);
 			// Health and energy show "current / maximum", full outside the game.
 			var shown = index is CharacterPanelInput.Health or CharacterPanelInput.Energy ? $"{total} / {total}" : total.ToString(culture);
 			var tip = string.Format(culture, input.Editable ? Resources.CEAttributeToolTip : Resources.CEAttributeBaseToolTip, value, total - value);
-			return new CharacterAttributeView(Game(tag, label), shown, color, StatToolTip.Sentence(tip));
+			return new CharacterAttributeView(Game(tag, label), shown, color,
+				composition.Append(StatToolTip.Sentence(tip), e => Total(e.Bonuses), [field, field + "Modifier"]));
 		}
 
 		var points = input.AttributePoints;
@@ -291,7 +338,8 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 				Attribute(CharacterPanelInput.Intelligence, "tagCIntelligence", Resources.CEIntelligence, "characterIntelligence", Color.White),
 				Attribute(CharacterPanelInput.Dexterity, "tagCDexterity", Resources.CEDexterity, "characterDexterity", Color.White),
 			],
-			Stats = this.StatsView(input),
+			Stats = this.StatsView(input, composition),
+			Buffs = this.BuffView(input),
 			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
 			GreatestMonster = this._translation.TranslateOr(info.GreatestMonster, info.GreatestMonster),
 			GreatestMonsterLevel = info.GreatestMonsterKilledLevel == 0 ? string.Empty
@@ -303,23 +351,34 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 				(Game("tagCTime", "Elapsed Time"), CharacterPanelLayout.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
 				(Game("tagCDeaths", "Total Deaths"), info.NumberOfDeaths.ToString("N0", culture)),
 			],
-			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III")],
+			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III"), Resources.BuffsTab],
 			Money = info.Money.ToString("N0", culture),
 			Electrum = info.Electrum?.ToString("N0", culture) ?? string.Empty,
 		};
 	}
 
 	/// <summary>What the panel shows of the computed statistics, with the game's texts.</summary>
-	public CharacterStatsView StatsView(CharacterPanelInput input)
+	public CharacterStatsView StatsView(CharacterPanelInput input) => this.StatsView(input, this.Compose(input));
+
+	/// <summary>
+	/// What the panel shows of the computed statistics, with the game's texts; the rollovers of tab I and II list the
+	/// sources of each value (<see cref="Composition"/>).
+	/// </summary>
+	private CharacterStatsView StatsView(CharacterPanelInput input, Composition composition)
 	{
-		var stats = this.ComputeStats(input);
-		var (attackSpeed, offense) = this.ComputeOffense(input);
+		var stats = composition.Total.Stats;
+		var (attackSpeed, offense) = (composition.Total.AttackSpeed, composition.Total.Offense);
 		var culture = CultureInfo.CurrentCulture;
 		var balance = this._service.GetGameBalance();
 		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
 		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
 		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, StatToolTip.Sentence(toolTip));
+
+		// A row whose rollover lists its sources: the value shown from an evaluation, the variables it reads.
+		StatRowView Sourced(string tag, string fallback, string value, Func<Evaluation, double> shown, IReadOnlyList<string> variables, string toolTip = "")
+			=> new(Game(tag, fallback), value, composition.Append(StatToolTip.Sentence(toolTip), shown, variables));
+		string[] Own(string field) => [field, field + "Modifier"];
 
 		// A damage's rollover blocks: its name, its bonus and its Global Multiplier, then the damage over time's name, its
 		// bonus "with +n% Improved Duration" and its multiplier.
@@ -399,33 +458,36 @@ public sealed class CharacterPanelViewBuilder(ICharacterStatsService service, IT
 		return new CharacterStatsView
 		{
 			DefenseTitle = Game("tagCDefense", "Defense"),
-			Armor = Row("tagCCombineArmor", "Combined Armor", stats.CombinedArmor.ToString(culture)),
+			Armor = Sourced("tagCCombineArmor", "Combined Armor", stats.CombinedArmor.ToString(culture), e => e.Stats.CombinedArmor, Own("defensiveProtection")),
 			Resistances = [.. Enum.GetValues<StatResistance>().Select(r => new StatIconView(
 				ResistanceIcons[(int)r].Icon,
 				Percent(stats.Resistances[r]),
-				new StatToolTip([new StatToolTipBlock(Game(ResistanceIcons[(int)r].Tag, ResistanceIcons[(int)r].Fallback), [])])))],
+				composition.Append(new StatToolTip([new StatToolTipBlock(Game(ResistanceIcons[(int)r].Tag, ResistanceIcons[(int)r].Fallback), [])]),
+					e => e.Stats.Resistances[r], CharacterStatsCalculator.ResistanceVariables(r),
+					CharacterStatsCalculator.ResistancePenalty(r, balance, Difficulty(input)))))],
 			OffenseTitle = Game("tagCOffense", "Offense"),
 			Offense =
 			[
-				Row("tagCTotalDamage", "Average Damage", offense.AverageDamage.ToString(culture),
+				Sourced("tagCTotalDamage", "Average Damage", offense.AverageDamage.ToString(culture), e => e.Offense.AverageDamage, [],
 					string.Format(culture, Resources.CEOffenseDamageToolTip, offense.WeaponDamage, offense.AddedDamage)),
-				Row("tagCAttackSpeed", "Attack Speed", Percent(CharacterStatsCalculator.Round(attackSpeed))),
-				Row("tagCDPS", "Damage Per Second (DPS)", offense.Dps.ToString(culture)),
+				Sourced("tagCAttackSpeed", "Attack Speed", Percent(CharacterStatsCalculator.Round(attackSpeed)), e => CharacterStatsCalculator.Round(e.AttackSpeed),
+					[.. Own("characterAttackSpeed"), "characterTotalSpeedModifier"]),
+				Sourced("tagCDPS", "Damage Per Second (DPS)", offense.Dps.ToString(culture), e => e.Offense.Dps, []),
 			],
 			SecondaryTitle = Game("tagCSecondaryResist", "Secondary Resistances:"),
 			Tab2Rows =
 			[
-				Row("tagCLifeRegen", "Health Regeneration", stats.LifeRegen.ToString("0.00", culture)),
-				Row("tagCEnergyRegen", "Energy Regeneration", stats.ManaRegen.ToString("0.00", culture)),
-				Row("x4tagCManaCostReduction", "Energy Cost Reduction", Percent(stats.ManaCostReduction)),
-				Row("x4tagCCooldownReduction", "Recharge Reduction", Percent(stats.CooldownReduction)),
-				Row("tagCCastSpeed", "Casting Speed", Percent(stats.CastSpeed)),
-				Row("tagCRunSpeed", "Movement Speed", Percent(stats.RunSpeed)),
-				Row("tagCOffensiveAbility", "Offensive Ability", stats.OffensiveAbility.ToString(culture)),
-				Row("tagCDefensiveAbility", "Defensive Ability", stats.DefensiveAbility.ToString(culture)),
-				Row("x4tagCDodgePercent", "Chance to Dodge Attacks", Percent(stats.Dodge)),
-				Row("x4tagCDeflectProjectileChance", "Chance to Avoid Projectiles", Percent(stats.DeflectProjectile)),
-				Row("tagCBlockPercent", "Block Chance", Percent(stats.Block)),
+				Sourced("tagCLifeRegen", "Health Regeneration", stats.LifeRegen.ToString("0.00", culture), e => Math.Round(e.Stats.LifeRegen, 2), Own("characterLifeRegen")),
+				Sourced("tagCEnergyRegen", "Energy Regeneration", stats.ManaRegen.ToString("0.00", culture), e => Math.Round(e.Stats.ManaRegen, 2), Own("characterManaRegen")),
+				Sourced("x4tagCManaCostReduction", "Energy Cost Reduction", Percent(stats.ManaCostReduction), e => e.Stats.ManaCostReduction, Own("skillManaCostReduction")),
+				Sourced("x4tagCCooldownReduction", "Recharge Reduction", Percent(stats.CooldownReduction), e => e.Stats.CooldownReduction, Own("skillCooldownReduction")),
+				Sourced("tagCCastSpeed", "Casting Speed", Percent(stats.CastSpeed), e => e.Stats.CastSpeed, [.. Own("characterSpellCastSpeed"), "characterTotalSpeedModifier"]),
+				Sourced("tagCRunSpeed", "Movement Speed", Percent(stats.RunSpeed), e => e.Stats.RunSpeed, [.. Own("characterRunSpeed"), "characterTotalSpeedModifier"]),
+				Sourced("tagCOffensiveAbility", "Offensive Ability", stats.OffensiveAbility.ToString(culture), e => e.Stats.OffensiveAbility, Own("characterOffensiveAbility")),
+				Sourced("tagCDefensiveAbility", "Defensive Ability", stats.DefensiveAbility.ToString(culture), e => e.Stats.DefensiveAbility, Own("characterDefensiveAbility")),
+				Sourced("x4tagCDodgePercent", "Chance to Dodge Attacks", Percent(stats.Dodge), e => e.Stats.Dodge, Own("characterDodgePercent")),
+				Sourced("x4tagCDeflectProjectileChance", "Chance to Avoid Projectiles", Percent(stats.DeflectProjectile), e => e.Stats.DeflectProjectile, Own("characterDeflectProjectile")),
+				Sourced("tagCBlockPercent", "Block Chance", Percent(stats.Block), e => e.Stats.Block, ["defensiveBlockChance", "defensiveBlockModifier"]),
 			],
 			DamageTitle = Game("x4tagCDamageStats2", "Damage & Duration Bonuses"),
 			// As the game's rollover: one block per damage, its name then its bonus; the damage over time "with +n%

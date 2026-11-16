@@ -1,4 +1,5 @@
 using System.Drawing;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Presentation;
 
@@ -68,6 +69,28 @@ public sealed record CharacterStatsView
 	public IReadOnlyList<StatIconView> Races { get; init; } = [];
 }
 
+/// <summary>A buff source of the Buffs tab: an icon (a text row for gear), on or off, with its tool tip.</summary>
+/// <param name="Id">The source's key (<see cref="BuffSource.Id"/>), given back when it is clicked.</param>
+/// <param name="Icon">The icon texture; null for a text row.</param>
+public sealed record BuffEntryView(string Id, string Name, string? Icon, bool On, StatToolTip ToolTip);
+
+/// <summary>A section of the Buffs tab: its title and its sources.</summary>
+public sealed record BuffSectionView(BuffGroup Group, string Title, IReadOnlyList<BuffEntryView> Entries);
+
+/// <summary>A scroll of the Buffs tab's choice; the first one is "none" (no record).</summary>
+public sealed record BuffScrollChoice(RecordId? Id, string Name);
+
+/// <summary>What the Buffs tab shows: a section per kind of source that has some, and the scroll choice.</summary>
+public sealed record BuffTabView
+{
+	public IReadOnlyList<BuffSectionView> Sections { get; init; } = [];
+	public string ScrollTitle { get; init; } = string.Empty;
+	public IReadOnlyList<BuffScrollChoice> Scrolls { get; init; } = [];
+
+	/// <summary>The index of the scroll picked in <see cref="Scrolls"/>, 0 for none.</summary>
+	public int SelectedScroll { get; init; }
+}
+
 /// <summary>What the statistics panel shows, given by the dialog.</summary>
 public sealed record CharacterPanelView
 {
@@ -99,7 +122,10 @@ public sealed record CharacterPanelView
 	public string GreatestMonster { get; init; } = string.Empty;
 	public string GreatestMonsterLevel { get; init; } = string.Empty;
 
-	public IReadOnlyList<string> TabNames { get; init; } = ["I", "II", "III"];
+	/// <summary>The Buffs tab: its sections and the scroll choice.</summary>
+	public BuffTabView Buffs { get; init; } = new();
+
+	public IReadOnlyList<string> TabNames { get; init; } = ["I", "II", "III", "IV"];
 	public string Money { get; init; } = string.Empty;
 	public string Electrum { get; init; } = string.Empty;
 }

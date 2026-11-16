@@ -19,15 +19,15 @@ public class CharacterPanelViewBuilderTests
 	private readonly Mock<ITranslationService> _translation = new();
 	private readonly CharacterPanelViewBuilder _builder;
 
+	/// <summary>The buff sources the service gives for a request; none by default.</summary>
+	private Func<BuffSourceRequest, IReadOnlyList<BuffSource>> _sources = _ => [];
+
 	public CharacterPanelViewBuilderTests()
 	{
 		// A character without equipment or skill bonus, and no game text: the builder falls back on its own texts.
-		this._stats.Setup(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns(() => new AttributeSum());
-		this._stats.Setup(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()))
-			.Returns(() => new AttributeSum());
-		this._stats.Setup(s => s.GetItemSkillAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(() => new AttributeSum());
+		this._stats.Setup(s => s.GetBuffSources(It.IsAny<BuffSourceRequest>())).Returns((BuffSourceRequest r) => this._sources(r));
+		this._stats.Setup(s => s.GetBuffScrolls()).Returns([]);
 		this._stats.Setup(s => s.GetGameBalance()).Returns(new GameBalance());
-		this._stats.Setup(s => s.GetOffenseGear(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns(new OffenseGear([], new AttributeSum()));
 		this._stats.Setup(s => s.GetWeaponStance(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>())).Returns(WeaponStance.Unarmed);
 		this._stats.Setup(s => s.GetAttackAnimationDurations(It.IsAny<bool>())).Returns(new Dictionary<WeaponStance, double>());
 
@@ -131,33 +131,41 @@ public class CharacterPanelViewBuilderTests
 	}
 
 	[Fact]
-	public void ComputeStats_SameEquipmentAndSkills_ReadsTheGearOnce()
+	public void ComputeStats_SameEquipmentAndSkills_ReadsTheSourcesOnce()
 	{
-		// Arrange: the panel asks for the view at every paint
+		// Arrange: the panel asks for the view at every paint; a toggle changes nothing the sources are read from
 		var input = Input();
 
 		// Act
 		this._builder.ComputeStats(input);
+		this._builder.Build(input);
 		this._builder.ComputeStats(input);
 
 		// Assert
-		this._stats.Verify(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()), Times.Once);
-		this._stats.Verify(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()), Times.Once);
+		this._stats.Verify(s => s.GetBuffSources(It.IsAny<BuffSourceRequest>()), Times.Once);
 	}
 
-	/// <summary>Gear sums giving 100 energy per item summed, recording the items of each call.</summary>
+	private static BuffSource Source(string id, BuffGroup group, bool defaultOn, params (string Name, double Value)[] values)
+	{
+		var sum = new AttributeSum();
+		foreach (var (name, value) in values)
+			sum.Add(name, value);
+		return new BuffSource
+		{
+			Id = id, Group = group, NameTag = id, DefaultOn = defaultOn, Sum = sum, Icon = group == BuffGroup.Gear ? null : "icon.tex",
+			GearRole = group == BuffGroup.Gear ? BuffGearRole.Other : BuffGearRole.None,
+		};
+	}
+
+	/// <summary>Gear sources giving 100 energy per item worn, recording the items of each request.</summary>
 	private List<List<Item>> SetupEnergyPerItem()
 	{
 		var summed = new List<List<Item>>();
-		this._stats.Setup(s => s.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()))
-			.Returns((IEnumerable<Item> items, bool _) =>
-			{
-				var list = items.ToList();
-				summed.Add(list);
-				var sum = new AttributeSum();
-				sum.Add("characterMana", 100 * list.Count);
-				return sum;
-			});
+		this._sources = request =>
+		{
+			summed.Add([.. request.Equipment]);
+			return [.. request.Equipment.Select((item, i) => Source($"item:{i}", BuffGroup.Gear, true, ("characterMana", 100)) with { Item = item })];
+		};
 		return summed;
 	}
 
@@ -205,26 +213,107 @@ public class CharacterPanelViewBuilderTests
 	}
 
 	[Fact]
-	public void ComputeStats_SkillsTheItemsGrant_AddToTheSkillSum()
+	public void ComputeStats_SourcesOn_AddToTheirSum_TheOthersNot()
 	{
-		// Arrange: a learned skill gives 10 strength, a skill an item grants 4 more
-		AttributeSum Strength(double value)
-		{
-			var sum = new AttributeSum();
-			sum.Add("characterStrength", value);
-			return sum;
-		}
-
-		this._stats.Setup(s => s.GetSkillAttributes(It.IsAny<IEnumerable<SkillRecord>>(), It.IsAny<IReadOnlyList<SkillAugment>>(), It.IsAny<IReadOnlyList<MasteryTree>>(), It.IsAny<bool>()))
-			.Returns(() => Strength(10));
-		this._stats.Setup(s => s.GetItemSkillAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>(), false)).Returns(() => Strength(4));
+		// Arrange: a learned passive gives 10 strength, a passive an item grants 4 more, an aura (off) 100
+		this._sources = _ =>
+		[
+			Source("skill:passive", BuffGroup.Passive, true, ("characterStrength", 10)),
+			Source("granted:passive", BuffGroup.Passive, true, ("characterStrength", 4)),
+			Source("skill:aura", BuffGroup.Active, false, ("characterStrength", 100)),
+		];
 
 		// Act
 		this._builder.ComputeStats(Input());
 
 		// Assert
 		this._builder.SkillSum!["characterStrength"].Should().Be(14);
+		this._builder.GearSum!.Values.Should().BeEmpty();
 	}
+
+	[Fact]
+	public void ToggleBuff_TurnsASourceOnOrOff_TheStatisticsFollow()
+	{
+		this._sources = _ => [Source("skill:aura", BuffGroup.Active, false, ("characterStrength", 100)), Source("curse:a", BuffGroup.Curse, true, ("characterStrength", -20))];
+		var input = Input();
+		string Strength() => this._builder.Build(input).Attributes[CharacterPanelInput.Strength].Value;
+
+		var before = Strength();
+		this._builder.ToggleBuff(input.Buffs, "skill:aura").Should().BeTrue();
+		var withAura = Strength();
+		this._builder.ToggleBuff(input.Buffs, "CURSE:A").Should().BeTrue("keys ignore case");
+		var withoutCurse = Strength();
+
+		(before, withAura, withoutCurse).Should().Be(("30", "130", "150"));
+		this._builder.ToggleBuff(input.Buffs, "skill:unknown").Should().BeFalse();
+	}
+
+	[Fact]
+	public void Sources_AskedWithTheSavedBuffsTheDifficultyAndTheScroll()
+	{
+		BuffSourceRequest? asked = null;
+		this._sources = r =>
+		{
+			asked = r;
+			return [];
+		};
+		var input = Input() with { Difficulty = 2 };
+		input.Info.SavedBuffs.Add("""records\item\heraclesway\buffs\heraclesdebuff02.dbr""");
+		input.Buffs.PickScroll("""records\item\scroll.dbr""");
+
+		this._builder.ComputeStats(input);
+
+		asked!.SavedBuffs.Should().ContainSingle();
+		(asked.Difficulty, asked.Scroll?.Raw).Should().Be((2, """records\item\scroll.dbr"""));
+	}
+
+	#region Buffs tab
+
+	[Fact]
+	public void Build_BuffsTab_OneSectionPerGroupWithSources_EmptySourcesLeftOut()
+	{
+		this._sources = _ =>
+		[
+			Source("skill:passive", BuffGroup.Passive, true, ("characterStrength", 10)),
+			Source("skill:nothing", BuffGroup.Passive, true),
+			Source("curse:a", BuffGroup.Curse, false, ("defensiveFire", -30)),
+		];
+
+		var buffs = this._builder.Build(Input()).Buffs;
+
+		buffs.Sections.Select(s => s.Group).Should().Equal(BuffGroup.Passive, BuffGroup.Curse);
+		buffs.Sections[0].Entries.Should().ContainSingle().Which.Should().Match<BuffEntryView>(e => e.Id == "skill:passive" && e.On && e.Icon == "icon.tex");
+		buffs.Sections[1].Entries[0].On.Should().BeFalse();
+		buffs.Sections[1].Entries[0].ToolTip.Blocks[0].Lines[0].Should().StartWith("Off");
+		buffs.Scrolls.Should().ContainSingle().Which.Id.Should().BeNull("only the empty choice when the game has no scroll");
+		buffs.SelectedScroll.Should().Be(0);
+	}
+
+	[Fact]
+	public void StatsView_ResistanceRollover_ListsEachSourceRawThenItsEffect_AndTheDifficulty()
+	{
+		// Arrange: fire +36 from an item, +10% from a passive, -30 from a curse; Epic penalty -40
+		var balance = new GameBalance { Penalties = new Dictionary<string, IReadOnlyList<double>>(StringComparer.OrdinalIgnoreCase) { ["defensiveFire"] = [.. Enumerable.Repeat(0.0, GameBalance.BalanceLevelsPerDifficulty), -40] } };
+		this._stats.Setup(s => s.GetGameBalance()).Returns(balance);
+		this._sources = _ =>
+		[
+			Source("item:0", BuffGroup.Gear, true, ("defensiveFire", 36)),
+			Source("skill:passive", BuffGroup.Passive, true, ("defensiveFireModifier", 10)),
+			Source("curse:a", BuffGroup.Curse, true, ("defensiveFire", -30)),
+			Source("skill:off", BuffGroup.Active, false, ("defensiveFire", 100)),
+		];
+
+		// Act
+		var stats = this._builder.StatsView(Input() with { Difficulty = 1 });
+
+		// Assert: (36 - 30 - 40) x 1.1 = -37.4 shown -37; without the item (-70) x 1.1 = -77
+		stats.Resistances[(int)StatResistance.Fire].Value.Should().Be("-37%");
+		var sources = stats.Resistances[(int)StatResistance.Fire].ToolTip.Blocks.Should().HaveCount(2).And.Subject.Last();
+		sources.Title.Should().Be("Sources");
+		sources.Lines.Should().Equal("item:0: +36 (+40)", "skill:passive: +10% (-3)", "curse:a: -30 (-33)", "Difficulty: -40");
+	}
+
+	#endregion
 
 	#region Rollovers
 

@@ -34,8 +34,8 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The difficulty the statistics are computed for, Normal to Legendary.</summary>
 	private ComboBox _statsDifficulty = null!;
 
-	/// <summary>Whether the auras and buffs count in the statistics.</summary>
-	private CheckBox _includeBuffs = null!;
+	/// <summary>The toggles of the Buffs tab for this character: memory only, never saved.</summary>
+	private readonly BuffSelection _buffs = new();
 
 	private readonly ToolTip _statsToolTip = new() { AutoPopDelay = 30000, InitialDelay = 300 };
 
@@ -134,19 +134,15 @@ internal sealed partial class CharacterEditorUserControl
 		this.AddSideEditor(this._statsDifficulty, () => this._side.StatisticsRow(0));
 		this._statsDifficulty.SelectedIndexChanged += (_, _) => this.InvalidateStats();
 
-		this._includeBuffs = new CheckBox { Name = "StatsIncludeBuffsCheckBox" };
-		this.AddSideEditor(this._includeBuffs, () => this._side.StatisticsRow(1));
-		this._includeBuffs.CheckedChanged += (_, _) => this.InvalidateStats();
-
 		this.LayOutColumn();
 		foreach (var editor in editors)
 			this.ShowLevelingEditor(editor);
 
 		this._statsToolTip.SetToolTip(this._statsDifficulty, Resources.CEStatisticsDifficultyToolTip);
-		this._statsToolTip.SetToolTip(this._includeBuffs, Resources.CEIncludeBuffsToolTip);
 
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
 		this._stats.UndoClicked += (_, _) => this.CharacterAttributes_Undo();
+		this._stats.BindBuffs(() => this.ViewBuilder, () => this._buffs, this.InvalidateStats);
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
 			box.ValueChanged += (_, _) => this.InvalidateStats();
 
@@ -232,12 +228,7 @@ internal sealed partial class CharacterEditorUserControl
 			check.SizeChanged += (_, _) => this.AlignCheckBox(check);
 		}
 		else if (editor is ComboBox combo)
-		{
-			// A drop-down list ignores its colours under the visual styles (white box): it draws its items itself.
-			combo.FlatStyle = FlatStyle.Flat;
-			combo.DrawMode = DrawMode.OwnerDrawFixed;
-			combo.DrawItem += DrawSideComboItem;
-		}
+			DarkComboBox.Apply(combo);
 
 		editor.VisibleChanged += (_, _) =>
 		{
@@ -252,7 +243,7 @@ internal sealed partial class CharacterEditorUserControl
 		editor.Bounds = row;
 		editor.Font = font;
 		if (editor is ComboBox combo)
-			FitComboHeight(combo, row.Height);
+			DarkComboBox.FitHeight(combo, row.Height);
 
 		this._sideEditorBounds[editor] = (editor.Bounds, row);
 		if (editor is CheckBox check)
@@ -274,37 +265,8 @@ internal sealed partial class CharacterEditorUserControl
 		check.Location = bounds.Location;
 	}
 
-	/// <summary>
-	/// A drop-down list as high as its row: its height follows its font, and a few pixels more covered the check box of
-	/// the next row.
-	/// </summary>
-	private static void FitComboHeight(ComboBox combo, int height)
-	{
-		// The box is its item's height plus its border (3 pixels above and under); 2 pixels over the row keep the text whole.
-		combo.ItemHeight = Math.Max(1, height - 4);
-	}
-
 	/// <summary>Where each editor of the side panel goes, in pixels at the editor's DPI.</summary>
 	private readonly Dictionary<Control, (Rectangle Bounds, Rectangle Row)> _sideEditorBounds = [];
-
-	/// <summary>Draws an entry of a side panel drop-down, and its box, in the panel's colours.</summary>
-	private static void DrawSideComboItem(object? sender, DrawItemEventArgs e)
-	{
-		if (sender is not ComboBox combo)
-			return;
-
-		// The list highlights the entry under the pointer; the box itself keeps the panel's background.
-		var highlighted = (e.State & DrawItemState.Selected) != 0 && (e.State & DrawItemState.ComboBoxEdit) == 0;
-		using (var back = new SolidBrush(highlighted ? Color.FromArgb(70, 70, 70) : combo.BackColor))
-			e.Graphics.FillRectangle(back, e.Bounds);
-
-		if (e.Index >= 0 && e.Index < combo.Items.Count)
-		{
-			TextRenderer.DrawText(e.Graphics, combo.GetItemText(combo.Items[e.Index]), e.Font ?? combo.Font, e.Bounds,
-				combo.Enabled ? combo.ForeColor : Color.Gray,
-				TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis);
-		}
-	}
 
 	/// <summary>
 	/// A font the editor made itself for its DPI, disposed with it or at the next DPI (never one of the font service's,
@@ -490,7 +452,7 @@ internal sealed partial class CharacterEditorUserControl
 			{
 				editor.Font = this._editorFont;
 				if (editor is ComboBox combo)
-					FitComboHeight(combo, row.Height);
+					DarkComboBox.FitHeight(combo, row.Height);
 			}
 
 			if (editor.Bounds != bounds)
@@ -579,7 +541,7 @@ internal sealed partial class CharacterEditorUserControl
 				.OfType<MasterySummary>()
 				.Select(s => PlayerInfoText.MasterySummaryLine(s, this.TranslationService))],
 			StatisticsTitle = Resources.CEStatistics,
-			StatisticsLabels = [Resources.CEDifficulty, Resources.CEIncludeBuffs],
+			StatisticsLabels = [Resources.CEDifficulty],
 		};
 	}
 

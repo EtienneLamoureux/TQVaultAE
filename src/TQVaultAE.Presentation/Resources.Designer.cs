@@ -810,29 +810,11 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Include buffs.
-        /// </summary>
-        public static string CEIncludeBuffs {
-            get {
-                return ResourceManager.GetString("CEIncludeBuffs", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to The difficulty played: Epic and Legendary lower the resistan.
         /// </summary>
         public static string CEStatisticsDifficultyToolTip {
             get {
                 return ResourceManager.GetString("CEStatisticsDifficultyToolTip", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Counts the auras and buffs of the skills as if they were act.
-        /// </summary>
-        public static string CEIncludeBuffsToolTip {
-            get {
-                return ResourceManager.GetString("CEIncludeBuffsToolTip", resourceCulture);
             }
         }
 
@@ -8299,6 +8281,168 @@ namespace TQVaultAE.Presentation {
         public static string ResultsMoveHeldItem {
             get {
                 return ResourceManager.GetString("ResultsMoveHeldItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buffs.
+        /// </summary>
+        public static string BuffsTab {
+            get {
+                return ResourceManager.GetString("BuffsTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equipment.
+        /// </summary>
+        public static string BuffsGear {
+            get {
+                return ResourceManager.GetString("BuffsGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passive.
+        /// </summary>
+        public static string BuffsPassive {
+            get {
+                return ResourceManager.GetString("BuffsPassive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active.
+        /// </summary>
+        public static string BuffsActive {
+            get {
+                return ResourceManager.GetString("BuffsActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pets.
+        /// </summary>
+        public static string BuffsPets {
+            get {
+                return ResourceManager.GetString("BuffsPets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Curses.
+        /// </summary>
+        public static string BuffsCurses {
+            get {
+                return ResourceManager.GetString("BuffsCurses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shrines.
+        /// </summary>
+        public static string BuffsShrines {
+            get {
+                return ResourceManager.GetString("BuffsShrines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tartarus.
+        /// </summary>
+        public static string BuffsTartarus {
+            get {
+                return ResourceManager.GetString("BuffsTartarus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scroll.
+        /// </summary>
+        public static string BuffsScroll {
+            get {
+                return ResourceManager.GetString("BuffsScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        public static string BuffsNoScroll {
+            get {
+                return ResourceManager.GetString("BuffsNoScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On: click to turn it off..
+        /// </summary>
+        public static string BuffsOn {
+            get {
+                return ResourceManager.GetString("BuffsOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off: click to turn it on..
+        /// </summary>
+        public static string BuffsOff {
+            get {
+                return ResourceManager.GetString("BuffsOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Level {0}.
+        /// </summary>
+        public static string BuffsLevel {
+            get {
+                return ResourceManager.GetString("BuffsLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Granted by {0}.
+        /// </summary>
+        public static string BuffsGrantedBy {
+            get {
+                return ResourceManager.GetString("BuffsGrantedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pieces worn: {0}.
+        /// </summary>
+        public static string BuffsSetPieces {
+            get {
+                return ResourceManager.GetString("BuffsSetPieces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sources.
+        /// </summary>
+        public static string BuffsSourcesTitle {
+            get {
+                return ResourceManager.GetString("BuffsSourcesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} ({2}).
+        /// </summary>
+        public static string BuffsSourceLine {
+            get {
+                return ResourceManager.GetString("BuffsSourceLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Difficulty: {0}.
+        /// </summary>
+        public static string BuffsDifficultyLine {
+            get {
+                return ResourceManager.GetString("BuffsDifficultyLine", resourceCulture);
             }
         }
     }

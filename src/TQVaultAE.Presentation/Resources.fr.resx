@@ -1103,14 +1103,8 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CEStatistics" xml:space="preserve">
     <value>Statistiques</value>
   </data>
-	<data name="CEIncludeBuffs" xml:space="preserve">
-    <value>Avec les buffs</value>
-  </data>
 	<data name="CEStatisticsDifficultyToolTip" xml:space="preserve">
     <value>La difficulté jouée : Épique et Légendaire baissent les résistances (-40 / -100, d’après les données du jeu).</value>
-  </data>
-	<data name="CEIncludeBuffsToolTip" xml:space="preserve">
-    <value>Compte les auras et les buffs des compétences comme s’ils étaient actifs ; sinon seules les compétences passives comptent.</value>
   </data>
 	<data name="CEOffenseDamageToolTip" xml:space="preserve">
     <value>Arme {0}, ajouté par l’équipement et les compétences {1}.</value>
@@ -2633,5 +2627,59 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   </data>
   <data name="ItemNoRoom" xml:space="preserve">
     <value>Pas la place ici pour la taille de cet objet, lu avec la carte de son conteneur.</value>
+  </data>
+  <data name="BuffsTab" xml:space="preserve">
+    <value>Effets</value>
+  </data>
+  <data name="BuffsGear" xml:space="preserve">
+    <value>Équipement</value>
+  </data>
+  <data name="BuffsPassive" xml:space="preserve">
+    <value>Passifs</value>
+  </data>
+  <data name="BuffsActive" xml:space="preserve">
+    <value>Actifs</value>
+  </data>
+  <data name="BuffsPets" xml:space="preserve">
+    <value>Familiers</value>
+  </data>
+  <data name="BuffsCurses" xml:space="preserve">
+    <value>Malédictions</value>
+  </data>
+  <data name="BuffsShrines" xml:space="preserve">
+    <value>Sanctuaires</value>
+  </data>
+  <data name="BuffsTartarus" xml:space="preserve">
+    <value>Tartare</value>
+  </data>
+  <data name="BuffsScroll" xml:space="preserve">
+    <value>Parchemin</value>
+  </data>
+  <data name="BuffsNoScroll" xml:space="preserve">
+    <value>(aucun)</value>
+  </data>
+  <data name="BuffsOn" xml:space="preserve">
+    <value>Actif : cliquer pour le désactiver.</value>
+  </data>
+  <data name="BuffsOff" xml:space="preserve">
+    <value>Inactif : cliquer pour l'activer.</value>
+  </data>
+  <data name="BuffsLevel" xml:space="preserve">
+    <value>Niveau {0}</value>
+  </data>
+  <data name="BuffsGrantedBy" xml:space="preserve">
+    <value>Accordé par {0}</value>
+  </data>
+  <data name="BuffsSetPieces" xml:space="preserve">
+    <value>Pièces portées : {0}</value>
+  </data>
+  <data name="BuffsSourcesTitle" xml:space="preserve">
+    <value>Sources</value>
+  </data>
+  <data name="BuffsSourceLine" xml:space="preserve">
+    <value>{0} : {1} ({2})</value>
+  </data>
+  <data name="BuffsDifficultyLine" xml:space="preserve">
+    <value>Difficulté : {0}</value>
   </data>
 </root>

@@ -71,18 +71,37 @@ Computed with the game's formulas from the attributes, equipped items, item sets
 | I | Attributes, combined armor, main resistances, average damage, attack speed, DPS |
 | II | Secondary resistances, offensive and defensive ability, chances to dodge, to avoid projectiles and to block, regeneration, energy cost and recharge reduction, casting and movement speed |
 | III | Damage and duration bonuses, monster race bonuses, play statistics |
+| Buffs | Every source of bonuses or maluses, each toggled on its own (see below) |
 
 ![Tab II](charedit/stats_tab2.png) ![Tab III](charedit/stats_tab3.png)
 
-Hover an icon or a value for its details, as in the game:
+Hover an icon or a value for its details, as in the game. Tabs I and II also list the **sources** of a value: per
+source its own bonus, then in parentheses what it changes in the value shown (the value without that source subtracted).
 
 ![Statistics tool tip](charedit/stats_tooltip.png)
 
-Options under the statistics:
+Option under the statistics: **Difficulty**, the difficulty played; Epic and Legendary lower the resistances.
 
-- **Difficulty**: the difficulty played; Epic and Legendary lower the resistances.
-- **Include buffs**: counts skill auras and buffs as active; otherwise only passive skills count. What a skill casts on
-  monsters (an attack's freeze, an aura weakening nearby monsters) never counts.
+### Buffs tab
+
+One section per kind of source; a click turns a source on or off (greyed when off) and the statistics follow. The
+toggles are kept in memory only, never saved, back to their defaults for another character.
+
+![Buffs tab](charedit/stats_buffs.png)
+
+| Section | Sources | At the start |
+|---|---|---|
+| Equipment | Each equipped item and item set with bonuses (text rows) | On |
+| Passive | Masteries, passive skills (a modifier with its skill), quest rewards, passive skills granted by items | On |
+| Active | Auras and buffs of the skills or granted by items | Off |
+| Pets | Auras a pet casts on the character | Off |
+| Curses | The 8 temple curses ("Heracles' way") | Saved ones on |
+| Shrines | World shrine buffs and quest blessings, the difficulty's variant | Off |
+| Tartarus | Tartarus arena effects on the player | Off |
+| Scroll | The buff of the scroll picked in the drop-down at the top | Off |
+
+What a skill casts on monsters (an attack's freeze, an aura weakening nearby monsters) is never listed. The main
+window's statistics panel has the same tab.
 
 ## Mastery pages
 

@@ -4,11 +4,13 @@ namespace TQVaultAE.GUI.Views;
 internal sealed partial class CharacterEditorUserControl
 {
 	/// <summary>
-	/// The sums behind the computed statistics: the equipped items and sets, the skills that count (with the buffs
-	/// option as set), their non-zero variables whose name contains <paramref name="filter"/>, and the racial bonuses;
-	/// tab I's offense with its inputs (stance, each weapon in hand, the other items, the hand damage).
+	/// The sums behind the computed statistics: the gear sources turned on (items and sets), the other sources turned
+	/// on (skills, curses, shrines...), their non-zero variables whose name contains <paramref name="filter"/>, and the
+	/// racial bonuses; the keys of the sources turned on; tab I's offense with its inputs (stance, each weapon in hand,
+	/// the other items, the hand damage).
 	/// </summary>
-	internal object AutomationStatSources(string filter)
+	/// <param name="sources">True to list each buff source with its own variables.</param>
+	internal object AutomationStatSources(string filter, bool sources = false)
 	{
 		this.ComputeStats();
 		object Values(Domain.Entities.AttributeSum? sum) => sum is null ? new { } : new
@@ -23,7 +25,17 @@ internal sealed partial class CharacterEditorUserControl
 		return new
 		{
 			difficulty = this._statsDifficulty.SelectedIndex,
-			includeBuffs = this._includeBuffs.Checked,
+			buffsOn = this.ViewBuilder.BuffSources.Where(this._buffs.IsOn).Select(s => s.Id).ToList(),
+			sources = !sources ? null : this.ViewBuilder.BuffSources.Select(s => new
+			{
+				id = s.Id,
+				group = s.Group.ToString(),
+				name = this.ViewBuilder.NameOf(s),
+				on = this._buffs.IsOn(s),
+				level = s.Level,
+				gearRole = s.GearRole.ToString(),
+				sum = Values(s.Sum),
+			}).ToList(),
 			gear = Values(this._gearSum),
 			skills = Values(this._skillSum),
 			offense = this.ComputeOffense() is var (speed, values) ? new

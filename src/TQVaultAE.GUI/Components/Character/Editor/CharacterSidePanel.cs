@@ -22,14 +22,14 @@ internal sealed record CharacterSideView
 	public string MasteriesTitle { get; init; } = string.Empty;
 	public IReadOnlyList<(string Name, string Value)> Masteries { get; init; } = [];
 
-	/// <summary>The options of the computed statistics: the difficulty played and whether the buffs count.</summary>
+	/// <summary>The option of the computed statistics: the difficulty played.</summary>
 	public string StatisticsTitle { get; init; } = string.Empty;
 	public IReadOnlyList<string> StatisticsLabels { get; init; } = [];
 }
 
 /// <summary>
-/// The editor's own rows under the game's character window, drawn in its style: the options of the statistics TQVault
-/// computes (difficulty, buffs), the leveling editors (where the game draws defense and offense in its window) and the
+/// The editor's own rows under the game's character window, drawn in its style: the option of the statistics TQVault
+/// computes (difficulty), the leveling editors (where the game draws defense and offense in its window) and the
 /// masteries. Sizes are in pixels of the game window times <see cref="PanelScale"/>.
 /// </summary>
 internal sealed partial class CharacterSidePanel : Control
@@ -43,7 +43,7 @@ internal sealed partial class CharacterSidePanel : Control
 	/// </summary>
 	private const int StatisticsTop = 6;
 	private const int RowHeight = 20;
-	private const int LevelingTop = StatisticsTop + 26 + 2 * RowHeight + 6;
+	private const int LevelingTop = StatisticsTop + 26 + RowHeight + 6;
 	private const int MasteriesTop = LevelingTop + 128;
 	/// <summary>Two lines per mastery (its name, then what it has), two masteries at most.</summary>
 	private const int PanelHeight = MasteriesTop + 20 + 4 * 18 + 12;
@@ -92,7 +92,7 @@ internal sealed partial class CharacterSidePanel : Control
 	/// <summary>The place of a leveling editor on screen: right part of its row, where the game writes numbers.</summary>
 	public Rectangle EditorRow(int row) => this.ScaledRect(new Rectangle(140, RowTop(LevelingTop, row) - 1, 103, 18));
 
-	/// <summary>The place of a statistics option on screen (difficulty, buffs).</summary>
+	/// <summary>The place of a statistics option on screen (difficulty).</summary>
 	public Rectangle StatisticsRow(int row) => this.ScaledRect(new Rectangle(140, RowTop(StatisticsTop, row) - 1, 103, 18));
 
 	private static int RowTop(int partTop, int row) => partTop + 22 + row * RowHeight;

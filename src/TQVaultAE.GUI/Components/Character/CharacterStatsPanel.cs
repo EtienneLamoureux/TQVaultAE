@@ -19,8 +19,9 @@ namespace TQVaultAE.GUI.Components.Character;
 /// window), at the positions of the <c>CharStatsTab1..3</c> records. Tab I shows the name, class, level, experience and the attributes
 /// with their "+" buttons (left click spends a point, right click takes it back, Shift all of them or back to the start),
 /// the combined armor and the resistances; tab II the secondary resistances and the other values; tab III the damage
-/// and race bonuses (icons with tool tips, as the game's rollovers) and the statistics of the save. Damage, attack speed
-/// and DPS stay computed in game. Sizes are in pixels of the game window times <see cref="PanelScale"/>.
+/// and race bonuses (icons with tool tips, as the game's rollovers) and the statistics of the save; a fourth tab of
+/// TQVault's own, the Buffs tab, toggles each source of bonuses (<c>CharacterStatsPanel.Buffs.cs</c>). Sizes are in
+/// pixels of the game window times <see cref="PanelScale"/>.
 /// </summary>
 internal sealed partial class CharacterStatsPanel : Control
 {
@@ -55,9 +56,17 @@ internal sealed partial class CharacterStatsPanel : Control
 		"""InGameUI\CharacterScreen\PrimaryStatsBtn01.tex""",
 		"""InGameUI\CharacterScreen\SecondaryStatsBtn01.tex""",
 		"""InGameUI\CharacterScreen\ThirdStatsBtn01.tex""",
+		// The Buffs tab is not the game's: the third tab's picture, narrower.
+		"""InGameUI\CharacterScreen\ThirdStatsBtn01.tex""",
 	];
-	private static readonly int[] TabX = [-1, 68, 137];
-	private static readonly int[] TabTextX = [5, 74, 142];
+	private static readonly int[] TabX = [-1, 68, 137, 205];
+	private static readonly int[] TabTextX = [5, 74, 142, 207];
+
+	/// <summary>The width of each tab's picture; the Buffs tab fits in what is left of the panel's width.</summary>
+	private static readonly int[] TabWidth = [62, 62, 62, 51];
+
+	/// <summary>The third tab's unlit picture in the panel's, drawn narrower for the Buffs tab.</summary>
+	private static readonly Rectangle UnlitTabSource = new(137, 0, 62, 20);
 
 	private const string StatsBar = """InGameUI\CharacterScreen\StatsBar01.tex""";
 	private const string PlusUp = """InGameUI\CharacterScreen\StatIncrementButtonUp01.tex""";
@@ -147,16 +156,17 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>The resistance numbers: Arial 14, not bold (<c>NumberStandard_Green</c>).</summary>
 	public Font? ResistanceFont { get; set; }
 
-	/// <summary>The tab shown: 0 for I, 1 for II, 2 for III.</summary>
+	/// <summary>The tab shown: 0 for I, 1 for II, 2 for III, 3 for the Buffs tab.</summary>
 	public int Tab
 	{
 		get => this._tab;
 		set
 		{
-			if (value is < 0 or > 2 || value == this._tab)
+			if (value is < 0 or > BuffsTab || value == this._tab)
 				return;
 
 			this._tab = value;
+			this.SyncScrollBox(this.View?.Invoke());
 			this.Invalidate();
 		}
 	}
@@ -184,7 +194,7 @@ internal sealed partial class CharacterStatsPanel : Control
 	public Rectangle PlusBounds(int attribute) => this.ScaledRect(new Rectangle(15, AttributeY[attribute] + 3, 12, 12));
 
 	/// <summary>A tab (I, II, III) on screen.</summary>
-	public Rectangle TabBounds(int tab) => this.ScaledRect(new Rectangle(TabX[tab] + 1, 0, 60, 22));
+	public Rectangle TabBounds(int tab) => this.ScaledRect(new Rectangle(TabX[tab] + 1, 0, TabWidth[tab] - 2, 22));
 
 	private int Scaled(int value) => (int)Math.Round(value * this._panelScale);
 
@@ -199,6 +209,7 @@ internal sealed partial class CharacterStatsPanel : Control
 			this._goldPile.Dispose();
 			this._coin.Dispose();
 			this._numberBox.Dispose();
+			this._scrollBoxFont?.Dispose();
 		}
 
 		base.Dispose(disposing);
@@ -232,12 +243,18 @@ internal sealed partial class CharacterStatsPanel : Control
 	protected override void OnMouseUp(MouseEventArgs e)
 	{
 		base.OnMouseUp(e);
-		for (int tab = 0; tab < 3; tab++)
+		for (int tab = 0; tab < TabX.Length; tab++)
 			if (e.Button == MouseButtons.Left && this.TabBounds(tab).Contains(e.Location))
 			{
 				this.Tab = tab;
 				return;
 			}
+
+		if (e.Button == MouseButtons.Left && this.HitBuff(e.Location) is { } buff)
+		{
+			this.RaiseBuffClick(buff.Id);
+			return;
+		}
 
 		var step = e.Button switch
 		{
@@ -263,7 +280,8 @@ internal sealed partial class CharacterStatsPanel : Control
 			this.Invalidate();
 		}
 
-		this.Cursor = plus >= 0 || undo || Enumerable.Range(0, 3).Any(t => this.TabBounds(t).Contains(e.Location)) ? Cursors.Hand : Cursors.Default;
+		this.Cursor = plus >= 0 || undo || this.HitBuff(e.Location) is not null
+			|| Enumerable.Range(0, TabX.Length).Any(t => this.TabBounds(t).Contains(e.Location)) ? Cursors.Hand : Cursors.Default;
 
 		// The attribute rows tell their base value and bonuses; icons and rows their meaning, as the game's rollovers.
 		var tip = StatToolTip.None;
@@ -316,10 +334,11 @@ internal sealed partial class CharacterStatsPanel : Control
 			return;
 
 		// The tab shown gets its lit button; the names are white on it, grey on the others.
+		g.DrawImage(this._panel, this.ScaledRect(new Rectangle(TabX[BuffsTab], 0, TabWidth[BuffsTab], UnlitTabSource.Height)), UnlitTabSource, GraphicsUnit.Pixel);
 		var tab = this.Picture(TabTextures[this._tab]);
-		g.DrawImage(tab, this.ScaledRect(new Rectangle(TabX[this._tab], -1, tab.Width, tab.Height)));
-		for (int i = 0; i < 3 && i < view.TabNames.Count; i++)
-			this.DrawText(g, view.TabNames[i], this.TabFont, i == this._tab ? Color.White : Grey, new Rectangle(TabTextX[i], 4, 50, 14), StringAlignment.Center);
+		g.DrawImage(tab, this.ScaledRect(new Rectangle(TabX[this._tab], -1, this._tab == BuffsTab ? TabWidth[BuffsTab] : tab.Width, tab.Height)));
+		for (int i = 0; i < TabX.Length && i < view.TabNames.Count; i++)
+			this.DrawText(g, view.TabNames[i], this.TabFont, i == this._tab ? Color.White : Grey, new Rectangle(TabTextX[i], 4, TabWidth[i] - 12, 14), StringAlignment.Center);
 
 		switch (this._tab)
 		{
@@ -329,10 +348,15 @@ internal sealed partial class CharacterStatsPanel : Control
 			case 1:
 				this.PaintTab2(g, view.Stats);
 				break;
-			default:
+			case 2:
 				this.PaintTab3(g, view);
 				break;
+			default:
+				this.PaintBuffs(g, view);
+				break;
 		}
+
+		this.SyncScrollBox(view);
 
 		// The gold bar: gold in yellow, Electrum in grey, centred in their boxes (characterGoldNumber...).
 		this.DrawText(g, view.Money, this.NumberFont, Yellow, new Rectangle(38, GoldTop + 6, 102, 20), StringAlignment.Center);
@@ -460,13 +484,17 @@ internal sealed partial class CharacterStatsPanel : Control
 				for (int i = 0; i < stats.Tab2Rows.Count && i < Tab2RowY.Length; i++)
 					yield return (new Rectangle(15, Tab2RowY[i], 228, 16), stats.Tab2Rows[i].ToolTip);
 				break;
-			default:
+			case 2:
 				foreach (var (place, icon) in IconPlaces(stats.Damages.Count, 5, 50, DamageY).Zip(stats.Damages))
 					yield return (new Rectangle(place, new Size(40, 32)), icon.ToolTip);
 				for (int i = 0; i < stats.Tab3Rows.Count && i < Tab3RowY.Length; i++)
 					yield return (new Rectangle(15, Tab3RowY[i], 228, 16), stats.Tab3Rows[i].ToolTip);
 				foreach (var (place, icon) in IconPlaces(stats.Races.Count, 6, 40, RaceY).Zip(stats.Races))
 					yield return (new Rectangle(place, new Size(36, 34)), icon.ToolTip);
+				break;
+			default:
+				foreach (var area in this.BuffToolTipAreas(view))
+					yield return area;
 				break;
 		}
 	}

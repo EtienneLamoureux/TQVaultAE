@@ -10,7 +10,7 @@ namespace TQVaultAE.GUI.Views;
 /// <summary>
 /// The statistics the editor's statistics panel computes like the game (<see cref="CharacterStatsCalculator"/>): defense on tab I,
 /// tab II, the damage and race bonuses of tab III, from the equipped items, the skills of the editor (their current
-/// points), the attributes of the editor, the difficulty chosen and the buffs option.
+/// points), the attributes of the editor, the difficulty chosen and the buff sources turned on in the Buffs tab.
 /// </summary>
 internal sealed partial class CharacterEditorUserControl
 {
@@ -18,7 +18,8 @@ internal sealed partial class CharacterEditorUserControl
 
 	/// <summary>Builds what the statistics panel shows, and keeps the sums of the gear and of the skills.</summary>
 	private CharacterPanelViewBuilder ViewBuilder
-		=> this._viewBuilder ??= new CharacterPanelViewBuilder(this.Services.CharacterStatsService, this.TranslationService);
+		=> this._viewBuilder ??= new CharacterPanelViewBuilder(this.Services.CharacterStatsService, this.TranslationService,
+			this.Services.CharacterEditService, this.Services.ItemText);
 
 	/// <summary>The state of the editor, for the statistics.</summary>
 	private CharacterPanelInput PanelInput()
@@ -38,7 +39,7 @@ internal sealed partial class CharacterEditorUserControl
 			Trees = skills?.Slots.OfType<MasteryTree>().ToList() ?? [],
 			Augments = this._gearAugments ?? [],
 			Difficulty = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked, this._statsDifficulty?.SelectedIndex ?? -1),
-			IncludeBuffs = this._includeBuffs?.Checked == true,
+			Buffs = this._buffs,
 			ClassCleared = skills?.MasteriesChanged == true,
 			Editable = true,
 			CanUndo = this.AttributeBoxes.Where((b, i) => Convert.ToInt32(b.Value) != this._startAttributes.ElementAtOrDefault(i)).Any(),

@@ -3,6 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.GUI.Components.Buttons;
@@ -35,6 +36,9 @@ public partial class StashPanel
 
 	/// <summary>The game's character window statistics (tabs I, II, III), read only, right of the equipment.</summary>
 	private CharacterStatsPanel? _statsPanel;
+
+	/// <summary>The toggles of the Buffs tab for the character shown: memory only, back to the defaults for another one.</summary>
+	private BuffSelection _statsBuffs = new();
 
 	/// <summary>The Edit button under the statistics panel, which opens the character editor.</summary>
 	private ScalingButton? _editButton;
@@ -132,6 +136,7 @@ public partial class StashPanel
 
 		// Another character, or its equipment or skills changed: the panel is built again.
 		DisplayPlayerInfoLastName = this.Player.PlayerName;
+		this._statsBuffs = new BuffSelection();
 		this._statsView = null;
 		panel.Invalidate();
 	}
@@ -269,13 +274,22 @@ public partial class StashPanel
 		if (this._statsPanel is not null)
 			return this._statsPanel;
 
-		this._statsBuilder = new CharacterPanelViewBuilder(this.Services.CharacterStatsService, this.TranslationService);
+		this._statsBuilder = new CharacterPanelViewBuilder(this.Services.CharacterStatsService, this.TranslationService,
+			this.Services.CharacterEditService, this.Services.ItemText);
 		this._statsPanel = new CharacterStatsPanel(this.UIService)
 		{
 			Name = "PlayerStatsPanel",
 			View = () => this._statsView ??= this.BuildStatsView(),
 			Visible = false,
 		};
+
+		// The Buffs tab's toggles change only what the panel shows, never the save.
+		var builder = this._statsBuilder;
+		this._statsPanel.BindBuffs(() => builder, () => this._statsBuffs, () =>
+		{
+			this._statsView = null;
+			this._statsPanel.Invalidate();
+		});
 
 		// The gold button of the dialogs; its font and bounds follow the scale in LayoutStatsPanel.
 		var editButton = CaravanDialog.Button(this.FontService, this.UIService.FontZoom, "editButton", Resources.CharacterEditBtn);
@@ -400,6 +414,7 @@ public partial class StashPanel
 		var worn = this.equipmentPanel.WornItems;
 		var skills = this.Services.CharacterEditService.CreateSkillEditor(info);
 		return this._statsBuilder.Build(CharacterPanelInput.FromSave(
-			player, info, worn, [.. skills.Slots.OfType<MasteryTree>()], this.Services.CharacterEditService.GetGearSkillAugments(worn, player.UseAlternate)));
+			player, info, worn, [.. skills.Slots.OfType<MasteryTree>()], this.Services.CharacterEditService.GetGearSkillAugments(worn, player.UseAlternate),
+			this._statsBuffs));
 	}
 }
