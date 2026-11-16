@@ -76,7 +76,11 @@ public partial class CharacterStatsService(IDatabase database, IItemProvider ite
 	/// <summary>A skill that adds to the character window: its record, its role resolved, its level and its sum there.</summary>
 	/// <param name="ParentId">The skill a modifier modifies, null for any other skill.</param>
 	/// <param name="Origins">The items granting it, none for a learned skill.</param>
-	private sealed record CountedSkill(RecordId Id, DBRecordCollection? Record, RecordId? ParentId, SkillStatRole Role, int Level, AttributeSum Sum, IReadOnlyList<Item> Origins);
+	private sealed record CountedSkill(RecordId Id, DBRecordCollection? Record, RecordId? ParentId, SkillStatRole Role, int Level, AttributeSum Sum, IReadOnlyList<Item> Origins)
+	{
+		/// <summary>True for a granted skill an item casts when worn (its auto controller fires on equip): always on.</summary>
+		public bool OnEquip { get; init; }
+	}
 
 	/// <summary>
 	/// The learned skills that add to the character window (passives, masteries, buffs, modifiers of those), each at its
@@ -142,7 +146,10 @@ public partial class CharacterStatsService(IDatabase database, IItemProvider ite
 				continue;
 
 			var origins = granted.Where(g => g.SkillId.Equals(id)).Select(g => g.Item).Distinct().ToList();
-			counted.Add(new CountedSkill(id, record, null, role, level, this.SkillRecordAttributes(id, record, level), origins));
+			counted.Add(new CountedSkill(id, record, null, role, level, this.SkillRecordAttributes(id, record, level), origins)
+			{
+				OnEquip = origins.Any(item => this.CastsOnEquip(item, id)),
+			});
 		}
 
 		return counted;

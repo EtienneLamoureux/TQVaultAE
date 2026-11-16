@@ -263,4 +263,27 @@ public class CharacterStatsServiceBuffTests
 		granted.Single(s => s.RecordId == Passive).Should().Match<BuffSource>(s => s.Level == 5 && s.Group == BuffGroup.Passive && s.DefaultOn && s.Origins.Count == 2);
 		granted.Single(s => s.RecordId == Aura).Should().Match<BuffSource>(s => s.Group == BuffGroup.Active && !s.DefaultOn);
 	}
+
+	[Fact]
+	public void GetBuffSources_GrantedToggleTheItemCastsWhenWorn_StartsOn()
+	{
+		// An item whose granted aura has an auto controller firing on equip (the game turns the toggle on and keeps it on),
+		// and a ring granting the same kind of aura without controller (the player turns it on).
+		var onEquip = """records\xpack2\skills\item skills\ai controllers\onequip.dbr""".ToRecordId();
+		Record(onEquip, "").Set(Text("triggerType", "OnEquip"));
+		var cursedAura = """records\skills\item skills\cursedaura.dbr""".ToRecordId();
+		Record(cursedAura, "Skill_BuffSelfToggled").Set(Text("buffSkillName", AuraBuff.Raw));
+		var amulet = Gear("ArmorJewelry_Amulet", 0, x: 3);
+		var ring = Gear("ArmorJewelry_Ring", 0, x: 4);
+		var amuletRecord = new DBRecordCollection("""records\item\amulet.dbr""".ToRecordId(), "ArmorJewelry_Amulet");
+		amuletRecord.Set(Text("itemSkillAutoController", onEquip.Raw));
+		this._items.Setup(p => p.GetGrantedSkillLevels(amulet)).Returns([(cursedAura, 1)]);
+		this._items.Setup(p => p.GetGrantedSkillSources(amulet)).Returns([(amuletRecord, cursedAura, 1)]);
+		this._items.Setup(p => p.GetGrantedSkillLevels(ring)).Returns([(Aura, 2)]);
+
+		var granted = this.Sources([amulet, ring]).Where(s => s.Id.StartsWith("granted:", StringComparison.Ordinal)).ToList();
+
+		granted.Single(s => s.RecordId == cursedAura).Should().Match<BuffSource>(s => s.OnEquip && s.DefaultOn && s.Group == BuffGroup.Active);
+		granted.Single(s => s.RecordId == Aura).Should().Match<BuffSource>(s => !s.OnEquip && !s.DefaultOn);
+	}
 }

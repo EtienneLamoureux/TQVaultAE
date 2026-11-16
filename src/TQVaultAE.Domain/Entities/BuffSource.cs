@@ -70,6 +70,9 @@ public sealed record BuffSource
 	/// <summary>On when the tab opens.</summary>
 	public bool DefaultOn { get; init; }
 
+	/// <summary>A granted skill the item casts by itself when worn (a toggled buff that stays on).</summary>
+	public bool OnEquip { get; init; }
+
 	/// <summary>How the item counts for the attack; <see cref="BuffGearRole.None"/> for what is not gear.</summary>
 	public BuffGearRole GearRole { get; init; }
 

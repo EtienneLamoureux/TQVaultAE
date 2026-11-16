@@ -1,5 +1,6 @@
 using System.Globalization;
 using TQVaultAE.Application.Character;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -155,7 +156,9 @@ public partial class CharacterStatsService
 			Icon = this.Icon(skill.Record) ?? this.Icon(buff) ?? FallbackIcon,
 			RecordId = skill.Id,
 			Level = skill.Level,
-			DefaultOn = group == BuffGroup.Passive,
+			// A toggled buff an item casts when worn runs as long as it is worn.
+			DefaultOn = group == BuffGroup.Passive || skill.OnEquip,
+			OnEquip = skill.OnEquip,
 			Origins = skill.Origins,
 			Sum = sum,
 		};
@@ -175,6 +178,20 @@ public partial class CharacterStatsService
 			DefaultOn = on,
 			Sum = this._itemProvider.GetRecordAttributes(id, 1),
 		};
+	}
+
+	/// <summary>
+	/// True when the item casts the skill by itself once worn: the granting record's auto controller
+	/// (<c>itemSkillAutoController</c>) fires on equip (<c>triggerType</c> OnEquip). Those skills are toggled buffs: the
+	/// item turns them on and they stay on.
+	/// </summary>
+	private bool CastsOnEquip(Item item, RecordId skillId)
+	{
+		using var modScope = this._itemMods.ScopeOrNone(item);
+		return this._itemProvider.GetGrantedSkillSources(item)
+			.Where(s => s.SkillId.Equals(skillId))
+			.Select(s => this.Record(s.Source.GetString("itemSkillAutoController", 0))?.GetString("triggerType", 0))
+			.Any(trigger => string.Equals(trigger, "OnEquip", StringComparison.OrdinalIgnoreCase));
 	}
 
 	/// <summary>The record of the buff a skill casts (<c>buffSkillName</c>), null when it casts none.</summary>
