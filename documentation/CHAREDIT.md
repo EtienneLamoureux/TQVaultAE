@@ -96,7 +96,7 @@ toggles are kept in memory only, never saved, back to their defaults for another
 | Equipment | Each equipped item and item set with bonuses (text rows) | On |
 | Passive | Masteries, passive skills (a modifier with its skill), quest rewards, passive skills granted by items | On |
 | Active | Auras and buffs of the skills or granted by items | Off; on for a toggle an item casts when worn |
-| Pets | Auras a pet casts on the character | Off |
+| Pets | Auras the pets of the summons cast on those around them (Battle Standard), and the ones a pet modifier adds | Off |
 | Curses | The 8 temple curses ("Heracles' way") | Saved ones on |
 | Shrines | World shrine buffs and quest blessings, the difficulty's variant | Off |
 | Tartarus | Tartarus arena effects on the player | Off |

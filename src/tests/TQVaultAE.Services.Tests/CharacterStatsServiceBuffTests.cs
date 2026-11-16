@@ -21,6 +21,16 @@ public class CharacterStatsServiceBuffTests
 	private static readonly RecordId PetAura = """Records\Skills\Nature\Wolf_PetSkill_Pack.dbr""".ToRecordId();
 	private static readonly RecordId PetAuraBuff = """Records\Skills\Nature\Wolf_PetSkill_PackBuff.dbr""".ToRecordId();
 	private static readonly RecordId Wolf = """Records\Skills\Nature\Pet\Wolf_01.dbr""".ToRecordId();
+	private static readonly RecordId Summon = """Records\Skills\Warfare\BattleStandard.dbr""".ToRecordId();
+	private static readonly RecordId Standard1 = """Records\Skills\Warfare\Pets\BattleStandard_01.dbr""".ToRecordId();
+	private static readonly RecordId Standard2 = """Records\Skills\Warfare\Pets\BattleStandard_02.dbr""".ToRecordId();
+	private static readonly RecordId StandardAura = """Records\Skills\Warfare\BattleStandard_PetSkill_Default.dbr""".ToRecordId();
+	private static readonly RecordId StandardAuraBuff = """Records\Skills\Warfare\BattleStandard_PetSkill_DefaultBuff.dbr""".ToRecordId();
+	private static readonly RecordId StandardSelfBuff = """Records\Skills\Monster Skills\Buff_Self\Banner_Self.dbr""".ToRecordId();
+	private static readonly RecordId Triumph = """Records\Skills\Warfare\BattleStandard_PetModifier_Triumph.dbr""".ToRecordId();
+	private static readonly RecordId TriumphAura = """Records\Skills\Warfare\BattleStandard_PetSkill_TriumphBuffRadius.dbr""".ToRecordId();
+	private static readonly RecordId TriumphBuff = """Records\Skills\Warfare\BattleStandard_PetSkill_Triumph.dbr""".ToRecordId();
+	private static readonly RecordId PackModifier = """Records\Skills\Nature\Wolf_PetModifier_Pack.dbr""".ToRecordId();
 
 	private static readonly RecordId CurseApplier1 = """records\item\heraclesway\heraclesshrinebuffer01.dbr""".ToRecordId();
 	private static readonly RecordId CurseApplier2 = """records\item\heraclesway\heraclesshrinebuffer02.dbr""".ToRecordId();
@@ -42,6 +52,9 @@ public class CharacterStatsServiceBuffTests
 		new MasterySkill(PassiveModifier, "", "", "", 10, 2, Passive),
 		new MasterySkill(Aura, "", "", "", 10, 1, null),
 		new MasterySkill(PetAura, "", "", "", 10, 1, null),
+		new MasterySkill(Summon, "tagBattleStandard", "", """InGameUI\standard.tex""", 10, 3, null),
+		new MasterySkill(Triumph, "tagTriumph", "", """InGameUI\triumph.tex""", 10, 5, Summon),
+		new MasterySkill(PackModifier, "tagPack", "", "", 10, 2, Summon),
 	]);
 
 	private readonly Mock<IDatabase> _database = new();
@@ -59,6 +72,23 @@ public class CharacterStatsServiceBuffTests
 		Record(PetAura, "Skill_BuffRadius").Set(Text("buffSkillName", PetAuraBuff.Raw));
 		Record(PetAuraBuff, "SkillBuff_Passive");
 		Record(Wolf, "Pet").Set(Text("skillName3", PetAura.Raw));
+
+		// Battle Standard spawns the pet of its level, which casts its aura (and a buff on itself); Triumph gives it one more.
+		Record(Summon, "Skill_SpawnPet").Set(new Variable("spawnObjects", VariableDataType.StringVar, 2) { [0] = Standard1.Raw, [1] = Standard2.Raw });
+		var standard = Record(Standard2, "Pet");
+		standard.Set(Text("skillName1", StandardAura.Raw));
+		standard.Set(new Variable("skillLevel1", VariableDataType.Integer, 1) { [0] = 7 });
+		standard.Set(Text("skillName2", StandardSelfBuff.Raw));
+		standard.Set(new Variable("skillLevel2", VariableDataType.Integer, 1) { [0] = 2 });
+		standard.Set(Text("skillName3", TriumphAura.Raw));
+		Record(StandardAura, "Skill_BuffRadius").Set(Text("buffSkillName", StandardAuraBuff.Raw));
+		Record(StandardAuraBuff, "SkillBuff_Passive");
+		Record(StandardSelfBuff, "Skill_BuffSelfDuration");
+		Record(Triumph, "SkillSecondary_PetModifier").Set(Text("petSkillName", TriumphAura.Raw));
+		// Triumph's banner weakens the monsters around: its buff is marked as a debuff.
+		Record(TriumphAura, "Skill_BuffRadius").Set(Text("buffSkillName", TriumphBuff.Raw));
+		Record(TriumphBuff, "SkillBuff_Passive").Set(new Variable("debufSkill", VariableDataType.Integer, 1) { [0] = 1 });
+		Record(PackModifier, "SkillSecondary_PetModifier").Set(Text("petSkillName", PetAura.Raw));
 
 		Applier(CurseApplier1, Curse1, -1);
 		Applier(CurseApplier2, Curse2, -1);
@@ -124,7 +154,7 @@ public class CharacterStatsServiceBuffTests
 
 	private IReadOnlyList<BuffSource> Sources(IReadOnlyList<Item>? equipment = null, IReadOnlyList<RecordId>? saved = null, int difficulty = 0, RecordId? scroll = null)
 		=> this._service.GetBuffSources(new BuffSourceRequest(equipment ?? [], false,
-			[Skill(Mastery, 10), Skill(Passive, 3), Skill(PassiveModifier, 2), Skill(Aura, 4), Skill(PetAura, 5)],
+			[Skill(Mastery, 10), Skill(Passive, 3), Skill(PassiveModifier, 2), Skill(Aura, 4), Skill(PetAura, 5), Skill(Summon, 2), Skill(Triumph, 4), Skill(PackModifier, 3)],
 			[], [Tree], saved ?? [], difficulty, scroll));
 
 	[Fact]
@@ -146,10 +176,39 @@ public class CharacterStatsServiceBuffTests
 		aura.Icon.Should().Be("""InGameUI\aura.tex""", "a toggled aura without icon of its own shows its buff's");
 		aura.Sum[AuraBuff.Raw].Should().Be(4);
 
-		var pet = sources.Single(s => s.Id == "skill:" + PetAura.Normalized);
-		pet.Group.Should().Be(BuffGroup.Pet, "a pet casts it");
-		pet.DefaultOn.Should().BeFalse();
+		sources.Single(s => s.Id == "skill:" + PetAura.Normalized).Group.Should().Be(BuffGroup.Active,
+			"a skill the character learns is the character's, even when a pet casts it too (Rally)");
 		sources.Single(s => s.Id == "skill:" + Mastery.Normalized).Group.Should().Be(BuffGroup.Passive);
+	}
+
+	[Fact]
+	public void GetBuffSources_PetAuras_TheSummonsPetAndThePetModifiers_Off()
+	{
+		var sources = this.Sources();
+		var pets = sources.Where(s => s.Group == BuffGroup.Pet).ToList();
+
+		pets.Select(p => (p.RecordId, p.Level, p.DefaultOn)).Should().BeEquivalentTo([(StandardAura, 7, false), (PetAura, 3, false)],
+			"the pet of the summon's level casts its aura at its own level, a pet modifier at the modifier's; the pet's buff on itself, "
+			+ "a skill at level 0 and a debuff (Triumph) are left out");
+		var standard = pets.Single(p => p.RecordId == StandardAura);
+		standard.Id.Should().Be("pet:" + StandardAura.Normalized);
+		standard.NameTag.Should().Be("tagBattleStandard", "an aura without a name of its own takes the summon's");
+		standard.Icon.Should().Be("""InGameUI\standard.tex""");
+		standard.Sum[StandardAuraBuff.Raw].Should().Be(7);
+		pets.Single(p => p.RecordId == PetAura).NameTag.Should().Be("tagPack", "an aura without a name of its own takes the modifier's");
+		sources.Should().NotContain(s => s.RecordId == Summon || s.RecordId == Triumph || s.RecordId == PackModifier, "the summon and the modifier add nothing themselves");
+	}
+
+	[Fact]
+	public void GetBuffSources_PetAuras_ASummonAnItemGrants()
+	{
+		var item = Gear("ArmorJewelry_Ring", 1);
+		this._items.Setup(p => p.GetGrantedSkillLevels(item)).Returns([(Summon, 2)]);
+
+		var aura = this._service.GetBuffSources(new BuffSourceRequest([item], false, [], [], [], [], 0, null)).Single(s => s.Group == BuffGroup.Pet);
+
+		aura.RecordId.Should().Be(StandardAura);
+		aura.Origins.Should().Equal(item);
 	}
 
 	[Fact]

@@ -24,7 +24,6 @@ public partial class CharacterStatsService
 	private List<RecordId>? _curses;
 	private List<(RecordId Buff, string Name, int Difficulty)>? _shrines;
 	private List<RecordId>? _tartarus;
-	private HashSet<RecordId>? _petSkills;
 	private List<BuffScroll>? _scrolls;
 
 	/// <summary>The pools read from the database are the active map's: a mod can add to them.</summary>
@@ -33,7 +32,6 @@ public partial class CharacterStatsService
 		this._curses = null;
 		this._shrines = null;
 		this._tartarus = null;
-		this._petSkills = null;
 		this._scrolls = null;
 	}
 
@@ -45,7 +43,6 @@ public partial class CharacterStatsService
 
 		// A modifier adds to the skill it modifies, which toggles both.
 		var learned = this.LearnedSkills(request.Skills, request.Augments, request.Trees);
-		var petSkills = this.PetSkills();
 		foreach (var skill in learned.Where(s => s.ParentId is null))
 		{
 			var sum = new AttributeSum();
@@ -53,13 +50,14 @@ public partial class CharacterStatsService
 			foreach (var modifier in learned.Where(s => skill.Id.Equals(s.ParentId)))
 				sum.Add(modifier.Sum);
 
-			var group = skill.Role == SkillStatRole.Passive ? BuffGroup.Passive
-				: petSkills.Contains(skill.Id) ? BuffGroup.Pet : BuffGroup.Active;
+			var group = skill.Role == SkillStatRole.Passive ? BuffGroup.Passive : BuffGroup.Active;
 			sources.Add(this.SkillSource("skill:", skill, group, sum));
 		}
 
 		foreach (var skill in this.GrantedSkills(request.Equipment, request.UseAlternate))
 			sources.Add(this.SkillSource("granted:", skill, skill.Role == SkillStatRole.Passive ? BuffGroup.Passive : BuffGroup.Active, skill.Sum));
+
+		sources.AddRange(this.PetAuraSources(request));
 
 		// The curses the save keeps start on; any other permanent buff it keeps too (a mod's), as a curse.
 		var saved = request.SavedBuffs.ToHashSet();
@@ -257,15 +255,6 @@ public partial class CharacterStatsService
 			.Where(id => id.Normalized.Contains(TartarusPlayerFolder, StringComparison.OrdinalIgnoreCase))
 			.Where(id => this._itemProvider.GetRecordAttributes(id, 1).Values.Count != 0)
 			.Order()];
-
-	/// <summary>The skills the pets cast (<c>skillName1</c>... of the <c>Pet</c> records): a learned one is a pet aura.</summary>
-	private HashSet<RecordId> PetSkills()
-		=> this._petSkills ??= [.. this.RecordsOfClass("Pet")
-			.Select(this._database.GetRecordFromFile)
-			.SelectMany(r => r is null ? [] : r.Where(v => v.Name.StartsWith("skillName", StringComparison.OrdinalIgnoreCase)
-				&& v.DataType == VariableDataType.StringVar && v.NumberOfValues > 0).Select(v => v.GetString(0)))
-			.Where(s => !string.IsNullOrEmpty(s))
-			.Select(s => s.ToRecordId())];
 
 	/// <summary>The records of the loaded databases (the custom map's, Immortal Throne's, the base game's), each once.</summary>
 	private IEnumerable<RecordId> AllRecordIds()
