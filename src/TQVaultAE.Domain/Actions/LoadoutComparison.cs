@@ -105,13 +105,14 @@ public static class LoadoutComparison
 	}
 
 	/// <summary>The cell columns of the middle slots (head, neck, body, legs, rings).</summary>
-	private const int MiddleColumnFirst = 4;
+	public const int MiddleColumnFirst = 4;
 
 	/// <inheritdoc cref="MiddleColumnFirst"/>
-	private const int MiddleColumnLast = 5;
+	public const int MiddleColumnLast = 5;
 
 	/// <summary>The cells of a slot: its box for a weapon slot (the whole box, top and bottom tips included).</summary>
-	private static (Point Location, Size Size) SlotCells(int slot)
+	/// <param name="slot">The equipment slot.</param>
+	public static (Point Location, Size Size) SlotCells(int slot)
 	{
 		if (slot < 0 || slot > EquipmentRules.ArtifactSlot)
 			throw new ArgumentOutOfRangeException(nameof(slot), slot, "Not an equipment slot.");

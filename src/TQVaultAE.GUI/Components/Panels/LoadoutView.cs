@@ -9,12 +9,15 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// The loadout panel in place of the statistics panel: the slot half of the equipment background and the
 /// <see cref="LoadoutPanel"/> over it, both the main equipment's geometry times one factor so that the slots fall on
-/// their frames at every zoom and DPI, and a small Back arrow in the upper right corner that returns to the statistics.
+/// their frames at every zoom and DPI, with the game's small gold buttons in the gaps of the stone: Back (returns to the
+/// statistics) in the upper right, previous and next loadout in the lower left and right.
 /// </summary>
 public sealed class LoadoutView : Control
 {
 	private readonly IUIService _uiService;
-	private readonly BackArrow _back;
+	private readonly GameButton _back;
+	private readonly GameButton _previous;
+	private readonly GameButton _next;
 
 	/// <summary>The equipment background picture, the part of it with the slots, and where the main equipment draws that
 	/// part, relative to the equipment panel and at the window's scale.</summary>
@@ -22,6 +25,9 @@ public sealed class LoadoutView : Control
 
 	/// <summary>Where the slots picture is drawn in this view.</summary>
 	private Rectangle _pictureBounds;
+
+	/// <summary>The size of the slots of the equipment panel at the window's scale, as last laid out.</summary>
+	private Size _slotsPanelSize;
 
 	/// <summary>Initializes a new instance of the LoadoutView class.</summary>
 	/// <param name="dragInfo">The drag shared by every panel.</param>
@@ -34,11 +40,18 @@ public sealed class LoadoutView : Control
 		this.Name = "loadoutView";
 
 		this.Panel = new LoadoutPanel(dragInfo, services);
-		this._back = new BackArrow(this._uiService) { Name = "loadoutBackButton" };
+		this._back = new GameButton(this._uiService, """InGameUI\tutorial\buttonback{0}01.tex""", Resources.LoadoutBack) { Name = "loadoutBackButton" };
 		this._back.Pressed += (_, _) => this.BackRequested?.Invoke(this, EventArgs.Empty);
+		this._previous = new GameButton(this._uiService, """InGameUI\characterscreen\characterrotateleft{0}01.tex""", Resources.LoadoutPrevious) { Name = "loadoutPreviousButton" };
+		this._previous.Pressed += (_, _) => this.TurnRequested?.Invoke(this, -1);
+		this._next = new GameButton(this._uiService, """InGameUI\characterscreen\characterrotateright{0}01.tex""", Resources.LoadoutNext) { Name = "loadoutNextButton" };
+		this._next.Pressed += (_, _) => this.TurnRequested?.Invoke(this, 1);
 		this.Controls.Add(this.Panel);
-		this.Controls.Add(this._back);
-		this._back.BringToFront();
+		foreach (var button in new[] { this._back, this._previous, this._next })
+		{
+			this.Controls.Add(button);
+			button.BringToFront();
+		}
 	}
 
 	/// <summary>The loadout panel.</summary>
@@ -47,12 +60,32 @@ public sealed class LoadoutView : Control
 	/// <summary>The Back arrow, which returns to the statistics panel.</summary>
 	internal Control BackButton => this._back;
 
+	/// <summary>The arrow that shows the previous loadout.</summary>
+	internal Control PreviousButton => this._previous;
+
+	/// <summary>The arrow that shows the next loadout.</summary>
+	internal Control NextButton => this._next;
+
 	/// <summary>Raised when the user clicks the Back arrow.</summary>
 	public event EventHandler? BackRequested;
 
+	/// <summary>Raised when the user clicks the previous (-1) or next (+1) arrow.</summary>
+	public event EventHandler<int>? TurnRequested;
+
+	/// <summary>Whether the previous and next arrows can be clicked: greyed with a single loadout.</summary>
+	public bool CanTurn
+	{
+		get => this._next.Enabled;
+		set
+		{
+			this._previous.Enabled = value;
+			this._next.Enabled = value;
+		}
+	}
+
 	/// <summary>
 	/// Lays the view out in its bounds: the slots picture and the loadout panel take the largest factor of the main
-	/// equipment's geometry that fits (whole-pixel cells), centred; the Back arrow sits in the upper right corner.
+	/// equipment's geometry that fits (whole-pixel cells), centred; the buttons sit in the gaps of the stone.
 	/// </summary>
 	/// <param name="picture">The equipment background picture.</param>
 	/// <param name="source">The part of the picture with the slots.</param>
@@ -61,6 +94,9 @@ public sealed class LoadoutView : Control
 	public void LayOut(Bitmap picture, Rectangle source, Rectangle target, Size slotsPanelSize)
 	{
 		this._slotsPicture = (picture, source, target);
+		this._slotsPanelSize = slotsPanelSize;
+		if (this.Width <= 0 || this.Height <= 0)
+			return;
 
 		// The region to show, relative to the equipment panel: the slots picture and the slot cells.
 		var region = Rectangle.Union(target, new Rectangle(Point.Empty, slotsPanelSize));
@@ -85,15 +121,29 @@ public sealed class LoadoutView : Control
 		var pictureLocation = Scaled(target.Location);
 		this._pictureBounds = new Rectangle(pictureLocation, new Size(Convert.ToInt32(target.Width * factor), Convert.ToInt32(target.Height * factor)));
 
-		// The game's "back" arrow, at the height of the loadout bar's Load arrow.
-		float scale = this._uiService.Scale;
-		var arrow = new Size(Convert.ToInt32(BackArrow.DesignSize.Width * scale), Convert.ToInt32(BackArrow.DesignSize.Height * scale));
-		int margin = Convert.ToInt32(4 * scale);
-		var backBounds = new Rectangle(new Point(this.Width - arrow.Width - margin, margin), arrow);
-		if (this._back.Bounds != backBounds)
-			this._back.Bounds = backBounds;
+		// The buttons in the gaps of the stone, at the panel's cell size.
+		var (back, previous, next) = LoadoutPanel.ButtonCells();
+		void Place(Control button, RectangleF cells)
+		{
+			var bounds = this.Panel.CellsToPixels(cells);
+			bounds.Offset(panelLocation);
+			if (button.Bounds != bounds)
+				button.Bounds = bounds;
+		}
+
+		Place(this._back, back);
+		Place(this._previous, previous);
+		Place(this._next, next);
 
 		this.Invalidate();
+	}
+
+	/// <summary>Resized by its room: laid out again in its new bounds.</summary>
+	protected override void OnResize(EventArgs e)
+	{
+		base.OnResize(e);
+		if (this._slotsPicture is var (picture, source, target))
+			this.LayOut(picture, source, target, this._slotsPanelSize);
 	}
 
 	/// <inheritdoc/>
@@ -113,32 +163,41 @@ public sealed class LoadoutView : Control
 		g.DrawImage(picture, this._pictureBounds, source.X, source.Y, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
 	}
 
-	/// <summary>The Back arrow: the game's gold "back" arrow, with its hover and pressed pictures.</summary>
-	private sealed class BackArrow : Control
+	/// <summary>
+	/// A small button drawn with one of the game's button pictures, in its up, over, down and disable states; its action
+	/// is raised from the mouse up (a synthetic click from the automation endpoint works too).
+	/// </summary>
+	private sealed class GameButton : Control
 	{
-		private const string Up = """InGameUI\tutorial\buttonbackup01.tex""";
-		private const string Over = """InGameUI\tutorial\buttonbackover01.tex""";
-		private const string Down = """InGameUI\tutorial\buttonbackdown01.tex""";
-
-		/// <summary>The size at scale 1: the 16 x 20 picture, a little larger than the loadout bar's Load arrow.</summary>
-		internal static readonly Size DesignSize = new(20, 25);
-
 		private readonly IUIService _uiService;
+		private readonly string _resource;
 		private readonly ToolTip _toolTip = new();
 		private bool _hovered;
 		private bool _pressed;
 
-		/// <summary>Raised when the left button is released over the arrow it went down on.</summary>
+		/// <summary>Raised when the left button is released over the button it went down on.</summary>
 		internal event EventHandler? Pressed;
 
-		internal BackArrow(IUIService uiService)
+		/// <param name="uiService">The UI service, which loads the pictures.</param>
+		/// <param name="resource">The pictures' id, with {0} for the state: up, over, down or disable.</param>
+		/// <param name="text">The tool tip and accessible name.</param>
+		internal GameButton(IUIService uiService, string resource, string text)
 		{
 			this._uiService = uiService;
+			this._resource = resource;
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			this.BackColor = Color.Transparent;
 			this.Cursor = Cursors.Hand;
-			this.AccessibleName = Resources.LoadoutBack;
-			this._toolTip.SetToolTip(this, Resources.LoadoutBack);
+			this.AccessibleName = text;
+			this._toolTip.SetToolTip(this, text);
+		}
+
+		protected override void OnEnabledChanged(EventArgs e)
+		{
+			base.OnEnabledChanged(e);
+			this.Cursor = this.Enabled ? Cursors.Hand : Cursors.Default;
+			this._hovered = this._pressed = false;
+			this.Invalidate();
 		}
 
 		protected override void OnMouseEnter(EventArgs e)
@@ -169,7 +228,7 @@ public sealed class LoadoutView : Control
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
-			bool clicked = this._pressed && e.Button == MouseButtons.Left && this.ClientRectangle.Contains(e.Location);
+			bool clicked = this._pressed && this.Enabled && e.Button == MouseButtons.Left && this.ClientRectangle.Contains(e.Location);
 			this._pressed = false;
 			this.Invalidate();
 			if (clicked)
@@ -179,7 +238,8 @@ public sealed class LoadoutView : Control
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			string resource = this._pressed ? Down : this._hovered ? Over : Up;
+			string state = !this.Enabled ? "disable" : this._pressed ? "down" : this._hovered ? "over" : "up";
+			string resource = string.Format(System.Globalization.CultureInfo.InvariantCulture, this._resource, state);
 			GamePicture.Draw(e.Graphics, this._uiService.LoadBitmap(resource.ToRecordId()), this.ClientRectangle);
 		}
 

@@ -7724,6 +7724,24 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("LoadoutBack", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Previous loadout.
+        /// </summary>
+        public static string LoadoutPrevious {
+            get {
+                return ResourceManager.GetString("LoadoutPrevious", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Next loadout.
+        /// </summary>
+        public static string LoadoutNext {
+            get {
+                return ResourceManager.GetString("LoadoutNext", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Gear swap.

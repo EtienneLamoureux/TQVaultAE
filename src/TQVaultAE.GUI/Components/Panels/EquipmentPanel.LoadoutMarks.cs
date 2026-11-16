@@ -72,15 +72,19 @@ public partial class EquipmentPanel
 	}
 
 	/// <summary>Where a mark is drawn, in the panel's pixels: its place in cells times the cell size, so it follows zoom and DPI.</summary>
-	public Rectangle MarkScreenBounds(LoadoutSlotMark mark)
+	public Rectangle MarkScreenBounds(LoadoutSlotMark mark) => this.CellsToPixels(mark.Bounds);
+
+	/// <summary>A place given in cells (x, y from the top left cell, fractions allowed), in the panel's pixels.</summary>
+	/// <param name="cells">The place in cells.</param>
+	public Rectangle CellsToPixels(RectangleF cells)
 	{
 		var origin = this.CellTopLeft(Point.Empty);
 		float unit = this.UnitSize;
 		return Rectangle.Round(new RectangleF(
-			origin.X + (mark.Bounds.X * unit),
-			origin.Y + (mark.Bounds.Y * unit),
-			mark.Bounds.Width * unit,
-			mark.Bounds.Height * unit));
+			origin.X + (cells.X * unit),
+			origin.Y + (cells.Y * unit),
+			cells.Width * unit,
+			cells.Height * unit));
 	}
 
 	/// <summary>The mark under a point of the panel, if any.</summary>

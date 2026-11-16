@@ -2419,6 +2419,12 @@ Quitter l'éditeur sans appliquer les changements ?</value>
 	<data name="LoadoutBack" xml:space="preserve">
     <value>Retour aux statistiques</value>
   </data>
+	<data name="LoadoutPrevious" xml:space="preserve">
+    <value>Tenue précédente</value>
+  </data>
+	<data name="LoadoutNext" xml:space="preserve">
+    <value>Tenue suivante</value>
+  </data>
 	<data name="LoadoutSwap" xml:space="preserve">
     <value>Échanger l'équipement</value>
   </data>

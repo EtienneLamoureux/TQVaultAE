@@ -22,6 +22,16 @@ public partial class StashPanel
 	/// <summary>Gets the Edit button under the statistics panel; null before the first character is shown.</summary>
 	internal Button? AutomationEditButton => this._editButton;
 
+	/// <summary>A control of the stash panel or of its room (statistics, loadout panel, loadout bar), in the stash panel's pixels.</summary>
+	/// <param name="control">The control.</param>
+	internal Rectangle AutomationBounds(Control control)
+	{
+		var bounds = control.Bounds;
+		for (var parent = control.Parent; parent is not null && parent != this; parent = parent.Parent)
+			bounds.Offset(parent.Location);
+		return bounds;
+	}
+
 	/// <summary>Runs the Edit button's click handler, which shows the character editor in place of the main content.</summary>
 	internal void AutomationClickEdit() => this.EditButton_Click(this, EventArgs.Empty);
 

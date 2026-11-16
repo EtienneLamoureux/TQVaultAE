@@ -62,6 +62,9 @@ public partial class StashPanel
 	/// <summary>The loadout chosen in the bar as a second equipment panel, in place of the statistics panel.</summary>
 	private LoadoutView? _loadoutView;
 
+	/// <summary>The room right of the equipment slots: the statistics or the loadout panel, the loadout bar, the Edit button.</summary>
+	private CharacterRoom? _room;
+
 	/// <summary>
 	/// True from the moment the user chooses a loadout in the bar until the Back arrow (or another character): the
 	/// loadout panel then shows in place of the statistics panel.
@@ -100,15 +103,9 @@ public partial class StashPanel
 		bool show = this.Player?.PlayerInfo is not null && this.equipmentPanel.Visible && this.CurrentBag == BagIdConstants.BAGID_EQUIPMENTPANEL;
 		if (!show)
 		{
-			if (this._statsPanel is not null)
-				this._statsPanel.Visible = false;
-			if (this._editButton is not null)
-				this._editButton.Visible = false;
-			if (this._loadoutBar is not null)
-				this._loadoutBar.Visible = false;
 			// Hidden, the loadout panel keeps its slots: a piece held from them may go to another tab.
-			if (this._loadoutView is not null)
-				this._loadoutView.Visible = false;
+			if (this._room is not null)
+				this._room.Visible = false;
 			// No bar shown, no loadout to compare with (another character may come without its statistics).
 			this.equipmentPanel.ComparedLoadout = null;
 			this._statsTooltip?.Hide();
@@ -116,14 +113,19 @@ public partial class StashPanel
 		}
 
 		var panel = this.EnsureStatsPanel();
+		var room = this._room!;
+		room.EditAllowed = this.USettings.AllowCharacterEdit;
 		this.LayoutStatsPanel(panel);
-		this._editButton!.Visible = this.USettings.AllowCharacterEdit;
-		this._loadoutBar!.Visible = true;
+		if (!room.Visible)
+		{
+			// Over the equipment panel, whose empty cells reach under the room.
+			room.Visible = true;
+			room.BringToFront();
+		}
 
 		// The loadouts may have changed (read again) or the character turned read-only: the bar follows, drawn again
 		// only when it changes; the loadout panel, when open, takes the place of the statistics.
 		this.RefreshLoadouts();
-		panel.Visible = this._loadoutView?.Visible != true;
 
 		if (DisplayPlayerInfoLastName == this.Player!.PlayerName)
 			return;
@@ -184,7 +186,7 @@ public partial class StashPanel
 	/// <param name="set">The shown character's loadouts.</param>
 	private void ShowSelectedLoadout(TQVaultAE.Application.Session.LoadoutSet? set)
 	{
-		if (this._loadoutView is not { } view || this._loadoutBar is not { } bar)
+		if (this._room is not { } room || this._loadoutView is not { } view || this._loadoutBar is not { } bar)
 			return;
 
 		var loadout = set is { ReadFailed: false } ? set.Find(bar.Selected) : null;
@@ -192,18 +194,34 @@ public partial class StashPanel
 
 		// The slots follow the selected loadout even while the statistics show: a piece held from them stays valid.
 		view.Panel.ShowLoadout(loadout is null ? null : set, loadout?.Name, this.Player);
-		if (view.Visible != show)
+		view.CanTurn = set is { ReadFailed: false, Loadouts.Count: > 1 };
+		if (room.LoadoutShown != show)
 		{
-			view.Visible = show;
-
-			// Over the equipment panel, whose empty cells reach under the statistics' room.
-			if (show)
-				view.BringToFront();
-			if (this._statsPanel is not null)
-				this._statsPanel.Visible = !show;
+			room.LoadoutShown = show;
 			if (!show)
 				this._statsTooltip?.Hide();
 		}
+	}
+
+	/// <summary>
+	/// The previous (-1) or next (+1) loadout of the character in the loadout panel, in the order of the bar's list,
+	/// the last one followed by the first.
+	/// </summary>
+	/// <param name="step">-1 or +1.</param>
+	private void TurnLoadout(int step)
+	{
+		if (this._loadoutBar is not { } bar || this.Player is not { } player)
+			return;
+
+		var set = this.Services.Loadouts.Find(System.IO.Path.GetDirectoryName(player.PlayerFile) ?? string.Empty);
+		if (set is not { ReadFailed: false } || set.Loadouts.Count < 2)
+			return;
+
+		var names = set.Loadouts.Select(l => l.Name).ToList();
+		int index = names.FindIndex(n => string.Equals(n, bar.Selected, StringComparison.OrdinalIgnoreCase));
+		int next = (((index < 0 ? 0 : index + step) % names.Count) + names.Count) % names.Count;
+		this._loadoutPanelOpen = true;
+		this.RefreshLoadouts(names[next]);
 	}
 
 	/// <summary>
@@ -271,19 +289,15 @@ public partial class StashPanel
 			this.OnLoadoutAction?.Invoke(this, e);
 		};
 
-		this._loadoutView = new LoadoutView(this.DragInfo, this.Services) { Visible = false };
+		this._loadoutView = new LoadoutView(this.DragInfo, this.Services);
 		this._loadoutView.BackRequested += (_, _) => this.LoadoutPanelOpen = false;
+		this._loadoutView.TurnRequested += (_, step) => this.TurnLoadout(step);
 		this._loadoutView.Panel.PiecesChanged += this.LoadoutPiecesChanged;
 		this.ForwardEvents(this._loadoutView.Panel);
 
-		this.Controls.Add(this._statsPanel);
-		this.Controls.Add(this._loadoutView);
-		this.Controls.Add(editButton);
-		this.Controls.Add(this._loadoutBar);
-		this._statsPanel.BringToFront();
-		this._loadoutView.BringToFront();
-		editButton.BringToFront();
-		this._loadoutBar.BringToFront();
+		this._room = new CharacterRoom(this._statsPanel, this._loadoutView, this._loadoutBar, editButton) { Visible = false };
+		this.Controls.Add(this._room);
+		this._room.BringToFront();
 		this.Disposed += (_, _) =>
 		{
 			this._statsTooltip?.Dispose();
@@ -305,8 +319,8 @@ public partial class StashPanel
 	}
 
 	/// <summary>
-	/// Places the statistics panel on the box of the equipment background, at the game's size times the scale, with the
-	/// loadout bar under its gold bar and the Edit button under the loadout bar; its fonts follow the scale.
+	/// Places the room of the statistics on the black field of the equipment background, the statistics panel at the
+	/// game's size times the scale on the box of the background; the room lays out its parts. The fonts follow the scale.
 	/// </summary>
 	private void LayoutStatsPanel(CharacterStatsPanel panel)
 	{
@@ -346,32 +360,23 @@ public partial class StashPanel
 				font.Dispose();
 		}
 
+		// The room: from the statistics panel's left to the black field's right, from the field's top to its bottom.
 		var location = new Point(PLAYERINFO_TOPRIGHT - PLAYERINFO_WIDTH, PLAYERINFO_TOPHEIGHT);
-		if (panel.Location != location)
-			panel.Location = location;
-
-		// The loadout panel takes the room of the statistics panel.
-		if (this._loadoutView is { } view)
-		{
-			if (view.Bounds != panel.Bounds)
-				view.Bounds = panel.Bounds;
-			if (this.EquipmentSlotsPicture() is var (picture, source, target))
-				view.LayOut(picture, source, target, this.equipmentPanel.SizeFor(LoadoutPanel.SlotCells));
-		}
-
-		// The loadout bar: the whole width of the statistics panel, under its gold bar; the Edit button on the line below.
 		int gap = Convert.ToInt32(4 * scale);
-		var barBounds = new Rectangle(location.X, panel.Bottom + gap, panel.Width, LoadoutBar.HeightAt(scale));
-		if (this._loadoutBar!.Bounds != barBounds)
-			this._loadoutBar.Bounds = barBounds;
+		var field = this.EquipmentField();
+		var roomBounds = Rectangle.FromLTRB(location.X, Math.Min(location.Y, field.Top + gap), field.Right - gap, field.Bottom - gap);
+		var room = this._room!;
+		if (room.Bounds != roomBounds)
+			room.Bounds = roomBounds;
 
-		// Sized from its design at the scale, as the panels are: built in code, it was 137 x 30 whatever the DPI and zoom.
-		var button = this._editButton!;
-		var buttonBounds = new Rectangle(
-			new Point(location.X, barBounds.Bottom + gap),
-			TQVaultAE.Application.Layout.WindowLayout.Scaled(EditButtonDesignSize, scale));
-		if (button.Bounds != buttonBounds)
-			button.Bounds = buttonBounds;
+		// The Edit button is sized from its design at the scale, as the panels are.
+		room.Arrange(
+			new Point(location.X - roomBounds.X, location.Y - roomBounds.Y),
+			TQVaultAE.Application.Layout.WindowLayout.Scaled(EditButtonDesignSize, scale),
+			gap);
+
+		if (this.EquipmentSlotsPicture() is var (picture, source, target))
+			this._loadoutView!.LayOut(picture, source, target, this.equipmentPanel.SizeFor(LoadoutPanel.SlotCells));
 	}
 
 	/// <summary>What the statistics panel shows of the character, from its save: nothing can be changed here.</summary>

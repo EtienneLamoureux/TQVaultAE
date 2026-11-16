@@ -300,7 +300,7 @@ internal static partial class AutomationTools
 				health = info.CalculatedHealth,
 				energy = info.CalculatedMana,
 			};
-			return Serialize(new { visible = panel.Visible, bounds = panel.Bounds, stats = panel.AutomationState(), requirementAttributes });
+			return Serialize(new { visible = panel.Visible, bounds = stash.AutomationBounds(panel), stats = panel.AutomationState(), requirementAttributes });
 		});
 
 	/// <summary>
@@ -315,9 +315,9 @@ internal static partial class AutomationTools
 			throw new McpException("The statistics panel is not shown: select a character and stash bag 0 (equipment).");
 
 		var bitmap = AutomationImages.Render(stash);
-		panel.DrawToBitmap(bitmap, panel.Bounds);
+		panel.DrawToBitmap(bitmap, stash.AutomationBounds(panel));
 		if (stash.AutomationEditButton is { Visible: true } edit)
-			edit.DrawToBitmap(bitmap, edit.Bounds);
+			edit.DrawToBitmap(bitmap, stash.AutomationBounds(edit));
 		return bitmap;
 	}
 

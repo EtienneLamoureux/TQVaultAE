@@ -22,6 +22,41 @@ public sealed class LoadoutPanel : EquipmentPanel
 	/// <summary>The cells the slots take in the equipment panel: columns 0 to 9, rows 0 to 13.</summary>
 	public static readonly Size SlotCells = new(10, 14);
 
+	/// <summary>The size of the Back arrow in cells: its 16 x 20 picture at the cell size of 32 pixels.</summary>
+	private static readonly SizeF BackCells = new(0.5F, 0.625F);
+
+	/// <summary>The size of the previous and next arrows in cells: their 20 x 14 pictures at the cell size of 32 pixels.</summary>
+	private static readonly SizeF TurnCells = new(0.625F, 0.4375F);
+
+	/// <summary>
+	/// Where the panel's buttons sit, in cells, in the gaps of the stone as the marks of the equipment do: the Back arrow
+	/// right of the right column, level with its top; the previous and next arrows left of the left column and right of
+	/// the right column, level with their bottom.
+	/// </summary>
+	public static (RectangleF Back, RectangleF Previous, RectangleF Next) ButtonCells()
+	{
+		float rightTop = float.MaxValue, leftBottom = 0F, rightBottom = 0F, rightEnd = 0F;
+		for (int slot = 0; slot <= EquipmentRules.ArtifactSlot; slot++)
+		{
+			var (location, size) = LoadoutComparison.SlotCells(slot);
+			if (location.X < LoadoutComparison.MiddleColumnFirst)
+				leftBottom = Math.Max(leftBottom, location.Y + size.Height);
+			else if (location.X > LoadoutComparison.MiddleColumnLast)
+			{
+				rightTop = Math.Min(rightTop, location.Y);
+				rightBottom = Math.Max(rightBottom, location.Y + size.Height);
+				rightEnd = Math.Max(rightEnd, location.X + size.Width);
+			}
+		}
+
+		// Centred in the one-cell gaps: column 0 on the left, the column after the right slots on the right.
+		float Centred(float column, float width) => column + ((1F - width) / 2F);
+		return (
+			new RectangleF(Centred(rightEnd, BackCells.Width), rightTop, BackCells.Width, BackCells.Height),
+			new RectangleF(Centred(0F, TurnCells.Width), leftBottom - TurnCells.Height, TurnCells.Width, TurnCells.Height),
+			new RectangleF(Centred(rightEnd, TurnCells.Width), rightBottom - TurnCells.Height, TurnCells.Width, TurnCells.Height));
+	}
+
 	/// <summary>The pieces shown, as the loadout held them when the sack was built or last composed here.</summary>
 	private IReadOnlyList<Item?>? shownPieces;
 

@@ -22,8 +22,9 @@ button of the character editor, when it shows, is on the line below):
 ## Composing a loadout
 
 Choose a loadout in the box: it shows as a second equipment panel in place of the character statistics, with the same
-slots as the equipment, both weapon sets included, and the loadout's pieces in them. Compose it by drag and drop, as
-the equipment:
+slots as the equipment, both weapon sets included, and the loadout's pieces in them. It takes the whole room right of
+the equipment: the **Edit** button is hidden meanwhile and the bar goes down to its line. Compose it by drag and drop,
+as the equipment:
 
 ![The loadout panel in place of the statistics](loadouts/loadout_panel.png)
 
@@ -36,8 +37,11 @@ the equipment:
   set, and with the setting **Enable Item Requirement Restriction** a piece the character cannot use yet is refused.
 - The item menu works on the pieces (properties, compare, search, copy, edit when allowed), except **Move Item To**.
 - The comparison marks stay beside the equipment slots: they follow the pieces you move.
-- The small gold arrow in the upper right corner of the panel (**Back to the statistics**) shows the statistics again.
+- The small gold arrow in the upper right corner of the stone (**Back to the statistics**) shows the statistics again.
   The loadout stays chosen in the box; choose it (or another one) to show the panel again.
+- The two curved arrows in the lower corners of the stone (**Previous loadout**, **Next loadout**) show the character's
+  other loadouts in one click, in the order of the box (after the last comes the first); they are grey with a single
+  loadout.
 
 The changes are kept until you save, as for the other files: the **Save** button, or the save when TQVault closes. Any
 action of the bar that writes the loadouts file (add, update, rename, copy, delete) writes the loadouts as they are

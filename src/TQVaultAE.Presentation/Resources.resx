@@ -2789,6 +2789,12 @@ Leave the editor without applying the changes?</value>
 	<data name="LoadoutBack" xml:space="preserve">
     <value>Back to the statistics</value>
   </data>
+	<data name="LoadoutPrevious" xml:space="preserve">
+    <value>Previous loadout</value>
+  </data>
+	<data name="LoadoutNext" xml:space="preserve">
+    <value>Next loadout</value>
+  </data>
 	<data name="LoadoutSwap" xml:space="preserve">
     <value>Gear swap</value>
   </data>

@@ -109,6 +109,9 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	/// </summary>
 	private static readonly Rectangle EquipmentSlotsStone = Rectangle.FromLTRB(14, 18, 350, 521);
 
+	/// <summary>The gold frame around the black field of the equipment background picture: 6 pixels from each edge.</summary>
+	private const int EquipmentFieldFrame = 6;
+
 	/// <summary>The equipment background drawn wider, without the old box, at the size it was last asked for.</summary>
 	private Bitmap? wideEquipmentBackground;
 
@@ -600,6 +603,21 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 		this.wideEquipmentBackground = wide;
 		return wide;
+	}
+
+	/// <summary>
+	/// The black field of the equipment background as <see cref="WideEquipmentBackground"/> draws it, inside the gold
+	/// frame around it (its inner line is <see cref="EquipmentFieldFrame"/> pixels of the picture from each edge).
+	/// </summary>
+	private Rectangle EquipmentField()
+	{
+		var rect = this.GetBackgroundRect();
+		if (this.equipmentBackground is not { } source || rect.Width <= 0 || rect.Height <= 0)
+			return Rectangle.Empty;
+
+		int frameX = (int)Math.Round(EquipmentFieldFrame * rect.Width / (float)source.Width);
+		int frameY = (int)Math.Round(EquipmentFieldFrame * rect.Height / (float)source.Height);
+		return Rectangle.FromLTRB(rect.X, rect.Y + frameY, rect.X + this.Width - (BorderPad * 2) - frameX, rect.Bottom - frameY);
 	}
 
 	/// <summary>

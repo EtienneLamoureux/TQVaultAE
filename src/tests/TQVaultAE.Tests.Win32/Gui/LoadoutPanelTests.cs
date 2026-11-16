@@ -1,3 +1,4 @@
+using System.Drawing;
 using AwesomeAssertions;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -98,5 +99,27 @@ public sealed class LoadoutPanelTests
 		sack.GetItem(EquipmentRules.Weapon1Slot).IsEmpty.Should().BeTrue();
 		handedBack!.BaseItemId.Should().Be(shield.BaseItemId, "the shield goes to the hand");
 		sack.Take(sack.NumberOfSlots).Should().NotContain(i => i.BaseItemId == shield.BaseItemId, "the slots no longer hold it");
+	}
+
+	[Fact]
+	public void ButtonCells_SitInTheGapsOfTheStone_OverNoSlot()
+	{
+		var (back, previous, next) = LoadoutPanel.ButtonCells();
+		var grid = new RectangleF(PointF.Empty, LoadoutPanel.SlotCells);
+
+		foreach (var button in new[] { back, previous, next })
+		{
+			grid.Contains(button).Should().BeTrue($"{button} stays on the stone of the slots");
+			for (int slot = 0; slot <= EquipmentRules.ArtifactSlot; slot++)
+			{
+				var (location, size) = LoadoutComparison.SlotCells(slot);
+				new RectangleF(location, size).IntersectsWith(button).Should().BeFalse($"{button} leaves slot {slot} free");
+			}
+		}
+
+		back.Top.Should().BeLessThan(previous.Top, "Back is in the upper corner, the turn arrows in the lower ones");
+		previous.Top.Should().Be(next.Top);
+		previous.Left.Should().BeLessThan(LoadoutComparison.MiddleColumnFirst);
+		next.Left.Should().BeGreaterThan(LoadoutComparison.MiddleColumnLast + 1);
 	}
 }

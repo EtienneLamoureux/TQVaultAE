@@ -22,9 +22,9 @@ internal static partial class AutomationTools
 #endif
 
 	[McpServerTool(Name = "loadouts", Destructive = true)]
-	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy, delete and swap (Gear swap: the loadout's pieces and the worn ones change places) click the entry of the bar's right-click menu — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load and swap when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison of the worn piece and the loadout's in a new modeless window (after the call returns; comparison_windows lists and closes them). hover (slot) rests the pointer on the mark of a slot through the panel's mouse handling and returns its tool tip (markTooltip: the state against the loadout, then 'Click to compare' when a click compares); hover without slot leaves the panel. Choosing a loadout (select) opens the loadout panel in place of the statistics panel (panel: visible, bounds in the stash panel's pixels, the loadout shown, cellScaleFactor and unitSize of its cells, the Back arrow's bounds, modified when its pieces changed since the file was written, and its slots with their pieces); its items are driven as panel 'loadout' with pick_item, drop_item, cancel_drag, get_state and the other panel tools. back clicks the panel's Back arrow (any character), which shows the statistics again. Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load, swap and update ask when the game runs) (Debug builds: only on test characters, names starting with 'player-test' or 'player-mod')." + LoadoutsDebugNote)]
+	[Description("The loadouts (saved equipment sets) of the character shown in the stash panel: the loadout bar under the statistics panel (visible, bounds and its parts, names, selected one, whether they can change), the loadouts file, and each loadout's pieces by slot (record, seed, and whether the piece worn in that slot is identical). With menu='list' or 'actions', the entries of the bar's drop-down or right-click menu (text, enabled, checked). The marks beside the equipment slots (slot, match: Same, Different or OneEmpty, canCompare, bounds in the equipment panel's pixels), which compare the worn pieces with the selected loadout. With action, first does it like the user, through the bar: select (name) picks it in the name box's list; add and load click the [+] and Load buttons; update, rename, copy, delete and swap (Gear swap: the loadout's pieces and the worn ones change places) click the entry of the bar's right-click menu — on the selected loadout unless name is given (then picked in the list first). A greyed action is refused, as the bar refuses it (Load and swap when PlayerReadonly is set: loadLocked). add (name), rename (newName) and copy (newName) type the name into the name dialog, queued first as its answer: its own checks run (a used or empty name shows an error box, then the dialog again: queue_dialog_answers). compare (slot) clicks the mark of a slot, which opens the Item Comparison of the worn piece and the loadout's in a new modeless window (after the call returns; comparison_windows lists and closes them). hover (slot) rests the pointer on the mark of a slot through the panel's mouse handling and returns its tool tip (markTooltip: the state against the loadout, then 'Click to compare' when a click compares); hover without slot leaves the panel. Choosing a loadout (select) opens the loadout panel in place of the statistics panel (panel: visible, bounds in the stash panel's pixels, the loadout shown, cellScaleFactor and unitSize of its cells, the bounds of its Back, previous and next arrows in the view's pixels, canTurn (false with a single loadout), modified when its pieces changed since the file was written, and its slots with their pieces); its items are driven as panel 'loadout' with pick_item, drop_item, cancel_drag, get_state and the other panel tools. back clicks the panel's Back arrow (any character), which shows the statistics again; previous and next click its arrows, which show the previous or next loadout of the list (the last followed by the first). Actions other than select and compare run after the call returns (queue the answers of their boxes first: update and delete confirm, load, swap and update ask when the game runs) (Debug builds: only on test characters, names starting with 'player-test' or 'player-mod')." + LoadoutsDebugNote)]
 	public static string Loadouts(
-		[Description("select, add, update, rename, copy, delete, load, swap, compare, hover or back; empty to only read.")] string? action = null,
+		[Description("select, add, update, rename, copy, delete, load, swap, compare, hover, back, previous or next; empty to only read.")] string? action = null,
 		[Description("The loadout (select, and the others instead of the selected one); the new loadout's name for add.")] string? name = null,
 		[Description("The new name for rename and copy.")] string? newName = null,
 		[Description("'list' or 'actions' to read that menu of the bar.")] string? menu = null,
@@ -59,13 +59,20 @@ internal static partial class AutomationTools
 				action = null;
 			}
 
-			// The Back arrow of the loadout panel only shows the statistics again: any character.
-			if (string.Equals(action?.Trim(), "back", StringComparison.OrdinalIgnoreCase))
+			// The buttons of the loadout panel only show the statistics or another loadout: any character.
+			if (action?.Trim().ToLowerInvariant() is "back" or "previous" or "next" && stash.LoadoutView is var view0)
 			{
-				if (stash.LoadoutView is not { Visible: true } shown)
+				if (view0 is not { Visible: true } shown)
 					throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
-				var back = shown.BackButton;
-				AutomationInput.SendClick(back, new Point(back.Width / 2, back.Height / 2), MouseButtons.Left, Keys.None);
+				var button = action.Trim().ToLowerInvariant() switch
+				{
+					"back" => shown.BackButton,
+					"previous" => shown.PreviousButton,
+					_ => shown.NextButton,
+				};
+				if (!button.Enabled)
+					throw new McpException("The button is greyed: the character has a single loadout.");
+				AutomationInput.SendClick(button, new Point(button.Width / 2, button.Height / 2), MouseButtons.Left, Keys.None);
 				action = null;
 			}
 
@@ -127,7 +134,7 @@ internal static partial class AutomationTools
 				bar = bar is null ? null : new
 				{
 					visible = bar.Visible,
-					bounds = bar.Bounds,
+					bounds = stash.AutomationBounds(bar),
 					field = bar.FieldBounds,
 					add = bar.AddBounds,
 					load = bar.LoadBounds,
@@ -141,8 +148,8 @@ internal static partial class AutomationTools
 				// Edit button, and the panel's own size (nothing may go past its bottom).
 				layout = bar is null ? null : new
 				{
-					statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? stats.Bounds : (Rectangle?)null,
-					editButton = stash.AutomationEditButton is { } edit ? edit.Bounds : (Rectangle?)null,
+					statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? stash.AutomationBounds(stats) : (Rectangle?)null,
+					editButton = stash.AutomationEditButton is { } edit ? stash.AutomationBounds(edit) : (Rectangle?)null,
 					editButtonVisible = stash.AutomationEditButton?.Visible,
 					editButtonFont = stash.AutomationEditButton?.Font.ToString(),
 					stashClient = stash.ClientRectangle,
@@ -160,12 +167,15 @@ internal static partial class AutomationTools
 				panel = stash.LoadoutView is not { } view ? null : new
 				{
 					visible = AutomationPanels.IsShown(view) && view.Visible,
-					bounds = view.Bounds,
+					bounds = stash.AutomationBounds(view),
 					loadout = view.Panel.LoadoutName,
 					panelBounds = view.Panel.Bounds,
 					cellScaleFactor = view.Panel.CellScaleFactor,
 					unitSize = view.Panel.UnitSize,
 					back = view.BackButton.Bounds,
+					previous = view.PreviousButton.Bounds,
+					next = view.NextButton.Bounds,
+					canTurn = view.CanTurn,
 					statsPanelVisible = stash.AutomationPlayerStatsPanel?.Visible,
 					slots = view.Panel.Sack?.Take(view.Panel.Sack.NumberOfSlots).Select((item, index) => ItemKey.IsEmptyItem(item) ? null : new
 					{
