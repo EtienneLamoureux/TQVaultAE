@@ -2393,7 +2393,7 @@ Quitter l'éditeur sans appliquer les changements ?</value>
     <value>Aucune tenue</value>
   </data>
 	<data name="LoadoutAdd" xml:space="preserve">
-    <value>Ajouter une tenue de l'équipement porté</value>
+    <value>Ajouter une tenue vide</value>
   </data>
 	<data name="LoadoutAddMenu" xml:space="preserve">
     <value>Ajouter...</value>

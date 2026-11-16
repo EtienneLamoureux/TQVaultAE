@@ -301,7 +301,9 @@ public sealed class ResultsMoveServiceTests : IDisposable
 	{
 		var player = this.Character();
 		Wear(player, EquipmentRules.Ring1Slot, NewItem());
-		this._loadouts.Add(this._loadouts.Read(this._folder, "HeroA", null), "A", player).IsSuccess.Should().BeTrue();
+		var added = this._loadouts.Read(this._folder, "HeroA", null);
+		this._loadouts.Add(added, "A").IsSuccess.Should().BeTrue();
+		this._loadouts.Update(added, "A", player).IsSuccess.Should().BeTrue();
 		var set = this._loadouts.Read(this._folder, "HeroA", null);
 		var ring = set.Loadouts[0].Pieces[EquipmentRules.Ring1Slot]!;
 		// As the search database places it.

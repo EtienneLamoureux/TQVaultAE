@@ -20,7 +20,7 @@ public sealed partial class LoadoutServiceTests
 	private LoadoutSet WithLoadoutA(out Item helm)
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false, (0, Piece("helm", 1)))).IsSuccess.Should().BeTrue();
+		this.AddWearing(set, "A", Wearing(false, (0, Piece("helm", 1)))).IsSuccess.Should().BeTrue();
 		helm = set.Loadouts[0].Pieces[0]!;
 		return set;
 	}

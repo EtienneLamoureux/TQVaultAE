@@ -38,11 +38,10 @@ public interface ILoadoutService
 	/// <param name="current">The loadout being renamed, which may keep its name with another case.</param>
 	LoadoutNameError ValidateName(LoadoutSet loadouts, string? name, string? current = null);
 
-	/// <summary>Records the worn equipment as a new loadout and writes the file.</summary>
+	/// <summary>Adds an empty loadout and writes the file.</summary>
 	/// <param name="loadouts">The character's loadouts.</param>
 	/// <param name="name">The new loadout's name.</param>
-	/// <param name="player">The character, whose equipment and weapon set in hand are recorded.</param>
-	LoadoutChange Add(LoadoutSet loadouts, string name, PlayerCollection player);
+	LoadoutChange Add(LoadoutSet loadouts, string name);
 
 	/// <summary>
 	/// Merges the worn equipment into a loadout (copies of the worn pieces replace the loadout's, slots empty on the

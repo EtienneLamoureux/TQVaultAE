@@ -49,7 +49,7 @@ public sealed partial class LoadoutServiceTests
 	private LoadoutSet WithLoadout(string name, bool useAlternate, params (int Slot, Item Item)[] pieces)
 	{
 		var set = this.Read();
-		this._service.Add(set, name, Wearing(useAlternate, pieces)).IsSuccess.Should().BeTrue();
+		this.AddWearing(set, name, Wearing(useAlternate, pieces)).IsSuccess.Should().BeTrue();
 		return set;
 	}
 

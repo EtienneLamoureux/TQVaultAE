@@ -7645,7 +7645,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add a loadout of the gear worn now.
+        ///   Looks up a localized string similar to Add an empty loadout.
         /// </summary>
         public static string LoadoutAdd {
             get {

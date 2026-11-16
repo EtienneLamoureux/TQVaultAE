@@ -10,7 +10,8 @@ On the **Equipment** tab, under the character statistics (the **Edit** button go
 ![The loadout bar under the gold](loadouts/loadout_bar.png)
 
 - The box lists the character's loadouts: click it to choose one.
-- **[+]** records the gear worn now as a new loadout, under a name you type (unique per character, case ignored).
+- **[+]** adds an empty loadout, under a name you type (unique per character, case ignored). Fill it in the
+  [loadout panel](#composing-a-loadout) or with **Update with the gear worn now**.
 - The gold arrow (**Load**) wears the chosen loadout. Grey with nothing to load, for a read-only character, or with the
   setting **Player Equipment ReadOnly** (its tool tip says why).
 - Right click: **Load**, **Gear swap**, **Update with the gear worn now** ([below](#update), asks first), **Rename**,

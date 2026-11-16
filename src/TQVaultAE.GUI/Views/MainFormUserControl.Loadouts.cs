@@ -129,10 +129,10 @@ public partial class MainFormUserControl
 		return change.IsSuccess;
 	}
 
-	/// <summary>Records the worn equipment as a new loadout, under the name asked.</summary>
+	/// <summary>Adds an empty loadout, under the name asked.</summary>
 	private bool AddLoadout()
 	{
-		if (this.ChangeableLoadouts() is not var (player, loadouts))
+		if (this.ChangeableLoadouts() is not var (_, loadouts))
 			return false;
 
 		var name = this.AskLoadoutName(loadouts, string.Empty);
@@ -140,7 +140,7 @@ public partial class MainFormUserControl
 			return false;
 
 		this.PutBackHeldItem();
-		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Add(loadouts, name, player), name.Trim(), name);
+		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Add(loadouts, name), name.Trim(), name);
 	}
 
 	/// <summary>Merges the worn equipment into a loadout, once confirmed.</summary>

@@ -90,14 +90,15 @@ public partial class LoadoutService(
 	}
 
 	/// <inheritdoc/>
-	public LoadoutChange Add(LoadoutSet loadouts, string name, PlayerCollection player)
+	public LoadoutChange Add(LoadoutSet loadouts, string name)
 	{
 		if (this.ValidateName(loadouts, name) is var error and not LoadoutNameError.None)
 			return LoadoutChange.Refused(error);
-		if (loadouts.ReadFailed || player.EquipmentSack is null)
+		if (loadouts.ReadFailed)
 			return LoadoutChange.Missing;
 
-		return this.Write(loadouts, [.. loadouts.Loadouts, Record(name.Trim(), player)]);
+		var empty = new Loadout(name.Trim(), false, new Item?[EquipmentRules.ArtifactSlot + 1]);
+		return this.Write(loadouts, [.. loadouts.Loadouts, empty]);
 	}
 
 	/// <inheritdoc/>
@@ -190,10 +191,6 @@ public partial class LoadoutService(
 		var change = this.Write(loadouts, [.. list]);
 		return (change, change.IsSuccess ? putBack : []);
 	}
-
-	/// <summary>A loadout of the worn equipment: copies of the pieces, and the weapon set in hand.</summary>
-	private static Loadout Record(string name, PlayerCollection player)
-		=> new(name, player.UseAlternate, [.. player.EquipmentSack!.Select(item => ItemKey.IsEmptyItem(item) ? null : item.Clone())]);
 
 	/// <inheritdoc/>
 	public bool Compose(LoadoutSet loadouts, string name, IReadOnlyList<Item?> pieces)

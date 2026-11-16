@@ -2763,7 +2763,7 @@ Leave the editor without applying the changes?</value>
     <value>No loadout</value>
   </data>
 	<data name="LoadoutAdd" xml:space="preserve">
-    <value>Add a loadout of the gear worn now</value>
+    <value>Add an empty loadout</value>
   </data>
 	<data name="LoadoutAddMenu" xml:space="preserve">
     <value>Add...</value>

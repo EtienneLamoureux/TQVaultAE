@@ -13,13 +13,13 @@ public enum LoadoutBarAction
 	/// <summary>Another loadout is selected in the list.</summary>
 	Select,
 
-	/// <summary>Records the worn equipment as a new loadout ([+] button).</summary>
+	/// <summary>Adds an empty loadout ([+] button).</summary>
 	Add,
 
 	/// <summary>Loads the selected loadout (Load button or menu).</summary>
 	Load,
 
-	/// <summary>Records the worn equipment over the selected loadout.</summary>
+	/// <summary>Merges the worn equipment into the selected loadout.</summary>
 	Update,
 
 	/// <summary>Renames the selected loadout.</summary>

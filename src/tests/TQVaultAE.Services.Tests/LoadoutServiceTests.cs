@@ -74,37 +74,37 @@ public sealed partial class LoadoutServiceTests : IDisposable
 
 	private LoadoutSet Read() => this._service.Read(this._save, "HeroA", CharacterMod);
 
+	/// <summary>A loadout of the given worn gear: an empty one, then updated with it.</summary>
+	private LoadoutChange AddWearing(LoadoutSet set, string name, PlayerCollection player)
+		=> this._service.Add(set, name) is { IsSuccess: true } ? this._service.Update(set, name, player) : LoadoutChange.Missing;
+
 	[Fact]
-	public void Add_ThenReadAgain_GivesIdenticalPiecesSlotBySlotAndTheWeaponSetInHand()
+	public void Add_GivesAnEmptyLoadout_WhateverIsWorn()
+	{
+		this._service.Add(this.Read(), "Fire set").IsSuccess.Should().BeTrue();
+
+		var loadout = this.Read().Loadouts.Should().ContainSingle().Subject;
+		loadout.Name.Should().Be("Fire set");
+		loadout.UseAlternate.Should().BeFalse();
+		loadout.Items.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void AddThenUpdate_ThenReadAgain_GivesIdenticalPiecesSlotBySlotAndTheWeaponSetInHand()
 	{
 		var helm = Piece("helm", 11);
 		var ring = Piece("ring", 22);
 		var player = Wearing(true, (0, helm), (EquipmentRules.Ring2Slot, ring));
 
-		this._service.Add(this.Read(), "Fire set", player).IsSuccess.Should().BeTrue();
+		this.AddWearing(this.Read(), "Fire set", player).IsSuccess.Should().BeTrue();
 		var read = this.Read();
 
 		var loadout = read.Loadouts.Should().ContainSingle().Subject;
-		loadout.Name.Should().Be("Fire set");
 		loadout.UseAlternate.Should().BeTrue();
 		ItemIdentityComparer.Instance.Equals(loadout.Pieces[0], helm).Should().BeTrue();
 		ItemIdentityComparer.Instance.Equals(loadout.Pieces[EquipmentRules.Ring2Slot], ring).Should().BeTrue();
 		loadout.Items.Should().HaveCount(2);
 		loadout.Pieces[0]!.ContainerMod.Should().Be(CharacterMod, "a piece is read with the character's map");
-		this._itemProvider.Verify(p => p.GetDBData(It.IsAny<Item>()), Times.Exactly(2));
-	}
-
-	[Fact]
-	public void Add_KeepsCopies_NotTheWornItems()
-	{
-		var helm = Piece("helm", 11);
-		var player = Wearing(false, (0, helm));
-		var set = this.Read();
-
-		this._service.Add(set, "A", player);
-		helm.Seed = 99;
-
-		set.Loadouts[0].Pieces[0]!.Seed.Should().Be(11);
 	}
 
 	[Theory]
@@ -114,10 +114,10 @@ public sealed partial class LoadoutServiceTests : IDisposable
 	public void Add_NameAlreadyUsedIgnoringCaseAndSpaces_IsRefusedAndTheFileUnchanged(string name)
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false));
+		this._service.Add(set, "A");
 		var before = File.ReadAllText(this.LoadoutsFile);
 
-		var result = this._service.Add(set, name, Wearing(false, (0, Piece("helm", 1))));
+		var result = this._service.Add(set, name);
 
 		result.NameError.Should().Be(LoadoutNameError.AlreadyUsed);
 		File.ReadAllText(this.LoadoutsFile).Should().Be(before);
@@ -125,13 +125,13 @@ public sealed partial class LoadoutServiceTests : IDisposable
 
 	[Fact]
 	public void Add_EmptyName_IsRefused()
-		=> this._service.Add(this.Read(), "  ", Wearing(false)).NameError.Should().Be(LoadoutNameError.Empty);
+		=> this._service.Add(this.Read(), "  ").NameError.Should().Be(LoadoutNameError.Empty);
 
 	[Fact]
 	public void Update_MergesTheWornPiecesAsCopies_AndKeepsTheLoadoutsPiecesOfTheEmptySlots()
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false, (0, Piece("helm", 1)), (2, Piece("torso", 2))));
+		this.AddWearing(set, "A", Wearing(false, (0, Piece("helm", 1)), (2, Piece("torso", 2))));
 		var wornTorso = Piece("torso", 3);
 		var player = Wearing(true, (2, wornTorso), (EquipmentRules.Ring1Slot, Piece("ring", 4)));
 
@@ -151,8 +151,8 @@ public sealed partial class LoadoutServiceTests : IDisposable
 	public void Rename_ToAnotherCaseOfItsName_IsAllowed_ToAnotherLoadoutsName_IsRefused()
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false));
-		this._service.Add(set, "B", Wearing(false));
+		this._service.Add(set, "A");
+		this._service.Add(set, "B");
 
 		this._service.Rename(set, "A", "a").IsSuccess.Should().BeTrue();
 		this._service.Rename(set, "a", "b").NameError.Should().Be(LoadoutNameError.AlreadyUsed);
@@ -164,7 +164,7 @@ public sealed partial class LoadoutServiceTests : IDisposable
 	public void Copy_GivesTheSamePiecesAsOtherItems()
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(true, (0, Piece("helm", 1))));
+		this.AddWearing(set, "A", Wearing(true, (0, Piece("helm", 1))));
 
 		this._service.Copy(set, "A", "A2").IsSuccess.Should().BeTrue();
 
@@ -179,7 +179,7 @@ public sealed partial class LoadoutServiceTests : IDisposable
 	public void Delete_TheLastLoadout_RemovesTheFile()
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false));
+		this._service.Add(set, "A");
 
 		this._service.Delete(set, "A").IsSuccess.Should().BeTrue();
 
@@ -197,7 +197,7 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		File.WriteAllText(this.LoadoutsFile, "{ not json");
 
 		var set = this.Read();
-		var result = this._service.Add(set, "A", Wearing(false));
+		var result = this._service.Add(set, "A");
 
 		set.ReadFailed.Should().BeTrue();
 		result.IsSuccess.Should().BeFalse();
@@ -208,10 +208,10 @@ public sealed partial class LoadoutServiceTests : IDisposable
 	public void Add_FileCannotBeWritten_FailsAndKeepsTheLoadoutsAsTheyWere()
 	{
 		var set = this.Read();
-		this._service.Add(set, "A", Wearing(false));
+		this._service.Add(set, "A");
 		File.SetAttributes(this.LoadoutsFile, FileAttributes.ReadOnly);
 
-		var result = this._service.Add(set, "B", Wearing(false));
+		var result = this._service.Add(set, "B");
 
 		result.Error.Should().NotBeNull();
 		set.Loadouts.Select(l => l.Name).Should().Equal("A");

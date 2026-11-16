@@ -17,7 +17,7 @@ public sealed partial class LoadoutServiceTests
 	private LoadoutSet WithLoadoutB(out Item loadoutHelm, out Item loadoutTorso)
 	{
 		var set = this.Read();
-		this._service.Add(set, "B", Wearing(true, (EquipmentRules.HeadSlot, Piece("helmB", 1)), (EquipmentRules.BodySlot, Piece("torsoB", 2))))
+		this.AddWearing(set, "B", Wearing(true, (EquipmentRules.HeadSlot, Piece("helmB", 1)), (EquipmentRules.BodySlot, Piece("torsoB", 2))))
 			.IsSuccess.Should().BeTrue();
 		loadoutHelm = set.Loadouts[0].Pieces[EquipmentRules.HeadSlot]!;
 		loadoutTorso = set.Loadouts[0].Pieces[EquipmentRules.BodySlot]!;
@@ -114,7 +114,7 @@ public sealed partial class LoadoutServiceTests
 	public void Swap_BothEmptySameWeaponSet_ChangesNothing()
 	{
 		var set = this.Read();
-		this._service.Add(set, "Empty", Wearing(false));
+		this._service.Add(set, "Empty");
 		var player = Wearing(false);
 		player.EquipmentSack!.IsModified = false;
 
