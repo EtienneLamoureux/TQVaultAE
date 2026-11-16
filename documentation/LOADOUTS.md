@@ -12,10 +12,8 @@ On the **Equipment** tab, under the character statistics (the **Edit** button go
 - The box lists the character's loadouts: click it to choose one.
 - **[+]** adds an empty loadout, under a name you type (unique per character, case ignored). Fill it in the
   [loadout panel](#composing-a-loadout) or with **Update with the gear worn now**.
-- The gold arrow (**Load**) wears the chosen loadout. Grey with nothing to load, for a read-only character, or with the
-  setting **Player Equipment ReadOnly** (its tool tip says why).
-- Right click: **Load**, **Gear swap**, **Empty loadout** ([below](#empty-loadout)), **Update with the gear worn now**
-  ([below](#update), asks first), **Rename**, **Copy**, **Delete** (asks first), **Add**.
+- Right click: **Gear swap** ([below](#gear-swap)), **Empty loadout** ([below](#empty-loadout)), **Update with the
+  gear worn now** ([below](#update), asks first), **Rename**, **Copy**, **Delete** (asks first), **Add**.
 
 ## Composing a loadout
 
@@ -48,25 +46,13 @@ While a loadout is chosen, a mark beside each equipment slot compares the worn p
 
 ![The marks beside the equipment slots](loadouts/loadout_marks.png)
 
-- **Blue**: the same piece (item, affixes, relics or charms, seed). Load keeps it.
+- **Blue**: the same piece (item, affixes, relics or charms, seed).
 - **Red**: different. Rings or weapon sets worn the other way round count as different.
 - **Grey**: one side empty. No mark when both are.
 
 Click a blue or red mark for the [item comparison](ITEMCOMPARE.md) (worn piece first). Hover a mark for its state.
 The marks follow every change, and are hidden for a read-only character or with no loadout chosen. A held item counts
 as out of its slot.
-
-## Load
-
-- A worn piece identical to the loadout's stays on, moved to its slot if needed.
-- The other pieces are put on as copies of the saved ones.
-- Worn pieces the loadout does not use go to the **vault bag shown**. Without room, nothing changes (status line).
-- With **Replace the worn pieces instead of storing them in the vault** (Settings, **Loadouts**), they are deleted
-  instead, after a confirmation (unless **Bypass Confirmation Messages**).
-- The loadout's weapon set is put in hand. Requirements are not checked, as in the game.
-
-A loadout keeps **copies** for **Load** and **Update**: loading it while its sword lies in a vault gives a second
-sword. Use **Gear swap** to move pieces instead.
 
 ## Update
 
@@ -77,13 +63,17 @@ sword. Use **Gear swap** to move pieces instead.
 - A two-handed weapon cannot stay beside another piece: its weapon set is then taken whole from the worn gear.
 - The weapon set in hand is recorded.
 
+The loadout gets **copies**: the worn pieces stay on. Use **Gear swap** to move pieces instead.
+
 ## Gear swap
 
 **Gear swap** (bar menu, or the button under the rings) exchanges the loadout's pieces and the worn ones, slot by slot:
 
 - Nothing is copied, stored or deleted; no vault needed. Empty slots exchange too. The weapon set in hand follows.
 - **Gear swap** again swaps back.
-- Refused like **Load** (read-only character, **Player Equipment ReadOnly**); asks first while the game runs.
+- Requirements are not checked, as in the game.
+- Refused for a read-only character or with **Player Equipment ReadOnly** (greyed, its tool tip says why); asks first
+  while the game runs.
 
 ## Empty loadout
 
@@ -99,7 +89,7 @@ Saved like a move by hand: **Save**, or on closing.
 
 ## Good to know
 
-- The game overwrites the save of the character it plays: TQVault asks before **Load**, **Gear swap** and **Update**
+- The game overwrites the save of the character it plays: TQVault asks before **Gear swap** and **Update**
   while the game runs.
 - Modded characters: pieces use the character's mod; taken out into a bag of another mod, they take that bag's mod
   ([mod links](MODLINK.md)).
