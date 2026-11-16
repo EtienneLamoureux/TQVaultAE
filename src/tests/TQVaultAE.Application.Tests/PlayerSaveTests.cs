@@ -66,6 +66,21 @@ public class PlayerSaveTests
 	}
 
 	[Fact]
+	public void ToString_ClassClearedByAChangeOfMasteries_TheClassTheMasteriesMake()
+	{
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
+		_translationServiceMock.Setup(t => t.TranslateXTag("x4tagNeidanWarfare", true, true)).Returns("Daoist");
+		_translationServiceMock.Setup(t => t.TranslateXTag("tagMenuImport05", false, false, false)).Returns("Level");
+		var info = new PlayerInfo(_pathIOMock.Object) { Class = string.Empty, CurrentLevel = 84 };
+		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Skills\Warfare\WarfareMastery.dbr""", skillLevel = 40 });
+		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Xpack4\Skills\Neidan\NeidanMastery.dbr""", skillLevel = 40 });
+
+		var playerSave = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object) { Info = info };
+
+		playerSave.ToString().Should().StartWith("Hero, Daoist - ");
+	}
+
+	[Fact]
 	public void ToString_IsImmortalThroneOmitsTQMarker()
 	{
 		// Arrange
