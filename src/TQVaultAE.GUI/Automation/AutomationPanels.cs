@@ -28,6 +28,9 @@ internal static class AutomationPanels
 	public const string Equipment = "equipment";
 	public const string Loadout = "loadout";
 
+	/// <summary>The equipment of a floating character window: this prefix and the character's name.</summary>
+	public const string CharacterWindowPrefix = "window:";
+
 	/// <summary>
 	/// Lists the item grids that currently exist. Must run on the UI thread.
 	/// </summary>
@@ -65,6 +68,9 @@ internal static class AutomationPanels
 			// The loadout panel, once the statistics panel was shown (a loadout chosen in the bar shows it).
 			Add(Loadout, stash.LoadoutPanel, stash);
 		}
+
+		foreach (var window in form.AutomationCharacterWindows)
+			Add(CharacterWindowPrefix + window.Save.Name, window.EquipmentPanel, null);
 
 		return result;
 	}

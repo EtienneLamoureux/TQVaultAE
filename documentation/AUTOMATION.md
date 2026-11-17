@@ -118,6 +118,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
   - the statistics panels' Buffs tab: `character_buffs`, `character_buff_toggle`;
+  - floating character windows: `character_window_open`, `character_window`, `character_window_close`;
   - test aids: `create_item`, `picture_fault`, the `gameRunning` and `realGame` parameters of `loadouts`;
   - the headless mode.
 
@@ -668,7 +669,7 @@ General rules:
   - `offense`: tab I's average damage, DPS and attack speed with their inputs: stance, each weapon in hand, the other
     items, bare-hands damage.
 - **`character_buffs(panel?, scroll?, capture?)`** *(Debug)*: shows the Buffs tab (tab 4) of the editor's statistics panel, or
-  of the main window's with `panel="main"`, and reads it: the scroll choice (title, selected, drop-down), then each
+  of the main window's with `panel="main"`, or of a floating character window's with `panel="window:<name>"`, and reads it: the scroll choice (title, selected, drop-down), then each
   section (`Gear`, `Passive`, `Active`, `Pet`, `Curse`, `Shrine`, `Tartarus`, `Scroll`) with its sources: key, name,
   icon, on, bounds in client pixels when in sight, tool tip lines. `scroll` first scrolls the list by game pixels, as the
   wheel. `capture=true` adds a PNG of the panel.
@@ -676,6 +677,15 @@ General rules:
   (scrolled into sight first); `/` is accepted for `\` in the key. `scrollIndex` picks a scroll in the drop-down (0 for
   none; the choices are listed when out of range). Toggles are memory only and never saved: allowed on any character.
   Returns the tab's state.
+- **Floating character windows** *(Debug)*: the window **Pop out** opens (`click_control("TQVaultAE","floatButton")`).
+  - `character_window_open(character, x?, y?)`: opens the window of a listed character (key, name or drop-down label),
+    or brings it to the front; `x`/`y` place it as a window reopened at start. Writes nothing.
+  - `character_window(character?, full?, capture?)`: per window the key, bounds, DPI, scale, cell size, read-only,
+    `sharedWithMain`, the equipped items, the numbers of tabs I-III and the buff keys on; `saved` lists the places
+    kept in `UserConfig.xml`. `full=true` adds each panel's view, `capture=true` a PNG.
+  - `character_window_close(character)`: closes it as its close button (not reopened at start).
+  - Its equipment is panel `window:<name>` for the item tools (`pick_item`, `drop_item`, `get_state`, `capture`...);
+    `character_buffs` / `character_buff_toggle` take `panel="window:<name>"`.
 - **`character_attribute_click(attribute, button?, shift?, modifiers?)`**: clicks the `+` button of an attribute
   (`health`, `energy`, `strength`, `intelligence`, `dexterity`, or 0-4) through the panel's hit test and mouse handler,
   `modifiers` held in the keyboard state (`shift=true` adds Shift). Test characters only.

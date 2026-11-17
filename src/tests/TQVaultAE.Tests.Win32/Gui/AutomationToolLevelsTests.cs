@@ -41,7 +41,7 @@ public sealed class AutomationToolLevelsTests
 	/// <summary>The developer tools: UI internals, raw input, diagnostics, fault injection.</summary>
 	private static readonly string[] DeveloperTools =
 	[
-		"bag_settings_drag_icon", "bag_settings_hover_icon", "capture_results_menu", "character_buff_toggle", "character_buffs", "check_list_items", "click_control", "control_tree",
+		"bag_settings_drag_icon", "bag_settings_hover_icon", "capture_results_menu", "character_buff_toggle", "character_buffs", "character_window", "character_window_close", "character_window_open", "check_list_items", "click_control", "control_tree",
 		"control_values", "create_item", "drag_select", "forge_drag_cursor", "forge_hover", "grid_click", "grid_values",
 		"item_properties_dump", "key_binds_dialog", "list_forms", "list_items", "list_keys", "list_state", "load_resource",
 		"mouse_click", "mouse_wheel", "move_window", "open_form", "open_input_dialog", "picture_fault", "player_stats_fonts",

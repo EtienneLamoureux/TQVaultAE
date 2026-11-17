@@ -27,6 +27,16 @@ public partial class MainForm
 	/// <summary>The comparison windows open, oldest first.</summary>
 	internal IReadOnlyList<Dialogs.ItemComparisonDialog> AutomationComparisons => this.mainView.OpenComparisons;
 
+	/// <summary>The floating character windows open, oldest first.</summary>
+	internal IReadOnlyList<Dialogs.CharacterWindow> AutomationCharacterWindows => this.mainView.CharacterWindows;
+
+	/// <summary>Opens a floating character window like the button beside Edit.</summary>
+	internal Dialogs.CharacterWindow? AutomationOpenCharacterWindow(TQVaultAE.Application.Session.PlayerSave save, Point? place)
+		=> this.mainView.OpenCharacterWindow(save, place);
+
+	/// <summary>The characters of the drop-down list.</summary>
+	internal TQVaultAE.Application.Session.PlayerSave[] AutomationListedCharacters => this.mainView.ListedCharacters();
+
 	/// <summary>Zooms like Ctrl + / Ctrl - (delta 0.1 / -0.1) or Ctrl Home (delta 1, back to 100 %).</summary>
 	internal void AutomationZoom(float delta) => this.ResizeFormCallback(this, new ResizeEventArgs(delta));
 
