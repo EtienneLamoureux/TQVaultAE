@@ -158,6 +158,17 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_AttackDamageToHealth_CountsAsAbsoluteDamage_WithTheTotalModifier()
+	{
+		// 10 % converted to health: 10 in the weapon part, 10 × 1.5 with +50 % total damage in the whole.
+		var weapon = Sum(("offensiveLifeLeechAverage", 10));
+
+		var values = CharacterOffenseCalculator.Damage(Input([weapon], skills: Sum(("offensiveTotalDamageModifier", 50))));
+
+		values.Should().Be(new OffenseValues(10, 5, 15, 15));
+	}
+
+	[Fact]
 	public void Damage_PierceShare_OfThePhysicalResult_GoesThroughThePierceEquation()
 	{
 		// A character's Iron Sudis in the game: 17-31 physical, 30 % pierce, 2-8 lightning, 99 Str, 115 Dex, 50 Int, 72 %:

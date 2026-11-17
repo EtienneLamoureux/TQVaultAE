@@ -166,6 +166,10 @@ public static class CharacterOffenseCalculator
 		}
 
 		damage += Scale(flat["offensiveLife" + Avg], modifiers["offensiveLifeModifier"] + total);
+
+		// The attack damage converted to health is an absolute entry too, without equation: a character's Ahmose's
+		// Ceremonial Axe (10 %) and Fang of Unnamed Horror dual wielded show 1384 + 699 in the game, 1379 + 697 without it.
+		damage += Scale(flat["offensiveLifeLeech" + Avg], modifiers["offensiveLifeLeechModifier"] + total);
 		damage += Equation("poisonDamageEquation", Scale(flat["offensivePoison" + Avg], modifiers["offensivePoisonModifier"] + total), "poisonDamageDV");
 
 		// Damage over time: its per-second value, added once (the window does not multiply it by the duration).
