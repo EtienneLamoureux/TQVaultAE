@@ -181,6 +181,7 @@ public partial class StashPanel
 		bar.ShowLoadouts([.. set?.Loadouts.Select(l => l.Name) ?? []], select, set is not null && !set.ReadFailed && !player!.IsReadOnly, equipmentLocked);
 		this.CompareWithSelectedLoadout();
 		this.ShowSelectedLoadout(set);
+		this.ShownLoadoutsChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>
@@ -254,6 +255,7 @@ public partial class StashPanel
 	{
 		this.CompareWithSelectedLoadout();
 		this.equipmentPanel.Invalidate();
+		this.ShownLoadoutsChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>

@@ -56,7 +56,10 @@ public partial class MainFormUserControl
 			return null;
 		}
 
-		var window = new CharacterWindow(owner, save, player, this.DragInfo, this.stashPanel.SlotsGeometry);
+		var window = new CharacterWindow(owner, save, player, this.DragInfo, this.stashPanel.SlotsGeometry, this);
+
+		// Move to: the vault shown or the transfer stash, placed as from the main window's panels.
+		window.EquipmentPanel.OnAutoMoveItem += this.AutoMoveItemCallback;
 		window.EquipmentChanged += this.CharacterWindowEquipmentChanged;
 		window.PlaceChanged += (_, _) => this.RememberCharacterWindow(window);
 		window.FormClosed += (_, e) =>
@@ -121,6 +124,14 @@ public partial class MainFormUserControl
 		var player = this.stashPanel.Player;
 		foreach (var window in this.CharacterWindows.Where(w => player is not null && ReferenceEquals(w.Player, player)))
 			window.EquipmentChangedElsewhere();
+	}
+
+	/// <summary>The main window showed the loadouts of its character again: the character's floating window lists them again.</summary>
+	private void ShownLoadoutsChanged()
+	{
+		var player = this.stashPanel.Player;
+		foreach (var window in this.CharacterWindows.Where(w => player is not null && ReferenceEquals(w.Player, player)))
+			window.LoadoutsChanged();
 	}
 
 	/// <summary>

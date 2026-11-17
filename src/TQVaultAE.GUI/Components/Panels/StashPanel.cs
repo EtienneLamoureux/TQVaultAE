@@ -315,6 +315,12 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	/// </summary>
 	internal event EventHandler? ShownEquipmentChanged;
 
+	/// <summary>
+	/// The loadouts of the shown character were shown again (one added, renamed, deleted or given other pieces): a floating
+	/// window listing them follows.
+	/// </summary>
+	internal event EventHandler? ShownLoadoutsChanged;
+
 	/// <summary>The character editor was left: the statistics are computed and shown again.</summary>
 	internal void CharacterEdited()
 	{

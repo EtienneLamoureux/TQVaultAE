@@ -1,6 +1,7 @@
 using System.Globalization;
 using TQVaultAE.Application.Layout;
 using TQVaultAE.Application.Session;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.GUI.Components.Panels;
@@ -17,9 +18,10 @@ namespace TQVaultAE.GUI.Dialogs;
 /// (I, II, III, Buffs), so that a toggle of the Buffs tab shows its effect on every number at once. A modeless window
 /// owned by the main window, one per character (<see cref="Views.MainFormUserControl.OpenCharacterWindow"/>); its buff
 /// toggles are its own, in memory only. Items go to and from the main window by drag and drop, with the main window's
-/// rules; changes are saved by the main window's Save.
+/// rules; changes are saved by the main window's Save. Under tab II, a list and two arrows show a loadout's pieces
+/// read-only in place of the equipment, the statistics computed with them; Compare opens through the main window.
 /// </summary>
-internal sealed class CharacterWindow : VaultForm
+internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 {
 	/// <summary>The name of the window's form.</summary>
 	public const string FormName = "CharacterWindow";
@@ -34,6 +36,23 @@ internal sealed class CharacterWindow : VaultForm
 	private readonly CharacterStatsPanel[] _tabs;
 	private readonly CharacterStatsSource _stats;
 	private readonly CharacterStatsLook _look;
+	private readonly IItemComparisonHost _comparisonHost;
+	private readonly GameButton _previousLoadout;
+	private readonly GameButton _nextLoadout;
+	private readonly ComboBox _loadoutBox;
+	private readonly ToolTip _toolTip = new();
+
+	/// <summary>The font of the loadout list, made at the window's scale.</summary>
+	private Font? _loadoutFont;
+
+	/// <summary>The loadout shown in place of the equipment, or null for the equipment worn.</summary>
+	private string? _loadoutName;
+
+	/// <summary>The pieces of the loadout shown, as the loadout held them when its slots were built.</summary>
+	private IReadOnlyList<Item?>? _shownPieces;
+
+	/// <summary>Set while the list is filled in code: its selection is not the user's.</summary>
+	private bool _fillingLoadouts;
 
 	/// <summary>Set while the window lays itself out: its moves are not the user's.</summary>
 	private bool _layingOut;
@@ -44,8 +63,9 @@ internal sealed class CharacterWindow : VaultForm
 	/// <param name="player">The character's loaded save, shared with the main window.</param>
 	/// <param name="dragInfo">The drag shared by every panel of the main window.</param>
 	/// <param name="slotsGeometry">The slots picture and cells of the main equipment, at the main window's scale.</param>
+	/// <param name="comparisonHost">The main content, which opens the item comparisons.</param>
 	public CharacterWindow(MainForm owner, PlayerSave save, PlayerCollection player, ItemDragInfo dragInfo,
-		Func<(Bitmap Picture, Rectangle Source, Rectangle Target, Size Slots)?> slotsGeometry)
+		Func<(Bitmap Picture, Rectangle Source, Rectangle Target, Size Slots)?> slotsGeometry, IItemComparisonHost comparisonHost)
 		: base(owner.Services)
 	{
 		this.Owner = owner;
@@ -53,6 +73,7 @@ internal sealed class CharacterWindow : VaultForm
 		this.Player = player;
 		this._dragInfo = dragInfo;
 		this._slotsGeometry = slotsGeometry;
+		this._comparisonHost = comparisonHost;
 
 		// Laid out in code at the user's zoom and the window's own DPI (LayOutContent), again when either changes.
 		this.UserZoomForLayout();
@@ -61,6 +82,9 @@ internal sealed class CharacterWindow : VaultForm
 		this.StartPosition = FormStartPosition.Manual;
 		this.Text = string.Format(CultureInfo.CurrentCulture, Resources.CharacterWindowTitle, save.Name);
 		this.KeyPreview = true;
+
+		// The main window's marble, stretched, as Advanced Search.
+		MarbleBackground.ApplyTo(this, MarbleBackground.Marble.MainWindow);
 
 		this._equipment = new CharacterWindowEquipmentPanel(dragInfo, this.Services, save)
 		{
@@ -89,8 +113,23 @@ internal sealed class CharacterWindow : VaultForm
 			this.EquipmentChanged?.Invoke(this, EventArgs.Empty);
 		};
 
+		// The loadouts: the previous and next arrows of the loadout panel around a list headed by the equipment worn.
+		this._previousLoadout = new GameButton(this.UIService, LoadoutView.PreviousPicture, Resources.LoadoutPrevious) { Name = "characterWindowPreviousLoadout" };
+		this._previousLoadout.Pressed += (_, _) => this.TurnLoadout(-1);
+		this._nextLoadout = new GameButton(this.UIService, LoadoutView.NextPicture, Resources.LoadoutNext) { Name = "characterWindowNextLoadout" };
+		this._nextLoadout.Pressed += (_, _) => this.TurnLoadout(1);
+		this._loadoutBox = new ComboBox { Name = "characterWindowLoadout", DropDownStyle = ComboBoxStyle.DropDownList, TabStop = false };
+		DarkComboBox.Apply(this._loadoutBox);
+		this._loadoutBox.SelectionChangeCommitted += (_, _) =>
+		{
+			if (!this._fillingLoadouts)
+				this.ShowLoadout(this._loadoutBox.SelectedIndex <= 0 ? null : this._loadoutBox.SelectedItem as string);
+		};
+		this._toolTip.SetToolTip(this._loadoutBox, Resources.LoadoutTitle);
+
 		this.Controls.Add(this._slots);
 		this.Controls.AddRange(this._tabs);
+		this.Controls.AddRange([this._previousLoadout, this._loadoutBox, this._nextLoadout]);
 
 		// Tab I's gold bar goes on under tab II: tab I in front.
 		this._tabs[0].BringToFront();
@@ -98,6 +137,7 @@ internal sealed class CharacterWindow : VaultForm
 		this.DrawCustomBorder = true;
 		this.ResizeCustomAllowed = false;
 		this._equipment.Sack = player.EquipmentSack;
+		this.FillLoadouts();
 	}
 
 	/// <summary>The character shown.</summary>
@@ -111,6 +151,12 @@ internal sealed class CharacterWindow : VaultForm
 
 	/// <summary>The statistics panels, tab I first.</summary>
 	internal IReadOnlyList<CharacterStatsPanel> StatsPanels => this._tabs;
+
+	/// <summary>The loadout shown in place of the equipment, or null for the equipment worn.</summary>
+	internal string? LoadoutName => this._loadoutName;
+
+	/// <summary>The character's loadouts, in the order of the list (after the equipment worn).</summary>
+	internal IReadOnlyList<string> LoadoutNames => [.. this.Loadouts()?.Loadouts.Select(l => l.Name) ?? []];
 
 	/// <summary>The buff toggles of this window.</summary>
 	internal Application.Character.BuffSelection Buffs => this._stats.Buffs;
@@ -147,9 +193,120 @@ internal sealed class CharacterWindow : VaultForm
 		this.ReleaseDrag();
 		this.Player = player;
 		this._equipment.PlayerCollection = player;
+		this._equipment.ShowsLoadout = false;
 		this._equipment.Sack = player.EquipmentSack;
+		this._shownPieces = null;
+		this.FillLoadouts();
+		this.ShowLoadout(this._loadoutName);
+	}
+
+	/// <summary>
+	/// The loadouts changed in the main window (added, renamed, deleted, other pieces): the list is filled again and the
+	/// loadout shown follows; a loadout gone gives the equipment worn back.
+	/// </summary>
+	public void LoadoutsChanged()
+	{
+		this.FillLoadouts();
+		this.ShowLoadout(this._loadoutName);
+	}
+
+	/// <summary>
+	/// Shows a loadout's pieces, read-only, in place of the equipment, or the equipment worn (null, or a loadout not
+	/// found); the statistics are computed with the pieces shown. An item held from the equipment goes back first.
+	/// </summary>
+	/// <param name="name">The loadout, or null.</param>
+	internal void ShowLoadout(string? name)
+	{
+		var set = this.Loadouts();
+		var loadout = name is null || set is not { ReadFailed: false } ? null : set.Find(name);
+		if (loadout is null)
+		{
+			this._loadoutName = null;
+			this._shownPieces = null;
+			if (this._equipment.ShowsLoadout || !ReferenceEquals(this._equipment.Sack, this.Player.EquipmentSack))
+			{
+				this.ReleaseDrag();
+				this._equipment.ShowsLoadout = false;
+				this._equipment.Sack = this.Player.EquipmentSack;
+			}
+		}
+		else
+		{
+			this._loadoutName = loadout.Name;
+			if (!this._equipment.ShowsLoadout || !ReferenceEquals(loadout.Pieces, this._shownPieces))
+			{
+				this.ReleaseDrag();
+				this._shownPieces = loadout.Pieces;
+				this._equipment.ShowsLoadout = true;
+				this._equipment.Sack = LoadoutPanel.BuildSack(loadout, this.Player.EquipmentSack?.NumberOfSlots ?? EquipmentRules.ArtifactSlot + 1, set!.Mod);
+			}
+		}
+
+		this.SelectLoadoutInList();
 		this.EquipmentChangedElsewhere();
 	}
+
+	/// <summary>The character's loadouts, read with its save; null when there are none to read.</summary>
+	private LoadoutSet? Loadouts()
+		=> this.Services.Loadouts.Find(Path.GetDirectoryName(this.Player.PlayerFile) ?? string.Empty);
+
+	/// <summary>Fills the list: the equipment worn, then the loadouts; the arrows are greyed without a loadout.</summary>
+	private void FillLoadouts()
+	{
+		List<string> names = this.Loadouts() is { ReadFailed: false } set ? [.. set.Loadouts.Select(l => l.Name)] : [];
+		List<string> items = [Resources.CharacterWindowCurrentGear, .. names];
+		if (!this._loadoutBox.Items.Cast<string>().SequenceEqual(items, StringComparer.Ordinal))
+		{
+			this._fillingLoadouts = true;
+			try
+			{
+				this._loadoutBox.BeginUpdate();
+				this._loadoutBox.Items.Clear();
+				this._loadoutBox.Items.AddRange([.. items]);
+				this._loadoutBox.EndUpdate();
+			}
+			finally
+			{
+				this._fillingLoadouts = false;
+			}
+		}
+
+		this._previousLoadout.Available = names.Count > 0;
+		this._nextLoadout.Available = names.Count > 0;
+		this.SelectLoadoutInList();
+	}
+
+	/// <summary>Selects the loadout shown in the list (the equipment worn first).</summary>
+	private void SelectLoadoutInList()
+	{
+		int index = this._loadoutName is null ? 0 : Math.Max(0, this._loadoutBox.Items.IndexOf(this._loadoutName));
+		if (this._loadoutBox.SelectedIndex == index || index >= this._loadoutBox.Items.Count)
+			return;
+
+		this._fillingLoadouts = true;
+		try
+		{
+			this._loadoutBox.SelectedIndex = index;
+		}
+		finally
+		{
+			this._fillingLoadouts = false;
+		}
+	}
+
+	/// <summary>The previous (-1) or next (+1) entry of the list, the equipment worn included, the last followed by the first.</summary>
+	internal void TurnLoadout(int step)
+	{
+		int count = this._loadoutBox.Items.Count;
+		if (count < 2)
+			return;
+
+		int next = (((Math.Max(0, this._loadoutBox.SelectedIndex) + step) % count) + count) % count;
+		this.ShowLoadout(next == 0 ? null : this._loadoutBox.Items[next] as string);
+	}
+
+	/// <summary>Compare from this window's equipment: the comparison opens through the main window, as from its panels.</summary>
+	void IItemComparisonHost.ShowComparison(Item first, Item second) => this._comparisonHost.ShowComparison(first, second);
 
 	/// <summary>Lays the content out again (the main window's scale changed: its equipment geometry follows).</summary>
 	public void Relayout()
@@ -212,6 +369,8 @@ internal sealed class CharacterWindow : VaultForm
 			for (int i = 0; i < this._tabs.Length; i++)
 				this._tabs[i].Location = tabBounds[i].Location + (Size)origin;
 
+			this.LayOutLoadoutSelector(tabBounds, origin, scale);
+
 			slotsBounds.Offset(origin);
 			this._slots.Bounds = slotsBounds;
 			this._slots.LayOut(picture, source, target, slots, scale / mainScale);
@@ -224,6 +383,40 @@ internal sealed class CharacterWindow : VaultForm
 		{
 			this._layingOut = false;
 		}
+	}
+
+	/// <summary>
+	/// The loadout list and its arrows under tab II, right of tab I's gold bar, as high as the gold bar's boxes; the list's
+	/// font follows the scale.
+	/// </summary>
+	private void LayOutLoadoutSelector(IReadOnlyList<Rectangle> tabBounds, Point origin, float scale)
+	{
+		var (previous, box, next) = CharacterWindowLayout.LoadoutSelector(tabBounds[0], tabBounds[1],
+			CharacterStatsPanel.GoldBarBounds, LoadoutView.TurnPictureSize, LoadoutBar.ReferenceHeight, scale);
+		previous.Offset(origin);
+		box.Offset(origin);
+		next.Offset(origin);
+		this._previousLoadout.Bounds = previous;
+		this._nextLoadout.Bounds = next;
+
+		var font = this._look.Light(15F, FontStyle.Regular);
+		if (this._loadoutFont is null || Math.Abs(this._loadoutFont.Size - font.Size) > 0.01F || this._loadoutFont.FontFamily.Name != font.FontFamily.Name)
+		{
+			var old = this._loadoutFont;
+			this._loadoutFont = new Font(font.FontFamily, font.Size, font.Style, font.Unit);
+			this._loadoutBox.Font = this._loadoutFont;
+			old?.Dispose();
+		}
+
+		DarkComboBox.FitHeight(this._loadoutBox, box.Height);
+		this._loadoutBox.Bounds = box;
+	}
+
+	/// <summary>Back in front: the loadouts may have changed in the main window meanwhile.</summary>
+	protected override void OnActivated(EventArgs e)
+	{
+		base.OnActivated(e);
+		this.LoadoutsChanged();
 	}
 
 	/// <inheritdoc/>
@@ -292,7 +485,11 @@ internal sealed class CharacterWindow : VaultForm
 	protected override void Dispose(bool disposing)
 	{
 		if (disposing)
+		{
 			this._look.Dispose();
+			this._toolTip.Dispose();
+			this._loadoutFont?.Dispose();
+		}
 
 		base.Dispose(disposing);
 	}

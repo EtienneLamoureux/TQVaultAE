@@ -907,6 +907,15 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CharacterWindowTitle", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Current gear.
+        /// </summary>
+        public static string CharacterWindowCurrentGear {
+            get {
+                return ResourceManager.GetString("CharacterWindowCurrentGear", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Class.

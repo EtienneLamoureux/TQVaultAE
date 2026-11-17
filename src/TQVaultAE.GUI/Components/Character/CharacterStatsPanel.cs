@@ -238,6 +238,9 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>The panel's size at a scale of 1, the gold bar under it included (wider than the panel above it).</summary>
 	public static Size DesignSize => new(Math.Max(CharacterPanelLayout.Width, GoldBarWidth), GoldTop + GoldBarHeight);
 
+	/// <summary>The gold bar under the panel, at a scale of 1, from the panel's top-left.</summary>
+	public static Rectangle GoldBarBounds => new(0, GoldTop, GoldBarWidth, GoldBarHeight);
+
 	/// <summary>The panel's size at a scale of 1 without the gold bar (<see cref="GoldBarShown"/>): its picture's width.</summary>
 	public static Size DesignSizeWithoutGoldBar => new(PictureWidth, GoldTop + GoldBarHeight);
 

@@ -1133,6 +1133,9 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CharacterWindowTitle" xml:space="preserve">
     <value>{0} - Personnage</value>
   </data>
+	<data name="CharacterWindowCurrentGear" xml:space="preserve">
+    <value>Équipement actuel</value>
+  </data>
 	<data name="Masteries" xml:space="preserve">
     <value>Maîtrises</value>
   </data>

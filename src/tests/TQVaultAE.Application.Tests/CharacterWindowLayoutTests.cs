@@ -40,6 +40,29 @@ public class CharacterWindowLayoutTests
 		content.Width.Should().Be(510 + (4 * 9) + (4 * 384));
 	}
 
+	[Theory]
+	[InlineData(1F)]
+	[InlineData(1.5F)]
+	public void LoadoutSelector_RightOfTheGoldBarUnderTabII(float scale)
+	{
+		var (_, stats, _) = CharacterWindowLayout.Arrange(Slots, First, Stats, scale);
+		var goldBar = new Rectangle(0, 400, 296, 30);
+
+		var (previous, box, next) = CharacterWindowLayout.LoadoutSelector(stats[0], stats[1], goldBar, new Size(20, 14), 22, scale);
+
+		int gap = (int)Math.Round(CharacterWindowLayout.Gap * scale);
+		int middle = stats[0].Y + (int)Math.Round(415 * scale);
+		previous.Left.Should().Be(stats[0].X + (int)Math.Round(296 * scale) + gap);
+		next.Right.Should().Be(stats[1].Right);
+		previous.Size.Should().Be(new Size((int)Math.Round(20 * scale), (int)Math.Round(14 * scale)));
+		next.Size.Should().Be(previous.Size);
+		box.Left.Should().Be(previous.Right + gap);
+		box.Right.Should().Be(next.Left - gap);
+		box.Height.Should().Be((int)Math.Round(22 * scale));
+		foreach (var part in new[] { previous, box, next })
+			(part.Top + (part.Height / 2)).Should().BeInRange(middle - 1, middle + 1, "centred on the gold bar");
+	}
+
 	[Fact]
 	public void FitScale_KeepsTheScaleWhenTheContentFits()
 		=> CharacterWindowLayout.FitScale(1.25F, Slots, First, Stats, new Size(3000, 1500)).Should().Be(1.25F);

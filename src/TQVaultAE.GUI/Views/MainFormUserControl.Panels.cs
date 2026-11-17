@@ -221,6 +221,7 @@ public partial class MainFormUserControl
 				this.OpenCharacterWindow(save);
 		};
 		this.stashPanel.ShownEquipmentChanged += (_, _) => this.ShownCharacterChanged();
+		this.stashPanel.ShownLoadoutsChanged += (_, _) => this.ShownLoadoutsChanged();
 		this.stashPanel.SizeChanged += (_, _) => this.RelayoutCharacterWindows();
 		this.stashPanel.OnLoadoutAction += this.LoadoutActionCallback;
 
@@ -408,7 +409,8 @@ public partial class MainFormUserControl
 
 		if (this.DragInfo.AutoMoveDestination == AutoMoveLocation.Stash)
 		{
-			this.AutoMoveItemToStash();
+			// A floating character window's character may not be the one whose stash shows: its items go to the transfer stash.
+			this.AutoMoveItemToStash(transferStash: sackPanel is CharacterWindowEquipmentPanel);
 			return;
 		}
 
@@ -446,13 +448,14 @@ public partial class MainFormUserControl
 	/// Handles auto-moving an item to the stash panel.
 	/// </summary>
 	// Special Case for moving to stash.
-	private void AutoMoveItemToStash()
+	private void AutoMoveItemToStash(bool transferStash)
 	{
 		var target = AutoMovePlanner.StashTarget(
 			this.stashPanel.CurrentBag
 			, this.stashPanel.Player is not null
 			, this.stashPanel.TransferStash is not null
-			, this.stashPanel.RelicVaultStash is not null);
+			, this.stashPanel.RelicVaultStash is not null
+			, transferStash);
 
 		// The equipment is shown: show the transfer stash instead.
 		if (target.Bag != this.stashPanel.CurrentBag)

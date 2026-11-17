@@ -1174,6 +1174,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
     <value>{0} - Character</value>
     <comment>Title of the floating character window. {0} = character name.</comment>
   </data>
+	<data name="CharacterWindowCurrentGear" xml:space="preserve">
+    <value>Current gear</value>
+    <comment>First entry of the floating character window's loadout list: the equipment worn.</comment>
+  </data>
 	<data name="Masteries" xml:space="preserve">
     <value>Masteries</value>
   </data>
