@@ -555,9 +555,14 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				if (d.Damage == StatDamage.LifeLeech)
 					blocks.AddRange(DamageBlocks(StatDamage.ManaLeech, null, "DamageDurationModifierManaLeach", Game("DamageDurationManaLeach", "Energy Leech")));
 
+				// The damage over time of a direct damage by the game's name ("Burn Damage", "Crushing Damage" for physical,
+				// whose rollover has no such block), not to read as a second block of the direct damage.
 				var tip = new StatToolTip(blocks.Count == 0 ? [new StatToolTipBlock(name, [])] : blocks);
-				return new StatIconView(d.Icon, string.Empty, DamageSources(tip, d.Damage, name, d.DurationDamageTag is { } over && d.DamageTag is not null
-					? Game(over.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal), name) : name));
+				var overName = d.DamageTag is null ? name
+					: Game((d.DurationDamageTag ?? d.DamageTag)
+						.Replace("DamageDurationModifier", "DamageDuration", StringComparison.Ordinal)
+						.Replace("DamageModifier", "DamageDuration", StringComparison.Ordinal), name);
+				return new StatIconView(d.Icon, string.Empty, DamageSources(tip, d.Damage, name, overName));
 			})],
 			Tab3Rows =
 			[
@@ -571,10 +576,11 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				var name = Game(tag, fallback);
 				string Line(string lineTag, string lineFallback, double value)
 					=> CharacterPanelLayout.FormatGameText(Game(lineTag, lineFallback), (long)Math.Round(value), name);
+				// In the game's order: the flat damage, the damage %, the damage taken %.
 				IEnumerable<string> Lines(RacialBonus bonus) =>
 				[
-					Line("RacialBonusPercentDamage", "{%+.0f0}% Damage to {%s1}", bonus.PercentDamage),
 					Line("RacialBonusAbsoluteDamage", "{%+.0f0} Damage to {%s1}", bonus.AbsoluteDamage),
+					Line("RacialBonusPercentDamage", "{%+.0f0}% Damage to {%s1}", bonus.PercentDamage),
 					Line("RacialBonusPercentDefense", "{%+.0f0}% Less Damage from {%s1}", bonus.PercentDefense),
 				];
 
@@ -585,8 +591,8 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 					var bonus = CharacterStatsCalculator.RaceBonus(r, sum);
 					return bonus == default ? [] : [string.Join(", ", Lines(bonus).Where((_, i) => i switch
 					{
-						0 => bonus.PercentDamage != 0,
-						1 => bonus.AbsoluteDamage != 0,
+						0 => bonus.AbsoluteDamage != 0,
+						1 => bonus.PercentDamage != 0,
 						_ => bonus.PercentDefense != 0,
 					}))];
 				}));
