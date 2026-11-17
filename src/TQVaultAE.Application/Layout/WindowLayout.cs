@@ -94,4 +94,33 @@ public static class WindowLayout
 
 		return preferred;
 	}
+
+	/// <summary>
+	/// Where a window saved at <paramref name="saved"/> reopens: there, kept within the working area of the screen it
+	/// overlaps most; on the first area when it overlaps none (a monitor unplugged since). A window larger than the area
+	/// keeps its top left corner on it.
+	/// </summary>
+	/// <param name="saved">The window's saved top left corner.</param>
+	/// <param name="size">The window's size.</param>
+	/// <param name="workingAreas">The working areas of the screens, the primary first.</param>
+	public static Point KeepOnScreen(Point saved, Size size, IReadOnlyList<Rectangle> workingAreas)
+	{
+		if (workingAreas.Count == 0)
+			return saved;
+
+		var window = new Rectangle(saved, size);
+		static long Overlap(Rectangle a, Rectangle b)
+		{
+			var both = Rectangle.Intersect(a, b);
+			return (long)both.Width * both.Height;
+		}
+
+		var area = workingAreas.OrderByDescending(a => Overlap(window, a)).First();
+		if (Overlap(window, area) == 0)
+			area = workingAreas[0];
+
+		return new Point(
+			Math.Clamp(saved.X, area.Left, Math.Max(area.Left, area.Right - size.Width)),
+			Math.Clamp(saved.Y, area.Top, Math.Max(area.Top, area.Bottom - size.Height)));
+	}
 }

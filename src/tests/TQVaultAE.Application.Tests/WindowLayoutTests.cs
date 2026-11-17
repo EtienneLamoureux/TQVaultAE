@@ -124,4 +124,23 @@ public class WindowLayoutTests
 		WindowLayout.Cascade(new Point(10, 10), Window, small, [new Point(10, 10), new Point(0, 0)], step: 30)
 			.Should().Be(new Point(10, 10));
 	}
+
+	// Two monitors: the primary 1920 x 1040 working area, a second one on its left.
+	private static readonly Rectangle[] Screens = [new Rectangle(0, 0, 1920, 1040), new Rectangle(-1600, 0, 1600, 860)];
+
+	[Fact]
+	public void KeepOnScreen_InsideAScreen_StaysThere()
+		=> WindowLayout.KeepOnScreen(new Point(-1500, 100), new Size(800, 500), Screens).Should().Be(new Point(-1500, 100));
+
+	[Fact]
+	public void KeepOnScreen_PartlyOut_PulledIntoTheScreenItOverlapsMost()
+		=> WindowLayout.KeepOnScreen(new Point(1500, 900), new Size(800, 500), Screens).Should().Be(new Point(1120, 540));
+
+	[Fact]
+	public void KeepOnScreen_OnNoScreen_GoesToThePrimary()
+		=> WindowLayout.KeepOnScreen(new Point(5000, 3000), new Size(800, 500), Screens).Should().Be(new Point(1120, 540));
+
+	[Fact]
+	public void KeepOnScreen_LargerThanTheScreen_TopLeftOnIt()
+		=> WindowLayout.KeepOnScreen(new Point(-100, -50), new Size(2500, 1200), Screens).Should().Be(new Point(0, 0));
 }
