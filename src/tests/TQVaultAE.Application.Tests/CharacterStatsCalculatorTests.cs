@@ -126,6 +126,15 @@ public class CharacterStatsCalculatorTests
 	}
 
 	[Fact]
+	public void Abilities_AreTruncated()
+	{
+		// A character in the game: (254 + 365.2 dexterity) × (1 + 28 / 100) = 792.6 shows 792.
+		var stats = Compute(Sum(("characterOffensiveAbility", 254), ("characterOffensiveAbilityModifier", 28), ("characterDexterityModifier", 10)), dexterity: 332);
+
+		stats.OffensiveAbility.Should().Be(792);
+	}
+
+	[Fact]
 	public void DodgeAndDeflect_AreCapped()
 	{
 		var stats = Compute(Sum(("characterDodgePercent", 95), ("characterDeflectProjectile", 12)));

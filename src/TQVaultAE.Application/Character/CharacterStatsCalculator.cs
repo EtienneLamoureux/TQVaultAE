@@ -173,8 +173,9 @@ public static class CharacterStatsCalculator
 				balance.EngineValue("playerSpellCastSpeedCapMin", difficulty, 0), balance.EngineValue("playerSpellCastSpeedCapMax", difficulty, 0))),
 			RunSpeed = Round(Speed(balance.BaseRunSpeed, all, "characterRunSpeed",
 				balance.EngineValue("playerRunSpeedCapMin", difficulty, 0), balance.EngineValue("playerRunSpeedCapMax", difficulty, 0))),
-			OffensiveAbility = Round(Ability(balance.OffensiveAbilityEquation, "offensiveAbility", all, "characterOffensiveAbility", dexterity)),
-			DefensiveAbility = Round(Ability(balance.DefensiveAbilityEquation, "defensiveAbility", all, "characterDefensiveAbility", dexterity)),
+			// Truncated: a character in the game with (254 + 365.2 dexterity) × 1.28 = 792.6 shows 792.
+			OffensiveAbility = (int)Ability(balance.OffensiveAbilityEquation, "offensiveAbility", all, "characterOffensiveAbility", dexterity),
+			DefensiveAbility = (int)Ability(balance.DefensiveAbilityEquation, "defensiveAbility", all, "characterDefensiveAbility", dexterity),
 			Dodge = Round(Math.Min(balance.EngineValue("playerDodgePercentCap", difficulty), Total(0, all, "characterDodgePercent"))),
 			DeflectProjectile = Round(Math.Min(balance.EngineValue("playerDodgeProjectilePercentCap", difficulty), Total(0, all, "characterDeflectProjectile"))),
 			Block = Round(Block(input.Gear, all)),
