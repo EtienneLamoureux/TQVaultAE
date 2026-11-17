@@ -55,13 +55,13 @@ internal static partial class AutomationTools
 			});
 
 		/// <summary>
-		/// The statistics panel of the open character editor, of the main window (its Equipment tab), or the Buffs tab of a
-		/// floating character window (<c>window:&lt;name&gt;</c>).
+		/// The statistics panel of the open character editor, of the main window (its Equipment tab), or a tab of a
+		/// floating character window (<c>window:&lt;name&gt;</c>), its Buffs tab unless <paramref name="windowTab"/> says.
 		/// </summary>
-		private static CharacterStatsPanel FindStatsPanel(string panel)
+		private static CharacterStatsPanel FindStatsPanel(string panel, int windowTab = CharacterStatsPanel.BuffsTab)
 			=> panel.StartsWith(AutomationPanels.CharacterWindowPrefix, StringComparison.OrdinalIgnoreCase)
 				? FindCharacterWindow(AutomationHost.MainForm ?? throw new McpException("The main window is not ready."), panel[AutomationPanels.CharacterWindowPrefix.Length..])
-					.StatsPanels[CharacterStatsPanel.BuffsTab]
+					.StatsPanels[windowTab]
 			: string.Equals(panel, "main", StringComparison.OrdinalIgnoreCase)
 				? AllControls(AutomationHost.MainForm ?? throw new McpException("The main window is not ready."))
 					.OfType<CharacterStatsPanel>().FirstOrDefault(p => p.Name == "PlayerStatsPanel" && p.Visible)

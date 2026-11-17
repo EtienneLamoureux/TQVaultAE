@@ -29,7 +29,7 @@ internal static partial class AutomationTools
 			});
 
 		[McpServerTool(Name = "character_window", ReadOnly = true)]
-		[Description("Reads the floating character windows: per window the character key, bounds, DPI, scale, read-only, the loadout shown in place of the equipment (null: the equipment worn) and the loadouts listed, the loaded save's instance id (changes when the file is read again), the equipment panel's id for the item tools (window:<name>, usable with click_cell, cell_info...), the equipped items, the numbers of tabs I to III (attributes, armor, resistances, rows, offense) and the Buffs toggles that are on. full=true adds each panel's whole view. With character, only that window; capture=true also returns it as a PNG (saved under %TEMP%).")]
+		[Description("Reads the floating character windows: per window the character key, bounds, DPI, scale, read-only, the loadout shown in place of the equipment (null: the equipment worn) and the loadouts listed, the loaded save's instance id (changes when the file is read again), the equipment panel's id for the item tools (window:<name>, usable with click_cell, cell_info...), the equipped items, the numbers of tabs I to III (attributes, armor, resistances, rows, offense) and the Buffs toggles that are on, the weapon set counted (I or II). full=true adds each panel's whole view. With character, only that window; capture=true also returns it as a PNG (saved under %TEMP%).")]
 		public static IEnumerable<ContentBlock> CharacterWindow(
 			[Description("The character's key or name; empty for every window.")] string character = "",
 			[Description("true to add each tab's whole view.")] bool full = false,
@@ -171,6 +171,7 @@ internal static partial class AutomationTools
 				tab2 = stats?.Tab2Rows.Select(r => new { r.Label, r.Value }).ToList(),
 				tab3 = stats?.Tab3Rows.Select(r => new { r.Label, r.Value }).ToList(),
 				buffsOn = view?.Buffs.Sections.SelectMany(s => s.Entries).Where(e => e.On).Select(e => e.Id).ToList(),
+				weaponSet = view?.Stats.WeaponSets.FirstOrDefault(s => s.Counted)?.Name,
 				tabs = full ? tabs.Select(t => t.AutomationState()).ToList() : null,
 			};
 		}

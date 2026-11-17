@@ -117,7 +117,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
   - diagnostics: `recent_log`, `recent_sounds`, `load_resource`, `player_stats_fonts`, `stash_background_switch`,
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
-  - the statistics panels' Buffs tab: `character_buffs`, `character_buff_toggle`;
+  - the statistics panels' Buffs tab and weapon set gems: `character_buffs`, `character_buff_toggle`, `character_weapon_set`;
   - floating character windows: `character_window_open`, `character_window`, `character_window_loadout`, `character_window_list`, `character_window_close`;
   - test aids: `create_item`, `picture_fault`, the `gameRunning` and `realGame` parameters of `loadouts`;
   - the headless mode.
@@ -677,6 +677,9 @@ General rules:
   (scrolled into sight first); `/` is accepted for `\` in the key. `scrollIndex` picks a scroll in the drop-down (0 for
   none; the choices are listed when out of range). Toggles are memory only and never saved: allowed on any character.
   Returns the tab's state.
+- **`character_weapon_set(panel?, set?)`** *(Debug)*: reads the weapon set gems of tab I (`editor`, `main`,
+  `window:<name>`): set counted, each gem's bounds and tool tip, armor, offense and attribute rows. `set=1|2` first clicks
+  that gem through the panel's hit test. Memory only, never saved: allowed on any character.
 - **Floating character windows** *(Debug)*: the window **Pop out** opens (`click_control("TQVaultAE","floatButton")`).
   - `character_window_open(character, x?, y?)`: opens the window of a listed character (key, name or drop-down label),
     or brings it to the front; `x`/`y` place it as a window reopened at start. Writes nothing.
