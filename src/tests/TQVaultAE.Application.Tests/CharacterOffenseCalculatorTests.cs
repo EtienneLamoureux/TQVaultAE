@@ -169,6 +169,16 @@ public class CharacterOffenseCalculatorTests
 	}
 
 	[Fact]
+	public void Damage_FlatPhysicalOutsideTheWeapon_GoesThroughTheNonWeaponEquation()
+	{
+		// 100 physical of a skill, +50 %, strength 650: 100 × 1.5 × (650 / 650 + 1) = 300, none in the weapon part.
+		var values = CharacterOffenseCalculator.Damage(Input([Sum()],
+			skills: Sum(("offensivePhysicalAverage", 100), ("offensivePhysicalModifier", 50)), strength: 650));
+
+		values.Should().Be(new OffenseValues(0, 300, 300, 300));
+	}
+
+	[Fact]
 	public void Damage_PierceShare_OfThePhysicalResult_GoesThroughThePierceEquation()
 	{
 		// A character's Iron Sudis in the game: 17-31 physical, 30 % pierce, 2-8 lightning, 99 Str, 115 Dex, 50 Int, 72 %:

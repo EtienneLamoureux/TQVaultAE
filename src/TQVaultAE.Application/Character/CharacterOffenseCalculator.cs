@@ -151,9 +151,11 @@ public static class CharacterOffenseCalculator
 			damage += Equation("physicalDamageEquation", Scale(hands, modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
 		}
 
-		// Flat damage of the other items and the skills (and the weapon's other damage).
+		// Flat damage of the other items and the skills (and the weapon's other damage). Their physical is a base physical
+		// entry of its own through the non-weapon equation: a character's Battle Standard (216 at level 12, +64 % physical)
+		// adds 857 in the game, 216 × 1.64 × (921.6 / 650 + 1).
 		double otherPhysical = flat["offensivePhysical" + Avg] - (weapon?["offensivePhysical" + Avg] ?? 0);
-		damage += Scale(otherPhysical, modifiers["offensivePhysicalModifier"] + total);
+		damage += Equation("physicalNonWeaponDamageEquation", Scale(otherPhysical, modifiers["offensivePhysicalModifier"] + total), "physicalDamageDV");
 		damage += flat["offensiveBonusPhysical" + Avg];
 		damage += Equation("pierceNonWeaponDamageEquation", Scale(flat["offensivePierce" + Avg], modifiers["offensivePierceModifier"] + total), "pierceDamageDV");
 		foreach (var element in (string[])["Fire", "Cold", "Lightning"])
