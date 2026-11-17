@@ -755,11 +755,14 @@ internal static partial class AutomationTools
 	}
 
 	/// <summary>
-	/// Respects the PlayerReadonly setting, which the equipment panel enforces for real mouse clicks too. A read-only
-	/// character's sack is left to the panel's own rules, which refuse and tell the user (the notification).
+	/// Respects the PlayerReadonly setting, which the equipment panel enforces for real mouse clicks too, and the loadout
+	/// shown read-only in a floating window. A read-only character's sack is left to the panel's own rules, which refuse
+	/// and tell the user (the notification).
 	/// </summary>
 	private static void EnsureWritable(SackPanel panel, string action)
 	{
+		if (panel is CharacterWindowEquipmentPanel { ShowsLoadout: true })
+			throw new McpException($"Cannot {action} the floating window's equipment: it shows a loadout, read-only.");
 		if (panel.ItemsReadOnly && panel.Sack is not { IsReadOnly: true })
 			throw new McpException($"Cannot {action} the equipment panel: the PlayerReadonly setting is on.");
 	}

@@ -28,7 +28,7 @@ internal static partial class AutomationTools
 			});
 
 		[McpServerTool(Name = "character_window", ReadOnly = true)]
-		[Description("Reads the floating character windows: per window the character key, bounds, DPI, scale, read-only, the loaded save's instance id (changes when the file is read again), the equipment panel's id for the item tools (window:<name>, usable with click_cell, cell_info...), the equipped items, the numbers of tabs I to III (attributes, armor, resistances, rows, offense) and the Buffs toggles that are on. full=true adds each panel's whole view. With character, only that window; capture=true also returns it as a PNG (saved under %TEMP%).")]
+		[Description("Reads the floating character windows: per window the character key, bounds, DPI, scale, read-only, the loadout shown in place of the equipment (null: the equipment worn) and the loadouts listed, the loaded save's instance id (changes when the file is read again), the equipment panel's id for the item tools (window:<name>, usable with click_cell, cell_info...), the equipped items, the numbers of tabs I to III (attributes, armor, resistances, rows, offense) and the Buffs toggles that are on. full=true adds each panel's whole view. With character, only that window; capture=true also returns it as a PNG (saved under %TEMP%).")]
 		public static IEnumerable<ContentBlock> CharacterWindow(
 			[Description("The character's key or name; empty for every window.")] string character = "",
 			[Description("true to add each tab's whole view.")] bool full = false,
@@ -51,6 +51,27 @@ internal static partial class AutomationTools
 
 			return AutomationImages.Result(state, png, "characterwindow");
 		}
+
+		[McpServerTool(Name = "character_window_loadout")]
+		[Description("Shows a loadout's pieces, read-only, in place of a floating window's equipment, as its list under tab II does (the statistics follow), or the equipment worn; or turns the list like its arrows (the equipment worn, then each loadout, round). Writes nothing. Returns the window's state (as character_window).")]
+		public static string CharacterWindowLoadout(
+			[Description("The character's key or name.")] string character,
+			[Description("The loadout's name; empty for the equipment worn. Ignored with step.")] string loadout = "",
+			[Description("-1 or +1 to click the previous or next arrow instead; 0 to select by name.")] int step = 0)
+			=> AutomationHost.OnUi(form =>
+			{
+				var window = FindCharacterWindow(form, character);
+				if (step != 0)
+					window.TurnLoadout(Math.Sign(step));
+				else if (string.IsNullOrEmpty(loadout))
+					window.ShowLoadout(null);
+				else if (window.LoadoutNames.FirstOrDefault(n => string.Equals(n, loadout, StringComparison.OrdinalIgnoreCase)) is { } name)
+					window.ShowLoadout(name);
+				else
+					throw new McpException($"No loadout '{loadout}' for {window.Save.Key}: {string.Join(" | ", window.LoadoutNames)}.");
+
+				return Serialize(CharacterWindowState(window, full: false));
+			});
 
 		[McpServerTool(Name = "character_window_close")]
 		[Description("Closes a floating character window as its close button does (the user's close: it is not reopened at the next start). Returns the windows left.")]
@@ -92,6 +113,8 @@ internal static partial class AutomationTools
 				scale = tabs[0].PanelScale,
 				cellSize = window.EquipmentPanel.UnitSize,
 				readOnly = window.Player.IsReadOnly,
+				loadout = window.LoadoutName,
+				loadouts = window.LoadoutNames,
 				panel = AutomationPanels.CharacterWindowPrefix + window.Save.Name,
 				sharedWithMain = ReferenceEquals(window.Player, AutomationHost.MainForm?.AutomationStashPanel?.Player),
 				playerInstance = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(window.Player),

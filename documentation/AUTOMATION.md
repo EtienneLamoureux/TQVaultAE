@@ -118,7 +118,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
   - the statistics panels' Buffs tab: `character_buffs`, `character_buff_toggle`;
-  - floating character windows: `character_window_open`, `character_window`, `character_window_close`;
+  - floating character windows: `character_window_open`, `character_window`, `character_window_loadout`, `character_window_close`;
   - test aids: `create_item`, `picture_fault`, the `gameRunning` and `realGame` parameters of `loadouts`;
   - the headless mode.
 
@@ -681,8 +681,10 @@ General rules:
   - `character_window_open(character, x?, y?)`: opens the window of a listed character (key, name or drop-down label),
     or brings it to the front; `x`/`y` place it as a window reopened at start. Writes nothing.
   - `character_window(character?, full?, capture?)`: per window the key, bounds, DPI, scale, cell size, read-only,
-    `sharedWithMain`, the equipped items, the numbers of tabs I-III and the buff keys on; `saved` lists the places
+    `loadout` shown (null: the equipment worn) and `loadouts` listed, `sharedWithMain`, the equipped items, the numbers of tabs I-III and the buff keys on; `saved` lists the places
     kept in `UserConfig.xml`. `full=true` adds each panel's view, `capture=true` a PNG.
+  - `character_window_loadout(character, loadout?, step?)`: shows a loadout's pieces read-only in place of the equipment
+    (empty: the equipment worn), or `step=-1/+1` clicks an arrow. Writes nothing.
   - `character_window_close(character)`: closes it as its close button (not reopened at start).
   - Its equipment is panel `window:<name>` for the item tools (`pick_item`, `drop_item`, `get_state`, `capture`...);
     `character_buffs` / `character_buff_toggle` take `panel="window:<name>"`.
