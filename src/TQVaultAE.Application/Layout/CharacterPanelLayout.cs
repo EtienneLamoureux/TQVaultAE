@@ -50,7 +50,7 @@ public static partial class CharacterPanelLayout
 
 	/// <summary>
 	/// Fills a game text format: <c>{%d0}</c>, <c>{%t1}</c>, <c>{%s1}</c>... (any printf format, by index) with the
-	/// values. For a whole number <c>%t</c> writes thousands separators and the <c>+</c> flag (<c>{%+.0f0}</c>) the sign of
+	/// values. For a whole number <c>%t</c> writes thousands separators and the <c>+</c> flag (<c>{%+.0f0}</c>, <c>{+%d0}</c>) the sign of
 	/// positive values; other values are written as they are. The one formatter of the game texts: the character panel,
 	/// the skill pane and the editor's skill tool tips.
 	/// </summary>
@@ -68,9 +68,11 @@ public static partial class CharacterPanelLayout
 			var text = m.Groups["type"].Value == "t"
 				? number.ToString("N0", CultureInfo.CurrentCulture)
 				: number.ToString(CultureInfo.CurrentCulture);
-			return m.Value.StartsWith("{%+", StringComparison.Ordinal) && number >= 0 ? "+" + text : text;
+			bool signed = m.Value.StartsWith("{%+", StringComparison.Ordinal) || m.Value.StartsWith("{+%", StringComparison.Ordinal);
+			return signed && number >= 0 ? "+" + text : text;
 		});
 
-	[GeneratedRegex("""\{%[^}]*?(?<type>[a-z])(?<index>[0-9])\}""")]
+	// The sign flag also comes before the % in a few texts: "{+%d0} to all Skills".
+	[GeneratedRegex("""\{\+?%[^}]*?(?<type>[a-z])(?<index>[0-9])\}""")]
 	private static partial Regex GameFormatRegex();
 }

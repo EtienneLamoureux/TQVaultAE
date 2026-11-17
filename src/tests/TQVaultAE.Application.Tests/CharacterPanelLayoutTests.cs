@@ -37,6 +37,13 @@ public class CharacterPanelLayoutTests
 	}
 
 	[Theory]
+	[InlineData("{%+.0f0}% Damage", 10, "+10% Damage")]
+	[InlineData("{+%d0} to all Skills", 4, "+4 to all Skills")]
+	[InlineData("{+%d0} to all Skills", -1, "-1 to all Skills")]
+	public void FormatGameText_SignFlag_BeforeOrAfterThePercent(string format, int value, string expected)
+		=> CharacterPanelLayout.FormatGameText(format, value).Should().Be(expected);
+
+	[Theory]
 	[InlineData("{%d0} Unused Skill Points", 3, "3 Unused Skill Points")]
 	[InlineData("Points : {%i0}", 12, "Points : 12")]
 	[InlineData("No Skill Points Available", 0, "No Skill Points Available")]

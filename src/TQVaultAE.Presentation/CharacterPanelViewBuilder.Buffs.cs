@@ -225,12 +225,19 @@ public sealed partial class CharacterPanelViewBuilder
 		// the energy reserve, which has none, gets its own line.
 		var culture = CultureInfo.CurrentCulture;
 		var reserve = source.Sum[EnergyReserve];
+
+		// "+1 to all skills" of a buff (Battle Standard, Stone of Mastery): the game writes it in the skill window, the item
+		// texts the description comes from leave it out.
+		var allSkills = source.Group == BuffGroup.Gear ? 0 : (long)Math.Round(source.Sum[AllSkills]);
+		IEnumerable<string> allSkillsLine = allSkills <= 0 ? [] : [Application.Layout.CharacterPanelLayout.FormatGameText(
+			this._translation.TranslateOr("ItemAllSkillIncrement", "+{%d0} to all skills") ?? "+{%d0} to all skills", allSkills)];
 		lines = [.. text
 			.Select(l => l.RemoveAllTQTags() ?? string.Empty)
 			.Where(l => !string.IsNullOrWhiteSpace(l) && !l.Contains(EnergyReserve, StringComparison.OrdinalIgnoreCase))
 			.Select(UnknownVariableLine)
 			.OfType<string>()
 			.Where(HasNonZeroNumberOrNone),
+			.. allSkillsLine,
 			.. reserve == 0 ? [] : new[] { string.Format(culture, Resources.BuffsEnergyReserve, Composition.Signed(reserve, culture).TrimStart('+')) }];
 		this._descriptions[source.Id] = lines;
 		return lines;
@@ -238,6 +245,9 @@ public sealed partial class CharacterPanelViewBuilder
 
 	/// <summary>The variable the game reserves a part of the energy with (curses, Tartarus).</summary>
 	private const string EnergyReserve = "characterManaLimitReservePercentage";
+
+	/// <summary>The variable of the levels a buff adds to every skill.</summary>
+	private const string AllSkills = "allSkillEnhancement";
 
 	/// <summary>
 	/// A variable the game has no text for ("?potionCooldownIncrease?: 5.000000, 10.000000"): our own text when it tells the
