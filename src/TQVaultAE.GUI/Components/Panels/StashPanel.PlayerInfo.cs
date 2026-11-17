@@ -283,7 +283,7 @@ public partial class StashPanel
 
 		var stats = this._stats = new CharacterStatsSource(this.Services);
 		this._statsLook = new CharacterStatsLook(this.FontService, this.UIService);
-		this._statsPanel = new CharacterStatsPanel(this.UIService)
+		this._statsPanel = new CharacterStatsPanel(this.UIService, this.FontService)
 		{
 			Name = "PlayerStatsPanel",
 			View = () => stats.View(this.Player, this.equipmentPanel.WornItems),

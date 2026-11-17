@@ -38,7 +38,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	private readonly CharacterStatsSource _stats;
 	private readonly CharacterStatsLook _look;
 	private readonly IItemComparisonHost _comparisonHost;
-	private readonly ComboBox _loadoutBox;
+	private readonly GameDropDown _loadoutBox;
 	private readonly ToolTip _toolTip = new();
 
 	/// <summary>The font of the loadout list, made at the window's scale.</summary>
@@ -49,9 +49,6 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 	/// <summary>The pieces of the loadout shown, as the loadout held them when its slots were built.</summary>
 	private IReadOnlyList<Item?>? _shownPieces;
-
-	/// <summary>Set while the list is filled in code: its selection is not the user's.</summary>
-	private bool _fillingLoadouts;
 
 	/// <summary>Set while the window lays itself out: its moves are not the user's.</summary>
 	private bool _layingOut;
@@ -94,7 +91,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		// The game data of the character's own map while its statistics are computed (the main window may show another).
 		this._stats = new CharacterStatsSource(this.Services) { ReadScope = () => this.Services.GameMapService.ReadWith(save) };
 		this._look = new CharacterStatsLook(this.FontService, this.UIService);
-		this._tabs = [.. Enumerable.Range(0, CharacterWindowLayout.StatsPanels).Select(tab => new CharacterStatsPanel(this.UIService)
+		this._tabs = [.. Enumerable.Range(0, CharacterWindowLayout.StatsPanels).Select(tab => new CharacterStatsPanel(this.UIService, this.FontService)
 		{
 			Name = $"characterWindowTab{tab + 1}",
 			Tab = tab,
@@ -115,13 +112,8 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		// The loadouts: the previous and next arrows on the stone, as in the loadout panel, and a list headed by the
 		// equipment worn right of the gold bar.
 		this._slots.TurnRequested += (_, step) => this.TurnLoadout(step);
-		this._loadoutBox = new ComboBox { Name = "characterWindowLoadout", DropDownStyle = ComboBoxStyle.DropDownList, TabStop = false };
-		DarkComboBox.Apply(this._loadoutBox);
-		this._loadoutBox.SelectionChangeCommitted += (_, _) =>
-		{
-			if (!this._fillingLoadouts)
-				this.ShowLoadout(this._loadoutBox.SelectedIndex <= 0 ? null : this._loadoutBox.SelectedItem as string);
-		};
+		this._loadoutBox = new GameDropDown(this.UIService, this.FontService) { Name = "characterWindowLoadout" };
+		this._loadoutBox.ItemPicked += (_, index) => this.ShowLoadout(index <= 0 ? null : this._loadoutBox.Items[index]);
 		this._toolTip.SetToolTip(this._loadoutBox, Resources.LoadoutTitle);
 
 		this.Controls.Add(this._slots);
@@ -157,6 +149,12 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 	/// <summary>The character's loadouts, in the order of the list (after the equipment worn).</summary>
 	internal IReadOnlyList<string> LoadoutNames => [.. this.Loadouts()?.Loadouts.Select(l => l.Name) ?? []];
+
+	/// <summary>The loadout list right of the gold bar.</summary>
+	internal GameDropDown LoadoutList => this._loadoutBox;
+
+	/// <summary>A statistics tab (0 for tab I).</summary>
+	internal CharacterStatsPanel StatsTab(int index) => this._tabs[index];
 
 	/// <summary>The buff toggles of this window.</summary>
 	internal Application.Character.BuffSelection Buffs => this._stats.Buffs;
@@ -255,43 +253,16 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	{
 		List<string> names = this.Loadouts() is { ReadFailed: false } set ? [.. set.Loadouts.Select(l => l.Name)] : [];
 		List<string> items = [Resources.CharacterWindowCurrentGear, .. names];
-		if (!this._loadoutBox.Items.Cast<string>().SequenceEqual(items, StringComparer.Ordinal))
-		{
-			this._fillingLoadouts = true;
-			try
-			{
-				this._loadoutBox.BeginUpdate();
-				this._loadoutBox.Items.Clear();
-				this._loadoutBox.Items.AddRange([.. items]);
-				this._loadoutBox.EndUpdate();
-			}
-			finally
-			{
-				this._fillingLoadouts = false;
-			}
-		}
-
+		this._loadoutBox.SetItems(items, this.LoadoutIndex(items));
 		this._slots.CanTurn = names.Count > 0;
-		this.SelectLoadoutInList();
 	}
 
 	/// <summary>Selects the loadout shown in the list (the equipment worn first).</summary>
-	private void SelectLoadoutInList()
-	{
-		int index = this._loadoutName is null ? 0 : Math.Max(0, this._loadoutBox.Items.IndexOf(this._loadoutName));
-		if (this._loadoutBox.SelectedIndex == index || index >= this._loadoutBox.Items.Count)
-			return;
+	private void SelectLoadoutInList() => this._loadoutBox.SetItems(this._loadoutBox.Items, this.LoadoutIndex(this._loadoutBox.Items));
 
-		this._fillingLoadouts = true;
-		try
-		{
-			this._loadoutBox.SelectedIndex = index;
-		}
-		finally
-		{
-			this._fillingLoadouts = false;
-		}
-	}
+	/// <summary>The place of the loadout shown in the list's entries; the equipment worn's (0) when it is not listed.</summary>
+	private int LoadoutIndex(IReadOnlyList<string> items)
+		=> this._loadoutName is null ? 0 : Math.Max(0, items.ToList().IndexOf(this._loadoutName));
 
 	/// <summary>The previous (-1) or next (+1) entry of the list, the equipment worn included, the last followed by the first.</summary>
 	internal void TurnLoadout(int step)
@@ -301,7 +272,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 			return;
 
 		int next = (((Math.Max(0, this._loadoutBox.SelectedIndex) + step) % count) + count) % count;
-		this.ShowLoadout(next == 0 ? null : this._loadoutBox.Items[next] as string);
+		this.ShowLoadout(next == 0 ? null : this._loadoutBox.Items[next]);
 	}
 
 	/// <summary>Compare from this window's equipment: the comparison opens through the main window, as from its panels.</summary>
@@ -397,11 +368,11 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		{
 			var old = this._loadoutFont;
 			this._loadoutFont = new Font(font.FontFamily, font.Size, font.Style, font.Unit);
-			this._loadoutBox.Font = this._loadoutFont;
+			this._loadoutBox.TextFont = this._loadoutFont;
 			old?.Dispose();
 		}
 
-		DarkComboBox.FitHeight(this._loadoutBox, box.Height);
+		this._loadoutBox.BarScale = scale;
 		this._loadoutBox.Bounds = box;
 	}
 

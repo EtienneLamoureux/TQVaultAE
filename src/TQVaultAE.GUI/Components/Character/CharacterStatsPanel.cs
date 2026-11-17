@@ -109,6 +109,7 @@ internal sealed partial class CharacterStatsPanel : Control
 	private static readonly Color Orange = Color.FromArgb(240, 160, 40);
 
 	private readonly IUIService _uiService;
+	private readonly IFontService _fontService;
 	private readonly ToolTip _toolTip = new() { AutoPopDelay = 30000, InitialDelay = 300, ReshowDelay = 100 };
 	private float _panelScale = 1F;
 	private int _tab;
@@ -127,9 +128,10 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>The key binds, for the modifier of a click that spends every point.</summary>
 	internal KeyBindMap? KeyBinds { get; init; }
 
-	public CharacterStatsPanel(IUIService uiService)
+	public CharacterStatsPanel(IUIService uiService, IFontService fontService)
 	{
 		this._uiService = uiService;
+		this._fontService = fontService;
 		this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
 
 		// Transparent: the gold bar is wider than the panel, and the page shows beside the panel.

@@ -35,7 +35,7 @@ internal sealed partial class CharacterStatsPanel
 
 	private static readonly Color BuffOffText = Color.FromArgb(110, 110, 105);
 
-	private ComboBox? _scrollBox;
+	private GameDropDown? _scrollBox;
 	private Font? _scrollBoxFont;
 	private bool _syncingScrollBox;
 	private int _buffScroll;
@@ -162,21 +162,14 @@ internal sealed partial class CharacterStatsPanel
 	}
 
 	/// <summary>The scroll choice: a drop-down over the panel, shown on the Buffs tab only.</summary>
-	private ComboBox ScrollBox()
+	private GameDropDown ScrollBox()
 	{
 		if (this._scrollBox is not null)
 			return this._scrollBox;
 
-		this._scrollBox = new ComboBox
-		{
-			Name = "BuffScrollComboBox",
-			DropDownStyle = ComboBoxStyle.DropDownList,
-			MaxDropDownItems = 16,
-			Visible = false,
-		};
-		DarkComboBox.Apply(this._scrollBox);
-		// Only the user's choice (a click in the list, Enter): the selection the panel sets itself raises nothing.
-		this._scrollBox.SelectionChangeCommitted += (_, _) => this.RaiseScrollPicked(this._scrollBox.SelectedIndex);
+		this._scrollBox = new GameDropDown(this._uiService, this._fontService) { Name = "BuffScrollComboBox", MaxDropDownItems = 16, Visible = false };
+		// Only the user's choice: the selection the panel sets itself raises nothing.
+		this._scrollBox.ItemPicked += (_, index) => this.RaiseScrollPicked(index);
 		this.Controls.Add(this._scrollBox);
 		return this._scrollBox;
 	}
@@ -208,36 +201,20 @@ internal sealed partial class CharacterStatsPanel
 		this._syncingScrollBox = true;
 		try
 		{
-			var names = view.Buffs.Scrolls.Select(s => s.Name).ToArray();
-			if (!box.Items.Cast<string>().SequenceEqual(names))
-			{
-				box.Items.Clear();
-				box.Items.AddRange(names);
-			}
-
-			if (box.SelectedIndex != view.Buffs.SelectedScroll)
-				box.SelectedIndex = Math.Clamp(view.Buffs.SelectedScroll, 0, names.Length - 1);
+			box.SetItems([.. view.Buffs.Scrolls.Select(s => s.Name)], view.Buffs.SelectedScroll);
 
 			// The panel's text font at the panel's scale; the box keeps its own copy (WinForms rescales a control's font).
 			if (this.TextFont is { } font && (this._scrollBoxFont is null || Math.Abs(this._scrollBoxFont.Size - font.Size) > 0.01F || this._scrollBoxFont.FontFamily.Name != font.FontFamily.Name))
 			{
 				var old = this._scrollBoxFont;
 				this._scrollBoxFont = new Font(font.FontFamily, font.Size, font.Style, font.Unit);
-				box.Font = this._scrollBoxFont;
+				box.TextFont = this._scrollBoxFont;
 				old?.Dispose();
 			}
 
-			var bounds = this.ScaledRect(ScrollBoxArea);
-			if (box.Bounds.Location != bounds.Location || box.Width != bounds.Width)
-			{
-				box.SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.Location | BoundsSpecified.Width);
-				DarkComboBox.FitHeight(box, bounds.Height);
-			}
-
-			// The open list as wide as its longest name (the box is narrow), within the screen.
-			var widest = names.Max(n => TextRenderer.MeasureText(n, box.Font).Width) + SystemInformation.VerticalScrollBarWidth + 8;
-			var screen = Screen.FromControl(this).WorkingArea.Width / 2;
-			box.DropDownWidth = Math.Clamp(widest, box.Width, Math.Max(box.Width, screen));
+			// The open list is as wide as its longest name: a menu sizes itself.
+			box.Bounds = this.ScaledRect(ScrollBoxArea);
+			box.BarScale = this.PanelScale;
 			box.Visible = true;
 		}
 		finally

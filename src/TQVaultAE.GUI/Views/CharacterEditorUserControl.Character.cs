@@ -89,7 +89,7 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		this.Controls.Add(this._content);
 
-		this._stats = new CharacterStatsPanel(this.UIService)
+		this._stats = new CharacterStatsPanel(this.UIService, this.FontService)
 		{
 			KeyBinds = this.Services.KeyBinds,
 			Name = "CharacterStatsPanel",

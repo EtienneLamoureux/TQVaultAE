@@ -57,20 +57,12 @@ public sealed class LoadoutBarEventArgs(LoadoutBarAction action, string? name) :
 /// </summary>
 public sealed class LoadoutBar : Control
 {
-	private const string ArrowUp = """InGameUI\quest\arrowdownsmallup.tex""";
-	private const string ArrowOver = """InGameUI\quest\arrowdownsmallover.tex""";
-	private const string ArrowDown = """InGameUI\quest\arrowdownsmalldown.tex""";
 	private const string PlusUp = """InGameUI\CharacterScreen\StatIncrementButtonUp01.tex""";
 	private const string PlusOver = """InGameUI\CharacterScreen\StatIncrementButtonOver01.tex""";
 	private const string PlusDown = """InGameUI\CharacterScreen\StatIncrementButtonDown01.tex""";
 
 	/// <summary>Height of the bar at scale 1: the gold box of the character window.</summary>
 	public const int ReferenceHeight = 22;
-
-	/// <summary>Corner of the gold box picture kept unstretched.</summary>
-	private const int BoxCorner = 4;
-
-	private static readonly Color Grey = Color.FromArgb(190, 190, 190);
 
 	private readonly IUIService _uiService;
 	private readonly IFontService _fontService;
@@ -202,16 +194,6 @@ public sealed class LoadoutBar : Control
 
 	/// <summary>The drop-down box: the rest of the width.</summary>
 	internal Rectangle FieldBounds => new(0, 0, Math.Max(this.Height, this.AddBounds.Left - this.Gap), this.Height);
-
-	private Rectangle ArrowBounds
-	{
-		get
-		{
-			var box = this.FieldBounds;
-			int size = Math.Max(1, box.Height - Convert.ToInt32(6 * this._scale));
-			return new Rectangle(box.Right - size - Convert.ToInt32(3 * this._scale), (box.Height - size) / 2, size, size);
-		}
-	}
 
 	/// <summary>Whether the bar offers an action now (its menu entry enabled, its button raising it).</summary>
 	internal bool CanAct(LoadoutBarAction action) => action switch
@@ -391,22 +373,11 @@ public sealed class LoadoutBar : Control
 	protected override void OnPaint(PaintEventArgs e)
 	{
 		var g = e.Graphics;
-		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-
-		var box = this.FieldBounds;
-		this.DrawBox(g, box);
-
-		var arrow = this.ArrowBounds;
-		bool canSelect = this.CanAct(LoadoutBarAction.Select);
-		// The picture's triangle points up: drawn upside down, it points to the list it opens.
-		this.DrawPicture(g, this._pressed == Part.Field ? ArrowDown : this._hovered == Part.Field && canSelect ? ArrowOver : ArrowUp, arrow, flip: true);
-
-		var font = this.TextFont ?? this.Font;
-		var textBounds = Rectangle.FromLTRB(box.Left + Convert.ToInt32(6 * this._scale), box.Top, arrow.Left - Convert.ToInt32(2 * this._scale), box.Bottom);
+		var arrow = this._pressed == Part.Field ? GameDropDown.ArrowState.Pressed
+			: this._hovered == Part.Field && this.CanAct(LoadoutBarAction.Select) ? GameDropDown.ArrowState.Over
+			: GameDropDown.ArrowState.Up;
 		string text = this.Selected ?? (this.Names.Count == 0 ? Resources.LoadoutNone : string.Empty);
-		TextRenderer.DrawText(g, text, font, textBounds, this.Selected is null ? Grey : Color.White
-			, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
+		GameDropDown.DrawField(g, this._uiService, this._box, this.FieldBounds, this._scale, text, this.TextFont ?? this.Font, this.Selected is null ? GameDropDown.Grey : Color.White, arrow);
 
 		this.DrawIconButton(g, Part.Add, this.AddBounds, this.CanAct(LoadoutBarAction.Add), PlusUp, PlusOver, PlusDown);
 	}
@@ -426,32 +397,9 @@ public sealed class LoadoutBar : Control
 		this.DrawPicture(g, this._pressed == part ? down : this._hovered == part ? over : up, bounds);
 	}
 
-	/// <summary>The gold box of the character window, its corners kept and its edges stretched to the bounds.</summary>
-	private void DrawBox(Graphics g, Rectangle to)
-	{
-		var box = this._box;
-		int c = BoxCorner;
-		int cs = Math.Max(1, Convert.ToInt32(c * this._scale));
-		void Part(Rectangle dest, int x, int y, int w, int h) => g.DrawImage(box, dest, x, y, w, h, GraphicsUnit.Pixel);
-
-		int midW = box.Width - (2 * c), midH = box.Height - (2 * c);
-		int left = to.Left, top = to.Top, right = to.Right - cs, bottom = to.Bottom - cs;
-		int innerW = Math.Max(0, to.Width - (2 * cs)), innerH = Math.Max(0, to.Height - (2 * cs));
-
-		Part(new Rectangle(left, top, cs, cs), 0, 0, c, c);
-		Part(new Rectangle(left + cs, top, innerW, cs), c, 0, midW, c);
-		Part(new Rectangle(right, top, cs, cs), box.Width - c, 0, c, c);
-		Part(new Rectangle(left, top + cs, cs, innerH), 0, c, c, midH);
-		Part(new Rectangle(left + cs, top + cs, innerW, innerH), c, c, midW, midH);
-		Part(new Rectangle(right, top + cs, cs, innerH), box.Width - c, c, c, midH);
-		Part(new Rectangle(left, bottom, cs, cs), 0, box.Height - c, c, c);
-		Part(new Rectangle(left + cs, bottom, innerW, cs), c, box.Height - c, midW, c);
-		Part(new Rectangle(right, bottom, cs, cs), box.Width - c, box.Height - c, c, c);
-	}
-
 	/// <summary>A game picture stretched to the bounds; a grey frame without the game files.</summary>
-	private void DrawPicture(Graphics g, string resource, Rectangle to, bool greyed = false, bool flip = false)
-		=> GamePicture.Draw(g, this.Picture(resource), to, greyed, flip);
+	private void DrawPicture(Graphics g, string resource, Rectangle to, bool greyed = false)
+		=> GamePicture.Draw(g, this.Picture(resource), to, greyed);
 
 	protected override void Dispose(bool disposing)
 	{
