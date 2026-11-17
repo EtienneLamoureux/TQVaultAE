@@ -43,30 +43,20 @@ public static class CharacterWindowLayout
 	}
 
 	/// <summary>
-	/// The loadout list and its previous and next arrows, in the row of tab I's gold bar: from the gold bar's end (and a
-	/// gap) to tab II's right edge, the arrows at the ends, the list between them as high as the gold bar's boxes; all
-	/// vertically centred on the gold bar.
+	/// The loadout list, in the row of tab I's gold bar: from the gold bar's end (and a gap) to tab II's right edge, as high
+	/// as the gold bar's boxes and vertically centred on the gold bar.
 	/// </summary>
 	/// <param name="first">Tab I's bounds at <paramref name="scale"/> (<see cref="Arrange"/>).</param>
 	/// <param name="second">Tab II's bounds at <paramref name="scale"/>.</param>
 	/// <param name="goldBar">Tab I's gold bar at scale 1, from the panel's top-left.</param>
-	/// <param name="arrow">An arrow's picture at scale 1.</param>
 	/// <param name="boxHeight">The list's height at scale 1.</param>
 	/// <param name="scale">The window's scale.</param>
-	public static (Rectangle Previous, Rectangle Box, Rectangle Next) LoadoutSelector(Rectangle first, Rectangle second, Rectangle goldBar, Size arrow, int boxHeight, float scale)
+	public static Rectangle LoadoutList(Rectangle first, Rectangle second, Rectangle goldBar, int boxHeight, float scale)
 	{
-		int gap = (int)Math.Round(Gap * scale);
-		int left = first.X + (int)Math.Round(goldBar.Right * scale) + gap;
-		int right = second.Right;
+		int left = first.X + (int)Math.Round(goldBar.Right * scale) + (int)Math.Round(Gap * scale);
 		int middle = first.Y + (int)Math.Round((goldBar.Y + (goldBar.Height / 2F)) * scale);
-		var arrowSize = WindowLayout.Scaled(arrow, scale);
 		int height = (int)Math.Round(boxHeight * scale);
-		int arrowTop = middle - (arrowSize.Height / 2);
-
-		var previous = new Rectangle(left, arrowTop, arrowSize.Width, arrowSize.Height);
-		var next = new Rectangle(right - arrowSize.Width, arrowTop, arrowSize.Width, arrowSize.Height);
-		var box = Rectangle.FromLTRB(previous.Right + gap, middle - (height / 2), next.Left - gap, middle - (height / 2) + height);
-		return (previous, box, next);
+		return new Rectangle(left, middle - (height / 2), second.Right - left, height);
 	}
 
 	/// <summary>

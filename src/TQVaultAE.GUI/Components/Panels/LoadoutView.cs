@@ -13,19 +13,8 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// </summary>
 public sealed class LoadoutView : EquipmentSlotsView
 {
-	/// <summary>The previous loadout arrow's pictures, with {0} for the state.</summary>
-	internal const string PreviousPicture = """InGameUI\characterscreen\characterrotateleft{0}01.tex""";
-
-	/// <summary>The next loadout arrow's pictures, with {0} for the state.</summary>
-	internal const string NextPicture = """InGameUI\characterscreen\characterrotateright{0}01.tex""";
-
-	/// <summary>The size of the previous and next arrows' pictures, in pixels at scale 1.</summary>
-	internal static readonly Size TurnPictureSize = new(20, 14);
-
 	private readonly IUIService _uiService;
 	private readonly GameButton _back;
-	private readonly GameButton _previous;
-	private readonly GameButton _next;
 	private readonly GameButton _swap;
 	private readonly GameButton _empty;
 
@@ -39,10 +28,6 @@ public sealed class LoadoutView : EquipmentSlotsView
 		this.Name = "loadoutView";
 		this._back = new GameButton(this._uiService, """InGameUI\tutorial\buttonback{0}01.tex""", Resources.LoadoutBack) { Name = "loadoutBackButton" };
 		this._back.Pressed += (_, _) => this.BackRequested?.Invoke(this, EventArgs.Empty);
-		this._previous = new GameButton(this._uiService, PreviousPicture, Resources.LoadoutPrevious) { Name = "loadoutPreviousButton" };
-		this._previous.Pressed += (_, _) => this.TurnRequested?.Invoke(this, -1);
-		this._next = new GameButton(this._uiService, NextPicture, Resources.LoadoutNext) { Name = "loadoutNextButton" };
-		this._next.Pressed += (_, _) => this.TurnRequested?.Invoke(this, 1);
 
 		// The game has no disable picture of this tile (greyed instead); its lighter over picture shows at rest, the up one under the mouse.
 		this._swap = new GameButton(this._uiService, """InGameUI\characterscreen\weaponswapbtn{0}01.tex""", Resources.LoadoutSwap, hasDisable: false, restState: "over", hoverState: "up")
@@ -57,7 +42,7 @@ public sealed class LoadoutView : EquipmentSlotsView
 			Name = "loadoutEmptyButton",
 		};
 		this._empty.Pressed += (_, _) => this.EmptyRequested?.Invoke(this, EventArgs.Empty);
-		foreach (var button in new[] { this._back, this._previous, this._next, this._swap, this._empty })
+		foreach (var button in new[] { this._back, this._swap, this._empty })
 		{
 			this.Controls.Add(button);
 			button.BringToFront();
@@ -69,12 +54,6 @@ public sealed class LoadoutView : EquipmentSlotsView
 
 	/// <summary>The Back arrow, which returns to the statistics panel.</summary>
 	internal Control BackButton => this._back;
-
-	/// <summary>The arrow that shows the previous loadout.</summary>
-	internal Control PreviousButton => this._previous;
-
-	/// <summary>The arrow that shows the next loadout.</summary>
-	internal Control NextButton => this._next;
 
 	/// <summary>The Gear swap button, which exchanges the loadout's pieces and the worn ones.</summary>
 	internal Control SwapButton => this._swap;
@@ -120,36 +99,13 @@ public sealed class LoadoutView : EquipmentSlotsView
 	/// <summary>Raised when the user clicks the Back arrow.</summary>
 	public event EventHandler? BackRequested;
 
-	/// <summary>Raised when the user clicks the previous (-1) or next (+1) arrow.</summary>
-	public event EventHandler<int>? TurnRequested;
-
-	/// <summary>Whether the previous and next arrows can be clicked: greyed with a single loadout.</summary>
-	public bool CanTurn
-	{
-		get => this._next.Available;
-		set
-		{
-			this._previous.Available = value;
-			this._next.Available = value;
-		}
-	}
-
-	/// <summary>The buttons in the gaps of the stone, at the panel's cell size.</summary>
+	/// <summary>The buttons in the gaps of the stone, at the panel's cell size: the arrows, Back, Gear swap and Empty loadout.</summary>
 	protected override void PlaceExtras(Point panelLocation)
 	{
-		var (back, previous, next, swap, empty) = LoadoutPanel.ButtonCells();
-		void Place(Control button, RectangleF cells)
-		{
-			var bounds = this.Panel.CellsToPixels(cells);
-			bounds.Offset(panelLocation);
-			if (button.Bounds != bounds)
-				button.Bounds = bounds;
-		}
-
-		Place(this._back, back);
-		Place(this._previous, previous);
-		Place(this._next, next);
-		Place(this._swap, swap);
-		Place(this._empty, empty);
+		base.PlaceExtras(panelLocation);
+		var (back, _, _, swap, empty) = LoadoutPanel.ButtonCells();
+		this.PlaceOnStone(this._back, back, panelLocation);
+		this.PlaceOnStone(this._swap, swap, panelLocation);
+		this.PlaceOnStone(this._empty, empty, panelLocation);
 	}
 }

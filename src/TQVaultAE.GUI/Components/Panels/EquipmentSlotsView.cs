@@ -1,3 +1,5 @@
+using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Components.Panels;
@@ -5,7 +7,8 @@ namespace TQVaultAE.GUI.Components.Panels;
 /// <summary>
 /// An equipment panel's slots on their stone, apart from the stash panel: the slot half of the equipment background and
 /// the panel over it, both the main equipment's geometry times one factor so that the slots fall on their frames at
-/// every zoom and DPI. The loadout panel (<see cref="LoadoutView"/>) and the floating character window show their slots so.
+/// every zoom and DPI. The loadout panel (<see cref="LoadoutView"/>) and the floating character window show their slots so,
+/// with the previous and next loadout arrows in the gaps of the stone (<see cref="LoadoutPanel.ButtonCells"/>).
 /// </summary>
 public class EquipmentSlotsView : Control
 {
@@ -24,6 +27,18 @@ public class EquipmentSlotsView : Control
 	/// <summary>The largest factor of the main equipment's geometry, as last laid out.</summary>
 	private float _maxFactor = 1F;
 
+	/// <summary>The previous loadout arrow's pictures, with {0} for the state.</summary>
+	private const string PreviousPicture = """InGameUI\characterscreen\characterrotateleft{0}01.tex""";
+
+	/// <summary>The next loadout arrow's pictures, with {0} for the state.</summary>
+	private const string NextPicture = """InGameUI\characterscreen\characterrotateright{0}01.tex""";
+
+	/// <summary>The size of the previous and next arrows' pictures, in pixels at scale 1.</summary>
+	internal static readonly Size TurnPictureSize = new(20, 14);
+
+	private readonly GameButton _previous;
+	private readonly GameButton _next;
+
 	/// <summary>Initializes a new instance of the EquipmentSlotsView class.</summary>
 	/// <param name="panel">The equipment panel shown on the stone.</param>
 	/// <param name="uiService">The UI service.</param>
@@ -34,6 +49,36 @@ public class EquipmentSlotsView : Control
 		this.BackColor = Color.Black;
 		this.SlotsPanel = panel;
 		this.Controls.Add(panel);
+
+		this._previous = new GameButton(uiService, PreviousPicture, Resources.LoadoutPrevious) { Name = "loadoutPreviousButton" };
+		this._previous.Pressed += (_, _) => this.TurnRequested?.Invoke(this, -1);
+		this._next = new GameButton(uiService, NextPicture, Resources.LoadoutNext) { Name = "loadoutNextButton" };
+		this._next.Pressed += (_, _) => this.TurnRequested?.Invoke(this, 1);
+		foreach (var button in new[] { this._previous, this._next })
+		{
+			this.Controls.Add(button);
+			button.BringToFront();
+		}
+	}
+
+	/// <summary>The arrow that shows the previous loadout.</summary>
+	internal Control PreviousButton => this._previous;
+
+	/// <summary>The arrow that shows the next loadout.</summary>
+	internal Control NextButton => this._next;
+
+	/// <summary>Raised when the user clicks the previous (-1) or next (+1) arrow.</summary>
+	public event EventHandler<int>? TurnRequested;
+
+	/// <summary>Whether the previous and next arrows can be clicked: greyed with nothing to turn to.</summary>
+	public bool CanTurn
+	{
+		get => this._next.Available;
+		set
+		{
+			this._previous.Available = value;
+			this._next.Available = value;
+		}
 	}
 
 	/// <summary>The equipment panel on the stone.</summary>
@@ -91,9 +136,24 @@ public class EquipmentSlotsView : Control
 		this.Invalidate();
 	}
 
-	/// <summary>Places what the view adds over the stone, once the panel is at <paramref name="panelLocation"/>.</summary>
+	/// <summary>
+	/// Places what the view adds over the stone, once the panel is at <paramref name="panelLocation"/>: the previous and
+	/// next arrows left of the left column and right of the right column, level with their bottom.
+	/// </summary>
 	protected virtual void PlaceExtras(Point panelLocation)
 	{
+		var (_, previous, next, _, _) = LoadoutPanel.ButtonCells();
+		this.PlaceOnStone(this._previous, previous, panelLocation);
+		this.PlaceOnStone(this._next, next, panelLocation);
+	}
+
+	/// <summary>Puts <paramref name="control"/> on the cells <paramref name="cells"/> of the panel at <paramref name="panelLocation"/>.</summary>
+	protected void PlaceOnStone(Control control, RectangleF cells, Point panelLocation)
+	{
+		var bounds = this.SlotsPanel.CellsToPixels(cells);
+		bounds.Offset(panelLocation);
+		if (control.Bounds != bounds)
+			control.Bounds = bounds;
 	}
 
 	/// <summary>Resized by its owner: laid out again in its new bounds.</summary>

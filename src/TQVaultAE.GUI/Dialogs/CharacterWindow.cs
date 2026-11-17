@@ -18,8 +18,9 @@ namespace TQVaultAE.GUI.Dialogs;
 /// (I, II, III, Buffs), so that a toggle of the Buffs tab shows its effect on every number at once. A modeless window
 /// owned by the main window, one per character (<see cref="Views.MainFormUserControl.OpenCharacterWindow"/>); its buff
 /// toggles are its own, in memory only. Items go to and from the main window by drag and drop, with the main window's
-/// rules; changes are saved by the main window's Save. Under tab II, a list and two arrows show a loadout's pieces
-/// read-only in place of the equipment, the statistics computed with them; Compare opens through the main window.
+/// rules; changes are saved by the main window's Save. A list right of the gold bar and the arrows on the stone show a
+/// loadout's pieces read-only in place of the equipment, the statistics computed with them; Compare opens through the
+/// main window.
 /// </summary>
 internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 {
@@ -37,8 +38,6 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	private readonly CharacterStatsSource _stats;
 	private readonly CharacterStatsLook _look;
 	private readonly IItemComparisonHost _comparisonHost;
-	private readonly GameButton _previousLoadout;
-	private readonly GameButton _nextLoadout;
 	private readonly ComboBox _loadoutBox;
 	private readonly ToolTip _toolTip = new();
 
@@ -83,8 +82,8 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		this.Text = string.Format(CultureInfo.CurrentCulture, Resources.CharacterWindowTitle, save.Name);
 		this.KeyPreview = true;
 
-		// The main window's marble, stretched, as Advanced Search.
-		MarbleBackground.ApplyTo(this, MarbleBackground.Marble.MainWindow);
+		// Solid black behind the stone and the panels.
+		this.BackColor = Color.Black;
 
 		this._equipment = new CharacterWindowEquipmentPanel(dragInfo, this.Services, save)
 		{
@@ -113,11 +112,9 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 			this.EquipmentChanged?.Invoke(this, EventArgs.Empty);
 		};
 
-		// The loadouts: the previous and next arrows of the loadout panel around a list headed by the equipment worn.
-		this._previousLoadout = new GameButton(this.UIService, LoadoutView.PreviousPicture, Resources.LoadoutPrevious) { Name = "characterWindowPreviousLoadout" };
-		this._previousLoadout.Pressed += (_, _) => this.TurnLoadout(-1);
-		this._nextLoadout = new GameButton(this.UIService, LoadoutView.NextPicture, Resources.LoadoutNext) { Name = "characterWindowNextLoadout" };
-		this._nextLoadout.Pressed += (_, _) => this.TurnLoadout(1);
+		// The loadouts: the previous and next arrows on the stone, as in the loadout panel, and a list headed by the
+		// equipment worn right of the gold bar.
+		this._slots.TurnRequested += (_, step) => this.TurnLoadout(step);
 		this._loadoutBox = new ComboBox { Name = "characterWindowLoadout", DropDownStyle = ComboBoxStyle.DropDownList, TabStop = false };
 		DarkComboBox.Apply(this._loadoutBox);
 		this._loadoutBox.SelectionChangeCommitted += (_, _) =>
@@ -129,7 +126,10 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 		this.Controls.Add(this._slots);
 		this.Controls.AddRange(this._tabs);
-		this.Controls.AddRange([this._previousLoadout, this._loadoutBox, this._nextLoadout]);
+		this.Controls.Add(this._loadoutBox);
+
+		// In front of tab II, whose panel takes the gold bar's row too.
+		this._loadoutBox.BringToFront();
 
 		// Tab I's gold bar goes on under tab II: tab I in front.
 		this._tabs[0].BringToFront();
@@ -271,8 +271,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 			}
 		}
 
-		this._previousLoadout.Available = names.Count > 0;
-		this._nextLoadout.Available = names.Count > 0;
+		this._slots.CanTurn = names.Count > 0;
 		this.SelectLoadoutInList();
 	}
 
@@ -386,18 +385,12 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	}
 
 	/// <summary>
-	/// The loadout list and its arrows under tab II, right of tab I's gold bar, as high as the gold bar's boxes; the list's
-	/// font follows the scale.
+	/// The loadout list under tab II, right of tab I's gold bar, as high as the gold bar's boxes; its font follows the scale.
 	/// </summary>
 	private void LayOutLoadoutSelector(IReadOnlyList<Rectangle> tabBounds, Point origin, float scale)
 	{
-		var (previous, box, next) = CharacterWindowLayout.LoadoutSelector(tabBounds[0], tabBounds[1],
-			CharacterStatsPanel.GoldBarBounds, LoadoutView.TurnPictureSize, LoadoutBar.ReferenceHeight, scale);
-		previous.Offset(origin);
+		var box = CharacterWindowLayout.LoadoutList(tabBounds[0], tabBounds[1], CharacterStatsPanel.GoldBarBounds, LoadoutBar.ReferenceHeight, scale);
 		box.Offset(origin);
-		next.Offset(origin);
-		this._previousLoadout.Bounds = previous;
-		this._nextLoadout.Bounds = next;
 
 		var font = this._look.Light(15F, FontStyle.Regular);
 		if (this._loadoutFont is null || Math.Abs(this._loadoutFont.Size - font.Size) > 0.01F || this._loadoutFont.FontFamily.Name != font.FontFamily.Name)
