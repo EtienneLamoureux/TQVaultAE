@@ -97,7 +97,7 @@ public partial class StashPanel
 	}
 
 	/// <summary>Raised for each action asked on the loadout bar (add, load, update, rename, copy, delete, select).</summary>
-	public event EventHandler<LoadoutBarEventArgs>? OnLoadoutAction;
+	public event EventHandler<ListBarEventArgs<LoadoutBarAction>>? OnLoadoutAction;
 
 	/// <summary>The loadout bar, once the statistics panel was shown.</summary>
 	internal LoadoutBar? LoadoutBar => this._loadoutBar;

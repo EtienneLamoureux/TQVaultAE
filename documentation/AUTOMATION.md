@@ -118,6 +118,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
   - the statistics panels' Buffs tab and weapon set gems: `character_buffs`, `character_buff_toggle`, `character_weapon_set`;
+  - the character editor's class sets: `class_sets`;
   - floating character windows: `character_window_open`, `character_window`, `character_window_loadout`, `character_window_list`, `character_window_close`;
   - test aids: `create_item`, `picture_fault`, the `gameRunning` and `realGame` parameters of `loadouts`;
   - the headless mode.
@@ -680,6 +681,15 @@ General rules:
 - **`character_weapon_set(panel?, set?)`** *(Debug)*: reads the weapon set gems of tab I (`editor`, `main`,
   `window:<name>`): set counted, each gem's bounds and tool tip, armor, offense and attribute rows. `set=1|2` first clicks
   that gem through the panel's hit test. Memory only, never saved: allowed on any character.
+- **`class_sets(action?, name?, newName?, target?, menu?)`** *(Debug)*: the class set bar of the open character editor
+  ([class sets](CHAREDIT.md#class-sets)): bar bounds and parts, names, selected, `canChange`, `updateTargets`; the file
+  (`fileExists`, `readFailed`); the sets as edited (`changed`: written on OK), each with its masteries, skills,
+  attribute points and `matches` (holds the build shown); the build shown (`current`), `skillPointsLeft`,
+  `attributePointsLeft`. `menu=list|actions` reads a menu.
+  - Actions through the bar like the user: `select` (name) applies the set; `add` (name) clicks [+] and types the name;
+    `rename` (newName) and `delete` act on the selected set (`name` picks it first, which applies it); `update` (target)
+    clicks the Update submenu entry of that set. All but `select` run after the call returns (queue the answers:
+    delete and update confirm). OK (`close_dialog`) writes the file. Test characters only.
 - **Floating character windows** *(Debug)*: the window **Pop out** opens (`click_control("TQVaultAE","floatButton")`).
   - `character_window_open(character, x?, y?)`: opens the window of a listed character (key, name or drop-down label),
     or brings it to the front; `x`/`y` place it as a window reopened at start. Writes nothing.
@@ -1013,8 +1023,8 @@ In Debug builds, `ISoundService` is wrapped by `RecordingSoundService`, which re
   - With git backup enabled, the test files are committed and pushed with the others.
 - **Name guard** (Debug builds):
   - The tools writing a character or vault file (`create_vault`, `duplicate_character`, `import_file`, `import_text`,
-    `open_mod_link`, `archive_character`, `tag_box` assign, `menu_click` on the character tools and loadout menus)
-    refuse names starting with none of `player-test`, `player-mod`, `vault-`. Tags must start with `test-`.
+    `open_mod_link`, `archive_character`, `tag_box` assign, `menu_click` on the character tools and loadout menus,
+    `class_sets` actions) refuse names starting with none of `player-test`, `player-mod`, `vault-`. Tags must start with `test-`.
   - For captures without a real name, start the app with `USERPROFILE` pointed at a folder holding a copy of
     `Documents\My Games` with only such files (junctions to the real custom maps if needed), and `VaultPath` set to a
     vault folder of copies.

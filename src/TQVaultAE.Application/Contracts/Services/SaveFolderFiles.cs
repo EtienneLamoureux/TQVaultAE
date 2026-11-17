@@ -31,6 +31,7 @@ public static class SaveFolderFiles
 			// The mod link: a copy plays with the same mod.
 			new(IModLinkService.LinkFileName, WrittenByTQVault: true),
 			new(ILoadoutService.FileName, WrittenByTQVault: true),
+			new(IClassSetService.FileName, WrittenByTQVault: true),
 		];
 }
 

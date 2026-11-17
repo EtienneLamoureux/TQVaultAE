@@ -308,6 +308,7 @@ internal sealed partial class CharacterEditorUserControl
 		this.ok.Parent = this.cancel.Parent = this._content;
 		this.cancel.Location = new Point(this._tabs.Right - this.cancel.Width, buttonsTop);
 		this.ok.Location = new Point(this.cancel.Left - gap - this.ok.Width, buttonsTop);
+		this.PlaceClassSetBar(buttonsTop, gap);
 
 		this.AddMedallion(Rectangle.FromLTRB(
 			this._tabs.Left,

@@ -2876,4 +2876,58 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="BuffsPotionTriggerChance" xml:space="preserve">
     <value>On a health or energy potion: {0}% chance, for {1} s</value>
   </data>
+  <data name="ClassSetTitle" xml:space="preserve">
+    <value>Class Sets</value>
+  </data>
+  <data name="ClassSetNone" xml:space="preserve">
+    <value>No class set</value>
+  </data>
+  <data name="ClassSetPlaceholder" xml:space="preserve">
+    <value>Class set</value>
+  </data>
+  <data name="ClassSetAdd" xml:space="preserve">
+    <value>Add an empty class set</value>
+  </data>
+  <data name="ClassSetAddMenu" xml:space="preserve">
+    <value>Add...</value>
+  </data>
+  <data name="ClassSetRename" xml:space="preserve">
+    <value>Rename...</value>
+  </data>
+  <data name="ClassSetDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ClassSetUpdate" xml:space="preserve">
+    <value>Update with the build shown</value>
+  </data>
+  <data name="ClassSetUpdateTip" xml:space="preserve">
+    <value>Writes the masteries, skill points and attribute points shown now into the class set picked</value>
+  </data>
+  <data name="ClassSetReadOnly" xml:space="preserve">
+    <value>Read-only character: its class sets can only be shown and tried</value>
+  </data>
+  <data name="ClassSetNamePrompt" xml:space="preserve">
+    <value>Name of the class set:</value>
+  </data>
+  <data name="ClassSetNameEmpty" xml:space="preserve">
+    <value>Enter a name for the class set.</value>
+  </data>
+  <data name="ClassSetNameUsed" xml:space="preserve">
+    <value>{0} already has a class set named "{1}".</value>
+  </data>
+  <data name="ClassSetDeleteConfirm" xml:space="preserve">
+    <value>Delete the class set "{0}"?</value>
+  </data>
+  <data name="ClassSetUpdateConfirm" xml:space="preserve">
+    <value>Put the masteries, skill points and attribute points shown now into the class set "{0}"?</value>
+  </data>
+  <data name="ClassSetPartlyApplied" xml:space="preserve">
+    <value>Not enough points or mastery slots for the whole class set "{0}": it is applied in part, the points not spent are left to spend.</value>
+  </data>
+  <data name="ClassSetWriteFailed" xml:space="preserve">
+    <value>The class sets of {0} could not be saved: {1}</value>
+  </data>
+  <data name="ClassSetUpdateNone" xml:space="preserve">
+    <value>Update writes the build shown into another class set than the selected one: add one first</value>
+  </data>
 </root>

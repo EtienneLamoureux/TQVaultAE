@@ -16,7 +16,7 @@ namespace TQVaultAE.GUI.Views;
 /// </summary>
 public partial class MainFormUserControl
 {
-	private void LoadoutActionCallback(object? sender, LoadoutBarEventArgs e)
+	private void LoadoutActionCallback(object? sender, ListBarEventArgs<LoadoutBarAction> e)
 	{
 		switch (e.Action)
 		{
@@ -74,24 +74,12 @@ public partial class MainFormUserControl
 	/// <param name="current">The loadout being renamed.</param>
 	/// <returns>The name, or null when cancelled.</returns>
 	private string? AskLoadoutName(LoadoutSet loadouts, string proposed, string? current = null)
-	{
-		while (true)
-		{
-			var name = InputDialog.Show(this.Services.Forms, Resources.LoadoutNamePrompt, Resources.LoadoutTitle, proposed).Trim();
-			if (name.Length == 0)
-				return null;
+		=> InputDialog.AskSetName(this.Services, Resources.LoadoutNamePrompt, Resources.LoadoutTitle, proposed
+			, name => this.Services.Loadouts.ValidateName(loadouts, name, current)
+			, (name, error) => this.LoadoutNameMessage(loadouts, name, error));
 
-			var error = this.Services.Loadouts.ValidateName(loadouts, name, current);
-			if (error == LoadoutNameError.None)
-				return name;
-
-			this.Services.MessageBoxes.Inform(this.LoadoutNameMessage(loadouts, name, error), Resources.LoadoutTitle, MessageBoxIcon.Error);
-			proposed = name;
-		}
-	}
-
-	private string LoadoutNameMessage(LoadoutSet loadouts, string name, LoadoutNameError error)
-		=> error == LoadoutNameError.AlreadyUsed
+	private string LoadoutNameMessage(LoadoutSet loadouts, string name, SetNameError error)
+		=> error == SetNameError.AlreadyUsed
 			? string.Format(CultureInfo.CurrentCulture, Resources.LoadoutNameUsed, loadouts.CharacterName, loadouts.Find(name)?.Name ?? name)
 			: Resources.LoadoutNameEmpty;
 
@@ -122,7 +110,7 @@ public partial class MainFormUserControl
 	/// <summary>Shows the outcome of a change: an error box, or the loadouts again with <paramref name="select"/> selected.</summary>
 	private bool ShowLoadoutChange(LoadoutSet loadouts, LoadoutChange change, string? select, string? name = null)
 	{
-		if (change.NameError != LoadoutNameError.None)
+		if (change.NameError != SetNameError.None)
 			this.Services.MessageBoxes.Inform(this.LoadoutNameMessage(loadouts, name ?? string.Empty, change.NameError), Resources.LoadoutTitle, MessageBoxIcon.Error);
 		else if (change.Error is not null)
 			this.Services.MessageBoxes.Inform(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutWriteFailed, loadouts.CharacterName, change.Error.Message), Resources.LoadoutTitle, MessageBoxIcon.Error);

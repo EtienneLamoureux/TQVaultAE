@@ -78,21 +78,13 @@ public partial class LoadoutService(
 	}
 
 	/// <inheritdoc/>
-	public LoadoutNameError ValidateName(LoadoutSet loadouts, string? name, string? current = null)
-	{
-		if (string.IsNullOrWhiteSpace(name))
-			return LoadoutNameError.Empty;
-
-		var same = loadouts.Find(name);
-		return same is null || string.Equals(same.Name, current, StringComparison.OrdinalIgnoreCase)
-			? LoadoutNameError.None
-			: LoadoutNameError.AlreadyUsed;
-	}
+	public SetNameError ValidateName(LoadoutSet loadouts, string? name, string? current = null)
+		=> SetNames.Validate(loadouts.Loadouts.Select(l => l.Name), name, current);
 
 	/// <inheritdoc/>
 	public LoadoutChange Add(LoadoutSet loadouts, string name)
 	{
-		if (this.ValidateName(loadouts, name) is var error and not LoadoutNameError.None)
+		if (this.ValidateName(loadouts, name) is var error and not SetNameError.None)
 			return LoadoutChange.Refused(error);
 		if (loadouts.ReadFailed)
 			return LoadoutChange.Missing;
@@ -117,7 +109,7 @@ public partial class LoadoutService(
 	{
 		if (loadouts.ReadFailed || loadouts.Find(name) is not { } loadout)
 			return LoadoutChange.Missing;
-		if (this.ValidateName(loadouts, newName, loadout.Name) is var error and not LoadoutNameError.None)
+		if (this.ValidateName(loadouts, newName, loadout.Name) is var error and not SetNameError.None)
 			return LoadoutChange.Refused(error);
 
 		return this.Write(loadouts, [.. loadouts.Loadouts.Select(l => l == loadout ? l with { Name = newName.Trim() } : l)]);
@@ -128,7 +120,7 @@ public partial class LoadoutService(
 	{
 		if (loadouts.ReadFailed || loadouts.Find(name) is not { } loadout)
 			return LoadoutChange.Missing;
-		if (this.ValidateName(loadouts, newName) is var error and not LoadoutNameError.None)
+		if (this.ValidateName(loadouts, newName) is var error and not SetNameError.None)
 			return LoadoutChange.Refused(error);
 
 		// The copy has its own items: each search entry and each gear swap works on its own pieces.

@@ -125,7 +125,7 @@ internal sealed class CharacterRoom : UserControl
 	private void Arrange()
 	{
 		var stats = new Rectangle(this._statsLocation, this.Stats.Size);
-		var bar = new Rectangle(stats.X, stats.Bottom + this._gap, stats.Width, LoadoutBar.HeightAt(this.Bar.BarScale));
+		var bar = new Rectangle(stats.X, stats.Bottom + this._gap, stats.Width, GameListBar.HeightAt(this.Bar.BarScale));
 		var edit = new Rectangle(new Point(stats.X, bar.Bottom + this._gap), this._editSize);
 
 		// The loadout panel: the bar goes down to the line of the Edit button, the panel takes all the room above it.

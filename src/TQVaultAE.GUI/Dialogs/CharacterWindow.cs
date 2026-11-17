@@ -364,7 +364,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	/// </summary>
 	private void LayOutLoadoutSelector(IReadOnlyList<Rectangle> tabBounds, Point origin, float scale)
 	{
-		var box = CharacterWindowLayout.LoadoutList(tabBounds[0], tabBounds[1], CharacterStatsPanel.GoldBarBounds, LoadoutBar.ReferenceHeight, scale);
+		var box = CharacterWindowLayout.LoadoutList(tabBounds[0], tabBounds[1], CharacterStatsPanel.GoldBarBounds, GameListBar.ReferenceHeight, scale);
 		box.Offset(origin);
 
 		var font = this._look.Light(15F, FontStyle.Regular);

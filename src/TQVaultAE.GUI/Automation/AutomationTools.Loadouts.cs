@@ -135,31 +135,16 @@ internal static partial class AutomationTools
 
 					// Another loadout than the selected one: picked in the bar's list first, as the user does.
 					if (name is not null && (barAction == LoadoutBarAction.Select || (barAction != LoadoutBarAction.Add && name != bar.Selected)))
-						PickLoadout(bar, name);
+						PickInBar(bar, name);
 					if (barAction != LoadoutBarAction.Select)
-						LoadoutBarAct(form, bar, barAction, barAction == LoadoutBarAction.Add ? name : newName);
+						ListBarAct(form, bar, barAction, barAction == LoadoutBarAction.Add ? name : newName);
 				}
 			}
 
 			object? menuEntries = null;
 			if (bar is not null && menu is not null)
 			{
-				var strip = menu.Equals("list", StringComparison.OrdinalIgnoreCase) ? bar.ListMenu : bar.ActionMenu;
-				strip.Show(bar, new Point(0, bar.Height));
-				menuEntries = strip.Items.OfType<ToolStripItem>()
-					.Select(i => new
-					{
-						text = i.Text,
-						enabled = i.Enabled,
-						@checked = (i as ToolStripMenuItem)?.Checked ?? false,
-						tip = i.ToolTipText,
-						separator = i is ToolStripSeparator,
-						items = i is ToolStripMenuItem { HasDropDownItems: true } sub
-							? sub.DropDownItems.OfType<ToolStripItem>().Select(e => new { text = e.Text, enabled = e.Enabled, tip = e.ToolTipText }).ToList()
-							: null,
-					})
-					.ToList();
-				strip.Close();
+				menuEntries = BarMenuEntries(bar, menu);
 			}
 
 			var set = player is null ? null : form.Services.Loadouts.Find(Path.GetDirectoryName(player.PlayerFile) ?? string.Empty);
@@ -263,15 +248,42 @@ internal static partial class AutomationTools
 		_ => throw new McpException("to must be inventory, stash or vault."),
 	};
 
-	/// <summary>Selects a loadout like the user: a click on the bar's name box opens its list, then a click on the name.</summary>
-	private static void PickLoadout(LoadoutBar bar, string name)
+	/// <summary>
+	/// The entries of a list bar's drop-down (<paramref name="menu"/> 'list') or right-click menu ('actions'), opened
+	/// then closed: text, enabled, checked, tip, separator, and a submenu's items with their tip.
+	/// </summary>
+	internal static object BarMenuEntries<TAction>(GameListBar<TAction> bar, string menu)
+		where TAction : struct, Enum
+	{
+		var strip = menu.Equals("list", StringComparison.OrdinalIgnoreCase) ? bar.ListMenu : bar.ActionMenu;
+		strip.Show(bar, new Point(0, bar.Height));
+		var entries = strip.Items.OfType<ToolStripItem>()
+			.Select(i => new
+			{
+				text = i.Text,
+				enabled = i.Enabled,
+				@checked = (i as ToolStripMenuItem)?.Checked ?? false,
+				tip = i.ToolTipText,
+				separator = i is ToolStripSeparator,
+				items = i is ToolStripMenuItem { HasDropDownItems: true } sub
+					? sub.DropDownItems.OfType<ToolStripItem>().Select(e => new { text = e.Text, enabled = e.Enabled, tip = e.ToolTipText }).ToList()
+					: null,
+			})
+			.ToList();
+		strip.Close();
+		return entries;
+	}
+
+	/// <summary>Selects an entry of a list bar (loadout, class set) like the user: a click on the bar's name box opens its list, then a click on the name.</summary>
+	internal static void PickInBar<TAction>(GameListBar<TAction> bar, string name)
+		where TAction : struct, Enum
 	{
 		var field = bar.FieldBounds;
 		AutomationInput.SendClick(bar, new Point(field.X + (field.Width / 2), field.Y + (field.Height / 2)), MouseButtons.Left, Keys.None);
 		try
 		{
 			var entry = bar.ListMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => string.Equals(i.Tag as string, name, StringComparison.OrdinalIgnoreCase))
-				?? throw new McpException($"No loadout '{name}'. Loadouts: {string.Join(", ", bar.Names)}");
+				?? throw new McpException($"No entry '{name}'. Entries: {string.Join(", ", bar.Names)}");
 			entry.PerformClick();
 		}
 		finally
@@ -281,20 +293,22 @@ internal static partial class AutomationTools
 	}
 
 	/// <summary>
-	/// Does an action on the selected loadout like the user, after the calling tool has returned (it may open the name
-	/// dialog or a confirmation): Add by a click on its button, the others by their entry of the bar's
-	/// right-click menu. <paramref name="typed"/> is queued first as the name dialog's answer.
+	/// Does an action of a list bar (loadout, class set) like the user, after the calling tool has returned (it may open
+	/// the name dialog or a confirmation): Add by a click on its button, the others by their entry of the bar's
+	/// right-click menu, or of a submenu (<paramref name="target"/>: the entry of a submenu naming another set, as the
+	/// class set bar's Update). <paramref name="typed"/> is queued first as the name dialog's answer.
 	/// </summary>
-	private static void LoadoutBarAct(Forms.MainForm form, LoadoutBar bar, LoadoutBarAction action, string? typed)
+	internal static void ListBarAct<TAction>(Forms.MainForm form, GameListBar<TAction> bar, TAction action, string? typed, string? target = null)
+		where TAction : struct, Enum
 	{
 		if (!bar.CanAct(action))
 			throw new McpException(bar.LockedReason(action) is { } locked && bar.CanChange
 				? $"{action} is greyed: {locked}"
-				: $"{action} is greyed: a user could not do it (no loadout selected, or the character cannot change).");
+				: $"{action} is greyed: a user could not do it (nothing selected, or the character cannot change).");
 		if (typed is not null)
 			AutomationHost.QueueDialogAnswerFirst(new QueuedAnswer(DialogResult.OK, typed));
 
-		if (action == LoadoutBarAction.Add)
+		if (EqualityComparer<TAction>.Default.Equals(action, bar.AddAction))
 		{
 			var button = bar.AddBounds;
 			var center = new Point(button.X + (button.Width / 2), button.Y + (button.Height / 2));
@@ -303,13 +317,16 @@ internal static partial class AutomationTools
 		}
 
 		AutomationInput.SendContextClick(bar, new Point(bar.FieldBounds.Width / 2, bar.Height / 2));
-		// An entry of the menu, or of its Empty loadout submenu (its parent first in the path).
-		static bool Carries(ToolStripItem item, LoadoutBarAction action) => item.Tag is LoadoutBarAction tagged && tagged == action;
+		// An entry of the menu, or of a submenu (its parent first in the path).
+		bool Carries(ToolStripItem item) => target is null
+			? item.Tag is TAction tagged && EqualityComparer<TAction>.Default.Equals(tagged, action)
+			: item.Tag is ListBarTarget<TAction> aimed && EqualityComparer<TAction>.Default.Equals(aimed.Action, action) && string.Equals(aimed.Name, target, StringComparison.OrdinalIgnoreCase);
 		var top = bar.ActionMenu.Items.OfType<ToolStripMenuItem>().ToList();
-		IReadOnlyList<ToolStripItem> chain = top.FirstOrDefault(i => Carries(i, action)) is { } entry
+		IReadOnlyList<ToolStripItem> chain = top.FirstOrDefault(Carries) is { } entry
 			? [entry]
-			: top.Select(parent => (parent, sub: parent.DropDownItems.OfType<ToolStripItem>().FirstOrDefault(i => Carries(i, action))))
-				.Where(p => p.sub is not null).Select(p => (IReadOnlyList<ToolStripItem>)[p.parent, p.sub!]).First();
+			: top.Select(parent => (parent, sub: parent.DropDownItems.OfType<ToolStripItem>().FirstOrDefault(Carries)))
+				.Where(p => p.sub is not null).Select(p => (IReadOnlyList<ToolStripItem>)[p.parent, p.sub!]).FirstOrDefault()
+				?? throw new McpException($"No menu entry for {action}{(target is null ? string.Empty : $" '{target}'")}.");
 		AutomationMenus.ClickLater(form, AutomationMenus.Clickable(chain));
 	}
 

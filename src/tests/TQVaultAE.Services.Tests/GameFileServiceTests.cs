@@ -149,6 +149,11 @@ public class GameFileServiceTests
 		_mockPathIO.Setup(x => x.Combine(playerSaveDirectory, ILoadoutService.FileName)).Returns(loadoutsFile);
 		_mockPathIO.Setup(x => x.Combine(newFolder, ILoadoutService.FileName)).Returns(newLoadoutsFile);
 		_mockFileIO.Setup(x => x.Exists(loadoutsFile)).Returns(true);
+		var classSetsFile = playerSaveDirectory + "\\" + IClassSetService.FileName;
+		var newClassSetsFile = newFolder + "\\" + IClassSetService.FileName;
+		_mockPathIO.Setup(x => x.Combine(playerSaveDirectory, IClassSetService.FileName)).Returns(classSetsFile);
+		_mockPathIO.Setup(x => x.Combine(newFolder, IClassSetService.FileName)).Returns(newClassSetsFile);
+		_mockFileIO.Setup(x => x.Exists(classSetsFile)).Returns(true);
 		var linkFile = playerSaveDirectory + "\\" + IModLinkService.LinkFileName;
 		var newLinkFile = newFolder + "\\" + IModLinkService.LinkFileName;
 		_mockPathIO.Setup(x => x.Combine(playerSaveDirectory, IModLinkService.LinkFileName)).Returns(linkFile);
@@ -176,6 +181,7 @@ public class GameFileServiceTests
 		_mockFileIO.Verify(x => x.Copy(stashFileG, It.IsAny<string>()), Times.Once);
 		_mockFileIO.Verify(x => x.Copy(settingsFile, It.IsAny<string>()), Times.Once);
 		_mockFileIO.Verify(x => x.Copy(loadoutsFile, newLoadoutsFile), Times.Once, "the loadouts follow the duplicate");
+		_mockFileIO.Verify(x => x.Copy(classSetsFile, newClassSetsFile), Times.Once, "the class sets follow the duplicate");
 		_mockFileIO.Verify(x => x.Copy(linkFile, newLinkFile), Times.Once, "the copy of a mod-linked character plays with the same mod");
 	}
 

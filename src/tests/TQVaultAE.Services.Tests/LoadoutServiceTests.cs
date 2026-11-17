@@ -119,13 +119,13 @@ public sealed partial class LoadoutServiceTests : IDisposable
 
 		var result = this._service.Add(set, name);
 
-		result.NameError.Should().Be(LoadoutNameError.AlreadyUsed);
+		result.NameError.Should().Be(SetNameError.AlreadyUsed);
 		File.ReadAllText(this.LoadoutsFile).Should().Be(before);
 	}
 
 	[Fact]
 	public void Add_EmptyName_IsRefused()
-		=> this._service.Add(this.Read(), "  ").NameError.Should().Be(LoadoutNameError.Empty);
+		=> this._service.Add(this.Read(), "  ").NameError.Should().Be(SetNameError.Empty);
 
 	[Fact]
 	public void Update_MergesTheWornPiecesAsCopies_AndKeepsTheLoadoutsPiecesOfTheEmptySlots()
@@ -155,7 +155,7 @@ public sealed partial class LoadoutServiceTests : IDisposable
 		this._service.Add(set, "B");
 
 		this._service.Rename(set, "A", "a").IsSuccess.Should().BeTrue();
-		this._service.Rename(set, "a", "b").NameError.Should().Be(LoadoutNameError.AlreadyUsed);
+		this._service.Rename(set, "a", "b").NameError.Should().Be(SetNameError.AlreadyUsed);
 
 		this.Read().Loadouts.Select(l => l.Name).Should().Equal("a", "B");
 	}

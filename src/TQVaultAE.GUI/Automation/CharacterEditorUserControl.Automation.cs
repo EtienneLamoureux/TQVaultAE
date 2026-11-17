@@ -51,4 +51,10 @@ internal sealed partial class CharacterEditorUserControl
 			} : null,
 		};
 	}
+
+	/// <summary>The skill points left to spend in the editor.</summary>
+	internal int AutomationSkillPointsLeft => this._skills?.AvailablePoints ?? 0;
+
+	/// <summary>The attribute points left to spend in the editor.</summary>
+	internal int AutomationAttributePointsLeft => Convert.ToInt32(this.attributeNumericUpDown.Value);
 }

@@ -91,7 +91,7 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 
 	/// <inheritdoc/>
 	public bool HasChanges => this._loaded
-		&& (this.CurrentState() != this._startState || this._skills?.Changed == true || this._skills?.MasteriesChanged == true);
+		&& (this.CurrentState() != this._startState || this._skills?.Changed == true || this._skills?.MasteriesChanged == true || this._classSets.Changed);
 
 	/// <inheritdoc/>
 	public string DiscardChangesQuestion => Resources.CharacterViewDiscardChanges;
@@ -173,6 +173,10 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 				, Mana: Convert.ToInt32(manacUpDown.Value)
 				, SkillRecords: this._skills?.Changed == true ? this._skills.BuildSkillRecords() : null
 				, MasteriesChanged: this._skills?.MasteriesChanged == true);
+
+			// The class sets first: when their file cannot be written the editor stays open, nothing applied.
+			if (!this.SaveClassSets())
+				return;
 
 			this.Services.CharacterEditService.Apply(PlayerCollection, request);
 
@@ -285,6 +289,7 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 			this._previousValues[upDown] = Convert.ToInt32(upDown.Value);
 
 		this._startAttributes = [.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))];
+		this.InitClassSets();
 		this.FitToFrame();
 		_loaded = true;
 		this._startState = this.CurrentState();

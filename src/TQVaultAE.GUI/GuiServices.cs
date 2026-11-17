@@ -65,6 +65,7 @@ public sealed class GuiServices
 		, ICharacterReadOnlyService characterReadOnlyService
 		, KeyBindMap keyBinds
 		, ILoadoutService loadouts
+		, IClassSetService classSets
 		, IGameProcessService gameProcess
 		, IResultsMoveService resultsMove
 	)
@@ -110,6 +111,7 @@ public sealed class GuiServices
 		this.SettingsPersistence = settingsPersistence;
 		this.KeyBinds = keyBinds;
 		this.Loadouts = loadouts;
+		this.ClassSets = classSets;
 		this.GameProcess = gameProcess;
 		this.ResultsMove = resultsMove;
 	}
@@ -211,6 +213,9 @@ public sealed class GuiServices
 
 	/// <summary>The characters' loadouts (saved equipment sets).</summary>
 	public ILoadoutService Loadouts { get; }
+
+	/// <summary>The characters' class sets (saved builds: masteries, skill and attribute points).</summary>
+	public IClassSetService ClassSets { get; }
 
 	/// <summary>Whether the game is running.</summary>
 	public IGameProcessService GameProcess { get; }

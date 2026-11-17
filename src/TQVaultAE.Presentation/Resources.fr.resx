@@ -2700,4 +2700,58 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="BuffsPotionTriggerChance" xml:space="preserve">
     <value>Sur une potion de santé ou d'énergie : {0} % de chances, pendant {1} s</value>
   </data>
+  <data name="ClassSetTitle" xml:space="preserve">
+    <value>Profils de classe</value>
+  </data>
+  <data name="ClassSetNone" xml:space="preserve">
+    <value>Aucun profil de classe</value>
+  </data>
+  <data name="ClassSetPlaceholder" xml:space="preserve">
+    <value>Profil de classe</value>
+  </data>
+  <data name="ClassSetAdd" xml:space="preserve">
+    <value>Ajouter un profil de classe vide</value>
+  </data>
+  <data name="ClassSetAddMenu" xml:space="preserve">
+    <value>Ajouter...</value>
+  </data>
+  <data name="ClassSetRename" xml:space="preserve">
+    <value>Renommer...</value>
+  </data>
+  <data name="ClassSetDelete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="ClassSetUpdate" xml:space="preserve">
+    <value>Mettre à jour avec le profil affiché</value>
+  </data>
+  <data name="ClassSetUpdateTip" xml:space="preserve">
+    <value>Écrit les maîtrises, les points de compétence et les points d'attributs affichés dans le profil de classe choisi</value>
+  </data>
+  <data name="ClassSetReadOnly" xml:space="preserve">
+    <value>Personnage en lecture seule : ses profils de classe peuvent seulement être affichés et essayés</value>
+  </data>
+  <data name="ClassSetNamePrompt" xml:space="preserve">
+    <value>Nom du profil de classe :</value>
+  </data>
+  <data name="ClassSetNameEmpty" xml:space="preserve">
+    <value>Saisissez un nom pour le profil de classe.</value>
+  </data>
+  <data name="ClassSetNameUsed" xml:space="preserve">
+    <value>{0} a déjà un profil de classe nommé « {1} ».</value>
+  </data>
+  <data name="ClassSetDeleteConfirm" xml:space="preserve">
+    <value>Supprimer le profil de classe « {0} » ?</value>
+  </data>
+  <data name="ClassSetUpdateConfirm" xml:space="preserve">
+    <value>Mettre les maîtrises, les points de compétence et les points d'attributs affichés dans le profil de classe « {0} » ?</value>
+  </data>
+  <data name="ClassSetPartlyApplied" xml:space="preserve">
+    <value>Pas assez de points ou d'emplacements de maîtrise pour tout le profil de classe « {0} » : il est appliqué en partie, les points non dépensés restent à dépenser.</value>
+  </data>
+  <data name="ClassSetWriteFailed" xml:space="preserve">
+    <value>Les profils de classe de {0} n'ont pas pu être enregistrés : {1}</value>
+  </data>
+  <data name="ClassSetUpdateNone" xml:space="preserve">
+    <value>Mettre à jour écrit le profil affiché dans un autre profil de classe que celui choisi : ajoutez-en un d'abord</value>
+  </data>
 </root>

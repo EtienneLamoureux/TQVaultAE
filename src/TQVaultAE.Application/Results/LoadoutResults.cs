@@ -2,31 +2,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TQVaultAE.Application.Results;
 
-/// <summary>Why a loadout name is refused.</summary>
-public enum LoadoutNameError
-{
-	/// <summary>The name can be used.</summary>
-	None,
-
-	/// <summary>No name, or only spaces.</summary>
-	Empty,
-
-	/// <summary>Another loadout of the character has this name (case ignored).</summary>
-	AlreadyUsed,
-}
-
 /// <summary>Outcome of a change to a character's loadouts (add, update, rename, copy, delete).</summary>
 public sealed class LoadoutChange
 {
-	private LoadoutChange(LoadoutNameError nameError, Exception? error, bool notFound)
+	private LoadoutChange(SetNameError nameError, Exception? error, bool notFound)
 	{
 		this.NameError = nameError;
 		this.Error = error;
 		this.NotFound = notFound;
 	}
 
-	/// <summary>The refused name; <see cref="LoadoutNameError.None"/> otherwise.</summary>
-	public LoadoutNameError NameError { get; }
+	/// <summary>The refused name; <see cref="SetNameError.None"/> otherwise.</summary>
+	public SetNameError NameError { get; }
 
 	/// <summary>The failure to write the file; null otherwise.</summary>
 	public Exception? Error { get; }
@@ -36,15 +23,15 @@ public sealed class LoadoutChange
 
 	/// <summary>True when the change is written.</summary>
 	[MemberNotNullWhen(false, nameof(Error))]
-	public bool IsSuccess => this.Error is null && this.NameError == LoadoutNameError.None && !this.NotFound;
+	public bool IsSuccess => this.Error is null && this.NameError == SetNameError.None && !this.NotFound;
 
-	public static readonly LoadoutChange Succeeded = new(LoadoutNameError.None, null, false);
+	public static readonly LoadoutChange Succeeded = new(SetNameError.None, null, false);
 
-	public static readonly LoadoutChange Missing = new(LoadoutNameError.None, null, true);
+	public static readonly LoadoutChange Missing = new(SetNameError.None, null, true);
 
-	public static LoadoutChange Refused(LoadoutNameError error) => new(error, null, false);
+	public static LoadoutChange Refused(SetNameError error) => new(error, null, false);
 
-	public static LoadoutChange Failed(Exception error) => new(LoadoutNameError.None, error, false);
+	public static LoadoutChange Failed(Exception error) => new(SetNameError.None, error, false);
 }
 
 /// <summary>How a gear swap ended.</summary>

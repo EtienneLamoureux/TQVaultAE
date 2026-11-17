@@ -7923,5 +7923,167 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("BuffsPotionTriggerChance", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class Sets.
+        /// </summary>
+        public static string ClassSetTitle {
+            get {
+                return ResourceManager.GetString("ClassSetTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No class set.
+        /// </summary>
+        public static string ClassSetNone {
+            get {
+                return ResourceManager.GetString("ClassSetNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class set.
+        /// </summary>
+        public static string ClassSetPlaceholder {
+            get {
+                return ResourceManager.GetString("ClassSetPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add an empty class set.
+        /// </summary>
+        public static string ClassSetAdd {
+            get {
+                return ResourceManager.GetString("ClassSetAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add....
+        /// </summary>
+        public static string ClassSetAddMenu {
+            get {
+                return ResourceManager.GetString("ClassSetAddMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename....
+        /// </summary>
+        public static string ClassSetRename {
+            get {
+                return ResourceManager.GetString("ClassSetRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string ClassSetDelete {
+            get {
+                return ResourceManager.GetString("ClassSetDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update with the build shown.
+        /// </summary>
+        public static string ClassSetUpdate {
+            get {
+                return ResourceManager.GetString("ClassSetUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writes the masteries, skill points and attribute points shown now into the class set picked.
+        /// </summary>
+        public static string ClassSetUpdateTip {
+            get {
+                return ResourceManager.GetString("ClassSetUpdateTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read-only character: its class sets can only be shown and tried.
+        /// </summary>
+        public static string ClassSetReadOnly {
+            get {
+                return ResourceManager.GetString("ClassSetReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name of the class set:.
+        /// </summary>
+        public static string ClassSetNamePrompt {
+            get {
+                return ResourceManager.GetString("ClassSetNamePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a name for the class set..
+        /// </summary>
+        public static string ClassSetNameEmpty {
+            get {
+                return ResourceManager.GetString("ClassSetNameEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} already has a class set named "{1}"..
+        /// </summary>
+        public static string ClassSetNameUsed {
+            get {
+                return ResourceManager.GetString("ClassSetNameUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the class set "{0}"?.
+        /// </summary>
+        public static string ClassSetDeleteConfirm {
+            get {
+                return ResourceManager.GetString("ClassSetDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put the masteries, skill points and attribute points shown now into the class set "{0}"?.
+        /// </summary>
+        public static string ClassSetUpdateConfirm {
+            get {
+                return ResourceManager.GetString("ClassSetUpdateConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not enough points or mastery slots for the whole class set "{0}": it is applied in part, the points not spent are left to spend..
+        /// </summary>
+        public static string ClassSetPartlyApplied {
+            get {
+                return ResourceManager.GetString("ClassSetPartlyApplied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The class sets of {0} could not be saved: {1}.
+        /// </summary>
+        public static string ClassSetWriteFailed {
+            get {
+                return ResourceManager.GetString("ClassSetWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update writes the build shown into another class set than the selected one: add one first.
+        /// </summary>
+        public static string ClassSetUpdateNone {
+            get {
+                return ResourceManager.GetString("ClassSetUpdateNone", resourceCulture);
+            }
+        }
     }
 }

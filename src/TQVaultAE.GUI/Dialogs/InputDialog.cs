@@ -12,6 +12,7 @@ using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Forms;
 using TQVaultAE.Presentation;
+using TQVaultAE.Application.Results;
 
 /// <summary>
 /// Asks the user for a text (the name of a duplicated character, of a loadout). A TQ window like Vault Maintenance:
@@ -141,6 +142,36 @@ internal sealed class InputDialog : VaultForm
 		dialog.Text = title;
 		dialog.InputValue = defaultValue;
 		return dialog.ShowDialog() == DialogResult.OK ? dialog.InputValue : string.Empty;
+	}
+
+
+	/// <summary>
+	/// Asks the name of a named set (loadout, class set) until it is valid or the dialog is cancelled: a refused name
+	/// shows its error box, then the dialog again with that name.
+	/// </summary>
+	/// <param name="services">The GUI services (dialogs, message boxes).</param>
+	/// <param name="prompt">The prompt text to display.</param>
+	/// <param name="title">The dialog and error box title.</param>
+	/// <param name="proposed">The name shown first.</param>
+	/// <param name="validate">Checks a name.</param>
+	/// <param name="errorText">The error text of a refused name.</param>
+	/// <returns>The name, trimmed, or null when cancelled.</returns>
+	public static string? AskSetName(GuiServices services, string prompt, string title, string proposed
+		, Func<string, SetNameError> validate, Func<string, SetNameError, string> errorText)
+	{
+		while (true)
+		{
+			var name = Show(services.Forms, prompt, title, proposed).Trim();
+			if (name.Length == 0)
+				return null;
+
+			var error = validate(name);
+			if (error == SetNameError.None)
+				return name;
+
+			services.MessageBoxes.Inform(errorText(name, error), title, MessageBoxIcon.Error);
+			proposed = name;
+		}
 	}
 
 	/// <summary>

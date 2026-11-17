@@ -36,7 +36,7 @@ public interface ILoadoutService
 	/// <param name="loadouts">The character's loadouts.</param>
 	/// <param name="name">The name asked for.</param>
 	/// <param name="current">The loadout being renamed, which may keep its name with another case.</param>
-	LoadoutNameError ValidateName(LoadoutSet loadouts, string? name, string? current = null);
+	SetNameError ValidateName(LoadoutSet loadouts, string? name, string? current = null);
 
 	/// <summary>Adds an empty loadout and writes the file.</summary>
 	/// <param name="loadouts">The character's loadouts.</param>

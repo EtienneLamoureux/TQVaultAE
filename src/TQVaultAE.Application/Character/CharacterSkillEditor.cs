@@ -284,6 +284,54 @@ public sealed class CharacterSkillEditor
 		return result;
 	}
 
+	/// <summary>The masteries of the slots now, with their levels and the levels of their skills: a class set's masteries.</summary>
+	public IReadOnlyList<ClassSetMastery> CaptureClassSet()
+		=> [.. this._slots.OfType<MasteryTree>().Select(tree => new ClassSetMastery(
+			tree.Mastery,
+			this.GetLevel(tree.Id),
+			[.. tree.Skills.Where(s => this.GetLevel(s.Id) > 0).Select(s => new ClassSetSkill(s.Id.Raw, this.GetLevel(s.Id)))]))];
+
+	/// <summary>
+	/// Applies the masteries of a class set: every mastery slot is emptied (its points back to the points left), then
+	/// each mastery of the set takes its slot, its level and its skill levels with the rules of the skill window, while
+	/// the points last. No point is lost: a set without masteries leaves them all in the points left.
+	/// </summary>
+	/// <param name="masteries">The class set's masteries, in slot order.</param>
+	/// <returns>False when the set could not be applied whole (too few points or mastery slots, a mastery or skill the game does not know).</returns>
+	public bool ApplyClassSet(IReadOnlyList<ClassSetMastery> masteries)
+	{
+		this.ResetMasteries();
+		for (int slot = 0; slot < Math.Min(masteries.Count, this._slots.Length); slot++)
+		{
+			var wanted = masteries[slot];
+			if (!this.SetMastery(slot, wanted.Mastery) || this._slots[slot] is not { } tree)
+				continue;
+
+			this.SetMasteryLevel(slot, wanted.Level);
+
+			// A skill takes its points once its parent has some: as many passes as the deepest chain needs.
+			var skills = wanted.Skills
+				.Select(s => (Skill: tree.Skills.FirstOrDefault(t => string.Equals(t.Id.Raw, s.Skill, StringComparison.OrdinalIgnoreCase)), s.Level))
+				.Where(s => s.Skill is not null)
+				.ToList();
+			for (int pass = 0; pass <= skills.Count; pass++)
+			{
+				bool changed = false;
+				foreach (var (skill, level) in skills)
+				{
+					var before = this.GetLevel(skill!.Id);
+					if (before != level && this.SetSkillLevel(slot, skill.Id, level) != before)
+						changed = true;
+				}
+				if (!changed)
+					break;
+			}
+		}
+
+		var applied = this.CaptureClassSet();
+		return applied.Count == masteries.Count && applied.Zip(masteries).All(pair => pair.First.SameAs(pair.Second));
+	}
+
 	private static SkillRecord Copy(SkillRecord record, int level) => new()
 	{
 		skillName = record.skillName,
