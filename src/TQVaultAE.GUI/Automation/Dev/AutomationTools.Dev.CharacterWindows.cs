@@ -75,11 +75,12 @@ internal static partial class AutomationTools
 			});
 
 		[McpServerTool(Name = "character_window_list")]
-		[Description("Opens a floating window's drop-down like a click: 'loadouts' (the list right of the gold bar) or 'scrolls' (tab IV's scroll choice). Returns its entries (text, checked) and the open list as a PNG, then closes it; with pick (0 first), clicks that entry instead (the window follows: the loadout or scroll is shown).")]
+		[Description("Opens a floating window's drop-down like a click: 'loadouts' (the list right of the gold bar) or 'scrolls' (tab IV's scroll choice). Returns its entries (text, checked, visible in the open list) and the open list as a PNG, then closes it; wheel first scrolls the open list by rows as the mouse wheel does (positive: down); with pick (0 first), clicks that entry instead (the window follows: the loadout or scroll is shown).")]
 		public static IEnumerable<ContentBlock> CharacterWindowList(
 			[Description("The character's key or name.")] string character,
 			[Description("'loadouts' or 'scrolls'.")] string list = "loadouts",
-			[Description("The entry to click (0 first); -1 to only render.")] int pick = -1)
+			[Description("The entry to click (0 first); -1 to only render.")] int pick = -1,
+			[Description("Rows to scroll the open list first, as wheel notches do (positive: down).")] int wheel = 0)
 		{
 			var (state, png) = AutomationHost.OnUi(form =>
 			{
@@ -94,7 +95,12 @@ internal static partial class AutomationTools
 
 				var menu = box.ListMenu;
 				menu.Show(box, new System.Drawing.Point(0, box.Height));
-				var entries = menu.Items.OfType<ToolStripMenuItem>().Select(i => new { text = i.Text, @checked = i.Checked, enabled = i.Enabled }).ToList();
+				if (wheel != 0)
+					menu.ScrollRows(wheel);
+				var view = menu.DisplayRectangle;
+				var entries = menu.Items.OfType<ToolStripMenuItem>()
+					.Select(i => new { text = i.Text, @checked = i.Checked, enabled = i.Enabled, visible = i.Bounds.Top >= view.Top && i.Bounds.Bottom <= view.Bottom })
+					.ToList();
 				if (pick >= 0)
 				{
 					if (pick >= menu.Items.Count)

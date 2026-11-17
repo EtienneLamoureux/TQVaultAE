@@ -83,7 +83,7 @@ public sealed class LoadoutBar : Control
 		this.BackColor = Color.Black;
 		this.ForeColor = Color.White;
 
-		this.ListMenu = new ContextMenuStrip { ShowCheckMargin = true, ShowImageMargin = false };
+		this.ListMenu = new WheelListMenu { ShowCheckMargin = true, ShowImageMargin = false };
 		this.ActionMenu = new ContextMenuStrip { ShowImageMargin = false, ShowItemToolTips = true };
 		CustomProfessionalRenderer.Apply(this.ListMenu);
 		CustomProfessionalRenderer.Apply(this.ActionMenu);

@@ -42,7 +42,7 @@ internal sealed class GameDropDown : Control
 		this.ForeColor = Color.White;
 		this.TabStop = false;
 
-		this.ListMenu = new ContextMenuStrip { ShowCheckMargin = true, ShowImageMargin = false };
+		this.ListMenu = new WheelListMenu { ShowCheckMargin = true, ShowImageMargin = false };
 		CustomProfessionalRenderer.Apply(this.ListMenu);
 		this.ListMenu.ItemClicked += (_, e) =>
 		{
@@ -61,7 +61,7 @@ internal sealed class GameDropDown : Control
 	public event EventHandler<int>? ItemPicked;
 
 	/// <summary>The list opened by a click.</summary>
-	internal ContextMenuStrip ListMenu { get; }
+	internal WheelListMenu ListMenu { get; }
 
 	/// <summary>The entries.</summary>
 	public IReadOnlyList<string> Items { get; private set; } = [];
@@ -165,6 +165,18 @@ internal sealed class GameDropDown : Control
 		this._pressed = true;
 		this.Invalidate();
 		this.ListMenu.Show(this, new Point(0, this.Height));
+	}
+
+	/// <summary>The wheel over the box scrolls the open list too (the wheel goes to the window with the focus).</summary>
+	protected override void OnMouseWheel(MouseEventArgs e)
+	{
+		base.OnMouseWheel(e);
+		if (!this.DroppedDown || e.Delta == 0)
+			return;
+
+		this.ListMenu.ScrollRows(-(e.Delta / 120 is var notches and not 0 ? notches : Math.Sign(e.Delta)));
+		if (e is HandledMouseEventArgs handled)
+			handled.Handled = true;
 	}
 
 	protected override void OnPaint(PaintEventArgs e)

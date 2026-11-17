@@ -686,7 +686,8 @@ General rules:
   - `character_window_loadout(character, loadout?, step?)`: shows a loadout's pieces read-only in place of the equipment
     (empty: the equipment worn), or `step=-1/+1` clicks an arrow. Writes nothing.
   - `character_window_list(character, list?, pick?)`: opens its `loadouts` list or tab IV's `scrolls` choice like a
-    click, returns the entries and the open list as a PNG; `pick` clicks an entry instead.
+    click, returns the entries and the open list as a PNG; `wheel` scrolls it first as wheel notches do, `pick` clicks an
+    entry instead.
   - `character_window_close(character)`: closes it as its close button (not reopened at start).
   - Its equipment is panel `window:<name>` for the item tools (`pick_item`, `drop_item`, `get_state`, `capture`...);
     `character_buffs` / `character_buff_toggle` take `panel="window:<name>"`.
