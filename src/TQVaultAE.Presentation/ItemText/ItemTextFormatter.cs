@@ -159,7 +159,15 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 		var key = (itm, scopes, filterExtra);
 		return FriendlyNamesCache.GetOrAddAtomic(key, k =>
 		{
+			// The lines are gathered through the item's CurrentFriendlyNameResult: one computation per item at a time
+			// (the search preparation computes on other threads while the panels paint), the previous one put back after.
+			lock (k.Item)
+				return Compute(k);
+		});
 
+		ToFriendlyNameResult Compute((Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra) k)
+		{
+			var previous = k.Item.CurrentFriendlyNameResult;
 			var res = new ToFriendlyNameResult(k.Item)
 			{
 				GrantedSkillsApart = k.Scope?.HasFlag(FriendlyNamesExtraScopes.GrantedSkills) ?? false,
@@ -584,11 +592,10 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.GrantedSkills) ?? false)
 				res.GrantedSkills = this.GetGrantedSkills(k.Item);
 
-			k.Item.CurrentFriendlyNameResult.TmpAttrib.Clear();
-			k.Item.CurrentFriendlyNameResult = null;
+			res.TmpAttrib.Clear();
+			k.Item.CurrentFriendlyNameResult = previous;
 			return res;
-
-		});
+		}
 
 		#region Local Helper
 

@@ -12,6 +12,25 @@ namespace TQVaultAE.Tests.Presentation;
 public class ItemTextFormatterAttributeAmountsTests : ItemProviderTextTestBase
 {
 	[Fact]
+	public void TheSameItemOnSeveralThreads_EachScopeGetsItsLines()
+	{
+		// The search preparation computes the items' texts on other threads while the panels paint the same items.
+		var items = Enumerable.Range(0, 200)
+			.Select(_ => this.CreateItem("ArmorJewelry_Ring", Float("offensiveStunMin", 1f), Float("offensiveStunMax", 2f), Float("offensiveStunChance", 10f)))
+			.ToList();
+		FriendlyNamesExtraScopes?[] scopes = [null, FriendlyNamesExtraScopes.BaseAttributes, FriendlyNamesExtraScopes.ItemFullDisplay, FriendlyNamesExtraScopes.RelicAttributes];
+
+		Parallel.ForEach(items.SelectMany(item => scopes.Select(scope => (item, scope))), new ParallelOptions { MaxDegreeOfParallelism = 8 },
+			pair => this.Formatter.GetFriendlyNames(pair.item, pair.scope));
+
+		items.Should().AllSatisfy(item =>
+		{
+			this.BaseAttributes(item).Should().Equal($"{Epic}10.0% Chance of 1.0 ~ 2.0 Stun");
+			item.CurrentFriendlyNameResult.Should().BeNull();
+		});
+	}
+
+	[Fact]
 	public void InfluenceRange_WithChance_UsesTheSecondsFormat_AfterTheChance()
 	{
 		var item = this.CreateItem("ArmorJewelry_Ring",
