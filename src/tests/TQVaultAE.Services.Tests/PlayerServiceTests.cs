@@ -968,6 +968,28 @@ public class PlayerServiceTests
 	}
 
 	[Fact]
+	public void MeetsRequirements_ChecksTheGivenPlayerNotTheCurrentOne()
+	{
+		// A floating character window: its character, not the one the main window shows.
+		var item = BaseGameSword();
+		SetupRequirements(item, 20);
+		_sessionContext.CurrentPlayer = PlayerWith(level: 10);
+
+		_playerService.MeetsRequirements(PlayerWith(level: 30), item).Should().BeTrue();
+		_playerService.MeetsRequirements(PlayerWith(level: 5), item).Should().BeFalse();
+		_playerService.MeetsRequirements(null, item).Should().BeTrue();
+	}
+
+	[Fact]
+	public void IsSuitableFor_ChecksTheGivenPlayerNotTheCurrentOne()
+	{
+		_sessionContext.CurrentPlayer = PlayerWith(immortalThrone: true);
+
+		_playerService.IsSuitableFor(PlayerWith(immortalThrone: false), ImmortalThroneSword()).Should().BeFalse();
+		_playerService.IsSuitableFor(null, ImmortalThroneSword()).Should().BeTrue();
+	}
+
+	[Fact]
 	public void IsSuitableForCurrentPlayer_WithoutCurrentPlayer_AcceptsEveryItem()
 		=> _playerService.IsSuitableForCurrentPlayer(ImmortalThroneSword()).Should().BeTrue();
 

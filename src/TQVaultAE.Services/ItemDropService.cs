@@ -1,6 +1,7 @@
 using System.Drawing;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -25,7 +26,7 @@ public class ItemDropService(
 	private readonly UserSettings _userSettings = userSettings;
 
 	/// <inheritdoc/>
-	public DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag)
+	public DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag, PlayerCollection? owner = null)
 	{
 		if (sack.IsReadOnly)
 			return DropDecision.ReadOnly;
@@ -38,7 +39,7 @@ public class ItemDropService(
 
 		// A loadout is worn gear too: the same rules as the equipment.
 		if (panelSackType is SackType.Player or SackType.Equipment or SackType.Loadout
-			&& !this._playerService.IsSuitableForCurrentPlayer(dragItem))
+			&& !(owner is null ? this._playerService.IsSuitableForCurrentPlayer(dragItem) : this._playerService.IsSuitableFor(owner, dragItem)))
 		{
 			return DropDecision.Refused;
 		}

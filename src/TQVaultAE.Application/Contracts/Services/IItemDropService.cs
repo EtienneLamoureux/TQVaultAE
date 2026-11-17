@@ -1,5 +1,6 @@
 using System.Drawing;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Services;
@@ -27,7 +28,9 @@ public interface IItemDropService
 	/// <param name="sack">The sack of the drop (its stash type and read-only state are read).</param>
 	/// <param name="panelSackType">The sack type of the panel of the drop.</param>
 	/// <param name="canCancelDrag">The drag can be cancelled (not a new or modified item).</param>
-	DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag);
+	/// <param name="owner">The character of a player or equipment sack when it is not the current one (a floating
+	/// character window); null for the current character.</param>
+	DropDecision Decide(Item dragItem, Item? itemUnderUs, SackCollection sack, SackType panelSackType, bool canCancelDrag, PlayerCollection? owner = null);
 
 	/// <summary>
 	/// Drops an item on a sack: stacks it on the item under it, or places it at <paramref name="cell"/>, moves its

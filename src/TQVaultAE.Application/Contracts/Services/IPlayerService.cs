@@ -99,6 +99,18 @@ public interface IPlayerService
 	bool IsSuitableForCurrentPlayer(Item item);
 
 	/// <summary>
+	/// Indicates whether <paramref name="player"/> meets the requirements of <paramref name="item"/>, as
+	/// <see cref="CurrentPlayerMeetsRequirements"/> does for the current player (a floating character window shows another).
+	/// </summary>
+	bool MeetsRequirements(PlayerCollection? player, Item item);
+
+	/// <summary>
+	/// Indicates whether <paramref name="item"/> suits <paramref name="player"/>, as <see cref="IsSuitableForCurrentPlayer"/>
+	/// does for the current player.
+	/// </summary>
+	bool IsSuitableFor(PlayerCollection? player, Item item);
+
+	/// <summary>
 	/// The items the character wears: <paramref name="equipment"/> without the item in hand. An equipped item picked up
 	/// stays in its slot until it is placed elsewhere, but no longer counts, for the item requirements as for the
 	/// statistics panel.

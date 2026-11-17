@@ -5,6 +5,7 @@ using Moq;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
@@ -81,6 +82,23 @@ public class ItemDropServiceTests
 		// Even dropped back where it was: nothing of a read-only character changes.
 		this._service.Decide(sword, null, Sack(stashType, readOnly: true), sackType, canCancelDrag: true).Should().Be(DropDecision.ReadOnly);
 		this._service.Decide(sword, sword, Sack(stashType, readOnly: true), sackType, canCancelDrag: true).Should().Be(DropDecision.ReadOnly);
+	}
+
+	[Fact]
+	public void Decide_ForAnotherCharacter_AsksWhetherItSuitsThatCharacter()
+	{
+		// A floating character window shows a character other than the current one (the default PlayerReadonly locks the
+		// equipment: a player sack runs the same check).
+		var sword = MakeItem(Item.ICLASS_SWORD);
+		var other = new PlayerCollection("HeroB", "Player.chr");
+		this.PlayerCannotUse(sword);
+		this._playerService.Setup(p => p.IsSuitableFor(other, sword)).Returns(true);
+
+		this._service.Decide(sword, null, Sack(null), SackType.Player, canCancelDrag: true, owner: other).Should().Be(DropDecision.Drop);
+		this._service.Decide(sword, null, Sack(null), SackType.Player, canCancelDrag: true).Should().Be(DropDecision.Refused);
+
+		this._playerService.Setup(p => p.IsSuitableFor(other, sword)).Returns(false);
+		this._service.Decide(sword, null, Sack(null), SackType.Player, canCancelDrag: true, owner: other).Should().Be(DropDecision.Refused);
 	}
 
 	[Fact]

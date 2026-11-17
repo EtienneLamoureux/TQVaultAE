@@ -367,8 +367,12 @@ public class PlayerService(
 
 	/// <inheritdoc/>
 	public bool CurrentPlayerMeetsRequirements(Item item)
+		=> this.MeetsRequirements(this.userContext.CurrentPlayer, item);
+
+	/// <inheritdoc/>
+	public bool MeetsRequirements(PlayerCollection? player, Item item)
 	{
-		var currPlayer = this.userContext.CurrentPlayer;
+		var currPlayer = player;
 		if (currPlayer is null)
 			return true;
 
@@ -381,10 +385,11 @@ public class PlayerService(
 
 	/// <inheritdoc/>
 	public bool IsSuitableForCurrentPlayer(Item item)
-	{
-		var currPlayer = this.userContext.CurrentPlayer;
-		return currPlayer is null || ItemActionRules.IsSuitableFor(item, currPlayer.IsImmortalThrone);
-	}
+		=> this.IsSuitableFor(this.userContext.CurrentPlayer, item);
+
+	/// <inheritdoc/>
+	public bool IsSuitableFor(PlayerCollection? player, Item item)
+		=> player is null || ItemActionRules.IsSuitableFor(item, player.IsImmortalThrone);
 
 	/// <inheritdoc/>
 	public IReadOnlyList<Item> GetWornEquipment(IEnumerable<Item> equipment, Item? held)
