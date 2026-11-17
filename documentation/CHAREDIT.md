@@ -14,8 +14,23 @@ The **Equipment** tab shows the statistics panel next to the equipment, read onl
 - It follows the equipment: equip or remove an item and the values change.
 - Resistances for the highest difficulty unlocked, no buffs.
 - Shown with or without character editing; only its **Edit** button, which opens the editor, needs the setting.
+- **Pop out**, beside **Edit**, opens the character in a floating window (below).
 
 ![Statistics panel in the main window](charedit/main_window_stats.png)
+
+## Floating window
+
+**Pop out** shows the character's equipment with tabs **I** to **IV** side by side, so a buff toggled in tab IV changes
+every number at once.
+
+![Floating character window](charedit/character_window.png)
+
+- One window per character; several characters at once. **Pop out** again brings the window to the front.
+- Its buff toggles are its own, in memory only, as in tab IV.
+- Drag items between the window and the main window (inventory, stash, vaults), with the usual rules: a read-only
+  character or *Player read-only* refuses changes. TQVault's **Save** writes them.
+- The main window and the window show each other's changes when they show the same character.
+- Open windows reopen at the next start, where they were. They follow the zoom and the DPI of their monitor.
 
 ## Open it
 
