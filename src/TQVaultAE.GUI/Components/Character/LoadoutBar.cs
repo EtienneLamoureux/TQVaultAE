@@ -92,7 +92,7 @@ public sealed class LoadoutBar : Control
 		this.ForeColor = Color.White;
 
 		this.ListMenu = new ContextMenuStrip { ShowCheckMargin = true, ShowImageMargin = false };
-		this.ActionMenu = new ContextMenuStrip { ShowImageMargin = false };
+		this.ActionMenu = new ContextMenuStrip { ShowImageMargin = false, ShowItemToolTips = true };
 		CustomProfessionalRenderer.Apply(this.ListMenu);
 		CustomProfessionalRenderer.Apply(this.ActionMenu);
 		this.ListMenu.ItemClicked += (_, e) =>
@@ -142,6 +142,12 @@ public sealed class LoadoutBar : Control
 	/// greyed and their tool tip says why; the loadouts can still be added, updated, renamed, copied and deleted.
 	/// </summary>
 	public string? EquipmentLocked { get; private set; }
+
+	/// <summary>
+	/// Why the pieces cannot be copied now (the Allow Item Copying setting off), or null: Update and Copy write copies,
+	/// so they are greyed and their tool tip says why. Read at each menu opening: a setting change counts at once.
+	/// </summary>
+	public Func<string?>? CopyLocked { get; set; }
 
 	/// <summary>The font of the name, made by the owner at the panel's scale (not disposed here).</summary>
 	public Font? TextFont { get; set; }
@@ -213,6 +219,7 @@ public sealed class LoadoutBar : Control
 		LoadoutBarAction.Select => this.Names.Count > 0,
 		LoadoutBarAction.Add => this.CanChange,
 		LoadoutBarAction.Swap or LoadoutBarAction.EmptyToInventory => this.CanChange && this.Selected is not null && this.EquipmentLocked is null,
+		LoadoutBarAction.Update or LoadoutBarAction.Copy => this.CanChange && this.Selected is not null && this.CopyLocked?.Invoke() is null,
 		_ => this.CanChange && this.Selected is not null,
 	};
 
@@ -222,12 +229,13 @@ public sealed class LoadoutBar : Control
 
 	/// <summary>
 	/// Why an action is greyed, for its tool tip, or null when the bar offers it: a read-only character, then the
-	/// PlayerReadonly setting for Gear swap and Empty to inventory.
+	/// Allow Item Copying setting for Update and Copy, the PlayerReadonly setting for Gear swap and Empty to inventory.
 	/// </summary>
 	/// <param name="action">The action.</param>
 	internal string? LockedReason(LoadoutBarAction action)
 		=> this.CanAct(action) ? null
 		: !this.CanChange ? Resources.LoadoutReadOnly
+		: action is LoadoutBarAction.Update or LoadoutBarAction.Copy ? this.CopyLocked?.Invoke()
 		: this.EquipmentLocked is null ? null
 		: action is LoadoutBarAction.EmptyToInventory ? string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutInventoryLocked, Resources.SettingsPlayerReadonly)
 		: action is LoadoutBarAction.Swap ? this.EquipmentLocked
@@ -273,7 +281,7 @@ public sealed class LoadoutBar : Control
 		this.ActionMenu.Font = this.MenuFont();
 		this.ActionMenu.Items.Clear();
 		ToolStripMenuItem Entry(string text, LoadoutBarAction action)
-			=> new(text) { Tag = action, Enabled = this.CanAct(action) };
+			=> new(text) { Tag = action, Enabled = this.CanAct(action), ToolTipText = this.LockedReason(action) };
 
 		var empty = new ToolStripMenuItem(Resources.LoadoutEmpty) { Enabled = this.CanEmpty };
 		empty.DropDown.Font = this.ActionMenu.Font;

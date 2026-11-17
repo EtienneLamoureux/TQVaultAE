@@ -7277,6 +7277,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The setting "{0}" is off: the pieces cannot be copied..
+        /// </summary>
+        public static string LoadoutCopyLocked {
+            get {
+                return ResourceManager.GetString("LoadoutCopyLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empty loadout.
         /// </summary>
         public static string LoadoutEmpty {

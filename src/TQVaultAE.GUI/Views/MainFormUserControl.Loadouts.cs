@@ -145,11 +145,21 @@ public partial class MainFormUserControl
 		return this.ShowLoadoutChange(loadouts, this.Services.Loadouts.Add(loadouts, name), name.Trim(), name);
 	}
 
-	/// <summary>Merges the worn equipment into a loadout, once confirmed.</summary>
+	/// <summary>Whether the Allow Item Copying setting refuses Update and Copy (told to the user): they write copies.</summary>
+	private bool LoadoutCopyRefused()
+	{
+		if (StashPanel.LoadoutCopyLocked(this.Services.Settings.AllowItemCopy) is not { } reason)
+			return false;
+
+		this.Services.UIService.NotifyUser(reason, TQColor.Red);
+		return true;
+	}
+
+	/// <summary>Merges the worn equipment into a loadout (as copies), once confirmed.</summary>
 	/// <param name="name">The loadout.</param>
 	private bool UpdateLoadout(string name)
 	{
-		if (this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
+		if (this.LoadoutCopyRefused() || this.ChangeableLoadouts() is not var (player, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;
 
 		if (!this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutUpdateConfirm, loadout.Name), Resources.LoadoutTitle, MessageBoxIcon.Question, defaultNo: true)
@@ -178,7 +188,7 @@ public partial class MainFormUserControl
 	/// <param name="name">The loadout.</param>
 	private bool CopyLoadout(string name)
 	{
-		if (this.ChangeableLoadouts() is not var (_, loadouts) || loadouts.Find(name) is not { } loadout)
+		if (this.LoadoutCopyRefused() || this.ChangeableLoadouts() is not var (_, loadouts) || loadouts.Find(name) is not { } loadout)
 			return false;
 
 		var newName = this.AskLoadoutName(loadouts, loadout.Name);

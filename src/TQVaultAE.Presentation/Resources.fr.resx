@@ -2486,6 +2486,9 @@ Les emplacements vides sur le personnage gardent les pièces de la tenue.</value
 	<data name="LoadoutInventoryOf" xml:space="preserve">
     <value>l'inventaire de {0}</value>
   </data>
+	<data name="LoadoutCopyLocked" xml:space="preserve">
+    <value>Le réglage « {0} » est désactivé : les pièces ne peuvent pas être copiées.</value>
+  </data>
 	<data name="LoadoutInventoryLocked" xml:space="preserve">
     <value>Le réglage « {0} » est activé : l'inventaire ne peut pas changer.</value>
   </data>

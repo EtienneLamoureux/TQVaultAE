@@ -13,7 +13,8 @@ On the **Equipment** tab, under the character statistics (the **Edit** button go
 - **[+]** adds an empty loadout, under a name you type (unique per character, case ignored). Fill it in the
   [loadout panel](#composing-a-loadout) or with **Update with the gear worn now**.
 - Right click: **Gear swap** ([below](#gear-swap)), **Empty loadout** ([below](#empty-loadout)), **Update with the
-  gear worn now** ([below](#update), asks first), **Rename**, **Copy**, **Delete** (asks first), **Add**.
+  gear worn now** ([below](#update), asks first), **Rename**, **Copy**, **Delete** (asks first), **Add**. **Update**
+  and **Copy** write copies of pieces: greyed while **Allow Item Copying** is off.
 
 ## Composing a loadout
 

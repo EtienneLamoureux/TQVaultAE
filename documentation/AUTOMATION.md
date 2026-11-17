@@ -927,7 +927,8 @@ pixels unless noted.
 
 `loadouts(action?, name?, newName?, menu?, to?, gameRunning?, realGame?, slot?)` reads:
 
-- `bar`: `bounds`, `field`, `add`, `names`, `selected`, `canChange`, `equipmentLocked` (why Gear swap is greyed), font.
+- `bar`: `bounds`, `field`, `add`, `names`, `selected`, `canChange`, `equipmentLocked` (why Gear swap is greyed),
+  `copyLocked` (why Update and Copy are greyed), font.
 - `layout`: `statsPanel`, `editButton` (visibility, font), `stashClient`.
 - The loadouts file (`file`, `fileExists`, `readFailed`, `modified`), each loadout's pieces (record, seed, `worn` when
   identical to the worn piece) and the worn pieces.
@@ -935,7 +936,7 @@ pixels unless noted.
 - `panel` (the loadout panel): `visible`, `bounds`, `loadout`, `panelBounds`, `cellScaleFactor`, `unitSize`, the
   `back`, `previous`, `next`, `swap` and `empty` buttons (view pixels), `canTurn`, `canSwap`, `swapLocked` and
   `emptyLocked` (the greyed button's tool tip), `statsPanelVisible`, `slots`.
-- `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu (a submenu's `items`, with `tip`).
+- `menu` = `list` or `actions`: the entries of the drop-down or of the right-click menu, with `tip` (a submenu's `items` too).
 
 `action`, through the bar's and panel's own handlers:
 

@@ -184,6 +184,11 @@ public partial class StashPanel
 		this.ShownLoadoutsChanged?.Invoke(this, EventArgs.Empty);
 	}
 
+	/// <summary>Why Update and Copy are refused (they write copies of pieces), or null when item copying is allowed.</summary>
+	/// <param name="allowItemCopy">The Allow Item Copying setting.</param>
+	internal static string? LoadoutCopyLocked(bool allowItemCopy)
+		=> allowItemCopy ? null : string.Format(System.Globalization.CultureInfo.CurrentCulture, Resources.LoadoutCopyLocked, Resources.SettingsAllowCopy);
+
 	/// <summary>
 	/// Shows the loadout selected in the bar in the loadout panel, in place of the statistics panel, while the panel is
 	/// open; the statistics panel otherwise. A read-only character's loadouts are composed too (their file is apart from
@@ -303,7 +308,12 @@ public partial class StashPanel
 		floatButton.Click += (_, _) => this.FloatCharacterClicked?.Invoke(this, EventArgs.Empty);
 		this._floatButton = floatButton;
 
-		this._loadoutBar = new LoadoutBar(this.UIService, this.FontService) { Name = "loadoutBar", Visible = false };
+		this._loadoutBar = new LoadoutBar(this.UIService, this.FontService)
+		{
+			Name = "loadoutBar",
+			Visible = false,
+			CopyLocked = () => LoadoutCopyLocked(this.USettings.AllowItemCopy),
+		};
 		this._loadoutBar.ActionRequested += (_, e) =>
 		{
 			if (e.Action == LoadoutBarAction.Select)

@@ -2661,6 +2661,10 @@ The slots empty on the character keep the loadout's pieces.</value>
 	<data name="LoadoutInventoryOf" xml:space="preserve">
     <value>the inventory of {0}</value>
   </data>
+	<data name="LoadoutCopyLocked" xml:space="preserve">
+    <value>The setting "{0}" is off: the pieces cannot be copied.</value>
+    <comment>Tool tip of the greyed loadout actions Update and Copy, which write copies. {0} = the setting's name.</comment>
+  </data>
 	<data name="LoadoutInventoryLocked" xml:space="preserve">
     <value>The setting "{0}" is on: the inventory cannot change.</value>
   </data>
