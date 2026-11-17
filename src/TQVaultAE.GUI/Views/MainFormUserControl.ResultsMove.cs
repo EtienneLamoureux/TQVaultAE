@@ -86,7 +86,7 @@ public partial class MainFormUserControl
 		if (shown is not null && outcome.Wearers.Contains(shown))
 		{
 			this.stashPanel.EquipmentPanel.GetGearStatBonus();
-			this.stashPanel.EquipmentReplaced();
+			this.ShownEquipmentReplaced();
 		}
 
 		if (shown is not null && outcome.LoadoutsChanged.Any(l => string.Equals(Path.GetDirectoryName(l.FilePath), Path.GetDirectoryName(shown.PlayerFile), StringComparison.OrdinalIgnoreCase)))

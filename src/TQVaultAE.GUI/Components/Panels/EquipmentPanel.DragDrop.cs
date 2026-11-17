@@ -117,7 +117,7 @@ public partial class EquipmentPanel
 			// Refused when the character is read-only (told before the slot check, wherever the item is dropped) or
 			// cannot use the item.
 			var decision = this.Services.ItemDropService.Decide(
-				dragItem, itemUnderUs, this.ShownSack, this.SackType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled);
+				dragItem, itemUnderUs, this.ShownSack, this.SackType, this.DragInfo.IsActive && this.DragInfo.CanBeCanceled, this.Owner);
 			if (decision == DropDecision.ReadOnly)
 			{
 				this.NotifyIfReadOnlyCharacter(this.ShownSack);

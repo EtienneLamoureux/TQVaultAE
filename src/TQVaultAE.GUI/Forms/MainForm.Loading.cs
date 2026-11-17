@@ -127,6 +127,10 @@ public partial class MainForm
 				this.loadCancellation.Cancel();
 
 			this.ShowMainForm();
+
+			// The floating character windows open at the last exit, once the main window shows.
+			if (this.loadingComplete)
+				this.mainView.RestoreCharacterWindows();
 		}
 		else
 			System.Windows.Forms.Application.Exit();

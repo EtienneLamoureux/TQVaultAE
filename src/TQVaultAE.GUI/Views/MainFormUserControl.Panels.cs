@@ -215,6 +215,13 @@ public partial class MainFormUserControl
 		// New location in bottom right of the Main Form.
 		// Align to playerPanel
 		this.stashPanel.EditCharacterClicked += (_, _) => this.EditCharacterRequested?.Invoke(this, this.stashPanel.ShownPlayer);
+		this.stashPanel.FloatCharacterClicked += (_, _) =>
+		{
+			if (this.SelectedCharacter is { } save)
+				this.OpenCharacterWindow(save);
+		};
+		this.stashPanel.ShownEquipmentChanged += (_, _) => this.ShownCharacterChanged();
+		this.stashPanel.SizeChanged += (_, _) => this.RelayoutCharacterWindows();
 		this.stashPanel.OnLoadoutAction += this.LoadoutActionCallback;
 
 		this.WirePanel(this.stashPanel, this.flowLayoutPanelRightPanels.Controls.Add);
@@ -226,7 +233,11 @@ public partial class MainFormUserControl
 	/// <summary>
 	/// The character edited in the character editor view is shown again: the stash panel shows its new state.
 	/// </summary>
-	internal void CharacterEdited() => this.stashPanel.CharacterEdited();
+	internal void CharacterEdited()
+	{
+		this.stashPanel.CharacterEdited();
+		this.ShownCharacterChanged();
+	}
 
 	/// <summary>
 	/// Used to toggle the upper display between the player panel or another vault.

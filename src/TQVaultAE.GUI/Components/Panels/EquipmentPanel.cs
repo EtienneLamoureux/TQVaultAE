@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using TQVaultAE.Application.Session;
 using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Models;
 using TQVaultAE.Domain.Actions;
@@ -81,7 +82,7 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 		if (Sack is null)
 			return;
 
-		var currentPlayer = userContext.CurrentPlayer;
+		var currentPlayer = this.Owner;
 		if (currentPlayer is null)
 			return;
 
@@ -106,6 +107,23 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 
 	/// <summary>An equipped item deleted or changed in place: the bonuses are summed again.</summary>
 	protected override void OnShownItemsChanged() => this.SlotsChanged();
+
+	/// <summary>
+	/// The character wearing the slots: the panel's own (a floating character window shows another character than the
+	/// main window), else the current one.
+	/// </summary>
+	internal PlayerCollection? Owner => this.PlayerCollection ?? this.userContext.CurrentPlayer;
+
+	/// <summary>The item requirements are those of the character wearing the slots.</summary>
+	protected override bool PlayerMeetRequierements(Item item)
+		=> this.Services.PlayerService.MeetsRequirements(this.Owner, item);
+
+	/// <summary>An item suits the character wearing the slots (a Titan Quest original character takes base game items only).</summary>
+	protected override bool IsSuitableForCurrentPlayer(Item item)
+		=> this.Services.PlayerService.IsSuitableFor(this.Owner, item);
+
+	/// <summary>A read-only refusal names the character wearing the slots.</summary>
+	protected override string ReadOnlyOwnerName => this.Owner?.PlayerName ?? string.Empty;
 
 	#region EquipmentPanel Protected Methods
 

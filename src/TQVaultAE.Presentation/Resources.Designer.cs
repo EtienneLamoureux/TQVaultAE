@@ -889,6 +889,24 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CharacterEditBtn", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pop out.
+        /// </summary>
+        public static string CharacterWindowBtn {
+            get {
+                return ResourceManager.GetString("CharacterWindowBtn", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} - Character.
+        /// </summary>
+        public static string CharacterWindowTitle {
+            get {
+                return ResourceManager.GetString("CharacterWindowTitle", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Class.

@@ -246,6 +246,7 @@ public partial class MainFormUserControl
 					this.stashPanel.Player = result.Player;
 					this.stashPanel.CurrentBag = BagIdConstants.BAGID_EQUIPMENTPANEL;
 				}
+				this.CharacterRead(selectedSave, result.Player);
 				this.comboBoxCharacter.RefreshItem(selectedSave);
 			}
 			, () =>

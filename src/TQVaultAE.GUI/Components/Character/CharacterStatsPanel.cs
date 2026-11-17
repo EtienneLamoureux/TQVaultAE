@@ -156,6 +156,38 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>The resistance numbers: Arial 14, not bold (<c>NumberStandard_Green</c>).</summary>
 	public Font? ResistanceFont { get; set; }
 
+	/// <summary>
+	/// The tab shown stays as set in code: a click on a tab changes nothing (the floating character window shows each tab
+	/// in its own panel).
+	/// </summary>
+	public bool TabsFixed
+	{
+		get => this._tabsFixed;
+		set
+		{
+			this._tabsFixed = value;
+			this.ClipOverhang();
+		}
+	}
+
+	private bool _tabsFixed;
+
+	/// <summary>
+	/// Whether the gold and Electrum bar shows under the panel. Without it, the panel is as wide as its picture; its height
+	/// stays, so that panels side by side line up.
+	/// </summary>
+	public bool GoldBarShown
+	{
+		get => this._goldBarShown;
+		set
+		{
+			this._goldBarShown = value;
+			this.PanelScale = this._panelScale;
+		}
+	}
+
+	private bool _goldBarShown = true;
+
 	/// <summary>The tab shown: 0 for I, 1 for II, 2 for III, 3 for the Buffs tab.</summary>
 	public int Tab
 	{
@@ -178,10 +210,39 @@ internal sealed partial class CharacterStatsPanel : Control
 		set
 		{
 			this._panelScale = value;
-			// The gold bar is wider than the panel above it.
-			this.Size = new Size(this.Scaled(Math.Max(CharacterPanelLayout.Width, GoldBarWidth)), this.Scaled(GoldTop + GoldBarHeight));
+			var design = this._goldBarShown ? DesignSize : DesignSizeWithoutGoldBar;
+			this.Size = new Size(this.Scaled(design.Width), this.Scaled(design.Height));
+			this.ClipOverhang();
 		}
 	}
+
+	/// <summary>
+	/// In the flat view (<see cref="TabsFixed"/>), the panel with the gold bar takes only its picture and the bar: the
+	/// next tab, under the bar's overhang, shows right of the picture.
+	/// </summary>
+	private void ClipOverhang()
+	{
+		var old = this.Region;
+		Region? region = null;
+		if (this.TabsFixed && this._goldBarShown && this.Width > this.Scaled(PictureWidth))
+		{
+			// Made whole before it is given: the window takes a copy of the region when it is set.
+			region = new Region(new Rectangle(0, 0, this.Scaled(PictureWidth), this.Scaled(GoldTop)));
+			region.Union(new Rectangle(0, this.Scaled(GoldTop), this.Width, this.Height - this.Scaled(GoldTop)));
+		}
+
+		this.Region = region;
+		old?.Dispose();
+	}
+
+	/// <summary>The panel's size at a scale of 1, the gold bar under it included (wider than the panel above it).</summary>
+	public static Size DesignSize => new(Math.Max(CharacterPanelLayout.Width, GoldBarWidth), GoldTop + GoldBarHeight);
+
+	/// <summary>The panel's size at a scale of 1 without the gold bar (<see cref="GoldBarShown"/>): its picture's width.</summary>
+	public static Size DesignSizeWithoutGoldBar => new(PictureWidth, GoldTop + GoldBarHeight);
+
+	/// <summary>The width of the panel's picture, its whole gold border included.</summary>
+	private const int PictureWidth = 256;
 
 	/// <summary>
 	/// The panel takes its size from <see cref="PanelScale"/>, never from its size before: a DPI change does not scale
@@ -243,7 +304,7 @@ internal sealed partial class CharacterStatsPanel : Control
 	protected override void OnMouseUp(MouseEventArgs e)
 	{
 		base.OnMouseUp(e);
-		for (int tab = 0; tab < TabX.Length; tab++)
+		for (int tab = 0; tab < TabX.Length && !this.TabsFixed; tab++)
 			if (e.Button == MouseButtons.Left && this.TabBounds(tab).Contains(e.Location))
 			{
 				this.Tab = tab;
@@ -281,7 +342,7 @@ internal sealed partial class CharacterStatsPanel : Control
 		}
 
 		this.Cursor = plus >= 0 || undo || this.HitBuff(e.Location) is not null
-			|| Enumerable.Range(0, TabX.Length).Any(t => this.TabBounds(t).Contains(e.Location)) ? Cursors.Hand : Cursors.Default;
+			|| (!this.TabsFixed && Enumerable.Range(0, TabX.Length).Any(t => this.TabBounds(t).Contains(e.Location))) ? Cursors.Hand : Cursors.Default;
 
 		// The attribute rows tell their base value and bonuses; icons and rows their meaning, as the game's rollovers.
 		var tip = StatToolTip.None;
@@ -325,10 +386,13 @@ internal sealed partial class CharacterStatsPanel : Control
 		g.DrawImage(this._panel, this.ScaledRect(new Rectangle(0, 0, this._panel.Width, this._panel.Height)));
 
 		// The gold bar, piece by piece at their places in the window, on the page.
-		this.DrawGoldPiece(g, this._goldPile, GoldPileAt);
-		this.DrawGoldPiece(g, this._numberBox, GoldBoxAt);
-		this.DrawGoldPiece(g, this._coin, CoinAt);
-		this.DrawGoldPiece(g, this._numberBox, ElectrumBoxAt);
+		if (this.GoldBarShown)
+		{
+			this.DrawGoldPiece(g, this._goldPile, GoldPileAt);
+			this.DrawGoldPiece(g, this._numberBox, GoldBoxAt);
+			this.DrawGoldPiece(g, this._coin, CoinAt);
+			this.DrawGoldPiece(g, this._numberBox, ElectrumBoxAt);
+		}
 
 		if (this.View?.Invoke() is not { } view)
 			return;
@@ -359,6 +423,9 @@ internal sealed partial class CharacterStatsPanel : Control
 		this.SyncScrollBox(view);
 
 		// The gold bar: gold in yellow, Electrum in grey, centred in their boxes (characterGoldNumber...).
+		if (!this.GoldBarShown)
+			return;
+
 		this.DrawText(g, view.Money, this.NumberFont, Yellow, new Rectangle(38, GoldTop + 6, 102, 20), StringAlignment.Center);
 		this.DrawText(g, view.Electrum, this.NumberFont, Grey, new Rectangle(190, GoldTop + 6, 102, 20), StringAlignment.Center);
 	}

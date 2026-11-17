@@ -4,9 +4,9 @@ namespace TQVaultAE.GUI.Components.Character;
 
 /// <summary>
 /// The room right of the equipment slots, on the black field of the equipment background: the statistics panel, or the
-/// loadout panel in its place, with the loadout bar under them and the Edit button under the bar. The room lays its parts
-/// out itself: the statistics at their own size with the bar and the Edit button under them; the loadout panel takes the
-/// whole room above the bar, which goes down to the line of the Edit button, hidden meanwhile.
+/// loadout panel in its place, with the loadout bar under them and the Edit and floating window buttons under the bar.
+/// The room lays its parts out itself: the statistics at their own size with the bar and the buttons under them; the
+/// loadout panel takes the whole room above the bar, which goes down to the line of the buttons, hidden meanwhile.
 /// </summary>
 internal sealed class CharacterRoom : UserControl
 {
@@ -27,7 +27,8 @@ internal sealed class CharacterRoom : UserControl
 	/// <param name="loadout">The loadout panel, with its Back and previous / next buttons.</param>
 	/// <param name="bar">The loadout bar.</param>
 	/// <param name="editButton">The Edit button of the character editor.</param>
-	public CharacterRoom(CharacterStatsPanel stats, LoadoutView loadout, LoadoutBar bar, Control editButton)
+	/// <param name="floatButton">The button that opens the character in a floating window, right of Edit.</param>
+	public CharacterRoom(CharacterStatsPanel stats, LoadoutView loadout, LoadoutBar bar, Control editButton, Control floatButton)
 	{
 		this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 		this.BackColor = Color.Black;
@@ -37,12 +38,14 @@ internal sealed class CharacterRoom : UserControl
 		this.Loadout = loadout;
 		this.Bar = bar;
 		this.EditButton = editButton;
+		this.FloatButton = floatButton;
 
 		stats.Visible = true;
 		loadout.Visible = false;
 		bar.Visible = true;
 		editButton.Visible = false;
-		this.Controls.AddRange([stats, loadout, editButton, bar]);
+		floatButton.Visible = false;
+		this.Controls.AddRange([stats, loadout, editButton, floatButton, bar]);
 	}
 
 	/// <summary>The statistics panel.</summary>
@@ -56,6 +59,9 @@ internal sealed class CharacterRoom : UserControl
 
 	/// <summary>The Edit button of the character editor.</summary>
 	public Control EditButton { get; }
+
+	/// <summary>The button that opens the character in a floating window: right of Edit, in its place without it.</summary>
+	public Control FloatButton { get; }
 
 	/// <summary>Whether the loadout panel shows, in place of the statistics and the Edit button.</summary>
 	public bool LoadoutShown
@@ -129,10 +135,12 @@ internal sealed class CharacterRoom : UserControl
 		SetBounds(this.Stats, stats);
 		SetBounds(this.Bar, bar);
 		SetBounds(this.EditButton, edit);
+		SetBounds(this.FloatButton, this._editAllowed ? new Rectangle(new Point(edit.Right + this._gap, edit.Y), edit.Size) : edit);
 		SetBounds(this.Loadout, new Rectangle(0, 0, this.Width, Math.Max(0, bar.Top - this._gap)));
 
 		this.Stats.Visible = !this._loadoutShown;
 		this.EditButton.Visible = this._editAllowed && !this._loadoutShown;
+		this.FloatButton.Visible = !this._loadoutShown;
 		this.Loadout.Visible = this._loadoutShown;
 	}
 

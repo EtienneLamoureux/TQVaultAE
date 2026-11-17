@@ -220,7 +220,7 @@ public partial class MainFormUserControl
 		}
 
 		// Both panels show the new pieces: the equipment (statistics, marks) and the loadout panel.
-		this.stashPanel.EquipmentReplaced();
+		this.ShownEquipmentReplaced();
 		this.stashPanel.RefreshLoadouts(loadout.Name);
 		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.LoadoutSwapped, loadout.Name, result.PutOn, result.TakenOff));
 		return true;

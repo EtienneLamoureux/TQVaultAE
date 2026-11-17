@@ -1127,6 +1127,12 @@ Voici un exemple complexe: 'arctique &amp; gel @sabre $épique | rare'</value>
 	<data name="CharacterEditBtn" xml:space="preserve">
     <value>modifier</value>
   </data>
+	<data name="CharacterWindowBtn" xml:space="preserve">
+    <value>Détacher</value>
+  </data>
+	<data name="CharacterWindowTitle" xml:space="preserve">
+    <value>{0} - Personnage</value>
+  </data>
 	<data name="Masteries" xml:space="preserve">
     <value>Maîtrises</value>
   </data>

@@ -37,19 +37,20 @@ public partial class StashPanel
 	/// <summary>The game's character window statistics (tabs I, II, III), read only, right of the equipment.</summary>
 	private CharacterStatsPanel? _statsPanel;
 
-	/// <summary>The toggles of the Buffs tab for the character shown: memory only, back to the defaults for another one.</summary>
-	private BuffSelection _statsBuffs = new();
+	/// <summary>
+	/// What the statistics panel shows, with the toggles of its Buffs tab for the character shown: memory only, back to
+	/// the defaults for another one.
+	/// </summary>
+	private CharacterStatsSource? _stats;
+
+	/// <summary>The fonts and tool tip of the statistics panel at the scale.</summary>
+	private CharacterStatsLook? _statsLook;
 
 	/// <summary>The Edit button under the statistics panel, which opens the character editor.</summary>
 	private ScalingButton? _editButton;
 
-	private CharacterPanelViewBuilder? _statsBuilder;
-	private CharacterPanelView? _statsView;
-	private GameTooltip? _statsTooltip;
-
-	/// <summary>The fonts made for the statistics panel, at the scale they were made for.</summary>
-	private readonly List<Font> _statsFonts = [];
-	private float _statsScale;
+	/// <summary>The button beside Edit that opens the character in a floating window.</summary>
+	private ScalingButton? _floatButton;
 
 	/// <summary>The Edit button's size at 96 dpi and zoom 1, that of the main window's menu buttons.</summary>
 	private static readonly Size EditButtonDesignSize = new(137, 30);
@@ -112,7 +113,7 @@ public partial class StashPanel
 				this._room.Visible = false;
 			// No bar shown, no loadout to compare with (another character may come without its statistics).
 			this.equipmentPanel.ComparedLoadout = null;
-			this._statsTooltip?.Hide();
+			this._statsLook?.Tooltip?.Hide();
 			return;
 		}
 
@@ -136,8 +137,7 @@ public partial class StashPanel
 
 		// Another character, or its equipment or skills changed: the panel is built again.
 		DisplayPlayerInfoLastName = this.Player.PlayerName;
-		this._statsBuffs = new BuffSelection();
-		this._statsView = null;
+		this._stats!.NewCharacter();
 		panel.Invalidate();
 	}
 
@@ -206,7 +206,7 @@ public partial class StashPanel
 		{
 			room.LoadoutShown = show;
 			if (!show)
-				this._statsTooltip?.Hide();
+				this._statsLook?.Tooltip?.Hide();
 		}
 	}
 
@@ -274,22 +274,17 @@ public partial class StashPanel
 		if (this._statsPanel is not null)
 			return this._statsPanel;
 
-		this._statsBuilder = new CharacterPanelViewBuilder(this.Services.CharacterStatsService, this.TranslationService,
-			this.Services.CharacterEditService, this.Services.ItemText);
+		var stats = this._stats = new CharacterStatsSource(this.Services);
+		this._statsLook = new CharacterStatsLook(this.FontService, this.UIService);
 		this._statsPanel = new CharacterStatsPanel(this.UIService)
 		{
 			Name = "PlayerStatsPanel",
-			View = () => this._statsView ??= this.BuildStatsView(),
+			View = () => stats.View(this.Player, this.equipmentPanel.WornItems),
 			Visible = false,
 		};
 
 		// The Buffs tab's toggles change only what the panel shows, never the save.
-		var builder = this._statsBuilder;
-		this._statsPanel.BindBuffs(() => builder, () => this._statsBuffs, () =>
-		{
-			this._statsView = null;
-			this._statsPanel.Invalidate();
-		});
+		stats.BindBuffs(this._statsPanel, this._statsPanel.Invalidate);
 
 		// The gold button of the dialogs; its font and bounds follow the scale in LayoutStatsPanel.
 		var editButton = CaravanDialog.Button(this.FontService, this.UIService.FontZoom, "editButton", Resources.CharacterEditBtn);
@@ -298,6 +293,13 @@ public partial class StashPanel
 		editButton.Visible = false;
 		editButton.Click += EditButton_Click;
 		this._editButton = editButton;
+
+		// Beside Edit: the character in a floating window, with the four tabs at once.
+		var floatButton = CaravanDialog.Button(this.FontService, this.UIService.FontZoom, "floatButton", Resources.CharacterWindowBtn);
+		floatButton.Padding = new Padding(10, 0, 10, 0);
+		floatButton.Visible = false;
+		floatButton.Click += (_, _) => this.FloatCharacterClicked?.Invoke(this, EventArgs.Empty);
+		this._floatButton = floatButton;
 
 		this._loadoutBar = new LoadoutBar(this.UIService, this.FontService) { Name = "loadoutBar", Visible = false };
 		this._loadoutBar.ActionRequested += (_, e) =>
@@ -320,15 +322,10 @@ public partial class StashPanel
 		this._loadoutView.Panel.PiecesChanged += this.LoadoutPiecesChanged;
 		this.ForwardEvents(this._loadoutView.Panel);
 
-		this._room = new CharacterRoom(this._statsPanel, this._loadoutView, this._loadoutBar, editButton) { Visible = false };
+		this._room = new CharacterRoom(this._statsPanel, this._loadoutView, this._loadoutBar, editButton, floatButton) { Visible = false };
 		this.Controls.Add(this._room);
 		this._room.BringToFront();
-		this.Disposed += (_, _) =>
-		{
-			this._statsTooltip?.Dispose();
-			foreach (var font in this._statsFonts)
-				font.Dispose();
-		};
+		this.Disposed += (_, _) => this._statsLook?.Dispose();
 		return this._statsPanel;
 	}
 
@@ -338,7 +335,7 @@ public partial class StashPanel
 		if (this._statsPanel is not { } panel)
 			return;
 
-		this._statsScale = 0;
+		this._statsLook?.Reset();
 		this.LayoutStatsPanel(panel);
 		panel.Invalidate();
 	}
@@ -350,39 +347,14 @@ public partial class StashPanel
 	private void LayoutStatsPanel(CharacterStatsPanel panel)
 	{
 		var scale = this.UIService.Scale;
-		if (scale != this._statsScale)
+		var look = this._statsLook!;
+		if (look.Apply([panel], scale))
 		{
-			this._statsScale = scale;
-			var old = this._statsFonts.ToList();
-			this._statsFonts.Clear();
-			Font Owned(Font font)
-			{
-				this._statsFonts.Add(font);
-				return font;
-			}
-
-			panel.PanelScale = scale;
-			panel.NameFont = this.FontService.GetFontLight(20F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
-			panel.ClassFont = this.FontService.GetFontLight(16F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
-			panel.TextFont = this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
-			panel.TitleFont = this.FontService.GetFontLight(16F * scale, FontStyle.Bold, GraphicsUnit.Pixel);
-			panel.TabFont = this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
-			panel.NumberFont = Owned(new Font("Arial", 13F * scale, FontStyle.Bold, GraphicsUnit.Pixel));
-			panel.ResistanceFont = Owned(new Font("Arial", 14F * scale, FontStyle.Regular, GraphicsUnit.Pixel));
-
-			this._statsTooltip?.Dispose();
-			this._statsTooltip = new GameTooltip(
-				this.FontService.GetFontLight(17F * scale, FontStyle.Bold, GraphicsUnit.Pixel),
-				this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel),
-				scale,
-				GameTooltipFrame.Load(this.UIService));
-			panel.Tooltip = this._statsTooltip;
-			this.equipmentPanel.MarkTooltip = this._statsTooltip;
-			this._loadoutBar!.TextFont = this.FontService.GetFontLight(15F * scale, FontStyle.Regular, GraphicsUnit.Pixel);
+			this.equipmentPanel.MarkTooltip = look.Tooltip;
+			this._loadoutBar!.TextFont = look.Light(15F, FontStyle.Regular);
 			this._loadoutBar.BarScale = scale;
 			this._editButton!.Font = this.FontService.GetFontLight(11F, this.UIService.FontZoom);
-			foreach (var font in old)
-				font.Dispose();
+			this._floatButton!.Font = this.FontService.GetFontLight(11F, this.UIService.FontZoom);
 		}
 
 		// The room: from the statistics panel's left to the black field's right, from the field's top to its bottom.
@@ -404,17 +376,14 @@ public partial class StashPanel
 			this._loadoutView!.LayOut(picture, source, target, this.equipmentPanel.SizeFor(LoadoutPanel.SlotCells));
 	}
 
-	/// <summary>What the statistics panel shows of the character, from its save: nothing can be changed here.</summary>
-	private CharacterPanelView BuildStatsView()
-	{
-		if (this.Player is not { PlayerInfo: { } info } player || this._statsBuilder is null)
-			return new CharacterPanelView();
-
-		// The items the item requirements count (PlayerInfo's calculated attributes): an equipped item in hand is left out.
-		var worn = this.equipmentPanel.WornItems;
-		var skills = this.Services.CharacterEditService.CreateSkillEditor(info);
-		return this._statsBuilder.Build(CharacterPanelInput.FromSave(
-			player, info, worn, [.. skills.Slots.OfType<MasteryTree>()], this.Services.CharacterEditService.GetGearSkillAugments(worn, player.UseAlternate),
-			this._statsBuffs));
-	}
+	/// <summary>
+	/// The part of the equipment background with the slots, where it lands relative to the equipment panel, and the size of
+	/// the slot cells (<see cref="LoadoutPanel.SlotCells"/>), at the window's scale: the floating character windows draw
+	/// the same slots.
+	/// </summary>
+	/// <returns>Null before the panel is laid out.</returns>
+	internal (Bitmap Picture, Rectangle Source, Rectangle Target, Size Slots)? SlotsGeometry()
+		=> this.EquipmentSlotsPicture() is var (picture, source, target)
+			? (picture, source, target, this.equipmentPanel.SizeFor(LoadoutPanel.SlotCells))
+			: null;
 }

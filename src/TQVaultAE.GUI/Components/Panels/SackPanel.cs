@@ -669,11 +669,14 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		if (sack is not { IsReadOnly: true })
 			return false;
 
-		// Only the character shown has its sacks on screen.
 		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, TQVaultAE.Presentation.Resources.CharacterReadOnlyRefused
-			, this.userContext.CurrentPlayer?.PlayerName ?? this.PlayerCollection?.PlayerName ?? string.Empty), TQColor.Red);
+			, this.ReadOnlyOwnerName), TQColor.Red);
 		return true;
 	}
+
+	/// <summary>The character a read-only refusal names: the one the main window shows (its sacks are on screen).</summary>
+	protected virtual string ReadOnlyOwnerName
+		=> this.userContext.CurrentPlayer?.PlayerName ?? this.PlayerCollection?.PlayerName ?? string.Empty;
 
 	/// <summary>
 	/// Indicates whether the passed item is suitable for equipping.

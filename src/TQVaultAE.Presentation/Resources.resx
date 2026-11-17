@@ -1166,6 +1166,14 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
 	<data name="CharacterEditBtn" xml:space="preserve">
     <value>Edit</value>
   </data>
+	<data name="CharacterWindowBtn" xml:space="preserve">
+    <value>Pop out</value>
+    <comment>Button beside Edit: opens the character in a floating window with the four statistics tabs.</comment>
+  </data>
+	<data name="CharacterWindowTitle" xml:space="preserve">
+    <value>{0} - Character</value>
+    <comment>Title of the floating character window. {0} = character name.</comment>
+  </data>
 	<data name="Masteries" xml:space="preserve">
     <value>Masteries</value>
   </data>

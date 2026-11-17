@@ -294,6 +294,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		// Force an update of the Player Info Panel.
 		DisplayPlayerInfoLastName = null;
 		DisplayPlayerInfo();
+		this.ShownEquipmentChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>
@@ -304,6 +305,15 @@ public partial class StashPanel : VaultPanel, IScalingControl
 
 	private void EditButton_Click(object? sender, EventArgs e)
 		=> this.EditCharacterClicked?.Invoke(this, EventArgs.Empty);
+
+	/// <summary>The button beside Edit asks for a floating window of <see cref="VaultPanel.ShownPlayer"/>.</summary>
+	internal event EventHandler? FloatCharacterClicked;
+
+	/// <summary>
+	/// The equipment of the shown character changed from this panel (an item put in or taken out): a floating window of the
+	/// same character follows.
+	/// </summary>
+	internal event EventHandler? ShownEquipmentChanged;
 
 	/// <summary>The character editor was left: the statistics are computed and shown again.</summary>
 	internal void CharacterEdited()
