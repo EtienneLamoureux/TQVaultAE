@@ -221,6 +221,13 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(KeyBinds))]
 	public KeyBindSettings KeyBinds { get; set; } = new();
 
+	/// <summary>
+	/// The floating character windows open at the last exit, with their places, reopened at the next start.
+	/// Missing, none opens.
+	/// </summary>
+	[XmlElement(ElementName = nameof(CharacterWindows))]
+	public CharacterWindowSettings CharacterWindows { get; set; } = new();
+
 	#endregion
 
 	#region AppSettings & DebugLevels

@@ -61,11 +61,21 @@ public sealed class UserSettingsTests : IDisposable
 				var t when t == typeof(ItemCompareSettings) => new ItemCompareSettings { AlignRows = false, HideUnchanged = true, ShowSources = true },
 				var t when t == typeof(SortSettings) => SortWithOwnOrders(),
 				var t when t == typeof(KeyBindSettings) => KeyBinds(("ItemDuplicateClick", "Ctrl+Click"), ("ZoomIn", "")),
+				var t when t == typeof(CharacterWindowSettings) => CharacterWindows(("IT/Main/HeroA", 120, -40), ("IT/User/HeroB", 2000, 300)),
 				_ => throw new NotSupportedException($"Add a test value for {property.PropertyType} ({property.Name})."),
 			};
 			property.SetValue(settings, value);
 		}
 
+		return settings;
+	}
+
+	/// <summary>Floating character windows at their places.</summary>
+	private static CharacterWindowSettings CharacterWindows(params (string Character, int X, int Y)[] windows)
+	{
+		var settings = new CharacterWindowSettings();
+		foreach (var (character, x, y) in windows)
+			settings.Remember(character, x, y);
 		return settings;
 	}
 
@@ -613,6 +623,52 @@ public sealed class UserSettingsTests : IDisposable
 		settings.Scale.Should().Be(-2F);
 		settings.ItemBGColorOpacity.Should().Be(500);
 		settings.CSVDelimiter.Should().Be("Pipe");
+	}
+
+	#endregion
+
+	#region Character windows
+
+	[Fact]
+	public void CharacterWindows_Missing_NoWindow()
+		=> UserSettings.ParseSettings("""<UserSettings><LoadLastVault>1</LoadLastVault></UserSettings>""").CharacterWindows.Windows.Should().BeEmpty();
+
+	[Fact]
+	public void CharacterWindows_SaveThenRead_OneWindowElementEach()
+	{
+		var settings = new UserSettings { CharacterWindows = CharacterWindows(("IT/Main/HeroA", 10, 20), ("IT/User/HeroB", -1900, 5)) };
+
+		settings.Save(this._xmlPath);
+
+		var windows = XDocument.Load(this._xmlPath).Root!.Element("CharacterWindows")!.Elements("Window").ToList();
+		windows.Should().HaveCount(2);
+		windows[0].Attribute("Character")!.Value.Should().Be("IT/Main/HeroA");
+		windows[1].Attribute("X")!.Value.Should().Be("-1900");
+		UserSettings.Read(this._xmlPath).CharacterWindows.Windows.Select(w => (w.Character, w.X, w.Y))
+			.Should().Equal(("IT/Main/HeroA", 10, 20), ("IT/User/HeroB", -1900, 5));
+	}
+
+	[Fact]
+	public void CharacterWindows_Remember_OnePlacePerCharacterCaseIgnored()
+	{
+		var settings = new CharacterWindowSettings();
+
+		settings.Remember("IT/Main/HeroA", 1, 2).Should().BeTrue();
+		settings.Remember("it/main/heroa", 1, 2).Should().BeFalse();
+		settings.Remember("IT/Main/HeroA", 3, 4).Should().BeTrue();
+
+		settings.Windows.Should().ContainSingle().Which.X.Should().Be(3);
+	}
+
+	[Fact]
+	public void CharacterWindows_Forget_RemovesOnlyThatCharacter()
+	{
+		var settings = CharacterWindows(("IT/Main/HeroA", 1, 2), ("IT/Main/HeroB", 3, 4));
+
+		settings.Forget("IT/MAIN/HEROA").Should().BeTrue();
+		settings.Forget("IT/Main/HeroC").Should().BeFalse();
+
+		settings.Windows.Should().ContainSingle().Which.Character.Should().Be("IT/Main/HeroB");
 	}
 
 	#endregion
