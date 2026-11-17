@@ -27,25 +27,14 @@ public partial class SackPanel
 
 	private void AddAutoMoveMenuItems(Item? focusedItem)
 	{
-		var destinations = ItemActionRules.MoveDestinations(new MoveContext(
-			this.AutoMoveLocation
-			, this.SackType
-			, this.MaxSacks
-			, this.PlayerCollection?.NumberOfSacks ?? 0
-			, this.DragInfo.AllAutoMoveLocations
-			, this.SecondaryVaultShown
-			, this.userContext.CurrentPlayer?.IsImmortalThrone
-			, focusedItem
-			, this.CurrentSack));
-
 		var moveChoices = new List<ToolStripItem>();
-		foreach (var destination in destinations)
+		foreach (var destination in this.MoveDestinations(focusedItem))
 		{
 			string label = destination switch
 			{
 				{ IsMainPlayerSack: true } => Resources.SackPanelMenuPlayer,
 				{ BagIndex: not null } => string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, destination.BagNumber),
-				_ => GetStringFromAutoMove(destination.Location),
+				_ => this.MoveLabel(destination.Location),
 			};
 
 			var moveChoice = new ToolStripMenuItem(label, null, MoveItemClicked, label)
@@ -62,6 +51,23 @@ public partial class SackPanel
 
 		this.CustomContextMenu.Items.Add(moveSubMenu);
 	}
+
+	/// <summary>The destinations of the Move Item To sub menu: the other bags of the panel, then the other panels.</summary>
+	/// <param name="focusedItem">The item under the cursor, or null for a selection right-clicked on an empty cell.</param>
+	protected virtual IReadOnlyList<MoveDestination> MoveDestinations(Item? focusedItem)
+		=> ItemActionRules.MoveDestinations(new MoveContext(
+			this.AutoMoveLocation
+			, this.SackType
+			, this.MaxSacks
+			, this.PlayerCollection?.NumberOfSacks ?? 0
+			, this.DragInfo.AllAutoMoveLocations
+			, this.SecondaryVaultShown
+			, this.userContext.CurrentPlayer?.IsImmortalThrone
+			, focusedItem
+			, this.CurrentSack));
+
+	/// <summary>The menu text of a panel among the Move Item To destinations.</summary>
+	protected virtual string MoveLabel(AutoMoveLocation location) => GetStringFromAutoMove(location);
 	
 	/// <summary>
 	/// Adds the Search sub menu: the item's copies, or the items sharing its base, prefix or suffix, among every loaded

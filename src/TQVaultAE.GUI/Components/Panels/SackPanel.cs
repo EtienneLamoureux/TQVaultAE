@@ -658,7 +658,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// Indicates whether the items of the shown sack cannot change: a sack of a read-only character, or the equipment
 	/// with the <c>PlayerReadonly</c> setting on (<see cref="ItemActionRules.IsReadOnly"/>).
 	/// </summary>
-	public bool ItemsReadOnly => ItemActionRules.IsReadOnly(this.SackType, this.USettings.PlayerReadonly, this.Sack?.IsReadOnly ?? false);
+	public virtual bool ItemsReadOnly => ItemActionRules.IsReadOnly(this.SackType, this.USettings.PlayerReadonly, this.Sack?.IsReadOnly ?? false);
 
 	/// <summary>
 	/// Tells the user that <paramref name="sack"/> belongs to a read-only character, when it does.

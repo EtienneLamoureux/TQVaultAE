@@ -180,5 +180,13 @@ public class AutoMoveRulesTests
 		=> AutoMovePlanner.StashTarget(currentBag, hasPlayerStash, hasTransferStash, hasRelicVaultStash)
 			.Should().Be(new StashMoveTarget(expectedBag, expectedAvailable));
 
+	[Theory]
+	[InlineData(BagIdConstants.BAGID_PLAYERSTASH, true, BagIdConstants.BAGID_TRANSFERSTASH, true)]
+	[InlineData(BagIdConstants.BAGID_RELICVAULTSTASH, true, BagIdConstants.BAGID_TRANSFERSTASH, true)]
+	[InlineData(BagIdConstants.BAGID_EQUIPMENTPANEL, false, BagIdConstants.BAGID_TRANSFERSTASH, false)]
+	public void StashTarget_TransferStashAsked_WhateverIsShown(int currentBag, bool hasTransferStash, int expectedBag, bool expectedAvailable)
+		=> AutoMovePlanner.StashTarget(currentBag, true, hasTransferStash, true, transferStash: true)
+			.Should().Be(new StashMoveTarget(expectedBag, expectedAvailable));
+
 	#endregion
 }

@@ -115,7 +115,7 @@ public partial class SackPanel : Panel, IScalingControl
 			return;
 
 		var destination = AutoMovePlanner.QuickMoveDestination(location, this.AutoMoveLocation, this.SecondaryVaultShown);
-		if (destination == AutoMoveLocation.NotSet)
+		if (destination == AutoMoveLocation.NotSet || !this.QuickMoveAllowed(destination))
 			return;
 
 		this.RaiseAutoMove(this.Sack, AutoMovePlanner.Plan(this.selectedItems, focusedItem, destination));
@@ -126,4 +126,7 @@ public partial class SackPanel : Panel, IScalingControl
 		ItemTooltip.HideTooltip();
 		BagButtonTooltip.InvalidateCache(Sack);
 	}
+
+	/// <summary>Whether a quick move key may send the items of this panel to <paramref name="destination"/> (all by default).</summary>
+	protected virtual bool QuickMoveAllowed(AutoMoveLocation destination) => true;
 }

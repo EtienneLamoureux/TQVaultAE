@@ -54,15 +54,17 @@ public static class AutoMovePlanner
 
 	/// <summary>
 	/// Where an auto-move to the stash panel puts the item: the stash shown, or the transfer stash when the equipment
-	/// is shown (an item cannot be auto-equipped).
+	/// is shown (an item cannot be auto-equipped) or asked for.
 	/// </summary>
 	/// <param name="currentBag">The bag shown by the stash panel (a <c>BAGID_*</c> constant).</param>
 	/// <param name="hasPlayerStash">The character's stash is loaded.</param>
 	/// <param name="hasTransferStash">The transfer stash is loaded.</param>
 	/// <param name="hasRelicVaultStash">The relic vault stash is loaded.</param>
-	public static StashMoveTarget StashTarget(int currentBag, bool hasPlayerStash, bool hasTransferStash, bool hasRelicVaultStash)
+	/// <param name="transferStash">The transfer stash whatever the panel shows: the items of a floating character window,
+	/// whose character's own stash may not be the one shown.</param>
+	public static StashMoveTarget StashTarget(int currentBag, bool hasPlayerStash, bool hasTransferStash, bool hasRelicVaultStash, bool transferStash = false)
 	{
-		int bag = currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL
+		int bag = transferStash || currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL
 			? BagIdConstants.BAGID_TRANSFERSTASH
 			: currentBag;
 
