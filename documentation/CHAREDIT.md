@@ -30,8 +30,8 @@ every number at once.
 - Drag items between the window and the main window (inventory, stash, vaults), with the usual rules: a read-only
   character or *Player read-only* refuses changes. TQVault's **Save** writes them.
 - Item menu: **Compare** with any item of either window; **Move Item To** the vault shown or the transfer stash.
-- Under tab II, the list and its arrows show a loadout in place of the equipment, read-only, with its statistics.
-  **Current gear** shows the equipment worn again.
+- The list right of the gold and the arrows on the stone show a loadout in place of the equipment, read-only, with its
+  statistics. **Current gear** shows the equipment worn again.
 - The main window and the window show each other's changes when they show the same character.
 - Open windows reopen at the next start, where they were. They follow the zoom and the DPI of their monitor.
 

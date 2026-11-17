@@ -45,7 +45,7 @@ internal static partial class AutomationTools
 				if (!capture || windows.Count != 1)
 					return (state, (byte[]?)null);
 
-				using var bitmap = AutomationImages.Render(windows[0]);
+				using var bitmap = AutomationImages.RenderInZOrder(windows[0]);
 				return (state, AutomationImages.Png(bitmap));
 			});
 

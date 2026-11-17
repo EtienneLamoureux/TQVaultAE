@@ -34,6 +34,43 @@ internal static class AutomationImages
 	}
 
 	/// <summary>
+	/// Draws <paramref name="control"/> like <see cref="Render(Control)"/>, then its children again from the back to the
+	/// front, theirs too: <see cref="Control.DrawToBitmap"/> draws overlapping children in the wrong order.
+	/// </summary>
+	public static Bitmap RenderInZOrder(Control control)
+	{
+		var bitmap = Render(control);
+		using var g = Graphics.FromImage(bitmap);
+		DrawChildren(g, control, Point.Empty);
+		return bitmap;
+	}
+
+	private static void DrawChildren(Graphics g, Control parent, Point offset)
+	{
+		for (int i = parent.Controls.Count - 1; i >= 0; i--)
+		{
+			var child = parent.Controls[i];
+			if (!child.Visible || child.Width <= 0 || child.Height <= 0)
+				continue;
+
+			// The child's region, as the screen shows it (tab I's gold bar clipped under tab II).
+			var at = new Point(offset.X + child.Left, offset.Y + child.Top);
+			var state = g.Save();
+			if (child.Region is { } region)
+			{
+				using var clip = region.Clone();
+				clip.Translate(at.X, at.Y);
+				g.IntersectClip(clip);
+			}
+
+			using (var picture = Render(child))
+				g.DrawImage(picture, at);
+			g.Restore(state);
+			DrawChildren(g, child, at);
+		}
+	}
+
+	/// <summary>
 	/// Draws the client area of <paramref name="form"/> with <paramref name="overlays"/> drawn over it at their screen
 	/// places, on a magenta canvas that also holds the overlays outside the window (a tool tip below its border).
 	/// </summary>
