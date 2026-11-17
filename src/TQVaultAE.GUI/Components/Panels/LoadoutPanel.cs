@@ -26,7 +26,7 @@ public sealed class LoadoutPanel : EquipmentPanel
 	private static readonly SizeF BackCells = new(0.5F, 0.625F);
 
 	/// <summary>The size of the previous and next arrows in cells: their 20 x 14 pictures at the cell size of 32 pixels.</summary>
-	private static readonly SizeF TurnCells = new(0.625F, 0.4375F);
+	private static readonly SizeF TurnCells = new(LoadoutView.TurnPictureSize.Width / 32F, LoadoutView.TurnPictureSize.Height / 32F);
 
 	/// <summary>The size of the Gear swap button's picture, 26 x 34 pixels at the cell size of 32 pixels.</summary>
 	private static readonly Size SwapPicture = new(26, 34);
