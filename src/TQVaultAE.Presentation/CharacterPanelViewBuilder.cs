@@ -96,7 +96,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 	private readonly IItemTextFormatter? _itemText = itemText;
 
 	private string? _gearKey;
-	private (string Key, IReadOnlyList<BuffSource> Sources)? _sources;
+	private (string Key, int Levels, IReadOnlyList<BuffSource> Sources)? _sources;
 
 	/// <summary>The sum of the gear sources turned on, once computed.</summary>
 	public AttributeSum? GearSum { get; private set; }
@@ -206,7 +206,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 
 	/// <summary>
 	/// The buff sources of the character (<see cref="ICharacterStatsService.GetBuffSources"/>), kept until the equipment,
-	/// a skill point, the saved buffs, the difficulty or the scroll picked change.
+	/// a skill point, the saved buffs, the difficulty, the scroll picked or the skill levels the buffs on add change.
 	/// </summary>
 	public IReadOnlyList<BuffSource> Sources(CharacterPanelInput input)
 	{
@@ -217,15 +217,28 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			string.Join(";", input.Skills.Select(r => r.skillName + "=" + r.skillLevel.ToString(CultureInfo.InvariantCulture))),
 			string.Join(";", input.Info.SavedBuffs.Select(b => b.Normalized)),
 			difficulty.ToString(CultureInfo.InvariantCulture), input.Buffs.Scroll?.Normalized);
-		if (this._sources?.Key != key)
+
+		// A buff on that adds levels to every skill (Battle Standard's "+1 to all skills") raises the skills, its own
+		// included: the sources are read again at those levels, until the levels added hold (a second read at most).
+		int levels = this._sources is { } known && known.Key == key ? known.Levels : 0;
+		for (int read = 0; read < 3; read++)
 		{
-			this._sources = (key, this._service.GetBuffSources(new BuffSourceRequest([.. Equipment(input)], input.Player.UseAlternate,
-				input.Skills, input.Augments, input.Trees, input.Info.SavedBuffs, difficulty, input.Buffs.Scroll)));
-			this._names.Clear();
-			this._descriptions.Clear();
+			if (this._sources is not { } cached || cached.Key != key || cached.Levels != levels)
+			{
+				IReadOnlyList<SkillAugment> augments = levels == 0 ? input.Augments : [.. input.Augments, new SkillAugment(SkillAugmentKind.All, null, levels)];
+				this._sources = (key, levels, this._service.GetBuffSources(new BuffSourceRequest([.. Equipment(input)], input.Player.UseAlternate,
+					input.Skills, augments, input.Trees, input.Info.SavedBuffs, difficulty, input.Buffs.Scroll)));
+				this._names.Clear();
+				this._descriptions.Clear();
+			}
+
+			int added = BuffSums.SkillLevelsAdded(this._sources.Value.Sources, input.Buffs.IsOn);
+			if (added == levels)
+				break;
+			levels = added;
 		}
 
-		return this._sources.Value.Sources;
+		return this._sources!.Value.Sources;
 	}
 
 	/// <summary>

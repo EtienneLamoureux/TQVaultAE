@@ -149,6 +149,30 @@ public class CharacterPanelViewBuilderTests
 		this._stats.Verify(s => s.GetBuffSources(It.IsAny<BuffSourceRequest>()), Times.Once);
 	}
 
+	[Fact]
+	public void Sources_ABuffOnAddingLevelsToEverySkill_ReadsTheSourcesAgainAtThoseLevels()
+	{
+		// Arrange: a standard whose aura gives +1 to all skills, off at first
+		var requests = new List<BuffSourceRequest>();
+		this._sources = r =>
+		{
+			requests.Add(r);
+			return [Source("pet:standard", BuffGroup.Pet, false, ("allSkillEnhancement", 1))];
+		};
+		var input = Input();
+		var standard = this._builder.Sources(input).Single();
+
+		// Act
+		input.Buffs.Set(standard, true);
+		this._builder.Sources(input);
+		this._builder.Sources(input);
+
+		// Assert: read again once with every skill one level up, not more
+		requests.Should().HaveCount(2);
+		requests[0].Augments.Should().BeEmpty();
+		requests[1].Augments.Should().ContainSingle().Which.Should().Be(new SkillAugment(SkillAugmentKind.All, null, 1));
+	}
+
 	private static BuffSource Source(string id, BuffGroup group, bool defaultOn, params (string Name, double Value)[] values)
 	{
 		var sum = new AttributeSum();

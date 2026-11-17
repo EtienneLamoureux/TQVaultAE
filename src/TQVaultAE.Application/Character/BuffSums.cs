@@ -39,6 +39,17 @@ public static class BuffSums
 	}
 
 	/// <summary>
+	/// The levels the sources that count add to every skill (<c>allSkillEnhancement</c>: Battle Standard's "+1 to all
+	/// skills"), the standard's own skill included and the masteries aside, as the game counts them.
+	/// </summary>
+	public static int SkillLevelsAdded(IEnumerable<BuffSource> sources, Func<BuffSource, bool> isOn)
+	{
+		ArgumentNullException.ThrowIfNull(sources);
+		ArgumentNullException.ThrowIfNull(isOn);
+		return (int)sources.Where(isOn).Sum(s => s.Sum["allSkillEnhancement"]);
+	}
+
+	/// <summary>
 	/// What an equipped item is for the attack: a weapon in hand, a shield, or other gear. An empty weapon slot saved as an
 	/// item without record is no item at all (<see cref="BuffGearRole.None"/>: bare hands then).
 	/// </summary>
