@@ -143,6 +143,7 @@ internal sealed partial class CharacterEditorUserControl
 		this._stats.AttributeClicked += (_, click) => this.CharacterAttribute_Clicked(click.Attribute, click.Step, click.ToEnd);
 		this._stats.UndoClicked += (_, _) => this.CharacterAttributes_Undo();
 		this._stats.BindBuffs(() => this.ViewBuilder, () => this._buffs, this.InvalidateStats);
+		this._stats.WeaponSetClicked += (_, alternate) => this.ChooseWeaponSet(alternate);
 		foreach (var box in this.AttributeBoxes.Append(this.attributeNumericUpDown))
 			box.ValueChanged += (_, _) => this.InvalidateStats();
 

@@ -23,7 +23,8 @@ public sealed record CharacterPanelInput
 	/// (<see cref="IPlayerService.GetWornEquipment"/>), and <paramref name="augments"/> their skill bonuses.
 	/// </summary>
 	/// <param name="buffs">The toggles of the Buffs tab for this character, kept by the panel's owner; none for the defaults.</param>
-	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<Item> equipment, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments, BuffSelection? buffs = null)
+	/// <param name="alternateWeapons">The weapon set counted (<see cref="AlternateWeapons"/>); null for the one in hand in the save.</param>
+	public static CharacterPanelInput FromSave(PlayerCollection player, PlayerInfo info, IReadOnlyList<Item> equipment, IReadOnlyList<MasteryTree> trees, IReadOnlyList<SkillAugment> augments, BuffSelection? buffs = null, bool? alternateWeapons = null)
 		=> new()
 		{
 			Player = player,
@@ -38,6 +39,7 @@ public sealed record CharacterPanelInput
 			Augments = augments,
 			Difficulty = CharacterPanelLayout.ShownDifficulty(info.DifficultyUnlocked),
 			Buffs = buffs ?? new(),
+			AlternateWeapons = alternateWeapons,
 		};
 
 	public required PlayerCollection Player { get; init; }
@@ -68,6 +70,16 @@ public sealed record CharacterPanelInput
 
 	/// <summary>Which buff sources count: the Buffs tab's toggles, kept by the panel's owner for the character shown.</summary>
 	public BuffSelection Buffs { get; init; } = new();
+
+	/// <summary>
+	/// The weapon set the statistics count, chosen in the panel without moving the pieces: true for the second set (rows
+	/// 2 and 3 of the weapon slots), false for the first; null for the one in hand in the save
+	/// (<see cref="PlayerCollection.UseAlternate"/>). <see cref="Augments"/> must be those of the same set.
+	/// </summary>
+	public bool? AlternateWeapons { get; init; }
+
+	/// <summary>True when the statistics count the second weapon set (<see cref="AlternateWeapons"/>).</summary>
+	public bool CountsAlternateWeapons => this.AlternateWeapons ?? this.Player.UseAlternate;
 
 	/// <summary>True when the masteries changed: the class is the one <see cref="Trees"/> make, not the save's.</summary>
 	public bool ClassCleared { get; init; }
@@ -192,7 +204,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 	/// <summary>Forgets the stance in hand when the equipment or the weapon set in hand changed.</summary>
 	private void TrackGear(CharacterPanelInput input)
 	{
-		var key = (input.Player.UseAlternate ? "+" : "-") + string.Join(";", Equipment(input).Select(i =>
+		var key = (input.CountsAlternateWeapons ? "+" : "-") + string.Join(";", Equipment(input).Select(i =>
 			string.Join(",", i.BaseItemId?.Raw, i.prefixID?.Raw, i.suffixID?.Raw, i.relicID?.Raw, i.RelicBonusId?.Raw, i.relic2ID?.Raw, i.RelicBonus2Id?.Raw,
 				i.Seed.ToString(CultureInfo.InvariantCulture), i.Var1.ToString(CultureInfo.InvariantCulture), i.Var2.ToString(CultureInfo.InvariantCulture), i.Mod)));
 		if (key == this._gearKey)
@@ -226,7 +238,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			if (this._sources is not { } cached || cached.Key != key || cached.Levels != levels)
 			{
 				IReadOnlyList<SkillAugment> augments = levels == 0 ? input.Augments : [.. input.Augments, new SkillAugment(SkillAugmentKind.All, null, levels)];
-				this._sources = (key, levels, this._service.GetBuffSources(new BuffSourceRequest([.. Equipment(input)], input.Player.UseAlternate,
+				this._sources = (key, levels, this._service.GetBuffSources(new BuffSourceRequest([.. Equipment(input)], input.CountsAlternateWeapons,
 					input.Skills, augments, input.Trees, input.Info.SavedBuffs, difficulty, input.Buffs.Scroll)));
 				this._names.Clear();
 				this._descriptions.Clear();
@@ -273,7 +285,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		all.Add(skills);
 
 		// The attack: the stance of the weapons worn (a weapon turned off keeps its animation), the gear turned on.
-		this.Stance ??= this._service.GetWeaponStance(Equipment(input), input.Player.UseAlternate);
+		this.Stance ??= this._service.GetWeaponStance(Equipment(input), input.CountsAlternateWeapons);
 		var durations = this._service.GetAttackAnimationDurations(input.Info.IsFemale);
 		var attackSpeed = CharacterOffenseCalculator.AttackSpeed(all, this.Stance.Value, balance, difficulty,
 			durations.GetValueOrDefault(WeaponStance.Unarmed), durations.GetValueOrDefault(this.Stance.Value));
@@ -383,6 +395,25 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 
 	/// <summary>What the panel shows of the computed statistics, with the game's texts.</summary>
 	public CharacterStatsView StatsView(CharacterPanelInput input) => this.StatsView(input, this.Compose(input));
+
+	/// <summary>
+	/// The weapon set gems I and II of tab I: the set counted lit, each with its rollover (what a click does, which set
+	/// the save has in hand).
+	/// </summary>
+	private List<WeaponSetView> WeaponSetsView(CharacterPanelInput input)
+	{
+		var culture = CultureInfo.CurrentCulture;
+		var title = this._translation.TranslateOr("tagHUD_WeaponSwap_R", "Weapon Swap");
+		var inSave = input.Player.UseAlternate ? "II" : "I";
+		return [.. new[] { false, true }.Select(alternate =>
+		{
+			var name = alternate ? "II" : "I";
+			bool counted = alternate == input.CountsAlternateWeapons;
+			List<string> lines = [string.Format(culture, counted ? Resources.WeaponSetCounted : Resources.WeaponSetPick, name),
+				string.Format(culture, Resources.WeaponSetInSave, inSave)];
+			return new WeaponSetView(name, counted, new StatToolTip([new StatToolTipBlock(title, lines)]));
+		})];
+	}
 
 	/// <summary>
 	/// What the panel shows of the computed statistics, with the game's texts; the rollovers of tab I and II list the
@@ -511,6 +542,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 					e => e.Stats.Resistances[r], CharacterStatsCalculator.ResistanceVariables(r),
 					CharacterStatsCalculator.ResistancePenalty(r, balance, Difficulty(input)))))],
 			OffenseTitle = Game("tagCOffense", "Offense"),
+			WeaponSets = this.WeaponSetsView(input),
 			Offense =
 			[
 				Sourced("tagCTotalDamage", "Average Damage", offense.AverageDamage.ToString(culture), e => e.Offense.AverageDamage, [],

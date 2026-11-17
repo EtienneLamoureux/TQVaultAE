@@ -102,6 +102,17 @@ plain sums (pet and race bonuses, durations) list the bonuses only. Hovering Ene
 
 Option under the statistics: **Difficulty**, the difficulty played; Epic and Legendary lower the resistances.
 
+### Weapon sets
+
+The gems **I** and **II** right of *Offense* (tab I) pick the weapon set the statistics count; the lit one is counted.
+
+- At the start, the set in hand in the save; the gem's tool tip names it.
+- Click the other gem to see the statistics with that set: damage, attack speed, the weapons' and their relics' bonuses,
+  skill levels they grant, the Buffs tab's equipment. The pieces don't move and the save doesn't change.
+- Memory only, like the buff toggles: the main window's panel, the editor and each floating window keep their own
+  choice; the main window's panel goes back to the save's set when the equipment changes, as its toggles do.
+- The item requirements (red items) still count the set in hand in the save.
+
 ### Tab IV: buffs
 
 One section per kind of source; a click turns a source on or off (greyed when off) and the statistics follow. The

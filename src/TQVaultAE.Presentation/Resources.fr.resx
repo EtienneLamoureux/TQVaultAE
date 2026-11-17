@@ -2664,6 +2664,15 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="BuffsDuration" xml:space="preserve">
     <value>durée</value>
   </data>
+  <data name="WeaponSetCounted" xml:space="preserve">
+    <value>Jeu {0} : les statistiques comptent ses armes.</value>
+  </data>
+  <data name="WeaponSetPick" xml:space="preserve">
+    <value>Jeu {0} : cliquer pour compter ses armes à la place (la sauvegarde ne change pas).</value>
+  </data>
+  <data name="WeaponSetInSave" xml:space="preserve">
+    <value>Le jeu {0} est en main dans la sauvegarde.</value>
+  </data>
   <data name="BuffsOnEquip" xml:space="preserve">
     <value>Lancé par l'objet quand il est porté : toujours actif.</value>
   </data>

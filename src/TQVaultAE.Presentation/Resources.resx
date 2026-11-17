@@ -2840,6 +2840,15 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="BuffsDuration" xml:space="preserve">
     <value>duration</value>
   </data>
+  <data name="WeaponSetCounted" xml:space="preserve">
+    <value>Set {0}: the statistics count its weapons.</value>
+  </data>
+  <data name="WeaponSetPick" xml:space="preserve">
+    <value>Set {0}: click to count its weapons instead (the save does not change).</value>
+  </data>
+  <data name="WeaponSetInSave" xml:space="preserve">
+    <value>Set {0} is in hand in the save.</value>
+  </data>
   <data name="BuffsOnEquip" xml:space="preserve">
     <value>Cast by the item when worn: always on.</value>
   </data>

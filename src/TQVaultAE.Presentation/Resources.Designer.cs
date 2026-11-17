@@ -7817,6 +7817,33 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set {0}: the statistics count its weapons..
+        /// </summary>
+        public static string WeaponSetCounted {
+            get {
+                return ResourceManager.GetString("WeaponSetCounted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set {0}: click to count its weapons instead (the save does not change)..
+        /// </summary>
+        public static string WeaponSetPick {
+            get {
+                return ResourceManager.GetString("WeaponSetPick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set {0} is in hand in the save..
+        /// </summary>
+        public static string WeaponSetInSave {
+            get {
+                return ResourceManager.GetString("WeaponSetInSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cast by the item when worn: always on..
         /// </summary>
         public static string BuffsOnEquip {

@@ -33,6 +33,9 @@ public sealed record CharacterAttributeView(string Label, string Value, Color Co
 /// <summary>An icon of the panel (a resistance, a damage kind, a monster race) with the number drawn on it and its tool tip.</summary>
 public sealed record StatIconView(string Icon, string Value, StatToolTip ToolTip);
 
+/// <summary>A weapon set gem of tab I: its name (I, II), whether the statistics count its weapons, its tool tip.</summary>
+public sealed record WeaponSetView(string Name, bool Counted, StatToolTip ToolTip);
+
 /// <summary>A row of the panel: grey label, white value, tool tip.</summary>
 public sealed record StatRowView(string Label, string Value, StatToolTip ToolTip);
 
@@ -46,6 +49,9 @@ public sealed record CharacterStatsView
 	public IReadOnlyList<StatIconView> Resistances { get; init; } = [];
 
 	public string OffenseTitle { get; init; } = string.Empty;
+
+	/// <summary>The weapon set gems right of the offense title: set I, then set II.</summary>
+	public IReadOnlyList<WeaponSetView> WeaponSets { get; init; } = [];
 
 	/// <summary>Average damage, attack speed, DPS: only the game computes them.</summary>
 	public IReadOnlyList<StatRowView> Offense { get; init; } = [];

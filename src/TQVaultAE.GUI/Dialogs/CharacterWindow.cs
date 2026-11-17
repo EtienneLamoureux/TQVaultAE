@@ -102,6 +102,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 		// Each window its own toggles: a click in its Buffs tab changes the four tabs at once.
 		this._stats.BindBuffs(this._tabs[CharacterStatsPanel.BuffsTab], this.InvalidateTabs);
+		this._stats.BindWeaponSets(this._tabs[0], this.InvalidateTabs);
 		this._equipment.OnEquipmentChanged += (_, _) =>
 		{
 			this._stats.Invalidate();
@@ -158,6 +159,9 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 	/// <summary>The buff toggles of this window.</summary>
 	internal Application.Character.BuffSelection Buffs => this._stats.Buffs;
+
+	/// <summary>The weapon set this window's statistics count; null for the one in hand in the save.</summary>
+	internal bool? AlternateWeapons => this._stats.AlternateWeapons;
 
 	/// <summary>Raised when an item was put in or taken out of the equipment from this window.</summary>
 	public event EventHandler? EquipmentChanged;

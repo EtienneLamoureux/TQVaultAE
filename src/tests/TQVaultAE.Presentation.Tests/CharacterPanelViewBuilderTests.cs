@@ -437,4 +437,72 @@ public class CharacterPanelViewBuilderTests
 	}
 
 	#endregion
+	#region Weapon set counted
+
+	[Theory]
+	[InlineData(false, null, false)]
+	[InlineData(false, true, true)]
+	[InlineData(true, false, false)]
+	[InlineData(true, null, true)]
+	public void ComputeStats_CountsTheWeaponSetChosen_OrTheSavedOne(bool saved, bool? chosen, bool expected)
+	{
+		// Arrange: the save has one set in hand, the panel may count the other
+		var input = Input() with { AlternateWeapons = chosen };
+		input.Player.UseAlternate = saved;
+
+		// Act
+		this._builder.ComputeOffense(input);
+
+		// Assert: the sources and the stance are those of the set counted
+		input.CountsAlternateWeapons.Should().Be(expected);
+		this._stats.Verify(s => s.GetBuffSources(It.Is<BuffSourceRequest>(r => r.UseAlternate == expected)), Times.Once);
+		this._stats.Verify(s => s.GetWeaponStance(It.IsAny<IEnumerable<Item>>(), expected), Times.Once);
+	}
+
+	[Fact]
+	public void ComputeStats_AnotherWeaponSetChosen_ReadsTheSourcesAndTheStanceAgain()
+	{
+		// Arrange: the view was built with the set in hand
+		var input = Input();
+		this._builder.ComputeOffense(input);
+
+		// Act: the second set's gem clicked, then the first again
+		this._builder.ComputeOffense(input with { AlternateWeapons = true });
+		this._builder.ComputeOffense(input with { AlternateWeapons = false });
+
+		// Assert
+		this._stats.Verify(s => s.GetBuffSources(It.Is<BuffSourceRequest>(r => r.UseAlternate)), Times.Once);
+		this._stats.Verify(s => s.GetBuffSources(It.Is<BuffSourceRequest>(r => !r.UseAlternate)), Times.Exactly(2));
+		this._stats.Verify(s => s.GetWeaponStance(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()), Times.Exactly(3));
+	}
+
+	[Fact]
+	public void StatsView_WeaponSets_LightTheSetCounted_AndNameTheSetInHandInTheSave()
+	{
+		// Arrange: set II in hand in the save, set I counted
+		var input = Input() with { AlternateWeapons = false };
+		input.Player.UseAlternate = true;
+
+		// Act
+		var sets = this._builder.StatsView(input).WeaponSets;
+
+		// Assert
+		sets.Select(s => (s.Name, s.Counted)).Should().Equal(("I", true), ("II", false));
+		var culture = System.Globalization.CultureInfo.CurrentCulture;
+		var inSave = string.Format(culture, Resources.WeaponSetInSave, "II");
+		sets[0].ToolTip.Blocks.Single().Lines.Should().Equal(string.Format(culture, Resources.WeaponSetCounted, "I"), inSave);
+		sets[1].ToolTip.Blocks.Single().Lines.Should().Equal(string.Format(culture, Resources.WeaponSetPick, "II"), inSave);
+	}
+
+	[Fact]
+	public void FromSave_WeaponSetChosen_IsCounted()
+	{
+		var info = new PlayerInfo(new PathIO());
+		var player = new PlayerCollection("HeroA", @"C:\saves\_HeroA\Player.chr") { PlayerInfo = info, UseAlternate = false };
+
+		CharacterPanelInput.FromSave(player, info, [], [], []).CountsAlternateWeapons.Should().BeFalse();
+		CharacterPanelInput.FromSave(player, info, [], [], [], alternateWeapons: true).CountsAlternateWeapons.Should().BeTrue();
+	}
+
+	#endregion
 }

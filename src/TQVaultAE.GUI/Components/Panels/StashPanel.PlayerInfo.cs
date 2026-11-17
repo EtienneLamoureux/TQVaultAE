@@ -290,8 +290,9 @@ public partial class StashPanel
 			Visible = false,
 		};
 
-		// The Buffs tab's toggles change only what the panel shows, never the save.
+		// The Buffs tab's toggles and the weapon set gems change only what the panel shows, never the save.
 		stats.BindBuffs(this._statsPanel, this._statsPanel.Invalidate);
+		stats.BindWeaponSets(this._statsPanel, this._statsPanel.Invalidate);
 
 		// The gold button of the dialogs; its font and bounds follow the scale in LayoutStatsPanel.
 		var editButton = CaravanDialog.Button(this.FontService, this.UIService.FontZoom, "editButton", Resources.CharacterEditBtn);

@@ -100,6 +100,15 @@ internal sealed partial class CharacterStatsPanel : Control
 	private static readonly int[] Tab2RowY = [138, 157, 182, 200, 226, 244, 281, 299, 325, 343, 369];
 
 	private static readonly int[] OffenseY = [333, 348, 363];
+
+	/// <summary>
+	/// The weapon set gems I and II right of the offense title (21x21, as the game's character screen): lit for the set
+	/// the statistics count, dim for the other, lighter under the mouse.
+	/// </summary>
+	private static readonly Rectangle[] WeaponSetGems = [new(199, 311, 21, 21), new(222, 311, 21, 21)];
+	private static readonly string[] WeaponSetLit = ["""InGameUI\characterscreen\weaponswapgemup01.tex""", """InGameUI\characterscreen\weaponswapgemup02.tex"""];
+	private static readonly string[] WeaponSetOver = ["""InGameUI\characterscreen\weaponswapgemover01.tex""", """InGameUI\characterscreen\weaponswapgemover02.tex"""];
+	private static readonly string[] WeaponSetDim = ["""InGameUI\characterscreen\weaponswapgemdown01.tex""", """InGameUI\characterscreen\weaponswapgemdown02.tex"""];
 	private static readonly int[] Tab3RowY = [126, 144];
 
 	/// <summary>NumberStandard_Green: pure green.</summary>
@@ -115,6 +124,7 @@ internal sealed partial class CharacterStatsPanel : Control
 	private int _tab;
 	private int _hoveredPlus = -1;
 	private bool _hoveredUndo;
+	private int _hoveredWeaponSet = -1;
 	private string _toolTipText = string.Empty;
 
 	/// <summary>Text of the game's rollovers, in the skill window's light grey.</summary>
@@ -147,6 +157,12 @@ internal sealed partial class CharacterStatsPanel : Control
 
 	/// <summary>Raised by a click on the Undo button: the attributes go back to their values at the start.</summary>
 	public event EventHandler? UndoClicked;
+
+	/// <summary>
+	/// Raised by a click on the weapon set gem not lit: true to count the second set, false the first. The save does not
+	/// change; the owner of the panel keeps the choice.
+	/// </summary>
+	public event EventHandler<bool>? WeaponSetClicked;
 
 	public Font? NameFont { get; set; }
 	public Font? ClassFont { get; set; }
@@ -306,6 +322,32 @@ internal sealed partial class CharacterStatsPanel : Control
 
 	internal void RaiseUndo() => this.UndoClicked?.Invoke(this, EventArgs.Empty);
 
+	/// <summary>A weapon set gem on screen: 0 for set I, 1 for set II.</summary>
+	public Rectangle WeaponSetBounds(int set) => this.ScaledRect(WeaponSetGems[set]);
+
+	/// <summary>The weapon set gem under a point (0 for I, 1 for II), or -1; only on tab I.</summary>
+	internal int HitWeaponSet(Point location)
+	{
+		if (this._tab != 0 || this.View?.Invoke() is not { } view)
+			return -1;
+
+		for (int set = 0; set < WeaponSetGems.Length && set < view.Stats.WeaponSets.Count; set++)
+			if (this.WeaponSetBounds(set).Contains(location))
+				return set;
+
+		return -1;
+	}
+
+	/// <summary>Counts the weapons of a set (0 for I, 1 for II), as a click on its gem; nothing when it is counted already.</summary>
+	internal bool ChooseWeaponSet(int set)
+	{
+		if (this.View?.Invoke() is not { } view || set < 0 || set >= view.Stats.WeaponSets.Count || view.Stats.WeaponSets[set].Counted)
+			return false;
+
+		this.WeaponSetClicked?.Invoke(this, set == 1);
+		return true;
+	}
+
 	protected override void OnMouseUp(MouseEventArgs e)
 	{
 		base.OnMouseUp(e);
@@ -315,6 +357,12 @@ internal sealed partial class CharacterStatsPanel : Control
 				this.Tab = tab;
 				return;
 			}
+
+		if (e.Button == MouseButtons.Left && this.HitWeaponSet(e.Location) is var set and >= 0)
+		{
+			this.ChooseWeaponSet(set);
+			return;
+		}
 
 		if (e.Button == MouseButtons.Left && this.HitBuff(e.Location) is { } buff)
 		{
@@ -339,14 +387,16 @@ internal sealed partial class CharacterStatsPanel : Control
 		base.OnMouseMove(e);
 		var plus = this.HitPlus(e.Location);
 		var undo = this.HitUndo(e.Location);
-		if (plus != this._hoveredPlus || undo != this._hoveredUndo)
+		var weaponSet = this.HitWeaponSet(e.Location);
+		if (plus != this._hoveredPlus || undo != this._hoveredUndo || weaponSet != this._hoveredWeaponSet)
 		{
 			this._hoveredPlus = plus;
 			this._hoveredUndo = undo;
+			this._hoveredWeaponSet = weaponSet;
 			this.Invalidate();
 		}
 
-		this.Cursor = plus >= 0 || undo || this.HitBuff(e.Location) is not null
+		this.Cursor = plus >= 0 || undo || weaponSet >= 0 || this.HitBuff(e.Location) is not null
 			|| (!this.TabsFixed && Enumerable.Range(0, TabX.Length).Any(t => this.TabBounds(t).Contains(e.Location))) ? Cursors.Hand : Cursors.Default;
 
 		// The attribute rows tell their base value and bonuses; icons and rows their meaning, as the game's rollovers.
@@ -373,6 +423,7 @@ internal sealed partial class CharacterStatsPanel : Control
 		base.OnMouseLeave(e);
 		this._hoveredPlus = -1;
 		this._hoveredUndo = false;
+		this._hoveredWeaponSet = -1;
 		this._toolTipText = string.Empty;
 		this._toolTip.SetToolTip(this, string.Empty);
 		this.Tooltip?.Hide();
@@ -475,9 +526,15 @@ internal sealed partial class CharacterStatsPanel : Control
 
 		// Offense (tagCOffense at 15,314): only the game computes damage, attack speed and DPS.
 		this.Bar(g, 303);
-		this.DrawText(g, stats.OffenseTitle, this.TitleFont, Color.White, new Rectangle(15, 314, 228, 18), StringAlignment.Near);
+		this.DrawText(g, stats.OffenseTitle, this.TitleFont, Color.White, new Rectangle(15, 314, WeaponSetGems[0].X - 19, 18), StringAlignment.Near);
 		for (int i = 0; i < stats.Offense.Count && i < OffenseY.Length; i++)
 			this.Row(g, stats.Offense[i].Label, stats.Offense[i].Value, OffenseY[i]);
+
+		for (int set = 0; set < WeaponSetGems.Length && set < stats.WeaponSets.Count; set++)
+		{
+			var gem = stats.WeaponSets[set].Counted ? WeaponSetLit : set == this._hoveredWeaponSet ? WeaponSetOver : WeaponSetDim;
+			g.DrawImage(this.Picture(gem[set]), this.WeaponSetBounds(set));
+		}
 	}
 
 	private void PaintTab2(Graphics g, CharacterStatsView stats)
@@ -549,6 +606,8 @@ internal sealed partial class CharacterStatsPanel : Control
 					yield return (new Rectangle(place, new Size(50, 32)), icon.ToolTip);
 				for (int i = 0; i < stats.Offense.Count && i < OffenseY.Length; i++)
 					yield return (new Rectangle(15, OffenseY[i], 228, 15), stats.Offense[i].ToolTip);
+				for (int set = 0; set < WeaponSetGems.Length && set < stats.WeaponSets.Count; set++)
+					yield return (WeaponSetGems[set], stats.WeaponSets[set].ToolTip);
 				break;
 			case 1:
 				foreach (var (place, icon) in IconPlaces(8, 4, 60, Tab2ResistanceY).Zip(stats.Resistances.Skip(8)))

@@ -40,6 +40,7 @@ internal sealed partial class CharacterEditorUserControl
 			Augments = this._gearAugments ?? [],
 			Difficulty = CharacterPanelLayout.ShownDifficulty(this.Info.DifficultyUnlocked, this._statsDifficulty?.SelectedIndex ?? -1),
 			Buffs = this._buffs,
+			AlternateWeapons = this._alternateWeapons,
 			ClassCleared = skills?.MasteriesChanged == true,
 			Editable = true,
 			CanUndo = this.AttributeBoxes.Where((b, i) => Convert.ToInt32(b.Value) != this._startAttributes.ElementAtOrDefault(i)).Any(),

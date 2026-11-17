@@ -56,7 +56,7 @@ internal sealed partial class CharacterEditorUserControl
 	private void InitSkills()
 	{
 		this._skills = this.Services.CharacterEditService.CreateSkillEditor(this.Info);
-		this._gearAugments = this.Services.CharacterEditService.GetGearSkillAugments(this.PlayerCollection);
+		this._gearAugments = this.GearAugments();
 
 		var choices = new List<MasteryChoice> { new(null, Resources.CEMasteryNone) };
 		foreach (var tree in this._skills.KnownMasteries)
@@ -161,6 +161,25 @@ internal sealed partial class CharacterEditorUserControl
 			tab.Pane.Tooltip = tooltip;
 
 		old?.Dispose();
+	}
+
+	/// <summary>
+	/// The weapon set the statistics and the skill levels count, chosen with the gems of the statistics panel: true for
+	/// the second, false for the first, null for the one in hand in the save. Memory only, the save does not change.
+	/// </summary>
+	private bool? _alternateWeapons;
+
+	/// <summary>The skill bonuses of the equipped items, the weapons of the set counted only.</summary>
+	private IReadOnlyList<SkillAugment> GearAugments()
+		=> this.Services.CharacterEditService.GetGearSkillAugments(this.PlayerCollection.EquipmentSack ?? Enumerable.Empty<Item>(),
+			this._alternateWeapons ?? this.PlayerCollection.UseAlternate);
+
+	/// <summary>A weapon set gem clicked: the skill levels and the statistics count that set's weapons.</summary>
+	private void ChooseWeaponSet(bool alternate)
+	{
+		this._alternateWeapons = alternate;
+		this._gearAugments = this.GearAugments();
+		this.RefreshSkills();
 	}
 
 	/// <summary>Builds the skill tool tips; the dialog only gives the colours.</summary>
