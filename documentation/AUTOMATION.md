@@ -118,7 +118,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
   - the statistics panels' Buffs tab: `character_buffs`, `character_buff_toggle`;
-  - floating character windows: `character_window_open`, `character_window`, `character_window_loadout`, `character_window_close`;
+  - floating character windows: `character_window_open`, `character_window`, `character_window_loadout`, `character_window_list`, `character_window_close`;
   - test aids: `create_item`, `picture_fault`, the `gameRunning` and `realGame` parameters of `loadouts`;
   - the headless mode.
 
@@ -685,6 +685,8 @@ General rules:
     kept in `UserConfig.xml`. `full=true` adds each panel's view, `capture=true` a PNG.
   - `character_window_loadout(character, loadout?, step?)`: shows a loadout's pieces read-only in place of the equipment
     (empty: the equipment worn), or `step=-1/+1` clicks an arrow. Writes nothing.
+  - `character_window_list(character, list?, pick?)`: opens its `loadouts` list or tab IV's `scrolls` choice like a
+    click, returns the entries and the open list as a PNG; `pick` clicks an entry instead.
   - `character_window_close(character)`: closes it as its close button (not reopened at start).
   - Its equipment is panel `window:<name>` for the item tools (`pick_item`, `drop_item`, `get_state`, `capture`...);
     `character_buffs` / `character_buff_toggle` take `panel="window:<name>"`.

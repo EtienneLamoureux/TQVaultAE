@@ -24,7 +24,7 @@ internal sealed partial class CharacterStatsPanel
 				selected = view.Buffs.SelectedScroll,
 				name = view.Buffs.Scrolls.ElementAtOrDefault(view.Buffs.SelectedScroll)?.Name,
 				count = view.Buffs.Scrolls.Count,
-				box = this._scrollBox is { } box ? new { box.Visible, box.Bounds, box.Text } : null,
+				box = this._scrollBox is { } box ? new { box.Visible, box.Bounds, Text = box.SelectedText } : null,
 			},
 			sections = view.Buffs.Sections.Select(s => new
 			{
@@ -73,6 +73,9 @@ internal sealed partial class CharacterStatsPanel
 		return true;
 	}
 
+	/// <summary>The Buffs tab's scroll choice, once shown.</summary>
+	internal GameDropDown? AutomationScrollBox => this._scrollBox;
+
 	/// <summary>Picks a scroll in the Buffs tab's drop-down, as the user's commit does.</summary>
 	/// <returns>false when there is no such choice.</returns>
 	internal bool AutomationPickScroll(int index)
@@ -82,8 +85,7 @@ internal sealed partial class CharacterStatsPanel
 		if (this._scrollBox is not { } box || index < 0 || index >= box.Items.Count)
 			return false;
 
-		box.SelectedIndex = index;
-		this.RaiseScrollPicked(index);
+		box.Pick(index);
 		return true;
 	}
 

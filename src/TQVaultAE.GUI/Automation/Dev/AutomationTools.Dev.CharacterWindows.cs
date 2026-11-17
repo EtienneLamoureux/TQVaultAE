@@ -3,6 +3,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Application.Session;
+using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.GUI.Dialogs;
 
 namespace TQVaultAE.GUI.Automation;
@@ -72,6 +73,43 @@ internal static partial class AutomationTools
 
 				return Serialize(CharacterWindowState(window, full: false));
 			});
+
+		[McpServerTool(Name = "character_window_list")]
+		[Description("Opens a floating window's drop-down like a click: 'loadouts' (the list right of the gold bar) or 'scrolls' (tab IV's scroll choice). Returns its entries (text, checked) and the open list as a PNG, then closes it; with pick (0 first), clicks that entry instead (the window follows: the loadout or scroll is shown).")]
+		public static IEnumerable<ContentBlock> CharacterWindowList(
+			[Description("The character's key or name.")] string character,
+			[Description("'loadouts' or 'scrolls'.")] string list = "loadouts",
+			[Description("The entry to click (0 first); -1 to only render.")] int pick = -1)
+		{
+			var (state, png) = AutomationHost.OnUi(form =>
+			{
+				var window = FindCharacterWindow(form, character);
+				var box = list.ToLowerInvariant() switch
+				{
+					"loadouts" => window.LoadoutList,
+					"scrolls" => window.StatsTab(CharacterStatsPanel.BuffsTab).AutomationScrollBox
+						?? throw new McpException("Tab IV shows no scroll choice."),
+					_ => throw new McpException($"Unknown list '{list}': loadouts or scrolls."),
+				};
+
+				var menu = box.ListMenu;
+				menu.Show(box, new System.Drawing.Point(0, box.Height));
+				var entries = menu.Items.OfType<ToolStripMenuItem>().Select(i => new { text = i.Text, @checked = i.Checked, enabled = i.Enabled }).ToList();
+				if (pick >= 0)
+				{
+					if (pick >= menu.Items.Count)
+						throw new McpException($"No entry {pick}: {menu.Items.Count} listed.");
+					menu.Items[pick].PerformClick();
+					menu.Close();
+					return (Serialize(new { picked = pick, selected = box.SelectedText, entries }), (byte[]?)null);
+				}
+
+				using var bitmap = AutomationMenus.Render(menu, []);
+				return (Serialize(new { selected = box.SelectedText, bounds = box.Bounds, entries }), AutomationImages.Png(bitmap));
+			});
+
+			return AutomationImages.Result(state, png, $"window-{list}");
+		}
 
 		[McpServerTool(Name = "character_window_close")]
 		[Description("Closes a floating character window as its close button does (the user's close: it is not reopened at the next start). Returns the windows left.")]
