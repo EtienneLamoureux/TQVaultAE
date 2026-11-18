@@ -82,7 +82,6 @@ BaseAttributeRanges (3)
   | <null>
   | <null>
   | (3 - 4 ~ 6 - 8)
-BaseItemInfoRecords: records\test\sword.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -91,7 +90,6 @@ RelicComplete: Completed Relic
 RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
-RelicInfoRecords: records\test\relic_ember.dbr
 RelicInfo1Description: Ember
 Relic1Attributes (2)
   | {^B}+10% Fire Damage
@@ -100,7 +98,6 @@ Relic2Attributes (0)
 RelicBonus1Attributes (1)
   | {^B}+12 Dexterity
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\relic_ember_bonus.dbr
 RelicInfo1CompletionResolved: Completed Relic
 RelicInfo1CompletionBonusResolved: Completion Bonus:
 FormulaeArtifactAttributes (0)
@@ -270,7 +267,6 @@ BaseAttributeRanges (11)
   | <null>
   | <null>
   | <null>
-BaseItemInfoRecords: records\test\sword.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -279,7 +275,6 @@ RelicComplete: Completed Relic
 RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
-RelicInfoRecords: records\test\relic_ember.dbr
 RelicInfo1Description: Ember
 Relic1Attributes (6)
   | {^B}+10% Fire Damage
@@ -293,7 +288,6 @@ RelicBonus1Attributes (2)
   | {^B}+12 Dexterity
   | {^P}?Class?: LootRandomizer
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\relic_ember_bonus.dbr
 RelicInfo1CompletionResolved: Completed Relic
 RelicInfo1CompletionBonusResolved: Completion Bonus:
 FormulaeArtifactAttributes (0)

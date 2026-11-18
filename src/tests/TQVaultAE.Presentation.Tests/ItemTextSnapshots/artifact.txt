@@ -34,16 +34,13 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\artifact_eye.dbr
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (1)
   | {^B}+8 Attack Speed
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\artifact_eye_bonus.dbr
 ArtifactClass: Greater Artifact
 ArtifactBonus: Completion Bonus
-ArtifactBonusFormat: (Completion Bonus ARTIFACT_EYE_BONUS)
 FormulaeArtifactAttributes (0)
 AttributesAll (4)
   | 25% Poison Resistance
@@ -98,17 +95,14 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\artifact_eye.dbr
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (2)
   | {^B}+8 Attack Speed
   | {^P}?Class?: LootRandomizer
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\artifact_eye_bonus.dbr
 ArtifactClass: Greater Artifact
 ArtifactBonus: Completion Bonus
-ArtifactBonusFormat: (Completion Bonus ARTIFACT_EYE_BONUS)
 FormulaeArtifactAttributes (0)
 AttributesAll (9)
   | 25% Poison Resistance

@@ -34,7 +34,6 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\relic_ember.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -44,16 +43,13 @@ RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
 RelicCompletionFormat: Completed Relic
-RelicBonusPattern: {0} {1}
 RelicBonusFormat: Completion Bonus: {^Y}Relic Ember Bonus
-RelicBonusFileName: Relic Ember Bonus
 RelicBonusTitle: Completion Bonus:
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (1)
   | {^B}+12 Dexterity
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\relic_ember_bonus.dbr
 RelicInfo1CompletionBonusResolved: Completion Bonus:
 FormulaeArtifactAttributes (0)
 AttributesAll (3)
@@ -111,7 +107,6 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\relic_ember.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -121,9 +116,7 @@ RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
 RelicCompletionFormat: Completed Relic
-RelicBonusPattern: {0} {1}
 RelicBonusFormat: Completion Bonus: {^Y}Relic Ember Bonus
-RelicBonusFileName: Relic Ember Bonus
 RelicBonusTitle: Completion Bonus:
 Relic1Attributes (0)
 Relic2Attributes (0)
@@ -131,7 +124,6 @@ RelicBonus1Attributes (2)
   | {^B}+12 Dexterity
   | {^P}?Class?: LootRandomizer
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\relic_ember_bonus.dbr
 RelicInfo1CompletionBonusResolved: Completion Bonus:
 FormulaeArtifactAttributes (0)
 AttributesAll (9)

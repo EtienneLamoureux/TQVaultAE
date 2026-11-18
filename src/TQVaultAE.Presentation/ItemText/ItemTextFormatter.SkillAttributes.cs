@@ -16,7 +16,6 @@ public partial class ItemTextFormatter
 	private static void AddTextLine(Item itm, List<string> results, string line)
 	{
 		results.Add(line);
-		itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
 		itm.CurrentFriendlyNameResult?.MarkTextLine(line);
 	}
 
@@ -538,7 +537,6 @@ public partial class ItemTextFormatter
 										line = Format(formatSpec, skillLevel);
 										var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}{line}";
 										results.Add(value);
-										itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
 									}
 								}
 							}
@@ -572,7 +570,6 @@ public partial class ItemTextFormatter
 										line = Format(formatSpec, skillLevel);
 										var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}    {line}";
 										results.Add(value);
-										itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
 									}
 								}
 							}

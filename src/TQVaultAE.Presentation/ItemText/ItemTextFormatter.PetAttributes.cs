@@ -65,7 +65,6 @@ public partial class ItemTextFormatter
 			petLine = this.Format(formatSpec, summonLimit.ToString(CultureInfo.CurrentCulture));
 			var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			results.Add(value);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
 		}
 		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", levelIndex("spawnObjects"));
 		DBRecordCollection? petRecord = Database.GetRecordFromFile(skillRecordspawnObjects);
@@ -97,7 +96,6 @@ public partial class ItemTextFormatter
 				petLine = this.Format(formatSpec, timeToLive);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 			}
 
 			// Health
@@ -109,7 +107,6 @@ public partial class ItemTextFormatter
 				petLine = this.Format(formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 			}
 
 			// Energy
@@ -121,7 +118,6 @@ public partial class ItemTextFormatter
 				petLine = this.Format(formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 			}
 
 			// Add abilities text
@@ -148,7 +144,6 @@ public partial class ItemTextFormatter
 					petLine = this.Format(formatSpec, value);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 					results.Add(valueStr);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 				}
 				else
 				{
@@ -157,7 +152,6 @@ public partial class ItemTextFormatter
 					petLine = this.Format(formatSpec, value, value2);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 					results.Add(valueStr);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 				}
 			}
 
@@ -240,7 +234,6 @@ public partial class ItemTextFormatter
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{skillName}";
 
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
 				// "+1 to all Skills" of a pet's buff (allSkillEnhancement), which item tool tips leave out.
 				var ownLines = new List<(string Variable, string Text)>();

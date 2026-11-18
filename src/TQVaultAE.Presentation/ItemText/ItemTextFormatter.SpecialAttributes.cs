@@ -115,7 +115,6 @@ public partial class ItemTextFormatter
 						line = string.Concat(globalIndent, line);
 
 					results.Add(line);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
 				}
 
 				line = Format(formatSpec, v[Math.Min(v.NumberOfValues - 1, varNum)], finalRace);

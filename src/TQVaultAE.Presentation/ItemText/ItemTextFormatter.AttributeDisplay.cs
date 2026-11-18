@@ -18,30 +18,25 @@ public partial class ItemTextFormatter
 	/// <summary>
 	/// Gets the item's attributes from the database record.
 	/// </summary>
-	/// <remarks>
-	/// Changed by VillageIdiot
-	/// Added option to NOT translate the attributes to strings
-	/// </remarks>
 	/// <param name="record">DBRecord for the database record</param>
 	/// <param name="filtering">whether or not we are filtering strings</param>
 	/// <param name="recordId">string containing the database record id</param>
 	/// <param name="results">List for the results</param>
-	/// <param name="convertStrings">flag on whether we convert attributes to strings.</param>
 	/// <param name="lineSlots">Receives, for each line added to <paramref name="results"/>, where the game lists its attribute group.</param>
 	/// <param name="skillWindow">
 	/// The order and extra lines of the game's skill window, for a skill's effects: the groups follow
 	/// <see cref="SkillWindowAttributeOrder"/>, and the lines the skill window writes itself (a variable and its text, e.g.
 	/// the summon's life time) are placed where the game lists that variable.
 	/// </param>
-	private void GetAttributesFromRecord(Item itm, DBRecordCollection? record, bool filtering, RecordId recordId, List<string> results, bool convertStrings = true
+	private void GetAttributesFromRecord(Item itm, DBRecordCollection? record, bool filtering, RecordId recordId, List<string> results
 		, IReadOnlyDictionary<string, ValueRange>? valueRanges = null, List<string?>? lineRanges = null, int? skillLevelIndex = null
 		, List<GameAttributeSlot>? lineSlots = null, IReadOnlySet<string>? hiddenVariables = null
 		, SkillWindowLines? skillWindow = null)
 	{
 		if (USettings.ItemDebugLevel > 0)
 		{
-			Log.LogDebug("Item.GetAttributesFromRecord({Record}, {Filtering}, {RecordId}, {Results}, {ConvertStrings})"
-				, record, filtering, recordId, results, convertStrings
+			Log.LogDebug("Item.GetAttributesFromRecord({Record}, {Filtering}, {RecordId}, {Results})"
+				, record, filtering, recordId, results
 			);
 		}
 
@@ -251,10 +246,7 @@ public partial class ItemTextFormatter
 			if (ItemAttributeProvider.AttributeGroupIs(attrList, ItemAttributesEffectType.DamageQualifierEffect))
 				attrList.Sort(this.SortDamageQualifiers);
 
-			if (!convertStrings)
-				ConvertBareAttributeListToString(attrList, results);
-			else
-				ConvertAttributeListToString(itm, record, attrList, recordId, results, skillLevelIndex);
+			ConvertAttributeListToString(itm, record, attrList, recordId, results, skillLevelIndex);
 
 			if (lineSlots is not null)
 			{
@@ -682,7 +674,6 @@ public partial class ItemTextFormatter
 				amountOrDurationText = amountOrDurationText.InsertAfterColorPrefix(globalIndent);
 
 			results.Add(amountOrDurationText);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(amountOrDurationText);
 		}
 		else
 		{
@@ -733,7 +724,6 @@ public partial class ItemTextFormatter
 				modifierText = $"{ItemStyle.Epic.TQColor().ColorTag()}{modifierText}";
 
 			results.Add(modifierText);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(modifierText);
 		}
 		else
 		{
@@ -881,7 +871,6 @@ public partial class ItemTextFormatter
 					line = GetRawAttribute(data, variableNumber, variable, ref color);
 
 				// Start finalizing the line of text
-				string? itemSkillAutoController = null;
 				if (line.Length > 0)
 				{
 					if (attributeData.Variable.Length > 0)
@@ -890,18 +879,6 @@ public partial class ItemTextFormatter
 							, ' '
 							, $"{ItemStyle.Legendary.TQColor().ColorTag()}{attributeData.Variable}"
 						);
-
-					// Add another special case for skill name formatting
-					// if it's an activated skill
-					if (normalizedFullAttribute == "ITEMSKILLNAME")
-					{
-						itemSkillAutoController = record.GetString("itemSkillAutoController", 0);
-						if (!string.IsNullOrEmpty(itemSkillAutoController))
-						{
-							// Granted Skill name BOLD. TODO must implement extended ColorTag {^(?<Color>.)(?<Style>.)} to support this.
-							//line = string.Concat("<b>", line, "</b>");
-						}
-					}
 
 					line = $"{color?.ColorTag()}{line}";
 
@@ -918,7 +895,6 @@ public partial class ItemTextFormatter
 					else
 					{
 						results.Add(line);
-						itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
 					}
 				}
 
@@ -991,19 +967,5 @@ public partial class ItemTextFormatter
 		}
 
 		return label;
-	}
-
-	/// <summary>
-	/// For displaying raw attribute data
-	/// </summary>
-	/// <param name="attributeList">List of the attribute variables of the group</param>
-	/// <param name="results">List containing the attribute strings.</param>
-	private void ConvertBareAttributeListToString(List<Variable?> attributeList, List<string> results)
-	{
-		foreach (Variable? variable in attributeList)
-		{
-			if (variable is not null)
-				results.Add(variable.ToString());
-		}
 	}
 }

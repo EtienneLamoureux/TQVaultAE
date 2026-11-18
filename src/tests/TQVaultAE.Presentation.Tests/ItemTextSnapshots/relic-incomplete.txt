@@ -34,7 +34,6 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\relic_ember.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -43,9 +42,7 @@ RelicComplete: Completed Relic
 RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
-RelicClass: Relic
 RelicCompletionFormat: Relic - 1 / 3
-RelicPattern: {0} - {1} / {2}
 RelicBonusFormat: Relic - 1 / 3
 Relic1Attributes (0)
 Relic2Attributes (0)
@@ -106,7 +103,6 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\relic_ember.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -115,9 +111,7 @@ RelicComplete: Completed Relic
 RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
-RelicClass: Relic
 RelicCompletionFormat: Relic - 1 / 3
-RelicPattern: {0} - {1} / {2}
 RelicBonusFormat: Relic - 1 / 3
 Relic1Attributes (0)
 Relic2Attributes (0)
