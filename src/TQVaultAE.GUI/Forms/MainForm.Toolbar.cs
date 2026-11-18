@@ -90,12 +90,6 @@ public partial class MainForm
 		forgeButton.Text = Resources.MainFormBtnPanelSelect;
 	}
 
-	private void ForgeActionCanceled()
-	{
-		SoundService.PlayRandomCancel();
-		ForgeHideUI();
-	}
-
 	private void ForgeHideUI()
 	{
 		SoundService.PlayRandomCancel();

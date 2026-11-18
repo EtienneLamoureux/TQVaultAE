@@ -53,7 +53,7 @@ public partial class MainForm
 	{
 		this.mainView.SecondaryVaultShownChanged += this.MainView_SecondaryVaultShownChanged;
 		this.mainView.EditCharacterRequested += (_, player) => this.ShowCharacterEditorView(player);
-		this.mainView.ForgeCancelled += (_, _) => this.ForgeActionCanceled();
+		this.mainView.ForgeCancelled += (_, _) => this.ForgeHideUI();
 		this.mainView.ForgeForged += (_, _) => this.ForgeHideUI();
 		this.mainView.SaveRequested += (_, _) => this.SaveAllModifiedFiles();
 	}
