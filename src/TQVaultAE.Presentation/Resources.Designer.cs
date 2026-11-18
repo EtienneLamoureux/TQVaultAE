@@ -909,6 +909,15 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Current build.
+        /// </summary>
+        public static string CharacterWindowCurrentBuild {
+            get {
+                return ResourceManager.GetString("CharacterWindowCurrentBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current gear.
         /// </summary>
         public static string CharacterWindowCurrentGear {

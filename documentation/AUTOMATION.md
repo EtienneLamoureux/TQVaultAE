@@ -696,11 +696,11 @@ General rules:
   - `character_window_open(character, x?, y?)`: opens the window of a listed character (key, name or drop-down label),
     or brings it to the front; `x`/`y` place it as a window reopened at start. Writes nothing.
   - `character_window(character?, full?, capture?)`: per window the key, bounds, DPI, scale, cell size, read-only,
-    `loadout` shown (null: the equipment worn) and `loadouts` listed, `sharedWithMain`, the equipped items, the numbers of tabs I-III and the buff keys on; `saved` lists the places
+    `loadout` shown (null: the equipment worn) and `loadouts` listed, `classSet` counted (null: the save's build), `classSets` listed and `classSetMark` (applied in part), `sharedWithMain`, the equipped items, the numbers of tabs I-III and the buff keys on; `saved` lists the places
     kept in `UserConfig.xml`. `full=true` adds each panel's view, `capture=true` a PNG.
   - `character_window_loadout(character, loadout?, step?)`: shows a loadout's pieces read-only in place of the equipment
     (empty: the equipment worn), or `step=-1/+1` clicks an arrow. Writes nothing.
-  - `character_window_list(character, list?, pick?)`: opens its `loadouts` list or tab IV's `scrolls` choice like a
+  - `character_window_list(character, list?, pick?)`: opens its `loadouts` list, its `classsets` list or tab IV's `scrolls` choice like a
     click, returns the entries and the open list as a PNG; `wheel` scrolls it first as wheel notches do, `pick` clicks an
     entry instead.
   - `character_window_close(character)`: closes it as its close button (not reopened at start).

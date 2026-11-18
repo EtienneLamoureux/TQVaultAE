@@ -29,7 +29,7 @@ internal static partial class AutomationTools
 			});
 
 		[McpServerTool(Name = "character_window", ReadOnly = true)]
-		[Description("Reads the floating character windows: per window the character key, bounds, DPI, scale, read-only, the loadout shown in place of the equipment (null: the equipment worn) and the loadouts listed, the loaded save's instance id (changes when the file is read again), the equipment panel's id for the item tools (window:<name>, usable with click_cell, cell_info...), the equipped items, the numbers of tabs I to III (attributes, armor, resistances, rows, offense) and the Buffs toggles that are on, the weapon set counted (I or II). full=true adds each panel's whole view. With character, only that window; capture=true also returns it as a PNG (saved under %TEMP%).")]
+		[Description("Reads the floating character windows: per window the character key, bounds, DPI, scale, read-only, the loadout shown in place of the equipment (null: the equipment worn) and the loadouts listed, the class set the statistics are computed with (null: the save's build), the class sets listed and the applied-in-part mark's text, the loaded save's instance id (changes when the file is read again), the equipment panel's id for the item tools (window:<name>, usable with click_cell, cell_info...), the equipped items, the numbers of tabs I to III (attributes, armor, resistances, rows, offense) and the Buffs toggles that are on, the weapon set counted (I or II). full=true adds each panel's whole view. With character, only that window; capture=true also returns it as a PNG (saved under %TEMP%).")]
 		public static IEnumerable<ContentBlock> CharacterWindow(
 			[Description("The character's key or name; empty for every window.")] string character = "",
 			[Description("true to add each tab's whole view.")] bool full = false,
@@ -75,10 +75,10 @@ internal static partial class AutomationTools
 			});
 
 		[McpServerTool(Name = "character_window_list")]
-		[Description("Opens a floating window's drop-down like a click: 'loadouts' (the list right of the gold bar) or 'scrolls' (tab IV's scroll choice). Returns its entries (text, checked, visible in the open list) and the open list as a PNG, then closes it; wheel first scrolls the open list by rows as the mouse wheel does (positive: down); with pick (0 first), clicks that entry instead (the window follows: the loadout or scroll is shown).")]
+		[Description("Opens a floating window's drop-down like a click: 'loadouts' (the list right of the gold bar), 'classsets' (the class set list under tab III: the save's build, then the class sets) or 'scrolls' (tab IV's scroll choice). Returns its entries (text, checked, visible in the open list) and the open list as a PNG, then closes it; wheel first scrolls the open list by rows as the mouse wheel does (positive: down); with pick (0 first), clicks that entry instead (the window follows: the loadout, class set or scroll is shown).")]
 		public static IEnumerable<ContentBlock> CharacterWindowList(
 			[Description("The character's key or name.")] string character,
-			[Description("'loadouts' or 'scrolls'.")] string list = "loadouts",
+			[Description("'loadouts', 'classsets' or 'scrolls'.")] string list = "loadouts",
 			[Description("The entry to click (0 first); -1 to only render.")] int pick = -1,
 			[Description("Rows to scroll the open list first, as wheel notches do (positive: down).")] int wheel = 0)
 		{
@@ -88,9 +88,10 @@ internal static partial class AutomationTools
 				var box = list.ToLowerInvariant() switch
 				{
 					"loadouts" => window.LoadoutList,
+					"classsets" => window.ClassSetList,
 					"scrolls" => window.StatsTab(CharacterStatsPanel.BuffsTab).AutomationScrollBox
 						?? throw new McpException("Tab IV shows no scroll choice."),
-					_ => throw new McpException($"Unknown list '{list}': loadouts or scrolls."),
+					_ => throw new McpException($"Unknown list '{list}': loadouts, classsets or scrolls."),
 				};
 
 				var menu = box.ListMenu;
@@ -159,6 +160,9 @@ internal static partial class AutomationTools
 				readOnly = window.Player.IsReadOnly,
 				loadout = window.LoadoutName,
 				loadouts = window.LoadoutNames,
+				classSet = window.ClassSetName,
+				classSets = window.ClassSetList.Items.Skip(1).ToList(),
+				classSetMark = window.ClassSetList.MarkToolTip,
 				panel = AutomationPanels.CharacterWindowPrefix + window.Save.Name,
 				sharedWithMain = ReferenceEquals(window.Player, AutomationHost.MainForm?.AutomationStashPanel?.Player),
 				playerInstance = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(window.Player),

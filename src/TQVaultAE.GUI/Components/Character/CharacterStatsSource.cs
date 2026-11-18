@@ -28,6 +28,15 @@ internal sealed class CharacterStatsSource(GuiServices services)
 	public bool? AlternateWeapons { get; private set; }
 
 	/// <summary>
+	/// The class set the statistics are computed with, applied to the save's build as the character editor applies it
+	/// (<see cref="ClassSetApplication.Apply"/>); null for the save's build. Memory only, like the toggles.
+	/// </summary>
+	public ClassSet? ClassSet { get; private set; }
+
+	/// <summary>False when <see cref="ClassSet"/> did not fit the character (too few points or mastery slots), once the view is built.</summary>
+	public bool ClassSetComplete { get; private set; } = true;
+
+	/// <summary>
 	/// Makes the game data of the character answer while the view is built (its linked mod), or null when the active map
 	/// is the character's (the main window's).
 	/// </summary>
@@ -45,6 +54,16 @@ internal sealed class CharacterStatsSource(GuiServices services)
 	{
 		this.Buffs = new BuffSelection();
 		this.AlternateWeapons = null;
+		this.ClassSet = null;
+		this.ClassSetComplete = true;
+		this._view = null;
+	}
+
+	/// <summary>Computes the statistics with a class set (null: the save's build); the save does not change.</summary>
+	public void ChooseClassSet(ClassSet? set)
+	{
+		this.ClassSet = set;
+		this.ClassSetComplete = true;
 		this._view = null;
 	}
 
@@ -87,8 +106,17 @@ internal sealed class CharacterStatsSource(GuiServices services)
 		// The items the item requirements count (PlayerInfo's calculated attributes): an equipped item in hand is left out.
 		var skills = services.CharacterEditService.CreateSkillEditor(info);
 		var alternate = this.AlternateWeapons ?? player.UseAlternate;
-		return this.Builder.Build(CharacterPanelInput.FromSave(
+		var applied = this.ClassSet is { } set
+			? ClassSetApplication.Apply(skills, [info.BaseHealth, info.BaseMana, info.BaseStrength, info.BaseIntelligence, info.BaseDexterity], info.AttributesPoints, set)
+			: null;
+		this.ClassSetComplete = applied?.Complete ?? true;
+
+		var input = CharacterPanelInput.FromSave(
 			player, info, worn, [.. skills.Slots.OfType<MasteryTree>()], services.CharacterEditService.GetGearSkillAugments(worn, alternate),
-			this.Buffs, alternate));
+			this.Buffs, alternate);
+		if (applied is not null)
+			input = input with { Attributes = applied.Attributes, AttributePoints = applied.AttributePoints, Skills = skills.BuildSkillRecords(), ClassCleared = skills.MasteriesChanged };
+
+		return this.Builder.Build(input);
 	}
 }

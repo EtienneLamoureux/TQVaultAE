@@ -39,6 +39,12 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	private readonly CharacterStatsLook _look;
 	private readonly IItemComparisonHost _comparisonHost;
 	private readonly GameDropDown _loadoutBox;
+
+	/// <summary>The class set list under tab III: the save's build, then the character's class sets.</summary>
+	private readonly GameDropDown _classSetBox;
+
+	/// <summary>The character's class sets, read again each time the window comes to the front.</summary>
+	private ClassSetBook? _classSetBook;
 	private readonly ToolTip _toolTip = new();
 
 	/// <summary>The font of the loadout list, made at the window's scale.</summary>
@@ -117,12 +123,19 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		this._loadoutBox.ItemPicked += (_, index) => this.ShowLoadout(index <= 0 ? null : this._loadoutBox.Items[index]);
 		this._toolTip.SetToolTip(this._loadoutBox, Resources.LoadoutTitle);
 
+		// The class sets: the statistics computed with another build, as the character editor applies it; memory only.
+		this._classSetBox = new GameDropDown(this.UIService, this.FontService) { Name = "characterWindowClassSet" };
+		this._classSetBox.ItemPicked += (_, index) => this.ShowClassSet(index <= 0 ? null : this._classSetBox.Items[index]);
+		this._toolTip.SetToolTip(this._classSetBox, Resources.ClassSetTitle);
+
 		this.Controls.Add(this._slots);
 		this.Controls.AddRange(this._tabs);
 		this.Controls.Add(this._loadoutBox);
+		this.Controls.Add(this._classSetBox);
 
-		// In front of tab II, whose panel takes the gold bar's row too.
+		// In front of tabs II and III, whose panels take the gold bar's row too.
 		this._loadoutBox.BringToFront();
+		this._classSetBox.BringToFront();
 
 		// Tab I's gold bar goes on under tab II: tab I in front.
 		this._tabs[0].BringToFront();
@@ -131,6 +144,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		this.ResizeCustomAllowed = false;
 		this._equipment.Sack = player.EquipmentSack;
 		this.FillLoadouts();
+		this.FillClassSets();
 	}
 
 	/// <summary>The character shown.</summary>
@@ -153,6 +167,12 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 	/// <summary>The loadout list right of the gold bar.</summary>
 	internal GameDropDown LoadoutList => this._loadoutBox;
+
+	/// <summary>The class set list under tab III.</summary>
+	internal GameDropDown ClassSetList => this._classSetBox;
+
+	/// <summary>The class set the statistics are computed with, or null for the save's build.</summary>
+	internal string? ClassSetName => this._stats.ClassSet?.Name;
 
 	/// <summary>A statistics tab (0 for tab I).</summary>
 	internal CharacterStatsPanel StatsTab(int index) => this._tabs[index];
@@ -200,6 +220,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		this._shownPieces = null;
 		this.FillLoadouts();
 		this.ShowLoadout(this._loadoutName);
+		this.FillClassSets();
 	}
 
 	/// <summary>
@@ -277,6 +298,36 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 		int next = (((Math.Max(0, this._loadoutBox.SelectedIndex) + step) % count) + count) % count;
 		this.ShowLoadout(next == 0 ? null : this._loadoutBox.Items[next]);
+	}
+
+	/// <summary>
+	/// Fills the class set list: the save's build, then the character's class sets, read again (the character editor may
+	/// have changed them). The set shown stays while it is listed, with its content of now; else the save's build.
+	/// </summary>
+	private void FillClassSets()
+	{
+		this._classSetBook = this.Services.ClassSets.Read(Path.GetDirectoryName(this.Player.PlayerFile) ?? string.Empty);
+		this._classSetBox.SetItems([Resources.CharacterWindowCurrentBuild, .. this._classSetBook.Sets.Select(s => s.Name)], 0);
+		this.ShowClassSet(this._stats.ClassSet?.Name);
+	}
+
+	/// <summary>
+	/// Computes the statistics with a class set (<see cref="CharacterStatsSource.ChooseClassSet"/>), or with the save's build
+	/// (null, or a set no longer listed); the mark tells a set that did not fit the character.
+	/// </summary>
+	/// <param name="name">The class set, or null.</param>
+	internal void ShowClassSet(string? name)
+	{
+		var set = name is null ? null : this._classSetBook?.Sets.FirstOrDefault(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
+		this._stats.ChooseClassSet(set);
+		this._classSetBox.SetItems(this._classSetBox.Items, set is null ? 0 : Math.Max(0, this._classSetBox.Items.ToList().IndexOf(set.Name)));
+
+		// The view built now tells whether the set fitted.
+		this._stats.View(this.Player, this._equipment.WornItems);
+		var mark = this._stats.ClassSetComplete ? null : Resources.ClassSetAppliedInPart;
+		this._classSetBox.MarkToolTip = mark;
+		this._toolTip.SetToolTip(this._classSetBox, mark ?? Resources.ClassSetTitle);
+		this.InvalidateTabs();
 	}
 
 	/// <summary>Compare from this window's equipment: the comparison opens through the main window, as from its panels.</summary>
@@ -360,7 +411,8 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 	}
 
 	/// <summary>
-	/// The loadout list under tab II, right of tab I's gold bar, as high as the gold bar's boxes; its font follows the scale.
+	/// The loadout list under tab II, right of tab I's gold bar, and the class set list under tab III, as high as the gold
+	/// bar's boxes; their font follows the scale.
 	/// </summary>
 	private void LayOutLoadoutSelector(IReadOnlyList<Rectangle> tabBounds, Point origin, float scale)
 	{
@@ -378,13 +430,20 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 		this._loadoutBox.BarScale = scale;
 		this._loadoutBox.Bounds = box;
+
+		var classSets = CharacterWindowLayout.ClassSetList(tabBounds[0], tabBounds[2], CharacterStatsPanel.GoldBarBounds, GameListBar.ReferenceHeight, scale);
+		classSets.Offset(origin);
+		this._classSetBox.TextFont = this._loadoutFont;
+		this._classSetBox.BarScale = scale;
+		this._classSetBox.Bounds = classSets;
 	}
 
-	/// <summary>Back in front: the loadouts may have changed in the main window meanwhile.</summary>
+	/// <summary>Back in front: the loadouts and the class sets may have changed in the main window meanwhile.</summary>
 	protected override void OnActivated(EventArgs e)
 	{
 		base.OnActivated(e);
 		this.LoadoutsChanged();
+		this.FillClassSets();
 	}
 
 	/// <inheritdoc/>

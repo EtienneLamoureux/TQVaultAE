@@ -1178,6 +1178,10 @@ Here is a complex example: 'arctic &amp; of frost @ring $rare | common'</value>
     <value>Current gear</value>
     <comment>First entry of the floating character window's loadout list: the equipment worn.</comment>
   </data>
+	<data name="CharacterWindowCurrentBuild" xml:space="preserve">
+    <value>Current build</value>
+    <comment>First entry of the floating character window's class set list: the masteries, skills and attributes of the save.</comment>
+  </data>
 	<data name="Masteries" xml:space="preserve">
     <value>Masteries</value>
   </data>

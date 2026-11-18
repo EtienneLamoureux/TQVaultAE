@@ -84,6 +84,23 @@ internal sealed class GameDropDown : Control
 	/// <summary>The font of the text, made by the owner at its scale (not disposed here).</summary>
 	public Font? TextFont { get; set; }
 
+	/// <summary>
+	/// The text of the mark drawn in the box before the arrow (the difference mark of the loadouts), or null for no mark;
+	/// the owner shows it as the box's tool tip.
+	/// </summary>
+	public string? MarkToolTip
+	{
+		get;
+		set
+		{
+			if (field == value)
+				return;
+
+			field = value;
+			this.Invalidate();
+		}
+	}
+
 	/// <summary>The owner's scale: sizes the pictures.</summary>
 	public float BarScale
 	{
@@ -183,8 +200,23 @@ internal sealed class GameDropDown : Control
 	{
 		var state = this._pressed ? ArrowState.Pressed : this._hovered && this.Items.Count > 0 ? ArrowState.Over : ArrowState.Up;
 		var text = this.Items.Count == 0 ? this.EmptyText ?? string.Empty : this.SelectedText;
-		DrawField(e.Graphics, this._uiService, this._box, this.ClientRectangle, this._scale, text, this.TextFont ?? this.Font, this.Items.Count == 0 ? Grey : this.ForeColor, state);
+		var mark = this.MarkToolTip is null ? Rectangle.Empty : MarkBounds(this.ClientRectangle, this._scale);
+		DrawField(e.Graphics, this._uiService, this._box, this.ClientRectangle, this._scale, text, this.TextFont ?? this.Font, this.Items.Count == 0 ? Grey : this.ForeColor, state, mark.Width);
+		if (!mark.IsEmpty)
+			DrawMark(e.Graphics, this._uiService, mark);
 	}
+
+	/// <summary>Where a box drawn by <see cref="DrawField"/> in <paramref name="field"/> has its mark: just before the arrow, as large as it.</summary>
+	internal static Rectangle MarkBounds(Rectangle field, float scale)
+	{
+		int size = Math.Max(1, field.Height - Convert.ToInt32(6 * scale));
+		int left = field.Right - size - Convert.ToInt32(3 * scale) - Convert.ToInt32(2 * scale) - size;
+		return new Rectangle(left, field.Top + ((field.Height - size) / 2), size, size);
+	}
+
+	/// <summary>Draws the mark (the loadouts' difference mark) in <paramref name="mark"/>.</summary>
+	internal static void DrawMark(Graphics g, IUIService uiService, Rectangle mark)
+		=> GamePicture.Draw(g, uiService.LoadBitmap(Panels.EquipmentPanel.DifferentMark.ToRecordId()), mark, greyed: false);
 
 	/// <summary>
 	/// Draws a drop-down's box: the gold box picture, its corners kept and its edges stretched to <paramref name="bounds"/>,

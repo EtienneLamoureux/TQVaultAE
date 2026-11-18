@@ -58,6 +58,23 @@ public class CharacterWindowLayoutTests
 		(box.Top + (box.Height / 2)).Should().BeInRange(middle - 1, middle + 1, "centred on the gold bar");
 	}
 
+	[Theory]
+	[InlineData(1F)]
+	[InlineData(1.5F)]
+	public void ClassSetList_UnderTabIIIInTheLoadoutListRow(float scale)
+	{
+		var (_, stats, _) = CharacterWindowLayout.Arrange(Slots, First, Stats, scale);
+		var goldBar = new Rectangle(0, 400, 296, 30);
+
+		var box = CharacterWindowLayout.ClassSetList(stats[0], stats[2], goldBar, 22, scale);
+		var loadouts = CharacterWindowLayout.LoadoutList(stats[0], stats[1], goldBar, 22, scale);
+
+		box.Left.Should().Be(stats[2].Left);
+		box.Right.Should().Be(stats[2].Right);
+		(box.Top, box.Height).Should().Be((loadouts.Top, loadouts.Height), "level with the loadout list");
+		box.Left.Should().BeGreaterThan(loadouts.Right, "clear of the loadout list");
+	}
+
 	[Fact]
 	public void FitScale_KeepsTheScaleWhenTheContentFits()
 		=> CharacterWindowLayout.FitScale(1.25F, Slots, First, Stats, new Size(3000, 1500)).Should().Be(1.25F);

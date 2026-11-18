@@ -195,18 +195,7 @@ public abstract class GameListBar<TAction> : Control
 
 	/// <summary>The mark in the box, just before the arrow, as large as the arrow; empty without a mark.</summary>
 	internal Rectangle MarkBounds
-	{
-		get
-		{
-			if (this.MarkToolTip is null)
-				return Rectangle.Empty;
-
-			var box = this.FieldBounds;
-			int size = Math.Max(1, box.Height - Convert.ToInt32(6 * this._scale));
-			int left = box.Right - size - Convert.ToInt32(3 * this._scale) - Convert.ToInt32(2 * this._scale) - size;
-			return new Rectangle(left, box.Top + ((box.Height - size) / 2), size, size);
-		}
-	}
+		=> this.MarkToolTip is null ? Rectangle.Empty : GameDropDown.MarkBounds(this.FieldBounds, this._scale);
 
 	/// <summary>Raises an action on the selected entry, as its menu entry does (nothing while it is greyed).</summary>
 	internal void Request(TAction action) => this.Raise(action, this.Selected);
@@ -341,7 +330,7 @@ public abstract class GameListBar<TAction> : Control
 		var mark = this.MarkBounds;
 		GameDropDown.DrawField(g, this._uiService, this._box, this.FieldBounds, this._scale, text, this.TextFont ?? this.Font, this.Selected is null ? GameDropDown.Grey : Color.White, arrow, mark.Width);
 		if (!mark.IsEmpty)
-			GamePicture.Draw(g, this._uiService.LoadBitmap(Panels.EquipmentPanel.DifferentMark.ToRecordId()), mark, greyed: false);
+			GameDropDown.DrawMark(g, this._uiService, mark);
 
 		this.DrawAddButton(g, this.CanAct(this.AddAction));
 	}

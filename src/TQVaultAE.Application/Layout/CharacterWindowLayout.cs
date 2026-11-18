@@ -60,6 +60,20 @@ public static class CharacterWindowLayout
 	}
 
 	/// <summary>
+	/// The class set list, in the same row as the loadout list (<see cref="LoadoutList"/>): under tab III, as wide as it.
+	/// </summary>
+	/// <param name="first">Tab I's bounds at <paramref name="scale"/> (<see cref="Arrange"/>).</param>
+	/// <param name="third">Tab III's bounds at <paramref name="scale"/>.</param>
+	/// <param name="goldBar">Tab I's gold bar at scale 1, from the panel's top-left.</param>
+	/// <param name="boxHeight">The list's height at scale 1.</param>
+	/// <param name="scale">The window's scale.</param>
+	public static Rectangle ClassSetList(Rectangle first, Rectangle third, Rectangle goldBar, int boxHeight, float scale)
+	{
+		var row = LoadoutList(first, third, goldBar, boxHeight, scale);
+		return new Rectangle(third.X, row.Y, third.Width, row.Height);
+	}
+
+	/// <summary>
 	/// <paramref name="scale"/>, made smaller when the content would not fit in <paramref name="limit"/> (the screen's
 	/// working area less the window's border): the window never grows past its screen.
 	/// </summary>
