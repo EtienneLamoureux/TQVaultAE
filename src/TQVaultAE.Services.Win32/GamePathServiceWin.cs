@@ -614,8 +614,8 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 		// Disc version detection logic -old
 		if (string.IsNullOrEmpty(titanQuestGamePath))
 		{
-			string[] path = ["SOFTWARE", "Iron Lore", "Titan Quest", "Install Location"];
-			titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
+			using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("""SOFTWARE\Iron Lore\Titan Quest""");
+			titanQuestGamePath = key?.GetValue("Install Location") as string;
 		}
 
 		if (string.IsNullOrEmpty(titanQuestGamePath))
@@ -623,31 +623,6 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 Please select the game installation directory.");
 
 		return titanQuestGamePath;
-	}
-
-	/// <summary>
-	/// Reads a value from the registry
-	/// </summary>
-	/// <param name="key">registry hive to be read</param>
-	/// <param name="path">path of the value to be read</param>
-	/// <returns>string value of the key and value that was read or empty string if there was a problem.</returns>
-	string ReadRegistryKey(Microsoft.Win32.RegistryKey key, string[] path)
-	{
-		// The last item in the path array is the actual value name.
-		int valueKey = path.Length - 1;
-
-		// All other values in the path are keys which will need to be navigated.
-		int lastSubKey = path.Length - 2;
-
-		for (int i = 0; i <= lastSubKey; ++i)
-		{
-			var subKey = key.OpenSubKey(path[i]);
-			if (subKey is null)
-				return string.Empty;
-			key = subKey;
-		}
-
-		return key.GetValue(path[valueKey]) as string ?? string.Empty;
 	}
 
 	/// <summary>
