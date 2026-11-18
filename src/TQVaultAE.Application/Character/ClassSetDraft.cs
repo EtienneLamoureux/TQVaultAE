@@ -20,6 +20,9 @@ public sealed class ClassSetDraft
 	/// <summary>True while the selected set is the one remembered and the save read at the opening already differed from it.</summary>
 	private bool _changedInGame;
 
+	/// <summary>The build the selected set gave when it could not be applied whole, or null.</summary>
+	private ClassSet? _appliedInPart;
+
 	/// <summary>Initializes a new instance of the <see cref="ClassSetDraft"/> class.</summary>
 	/// <param name="book">The character's class sets, as read.</param>
 	/// <param name="canChange">False for a read-only character: the sets are listed and applied, never changed.</param>
@@ -68,10 +71,15 @@ public sealed class ClassSetDraft
 		{
 			this.Selected = set.Name;
 			this._changedInGame = false;
+			this._appliedInPart = null;
 		}
 
 		return set;
 	}
+
+	/// <summary>The selected set could not be applied whole: the build it gave is marked as such until it changes.</summary>
+	/// <param name="shown">The build shown after the apply.</param>
+	public void AppliedInPart(ClassSet shown) => this._appliedInPart = this.Selected is null ? null : shown;
 
 	/// <summary>Save as: a new set holding the build shown, which becomes the selected set.</summary>
 	/// <param name="name">Its name.</param>
@@ -86,6 +94,7 @@ public sealed class ClassSetDraft
 		this._sets.Add(build with { Name = name.Trim() });
 		this.Selected = name.Trim();
 		this._changedInGame = false;
+		this._appliedInPart = null;
 		this._setsChanged = true;
 		return SetNameError.None;
 	}
@@ -100,6 +109,7 @@ public sealed class ClassSetDraft
 
 		this._sets[this._sets.IndexOf(set)] = build with { Name = set.Name };
 		this._changedInGame = false;
+		this._appliedInPart = null;
 		this._setsChanged = true;
 		return true;
 	}
@@ -131,6 +141,7 @@ public sealed class ClassSetDraft
 		{
 			this.Selected = null;
 			this._changedInGame = false;
+			this._appliedInPart = null;
 		}
 
 		this._setsChanged = true;
@@ -141,12 +152,30 @@ public sealed class ClassSetDraft
 	/// <param name="current">The build shown.</param>
 	public ClassSetStatus? Status(ClassSet current)
 		=> this.Find(this.Selected) is { } set && !set.SameBuild(current)
-			// From the game while the build shown is still the save's; any edit since makes it the editor's.
-			? new ClassSetStatus(this._changedInGame && current.SameBuild(this._opening), current.DifferenceFrom(set))
+			? new ClassSetStatus(this.ChangeOf(current), current.DifferenceFrom(set))
 			: null;
+
+	// The game or a partial apply while the build shown is still the one they gave; any edit since makes it the editor's.
+	private ClassSetChange ChangeOf(ClassSet current)
+		=> this._appliedInPart is { } partial && current.SameBuild(partial) ? ClassSetChange.AppliedInPart
+			: this._changedInGame && current.SameBuild(this._opening) ? ClassSetChange.InGame
+			: ClassSetChange.InEditor;
 }
 
 /// <summary>The build shown differs from the selected class set.</summary>
-/// <param name="ChangedInGame">True when the save already differed at the opening (points spent in the game since the set was saved); false for edits in the editor.</param>
+/// <param name="Change">Where the difference comes from.</param>
 /// <param name="Difference">What the build shown has more or less than the set.</param>
-public sealed record ClassSetStatus(bool ChangedInGame, ClassSetDifference Difference);
+public sealed record ClassSetStatus(ClassSetChange Change, ClassSetDifference Difference);
+
+/// <summary>Where the difference between the build shown and the selected class set comes from.</summary>
+public enum ClassSetChange
+{
+	/// <summary>Edits in the editor since the set was applied or saved.</summary>
+	InEditor,
+
+	/// <summary>The save already differed at the opening: points spent in the game since the set was saved.</summary>
+	InGame,
+
+	/// <summary>The set was applied in part: too few points or mastery slots.</summary>
+	AppliedInPart,
+}

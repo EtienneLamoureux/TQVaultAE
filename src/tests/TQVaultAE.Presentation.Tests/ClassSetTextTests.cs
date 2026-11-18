@@ -26,7 +26,7 @@ public class ClassSetTextTests
 	[Fact]
 	public void StatusToolTip_ChangedInTheGame_ListsOnlyTheMasteriesAndAttributesThatDifferWithTheirSign()
 	{
-		var status = new ClassSetStatus(true, new ClassSetDifference(
+		var status = new ClassSetStatus(ClassSetChange.InGame, new ClassSetDifference(
 			[(Masteries.Storm, 6), (Masteries.Earth, 0), (Masteries.Defensive, -3)],
 			new ClassSetAttributes(0, 0, 2, 0, -1)));
 
@@ -44,12 +44,23 @@ public class ClassSetTextTests
 	[Fact]
 	public void StatusToolTip_PointsMovedInsideAMastery_SaysTheEditorChangedItWithoutCounts()
 	{
-		var status = new ClassSetStatus(false, new ClassSetDifference([(Masteries.Storm, 0)], default));
+		var status = new ClassSetStatus(ClassSetChange.InEditor, new ClassSetDifference([(Masteries.Storm, 0)], default));
 
 		var text = English(() => ClassSetText.StatusToolTip(status, m => m.ToString()));
 
 		text.Split(Environment.NewLine).Should().Equal(
 			"Changed in the editor since this class set was applied",
 			"Save to keep it in the class set, pick the class set to go back to it.");
+	}
+
+	[Fact]
+	public void StatusToolTip_AppliedInPart_SaysSoBeforeTheMissingPoints()
+	{
+		var status = new ClassSetStatus(ClassSetChange.AppliedInPart, new ClassSetDifference([(Masteries.Storm, -10)], default));
+
+		var text = English(() => ClassSetText.StatusToolTip(status, m => m.ToString()));
+
+		text.Split(Environment.NewLine).Should().StartWith(
+			["Applied in part: not enough points or mastery slots for this class set", "Storm: -10 skill points"]);
 	}
 }

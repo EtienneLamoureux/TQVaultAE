@@ -52,7 +52,7 @@ public class ClassSetDraftTests
 		var status = draft.Status(Played);
 
 		status.Should().NotBeNull();
-		status!.ChangedInGame.Should().BeTrue();
+		status!.Change.Should().Be(ClassSetChange.InGame);
 		status.Difference.SkillPoints.Should().Equal((Masteries.Storm, 6), (Masteries.Earth, 0));
 		status.Difference.Attributes.Should().Be(new ClassSetAttributes(0, 0, 0, 2, 0));
 	}
@@ -63,8 +63,8 @@ public class ClassSetDraftTests
 		var draft = Draft(Played, "Storm", Build);
 		var edited = Played with { Attributes = new ClassSetAttributes(1, 2, 0, 12, 0) };
 
-		draft.Status(edited)!.ChangedInGame.Should().BeFalse("the build shown is no longer the save's");
-		draft.Status(Played)!.ChangedInGame.Should().BeTrue("back to the save's build");
+		draft.Status(edited)!.Change.Should().Be(ClassSetChange.InEditor, "the build shown is no longer the save's");
+		draft.Status(Played)!.Change.Should().Be(ClassSetChange.InGame, "back to the save's build");
 	}
 
 	[Fact]
@@ -85,7 +85,24 @@ public class ClassSetDraftTests
 		draft.Select("Storm");
 
 		draft.Status(Build).Should().BeNull("the build shown is the set's again");
-		draft.Status(Played)!.ChangedInGame.Should().BeFalse();
+		draft.Status(Played)!.Change.Should().Be(ClassSetChange.InEditor);
+	}
+
+	[Fact]
+	public void Status_AppliedInPart_TellsItUntilTheBuildShownChangesOrTheSetIsSaved()
+	{
+		var draft = Draft(Build, null, Played);
+		var partial = Build with { Name = "shown" };
+		draft.Select("x");
+
+		draft.AppliedInPart(partial);
+
+		draft.Status(partial)!.Change.Should().Be(ClassSetChange.AppliedInPart);
+		draft.Status(Build with { Attributes = new ClassSetAttributes(1, 2, 0, 10, 0) })!.Change
+			.Should().Be(ClassSetChange.InEditor, "an edit since makes the build the editor's");
+		draft.Save(partial);
+		draft.Select("x");
+		draft.Status(Build).Should().BeNull("the set holds the build shown since it was saved");
 	}
 
 	[Fact]

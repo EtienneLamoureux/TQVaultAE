@@ -94,7 +94,7 @@ box under the mastery pages, between **Reset Masteries** and **OK**, lists the c
 - The selected set is the one applied or saved last. It is shown again at the next opening while the character keeps
   the same two masteries (slot order and points aside); otherwise no set is selected.
 - A red mark in the box tells that the build shown differs from the selected set: points spent in the game since the
-  set was saved, or clicks in the editor. Its tool tip says which, and the points per mastery and attribute. **Save**
+  set was saved, clicks in the editor, or a set applied in part. Its tool tip says which, and the points per mastery and attribute. **Save**
   keeps the new build in the set; picking the set goes back to it.
 - Points a set does not spend stay to spend: a set without masteries leaves every skill and attribute point in the
   unspent points. The available points are the save's (unspent plus spent), whatever the level or the quests gave.

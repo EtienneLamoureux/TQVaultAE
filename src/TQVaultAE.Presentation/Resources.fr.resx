@@ -2754,6 +2754,9 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="ClassSetChangedInGame" xml:space="preserve">
     <value>Modifié dans le jeu depuis l'enregistrement de ce profil de classe</value>
   </data>
+  <data name="ClassSetAppliedInPart" xml:space="preserve">
+    <value>Appliqué en partie : pas assez de points ou d'emplacements de maîtrise pour ce profil de classe</value>
+  </data>
   <data name="ClassSetChangedInEditor" xml:space="preserve">
     <value>Modifié dans l'éditeur depuis l'application de ce profil de classe</value>
   </data>

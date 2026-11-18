@@ -2930,6 +2930,9 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="ClassSetChangedInGame" xml:space="preserve">
     <value>Changed in the game since this class set was saved</value>
   </data>
+  <data name="ClassSetAppliedInPart" xml:space="preserve">
+    <value>Applied in part: not enough points or mastery slots for this class set</value>
+  </data>
   <data name="ClassSetChangedInEditor" xml:space="preserve">
     <value>Changed in the editor since this class set was applied</value>
   </data>

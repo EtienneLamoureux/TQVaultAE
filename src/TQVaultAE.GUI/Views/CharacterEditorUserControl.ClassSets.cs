@@ -135,6 +135,9 @@ internal sealed partial class CharacterEditorUserControl
 			boxes[i].Value = Math.Max(targets[i], Convert.ToInt32(boxes[i].Minimum));
 		}
 
+		if (!complete || !attributesComplete)
+			this._classSets?.AppliedInPart(this.CaptureClassSet(string.Empty));
+
 		this.InvalidateStats();
 		if (!complete || !attributesComplete)
 			this.Services.MessageBoxes.Inform(string.Format(CultureInfo.CurrentCulture, Resources.ClassSetPartlyApplied, set.Name), Resources.ClassSetTitle);

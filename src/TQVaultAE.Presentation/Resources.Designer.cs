@@ -8087,6 +8087,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Applied in part: not enough points or mastery slots for this class set.
+        /// </summary>
+        public static string ClassSetAppliedInPart {
+            get {
+                return ResourceManager.GetString("ClassSetAppliedInPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changed in the editor since this class set was applied.
         /// </summary>
         public static string ClassSetChangedInEditor {

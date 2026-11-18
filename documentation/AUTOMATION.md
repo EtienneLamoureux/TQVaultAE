@@ -686,7 +686,8 @@ General rules:
   `markToolTip` (why the build shown differs from the selected set, null when it holds it); the file (`fileExists`,
   `readFailed`, `lastApplied`); the sets as edited (`changed`: something for OK to write), each with its masteries,
   skills, attribute points and `matches` (holds the build shown); the build shown (`current`), `skillPointsLeft`,
-  `attributePointsLeft`. `menu=list|actions` reads a menu.
+  `attributePointsLeft`. `menu=list|actions` reads a menu. `hover=mark|add|field` sends a mouse move to that part,
+  shows the tool tip it set as a hover does and returns it (`hoverToolTip`: text, window bounds).
   - Actions through the bar like the user: `select` (name) applies the set; `saveAs` (name) clicks [+] and types the
     name; `save`, `rename` (newName) and `delete` act on the selected set (`name` picks it first, which applies it).
     All but `select` run after the call returns (queue the answers: save and delete confirm). OK (`close_dialog`)

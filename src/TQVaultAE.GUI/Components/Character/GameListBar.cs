@@ -353,6 +353,17 @@ public abstract class GameListBar<TAction> : Control
 		GamePicture.Draw(g, this._uiService.LoadBitmap(picture.ToRecordId()), this.AddBounds, greyed: !enabled);
 	}
 
+#if DEBUG
+	/// <summary>Automation: the tool tip set by the last mouse move, the hovered part's.</summary>
+	internal string? AutomationToolTip => this._toolTip.GetToolTip(this);
+
+	/// <summary>Automation: shows that tool tip under a point as a hover does (a real hover waits for the cursor to rest there).</summary>
+	internal void AutomationShowToolTip(Point point) => this._toolTip.Show(this.AutomationToolTip, this, point.X, point.Y + (SystemInformation.CursorSize.Height / 2));
+
+	/// <summary>Automation: hides the tool tip shown by <see cref="AutomationShowToolTip"/>.</summary>
+	internal void AutomationHideToolTip() => this._toolTip.Hide(this);
+#endif
+
 	protected override void Dispose(bool disposing)
 	{
 		if (disposing)

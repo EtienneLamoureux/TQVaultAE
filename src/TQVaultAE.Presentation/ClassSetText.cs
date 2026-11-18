@@ -8,7 +8,7 @@ namespace TQVaultAE.Presentation;
 public static class ClassSetText
 {
 	/// <summary>
-	/// The mark's tool tip: where the change comes from (the game, or the editor), the points each mastery and each
+	/// The mark's tool tip: where the change comes from (the game, the editor, or a set applied in part), the points each mastery and each
 	/// attribute has more or less than the set, then what to do.
 	/// </summary>
 	/// <param name="status">How the build shown differs from the set.</param>
@@ -18,7 +18,15 @@ public static class ClassSetText
 		var culture = CultureInfo.CurrentCulture;
 		static string Signed(int value) => value.ToString("+0;-0", CultureInfo.CurrentCulture);
 
-		var lines = new List<string> { status.ChangedInGame ? Resources.ClassSetChangedInGame : Resources.ClassSetChangedInEditor };
+		var lines = new List<string>
+		{
+			status.Change switch
+			{
+				ClassSetChange.InGame => Resources.ClassSetChangedInGame,
+				ClassSetChange.AppliedInPart => Resources.ClassSetAppliedInPart,
+				_ => Resources.ClassSetChangedInEditor,
+			},
+		};
 		lines.AddRange(status.Difference.SkillPoints
 			.Where(d => d.Points != 0)
 			.Select(d => string.Format(culture, Resources.ClassSetSkillPointsDelta, masteryName(d.Mastery), Signed(d.Points))));
