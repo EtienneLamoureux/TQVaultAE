@@ -230,7 +230,7 @@ public class ModLinkService(
 	{
 		var databases = new[] { this.GamePathService.GamePathTQIT, this.GamePathService.GamePathTQ }
 			.Where(p => !string.IsNullOrWhiteSpace(p))
-			.Select(p => this.PathIO.Combine(p, "Database", "database.arz"))
+			.Select(GameLocator.DatabasePath)
 			.Distinct(StringComparer.OrdinalIgnoreCase)
 			.Where(this.FileIO.Exists)
 			.ToList();

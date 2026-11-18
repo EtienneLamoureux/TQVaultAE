@@ -1333,7 +1333,7 @@ public partial class Database : IDatabase
 			Log.LogDebug("Database.LoadARZFile()");
 
 		// from the original TQ folder
-		string file = this.PathIO.Combine(GamePathResolver.GamePathTQ, "Database", "database.arz");
+		string file = GameLocator.DatabasePath(GamePathResolver.GamePathTQ);
 
 		this.ArzFile = new ArzFile(file) { Source = RecordSource.BaseGame };
 		arzProv.Read(this.ArzFile);
@@ -1349,7 +1349,7 @@ public partial class Database : IDatabase
 		// now Immortal Throne expansion pack
 		if (!string.IsNullOrWhiteSpace(GamePathResolver.GamePathTQIT) && GamePathResolver.GamePathAreDifferent)
 		{
-			file = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Database", "database.arz");
+			file = GameLocator.DatabasePath(GamePathResolver.GamePathTQIT);
 
 			this.ArzFileIT = new ArzFile(file) { Source = RecordSource.ImmortalThrone };
 			arzProv.Read(this.ArzFileIT);

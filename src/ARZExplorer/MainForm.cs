@@ -163,7 +163,7 @@ public partial class MainForm : Form
 	/// <summary>
 	/// Resolve database file
 	/// </summary>
-	private string DataBasePath => Path.Combine(this.GamePathService.GamePathTQIT, "Database", "database.arz");
+	private string DataBasePath => GameLocator.DatabasePath(this.GamePathService.GamePathTQIT);
 
 	/// <summary>
 	/// Folder the file dialogs start in: the game's save folder.
