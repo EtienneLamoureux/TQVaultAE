@@ -56,14 +56,20 @@ internal sealed class CliContext : IDisposable
 					return this._install ??= GameLocator.Locate(this.GamePath);
 				}
 				catch (DirectoryNotFoundException ex) {
-					// With --game, only that folder is tried: say why it is not an install, without suggesting --game.
-					throw new NotFoundException(string.IsNullOrWhiteSpace(this.GamePath)
-						? $"{ex.Message.TrimEnd('.')}. Use --game <path> or set TQ_GAME_PATH."
-						: ex.Message);
+					throw new NotFoundException(NotFoundMessage(ex.Message, this.GamePath));
 				}
 			}
 		}
 	}
+
+	/// <summary>
+	/// Message of a failed game search: with --game, only that folder is tried, so the locator's reason alone;
+	/// otherwise the reason and how to give the folder.
+	/// </summary>
+	internal static string NotFoundMessage(string locatorMessage, string? gamePath)
+		=> string.IsNullOrWhiteSpace(gamePath)
+			? $"{locatorMessage.TrimEnd('.')}. Use --game <path> or set {GameLocator.EnvironmentVariable}."
+			: locatorMessage;
 
 	/// <summary>database.arz (lazy).</summary>
 	public IArzDatabase Database {

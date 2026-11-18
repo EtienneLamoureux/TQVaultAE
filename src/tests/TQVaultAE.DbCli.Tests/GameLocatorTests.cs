@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using TQVaultAE.DbCli.Commands;
 
 namespace TQVaultAE.Tests.DbCli;
 
@@ -214,5 +215,23 @@ public sealed class GameLocatorTests : IDisposable
 		var act = () => GameLocator.Locate(null, " ", [Path.Combine(this._root, "none")]);
 
 		act.Should().Throw<DirectoryNotFoundException>().WithMessage("*not found*");
+	}
+
+	[Fact]
+	public void NotFoundMessage_NoGameFound_GivesTheHintOnce()
+	{
+		var ex = Assert.Throws<DirectoryNotFoundException>(() => GameLocator.Locate(null, null, [Path.Combine(this._root, "none")]));
+
+		var message = CliContext.NotFoundMessage(ex.Message, gamePath: null);
+
+		message.Should().Be("Titan Quest Anniversary Edition not found. Use --game <path> or set TQ_GAME_PATH.");
+	}
+
+	[Fact]
+	public void NotFoundMessage_WithGameOption_KeepsTheLocatorReason()
+	{
+		var ex = Assert.Throws<DirectoryNotFoundException>(() => GameLocator.Locate(this._root));
+
+		CliContext.NotFoundMessage(ex.Message, this._root).Should().Be(ex.Message);
 	}
 }

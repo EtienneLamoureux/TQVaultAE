@@ -65,7 +65,8 @@ public static class GameLocator
 			if (IsGameRoot(candidate))
 				return FromRoot(candidate);
 
-		throw new DirectoryNotFoundException($"Titan Quest Anniversary Edition not found. Pass the install folder explicitly or set {EnvironmentVariable}.");
+		// No hint here: each caller says how its user gives the folder (tqdb: --game or TQ_GAME_PATH).
+		throw new DirectoryNotFoundException("Titan Quest Anniversary Edition not found.");
 	}
 
 	/// <summary>Builds the install description for a known root (enumerates every .arc recursively).</summary>
