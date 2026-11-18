@@ -108,20 +108,21 @@ internal sealed partial class CharacterEditorUserControl
 				: Resources.ClassSetNameEmpty);
 
 	/// <summary>
-	/// Applies a class set to the editor: the masteries and their skills (<see cref="CharacterSkillEditor.ApplyClassSet"/>),
-	/// then the attributes (<see cref="ClassSetAttributeRules.Targets"/>), the lowered ones first so that their points pay
-	/// for the raised ones. Every point the set does not spend stays in the unspent pools. OK applies it to the
-	/// character, Cancel drops it.
+	/// Applies a class set to the editor (<see cref="ClassSetApplication.Apply"/>, as the read-only panels do): the
+	/// masteries and their skills, then the attributes, the lowered ones first so that their points pay for the raised
+	/// ones. Every point the set does not spend stays in the unspent pools. OK applies it to the character, Cancel drops it.
 	/// </summary>
 	private void ApplyClassSet(ClassSet set)
 	{
-		bool complete = this._skills?.ApplyClassSet(set.Masteries) ?? set.Masteries.Count == 0;
-		this.RefreshSkills();
+		if (this._skills is not { } skills)
+			return;
 
 		var boxes = this.AttributeBoxes;
 		var values = boxes.Select(b => Convert.ToInt32(b.Value)).ToArray();
 		var pool = Convert.ToInt32(this.attributeNumericUpDown.Value);
-		var (targets, attributesComplete) = ClassSetAttributeRules.Targets(values, set.Attributes, pool);
+		var applied = ClassSetApplication.Apply(skills, values, pool, set);
+		var targets = applied.Attributes;
+		this.RefreshSkills();
 
 		// The pool box takes every point given back, as for Reset Attributes: a value past its maximum would be dropped.
 		var total = pool + PlayerLevel.GetInvestedAttributePoints(values[2], values[4], values[3], values[0], values[1]);
@@ -135,11 +136,11 @@ internal sealed partial class CharacterEditorUserControl
 			boxes[i].Value = Math.Max(targets[i], Convert.ToInt32(boxes[i].Minimum));
 		}
 
-		if (!complete || !attributesComplete)
+		if (!applied.Complete)
 			this._classSets?.AppliedInPart(this.CaptureClassSet(string.Empty));
 
 		this.InvalidateStats();
-		if (!complete || !attributesComplete)
+		if (!applied.Complete)
 			this.Services.MessageBoxes.Inform(string.Format(CultureInfo.CurrentCulture, Resources.ClassSetPartlyApplied, set.Name), Resources.ClassSetTitle);
 	}
 
