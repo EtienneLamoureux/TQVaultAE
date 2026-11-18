@@ -9,6 +9,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.GUI.Components.Character;
 using TQVaultAE.GUI.Components.Character.Editor;
+using TQVaultAE.GUI.Components.Scaling;
 using TQVaultAE.GUI.Infrastructure;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32;
@@ -56,8 +57,20 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The attribute values at the start, for Shift + right click.</summary>
 	private int[] _startAttributes = [];
 
-	/// <summary>The size of a game pixel on screen: the frame is drawn at the game's size times the DPI factor.</summary>
-	private float GameScale => this.DpiScale();
+	/// <summary>
+	/// The size of a game pixel on screen: the frame is drawn at the game's size times the DPI factor, times the fit that
+	/// makes the editor fill the room it is given (<see cref="FitToRoom"/>).
+	/// </summary>
+	private float GameScale => this.DpiScale() * this._fit;
+
+	/// <summary>The editor's size against the game's size times the DPI: 1 until it is fitted to its room.</summary>
+	private float _fit = 1F;
+
+	/// <summary>The smallest and largest fit: below, the editor scrolls; above, it stays at that size.</summary>
+	private const float MinFit = 0.5F, MaxFit = 3F;
+
+	/// <summary><paramref name="logical"/> pixels at 96 dpi, at the editor's DPI and fit.</summary>
+	private int Fitted(int logical) => (int)Math.Round(this.LogicalToDeviceUnits(logical) * this._fit);
 
 	/// <summary>
 	/// The game frame with OK and Cancel under it, sized to them; laid at the top left of the control
@@ -166,7 +179,7 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		var scale = this.GameScale;
 		var panelScale = scale * ColumnScale;
-		var margin = this.LogicalToDeviceUnits(ContentMargin);
+		var margin = this.Fitted(ContentMargin);
 
 		// The fonts made for the previous DPI are disposed once the new ones are in place.
 		var oldFonts = this._scaleFonts.ToList();
@@ -292,8 +305,8 @@ internal sealed partial class CharacterEditorUserControl
 	/// </summary>
 	private void FitToFrame()
 	{
-		var margin = this.LogicalToDeviceUnits(ContentMargin);
-		var gap = this.LogicalToDeviceUnits(10);
+		var margin = this.Fitted(ContentMargin);
+		var gap = this.Fitted(10);
 		var buttonsTop = this._tabs.Bottom + gap;
 		var bottom = Math.Max(this._stats.Bottom, this._side.Bottom);
 		bottom = Math.Max(bottom, buttonsTop + Math.Max(this.ok.Height, this.ResetAttributesScalingButton.Height));
@@ -367,7 +380,12 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		base.OnVisibleChanged(e);
 		if (this._loaded && this.Visible)
+		{
 			this.RestoreSideEditors();
+
+			// Shown: fitted to the room it opens in.
+			this.PostFitToRoom();
+		}
 	}
 
 	/// <summary>
@@ -417,6 +435,73 @@ internal sealed partial class CharacterEditorUserControl
 
 		this.Log.LogDebug("Character editor at {Dpi} dpi: scaled by Windows Forms in {Scaled} ms, laid out {Start} ms after the DPI change began, in {Layout} ms",
 			this.DeviceDpi, this._dpiScaledMs, startMs, this._dpiWatch.ElapsedMilliseconds - startMs);
+	}
+
+	/// <summary>
+	/// The room given to the editor changed (the window resized, maximized or zoomed): it is fitted to it, once the layout
+	/// of the window is done.
+	/// </summary>
+	protected override void OnSizeChanged(EventArgs e)
+	{
+		base.OnSizeChanged(e);
+		this.PostFitToRoom();
+	}
+
+	/// <summary>Posts a <see cref="FitToRoom"/>, once the layout running is done; one at a time.</summary>
+	private void PostFitToRoom()
+	{
+		if (this._loaded && this.IsHandleCreated && !this._fitPending)
+		{
+			this._fitPending = true;
+			this.BeginInvoke(this.FitToRoom);
+		}
+	}
+
+	/// <summary>Whether a <see cref="FitToRoom"/> is posted.</summary>
+	private bool _fitPending;
+
+	/// <summary>
+	/// Scales the editor so that its content fills the room it is given, its proportions kept: the statistics column, the
+	/// frame and its pages, the buttons under it and their fonts, laid out again at the new <see cref="GameScale"/> as at
+	/// a DPI change. The edits are kept. Nothing when the fit barely changes.
+	/// </summary>
+	private void FitToRoom()
+	{
+		this._fitPending = false;
+		if (this.IsDisposed || !this._loaded || this.ContentSize.Width <= 0 || this.ContentSize.Height <= 0 || this.ClientSize.Width <= 0)
+			return;
+
+		var room = this.ClientSize;
+		float fit = Math.Clamp(this._fit * Math.Min(room.Width / (float)this.ContentSize.Width, room.Height / (float)this.ContentSize.Height), MinFit, MaxFit);
+		if (Math.Abs(fit / this._fit - 1F) < 0.005F)
+			return;
+
+		float factor = fit / this._fit;
+		this._fit = fit;
+		using (new LayoutBatch(this, this, this._content))
+		{
+			// The buttons of the designer, their fonts with them (ScalingButton grows its font in a zoom).
+			using (ZoomScope.Enter())
+			{
+				foreach (var button in new Control[] { this.ResetAttributesScalingButton, this.ResetMasteriesScalingButton, this.ok, this.cancel })
+					button.Scale(new SizeF(factor, factor));
+			}
+
+			foreach (var tab in this._skillTabs)
+			{
+				tab.Pane.PaneScale = this.GameScale;
+				tab.Mastery.Font = tab.Level.Font = this.SkillHeaderFont;
+				this.SizeSkillHeader(tab.Mastery, tab.Level);
+			}
+
+			this.LayOutColumn();
+			this.FitToFrame();
+			this.RestoreSideEditors();
+		}
+
+		// The rounding of the new sizes may leave the content a few pixels larger than the room.
+		if (this.ContentSize.Width > room.Width || this.ContentSize.Height > room.Height)
+			this.PostFitToRoom();
 	}
 
 	/// <summary>The time Windows Forms took to scale the window at the last DPI change, for the log.</summary>

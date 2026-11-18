@@ -50,6 +50,7 @@ of the main content.
 - Left: the game's character window (tabs **I**, **II**, **III**), and under it the editing options: statistics,
   leveling, masteries.
 - Right: one page per mastery. The statistics stay in sight and change at each click on a skill.
+- It scales to fill the main window, maximized or not, whatever the zoom; edits are kept.
 
 ### Attributes
 

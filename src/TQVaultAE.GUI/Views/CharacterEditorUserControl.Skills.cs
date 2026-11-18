@@ -72,7 +72,7 @@ internal sealed partial class CharacterEditorUserControl
 
 	private SkillTab CreateSkillTab(int slot, List<MasteryChoice> choices)
 	{
-		var font = this.FontService.GetFontLight(11F);
+		var font = this.SkillHeaderFont;
 
 		var mastery = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Name = $"SkillsMastery{slot + 1}ComboBox", Font = font };
 		mastery.Items.AddRange([.. choices]);
@@ -121,9 +121,12 @@ internal sealed partial class CharacterEditorUserControl
 	/// </summary>
 	private void SizeSkillHeader(ComboBox mastery, NumericUpDown level)
 	{
-		mastery.Width = this.LogicalToDeviceUnits(170);
-		level.Width = this.LogicalToDeviceUnits(55);
+		mastery.Width = this.Fitted(170);
+		level.Width = this.Fitted(55);
 	}
+
+	/// <summary>The font of a page's mastery list and level box, at the editor's fit (the font service's, shared).</summary>
+	private Font SkillHeaderFont => this.FontService.GetFontLight(11F * this._fit);
 
 	/// <summary>What the pane shows of a skill: its level, the levels of the equipped items, its border.</summary>
 	private SkillPaneSkillView SkillView(SkillTab tab, MasterySkill skill)

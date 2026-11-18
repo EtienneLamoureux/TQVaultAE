@@ -123,8 +123,8 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 	protected override Point ScrollToControl(Control activeControl) => this.DisplayRectangle.Location;
 
 	/// <summary>
-	/// The editor is drawn at the game's size times the DPI, whatever the main window's zoom: once built, a zoom leaves
-	/// it as it is. A move to a monitor of another DPI scales it, as Windows Forms scales any window: the controls of the
+	/// The editor is drawn at the game's size times the DPI and its fit to the room it is given (FitToRoom), whatever the
+	/// main window's zoom: a zoom does not scale it, the new room fits it. A move to a monitor of another DPI scales it, as Windows Forms scales any window: the controls of the
 	/// designer and their fonts here, the drawn parts laid out again afterwards (<see cref="OnDpiChangedAfterParent"/>).
 	/// </summary>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
@@ -293,6 +293,7 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		this.FitToFrame();
 		_loaded = true;
 		this._startState = this.CurrentState();
+		this.PostFitToRoom();
 	}
 
 	private void LevelNumericUpDown_ValueChanged(object? sender, EventArgs e)
