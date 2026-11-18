@@ -140,6 +140,19 @@ public sealed class ArchiveExtractorTests : IDisposable
 	}
 
 	[Fact]
+	public void ExtractAll_NameLeavingTheFolder_IsRefusedAndNothingIsWrittenOutside()
+	{
+		var file = this.OpenArz(new ArzRec("""records\..\..\evil.dbr""", "ArmorJewelry_Ring", 0, new ArzVar(Int, "itemLevel", [1])));
+
+		var result = this._extractor.ExtractAll(file, this.Output("db"), _ => { }, () => { }, CancellationToken.None);
+
+		result.Outcome.Should().Be(ExtractionOutcome.Failed);
+		result.Error.Should().BeOfType<InvalidDataException>();
+		File.Exists(Path.Combine(this._folder, "evil.dbr")).Should().BeFalse();
+		File.Exists(this.Output("evil.dbr")).Should().BeFalse();
+	}
+
+	[Fact]
 	public void ExtractAll_WhenCancelled_StopsAfterTheEntryBeingWritten()
 	{
 		var file = this.OpenArc("UI.arc", Stored("a.tex", Bytes("a")), Stored("b.tex", Bytes("b")), Stored("c.tex", Bytes("c")));
