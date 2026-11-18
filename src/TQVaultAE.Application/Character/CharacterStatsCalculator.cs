@@ -180,7 +180,8 @@ public static class CharacterStatsCalculator
 			DeflectProjectile = Round(Math.Min(balance.EngineValue("playerDodgeProjectilePercentCap", difficulty), Total(0, all, "characterDeflectProjectile"))),
 			Block = Round(Block(input.Gear, all)),
 			AttackDamageToHealth = Round(all["offensiveLifeLeechMin"]),
-			PhysicalToElemental = 0,
+			// No record of the base game has this field: 0 unless a mod adds it.
+			PhysicalToElemental = Round(Math.Max(0, all["characterPhysToElementalRatio"])),
 			DamageBonuses = Enum.GetValues<StatDamage>().Where(DamageFields.ContainsKey).ToDictionary(d => d, d => Damage(d, all)),
 			RaceBonuses = Enum.GetValues<StatRace>().ToDictionary(r => r, r => RaceBonus(r, all)),
 			PetBonuses = PetBonuses(all),

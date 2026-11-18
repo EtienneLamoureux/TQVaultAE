@@ -428,7 +428,6 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
 		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
-		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, StatToolTip.Sentence(toolTip));
 
 		// A row whose rollover lists its sources: the value shown from an evaluation, the variables it reads.
 		StatRowView Sourced(string tag, string fallback, string value, Func<Evaluation, double> shown, IReadOnlyList<string> variables, string toolTip = "")
@@ -599,7 +598,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			Tab3Rows =
 			[
 				Sourced("x4tagCADctH", "Weapon Damage as Health", Percent(stats.AttackDamageToHealth), e => e.Stats.AttackDamageToHealth, ["offensiveLifeLeechMin"]),
-				Row("x4tagCEleConversion", "Weapon Base as Elemental", Percent(stats.PhysicalToElemental)),
+				Sourced("x4tagCEleConversion", "Weapon Base as Elemental", Percent(stats.PhysicalToElemental), e => e.Stats.PhysicalToElemental, ["characterPhysToElementalRatio"]),
 			],
 			RaceTitle = Game("x4tagCMonsterStats", "Monster Race Bonuses"),
 			Races = [.. Enum.GetValues<StatRace>().Select(r =>
