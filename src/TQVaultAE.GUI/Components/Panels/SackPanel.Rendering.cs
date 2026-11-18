@@ -325,7 +325,8 @@ public partial class SackPanel : Panel, IScalingControl
 		using var imgAttr = new System.Drawing.Imaging.ImageAttributes();
 		imgAttr.SetColorMatrix(colorMatrix);
 
-		graphics.DrawImage(Images.ItemAccent, itemRectangle, 0, 0, Images.ItemAccent.Width, Images.ItemAccent.Height, GraphicsUnit.Pixel, imgAttr);
+		var accent = UIPictures.ItemAccent;
+		graphics.DrawImage(accent, itemRectangle, 0, 0, accent.Width, accent.Height, GraphicsUnit.Pixel, imgAttr);
 	}
 
 	/// <summary>

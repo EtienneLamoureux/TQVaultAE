@@ -1,4 +1,4 @@
-using TQVaultAE.Presentation.Win32;
+using TQVaultAE.GUI.Components.Rendering;
 
 //-----------------------------------------------------------------------
 // <copyright file="AutoSortButton.cs" company="None">
@@ -65,24 +65,7 @@ public class AutoSortButton : BagButtonBase
 	/// </summary>
 	public override void CreateBackgroundGraphics()
 	{
-		this.OffBitmap = Images.autosortup01;
-		this.OnBitmap = Images.autosortdown01;
-		this.OverBitmap = Images.autosortover01;
-
-		if (this.IsVault)
-		{
-			this.OffBitmap = Images.rotatedautosortup01;
-			this.OnBitmap = Images.rotatedautosortdown01;
-			this.OverBitmap = Images.rotatedautosortover01;
-		}
-
-		// The resource pictures are new bitmaps at each read: flipping them changes no other button.
-		if (this.IsFlipped)
-		{
-			this.OffBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-			this.OnBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-			this.OverBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-		}
+		(this.OffBitmap, this.OnBitmap, this.OverBitmap) = UIPictures.AutoSort(this.IsVault, this.IsFlipped);
 
 		this.FollowScale();
 	}

@@ -49,9 +49,9 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	{
 		InitializeComponent();
 
-		this.DownBitmap = Images.MainButtonDown;
-		this.OverBitmap = Images.MainButtonOver;
-		this.UpBitmap = Images.MainButtonUp;
+		this.DownBitmap = UIPictures.MainButtonDown;
+		this.OverBitmap = UIPictures.MainButtonOver;
+		this.UpBitmap = UIPictures.MainButtonUp;
 	}
 
 	private void InitializeComponent()

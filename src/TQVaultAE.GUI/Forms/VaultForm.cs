@@ -135,11 +135,11 @@ public partial class VaultForm : Form, IScalingControl
 	{
 		this.InitializeComponent();
 
-		this.topBorder = Images.BorderTop;
-		this.bottomBorder = Images.BorderBottom;
-		this.sideBorder = Images.BorderSide;
-		this.bottomRightCorner = Images.BorderBottomRightCorner;
-		this.bottomLeftCorner = Images.BorderBottomLeftCorner;
+		this.topBorder = UIPictures.BorderTop;
+		this.bottomBorder = UIPictures.BorderBottom;
+		this.sideBorder = UIPictures.BorderSide;
+		this.bottomRightCorner = UIPictures.BorderBottomRightCorner;
+		this.bottomLeftCorner = UIPictures.BorderBottomLeftCorner;
 
 		this.TitleTextColor = SystemColors.ControlText;
 

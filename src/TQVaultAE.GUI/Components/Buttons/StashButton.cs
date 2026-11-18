@@ -3,7 +3,7 @@
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using TQVaultAE.Presentation.Win32;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Components.Buttons;
@@ -29,8 +29,8 @@ public class StashButton : BagButtonBase
 	/// </summary>
 	public override void CreateBackgroundGraphics()
 	{
-		this.OnBitmap = Images.StashTabUp;
-		this.OffBitmap = Images.StashTabDown;
-		this.OverBitmap = Images.StashTabOver;
+		this.OnBitmap = UIPictures.StashTabUp;
+		this.OffBitmap = UIPictures.StashTabDown;
+		this.OverBitmap = UIPictures.StashTabOver;
 	}
 }
