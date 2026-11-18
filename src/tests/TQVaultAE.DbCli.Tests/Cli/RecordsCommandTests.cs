@@ -45,6 +45,15 @@ public sealed class RecordsCommandTests : IDisposable
 	}
 
 	[Fact]
+	public void Records_CountWithLimit_StopsAtTheLimitLikeTheOtherCommands()
+	{
+		var (code, _, lines) = this.RunToFile(".txt", "--class", "Weapon*", "--where", "itemLevel>10", "--count", "--limit", "1");
+
+		code.Should().Be(0);
+		lines.Should().Equal("1");
+	}
+
+	[Fact]
 	public void Records_NameFilter_UsesTheRequestedLanguage()
 	{
 		var (code, _, lines) = this.RunToFile(".jsonl", "--name", "*alpha*", "--lang", "FR");

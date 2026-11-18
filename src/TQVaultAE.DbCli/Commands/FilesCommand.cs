@@ -28,7 +28,7 @@ internal sealed class FilesCommand : ICommand
 		[
 			.. SelectorOptions,
 			new("limit", null, "N", "Maximum number of entries."),
-			new("count", null, null, "Print only the number of matches."),
+			CliContext.CountOption,
 			new("format", null, "fmt", "json | jsonl | tsv (default tsv, or from the --out extension)."),
 			new("out", 'o', "path", "Output file, default stdout."),
 		],
@@ -81,8 +81,7 @@ internal sealed class FilesCommand : ICommand
 				foreach (var e in a.Entries)
 					if (selection.MatchesEntry(e))
 						count++;
-			using var w = CliContext.OpenTextOutput(outPath);
-			w.WriteLine(limit > 0 ? Math.Min(limit, count) : count);
+			CliContext.WriteCount(outPath, count, limit);
 			return ExitCodes.Ok;
 		}
 

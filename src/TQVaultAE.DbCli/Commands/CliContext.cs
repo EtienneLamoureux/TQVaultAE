@@ -132,6 +132,15 @@ internal sealed class CliContext : IDisposable
 	/// <summary>Text writer over <see cref="OpenOutput"/>.</summary>
 	public static StreamWriter OpenTextOutput(string? path) => new(OpenOutput(path), Formats.Utf8, Formats.BufferSize);
 
+	/// <summary><c>--count</c> of the listing commands (records, text, files).</summary>
+	public static readonly OptionSpec CountOption = new("count", null, null, "Print only the number of matches, at most --limit.");
+
+	/// <summary>Writes the <c>--count</c> result: the number of rows the listing would print (at most <paramref name="limit"/>, 0 = no limit).</summary>
+	public static void WriteCount(string? outPath, long count, int limit) {
+		using var w = OpenTextOutput(outPath);
+		w.WriteLine(limit > 0 ? Math.Min(limit, count) : count);
+	}
+
 	/// <summary>Informational message on stderr unless quiet.</summary>
 	public void Info(string message) {
 		if (!this.Quiet)
