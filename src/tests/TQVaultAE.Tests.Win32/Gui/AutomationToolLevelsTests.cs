@@ -42,7 +42,7 @@ public sealed class AutomationToolLevelsTests
 	private static readonly string[] DeveloperTools =
 	[
 		"bag_settings_drag_icon", "bag_settings_hover_icon", "capture_results_menu", "character_buff_toggle", "character_buffs", "character_weapon_set", "character_window", "character_window_close", "character_window_list", "character_window_loadout", "character_window_open", "check_list_items", "class_sets", "click_control", "control_tree",
-		"control_values", "create_item", "drag_select", "forge_drag_cursor", "forge_hover", "grid_click", "grid_values",
+		"control_values", "create_item", "drag_select", "forge_drag_cursor", "forge_hover", "gdi_census", "grid_click", "grid_values",
 		"item_properties_dump", "key_binds_dialog", "list_forms", "list_items", "list_keys", "list_state", "load_resource",
 		"mouse_click", "mouse_wheel", "move_window", "open_form", "open_input_dialog", "picture_fault", "player_stats_fonts",
 		"player_stats_hover", "press_key", "raw_tooltip_lines", "recent_log", "results_move", "recent_sounds", "search_dialog_scroll",
