@@ -331,9 +331,9 @@ public partial class BagButtonSettings : VaultForm
 	{
 		if (this.scalingRadioButtonDefaultIcon.Checked)
 		{
-			this.pictureBoxOn.Image = Images.inventorybagup01;
-			this.pictureBoxOff.Image = this.pictureBoxSimple.Image = Images.inventorybagdown01;
-			this.pictureBoxOver.Image = Images.inventorybagover01;
+			this.pictureBoxOn.Image = DefaultBagPictures.On;
+			this.pictureBoxOff.Image = this.pictureBoxSimple.Image = DefaultBagPictures.Off;
+			this.pictureBoxOver.Image = DefaultBagPictures.Over;
 			return;
 		}
 
@@ -575,9 +575,9 @@ public partial class BagButtonSettings : VaultForm
 		if (mode == BagButtonDisplayMode.Default)
 		{
 			// Reset to default settings
-			this._CurrentBagButton.OnBitmap = Images.inventorybagup01;
-			this._CurrentBagButton.OffBitmap = Images.inventorybagdown01;
-			this._CurrentBagButton.OverBitmap = Images.inventorybagover01;
+			this._CurrentBagButton.OnBitmap = DefaultBagPictures.On;
+			this._CurrentBagButton.OffBitmap = DefaultBagPictures.Off;
+			this._CurrentBagButton.OverBitmap = DefaultBagPictures.Over;
 
 			this._CurrentBagButton.Sack?.ChangeBagButtonIconInfo(null);
 		}

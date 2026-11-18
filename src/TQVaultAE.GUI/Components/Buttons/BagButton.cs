@@ -31,8 +31,8 @@ public class BagButton : BagButtonBase
 	/// </summary>
 	public override void CreateBackgroundGraphics()
 	{
-		if (this.OnBitmap is null) this.OnBitmap = Images.inventorybagup01;
-		if (this.OffBitmap is null) this.OffBitmap = Images.inventorybagdown01;
-		if (this.OverBitmap is null) this.OverBitmap = Images.inventorybagover01;
+		if (this.OnBitmap is null) this.OnBitmap = DefaultBagPictures.On;
+		if (this.OffBitmap is null) this.OffBitmap = DefaultBagPictures.Off;
+		if (this.OverBitmap is null) this.OverBitmap = DefaultBagPictures.Over;
 	}
 }
