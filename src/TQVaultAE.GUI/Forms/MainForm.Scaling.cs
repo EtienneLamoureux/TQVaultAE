@@ -70,16 +70,21 @@ public partial class MainForm
 	}
 
 	/// <summary>
-	/// Maximized, the window's design size is not needed, only room for the panels: the largest step whose panels,
-	/// measured now and scaled to the step, fit inside the border, never below the step of the design size. At 96 dpi a
-	/// 1602 x 1080 maximized window misses 1.2 by 18 px of design size, while the panels at 1.2 fit.
+	/// Maximized, the panels fill the room inside the border: the scale at which they, measured now and scaled with it,
+	/// just fit, between the smallest and the largest zoom.
 	/// </summary>
-	protected override int MaximizedStep()
-		=> Math.Max(base.MaximizedStep(), ZoomSteps.LargestFitting(this.PanelsExtent, UIService.Scale, UIService.DpiScale, this.ContentAreaExtent));
+	protected override float MaximizedScale()
+	{
+		var area = this.ContentArea;
+		var extent = this.PanelsExtent;
+		float fill = Math.Min((float)area.Right / extent.Width, (float)area.Bottom / extent.Height);
+		float dpi = UIService.DpiScale;
+		return Math.Clamp(UIService.Scale * fill, Presentation.Win32.UIService.MinZoom * dpi, Presentation.Win32.UIService.MaxZoom * dpi);
+	}
 
 	/// <summary>
-	/// The maximize zoomed by a step predicted from the panels' size (<see cref="MaximizedStep"/>): the steps down while
-	/// the rounding of the new sizes leaves them past the border, never below the step of the design size.
+	/// The maximize scaled the panels from their size measured before (<see cref="MaximizedScale"/>): when the rounding of
+	/// the new sizes leaves them past the border, a little smaller, a few times at most.
 	/// </summary>
 	protected override void DoResizeEndCallback(object? sender, EventArgs e, bool fromMinimizedMaximized = false)
 	{
@@ -87,10 +92,9 @@ public partial class MainForm
 		if (this.WindowState != FormWindowState.Maximized || !this.ScaleOnResize)
 			return;
 
-		int floor = base.MaximizedStep();
-		while (this.ZoomStep > floor && !this.PanelsFit)
+		for (int i = 0; i < 3 && !this.PanelsFit; i++)
 		{
-			this.ZoomTo(this.ZoomStep - 1);
+			this.ScaleFreely(this.MaximizedScale() * 0.995F);
 			this.LastFormSize = this.Size;
 		}
 	}
@@ -99,12 +103,9 @@ public partial class MainForm
 	private Size PanelsExtent
 		=> new(this.mainView.Left + this.mainView.PanelsPreferredSize.Width, this.mainView.Top + this.mainView.PanelsPreferredSize.Height);
 
-	/// <summary>The content area's bottom right corner, from the client area's top left.</summary>
-	private Size ContentAreaExtent => new(this.ContentArea.Right, this.ContentArea.Bottom);
-
 	/// <summary>Whether the panels fit inside the border at their preferred size.</summary>
 	private bool PanelsFit
-		=> this.PanelsExtent.Width <= this.ContentAreaExtent.Width && this.PanelsExtent.Height <= this.ContentAreaExtent.Height;
+		=> this.PanelsExtent.Width <= this.ContentArea.Right && this.PanelsExtent.Height <= this.ContentArea.Bottom;
 
 	/// <summary>The client size of the window at zoom 1 and 96 dpi.</summary>
 	private static readonly Size DesignClientSize = new(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);

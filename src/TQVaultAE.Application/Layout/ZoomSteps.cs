@@ -51,21 +51,5 @@ public static class ZoomSteps
 		return 0;
 	}
 
-	/// <summary>
-	/// The largest step at which <paramref name="measured"/> (a size in pixels at <paramref name="measuredAt"/>, the scale
-	/// it was measured at) scaled to the step's scale fits inside <paramref name="limit"/>; the first step when none does.
-	/// </summary>
-	public static int LargestFitting(Size measured, float measuredAt, float dpiScale, Size limit)
-	{
-		for (int step = Count - 1; step > 0; step--)
-		{
-			var size = WindowLayout.Scaled(measured, Scale(step, dpiScale) / measuredAt);
-			if (size.Width <= limit.Width && size.Height <= limit.Height)
-				return step;
-		}
-
-		return 0;
-	}
-
 	private static int Clamp(int step) => Math.Clamp(step, 0, Count - 1);
 }

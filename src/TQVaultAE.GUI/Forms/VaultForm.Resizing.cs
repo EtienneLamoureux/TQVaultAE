@@ -190,7 +190,11 @@ public partial class VaultForm
 	{
 		float previous = UIService.Scale;
 		this.ZoomStep = Math.Clamp(zoomStep, 0, ZoomSteps.Count - 1);
-		UIService.Scale = ZoomSteps.Scale(this.ZoomStep, UIService.DpiScale);
+
+		// A maximize scales freely to fill the window (MaximizedScale); the step kept is the one of before, saved and
+		// given back by the restore.
+		UIService.Scale = this.freeScale ?? ZoomSteps.Scale(this.ZoomStep, UIService.DpiScale);
+		this.freeScale = null;
 
 		// Maximized (or minimized), the window cannot be given its size at zoom 1, and the size Windows restores it to
 		// follows the scaling of its size: it is scaled from the zoom before, as the content until it is restored; the
@@ -456,12 +460,22 @@ public partial class VaultForm
 		base.OnResizeEnd(e);
 	}
 
+	/// <summary>The scale the next <see cref="ScaleForm"/> gives instead of its step's: a maximize's.</summary>
+	private float? freeScale;
+
 	/// <summary>
-	/// The zoom step a maximize gives, the window already at its maximized size: the largest step whose window at its
-	/// design size fits it.
+	/// The scale a maximize gives, the window already at its maximized size: the window at its design size fills it. Not
+	/// a zoom step: the item cells are rounded from it, and the gaps around the bags may differ by a pixel or two.
 	/// </summary>
-	protected virtual int MaximizedStep()
-		=> ZoomSteps.LargestFitting(new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.ClientSize);
+	protected virtual float MaximizedScale()
+		=> Math.Min(this.ClientSize.Width / (float)NORMAL_FORMWIDTH, this.ClientSize.Height / (float)NORMAL_FORMHEIGHT);
+
+	/// <summary>Gives the window <paramref name="scale"/>, not a zoom step's, its step kept (<see cref="freeScale"/>).</summary>
+	protected void ScaleFreely(float scale)
+	{
+		this.freeScale = scale;
+		this.ZoomTo(this.ZoomStep);
+	}
 
 	/// <summary>The zoom step before the window was maximized, given back when it is restored.</summary>
 	private int? stepBeforeMaximize;
@@ -479,9 +493,11 @@ public partial class VaultForm
 			int step;
 			if (this.WindowState == FormWindowState.Maximized)
 			{
-				// Maximized: the step of the maximized size (MaximizedStep). The step before is given back by the restore.
+				// Maximized: a free scale that fills the window (MaximizedScale), the step kept; the restore gives back
+				// the step's scale.
 				this.stepBeforeMaximize = this.ZoomStep;
-				step = this.MaximizedStep();
+				step = this.ZoomStep;
+				this.freeScale = this.MaximizedScale();
 			}
 			else if (this.WindowState == FormWindowState.Minimized)
 				step = this.ZoomStep;
