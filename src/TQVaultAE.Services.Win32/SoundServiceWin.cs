@@ -80,7 +80,7 @@ public class SoundServiceWin : ISoundService, IDisposable
 
 	public void InitAllPlayers()
 	{
-		LoadedPlayers.Clear();
+		ClearPlayers();
 
 		if (this.DataBase is null)
 			return;
@@ -90,6 +90,23 @@ public class SoundServiceWin : ISoundService, IDisposable
 		SoundPoolRelicDrop = InitPlayers(SoundPoolRelicDropIds);
 		SoundPoolVoice = InitPlayers(SoundPoolVoiceIds);
 		SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
+	}
+
+	/// <summary>Disposes the loaded players and empties the pools.</summary>
+	private static void ClearPlayers()
+	{
+		foreach (var (player, stream) in LoadedPlayers.Values)
+		{
+			player?.Dispose();
+			stream?.Dispose();
+		}
+
+		LoadedPlayers.Clear();
+		SoundPoolCancel = [];
+		SoundPoolItemDrop = [];
+		SoundPoolMetalHit = [];
+		SoundPoolRelicDrop = [];
+		SoundPoolVoice = [];
 	}
 
 	private SoundPlayer[] InitPlayers(RecordId[] list)
@@ -174,14 +191,11 @@ public class SoundServiceWin : ISoundService, IDisposable
 
 	private SoundPlayer? GetRandomPlayer(SoundPlayer[] pool)
 	{
-		if (!this.USettings.EnableTQVaultSounds)
+		// The pool is empty when the sounds could not be loaded.
+		if (!this.USettings.EnableTQVaultSounds || pool.Length == 0)
 			return null;
 
-		var rand = new Random(DateTime.Now.Millisecond);
-		var multi = (pool.Length * 100) - 1;
-		var playerIdx = rand.Next(0, multi);
-		playerIdx = playerIdx / 100;
-		return pool[playerIdx];
+		return pool[Random.Shared.Next(pool.Length)];
 	}
 
 	public void PlaySound(RecordId resourceId)
@@ -223,26 +237,9 @@ public class SoundServiceWin : ISoundService, IDisposable
 		}
 
 		if (disposing)
-		{
-			// dispose managed state (managed objects).
-			// Cleanup SoundPlayers
-			foreach (var player in LoadedPlayers)
-			{
-				var val = player.Value;
-				val.Player?.Dispose();
-				val.MS?.Dispose();
-			}
-		}
+			ClearPlayers();
 
-		// free unmanaged resources (unmanaged objects) and override a finalizer below.
-		// set large fields to null.
 		SoundData.Clear();
-		LoadedPlayers.Clear();
-		SoundPoolCancel = [];
-		SoundPoolItemDrop = [];
-		SoundPoolMetalHit = [];
-		SoundPoolRelicDrop = [];
-		SoundPoolVoice = [];
 
 		_disposed = true;
 	}
