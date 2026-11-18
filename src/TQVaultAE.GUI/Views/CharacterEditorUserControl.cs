@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 /// window (it is built for that character only), and leaves it on <see cref="Applied"/> (OK, the edits applied to the
 /// character in memory) or <see cref="Cancelled"/> (Cancel, the edits dropped).
 /// </summary>
-internal sealed partial class CharacterEditorUserControl : MainWindowView, IMainWindowView
+internal sealed partial class CharacterEditorUserControl : MainWindowView, IMainWindowView, IIgnoresZoom
 {
 	private struct DifficultData
 	{

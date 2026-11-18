@@ -119,6 +119,9 @@ internal sealed class ZoomSnapshot
 
 		foreach (Control control in controls)
 		{
+			if (control is IIgnoresZoom)
+				continue;
+
 			Font? font = null;
 			if (control is IZoomedFont zoomed)
 			{
@@ -252,6 +255,9 @@ internal sealed class ZoomSnapshot
 	{
 		foreach (Control control in controls)
 		{
+			if (control is IIgnoresZoom)
+				continue;
+
 			if (!this.known.Contains(control))
 				yield return control;
 			else if (control is not ILaysOutChildren)

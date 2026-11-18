@@ -23,6 +23,15 @@ internal interface ILaysOutChildren
 }
 
 /// <summary>
+/// A control drawn at its own size whatever the zoom, which refuses the zoom's scaling (the character editor): the
+/// <see cref="ZoomSnapshot"/> keeps neither it nor the controls it holds, else a zoom gave them their values at the
+/// snapshot's scale and the control, refusing the scaling, kept them.
+/// </summary>
+internal interface IIgnoresZoom
+{
+}
+
+/// <summary>
 /// A control that fits a part of itself to its content or to the room it is given, in code: the
 /// <see cref="ZoomSnapshot"/> and each zoom start from its whole layout, and it fits again once the zoom is done.
 /// </summary>
