@@ -62,7 +62,7 @@ public partial class ItemTextFormatter
 			else
 				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
-			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, summonLimit.ToString(CultureInfo.CurrentCulture));
+			petLine = this.Format(formatSpec, summonLimit.ToString(CultureInfo.CurrentCulture));
 			var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			results.Add(value);
 			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
@@ -81,7 +81,7 @@ public partial class ItemTextFormatter
 			string petName = TranslationService.TranslateXTag(petNameTag);
 			float value = 0.0F;
 
-			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
+			petLine = this.Format(formatSpec, petName);
 			var valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			AddTextLine(itm, results, valueStr);
 
@@ -94,7 +94,7 @@ public partial class ItemTextFormatter
 				else
 					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
-				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, timeToLive);
+				petLine = this.Format(formatSpec, timeToLive);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
 				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
@@ -106,7 +106,7 @@ public partial class ItemTextFormatter
 			{
 				formatSpec = this.PetStatFormat("SkillPetDescriptionHealth", "{0}  Health");
 
-				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
+				petLine = this.Format(formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
 				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
@@ -118,7 +118,7 @@ public partial class ItemTextFormatter
 			{
 				formatSpec = this.PetStatFormat("SkillPetDescriptionMana", "{0}  Energy");
 
-				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
+				petLine = this.Format(formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
 				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
@@ -131,7 +131,7 @@ public partial class ItemTextFormatter
 			else
 				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 
-			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
+			petLine = this.Format(formatSpec, petName);
 			valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			AddTextLine(itm, results, valueStr);
 
@@ -145,7 +145,7 @@ public partial class ItemTextFormatter
 				{
 					formatSpec = this.PetStatFormat("SkillPetDescriptionDamageMinOnly", "{0}  Damage");
 
-					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
+					petLine = this.Format(formatSpec, value);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 					results.Add(valueStr);
 					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
@@ -154,7 +154,7 @@ public partial class ItemTextFormatter
 				{
 					formatSpec = this.PetStatFormat("SkillPetDescriptionDamageMinMax", "{0} - {1}  Damage");
 
-					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value, value2);
+					petLine = this.Format(formatSpec, value, value2);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 					results.Add(valueStr);
 					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
