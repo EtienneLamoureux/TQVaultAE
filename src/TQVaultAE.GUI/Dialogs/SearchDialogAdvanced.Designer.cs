@@ -1926,396 +1926,306 @@ public partial class SearchDialogAdvanced
 		// scalingButtonMenuCharacters
 		// 
 		scalingButtonMenuCharacters.BackColor = Color.Transparent;
-		scalingButtonMenuCharacters.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuCharacters.DownBitmap");
 		scalingButtonMenuCharacters.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuCharacters.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuCharacters.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuCharacters.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuCharacters.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuCharacters.Image = (Image)resources.GetObject("scalingButtonMenuCharacters.Image");
 		scalingButtonMenuCharacters.Location = new Point(3, 3);
 		scalingButtonMenuCharacters.Name = "scalingButtonMenuCharacters";
-		scalingButtonMenuCharacters.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuCharacters.OverBitmap");
 		scalingButtonMenuCharacters.Size = new Size(120, 30);
 		scalingButtonMenuCharacters.SizeToGraphic = false;
 		scalingButtonMenuCharacters.TabIndex = 8;
 		scalingButtonMenuCharacters.Text = "Characters";
-		scalingButtonMenuCharacters.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuCharacters.UpBitmap");
-		scalingButtonMenuCharacters.UseCustomGraphic = true;
 		scalingButtonMenuCharacters.UseVisualStyleBackColor = false;
 		scalingButtonMenuCharacters.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuVaults
 		// 
 		scalingButtonMenuVaults.BackColor = Color.Transparent;
-		scalingButtonMenuVaults.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuVaults.DownBitmap");
 		scalingButtonMenuVaults.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuVaults.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuVaults.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuVaults.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuVaults.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuVaults.Image = (Image)resources.GetObject("scalingButtonMenuVaults.Image");
 		scalingButtonMenuVaults.Location = new Point(3, 39);
 		scalingButtonMenuVaults.Name = "scalingButtonMenuVaults";
-		scalingButtonMenuVaults.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuVaults.OverBitmap");
 		scalingButtonMenuVaults.Size = new Size(120, 30);
 		scalingButtonMenuVaults.SizeToGraphic = false;
 		scalingButtonMenuVaults.TabIndex = 9;
 		scalingButtonMenuVaults.Text = "Vaults";
-		scalingButtonMenuVaults.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuVaults.UpBitmap");
-		scalingButtonMenuVaults.UseCustomGraphic = true;
 		scalingButtonMenuVaults.UseVisualStyleBackColor = false;
 		scalingButtonMenuVaults.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuType
 		// 
 		scalingButtonMenuType.BackColor = Color.Transparent;
-		scalingButtonMenuType.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuType.DownBitmap");
 		scalingButtonMenuType.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuType.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuType.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuType.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuType.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuType.Image = (Image)resources.GetObject("scalingButtonMenuType.Image");
 		scalingButtonMenuType.Location = new Point(3, 75);
 		scalingButtonMenuType.Name = "scalingButtonMenuType";
-		scalingButtonMenuType.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuType.OverBitmap");
 		scalingButtonMenuType.Size = new Size(120, 30);
 		scalingButtonMenuType.SizeToGraphic = false;
 		scalingButtonMenuType.TabIndex = 10;
 		scalingButtonMenuType.Text = "Type";
-		scalingButtonMenuType.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuType.UpBitmap");
-		scalingButtonMenuType.UseCustomGraphic = true;
 		scalingButtonMenuType.UseVisualStyleBackColor = false;
 		scalingButtonMenuType.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuRarity
 		// 
 		scalingButtonMenuRarity.BackColor = Color.Transparent;
-		scalingButtonMenuRarity.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuRarity.DownBitmap");
 		scalingButtonMenuRarity.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuRarity.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuRarity.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuRarity.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuRarity.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuRarity.Image = (Image)resources.GetObject("scalingButtonMenuRarity.Image");
 		scalingButtonMenuRarity.Location = new Point(3, 111);
 		scalingButtonMenuRarity.Name = "scalingButtonMenuRarity";
-		scalingButtonMenuRarity.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuRarity.OverBitmap");
 		scalingButtonMenuRarity.Size = new Size(120, 30);
 		scalingButtonMenuRarity.SizeToGraphic = false;
 		scalingButtonMenuRarity.TabIndex = 11;
 		scalingButtonMenuRarity.Text = "Rarity";
-		scalingButtonMenuRarity.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuRarity.UpBitmap");
-		scalingButtonMenuRarity.UseCustomGraphic = true;
 		scalingButtonMenuRarity.UseVisualStyleBackColor = false;
 		scalingButtonMenuRarity.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuOrigin
 		// 
 		scalingButtonMenuOrigin.BackColor = Color.Transparent;
-		scalingButtonMenuOrigin.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.DownBitmap");
 		scalingButtonMenuOrigin.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuOrigin.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuOrigin.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuOrigin.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuOrigin.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuOrigin.Image = (Image)resources.GetObject("scalingButtonMenuOrigin.Image");
 		scalingButtonMenuOrigin.Location = new Point(3, 147);
 		scalingButtonMenuOrigin.Name = "scalingButtonMenuOrigin";
-		scalingButtonMenuOrigin.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.OverBitmap");
 		scalingButtonMenuOrigin.Size = new Size(120, 30);
 		scalingButtonMenuOrigin.SizeToGraphic = false;
 		scalingButtonMenuOrigin.TabIndex = 22;
 		scalingButtonMenuOrigin.Text = "Origin";
-		scalingButtonMenuOrigin.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.UpBitmap");
-		scalingButtonMenuOrigin.UseCustomGraphic = true;
 		scalingButtonMenuOrigin.UseVisualStyleBackColor = false;
 		scalingButtonMenuOrigin.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuMod
 		// 
 		scalingButtonMenuMod.BackColor = Color.Transparent;
-		scalingButtonMenuMod.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.DownBitmap");
 		scalingButtonMenuMod.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuMod.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuMod.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuMod.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuMod.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuMod.Image = (Image)resources.GetObject("scalingButtonMenuOrigin.Image");
 		scalingButtonMenuMod.Location = new Point(3, 147);
 		scalingButtonMenuMod.Name = "scalingButtonMenuMod";
-		scalingButtonMenuMod.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.OverBitmap");
 		scalingButtonMenuMod.Size = new Size(120, 30);
 		scalingButtonMenuMod.SizeToGraphic = false;
 		scalingButtonMenuMod.TabIndex = 34;
 		scalingButtonMenuMod.Text = "Mod";
-		scalingButtonMenuMod.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuOrigin.UpBitmap");
-		scalingButtonMenuMod.UseCustomGraphic = true;
 		scalingButtonMenuMod.UseVisualStyleBackColor = false;
 		scalingButtonMenuMod.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuQuality
 		// 
 		scalingButtonMenuQuality.BackColor = Color.Transparent;
-		scalingButtonMenuQuality.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuQuality.DownBitmap");
 		scalingButtonMenuQuality.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuQuality.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuQuality.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuQuality.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuQuality.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuQuality.Image = (Image)resources.GetObject("scalingButtonMenuQuality.Image");
 		scalingButtonMenuQuality.Location = new Point(3, 183);
 		scalingButtonMenuQuality.Name = "scalingButtonMenuQuality";
-		scalingButtonMenuQuality.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuQuality.OverBitmap");
 		scalingButtonMenuQuality.Size = new Size(120, 30);
 		scalingButtonMenuQuality.SizeToGraphic = false;
 		scalingButtonMenuQuality.TabIndex = 21;
 		scalingButtonMenuQuality.Text = "Quality";
-		scalingButtonMenuQuality.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuQuality.UpBitmap");
-		scalingButtonMenuQuality.UseCustomGraphic = true;
 		scalingButtonMenuQuality.UseVisualStyleBackColor = false;
 		scalingButtonMenuQuality.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuStyle
 		// 
 		scalingButtonMenuStyle.BackColor = Color.Transparent;
-		scalingButtonMenuStyle.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuStyle.DownBitmap");
 		scalingButtonMenuStyle.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuStyle.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuStyle.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuStyle.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuStyle.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuStyle.Image = (Image)resources.GetObject("scalingButtonMenuStyle.Image");
 		scalingButtonMenuStyle.Location = new Point(3, 219);
 		scalingButtonMenuStyle.Name = "scalingButtonMenuStyle";
-		scalingButtonMenuStyle.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuStyle.OverBitmap");
 		scalingButtonMenuStyle.Size = new Size(120, 30);
 		scalingButtonMenuStyle.SizeToGraphic = false;
 		scalingButtonMenuStyle.TabIndex = 12;
 		scalingButtonMenuStyle.Text = "Style";
-		scalingButtonMenuStyle.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuStyle.UpBitmap");
-		scalingButtonMenuStyle.UseCustomGraphic = true;
 		scalingButtonMenuStyle.UseVisualStyleBackColor = false;
 		scalingButtonMenuStyle.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuSetItems
 		// 
 		scalingButtonMenuSetItems.BackColor = Color.Transparent;
-		scalingButtonMenuSetItems.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSetItems.DownBitmap");
 		scalingButtonMenuSetItems.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuSetItems.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSetItems.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSetItems.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuSetItems.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuSetItems.Image = (Image)resources.GetObject("scalingButtonMenuSetItems.Image");
 		scalingButtonMenuSetItems.Location = new Point(3, 255);
 		scalingButtonMenuSetItems.Name = "scalingButtonMenuSetItems";
-		scalingButtonMenuSetItems.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSetItems.OverBitmap");
 		scalingButtonMenuSetItems.Size = new Size(120, 30);
 		scalingButtonMenuSetItems.SizeToGraphic = false;
 		scalingButtonMenuSetItems.TabIndex = 23;
 		scalingButtonMenuSetItems.Text = "Sets";
-		scalingButtonMenuSetItems.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSetItems.UpBitmap");
-		scalingButtonMenuSetItems.UseCustomGraphic = true;
 		scalingButtonMenuSetItems.UseVisualStyleBackColor = false;
 		scalingButtonMenuSetItems.Click += scalingButtonMenu_Click;
 		//
 		// scalingButtonMenuSkills
 		//
 		scalingButtonMenuSkills.BackColor = Color.Transparent;
-		scalingButtonMenuSkills.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSetItems.DownBitmap");
 		scalingButtonMenuSkills.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuSkills.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSkills.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSkills.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuSkills.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuSkills.Image = (Image)resources.GetObject("scalingButtonMenuSetItems.Image");
 		scalingButtonMenuSkills.Location = new Point(3, 291);
 		scalingButtonMenuSkills.Name = "scalingButtonMenuSkills";
-		scalingButtonMenuSkills.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSetItems.OverBitmap");
 		scalingButtonMenuSkills.Size = new Size(120, 30);
 		scalingButtonMenuSkills.SizeToGraphic = false;
 		scalingButtonMenuSkills.TabIndex = 24;
 		scalingButtonMenuSkills.Text = "Item Skills";
-		scalingButtonMenuSkills.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSetItems.UpBitmap");
-		scalingButtonMenuSkills.UseCustomGraphic = true;
 		scalingButtonMenuSkills.UseVisualStyleBackColor = false;
 		scalingButtonMenuSkills.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuWithCharm
 		// 
 		scalingButtonMenuWithCharm.BackColor = Color.Transparent;
-		scalingButtonMenuWithCharm.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuWithCharm.DownBitmap");
 		scalingButtonMenuWithCharm.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuWithCharm.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithCharm.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithCharm.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuWithCharm.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuWithCharm.Image = (Image)resources.GetObject("scalingButtonMenuWithCharm.Image");
 		scalingButtonMenuWithCharm.Location = new Point(3, 291);
 		scalingButtonMenuWithCharm.Name = "scalingButtonMenuWithCharm";
-		scalingButtonMenuWithCharm.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuWithCharm.OverBitmap");
 		scalingButtonMenuWithCharm.Size = new Size(120, 30);
 		scalingButtonMenuWithCharm.SizeToGraphic = false;
 		scalingButtonMenuWithCharm.TabIndex = 13;
 		scalingButtonMenuWithCharm.Text = "Having Charm";
-		scalingButtonMenuWithCharm.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuWithCharm.UpBitmap");
-		scalingButtonMenuWithCharm.UseCustomGraphic = true;
 		scalingButtonMenuWithCharm.UseVisualStyleBackColor = false;
 		scalingButtonMenuWithCharm.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuWithRelic
 		// 
 		scalingButtonMenuWithRelic.BackColor = Color.Transparent;
-		scalingButtonMenuWithRelic.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuWithRelic.DownBitmap");
 		scalingButtonMenuWithRelic.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuWithRelic.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithRelic.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithRelic.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuWithRelic.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuWithRelic.Image = (Image)resources.GetObject("scalingButtonMenuWithRelic.Image");
 		scalingButtonMenuWithRelic.Location = new Point(3, 327);
 		scalingButtonMenuWithRelic.Name = "scalingButtonMenuWithRelic";
-		scalingButtonMenuWithRelic.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuWithRelic.OverBitmap");
 		scalingButtonMenuWithRelic.Size = new Size(120, 30);
 		scalingButtonMenuWithRelic.SizeToGraphic = false;
 		scalingButtonMenuWithRelic.TabIndex = 14;
 		scalingButtonMenuWithRelic.Text = "Having Relic";
-		scalingButtonMenuWithRelic.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuWithRelic.UpBitmap");
-		scalingButtonMenuWithRelic.UseCustomGraphic = true;
 		scalingButtonMenuWithRelic.UseVisualStyleBackColor = false;
 		scalingButtonMenuWithRelic.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuAttribute
 		// 
 		scalingButtonMenuAttribute.BackColor = Color.Transparent;
-		scalingButtonMenuAttribute.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuAttribute.DownBitmap");
 		scalingButtonMenuAttribute.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuAttribute.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuAttribute.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuAttribute.Image = (Image)resources.GetObject("scalingButtonMenuAttribute.Image");
 		scalingButtonMenuAttribute.Location = new Point(3, 363);
 		scalingButtonMenuAttribute.Name = "scalingButtonMenuAttribute";
-		scalingButtonMenuAttribute.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuAttribute.OverBitmap");
 		scalingButtonMenuAttribute.Size = new Size(120, 30);
 		scalingButtonMenuAttribute.SizeToGraphic = false;
 		scalingButtonMenuAttribute.TabIndex = 15;
 		scalingButtonMenuAttribute.Text = "All Attributes";
-		scalingButtonMenuAttribute.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuAttribute.UpBitmap");
-		scalingButtonMenuAttribute.UseCustomGraphic = true;
 		scalingButtonMenuAttribute.UseVisualStyleBackColor = false;
 		scalingButtonMenuAttribute.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuPrefixName
 		// 
 		scalingButtonMenuPrefixName.BackColor = Color.Transparent;
-		scalingButtonMenuPrefixName.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuPrefixName.DownBitmap");
 		scalingButtonMenuPrefixName.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuPrefixName.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixName.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixName.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuPrefixName.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuPrefixName.Image = (Image)resources.GetObject("scalingButtonMenuPrefixName.Image");
 		scalingButtonMenuPrefixName.Location = new Point(3, 399);
 		scalingButtonMenuPrefixName.Name = "scalingButtonMenuPrefixName";
-		scalingButtonMenuPrefixName.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuPrefixName.OverBitmap");
 		scalingButtonMenuPrefixName.Size = new Size(120, 30);
 		scalingButtonMenuPrefixName.SizeToGraphic = false;
 		scalingButtonMenuPrefixName.TabIndex = 16;
 		scalingButtonMenuPrefixName.Text = "Prefix Name";
-		scalingButtonMenuPrefixName.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuPrefixName.UpBitmap");
-		scalingButtonMenuPrefixName.UseCustomGraphic = true;
 		scalingButtonMenuPrefixName.UseVisualStyleBackColor = false;
 		scalingButtonMenuPrefixName.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuPrefixAttribute
 		// 
 		scalingButtonMenuPrefixAttribute.BackColor = Color.Transparent;
-		scalingButtonMenuPrefixAttribute.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuPrefixAttribute.DownBitmap");
 		scalingButtonMenuPrefixAttribute.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuPrefixAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixAttribute.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuPrefixAttribute.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuPrefixAttribute.Image = (Image)resources.GetObject("scalingButtonMenuPrefixAttribute.Image");
 		scalingButtonMenuPrefixAttribute.Location = new Point(3, 435);
 		scalingButtonMenuPrefixAttribute.Name = "scalingButtonMenuPrefixAttribute";
-		scalingButtonMenuPrefixAttribute.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuPrefixAttribute.OverBitmap");
 		scalingButtonMenuPrefixAttribute.Size = new Size(120, 30);
 		scalingButtonMenuPrefixAttribute.SizeToGraphic = false;
 		scalingButtonMenuPrefixAttribute.TabIndex = 19;
 		scalingButtonMenuPrefixAttribute.Text = "Prefix Attribute";
-		scalingButtonMenuPrefixAttribute.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuPrefixAttribute.UpBitmap");
-		scalingButtonMenuPrefixAttribute.UseCustomGraphic = true;
 		scalingButtonMenuPrefixAttribute.UseVisualStyleBackColor = false;
 		scalingButtonMenuPrefixAttribute.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuBaseAttribute
 		// 
 		scalingButtonMenuBaseAttribute.BackColor = Color.Transparent;
-		scalingButtonMenuBaseAttribute.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuBaseAttribute.DownBitmap");
 		scalingButtonMenuBaseAttribute.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuBaseAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuBaseAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuBaseAttribute.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuBaseAttribute.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuBaseAttribute.Image = (Image)resources.GetObject("scalingButtonMenuBaseAttribute.Image");
 		scalingButtonMenuBaseAttribute.Location = new Point(3, 471);
 		scalingButtonMenuBaseAttribute.Name = "scalingButtonMenuBaseAttribute";
-		scalingButtonMenuBaseAttribute.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuBaseAttribute.OverBitmap");
 		scalingButtonMenuBaseAttribute.Size = new Size(120, 30);
 		scalingButtonMenuBaseAttribute.SizeToGraphic = false;
 		scalingButtonMenuBaseAttribute.TabIndex = 17;
 		scalingButtonMenuBaseAttribute.Text = "Base Attribute";
-		scalingButtonMenuBaseAttribute.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuBaseAttribute.UpBitmap");
-		scalingButtonMenuBaseAttribute.UseCustomGraphic = true;
 		scalingButtonMenuBaseAttribute.UseVisualStyleBackColor = false;
 		scalingButtonMenuBaseAttribute.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuSuffixName
 		// 
 		scalingButtonMenuSuffixName.BackColor = Color.Transparent;
-		scalingButtonMenuSuffixName.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSuffixName.DownBitmap");
 		scalingButtonMenuSuffixName.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuSuffixName.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixName.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixName.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuSuffixName.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuSuffixName.Image = (Image)resources.GetObject("scalingButtonMenuSuffixName.Image");
 		scalingButtonMenuSuffixName.Location = new Point(3, 507);
 		scalingButtonMenuSuffixName.Name = "scalingButtonMenuSuffixName";
-		scalingButtonMenuSuffixName.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSuffixName.OverBitmap");
 		scalingButtonMenuSuffixName.Size = new Size(120, 30);
 		scalingButtonMenuSuffixName.SizeToGraphic = false;
 		scalingButtonMenuSuffixName.TabIndex = 18;
 		scalingButtonMenuSuffixName.Text = "Suffix Name";
-		scalingButtonMenuSuffixName.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSuffixName.UpBitmap");
-		scalingButtonMenuSuffixName.UseCustomGraphic = true;
 		scalingButtonMenuSuffixName.UseVisualStyleBackColor = false;
 		scalingButtonMenuSuffixName.Click += scalingButtonMenu_Click;
 		// 
 		// scalingButtonMenuSuffixAttribute
 		// 
 		scalingButtonMenuSuffixAttribute.BackColor = Color.Transparent;
-		scalingButtonMenuSuffixAttribute.DownBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSuffixAttribute.DownBitmap");
 		scalingButtonMenuSuffixAttribute.FlatAppearance.BorderSize = 0;
 		scalingButtonMenuSuffixAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixAttribute.FlatStyle = FlatStyle.Flat;
 		scalingButtonMenuSuffixAttribute.ForeColor = Color.FromArgb(51, 44, 28);
-		scalingButtonMenuSuffixAttribute.Image = (Image)resources.GetObject("scalingButtonMenuSuffixAttribute.Image");
 		scalingButtonMenuSuffixAttribute.Location = new Point(3, 543);
 		scalingButtonMenuSuffixAttribute.Name = "scalingButtonMenuSuffixAttribute";
-		scalingButtonMenuSuffixAttribute.OverBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSuffixAttribute.OverBitmap");
 		scalingButtonMenuSuffixAttribute.Size = new Size(120, 30);
 		scalingButtonMenuSuffixAttribute.SizeToGraphic = false;
 		scalingButtonMenuSuffixAttribute.TabIndex = 20;
 		scalingButtonMenuSuffixAttribute.Text = "Suffix Attribute";
-		scalingButtonMenuSuffixAttribute.UpBitmap = (Bitmap)resources.GetObject("scalingButtonMenuSuffixAttribute.UpBitmap");
-		scalingButtonMenuSuffixAttribute.UseCustomGraphic = true;
 		scalingButtonMenuSuffixAttribute.UseVisualStyleBackColor = false;
 		scalingButtonMenuSuffixAttribute.Click += scalingButtonMenu_Click;
 		// 

@@ -73,31 +73,11 @@ public partial class SearchDialogAdvanced
 	/// <summary>The color of a category button whose category is hidden: the shown one's (Collapse All's), darker.</summary>
 	private Color HiddenCategoryColor => ControlPaint.Dark(this.buttonCollapseAll.BackColor, 0.1F);
 
+	/// <summary>Flat buttons (Collapse All's look): a shown category's button is light, a hidden one's darker.</summary>
 	private void SyncNavButtonImage()
 	{
 		foreach (var map in NavMap)
-		{
-			// Flat buttons (Collapse All's look): a shown category's button is light, a hidden one's darker.
-			if (!map.Button.UseCustomGraphic)
-			{
-				map.Button.BackColor = map.Panel.Visible ? this.buttonCollapseAll.BackColor : this.HiddenCategoryColor;
-				continue;
-			}
-
-			// Invert Up & Down each time you click to make it behave like a toggle
-			if (map.Panel.Visible)
-			{
-				map.Button.UpBitmap = this.ButtonImageDown;
-				map.Button.OverBitmap = this.ButtonImageUp;
-				map.Button.Image = map.Button.DownBitmap;
-			}
-			else
-			{
-				map.Button.UpBitmap = this.ButtonImageUp;
-				map.Button.OverBitmap = this.ButtonImageDown;
-				map.Button.Image = map.Button.UpBitmap;
-			}
-		}
+			map.Button.BackColor = map.Panel.Visible ? this.buttonCollapseAll.BackColor : this.HiddenCategoryColor;
 	}
 
 	private void Sync_SelectedFilters()

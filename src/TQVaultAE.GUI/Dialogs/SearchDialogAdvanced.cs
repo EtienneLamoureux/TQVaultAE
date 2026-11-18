@@ -22,8 +22,6 @@ public partial class SearchDialogAdvanced : VaultForm
 {
 	private readonly IItemDatabaseService ItemDatabaseService;
 	private readonly ILogger Log;
-	private readonly Bitmap ButtonImageUp;
-	private readonly Bitmap ButtonImageDown;
 	/// <summary>
 	/// One search category: its navigation button, the panel it shows or hides, the title over the list, the list, and the
 	/// localized title shown by both the button and the label.
@@ -81,8 +79,8 @@ public partial class SearchDialogAdvanced : VaultForm
 			button.Margin = new Padding(button.Margin.Left, 1, button.Margin.Right, 1);
 			if (button is ScalingButton category)
 			{
+				// Its setter gives the standard button's frame and hover colors.
 				category.UseCustomGraphic = false;
-				category.Image = null;
 				category.FlatStyle = this.buttonCollapseAll.FlatStyle;
 				category.BackColor = this.buttonCollapseAll.BackColor;
 				category.ForeColor = this.buttonCollapseAll.ForeColor;
@@ -137,10 +135,6 @@ public partial class SearchDialogAdvanced : VaultForm
 		scalingCheckBoxModded.Text = Resources.SearchModded;
 
 		#endregion
-
-		// Keep reference of base Up & Down button image
-		this.ButtonImageUp = this.scalingButtonMenuAttribute.UpBitmap;
-		this.ButtonImageDown = this.scalingButtonMenuAttribute.DownBitmap;
 
 		this.scalingComboBoxOperator.SelectedIndex = (int)SearchOperator.And;
 
