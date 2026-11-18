@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Panels;
@@ -179,11 +180,16 @@ public partial class MainForm
 	/// Imports text like a paste (Ctrl+V) of the clipboard holding it, without touching the clipboard: the same parsing
 	/// (exported JSON, or a PasteBin link) and the same placement as <see cref="Views.MainFormUserControl.PasteFromClipboardAsync"/>.
 	/// </summary>
+	/// <remarks>
+	/// Called from the request thread, not the UI thread: a PasteBin link is downloaded, and the UI thread stays free
+	/// meanwhile. The result is then placed on the UI thread with <see cref="AutomationHandleImportResult"/>.
+	/// </remarks>
+	internal Task<ImportResult> AutomationParseImportTextAsync(string text) => this.itemExchangeService.ImportFromTextAsync(text);
+
+	/// <summary>Places an import's items like the paste does, on the UI thread.</summary>
 	/// <returns>The import's error, or null when it succeeded.</returns>
-	internal string? AutomationImportText(string text)
+	internal string? AutomationHandleImportResult(ImportResult result)
 	{
-		// Off the UI thread, as the paste awaits it: a PasteBin link is downloaded.
-		var result = Task.Run(() => this.itemExchangeService.ImportFromTextAsync(text)).GetAwaiter().GetResult();
 		this.mainView.HandleImportResult(result);
 		return result.Success ? null : result.ErrorMessage;
 	}
