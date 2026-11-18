@@ -127,7 +127,7 @@ internal partial class AboutBox
         // 
         this.labelProductName.Dock = System.Windows.Forms.DockStyle.Fill;
         this.labelProductName.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-        this.labelProductName.ForeColor = System.Drawing.Color.White;
+        this.labelProductName.ForeColor = System.Drawing.Color.Gold;
         this.labelProductName.Location = new System.Drawing.Point(193, 0);
         this.labelProductName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
         this.labelProductName.Name = "labelProductName";
@@ -140,7 +140,7 @@ internal partial class AboutBox
         // 
         this.labelVersion.Dock = System.Windows.Forms.DockStyle.Fill;
         this.labelVersion.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-        this.labelVersion.ForeColor = System.Drawing.Color.White;
+        this.labelVersion.ForeColor = System.Drawing.Color.Gold;
         this.labelVersion.Location = new System.Drawing.Point(193, 41);
         this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
         this.labelVersion.Name = "labelVersion";
@@ -153,7 +153,7 @@ internal partial class AboutBox
         // 
         this.labelCopyright.Dock = System.Windows.Forms.DockStyle.Fill;
         this.labelCopyright.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
-        this.labelCopyright.ForeColor = System.Drawing.Color.White;
+        this.labelCopyright.ForeColor = System.Drawing.Color.Gold;
         this.labelCopyright.Location = new System.Drawing.Point(193, 82);
         this.labelCopyright.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
         this.labelCopyright.Name = "labelCopyright";
