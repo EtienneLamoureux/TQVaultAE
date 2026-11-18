@@ -7952,24 +7952,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add an empty class set.
-        /// </summary>
-        public static string ClassSetAdd {
-            get {
-                return ResourceManager.GetString("ClassSetAdd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add....
-        /// </summary>
-        public static string ClassSetAddMenu {
-            get {
-                return ResourceManager.GetString("ClassSetAddMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Rename....
         /// </summary>
         public static string ClassSetRename {
@@ -7984,24 +7966,6 @@ namespace TQVaultAE.Presentation {
         public static string ClassSetDelete {
             get {
                 return ResourceManager.GetString("ClassSetDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update with the build shown.
-        /// </summary>
-        public static string ClassSetUpdate {
-            get {
-                return ResourceManager.GetString("ClassSetUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Writes the masteries, skill points and attribute points shown now into the class set picked.
-        /// </summary>
-        public static string ClassSetUpdateTip {
-            get {
-                return ResourceManager.GetString("ClassSetUpdateTip", resourceCulture);
             }
         }
         
@@ -8051,15 +8015,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Put the masteries, skill points and attribute points shown now into the class set "{0}"?.
-        /// </summary>
-        public static string ClassSetUpdateConfirm {
-            get {
-                return ResourceManager.GetString("ClassSetUpdateConfirm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Not enough points or mastery slots for the whole class set "{0}": it is applied in part, the points not spent are left to spend..
         /// </summary>
         public static string ClassSetPartlyApplied {
@@ -8078,11 +8033,92 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update writes the build shown into another class set than the selected one: add one first.
+        ///   Looks up a localized string similar to Save the build shown as a new class set.
         /// </summary>
-        public static string ClassSetUpdateNone {
+        public static string ClassSetAdd {
             get {
-                return ResourceManager.GetString("ClassSetUpdateNone", resourceCulture);
+                return ResourceManager.GetString("ClassSetAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string ClassSetSave {
+            get {
+                return ResourceManager.GetString("ClassSetSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save as....
+        /// </summary>
+        public static string ClassSetSaveAs {
+            get {
+                return ResourceManager.GetString("ClassSetSaveAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put the masteries, skill points and attribute points shown now into the class set "{0}"?.
+        /// </summary>
+        public static string ClassSetSaveConfirm {
+            get {
+                return ResourceManager.GetString("ClassSetSaveConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No class set selected: pick one, or use Save as.
+        /// </summary>
+        public static string ClassSetSaveNone {
+            get {
+                return ResourceManager.GetString("ClassSetSaveNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed in the game since this class set was saved.
+        /// </summary>
+        public static string ClassSetChangedInGame {
+            get {
+                return ResourceManager.GetString("ClassSetChangedInGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed in the editor since this class set was applied.
+        /// </summary>
+        public static string ClassSetChangedInEditor {
+            get {
+                return ResourceManager.GetString("ClassSetChangedInEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} skill points.
+        /// </summary>
+        public static string ClassSetSkillPointsDelta {
+            get {
+                return ResourceManager.GetString("ClassSetSkillPointsDelta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} attribute points.
+        /// </summary>
+        public static string ClassSetAttributePointsDelta {
+            get {
+                return ResourceManager.GetString("ClassSetAttributePointsDelta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save to keep it in the class set, pick the class set to go back to it..
+        /// </summary>
+        public static string ClassSetStatusHint {
+            get {
+                return ResourceManager.GetString("ClassSetStatusHint", resourceCulture);
             }
         }
     }

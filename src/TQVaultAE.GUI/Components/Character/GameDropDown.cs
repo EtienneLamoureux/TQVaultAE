@@ -191,7 +191,8 @@ internal sealed class GameDropDown : Control
 	/// the small arrow at its right end, pointing down, and <paramref name="text"/> before it. The loadout bar draws its
 	/// box with it too.
 	/// </summary>
-	internal static void DrawField(Graphics g, IUIService uiService, Bitmap box, Rectangle bounds, float scale, string text, Font font, Color color, ArrowState state)
+	/// <param name="textInset">Room left free before the arrow, for a mark the owner draws there.</param>
+	internal static void DrawField(Graphics g, IUIService uiService, Bitmap box, Rectangle bounds, float scale, string text, Font font, Color color, ArrowState state, int textInset = 0)
 	{
 		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
@@ -203,7 +204,7 @@ internal sealed class GameDropDown : Control
 		// The picture's triangle points up: drawn upside down, it points to the list it opens.
 		GamePicture.Draw(g, uiService.LoadBitmap(picture.ToRecordId()), arrow, greyed: false, flip: true);
 
-		var textBounds = Rectangle.FromLTRB(bounds.Left + Convert.ToInt32(6 * scale), bounds.Top, arrow.Left - Convert.ToInt32(2 * scale), bounds.Bottom);
+		var textBounds = Rectangle.FromLTRB(bounds.Left + Convert.ToInt32(6 * scale), bounds.Top, arrow.Left - Convert.ToInt32(2 * scale) - (textInset > 0 ? textInset + Convert.ToInt32(2 * scale) : 0), bounds.Bottom);
 		TextRenderer.DrawText(g, text, font, textBounds, color
 			, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
 	}

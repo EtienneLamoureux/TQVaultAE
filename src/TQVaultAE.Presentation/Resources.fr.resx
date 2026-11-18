@@ -2709,23 +2709,11 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="ClassSetPlaceholder" xml:space="preserve">
     <value>Profil de classe</value>
   </data>
-  <data name="ClassSetAdd" xml:space="preserve">
-    <value>Ajouter un profil de classe vide</value>
-  </data>
-  <data name="ClassSetAddMenu" xml:space="preserve">
-    <value>Ajouter...</value>
-  </data>
   <data name="ClassSetRename" xml:space="preserve">
     <value>Renommer...</value>
   </data>
   <data name="ClassSetDelete" xml:space="preserve">
     <value>Supprimer</value>
-  </data>
-  <data name="ClassSetUpdate" xml:space="preserve">
-    <value>Mettre à jour avec le profil affiché</value>
-  </data>
-  <data name="ClassSetUpdateTip" xml:space="preserve">
-    <value>Écrit les maîtrises, les points de compétence et les points d'attributs affichés dans le profil de classe choisi</value>
   </data>
   <data name="ClassSetReadOnly" xml:space="preserve">
     <value>Personnage en lecture seule : ses profils de classe peuvent seulement être affichés et essayés</value>
@@ -2742,16 +2730,40 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="ClassSetDeleteConfirm" xml:space="preserve">
     <value>Supprimer le profil de classe « {0} » ?</value>
   </data>
-  <data name="ClassSetUpdateConfirm" xml:space="preserve">
-    <value>Mettre les maîtrises, les points de compétence et les points d'attributs affichés dans le profil de classe « {0} » ?</value>
-  </data>
   <data name="ClassSetPartlyApplied" xml:space="preserve">
     <value>Pas assez de points ou d'emplacements de maîtrise pour tout le profil de classe « {0} » : il est appliqué en partie, les points non dépensés restent à dépenser.</value>
   </data>
   <data name="ClassSetWriteFailed" xml:space="preserve">
     <value>Les profils de classe de {0} n'ont pas pu être enregistrés : {1}</value>
   </data>
-  <data name="ClassSetUpdateNone" xml:space="preserve">
-    <value>Mettre à jour écrit le profil affiché dans un autre profil de classe que celui choisi : ajoutez-en un d'abord</value>
+  <data name="ClassSetAdd" xml:space="preserve">
+    <value>Enregistrer le profil affiché comme nouveau profil de classe</value>
+  </data>
+  <data name="ClassSetSave" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="ClassSetSaveAs" xml:space="preserve">
+    <value>Enregistrer sous...</value>
+  </data>
+  <data name="ClassSetSaveConfirm" xml:space="preserve">
+    <value>Mettre les maîtrises, les points de compétence et les points d'attributs affichés dans le profil de classe « {0} » ?</value>
+  </data>
+  <data name="ClassSetSaveNone" xml:space="preserve">
+    <value>Aucun profil de classe choisi : choisissez-en un, ou utilisez Enregistrer sous</value>
+  </data>
+  <data name="ClassSetChangedInGame" xml:space="preserve">
+    <value>Modifié dans le jeu depuis l'enregistrement de ce profil de classe</value>
+  </data>
+  <data name="ClassSetChangedInEditor" xml:space="preserve">
+    <value>Modifié dans l'éditeur depuis l'application de ce profil de classe</value>
+  </data>
+  <data name="ClassSetSkillPointsDelta" xml:space="preserve">
+    <value>{0} : {1} points de compétence</value>
+  </data>
+  <data name="ClassSetAttributePointsDelta" xml:space="preserve">
+    <value>{0} : {1} points d'attributs</value>
+  </data>
+  <data name="ClassSetStatusHint" xml:space="preserve">
+    <value>Enregistrer pour le garder dans le profil de classe, choisir le profil de classe pour y revenir.</value>
   </data>
 </root>

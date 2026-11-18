@@ -87,15 +87,20 @@ box under the mastery pages, between **Reset Masteries** and **OK**, lists the c
 
 - Pick a set in the box: it is applied to the editor. **OK** applies it to the character (written at the next save),
   **Cancel** drops it.
-- The set shown is the one applied last; later clicks in the editor do not change it. At the opening, the box shows
-  the set holding the character's build, if any.
-- **[+]** adds an empty set, under a name you type (unique per character, case ignored).
-- Right click: **Update with the build shown** (writes the masteries and attributes shown into the set picked in its
-  submenu; never the set shown), **Rename**, **Delete** (the set shown), **Add**.
-- Points the set does not spend stay to spend: an empty set leaves every skill and attribute point in the unspent
-  points. Without enough points or mastery slots, the set is applied in part and a message says so.
-- The sets are written on **OK**, dropped by **Cancel**. File: `TQVaultAE.ClassSets.json` next to `Player.chr`; it
-  follows the character like the [loadouts file](LOADOUTS.md#good-to-know).
+- **[+]** or **Save as...**: a new set holding the build shown, under a name you type (unique per character, case
+  ignored).
+- Right click: **Save** (the build shown goes into the selected set, asks first), **Save as...**, **Rename**,
+  **Delete** (the selected set, asks first).
+- The selected set is the one applied or saved last. It is shown again at the next opening while the character keeps
+  the same two masteries (slot order and points aside); otherwise no set is selected.
+- A red mark in the box tells that the build shown differs from the selected set: points spent in the game since the
+  set was saved, or clicks in the editor. Its tool tip says which, and the points per mastery and attribute. **Save**
+  keeps the new build in the set; picking the set goes back to it.
+- Points a set does not spend stay to spend: a set without masteries leaves every skill and attribute point in the
+  unspent points. The available points are the save's (unspent plus spent), whatever the level or the quests gave.
+  Without enough points or mastery slots, the set is applied in part and a message says so.
+- The sets and the set selected are written on **OK**, dropped by **Cancel**. File: `TQVaultAE.ClassSets.json` next
+  to `Player.chr`; it follows the character like the [loadouts file](LOADOUTS.md#good-to-know).
 - A read-only character's sets can be picked to try them, not changed.
 
 ## Statistics

@@ -17,12 +17,6 @@ public sealed class ListBarEventArgs<TAction>(TAction action, string? name) : Ev
 	public string? Name { get; } = name;
 }
 
-/// <summary>A menu entry of a list bar acting on a given entry rather than the selected one.</summary>
-/// <param name="Action">The action.</param>
-/// <param name="Name">The entry it acts on.</param>
-internal sealed record ListBarTarget<TAction>(TAction Action, string Name)
-	where TAction : struct, Enum;
-
 /// <summary>The size of the list bars (<see cref="GameListBar{TAction}"/>).</summary>
 public static class GameListBar
 {
@@ -51,7 +45,7 @@ public abstract class GameListBar<TAction> : Control
 	private readonly Bitmap _box = Images.CharacterNumberBox;
 	private readonly ToolTip _toolTip = new();
 
-	private enum Part { None, Field, Add }
+	private enum Part { None, Field, Mark, Add }
 
 	private Part _hovered;
 	private Part _pressed;
@@ -100,6 +94,24 @@ public abstract class GameListBar<TAction> : Control
 
 	/// <summary>The font of the name, made by the owner at its scale (not disposed here).</summary>
 	public Font? TextFont { get; set; }
+
+	/// <summary>
+	/// The tool tip of the mark drawn in the box before the arrow (the difference mark of the loadout comparison), or
+	/// null for no mark: the selected entry no longer holds what is shown.
+	/// </summary>
+	internal string? MarkToolTip { get; private set; }
+
+	/// <summary>Shows the mark in the box with its tool tip, or hides it (null).</summary>
+	protected void SetMark(string? toolTip)
+	{
+		if (toolTip == this.MarkToolTip)
+			return;
+
+		this.MarkToolTip = toolTip;
+		if (this._hovered == Part.Mark)
+			this._toolTip.SetToolTip(this, toolTip);
+		this.Invalidate();
+	}
 
 	/// <summary>The owner's scale: sizes the pictures.</summary>
 	public float BarScale
@@ -181,6 +193,21 @@ public abstract class GameListBar<TAction> : Control
 	/// <summary>The drop-down box: the rest of the width.</summary>
 	internal Rectangle FieldBounds => new(0, 0, Math.Max(this.Height, this.AddBounds.Left - this.Gap), this.Height);
 
+	/// <summary>The mark in the box, just before the arrow, as large as the arrow; empty without a mark.</summary>
+	internal Rectangle MarkBounds
+	{
+		get
+		{
+			if (this.MarkToolTip is null)
+				return Rectangle.Empty;
+
+			var box = this.FieldBounds;
+			int size = Math.Max(1, box.Height - Convert.ToInt32(6 * this._scale));
+			int left = box.Right - size - Convert.ToInt32(3 * this._scale) - Convert.ToInt32(2 * this._scale) - size;
+			return new Rectangle(left, box.Top + ((box.Height - size) / 2), size, size);
+		}
+	}
+
 	/// <summary>Raises an action on the selected entry, as its menu entry does (nothing while it is greyed).</summary>
 	internal void Request(TAction action) => this.Raise(action, this.Selected);
 
@@ -188,13 +215,11 @@ public abstract class GameListBar<TAction> : Control
 	protected ToolStripMenuItem Entry(string text, TAction action)
 		=> new(text) { Tag = action, Enabled = this.CanAct(action), ToolTipText = this.LockedReason(action) };
 
-	/// <summary>An entry of a menu or submenu: the action it carries, on the selected entry or on its own target.</summary>
+	/// <summary>An entry of a menu or submenu: the action it carries, on the selected entry.</summary>
 	protected void ActionClicked(object? sender, ToolStripItemClickedEventArgs e)
 	{
 		if (e.ClickedItem?.Tag is TAction action)
 			this.Raise(action, EqualityComparer<TAction>.Default.Equals(action, this.AddAction) ? null : this.Selected);
-		else if (e.ClickedItem?.Tag is ListBarTarget<TAction> target)
-			this.Raise(target.Action, target.Name);
 	}
 
 	private void Raise(TAction action, string? name)
@@ -248,6 +273,7 @@ public abstract class GameListBar<TAction> : Control
 
 	private Part PartAt(Point point)
 		=> this.AddBounds.Contains(point) ? Part.Add
+		: this.MarkBounds.Contains(point) ? Part.Mark
 		: this.FieldBounds.Contains(point) ? Part.Field
 		: Part.None;
 
@@ -262,6 +288,7 @@ public abstract class GameListBar<TAction> : Control
 		this._toolTip.SetToolTip(this, part switch
 		{
 			Part.Add => this.AddToolTip,
+			Part.Mark => this.MarkToolTip,
 			_ => this.CanChange ? this.Selected : this.ReadOnlyText,
 		});
 		this.Invalidate();
@@ -281,7 +308,8 @@ public abstract class GameListBar<TAction> : Control
 		if (e.Button != MouseButtons.Left)
 			return;
 
-		this._pressed = this.PartAt(e.Location);
+		// The mark is part of the box: a click on it opens the list too.
+		this._pressed = this.PartAt(e.Location) is Part.Mark ? Part.Field : this.PartAt(e.Location);
 		this.Invalidate();
 		if (this._pressed == Part.Field)
 			this.ListMenu.Show(this, new Point(0, this.Height));
@@ -296,7 +324,7 @@ public abstract class GameListBar<TAction> : Control
 		var pressed = this._pressed;
 		this._pressed = Part.None;
 		this.Invalidate();
-		if (pressed != this.PartAt(e.Location))
+		if (pressed != (this.PartAt(e.Location) is Part.Mark ? Part.Field : this.PartAt(e.Location)))
 			return;
 
 		if (pressed == Part.Add)
@@ -307,10 +335,13 @@ public abstract class GameListBar<TAction> : Control
 	{
 		var g = e.Graphics;
 		var arrow = this._pressed == Part.Field ? GameDropDown.ArrowState.Pressed
-			: this._hovered == Part.Field && this.CanAct(this.SelectAction) ? GameDropDown.ArrowState.Over
+			: this._hovered is Part.Field or Part.Mark && this.CanAct(this.SelectAction) ? GameDropDown.ArrowState.Over
 			: GameDropDown.ArrowState.Up;
 		string text = this.Selected ?? (this.Names.Count == 0 ? this.NoneText : this.PlaceholderText);
-		GameDropDown.DrawField(g, this._uiService, this._box, this.FieldBounds, this._scale, text, this.TextFont ?? this.Font, this.Selected is null ? GameDropDown.Grey : Color.White, arrow);
+		var mark = this.MarkBounds;
+		GameDropDown.DrawField(g, this._uiService, this._box, this.FieldBounds, this._scale, text, this.TextFont ?? this.Font, this.Selected is null ? GameDropDown.Grey : Color.White, arrow, mark.Width);
+		if (!mark.IsEmpty)
+			GamePicture.Draw(g, this._uiService.LoadBitmap(Panels.EquipmentPanel.DifferentMark.ToRecordId()), mark, greyed: false);
 
 		this.DrawAddButton(g, this.CanAct(this.AddAction));
 	}

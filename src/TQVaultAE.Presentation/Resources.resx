@@ -2885,23 +2885,11 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="ClassSetPlaceholder" xml:space="preserve">
     <value>Class set</value>
   </data>
-  <data name="ClassSetAdd" xml:space="preserve">
-    <value>Add an empty class set</value>
-  </data>
-  <data name="ClassSetAddMenu" xml:space="preserve">
-    <value>Add...</value>
-  </data>
   <data name="ClassSetRename" xml:space="preserve">
     <value>Rename...</value>
   </data>
   <data name="ClassSetDelete" xml:space="preserve">
     <value>Delete</value>
-  </data>
-  <data name="ClassSetUpdate" xml:space="preserve">
-    <value>Update with the build shown</value>
-  </data>
-  <data name="ClassSetUpdateTip" xml:space="preserve">
-    <value>Writes the masteries, skill points and attribute points shown now into the class set picked</value>
   </data>
   <data name="ClassSetReadOnly" xml:space="preserve">
     <value>Read-only character: its class sets can only be shown and tried</value>
@@ -2918,16 +2906,40 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="ClassSetDeleteConfirm" xml:space="preserve">
     <value>Delete the class set "{0}"?</value>
   </data>
-  <data name="ClassSetUpdateConfirm" xml:space="preserve">
-    <value>Put the masteries, skill points and attribute points shown now into the class set "{0}"?</value>
-  </data>
   <data name="ClassSetPartlyApplied" xml:space="preserve">
     <value>Not enough points or mastery slots for the whole class set "{0}": it is applied in part, the points not spent are left to spend.</value>
   </data>
   <data name="ClassSetWriteFailed" xml:space="preserve">
     <value>The class sets of {0} could not be saved: {1}</value>
   </data>
-  <data name="ClassSetUpdateNone" xml:space="preserve">
-    <value>Update writes the build shown into another class set than the selected one: add one first</value>
+  <data name="ClassSetAdd" xml:space="preserve">
+    <value>Save the build shown as a new class set</value>
+  </data>
+  <data name="ClassSetSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ClassSetSaveAs" xml:space="preserve">
+    <value>Save as...</value>
+  </data>
+  <data name="ClassSetSaveConfirm" xml:space="preserve">
+    <value>Put the masteries, skill points and attribute points shown now into the class set "{0}"?</value>
+  </data>
+  <data name="ClassSetSaveNone" xml:space="preserve">
+    <value>No class set selected: pick one, or use Save as</value>
+  </data>
+  <data name="ClassSetChangedInGame" xml:space="preserve">
+    <value>Changed in the game since this class set was saved</value>
+  </data>
+  <data name="ClassSetChangedInEditor" xml:space="preserve">
+    <value>Changed in the editor since this class set was applied</value>
+  </data>
+  <data name="ClassSetSkillPointsDelta" xml:space="preserve">
+    <value>{0}: {1} skill points</value>
+  </data>
+  <data name="ClassSetAttributePointsDelta" xml:space="preserve">
+    <value>{0}: {1} attribute points</value>
+  </data>
+  <data name="ClassSetStatusHint" xml:space="preserve">
+    <value>Save to keep it in the class set, pick the class set to go back to it.</value>
   </data>
 </root>

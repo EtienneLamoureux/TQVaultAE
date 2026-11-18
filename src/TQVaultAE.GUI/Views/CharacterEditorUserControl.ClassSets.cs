@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Character;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
@@ -12,8 +13,9 @@ namespace TQVaultAE.GUI.Views;
 
 /// <summary>
 /// The class sets of the character editor (saved builds: masteries, skill points, attribute points), in the bar under
-/// the mastery pages: picking a set applies it to the editor; Add, Rename, Delete and Update change the sets in memory,
-/// written on OK with the character's edits and dropped by Cancel.
+/// the mastery pages: picking a set applies it to the editor; Save, Save as, Rename and Delete change the sets in memory,
+/// written on OK with the character's edits (and the set selected, shown at the next opening) and dropped by Cancel. A
+/// mark in the box tells when the build shown differs from the selected set.
 /// </summary>
 internal sealed partial class CharacterEditorUserControl
 {
@@ -31,15 +33,14 @@ internal sealed partial class CharacterEditorUserControl
 	internal ClassSetBook ClassSetBook => this._classSetBook;
 
 	/// <summary>
-	/// Reads the character's class sets and builds the bar; the set holding the character's build, if any, shows as
-	/// selected. Called once the masteries and the attributes are shown.
+	/// Reads the character's class sets and builds the bar; the set selected at the last OK shows as selected while the
+	/// character keeps its masteries. Called once the masteries and the attributes are shown.
 	/// </summary>
 	private void InitClassSets()
 	{
 		var folder = Path.GetDirectoryName(this.PlayerCollection.PlayerFile) ?? string.Empty;
 		this._classSetBook = this.Services.ClassSets.Read(folder);
-		this._classSets = new ClassSetDraft(this._classSetBook, canChange: !this.PlayerCollection.IsReadOnly);
-		this._classSets.SelectMatching(this.CaptureClassSet(string.Empty));
+		this._classSets = new ClassSetDraft(this._classSetBook, canChange: !this.PlayerCollection.IsReadOnly, this.CaptureClassSet(string.Empty));
 
 		this._classSetBar = new ClassSetBar(this.UIService, this.FontService) { Name = "ClassSetBar" };
 		this._classSetBar.ActionRequested += (_, e) => this.ClassSetAction(e.Action, e.Name);
@@ -47,8 +48,22 @@ internal sealed partial class CharacterEditorUserControl
 		this.ShowClassSets();
 	}
 
+	/// <summary>Shows the sets, the selected one and the mark: after each action and each change of the build shown.</summary>
 	private void ShowClassSets()
-		=> this._classSetBar.ShowClassSets(this._classSets.Names, this._classSets.Selected, this._classSets.CanChange);
+	{
+		if (this._classSets is null)
+			return;
+
+		var status = this._classSets.Status(this.CaptureClassSet(string.Empty));
+		this._classSetBar.ShowClassSets(this._classSets.Names, this._classSets.Selected, this._classSets.CanChange,
+			status is null ? null : ClassSetText.StatusToolTip(status, this.MasteryName));
+	}
+
+	/// <summary>The name of a mastery in the game's language.</summary>
+	private string MasteryName(Masteries mastery)
+		=> this._skills?.KnownMasteries.FirstOrDefault(t => t.Mastery == mastery) is { } tree
+			? this.TranslationService.TranslateOr(tree.NameTag, mastery.ToString())
+			: mastery.ToString();
 
 	/// <summary>The build shown in the editor now: masteries with their skill levels, attribute points.</summary>
 	internal ClassSet CaptureClassSet(string name)
@@ -63,9 +78,13 @@ internal sealed partial class CharacterEditorUserControl
 				if (this._classSets.Select(name) is { } set)
 					this.ApplyClassSet(set);
 				break;
-			case ClassSetBarAction.Add:
+			case ClassSetBarAction.SaveAs:
 				if (this.AskClassSetName(string.Empty) is { } added)
-					this._classSets.Add(added);
+					this._classSets.SaveAs(added, this.CaptureClassSet(added));
+				break;
+			case ClassSetBarAction.Save when name is not null:
+				if (this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.ClassSetSaveConfirm, name), Resources.ClassSetTitle, MessageBoxIcon.Question))
+					this._classSets.Save(this.CaptureClassSet(name));
 				break;
 			case ClassSetBarAction.Rename when name is not null:
 				if (this.AskClassSetName(name, name) is { } renamed)
@@ -74,10 +93,6 @@ internal sealed partial class CharacterEditorUserControl
 			case ClassSetBarAction.Delete when name is not null:
 				if (this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.ClassSetDeleteConfirm, name), Resources.ClassSetTitle, MessageBoxIcon.Question))
 					this._classSets.Delete(name);
-				break;
-			case ClassSetBarAction.Update when name is not null:
-				if (this.Services.MessageBoxes.Confirm(string.Format(CultureInfo.CurrentCulture, Resources.ClassSetUpdateConfirm, name), Resources.ClassSetTitle, MessageBoxIcon.Question))
-					this._classSets.Update(name, this.CaptureClassSet(name));
 				break;
 		}
 
@@ -134,7 +149,7 @@ internal sealed partial class CharacterEditorUserControl
 
 		try
 		{
-			this.Services.ClassSets.Write(this._classSetBook, this._classSets.Sets);
+			this.Services.ClassSets.Write(this._classSetBook, this._classSets.Sets, this._classSets.Selected);
 			return true;
 		}
 		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

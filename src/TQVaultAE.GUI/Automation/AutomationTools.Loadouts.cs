@@ -295,10 +295,9 @@ internal static partial class AutomationTools
 	/// <summary>
 	/// Does an action of a list bar (loadout, class set) like the user, after the calling tool has returned (it may open
 	/// the name dialog or a confirmation): Add by a click on its button, the others by their entry of the bar's
-	/// right-click menu, or of a submenu (<paramref name="target"/>: the entry of a submenu naming another set, as the
-	/// class set bar's Update). <paramref name="typed"/> is queued first as the name dialog's answer.
+	/// right-click menu or of a submenu. <paramref name="typed"/> is queued first as the name dialog's answer.
 	/// </summary>
-	internal static void ListBarAct<TAction>(Forms.MainForm form, GameListBar<TAction> bar, TAction action, string? typed, string? target = null)
+	internal static void ListBarAct<TAction>(Forms.MainForm form, GameListBar<TAction> bar, TAction action, string? typed)
 		where TAction : struct, Enum
 	{
 		if (!bar.CanAct(action))
@@ -318,15 +317,13 @@ internal static partial class AutomationTools
 
 		AutomationInput.SendContextClick(bar, new Point(bar.FieldBounds.Width / 2, bar.Height / 2));
 		// An entry of the menu, or of a submenu (its parent first in the path).
-		bool Carries(ToolStripItem item) => target is null
-			? item.Tag is TAction tagged && EqualityComparer<TAction>.Default.Equals(tagged, action)
-			: item.Tag is ListBarTarget<TAction> aimed && EqualityComparer<TAction>.Default.Equals(aimed.Action, action) && string.Equals(aimed.Name, target, StringComparison.OrdinalIgnoreCase);
+		bool Carries(ToolStripItem item) => item.Tag is TAction tagged && EqualityComparer<TAction>.Default.Equals(tagged, action);
 		var top = bar.ActionMenu.Items.OfType<ToolStripMenuItem>().ToList();
 		IReadOnlyList<ToolStripItem> chain = top.FirstOrDefault(Carries) is { } entry
 			? [entry]
 			: top.Select(parent => (parent, sub: parent.DropDownItems.OfType<ToolStripItem>().FirstOrDefault(Carries)))
 				.Where(p => p.sub is not null).Select(p => (IReadOnlyList<ToolStripItem>)[p.parent, p.sub!]).FirstOrDefault()
-				?? throw new McpException($"No menu entry for {action}{(target is null ? string.Empty : $" '{target}'")}.");
+				?? throw new McpException($"No menu entry for {action}.");
 		AutomationMenus.ClickLater(form, AutomationMenus.Clickable(chain));
 	}
 

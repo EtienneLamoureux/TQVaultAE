@@ -681,15 +681,16 @@ General rules:
 - **`character_weapon_set(panel?, set?)`** *(Debug)*: reads the weapon set gems of tab I (`editor`, `main`,
   `window:<name>`): set counted, each gem's bounds and tool tip, armor, offense and attribute rows. `set=1|2` first clicks
   that gem through the panel's hit test. Memory only, never saved: allowed on any character.
-- **`class_sets(action?, name?, newName?, target?, menu?)`** *(Debug)*: the class set bar of the open character editor
-  ([class sets](CHAREDIT.md#class-sets)): bar bounds and parts, names, selected, `canChange`, `updateTargets`; the file
-  (`fileExists`, `readFailed`); the sets as edited (`changed`: written on OK), each with its masteries, skills,
-  attribute points and `matches` (holds the build shown); the build shown (`current`), `skillPointsLeft`,
+- **`class_sets(action?, name?, newName?, menu?)`** *(Debug)*: the class set bar of the open character editor
+  ([class sets](CHAREDIT.md#class-sets)): bar bounds and parts (field, mark, [+]), names, selected, `canChange`,
+  `markToolTip` (why the build shown differs from the selected set, null when it holds it); the file (`fileExists`,
+  `readFailed`, `lastApplied`); the sets as edited (`changed`: something for OK to write), each with its masteries,
+  skills, attribute points and `matches` (holds the build shown); the build shown (`current`), `skillPointsLeft`,
   `attributePointsLeft`. `menu=list|actions` reads a menu.
-  - Actions through the bar like the user: `select` (name) applies the set; `add` (name) clicks [+] and types the name;
-    `rename` (newName) and `delete` act on the selected set (`name` picks it first, which applies it); `update` (target)
-    clicks the Update submenu entry of that set. All but `select` run after the call returns (queue the answers:
-    delete and update confirm). OK (`close_dialog`) writes the file. Test characters only.
+  - Actions through the bar like the user: `select` (name) applies the set; `saveAs` (name) clicks [+] and types the
+    name; `save`, `rename` (newName) and `delete` act on the selected set (`name` picks it first, which applies it).
+    All but `select` run after the call returns (queue the answers: save and delete confirm). OK (`close_dialog`)
+    writes the file. Test characters only.
 - **Floating character windows** *(Debug)*: the window **Pop out** opens (`click_control("TQVaultAE","floatButton")`).
   - `character_window_open(character, x?, y?)`: opens the window of a listed character (key, name or drop-down label),
     or brings it to the front; `x`/`y` place it as a window reopened at start. Writes nothing.

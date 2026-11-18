@@ -5,21 +5,39 @@ using TQVaultAE.Domain.Entities;
 namespace TQVaultAE.Application.Character;
 
 /// <summary>
-/// The class sets of the character edited in the character editor, changed in memory: added, renamed, deleted or
-/// updated sets are written on OK (<see cref="Contracts.Services.IClassSetService.Write"/>) and dropped by Cancel. The
-/// selected set is the one applied last: later edits in the editor do not change it.
+/// The class sets of the character edited in the character editor, changed in memory: sets saved, renamed or deleted
+/// and the set selected are written on OK (<see cref="Contracts.Services.IClassSetService.Write"/>) and dropped by
+/// Cancel. The selected set is the one applied or saved last; edits in the editor do not change it, they only make the
+/// build shown differ from it (<see cref="Status"/>).
 /// </summary>
 public sealed class ClassSetDraft
 {
+	private readonly ClassSet _opening;
+	private readonly string? _openingSelected;
 	private readonly List<ClassSet> _sets;
+	private bool _setsChanged;
+
+	/// <summary>True while the selected set is the one remembered and the save read at the opening already differed from it.</summary>
+	private bool _changedInGame;
 
 	/// <summary>Initializes a new instance of the <see cref="ClassSetDraft"/> class.</summary>
 	/// <param name="book">The character's class sets, as read.</param>
 	/// <param name="canChange">False for a read-only character: the sets are listed and applied, never changed.</param>
-	public ClassSetDraft(ClassSetBook book, bool canChange)
+	/// <param name="opening">The character's build when the editor opens.</param>
+	public ClassSetDraft(ClassSetBook book, bool canChange, ClassSet opening)
 	{
+		this._opening = opening;
 		this._sets = [.. book.Sets];
 		this.CanChange = canChange && !book.ReadFailed;
+
+		// The set remembered stays selected while the character keeps its masteries; its points may have changed since.
+		if (this.Find(book.LastApplied) is { } last && last.SameMasteries(opening))
+		{
+			this.Selected = last.Name;
+			this._changedInGame = !last.SameBuild(opening);
+		}
+
+		this._openingSelected = this.Selected;
 	}
 
 	/// <summary>The class sets, in the order of the file.</summary>
@@ -31,11 +49,11 @@ public sealed class ClassSetDraft
 	/// <summary>False for a read-only character or a file that could not be read.</summary>
 	public bool CanChange { get; }
 
-	/// <summary>True once a set was added, renamed, deleted or updated: the file is written on OK.</summary>
-	public bool Changed { get; private set; }
-
-	/// <summary>The set applied last, or null.</summary>
+	/// <summary>The set applied or saved last, or null.</summary>
 	public string? Selected { get; private set; }
+
+	/// <summary>True when OK has something to write: a set saved, renamed or deleted, or another set selected than at the opening.</summary>
+	public bool Changed => this._setsChanged || !string.Equals(this.Selected, this._openingSelected, StringComparison.OrdinalIgnoreCase);
 
 	/// <summary>The set of that name (case ignored), or null.</summary>
 	public ClassSet? Find(string? name)
@@ -47,27 +65,43 @@ public sealed class ClassSetDraft
 	{
 		var set = this.Find(name);
 		if (set is not null)
+		{
 			this.Selected = set.Name;
+			this._changedInGame = false;
+		}
 
 		return set;
 	}
 
-	/// <summary>Selects the first set holding the same build as the character, or none: what the editor shows at its opening.</summary>
-	/// <param name="current">The character's build, captured.</param>
-	public void SelectMatching(ClassSet current)
-		=> this.Selected = this._sets.FirstOrDefault(s => s.SameBuild(current))?.Name;
-
-	/// <summary>Adds an empty set (no mastery, no attribute point); the selection stays.</summary>
-	public SetNameError Add(string name)
+	/// <summary>Save as: a new set holding the build shown, which becomes the selected set.</summary>
+	/// <param name="name">Its name.</param>
+	/// <param name="build">The build shown; its name is not used.</param>
+	public SetNameError SaveAs(string name, ClassSet build)
 	{
 		if (!this.CanChange)
 			return SetNameError.None;
 		if (SetNames.Validate(this.Names, name) is var error and not SetNameError.None)
 			return error;
 
-		this._sets.Add(ClassSet.Empty(name.Trim()));
-		this.Changed = true;
+		this._sets.Add(build with { Name = name.Trim() });
+		this.Selected = name.Trim();
+		this._changedInGame = false;
+		this._setsChanged = true;
 		return SetNameError.None;
+	}
+
+	/// <summary>Save: the selected set takes the build shown; it keeps its name and place.</summary>
+	/// <param name="build">The build shown; its name is not used.</param>
+	/// <returns>False with no set selected, or when the sets cannot change.</returns>
+	public bool Save(ClassSet build)
+	{
+		if (!this.CanChange || this.Find(this.Selected) is not { } set)
+			return false;
+
+		this._sets[this._sets.IndexOf(set)] = build with { Name = set.Name };
+		this._changedInGame = false;
+		this._setsChanged = true;
+		return true;
 	}
 
 	/// <summary>Renames a set; the selection follows it.</summary>
@@ -81,7 +115,7 @@ public sealed class ClassSetDraft
 		this._sets[this._sets.IndexOf(set)] = set with { Name = newName.Trim() };
 		if (this.Selected == set.Name)
 			this.Selected = newName.Trim();
-		this.Changed = true;
+		this._setsChanged = true;
 		return SetNameError.None;
 	}
 
@@ -94,24 +128,25 @@ public sealed class ClassSetDraft
 
 		this._sets.Remove(set);
 		if (this.Selected == set.Name)
+		{
 			this.Selected = null;
-		this.Changed = true;
+			this._changedInGame = false;
+		}
+
+		this._setsChanged = true;
 		return true;
 	}
 
-	/// <summary>
-	/// Writes a build (the character's now) into another set than the selected one, which keeps its name and place.
-	/// </summary>
-	/// <param name="target">The set written.</param>
-	/// <param name="build">The build; its name is not used.</param>
-	/// <returns>False when the target is the selected set, missing, or the sets cannot change.</returns>
-	public bool Update(string target, ClassSet build)
-	{
-		if (!this.CanChange || this.Find(target) is not { } set || set.Name == this.Selected)
-			return false;
-
-		this._sets[this._sets.IndexOf(set)] = build with { Name = set.Name };
-		this.Changed = true;
-		return true;
-	}
+	/// <summary>How the build shown differs from the selected set, or null when it holds it (or none is selected).</summary>
+	/// <param name="current">The build shown.</param>
+	public ClassSetStatus? Status(ClassSet current)
+		=> this.Find(this.Selected) is { } set && !set.SameBuild(current)
+			// From the game while the build shown is still the save's; any edit since makes it the editor's.
+			? new ClassSetStatus(this._changedInGame && current.SameBuild(this._opening), current.DifferenceFrom(set))
+			: null;
 }
+
+/// <summary>The build shown differs from the selected class set.</summary>
+/// <param name="ChangedInGame">True when the save already differed at the opening (points spent in the game since the set was saved); false for edits in the editor.</param>
+/// <param name="Difference">What the build shown has more or less than the set.</param>
+public sealed record ClassSetStatus(bool ChangedInGame, ClassSetDifference Difference);

@@ -31,10 +31,11 @@ public sealed class ClassSetServiceTests : IDisposable
 	{
 		var book = this._service.Read(this._save);
 
-		this._service.Write(book, [Build, ClassSet.Empty("Empty")]);
+		this._service.Write(book, [Build, ClassSet.Empty("Empty")], "Storm");
 		var read = this._service.Read(this._save);
 
 		read.ReadFailed.Should().BeFalse();
+		read.LastApplied.Should().Be("Storm");
 		read.Sets.Select(s => s.Name).Should().Equal("Storm", "Empty");
 		read.Sets[0].SameBuild(Build).Should().BeTrue();
 		read.Sets[1].Masteries.Should().BeEmpty();
@@ -44,9 +45,9 @@ public sealed class ClassSetServiceTests : IDisposable
 	public void Write_NoSetLeft_DeletesTheFile()
 	{
 		var book = this._service.Read(this._save);
-		this._service.Write(book, [Build]);
+		this._service.Write(book, [Build], null);
 
-		this._service.Write(book, []);
+		this._service.Write(book, [], null);
 
 		File.Exists(this.SetsFile).Should().BeFalse();
 	}
@@ -57,7 +58,7 @@ public sealed class ClassSetServiceTests : IDisposable
 		File.WriteAllText(this.SetsFile, "{ not json");
 
 		var book = this._service.Read(this._save);
-		this._service.Write(book, [Build]);
+		this._service.Write(book, [Build], null);
 
 		book.ReadFailed.Should().BeTrue();
 		File.ReadAllText(this.SetsFile).Should().Be("{ not json");

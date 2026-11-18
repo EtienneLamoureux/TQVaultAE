@@ -19,7 +19,8 @@ public interface IClassSetService
 	/// <summary>Writes the class sets of a character (the file is deleted when none is left) and keeps them in the book.</summary>
 	/// <param name="book">The character's class sets, as read.</param>
 	/// <param name="sets">The class sets to write.</param>
+	/// <param name="lastApplied">The set applied or saved last, shown at the next opening; null for none.</param>
 	/// <exception cref="IOException">The file could not be written.</exception>
 	/// <exception cref="UnauthorizedAccessException">The file or its folder is read-only or protected.</exception>
-	void Write(ClassSetBook book, IReadOnlyList<ClassSet> sets);
+	void Write(ClassSetBook book, IReadOnlyList<ClassSet> sets, string? lastApplied);
 }

@@ -507,6 +507,9 @@ internal sealed partial class CharacterEditorUserControl
 
 		// The masteries the side panel sums up change with the points spent.
 		this._side.Invalidate();
+
+		// The class set mark follows the build shown.
+		this.ShowClassSets();
 	}
 
 	/// <summary>What the side panel shows: the leveling rows, the masteries and the statistics options.</summary>

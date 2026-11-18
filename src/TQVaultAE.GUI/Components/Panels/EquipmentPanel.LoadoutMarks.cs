@@ -14,9 +14,9 @@ namespace TQVaultAE.GUI.Components.Panels;
 public partial class EquipmentPanel
 {
 	/// <summary>The game's difficulty buttons used as marks: normal (blue), legendary (red), and the unpressed one (grey).</summary>
-	private const string SameMark = @"MENU\DIFFICULTYNORMALDOWN01.TEX";
-	private const string DifferentMark = @"MENU\DIFFICULTYLEGENDARYDOWN01.TEX";
-	private const string OneEmptyMark = @"MENU\DIFFICULTYNORMALUP01.TEX";
+	internal const string SameMark = @"MENU\DIFFICULTYNORMALDOWN01.TEX";
+	internal const string DifferentMark = @"MENU\DIFFICULTYLEGENDARYDOWN01.TEX";
+	internal const string OneEmptyMark = @"MENU\DIFFICULTYNORMALUP01.TEX";
 
 	// The marks' colours, for the first line of their tool tip.
 	private static readonly Color SameColor = Color.FromArgb(120, 175, 255);

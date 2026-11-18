@@ -34,6 +34,7 @@ public class ClassSetService(ILogger<ClassSetService> log, IFileIO fileIO, IPath
 			var dto = JsonSerializer.Deserialize<ClassSetFileDto>(this.FileIO.ReadAllText(book.FilePath), JsonOptions)
 				?? throw new JsonException("Empty class sets file");
 			book.Sets = [.. dto.classSets.Select(FromDto)];
+			book.LastApplied = dto.lastApplied;
 		}
 		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
 		{
@@ -45,7 +46,7 @@ public class ClassSetService(ILogger<ClassSetService> log, IFileIO fileIO, IPath
 	}
 
 	/// <inheritdoc/>
-	public void Write(ClassSetBook book, IReadOnlyList<ClassSet> sets)
+	public void Write(ClassSetBook book, IReadOnlyList<ClassSet> sets, string? lastApplied)
 	{
 		if (book.ReadFailed)
 			return;
@@ -57,11 +58,12 @@ public class ClassSetService(ILogger<ClassSetService> log, IFileIO fileIO, IPath
 		}
 		else
 		{
-			var dto = new ClassSetFileDto { version = FileVersion, classSets = [.. sets.Select(ToDto)] };
+			var dto = new ClassSetFileDto { version = FileVersion, lastApplied = lastApplied, classSets = [.. sets.Select(ToDto)] };
 			this.FileIO.WriteAllText(book.FilePath, JsonSerializer.Serialize(dto, JsonOptions));
 		}
 
 		book.Sets = [.. sets];
+		book.LastApplied = sets.Count == 0 ? null : lastApplied;
 	}
 
 	private static ClassSetDto ToDto(ClassSet set) => new()
@@ -103,6 +105,9 @@ public class ClassSetService(ILogger<ClassSetService> log, IFileIO fileIO, IPath
 internal sealed class ClassSetFileDto
 {
 	public int version { get; set; } = ClassSetService.FileVersion;
+
+	/// <summary>The set applied or saved last, shown selected at the next opening.</summary>
+	public string? lastApplied { get; set; }
 
 	public List<ClassSetDto> classSets { get; set; } = [];
 }
