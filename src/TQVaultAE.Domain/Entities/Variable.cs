@@ -76,7 +76,11 @@ public class Variable
 	public object this[int index]
 	{
 		get => this.values[index];
-		set => this.values[index] = value;
+		set
+		{
+			this.values[index] = value;
+			this._toString = null;
+		}
 	}
 
 	/// <summary>
