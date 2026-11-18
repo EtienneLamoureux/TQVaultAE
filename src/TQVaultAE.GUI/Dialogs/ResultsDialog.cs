@@ -489,6 +489,13 @@ public partial class ResultsDialog : VaultForm
 		MenuStyle.Apply(this.moveMenu, this.FontService, this.UIService.FontZoom);
 		this.moveMenu.FillOnOpening(() => this.FillMenu(this.moveMenu, full: false));
 
+		// Made in code, outside the designer's components: disposed with the dialog, their entries with them.
+		this.Disposed += (_, _) =>
+		{
+			this.resultsMenu.Dispose();
+			this.moveMenu.Dispose();
+		};
+
 		this.resultsDataGridView.SelectionChanged += (_, _) => this.UpdateMoveButtons();
 		this.UpdateMoveButtons();
 	}

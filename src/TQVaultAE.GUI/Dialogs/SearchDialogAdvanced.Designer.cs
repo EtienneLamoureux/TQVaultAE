@@ -182,8 +182,8 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuBaseAttribute = new ScalingButton();
 		scalingButtonMenuSuffixName = new ScalingButton();
 		scalingButtonMenuSuffixAttribute = new ScalingButton();
-		typeAssistantSearchBox = new TypeAssistant();
-		typeAssistantFilterCategories = new TypeAssistant();
+		typeAssistantSearchBox = new TypeAssistant(components);
+		typeAssistantFilterCategories = new TypeAssistant(components);
 		tableLayoutPanelBottom.SuspendLayout();
 		flowLayoutPanelCharacters.SuspendLayout();
 		flowLayoutPanelItemType.SuspendLayout();

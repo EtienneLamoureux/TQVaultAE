@@ -55,7 +55,7 @@ public partial class MainFormUserControl
         this.bufferedFlowLayoutPanelsecondaryVaultList = new TQVaultAE.GUI.Components.Layout.BufferedFlowLayoutPanel();
         this.pictureBoxSecondVault = new System.Windows.Forms.PictureBox();
         this.secondaryVaultListComboBox = new TQVaultAE.GUI.Components.Scaling.ScalingComboBox();
-        this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant();
+        this.typeAssistant = new TQVaultAE.GUI.Components.TypeAssistant(this.components);
         this.highlightFilters = new TQVaultAE.GUI.Components.HighlightFilters();
         this.itemTextPanel.SuspendLayout();
         this.flowLayoutPanelVaultSelector.SuspendLayout();
