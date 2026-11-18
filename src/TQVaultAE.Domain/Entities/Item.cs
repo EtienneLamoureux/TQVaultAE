@@ -26,11 +26,6 @@ public class Item
 	public const int var2Default = 2035248;
 
 	/// <summary>
-	/// Random number used as a seed for new items
-	/// </summary>
-	private static Random random = new Random();
-
-	/// <summary>
 	/// Binary marker for the beginning of a block
 	/// </summary>
 	public int beginBlockCrap1;
@@ -1050,7 +1045,7 @@ public class Item
 	/// </summary>
 	/// <returns>New seed from 1 to <see cref="MaxSeed"/></returns>
 	public static int GenerateSeed()
-		=> random.Next(1, MaxSeed + 1);
+		=> Random.Shared.Next(1, MaxSeed + 1);
 
 	#endregion Item Public Static Methods
 
