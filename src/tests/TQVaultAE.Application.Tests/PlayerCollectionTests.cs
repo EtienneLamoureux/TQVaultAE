@@ -155,18 +155,32 @@ public class PlayerCollectionTests
 		result.Should().BeFalse();
 	}
 
-	[Fact]
-	public void MoveSack_WithOutOfRangeIndex_ReturnsFalse()
+	[Theory]
+	[InlineData(0, 10)]
+	[InlineData(0, 3)]
+	[InlineData(3, 0)]
+	public void MoveSack_WithOutOfRangeIndex_ReturnsFalse(int source, int destination)
 	{
 		// Arrange
 		var playerCollection = new PlayerCollection("TestPlayer", "test_player.chr");
 		playerCollection.CreateEmptySacks(3);
 
 		// Act
-		var result = playerCollection.MoveSack(0, 10);
+		var result = playerCollection.MoveSack(source, destination);
 
 		// Assert
 		result.Should().BeFalse();
+	}
+
+	[Theory]
+	[InlineData(0, 3)]
+	[InlineData(3, 0)]
+	public void CopySack_WithOutOfRangeIndex_ReturnsFalse(int source, int destination)
+	{
+		var playerCollection = new PlayerCollection("TestPlayer", "test_player.chr");
+		playerCollection.CreateEmptySacks(3);
+
+		playerCollection.CopySack(source, destination).Should().BeFalse();
 	}
 
 	[Fact]
