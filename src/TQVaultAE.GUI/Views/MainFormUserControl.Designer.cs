@@ -82,7 +82,6 @@ public partial class MainFormUserControl
         // 
         this.NotificationText.BackColor = System.Drawing.Color.Transparent;
         this.NotificationText.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.NotificationText.Font = new System.Drawing.Font("Arial Black", 8.25F);
         this.NotificationText.Location = new System.Drawing.Point(2, 2);
         this.NotificationText.Name = "NotificationText";
         this.NotificationText.Size = new System.Drawing.Size(588, 18);
@@ -93,7 +92,6 @@ public partial class MainFormUserControl
         // 
         this.vaultListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
         this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.vaultListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
         this.vaultListComboBox.Location = new System.Drawing.Point(51, 3);
         this.vaultListComboBox.Name = "vaultListComboBox";
         this.vaultListComboBox.Size = new System.Drawing.Size(481, 28);
@@ -170,7 +168,6 @@ public partial class MainFormUserControl
         // 
         this.scalingLabelHighlight.AutoSize = true;
         this.scalingLabelHighlight.BackColor = System.Drawing.Color.Transparent;
-        this.scalingLabelHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingLabelHighlight.LinkColor = System.Drawing.Color.Gold;
         this.scalingLabelHighlight.Location = new System.Drawing.Point(3, 0);
         this.scalingLabelHighlight.Name = "scalingLabelHighlight";
@@ -183,7 +180,6 @@ public partial class MainFormUserControl
         // 
         // scalingTextBoxHighlight
         // 
-        this.scalingTextBoxHighlight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
         this.scalingTextBoxHighlight.Location = new System.Drawing.Point(149, 0);
         this.scalingTextBoxHighlight.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
         this.scalingTextBoxHighlight.Name = "scalingTextBoxHighlight";
@@ -257,7 +253,6 @@ public partial class MainFormUserControl
         // 
         this.secondaryVaultListComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
         this.secondaryVaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.secondaryVaultListComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
         this.secondaryVaultListComboBox.Location = new System.Drawing.Point(51, 3);
         this.secondaryVaultListComboBox.MaxDropDownItems = 10;
         this.secondaryVaultListComboBox.Name = "secondaryVaultListComboBox";

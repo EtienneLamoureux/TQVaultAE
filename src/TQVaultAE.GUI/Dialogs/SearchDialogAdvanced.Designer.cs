@@ -229,7 +229,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelCharacters
 		// 
 		scalingLabelCharacters.AutoSize = true;
-		scalingLabelCharacters.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelCharacters.ForeColor = Color.Gold;
 		scalingLabelCharacters.Location = new Point(4, 2);
 		scalingLabelCharacters.Name = "scalingLabelCharacters";
@@ -248,7 +247,6 @@ public partial class SearchDialogAdvanced
 		applyButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		applyButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		applyButton.FlatStyle = FlatStyle.Flat;
-		applyButton.Font = new Font("Microsoft Sans Serif", 12F);
 		applyButton.ForeColor = Color.FromArgb(51, 44, 28);
 		applyButton.Image = (Image)resources.GetObject("applyButton.Image");
 		applyButton.Location = new Point(34, 40);
@@ -273,7 +271,6 @@ public partial class SearchDialogAdvanced
 		cancelButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		cancelButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		cancelButton.FlatStyle = FlatStyle.Flat;
-		cancelButton.Font = new Font("Microsoft Sans Serif", 12F);
 		cancelButton.ForeColor = Color.FromArgb(51, 44, 28);
 		cancelButton.Image = (Image)resources.GetObject("cancelButton.Image");
 		cancelButton.Location = new Point(1206, 40);
@@ -305,7 +302,6 @@ public partial class SearchDialogAdvanced
 		scalingLabelProgress.Anchor = AnchorStyles.None;
 		scalingLabelProgress.AutoSize = true;
 		scalingLabelProgress.BackColor = Color.Transparent;
-		scalingLabelProgress.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelProgress.ForeColor = Color.DarkOrange;
 		scalingLabelProgress.Location = new Point(422, 1);
 		scalingLabelProgress.Name = "scalingLabelProgress";
@@ -342,7 +338,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxCharacters.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxCharacters.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxCharacters.CheckOnClick = true;
-		scalingCheckedListBoxCharacters.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxCharacters.ForeColor = Color.White;
 		scalingCheckedListBoxCharacters.FormattingEnabled = true;
 		scalingCheckedListBoxCharacters.HorizontalScrollbar = true;
@@ -390,7 +385,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelItemType
 		// 
 		scalingLabelItemType.AutoSize = true;
-		scalingLabelItemType.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelItemType.ForeColor = Color.Gold;
 		scalingLabelItemType.Location = new Point(4, 2);
 		scalingLabelItemType.Name = "scalingLabelItemType";
@@ -405,7 +399,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxItemType.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxItemType.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxItemType.CheckOnClick = true;
-		scalingCheckedListBoxItemType.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxItemType.ForeColor = Color.White;
 		scalingCheckedListBoxItemType.FormattingEnabled = true;
 		scalingCheckedListBoxItemType.HorizontalScrollbar = true;
@@ -438,7 +431,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelItemAttributes
 		// 
 		scalingLabelItemAttributes.AutoSize = true;
-		scalingLabelItemAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelItemAttributes.ForeColor = Color.Gold;
 		scalingLabelItemAttributes.Location = new Point(4, 2);
 		scalingLabelItemAttributes.Name = "scalingLabelItemAttributes";
@@ -453,7 +445,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxItemAttributes.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxItemAttributes.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxItemAttributes.CheckOnClick = true;
-		scalingCheckedListBoxItemAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxItemAttributes.ForeColor = Color.White;
 		scalingCheckedListBoxItemAttributes.FormattingEnabled = true;
 		scalingCheckedListBoxItemAttributes.HorizontalScrollbar = true;
@@ -486,7 +477,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelRarity
 		// 
 		scalingLabelRarity.AutoSize = true;
-		scalingLabelRarity.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelRarity.ForeColor = Color.Gold;
 		scalingLabelRarity.Location = new Point(4, 2);
 		scalingLabelRarity.Name = "scalingLabelRarity";
@@ -501,7 +491,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxRarity.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxRarity.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxRarity.CheckOnClick = true;
-		scalingCheckedListBoxRarity.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxRarity.ForeColor = Color.White;
 		scalingCheckedListBoxRarity.FormattingEnabled = true;
 		scalingCheckedListBoxRarity.HorizontalScrollbar = true;
@@ -534,7 +523,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelPrefixAttributes
 		// 
 		scalingLabelPrefixAttributes.AutoSize = true;
-		scalingLabelPrefixAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelPrefixAttributes.ForeColor = Color.Gold;
 		scalingLabelPrefixAttributes.Location = new Point(4, 2);
 		scalingLabelPrefixAttributes.Name = "scalingLabelPrefixAttributes";
@@ -549,7 +537,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxPrefixAttributes.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxPrefixAttributes.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxPrefixAttributes.CheckOnClick = true;
-		scalingCheckedListBoxPrefixAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxPrefixAttributes.ForeColor = Color.White;
 		scalingCheckedListBoxPrefixAttributes.FormattingEnabled = true;
 		scalingCheckedListBoxPrefixAttributes.HorizontalScrollbar = true;
@@ -583,7 +570,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelSuffixAttributes
 		// 
 		scalingLabelSuffixAttributes.AutoSize = true;
-		scalingLabelSuffixAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelSuffixAttributes.ForeColor = Color.Gold;
 		scalingLabelSuffixAttributes.Location = new Point(4, 2);
 		scalingLabelSuffixAttributes.Name = "scalingLabelSuffixAttributes";
@@ -598,7 +584,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxSuffixAttributes.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxSuffixAttributes.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxSuffixAttributes.CheckOnClick = true;
-		scalingCheckedListBoxSuffixAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxSuffixAttributes.ForeColor = Color.White;
 		scalingCheckedListBoxSuffixAttributes.FormattingEnabled = true;
 		scalingCheckedListBoxSuffixAttributes.HorizontalScrollbar = true;
@@ -631,7 +616,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelBaseAttributes
 		// 
 		scalingLabelBaseAttributes.AutoSize = true;
-		scalingLabelBaseAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelBaseAttributes.ForeColor = Color.Gold;
 		scalingLabelBaseAttributes.Location = new Point(4, 2);
 		scalingLabelBaseAttributes.Name = "scalingLabelBaseAttributes";
@@ -646,7 +630,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxBaseAttributes.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxBaseAttributes.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxBaseAttributes.CheckOnClick = true;
-		scalingCheckedListBoxBaseAttributes.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxBaseAttributes.ForeColor = Color.White;
 		scalingCheckedListBoxBaseAttributes.FormattingEnabled = true;
 		scalingCheckedListBoxBaseAttributes.HorizontalScrollbar = true;
@@ -707,7 +690,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelInVaults
 		// 
 		scalingLabelInVaults.AutoSize = true;
-		scalingLabelInVaults.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelInVaults.ForeColor = Color.Gold;
 		scalingLabelInVaults.Location = new Point(4, 2);
 		scalingLabelInVaults.Name = "scalingLabelInVaults";
@@ -722,7 +704,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxVaults.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxVaults.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxVaults.CheckOnClick = true;
-		scalingCheckedListBoxVaults.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxVaults.ForeColor = Color.White;
 		scalingCheckedListBoxVaults.FormattingEnabled = true;
 		scalingCheckedListBoxVaults.HorizontalScrollbar = true;
@@ -755,7 +736,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelOrigin
 		// 
 		scalingLabelOrigin.AutoSize = true;
-		scalingLabelOrigin.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelOrigin.ForeColor = Color.Gold;
 		scalingLabelOrigin.Location = new Point(4, 2);
 		scalingLabelOrigin.Name = "scalingLabelOrigin";
@@ -770,7 +750,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxOrigin.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxOrigin.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxOrigin.CheckOnClick = true;
-		scalingCheckedListBoxOrigin.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxOrigin.ForeColor = Color.White;
 		scalingCheckedListBoxOrigin.FormattingEnabled = true;
 		scalingCheckedListBoxOrigin.HorizontalScrollbar = true;
@@ -803,7 +782,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMod
 		// 
 		scalingLabelMod.AutoSize = true;
-		scalingLabelMod.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMod.ForeColor = Color.Gold;
 		scalingLabelMod.Location = new Point(4, 2);
 		scalingLabelMod.Name = "scalingLabelMod";
@@ -818,7 +796,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxMod.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxMod.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxMod.CheckOnClick = true;
-		scalingCheckedListBoxMod.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxMod.ForeColor = Color.White;
 		scalingCheckedListBoxMod.FormattingEnabled = true;
 		scalingCheckedListBoxMod.HorizontalScrollbar = true;
@@ -851,7 +828,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelQuality
 		// 
 		scalingLabelQuality.AutoSize = true;
-		scalingLabelQuality.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelQuality.ForeColor = Color.Gold;
 		scalingLabelQuality.Location = new Point(4, 2);
 		scalingLabelQuality.Name = "scalingLabelQuality";
@@ -866,7 +842,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxQuality.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxQuality.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxQuality.CheckOnClick = true;
-		scalingCheckedListBoxQuality.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxQuality.ForeColor = Color.White;
 		scalingCheckedListBoxQuality.FormattingEnabled = true;
 		scalingCheckedListBoxQuality.HorizontalScrollbar = true;
@@ -899,7 +874,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelStyle
 		// 
 		scalingLabelStyle.AutoSize = true;
-		scalingLabelStyle.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelStyle.ForeColor = Color.Gold;
 		scalingLabelStyle.Location = new Point(4, 2);
 		scalingLabelStyle.Name = "scalingLabelStyle";
@@ -914,7 +888,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxStyle.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxStyle.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxStyle.CheckOnClick = true;
-		scalingCheckedListBoxStyle.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxStyle.ForeColor = Color.White;
 		scalingCheckedListBoxStyle.FormattingEnabled = true;
 		scalingCheckedListBoxStyle.HorizontalScrollbar = true;
@@ -947,7 +920,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelSetItems
 		// 
 		scalingLabelSetItems.AutoSize = true;
-		scalingLabelSetItems.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelSetItems.ForeColor = Color.Gold;
 		scalingLabelSetItems.Location = new Point(4, 2);
 		scalingLabelSetItems.Name = "scalingLabelSetItems";
@@ -962,7 +934,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxSetItems.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxSetItems.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxSetItems.CheckOnClick = true;
-		scalingCheckedListBoxSetItems.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxSetItems.ForeColor = Color.White;
 		scalingCheckedListBoxSetItems.FormattingEnabled = true;
 		scalingCheckedListBoxSetItems.HorizontalScrollbar = true;
@@ -995,7 +966,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelSkills
 		//
 		scalingLabelSkills.AutoSize = true;
-		scalingLabelSkills.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelSkills.ForeColor = Color.Gold;
 		scalingLabelSkills.Location = new Point(4, 2);
 		scalingLabelSkills.Name = "scalingLabelSkills";
@@ -1010,7 +980,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxSkills.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxSkills.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxSkills.CheckOnClick = true;
-		scalingCheckedListBoxSkills.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxSkills.ForeColor = Color.White;
 		scalingCheckedListBoxSkills.FormattingEnabled = true;
 		scalingCheckedListBoxSkills.HorizontalScrollbar = true;
@@ -1043,7 +1012,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelWithCharm
 		// 
 		scalingLabelWithCharm.AutoSize = true;
-		scalingLabelWithCharm.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelWithCharm.ForeColor = Color.Gold;
 		scalingLabelWithCharm.Location = new Point(4, 2);
 		scalingLabelWithCharm.Name = "scalingLabelWithCharm";
@@ -1058,7 +1026,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxWithCharm.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxWithCharm.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxWithCharm.CheckOnClick = true;
-		scalingCheckedListBoxWithCharm.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxWithCharm.ForeColor = Color.White;
 		scalingCheckedListBoxWithCharm.FormattingEnabled = true;
 		scalingCheckedListBoxWithCharm.HorizontalScrollbar = true;
@@ -1091,7 +1058,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelWithRelic
 		// 
 		scalingLabelWithRelic.AutoSize = true;
-		scalingLabelWithRelic.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelWithRelic.ForeColor = Color.Gold;
 		scalingLabelWithRelic.Location = new Point(4, 2);
 		scalingLabelWithRelic.Name = "scalingLabelWithRelic";
@@ -1106,7 +1072,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxWithRelic.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxWithRelic.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxWithRelic.CheckOnClick = true;
-		scalingCheckedListBoxWithRelic.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxWithRelic.ForeColor = Color.White;
 		scalingCheckedListBoxWithRelic.FormattingEnabled = true;
 		scalingCheckedListBoxWithRelic.HorizontalScrollbar = true;
@@ -1139,7 +1104,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelPrefixName
 		// 
 		scalingLabelPrefixName.AutoSize = true;
-		scalingLabelPrefixName.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelPrefixName.ForeColor = Color.Gold;
 		scalingLabelPrefixName.Location = new Point(4, 2);
 		scalingLabelPrefixName.Name = "scalingLabelPrefixName";
@@ -1154,7 +1118,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxPrefixName.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxPrefixName.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxPrefixName.CheckOnClick = true;
-		scalingCheckedListBoxPrefixName.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxPrefixName.ForeColor = Color.White;
 		scalingCheckedListBoxPrefixName.FormattingEnabled = true;
 		scalingCheckedListBoxPrefixName.HorizontalScrollbar = true;
@@ -1187,7 +1150,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelSuffixName
 		// 
 		scalingLabelSuffixName.AutoSize = true;
-		scalingLabelSuffixName.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelSuffixName.ForeColor = Color.Gold;
 		scalingLabelSuffixName.Location = new Point(4, 2);
 		scalingLabelSuffixName.Name = "scalingLabelSuffixName";
@@ -1202,7 +1164,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckedListBoxSuffixName.BackColor = Color.FromArgb(46, 31, 21);
 		scalingCheckedListBoxSuffixName.BorderStyle = BorderStyle.None;
 		scalingCheckedListBoxSuffixName.CheckOnClick = true;
-		scalingCheckedListBoxSuffixName.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckedListBoxSuffixName.ForeColor = Color.White;
 		scalingCheckedListBoxSuffixName.FormattingEnabled = true;
 		scalingCheckedListBoxSuffixName.HorizontalScrollbar = true;
@@ -1235,7 +1196,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelSearchTerm
 		// 
 		scalingLabelSearchTerm.AutoSize = true;
-		scalingLabelSearchTerm.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelSearchTerm.ForeColor = Color.Gold;
 		scalingLabelSearchTerm.Location = new Point(3, 7);
 		scalingLabelSearchTerm.Margin = new Padding(3, 7, 3, 0);
@@ -1248,7 +1208,6 @@ public partial class SearchDialogAdvanced
 		// scalingTextBoxSearchTerm
 		// 
 		scalingTextBoxSearchTerm.BorderStyle = BorderStyle.FixedSingle;
-		scalingTextBoxSearchTerm.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingTextBoxSearchTerm.Location = new Point(72, 3);
 		scalingTextBoxSearchTerm.Name = "scalingTextBoxSearchTerm";
 		scalingTextBoxSearchTerm.Size = new Size(387, 24);
@@ -1264,7 +1223,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonReset.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonReset.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonReset.FlatStyle = FlatStyle.Flat;
-		scalingButtonReset.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingButtonReset.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonReset.Image = (Image)resources.GetObject("scalingButtonReset.Image");
 		scalingButtonReset.Location = new Point(465, 3);
@@ -1297,7 +1255,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelQueries
 		// 
 		scalingLabelQueries.AutoSize = true;
-		scalingLabelQueries.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelQueries.ForeColor = Color.Gold;
 		scalingLabelQueries.Location = new Point(3, 7);
 		scalingLabelQueries.Margin = new Padding(3, 7, 3, 0);
@@ -1310,7 +1267,6 @@ public partial class SearchDialogAdvanced
 		// scalingComboBoxQueryList
 		// 
 		scalingComboBoxQueryList.DrawMode = DrawMode.OwnerDrawFixed;
-		scalingComboBoxQueryList.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingComboBoxQueryList.FormattingEnabled = true;
 		scalingComboBoxQueryList.Items.AddRange(new object[] { "Search term 1", "Search term 2" });
 		scalingComboBoxQueryList.Location = new Point(77, 3);
@@ -1330,7 +1286,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonQuerySave.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonQuerySave.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonQuerySave.FlatStyle = FlatStyle.Flat;
-		scalingButtonQuerySave.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingButtonQuerySave.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonQuerySave.Image = (Image)resources.GetObject("scalingButtonQuerySave.Image");
 		scalingButtonQuerySave.Location = new Point(383, 3);
@@ -1354,7 +1309,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonQueryDelete.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonQueryDelete.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonQueryDelete.FlatStyle = FlatStyle.Flat;
-		scalingButtonQueryDelete.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingButtonQueryDelete.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonQueryDelete.Image = (Image)resources.GetObject("scalingButtonQueryDelete.Image");
 		scalingButtonQueryDelete.Location = new Point(489, 3);
@@ -1431,7 +1385,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxHavingPrefix
 		// 
 		scalingCheckBoxHavingPrefix.AutoSize = true;
-		scalingCheckBoxHavingPrefix.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxHavingPrefix.ForeColor = Color.Gold;
 		scalingCheckBoxHavingPrefix.Location = new Point(3, 0);
 		scalingCheckBoxHavingPrefix.Margin = new Padding(3, 0, 3, 0);
@@ -1445,7 +1398,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxHavingSuffix
 		// 
 		scalingCheckBoxHavingSuffix.AutoSize = true;
-		scalingCheckBoxHavingSuffix.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxHavingSuffix.ForeColor = Color.Gold;
 		scalingCheckBoxHavingSuffix.Location = new Point(125, 0);
 		scalingCheckBoxHavingSuffix.Margin = new Padding(3, 0, 3, 0);
@@ -1459,7 +1411,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxHavingRelic
 		// 
 		scalingCheckBoxHavingRelic.AutoSize = true;
-		scalingCheckBoxHavingRelic.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxHavingRelic.ForeColor = Color.Gold;
 		scalingCheckBoxHavingRelic.Location = new Point(246, 0);
 		scalingCheckBoxHavingRelic.Margin = new Padding(3, 0, 3, 0);
@@ -1473,7 +1424,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxHavingCharm
 		// 
 		scalingCheckBoxHavingCharm.AutoSize = true;
-		scalingCheckBoxHavingCharm.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxHavingCharm.ForeColor = Color.Gold;
 		scalingCheckBoxHavingCharm.Location = new Point(364, 0);
 		scalingCheckBoxHavingCharm.Margin = new Padding(3, 0, 3, 0);
@@ -1487,7 +1437,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxIsSetItem
 		// 
 		scalingCheckBoxIsSetItem.AutoSize = true;
-		scalingCheckBoxIsSetItem.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxIsSetItem.ForeColor = Color.Gold;
 		scalingCheckBoxIsSetItem.Location = new Point(494, 0);
 		scalingCheckBoxIsSetItem.Margin = new Padding(3, 0, 3, 0);
@@ -1501,7 +1450,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxHavingSkill
 		// 
 		scalingCheckBoxHavingSkill.AutoSize = true;
-		scalingCheckBoxHavingSkill.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxHavingSkill.ForeColor = Color.Gold;
 		scalingCheckBoxHavingSkill.Location = new Point(584, 0);
 		scalingCheckBoxHavingSkill.Margin = new Padding(3, 0, 3, 0);
@@ -1515,7 +1463,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxModded
 		// 
 		scalingCheckBoxModded.AutoSize = true;
-		scalingCheckBoxModded.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxModded.ForeColor = Color.Gold;
 		scalingCheckBoxModded.Location = new Point(674, 0);
 		scalingCheckBoxModded.Margin = new Padding(3, 0, 3, 0);
@@ -1551,7 +1498,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMaxVisibleElement
 		// 
 		scalingLabelMaxVisibleElement.AutoSize = true;
-		scalingLabelMaxVisibleElement.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMaxVisibleElement.ForeColor = Color.Gold;
 		scalingLabelMaxVisibleElement.Location = new Point(3, 7);
 		scalingLabelMaxVisibleElement.Margin = new Padding(3, 7, 3, 0);
@@ -1564,7 +1510,6 @@ public partial class SearchDialogAdvanced
 		// numericUpDownMaxElement
 		// 
 		numericUpDownMaxElement.BorderStyle = BorderStyle.FixedSingle;
-		numericUpDownMaxElement.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMaxElement.Location = new Point(192, 3);
 		numericUpDownMaxElement.Maximum = new decimal(new int[] { 150, 0, 0, 0 });
 		numericUpDownMaxElement.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
@@ -1579,7 +1524,6 @@ public partial class SearchDialogAdvanced
 		scalingCheckBoxReduceDuringSelection.AutoSize = true;
 		scalingCheckBoxReduceDuringSelection.Checked = true;
 		scalingCheckBoxReduceDuringSelection.CheckState = CheckState.Checked;
-		scalingCheckBoxReduceDuringSelection.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxReduceDuringSelection.ForeColor = Color.Gold;
 		scalingCheckBoxReduceDuringSelection.Location = new Point(251, 7);
 		scalingCheckBoxReduceDuringSelection.Margin = new Padding(13, 7, 3, 3);
@@ -1623,7 +1567,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelOperator
 		// 
 		scalingLabelOperator.AutoSize = true;
-		scalingLabelOperator.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelOperator.ForeColor = Color.Gold;
 		scalingLabelOperator.Location = new Point(711, 7);
 		scalingLabelOperator.Margin = new Padding(3, 7, 3, 0);
@@ -1637,7 +1580,6 @@ public partial class SearchDialogAdvanced
 		// 
 		scalingComboBoxOperator.DrawMode = DrawMode.OwnerDrawFixed;
 		scalingComboBoxOperator.DropDownStyle = ComboBoxStyle.DropDownList;
-		scalingComboBoxOperator.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingComboBoxOperator.FormattingEnabled = true;
 		scalingComboBoxOperator.Items.AddRange(new object[] { "And", "Or" });
 		scalingComboBoxOperator.Location = new Point(792, 3);
@@ -1650,7 +1592,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelFiltersSelected
 		// 
 		scalingLabelFiltersSelected.AutoSize = true;
-		scalingLabelFiltersSelected.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelFiltersSelected.ForeColor = Color.Gold;
 		scalingLabelFiltersSelected.Location = new Point(858, 7);
 		scalingLabelFiltersSelected.Margin = new Padding(3, 7, 3, 0);
@@ -1666,7 +1607,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelFilterCategories
 		// 
 		scalingLabelFilterCategories.AutoSize = true;
-		scalingLabelFilterCategories.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelFilterCategories.ForeColor = Color.Gold;
 		scalingLabelFilterCategories.Location = new Point(988, 7);
 		scalingLabelFilterCategories.Margin = new Padding(3, 7, 3, 0);
@@ -1679,7 +1619,6 @@ public partial class SearchDialogAdvanced
 		// scalingTextBoxFilterCategories
 		// 
 		scalingTextBoxFilterCategories.BorderStyle = BorderStyle.FixedSingle;
-		scalingTextBoxFilterCategories.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingTextBoxFilterCategories.Location = new Point(1115, 3);
 		scalingTextBoxFilterCategories.Name = "scalingTextBoxFilterCategories";
 		scalingTextBoxFilterCategories.Size = new Size(200, 24);
@@ -1724,7 +1663,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxMinReq
 		// 
 		scalingCheckBoxMinReq.AutoSize = true;
-		scalingCheckBoxMinReq.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxMinReq.ForeColor = Color.Gold;
 		scalingCheckBoxMinReq.Location = new Point(3, 3);
 		scalingCheckBoxMinReq.Name = "scalingCheckBoxMinReq";
@@ -1755,7 +1693,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMinLvl
 		// 
 		scalingLabelMinLvl.AutoSize = true;
-		scalingLabelMinLvl.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMinLvl.ForeColor = Color.Gold;
 		scalingLabelMinLvl.Location = new Point(3, 0);
 		scalingLabelMinLvl.Name = "scalingLabelMinLvl";
@@ -1765,7 +1702,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMinLvl
 		// 
-		numericUpDownMinLvl.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMinLvl.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMinLvl.Location = new Point(56, 0);
 		numericUpDownMinLvl.Margin = new Padding(0);
@@ -1778,7 +1714,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMinStr
 		// 
 		scalingLabelMinStr.AutoSize = true;
-		scalingLabelMinStr.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMinStr.ForeColor = Color.Gold;
 		scalingLabelMinStr.Location = new Point(103, 0);
 		scalingLabelMinStr.Name = "scalingLabelMinStr";
@@ -1788,7 +1723,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMinStr
 		// 
-		numericUpDownMinStr.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMinStr.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMinStr.Location = new Point(141, 0);
 		numericUpDownMinStr.Margin = new Padding(0);
@@ -1802,7 +1736,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMinDex
 		// 
 		scalingLabelMinDex.AutoSize = true;
-		scalingLabelMinDex.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMinDex.ForeColor = Color.Gold;
 		scalingLabelMinDex.Location = new Point(188, 0);
 		scalingLabelMinDex.Name = "scalingLabelMinDex";
@@ -1812,7 +1745,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMinDex
 		// 
-		numericUpDownMinDex.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMinDex.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMinDex.Location = new Point(233, 0);
 		numericUpDownMinDex.Margin = new Padding(0);
@@ -1826,7 +1758,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMinInt
 		// 
 		scalingLabelMinInt.AutoSize = true;
-		scalingLabelMinInt.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMinInt.ForeColor = Color.Gold;
 		scalingLabelMinInt.Location = new Point(280, 0);
 		scalingLabelMinInt.Name = "scalingLabelMinInt";
@@ -1836,7 +1767,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMinInt
 		// 
-		numericUpDownMinInt.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMinInt.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMinInt.Location = new Point(314, 0);
 		numericUpDownMinInt.Margin = new Padding(0);
@@ -1850,7 +1780,6 @@ public partial class SearchDialogAdvanced
 		// scalingCheckBoxMaxReq
 		// 
 		scalingCheckBoxMaxReq.AutoSize = true;
-		scalingCheckBoxMaxReq.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingCheckBoxMaxReq.ForeColor = Color.Gold;
 		scalingCheckBoxMaxReq.Location = new Point(581, 3);
 		scalingCheckBoxMaxReq.Name = "scalingCheckBoxMaxReq";
@@ -1881,7 +1810,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMaxLvl
 		// 
 		scalingLabelMaxLvl.AutoSize = true;
-		scalingLabelMaxLvl.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMaxLvl.ForeColor = Color.Gold;
 		scalingLabelMaxLvl.Location = new Point(3, 0);
 		scalingLabelMaxLvl.Name = "scalingLabelMaxLvl";
@@ -1891,7 +1819,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMaxLvl
 		// 
-		numericUpDownMaxLvl.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMaxLvl.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMaxLvl.Location = new Point(56, 0);
 		numericUpDownMaxLvl.Margin = new Padding(0);
@@ -1904,7 +1831,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMaxStr
 		// 
 		scalingLabelMaxStr.AutoSize = true;
-		scalingLabelMaxStr.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMaxStr.ForeColor = Color.Gold;
 		scalingLabelMaxStr.Location = new Point(103, 0);
 		scalingLabelMaxStr.Name = "scalingLabelMaxStr";
@@ -1914,7 +1840,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMaxStr
 		// 
-		numericUpDownMaxStr.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMaxStr.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMaxStr.Location = new Point(141, 0);
 		numericUpDownMaxStr.Margin = new Padding(0);
@@ -1928,7 +1853,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMaxDex
 		// 
 		scalingLabelMaxDex.AutoSize = true;
-		scalingLabelMaxDex.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMaxDex.ForeColor = Color.Gold;
 		scalingLabelMaxDex.Location = new Point(188, 0);
 		scalingLabelMaxDex.Name = "scalingLabelMaxDex";
@@ -1938,7 +1862,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMaxDex
 		// 
-		numericUpDownMaxDex.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMaxDex.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMaxDex.Location = new Point(233, 0);
 		numericUpDownMaxDex.Margin = new Padding(0);
@@ -1952,7 +1875,6 @@ public partial class SearchDialogAdvanced
 		// scalingLabelMaxInt
 		// 
 		scalingLabelMaxInt.AutoSize = true;
-		scalingLabelMaxInt.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingLabelMaxInt.ForeColor = Color.Gold;
 		scalingLabelMaxInt.Location = new Point(280, 0);
 		scalingLabelMaxInt.Name = "scalingLabelMaxInt";
@@ -1962,7 +1884,6 @@ public partial class SearchDialogAdvanced
 		// 
 		// numericUpDownMaxInt
 		// 
-		numericUpDownMaxInt.Font = new Font("Microsoft Sans Serif", 8.25F);
 		numericUpDownMaxInt.Increment = new decimal(new int[] { 5, 0, 0, 0 });
 		numericUpDownMaxInt.Location = new Point(314, 0);
 		numericUpDownMaxInt.Margin = new Padding(0);
@@ -2010,7 +1931,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuCharacters.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuCharacters.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuCharacters.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuCharacters.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuCharacters.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuCharacters.Image = (Image)resources.GetObject("scalingButtonMenuCharacters.Image");
 		scalingButtonMenuCharacters.Location = new Point(3, 3);
@@ -2033,7 +1953,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuVaults.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuVaults.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuVaults.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuVaults.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuVaults.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuVaults.Image = (Image)resources.GetObject("scalingButtonMenuVaults.Image");
 		scalingButtonMenuVaults.Location = new Point(3, 39);
@@ -2056,7 +1975,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuType.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuType.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuType.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuType.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuType.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuType.Image = (Image)resources.GetObject("scalingButtonMenuType.Image");
 		scalingButtonMenuType.Location = new Point(3, 75);
@@ -2079,7 +1997,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuRarity.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuRarity.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuRarity.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuRarity.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuRarity.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuRarity.Image = (Image)resources.GetObject("scalingButtonMenuRarity.Image");
 		scalingButtonMenuRarity.Location = new Point(3, 111);
@@ -2102,7 +2019,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuOrigin.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuOrigin.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuOrigin.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuOrigin.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuOrigin.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuOrigin.Image = (Image)resources.GetObject("scalingButtonMenuOrigin.Image");
 		scalingButtonMenuOrigin.Location = new Point(3, 147);
@@ -2125,7 +2041,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuMod.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuMod.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuMod.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuMod.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuMod.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuMod.Image = (Image)resources.GetObject("scalingButtonMenuOrigin.Image");
 		scalingButtonMenuMod.Location = new Point(3, 147);
@@ -2148,7 +2063,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuQuality.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuQuality.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuQuality.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuQuality.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuQuality.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuQuality.Image = (Image)resources.GetObject("scalingButtonMenuQuality.Image");
 		scalingButtonMenuQuality.Location = new Point(3, 183);
@@ -2171,7 +2085,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuStyle.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuStyle.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuStyle.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuStyle.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuStyle.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuStyle.Image = (Image)resources.GetObject("scalingButtonMenuStyle.Image");
 		scalingButtonMenuStyle.Location = new Point(3, 219);
@@ -2194,7 +2107,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuSetItems.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSetItems.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSetItems.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuSetItems.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuSetItems.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuSetItems.Image = (Image)resources.GetObject("scalingButtonMenuSetItems.Image");
 		scalingButtonMenuSetItems.Location = new Point(3, 255);
@@ -2217,7 +2129,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuSkills.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSkills.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSkills.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuSkills.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuSkills.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuSkills.Image = (Image)resources.GetObject("scalingButtonMenuSetItems.Image");
 		scalingButtonMenuSkills.Location = new Point(3, 291);
@@ -2240,7 +2151,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuWithCharm.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithCharm.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithCharm.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuWithCharm.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuWithCharm.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuWithCharm.Image = (Image)resources.GetObject("scalingButtonMenuWithCharm.Image");
 		scalingButtonMenuWithCharm.Location = new Point(3, 291);
@@ -2263,7 +2173,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuWithRelic.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithRelic.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuWithRelic.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuWithRelic.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuWithRelic.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuWithRelic.Image = (Image)resources.GetObject("scalingButtonMenuWithRelic.Image");
 		scalingButtonMenuWithRelic.Location = new Point(3, 327);
@@ -2286,7 +2195,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuAttribute.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuAttribute.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuAttribute.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuAttribute.Image = (Image)resources.GetObject("scalingButtonMenuAttribute.Image");
 		scalingButtonMenuAttribute.Location = new Point(3, 363);
@@ -2309,7 +2217,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuPrefixName.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixName.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixName.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuPrefixName.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuPrefixName.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuPrefixName.Image = (Image)resources.GetObject("scalingButtonMenuPrefixName.Image");
 		scalingButtonMenuPrefixName.Location = new Point(3, 399);
@@ -2332,7 +2239,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuPrefixAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuPrefixAttribute.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuPrefixAttribute.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuPrefixAttribute.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuPrefixAttribute.Image = (Image)resources.GetObject("scalingButtonMenuPrefixAttribute.Image");
 		scalingButtonMenuPrefixAttribute.Location = new Point(3, 435);
@@ -2355,7 +2261,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuBaseAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuBaseAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuBaseAttribute.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuBaseAttribute.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuBaseAttribute.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuBaseAttribute.Image = (Image)resources.GetObject("scalingButtonMenuBaseAttribute.Image");
 		scalingButtonMenuBaseAttribute.Location = new Point(3, 471);
@@ -2378,7 +2283,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuSuffixName.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixName.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixName.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuSuffixName.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuSuffixName.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuSuffixName.Image = (Image)resources.GetObject("scalingButtonMenuSuffixName.Image");
 		scalingButtonMenuSuffixName.Location = new Point(3, 507);
@@ -2401,7 +2305,6 @@ public partial class SearchDialogAdvanced
 		scalingButtonMenuSuffixAttribute.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixAttribute.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		scalingButtonMenuSuffixAttribute.FlatStyle = FlatStyle.Flat;
-		scalingButtonMenuSuffixAttribute.Font = new Font("Microsoft Sans Serif", 7.5F);
 		scalingButtonMenuSuffixAttribute.ForeColor = Color.FromArgb(51, 44, 28);
 		scalingButtonMenuSuffixAttribute.Image = (Image)resources.GetObject("scalingButtonMenuSuffixAttribute.Image");
 		scalingButtonMenuSuffixAttribute.Location = new Point(3, 543);
@@ -2434,7 +2337,6 @@ public partial class SearchDialogAdvanced
 		ClientSize = new Size(1415, 870);
 		Controls.Add(tableLayoutPanelContent);
 		DrawCustomBorder = true;
-		Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
 		ForeColor = Color.White;
 		FormBorderStyle = FormBorderStyle.None;
 		MaximizeBox = false;

@@ -284,7 +284,6 @@ internal partial class SettingsUserControl
 		// allowItemEditCheckBox
 		// 
 		allowItemEditCheckBox.AutoSize = true;
-		allowItemEditCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		allowItemEditCheckBox.ForeColor = Color.White;
 		allowItemEditCheckBox.Location = new Point(3, 59);
 		allowItemEditCheckBox.Name = "allowItemEditCheckBox";
@@ -298,7 +297,6 @@ internal partial class SettingsUserControl
 		// allowItemCopyCheckBox
 		// 
 		allowItemCopyCheckBox.AutoSize = true;
-		allowItemCopyCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		allowItemCopyCheckBox.ForeColor = Color.White;
 		allowItemCopyCheckBox.Location = new Point(3, 31);
 		allowItemCopyCheckBox.Name = "allowItemCopyCheckBox";
@@ -312,7 +310,6 @@ internal partial class SettingsUserControl
 		// loadLastCharacterCheckBox
 		// 
 		loadLastCharacterCheckBox.AutoSize = true;
-		loadLastCharacterCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		loadLastCharacterCheckBox.ForeColor = Color.White;
 		loadLastCharacterCheckBox.Location = new Point(3, 31);
 		loadLastCharacterCheckBox.Name = "loadLastCharacterCheckBox";
@@ -326,7 +323,6 @@ internal partial class SettingsUserControl
 		// loadLastVaultCheckBox
 		// 
 		loadLastVaultCheckBox.AutoSize = true;
-		loadLastVaultCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		loadLastVaultCheckBox.ForeColor = Color.White;
 		loadLastVaultCheckBox.Location = new Point(3, 59);
 		loadLastVaultCheckBox.Name = "loadLastVaultCheckBox";
@@ -339,7 +335,6 @@ internal partial class SettingsUserControl
 		// 
 		// vaultPathTextBox
 		// 
-		vaultPathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		vaultPathTextBox.Location = new Point(3, 3);
 		vaultPathTextBox.Name = "vaultPathTextBox";
 		vaultPathTextBox.Size = new Size(397, 24);
@@ -357,7 +352,6 @@ internal partial class SettingsUserControl
 		cancelButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		cancelButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		cancelButton.FlatStyle = FlatStyle.Flat;
-		cancelButton.Font = new Font("Microsoft Sans Serif", 12F);
 		cancelButton.ForeColor = Color.FromArgb(51, 44, 28);
 		cancelButton.Image = (Image)resources.GetObject("cancelButton.Image");
 		cancelButton.Location = new Point(609, 3);
@@ -380,7 +374,6 @@ internal partial class SettingsUserControl
 		okayButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		okayButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		okayButton.FlatStyle = FlatStyle.Flat;
-		okayButton.Font = new Font("Microsoft Sans Serif", 12F);
 		okayButton.ForeColor = Color.FromArgb(51, 44, 28);
 		okayButton.Image = (Image)resources.GetObject("okayButton.Image");
 		okayButton.Location = new Point(446, 3);
@@ -408,7 +401,6 @@ internal partial class SettingsUserControl
 		resetButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		resetButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		resetButton.FlatStyle = FlatStyle.Flat;
-		resetButton.Font = new Font("Microsoft Sans Serif", 12F);
 		resetButton.ForeColor = Color.FromArgb(51, 44, 28);
 		resetButton.Image = (Image)resources.GetObject("resetButton.Image");
 		resetButton.Location = new Point(1052, 3);
@@ -432,7 +424,6 @@ internal partial class SettingsUserControl
 		vaultPathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		vaultPathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		vaultPathBrowseButton.FlatStyle = FlatStyle.Flat;
-		vaultPathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
 		vaultPathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
 		vaultPathBrowseButton.Image = (Image)resources.GetObject("vaultPathBrowseButton.Image");
 		vaultPathBrowseButton.Location = new Point(406, 0);
@@ -451,7 +442,6 @@ internal partial class SettingsUserControl
 		// loadAllFilesCheckBox
 		// 
 		loadAllFilesCheckBox.AutoSize = true;
-		loadAllFilesCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		loadAllFilesCheckBox.ForeColor = Color.White;
 		loadAllFilesCheckBox.Location = new Point(3, 87);
 		loadAllFilesCheckBox.Name = "loadAllFilesCheckBox";
@@ -465,7 +455,6 @@ internal partial class SettingsUserControl
 		// suppressWarningsCheckBox
 		// 
 		suppressWarningsCheckBox.AutoSize = true;
-		suppressWarningsCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		suppressWarningsCheckBox.ForeColor = Color.White;
 		suppressWarningsCheckBox.Location = new Point(3, 141);
 		suppressWarningsCheckBox.Name = "suppressWarningsCheckBox";
@@ -479,7 +468,6 @@ internal partial class SettingsUserControl
 		// playerReadonlyCheckbox
 		// 
 		playerReadonlyCheckbox.AutoSize = true;
-		playerReadonlyCheckbox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		playerReadonlyCheckbox.ForeColor = Color.White;
 		playerReadonlyCheckbox.Location = new Point(3, 197);
 		playerReadonlyCheckbox.Name = "playerReadonlyCheckbox";
@@ -493,7 +481,6 @@ internal partial class SettingsUserControl
 		// characterEditCheckBox
 		// 
 		characterEditCheckBox.AutoSize = true;
-		characterEditCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		characterEditCheckBox.ForeColor = Color.White;
 		characterEditCheckBox.Location = new Point(3, 3);
 		characterEditCheckBox.Name = "characterEditCheckBox";
@@ -554,7 +541,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxTooltipDetailedView
 		//
 		scalingCheckBoxTooltipDetailedView.AutoSize = true;
-		scalingCheckBoxTooltipDetailedView.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipDetailedView.ForeColor = Color.White;
 		scalingCheckBoxTooltipDetailedView.Name = "scalingCheckBoxTooltipDetailedView";
 		scalingCheckBoxTooltipDetailedView.Size = new Size(213, 22);
@@ -567,7 +553,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxTooltipInGameRolls
 		//
 		scalingCheckBoxTooltipInGameRolls.AutoSize = true;
-		scalingCheckBoxTooltipInGameRolls.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipInGameRolls.ForeColor = Color.White;
 		scalingCheckBoxTooltipInGameRolls.Name = "scalingCheckBoxTooltipInGameRolls";
 		scalingCheckBoxTooltipInGameRolls.Size = new Size(213, 22);
@@ -579,7 +564,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxTooltipValueRanges
 		//
 		scalingCheckBoxTooltipValueRanges.AutoSize = true;
-		scalingCheckBoxTooltipValueRanges.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipValueRanges.ForeColor = Color.White;
 		scalingCheckBoxTooltipValueRanges.Name = "scalingCheckBoxTooltipValueRanges";
 		scalingCheckBoxTooltipValueRanges.Size = new Size(213, 22);
@@ -591,7 +575,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxTooltipGrantedSkills
 		//
 		scalingCheckBoxTooltipGrantedSkills.AutoSize = true;
-		scalingCheckBoxTooltipGrantedSkills.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipGrantedSkills.ForeColor = Color.White;
 		scalingCheckBoxTooltipGrantedSkills.Name = "scalingCheckBoxTooltipGrantedSkills";
 		scalingCheckBoxTooltipGrantedSkills.Size = new Size(213, 22);
@@ -603,7 +586,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxTooltipSetPieceCounts
 		//
 		scalingCheckBoxTooltipSetPieceCounts.AutoSize = true;
-		scalingCheckBoxTooltipSetPieceCounts.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipSetPieceCounts.ForeColor = Color.White;
 		scalingCheckBoxTooltipSetPieceCounts.Name = "scalingCheckBoxTooltipSetPieceCounts";
 		scalingCheckBoxTooltipSetPieceCounts.Size = new Size(213, 22);
@@ -615,7 +597,6 @@ internal partial class SettingsUserControl
 		// ShowInGameValuesCheckBox
 		// 
 		ShowInGameValuesCheckBox.AutoSize = true;
-		ShowInGameValuesCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		ShowInGameValuesCheckBox.ForeColor = Color.White;
 		ShowInGameValuesCheckBox.Name = "ShowInGameValuesCheckBox";
 		ShowInGameValuesCheckBox.Size = new Size(213, 22);
@@ -626,7 +607,6 @@ internal partial class SettingsUserControl
 		// ItemBGColorOpacityLabel
 		// 
 		ItemBGColorOpacityLabel.AutoSize = true;
-		ItemBGColorOpacityLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		ItemBGColorOpacityLabel.ForeColor = Color.White;
 		ItemBGColorOpacityLabel.Location = new Point(3, 105);
 		ItemBGColorOpacityLabel.Name = "ItemBGColorOpacityLabel";
@@ -638,7 +618,6 @@ internal partial class SettingsUserControl
 		// EnableItemRequirementRestrictionCheckBox
 		// 
 		EnableItemRequirementRestrictionCheckBox.AutoSize = true;
-		EnableItemRequirementRestrictionCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		EnableItemRequirementRestrictionCheckBox.ForeColor = Color.Orange;
 		EnableItemRequirementRestrictionCheckBox.Location = new Point(3, 80);
 		EnableItemRequirementRestrictionCheckBox.Name = "EnableItemRequirementRestrictionCheckBox";
@@ -652,7 +631,6 @@ internal partial class SettingsUserControl
 		// hotReloadCheckBox
 		// 
 		hotReloadCheckBox.AutoSize = true;
-		hotReloadCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		hotReloadCheckBox.ForeColor = Color.White;
 		hotReloadCheckBox.Location = new Point(2, 114);
 		hotReloadCheckBox.Margin = new Padding(2);
@@ -668,7 +646,6 @@ internal partial class SettingsUserControl
 		// 
 		scalingCheckBoxEnableEpicLegendaryAffixes.AutoSize = true;
 		scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = false;
-		scalingCheckBoxEnableEpicLegendaryAffixes.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxEnableEpicLegendaryAffixes.ForeColor = Color.White;
 		scalingCheckBoxEnableEpicLegendaryAffixes.Location = new Point(3, 87);
 		scalingCheckBoxEnableEpicLegendaryAffixes.Name = "scalingCheckBoxEnableEpicLegendaryAffixes";
@@ -682,7 +659,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxDisableAutoStacking
 		// 
 		scalingCheckBoxDisableAutoStacking.AutoSize = true;
-		scalingCheckBoxDisableAutoStacking.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxDisableAutoStacking.ForeColor = Color.White;
 		scalingCheckBoxDisableAutoStacking.Location = new Point(3, 225);
 		scalingCheckBoxDisableAutoStacking.Name = "scalingCheckBoxDisableAutoStacking";
@@ -696,7 +672,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxMergeRelicsOnSort
 		// 
 		scalingCheckBoxMergeRelicsOnSort.AutoSize = true;
-		scalingCheckBoxMergeRelicsOnSort.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxMergeRelicsOnSort.ForeColor = Color.White;
 		scalingCheckBoxMergeRelicsOnSort.Location = new Point(3, 253);
 		scalingCheckBoxMergeRelicsOnSort.Name = "scalingCheckBoxMergeRelicsOnSort";
@@ -740,7 +715,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxDisableLegacyBackup
 		// 
 		scalingCheckBoxDisableLegacyBackup.AutoSize = true;
-		scalingCheckBoxDisableLegacyBackup.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxDisableLegacyBackup.ForeColor = Color.White;
 		scalingCheckBoxDisableLegacyBackup.Location = new Point(3, 3);
 		scalingCheckBoxDisableLegacyBackup.Name = "scalingCheckBoxDisableLegacyBackup";
@@ -754,7 +728,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxBackupPlayerSaves
 		// 
 		scalingCheckBoxBackupPlayerSaves.AutoSize = true;
-		scalingCheckBoxBackupPlayerSaves.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxBackupPlayerSaves.ForeColor = Color.White;
 		scalingCheckBoxBackupPlayerSaves.Location = new Point(3, 31);
 		scalingCheckBoxBackupPlayerSaves.Name = "scalingCheckBoxBackupPlayerSaves";
@@ -768,7 +741,6 @@ internal partial class SettingsUserControl
 		// scalingLabelGitRepository
 		// 
 		scalingLabelGitRepository.AutoSize = true;
-		scalingLabelGitRepository.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingLabelGitRepository.ForeColor = Color.White;
 		scalingLabelGitRepository.Location = new Point(3, 56);
 		scalingLabelGitRepository.Name = "scalingLabelGitRepository";
@@ -778,7 +750,6 @@ internal partial class SettingsUserControl
 		// 
 		// scalingTextBoxGitRepository
 		// 
-		scalingTextBoxGitRepository.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingTextBoxGitRepository.Location = new Point(3, 77);
 		scalingTextBoxGitRepository.Name = "scalingTextBoxGitRepository";
 		scalingTextBoxGitRepository.Size = new Size(397, 24);
@@ -857,7 +828,6 @@ internal partial class SettingsUserControl
 		//
 		scalingLabelMcpServerPort.Anchor = AnchorStyles.Left;
 		scalingLabelMcpServerPort.AutoSize = true;
-		scalingLabelMcpServerPort.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingLabelMcpServerPort.ForeColor = Color.White;
 		scalingLabelMcpServerPort.Location = new Point(3, 8);
 		scalingLabelMcpServerPort.Name = "scalingLabelMcpServerPort";
@@ -867,7 +837,6 @@ internal partial class SettingsUserControl
 		//
 		// numericUpDownMcpServerPort
 		//
-		numericUpDownMcpServerPort.Font = new Font("Microsoft Sans Serif", 11.25F);
 		numericUpDownMcpServerPort.Location = new Point(57, 3);
 		numericUpDownMcpServerPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 		numericUpDownMcpServerPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
@@ -881,7 +850,6 @@ internal partial class SettingsUserControl
 		// 
 		languageComboBox.DrawMode = DrawMode.OwnerDrawFixed;
 		languageComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-		languageComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		languageComboBox.FormattingEnabled = true;
 		languageComboBox.Location = new Point(3, 21);
 		languageComboBox.Name = "languageComboBox";
@@ -892,7 +860,6 @@ internal partial class SettingsUserControl
 		// languageLabel
 		// 
 		languageLabel.AutoSize = true;
-		languageLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		languageLabel.ForeColor = Color.White;
 		languageLabel.Location = new Point(3, 0);
 		languageLabel.Name = "languageLabel";
@@ -902,7 +869,6 @@ internal partial class SettingsUserControl
 		// 
 		// titanQuestPathTextBox
 		// 
-		titanQuestPathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		titanQuestPathTextBox.Location = new Point(3, 3);
 		titanQuestPathTextBox.Name = "titanQuestPathTextBox";
 		titanQuestPathTextBox.Size = new Size(397, 24);
@@ -912,7 +878,6 @@ internal partial class SettingsUserControl
 		// titanQuestPathLabel
 		// 
 		titanQuestPathLabel.AutoSize = true;
-		titanQuestPathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		titanQuestPathLabel.ForeColor = Color.White;
 		titanQuestPathLabel.Location = new Point(3, 0);
 		titanQuestPathLabel.Name = "titanQuestPathLabel";
@@ -923,7 +888,6 @@ internal partial class SettingsUserControl
 		// immortalThronePathLabel
 		// 
 		immortalThronePathLabel.AutoSize = true;
-		immortalThronePathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		immortalThronePathLabel.ForeColor = Color.White;
 		immortalThronePathLabel.Location = new Point(3, 57);
 		immortalThronePathLabel.Name = "immortalThronePathLabel";
@@ -933,7 +897,6 @@ internal partial class SettingsUserControl
 		// 
 		// immortalThronePathTextBox
 		// 
-		immortalThronePathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		immortalThronePathTextBox.Location = new Point(3, 3);
 		immortalThronePathTextBox.Name = "immortalThronePathTextBox";
 		immortalThronePathTextBox.Size = new Size(397, 24);
@@ -948,7 +911,6 @@ internal partial class SettingsUserControl
 		titanQuestPathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		titanQuestPathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		titanQuestPathBrowseButton.FlatStyle = FlatStyle.Flat;
-		titanQuestPathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
 		titanQuestPathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
 		titanQuestPathBrowseButton.Image = (Image)resources.GetObject("titanQuestPathBrowseButton.Image");
 		titanQuestPathBrowseButton.Location = new Point(406, 0);
@@ -972,7 +934,6 @@ internal partial class SettingsUserControl
 		immortalThronePathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		immortalThronePathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		immortalThronePathBrowseButton.FlatStyle = FlatStyle.Flat;
-		immortalThronePathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
 		immortalThronePathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
 		immortalThronePathBrowseButton.Image = (Image)resources.GetObject("immortalThronePathBrowseButton.Image");
 		immortalThronePathBrowseButton.Location = new Point(406, 0);
@@ -991,7 +952,6 @@ internal partial class SettingsUserControl
 		// baseFontLabel
 		// 
 		baseFontLabel.AutoSize = true;
-		baseFontLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		baseFontLabel.ForeColor = Color.White;
 		baseFontLabel.Location = new Point(3, 0);
 		baseFontLabel.Name = "baseFontLabel";
@@ -1003,7 +963,6 @@ internal partial class SettingsUserControl
 		// 
 		baseFontComboBox.DrawMode = DrawMode.OwnerDrawFixed;
 		baseFontComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-		baseFontComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		baseFontComboBox.FormattingEnabled = true;
 		baseFontComboBox.Location = new Point(3, 21);
 		baseFontComboBox.Name = "baseFontComboBox";
@@ -1047,7 +1006,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxEnableSounds
 		// 
 		scalingCheckBoxEnableSounds.AutoSize = true;
-		scalingCheckBoxEnableSounds.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxEnableSounds.ForeColor = Color.White;
 		scalingCheckBoxEnableSounds.Location = new Point(3, 52);
 		scalingCheckBoxEnableSounds.Name = "scalingCheckBoxEnableSounds";
@@ -1060,7 +1018,6 @@ internal partial class SettingsUserControl
 		// scalingLabelCSVDelim
 		// 
 		scalingLabelCSVDelim.AutoSize = true;
-		scalingLabelCSVDelim.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingLabelCSVDelim.ForeColor = Color.White;
 		scalingLabelCSVDelim.Location = new Point(3, 250);
 		scalingLabelCSVDelim.Name = "scalingLabelCSVDelim";
@@ -1073,7 +1030,6 @@ internal partial class SettingsUserControl
 		scalingComboBoxCSVDelim.BackColor = SystemColors.Window;
 		scalingComboBoxCSVDelim.DrawMode = DrawMode.OwnerDrawFixed;
 		scalingComboBoxCSVDelim.DropDownStyle = ComboBoxStyle.DropDownList;
-		scalingComboBoxCSVDelim.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingComboBoxCSVDelim.FormattingEnabled = true;
 		scalingComboBoxCSVDelim.Location = new Point(3, 271);
 		scalingComboBoxCSVDelim.Name = "scalingComboBoxCSVDelim";
@@ -1327,7 +1283,6 @@ internal partial class SettingsUserControl
 		// 
 		pasteBinExpirationComboBox.DrawMode = DrawMode.OwnerDrawFixed;
 		pasteBinExpirationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-		pasteBinExpirationComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinExpirationComboBox.Name = "pasteBinExpirationComboBox";
 		pasteBinExpirationComboBox.Size = new Size(150, 30);
 		pasteBinExpirationComboBox.TabIndex = 3;
@@ -1337,7 +1292,6 @@ internal partial class SettingsUserControl
 		// 
 		pasteBinApiKeyLabel.AutoSize = true;
 		pasteBinFlowPanel.SetColumnSpan(pasteBinApiKeyLabel, 2);
-		pasteBinApiKeyLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinApiKeyLabel.ForeColor = Color.White;
 		pasteBinApiKeyLabel.Location = new Point(3, 0);
 		pasteBinApiKeyLabel.Name = "pasteBinApiKeyLabel";
@@ -1348,7 +1302,6 @@ internal partial class SettingsUserControl
 		// pasteBinApiKeyTextBox
 		// 
 		pasteBinFlowPanel.SetColumnSpan(pasteBinApiKeyTextBox, 2);
-		pasteBinApiKeyTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinApiKeyTextBox.Location = new Point(3, 21);
 		pasteBinApiKeyTextBox.Name = "pasteBinApiKeyTextBox";
 		pasteBinApiKeyTextBox.Size = new Size(250, 24);
@@ -1358,7 +1311,6 @@ internal partial class SettingsUserControl
 		// pasteBinExpirationLabel
 		// 
 		pasteBinExpirationLabel.AutoSize = true;
-		pasteBinExpirationLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinExpirationLabel.ForeColor = Color.White;
 		pasteBinExpirationLabel.Location = new Point(3, 48);
 		pasteBinExpirationLabel.Name = "pasteBinExpirationLabel";
@@ -1430,7 +1382,6 @@ internal partial class SettingsUserControl
 		AutoValidate = AutoValidate.EnablePreventFocusChange;
 		BackColor = Color.FromArgb(46, 31, 21);
 		Controls.Add(bufferedTableLayoutPanelSkeleton);
-		Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
 		ForeColor = Color.White;
 		Margin = new Padding(0);
 		Name = "SettingsUserControl";
