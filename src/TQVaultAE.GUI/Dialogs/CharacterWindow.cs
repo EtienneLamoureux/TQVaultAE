@@ -96,6 +96,9 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 		// The game data of the character's own map while its statistics are computed (the main window may show another).
 		this._stats = new CharacterStatsSource(this.Services) { ReadScope = () => this.Services.GameMapService.ReadWith(save) };
+
+		// The red items follow the class set shown.
+		this._equipment.RequirementAttributes = () => this._stats.Requirements(this.Player, this._equipment.WornItems);
 		this._look = new CharacterStatsLook(this.FontService, this.UIService);
 		this._tabs = [.. Enumerable.Range(0, CharacterWindowLayout.StatsPanels).Select(tab => new CharacterStatsPanel(this.UIService, this.FontService)
 		{
@@ -328,6 +331,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 		this._classSetBox.MarkToolTip = mark;
 		this._toolTip.SetToolTip(this._classSetBox, mark ?? Resources.ClassSetTitle);
 		this.InvalidateTabs();
+		this._equipment.Invalidate();
 	}
 
 	/// <summary>Compare from this window's equipment: the comparison opens through the main window, as from its panels.</summary>

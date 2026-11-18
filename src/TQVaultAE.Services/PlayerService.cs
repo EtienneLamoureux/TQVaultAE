@@ -370,7 +370,7 @@ public class PlayerService(
 		=> this.MeetsRequirements(this.userContext.CurrentPlayer, item);
 
 	/// <inheritdoc/>
-	public bool MeetsRequirements(PlayerCollection? player, Item item)
+	public bool MeetsRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null)
 	{
 		var currPlayer = player;
 		if (currPlayer is null)
@@ -380,7 +380,7 @@ public class PlayerService(
 		if (reqs is null || reqs.Count == 0)
 			return true;
 
-		return currPlayer.IsPlayerMeetRequierements(reqs);
+		return currPlayer.IsPlayerMeetRequierements(reqs, attributes);
 	}
 
 	/// <inheritdoc/>

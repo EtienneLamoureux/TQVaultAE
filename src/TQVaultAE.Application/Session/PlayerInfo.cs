@@ -110,10 +110,16 @@ public class PlayerInfo
 	/// <see cref="CharacterPanelLayout.AttributeTotal"/> of the unrounded sums of <paramref name="field"/> and its
 	/// <c>Modifier</c> (%).
 	/// </summary>
-	private int Calculated(int baseValue, string field)
+	private int Calculated(int baseValue, string field) => Total(baseValue, field, this.GearBonus, this.SkillBonus);
+
+	/// <summary>
+	/// An attribute with the bonuses of <paramref name="gear"/> and <paramref name="skills"/>, as the game's character
+	/// window shows it (<see cref="CalculatedStrength"/>, for another build: a class set shown in a read-only panel).
+	/// </summary>
+	public static int Total(int baseValue, string field, AttributeSum? gear, AttributeSum? skills)
 		=> CharacterPanelLayout.AttributeTotal(baseValue,
-			(this.GearBonus?[field] ?? 0) + (this.SkillBonus?[field] ?? 0),
-			(this.GearBonus?[field + "Modifier"] ?? 0) + (this.SkillBonus?[field + "Modifier"] ?? 0));
+			(gear?[field] ?? 0) + (skills?[field] ?? 0),
+			(gear?[field + "Modifier"] ?? 0) + (skills?[field + "Modifier"] ?? 0));
 
 	/// <summary>
 	/// Released skill points from masteries reset

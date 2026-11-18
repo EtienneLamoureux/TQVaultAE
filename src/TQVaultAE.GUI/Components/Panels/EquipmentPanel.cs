@@ -114,9 +114,15 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	/// </summary>
 	internal PlayerCollection? Owner => this.PlayerCollection ?? this.userContext.CurrentPlayer;
 
-	/// <summary>The item requirements are those of the character wearing the slots.</summary>
+	/// <summary>
+	/// What the item requirements are checked against when the panel shows another build than the save's (a floating
+	/// character window's class set); null, or returning null, for the save's.
+	/// </summary>
+	internal Func<RequirementAttributes?>? RequirementAttributes { get; set; }
+
+	/// <summary>The item requirements are those of the character wearing the slots, with the build shown.</summary>
 	protected override bool PlayerMeetRequierements(Item item)
-		=> this.Services.PlayerService.MeetsRequirements(this.Owner, item);
+		=> this.Services.PlayerService.MeetsRequirements(this.Owner, item, this.RequirementAttributes?.Invoke());
 
 	/// <summary>An item suits the character wearing the slots (a Titan Quest original character takes base game items only).</summary>
 	protected override bool IsSuitableForCurrentPlayer(Item item)

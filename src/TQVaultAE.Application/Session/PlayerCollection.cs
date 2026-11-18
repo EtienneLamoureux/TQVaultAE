@@ -308,9 +308,12 @@ public class PlayerCollection : IEnumerable<SackCollection>
 		return false;
 	}
 
-	public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables)
+	/// <param name="attributes">The attributes to check against (another build shown); null for the save's.</param>
+	public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables, RequirementAttributes? attributes = null)
 	{
 		if (this.IsVault || this.PlayerInfo is null) return true;
+
+		var have = attributes ?? RequirementAttributes.Of(this.PlayerInfo);
 
 		// "LevelRequirement"
 		int LevelRequirement = requirementVariables.TryGetValue(Variable.KEY_LEVELREQ, out Variable? levelRequirementVariable) ? levelRequirementVariable.GetInt32() : 0;
@@ -325,10 +328,10 @@ public class PlayerCollection : IEnumerable<SackCollection>
 		int Intelligence = requirementVariables.TryGetValue(Variable.KEY_INTELLIGENCE, out Variable? intelligenceVariable) ? intelligenceVariable.GetInt32() : 0;
 
 		return
-			LevelRequirement <= this.PlayerInfo.CurrentLevel
-			&& Strength <= this.PlayerInfo.CalculatedStrength
-			&& Dexterity <= this.PlayerInfo.CalculatedDexterity
-			&& Intelligence <= this.PlayerInfo.CalculatedIntelligence
+			LevelRequirement <= have.Level
+			&& Strength <= have.Strength
+			&& Dexterity <= have.Dexterity
+			&& Intelligence <= have.Intelligence
 			;
 	}
 }

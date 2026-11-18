@@ -34,7 +34,8 @@ every number at once.
   statistics. **Current gear** shows the equipment worn again.
 - The list under tab III computes the statistics with a class set (below), applied to the save as the editor applies
   it; **Current build** is the save's. Memory only: nothing is written. A red mark tells a set that did not fit
-  (too few points or mastery slots). It combines with a loadout.
+  (too few points or mastery slots). It combines with a loadout. The red items (item requirements) follow the build
+  shown.
 - The main window and the window show each other's changes when they show the same character.
 - Open windows reopen at the next start, where they were. They follow the zoom and the DPI of their monitor.
 

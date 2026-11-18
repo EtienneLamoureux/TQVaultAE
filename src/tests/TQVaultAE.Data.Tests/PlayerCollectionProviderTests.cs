@@ -883,6 +883,24 @@ public class PlayerCollectionProviderTests
 		result.Should().BeTrue();
 	}
 
+	// A class set shown in a floating window: the requirements follow its attributes, not the save's.
+	[Theory]
+	[InlineData(100, false)]
+	[InlineData(150, true)]
+	public void PlayerCollection_IsPlayerMeetRequierements_AttributesGiven_ChecksThemInsteadOfTheSave(int strength, bool meets)
+	{
+		var pc = new PlayerCollection("test", "test.chr") { PlayerInfo = this.CreateTestPlayerInfo() };
+		pc.PlayerInfo.CurrentLevel = 40;
+		pc.PlayerInfo.BaseStrength = 300;
+		var requirements = new SortedList<string, Variable>
+		{
+			[Variable.KEY_STRENGTH] = new Variable(Variable.KEY_STRENGTH, VariableDataType.Integer, 1) { [0] = 120 },
+		};
+
+		pc.IsPlayerMeetRequierements(requirements).Should().BeTrue("the save has 300 strength");
+		pc.IsPlayerMeetRequierements(requirements, new RequirementAttributes(40, strength, 50, 50)).Should().Be(meets);
+	}
+
 	[Fact]
 	public void PlayerCollection_DisabledTooltipBagId_CanBeAccessed()
 	{

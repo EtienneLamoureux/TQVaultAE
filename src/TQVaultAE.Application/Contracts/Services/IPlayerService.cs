@@ -102,7 +102,8 @@ public interface IPlayerService
 	/// Indicates whether <paramref name="player"/> meets the requirements of <paramref name="item"/>, as
 	/// <see cref="CurrentPlayerMeetsRequirements"/> does for the current player (a floating character window shows another).
 	/// </summary>
-	bool MeetsRequirements(PlayerCollection? player, Item item);
+	/// <param name="attributes">The attributes to check against (a class set shown); null for the save's.</param>
+	bool MeetsRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null);
 
 	/// <summary>
 	/// Indicates whether <paramref name="item"/> suits <paramref name="player"/>, as <see cref="IsSuitableForCurrentPlayer"/>
