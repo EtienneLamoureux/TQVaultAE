@@ -69,6 +69,43 @@ public partial class MainForm
 			dialog.FollowUserZoom();
 	}
 
+	/// <summary>
+	/// Maximized, the window's design size is not needed, only room for the panels: the largest step whose panels,
+	/// measured now and scaled to the step, fit inside the border, never below the step of the design size. At 96 dpi a
+	/// 1602 x 1080 maximized window misses 1.2 by 18 px of design size, while the panels at 1.2 fit.
+	/// </summary>
+	protected override int MaximizedStep()
+		=> Math.Max(base.MaximizedStep(), ZoomSteps.LargestFitting(this.PanelsExtent, UIService.Scale, UIService.DpiScale, this.ContentAreaExtent));
+
+	/// <summary>
+	/// The maximize zoomed by a step predicted from the panels' size (<see cref="MaximizedStep"/>): the steps down while
+	/// the rounding of the new sizes leaves them past the border, never below the step of the design size.
+	/// </summary>
+	protected override void DoResizeEndCallback(object? sender, EventArgs e, bool fromMinimizedMaximized = false)
+	{
+		base.DoResizeEndCallback(sender, e, fromMinimizedMaximized);
+		if (this.WindowState != FormWindowState.Maximized || !this.ScaleOnResize)
+			return;
+
+		int floor = base.MaximizedStep();
+		while (this.ZoomStep > floor && !this.PanelsFit)
+		{
+			this.ZoomTo(this.ZoomStep - 1);
+			this.LastFormSize = this.Size;
+		}
+	}
+
+	/// <summary>The panels' bottom right corner, from the client area's top left.</summary>
+	private Size PanelsExtent
+		=> new(this.mainView.Left + this.mainView.PanelsPreferredSize.Width, this.mainView.Top + this.mainView.PanelsPreferredSize.Height);
+
+	/// <summary>The content area's bottom right corner, from the client area's top left.</summary>
+	private Size ContentAreaExtent => new(this.ContentArea.Right, this.ContentArea.Bottom);
+
+	/// <summary>Whether the panels fit inside the border at their preferred size.</summary>
+	private bool PanelsFit
+		=> this.PanelsExtent.Width <= this.ContentAreaExtent.Width && this.PanelsExtent.Height <= this.ContentAreaExtent.Height;
+
 	/// <summary>The client size of the window at zoom 1 and 96 dpi.</summary>
 	private static readonly Size DesignClientSize = new(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT);
 

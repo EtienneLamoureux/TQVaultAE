@@ -456,6 +456,13 @@ public partial class VaultForm
 		base.OnResizeEnd(e);
 	}
 
+	/// <summary>
+	/// The zoom step a maximize gives, the window already at its maximized size: the largest step whose window at its
+	/// design size fits it.
+	/// </summary>
+	protected virtual int MaximizedStep()
+		=> ZoomSteps.LargestFitting(new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.ClientSize);
+
 	/// <summary>The zoom step before the window was maximized, given back when it is restored.</summary>
 	private int? stepBeforeMaximize;
 
@@ -472,10 +479,9 @@ public partial class VaultForm
 			int step;
 			if (this.WindowState == FormWindowState.Maximized)
 			{
-				// Maximized: the largest step whose window fits, the margin left around it. The step before is given
-				// back by the restore.
+				// Maximized: the step of the maximized size (MaximizedStep). The step before is given back by the restore.
 				this.stepBeforeMaximize = this.ZoomStep;
-				step = ZoomSteps.LargestFitting(new Size(NORMAL_FORMWIDTH, NORMAL_FORMHEIGHT), UIService.DpiScale, this.ClientSize);
+				step = this.MaximizedStep();
 			}
 			else if (this.WindowState == FormWindowState.Minimized)
 				step = this.ZoomStep;

@@ -57,6 +57,17 @@ public class ZoomStepsTests
 	public void LargestFitting_IsLimitedByTheTighterSide()
 		=> ZoomSteps.LargestFitting(new Size(1350, 910), 1.25F, new Size(2572, 1462)).Should().Be(8);
 
+	// 96 dpi maximized 1602 x 1080: the panels measured at 1.1 (cell 35) are 1440 x 940 with their place; at 1.2 (cell 38)
+	// they take 1563 x 1021 and fit, at 1.3 (cell 42) 1728 px do not. The design size (1350 wide) only allows 1.1.
+	[Fact]
+	public void LargestFitting_MeasuredContent_ScalesFromTheScaleItWasMeasuredAt()
+	{
+		var limit = new Size(1596, 1074);
+
+		ZoomSteps.LargestFitting(new Size(1440, 940), ZoomSteps.Scale(7, 1F), 1F, limit).Should().Be(8);
+		ZoomSteps.LargestFitting(new Size(1350, 910), 1F, limit).Should().Be(7);
+	}
+
 	// 96 dpi, a 1920 x 1300 limit: the width allows 1.4 (1890 px), not 1.5 (2025 px).
 	[Fact]
 	public void LargestFitting_CanBeLimitedByTheWidth()
