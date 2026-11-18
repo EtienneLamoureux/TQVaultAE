@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using TQVaultAE.DbCli.Core;
 
 namespace TQVaultAE.Tests.DbCli;
 

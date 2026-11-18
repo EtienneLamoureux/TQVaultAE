@@ -5,8 +5,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
 		<ProjectReference Include="..\..\TQVaultAE.GameFiles\TQVaultAE.GameFiles.csproj" />
-		<!-- The jitter verification reads the real game database through DbCli. -->
-		<ProjectReference Include="..\..\TQVaultAE.DbCli\TQVaultAE.DbCli.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
