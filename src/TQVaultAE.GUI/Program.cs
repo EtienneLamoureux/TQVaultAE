@@ -39,11 +39,6 @@ public static class Program
 	// Set first thing in Main.
 	private static ILogger Log = null!;
 
-	/// <summary>
-	/// Right to left reading options for message boxes
-	/// </summary>
-	private static MessageBoxOptions rightToLeft;
-
 	internal static ServiceProvider ServiceProvider { get; private set; } = null!;
 	// Registered in the services as ILoggerFactory: keep the interface type.
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Registered as ILoggerFactory.")]
@@ -360,13 +355,6 @@ public static class Program
 				?.CultureName ?? "en";
 			Thread.CurrentThread.CurrentCulture = new CultureInfo(assemblyCultureName, true);
 		}
-
-		// Set options for Right to Left reading.
-		rightToLeft = (MessageBoxOptions)0;
-		if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-		{
-			rightToLeft = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
-		}
 	}
 
 	/// <summary>
@@ -386,14 +374,14 @@ public static class Program
 			if (TQVaultAE.GUI.Automation.AutomationHost.MainForm?.AutomationLoadingComplete != true)
 				headlessAnswer = DialogResult.Abort;
 #endif
-			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, rightToLeft, headlessAnswer);
+			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxService.ReadingOptions, headlessAnswer);
 		}
 		catch
 		{
 			try
 			{
 				Log.LogCritical(t.Exception, "Fatal Windows Forms Error");
-				ShowMessageBox(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, rightToLeft);
+				ShowMessageBox(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxService.ReadingOptions);
 			}
 			finally
 			{
