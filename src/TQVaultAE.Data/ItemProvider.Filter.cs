@@ -375,7 +375,7 @@ public partial class ItemProvider
 			string keyRaw = variable.Name;
 			string key = variable.Name.Replace(prefix, string.Empty);
 			key = key.Replace("Equation", string.Empty);
-			key = key.Replace(key[0], char.ToUpperInvariant(key[0]));
+			key = key.AsSpan().ToFirstCharUpperCase();
 
 			// We need to ignore the cost equations.
 			// Shields have costs so they will cause an overflow.
