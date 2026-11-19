@@ -108,7 +108,7 @@ internal static partial class AutomationTools
 			{
 				// Picking a loadout only selects it.
 				var field = bar.FieldBounds;
-				AutomationInput.SendClick(bar, new Point(field.X + (field.Width / 2), field.Y + (field.Height / 2)), MouseButtons.Left, Keys.None);
+				AutomationInput.SendClick(bar, AutomationInput.Center(field), MouseButtons.Left, Keys.None);
 				return (bar.ListMenu, None);
 			}
 

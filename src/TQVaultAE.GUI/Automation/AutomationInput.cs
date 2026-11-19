@@ -102,6 +102,9 @@ internal static partial class AutomationInput
 	/// <summary>The center of <paramref name="control"/> in its client coordinates.</summary>
 	public static Point Center(Control control) => new(control.Width / 2, control.Height / 2);
 
+	/// <summary>The center of <paramref name="bounds"/>.</summary>
+	public static Point Center(Rectangle bounds) => new(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
+
 	/// <summary>The mouse event of a single <paramref name="button"/> click at the centre of <paramref name="control"/>.</summary>
 	public static MouseEventArgs CenterClick(Control control, MouseButtons button) => new(button, 1, control.Width / 2, control.Height / 2, 0);
 

@@ -30,7 +30,7 @@ public partial class BagButtonSettings
 
 		var (grid, cell) = this.AutomationCell(category, index);
 		var bounds = grid.BoundsOf(cell);
-		var start = new Point(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
+		var start = AutomationInput.Center(bounds);
 		var end = grid.PointToClient(box.PointToScreen(Automation.AutomationInput.Center(box)));
 		Automation.AutomationInput.SendButton(grid, start, MouseButtons.Left, down: true);
 		Automation.VirtualCursor.Set(box, Automation.AutomationInput.Center(box));

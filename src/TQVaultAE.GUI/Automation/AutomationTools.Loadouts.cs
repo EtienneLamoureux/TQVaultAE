@@ -44,199 +44,214 @@ internal static partial class AutomationTools
 #endif
 
 			var stash = form.AutomationStashPanel ?? throw new McpException("No stash panel.");
-			var player = stash.Player;
-			var bar = stash.LoadoutBar;
-			var equipment = stash.EquipmentPanel;
-
-			// Hovering a mark only shows its tool tip: any character.
 			object? markTooltip = null;
-			if (string.Equals(action?.Trim(), "hover", StringComparison.OrdinalIgnoreCase))
+			switch (action?.Trim().ToLowerInvariant())
 			{
-				Domain.Actions.LoadoutSlotMark? hovered = slot is { } hoverSlot
-					? equipment.LoadoutMarks.Where(m => m.Slot == hoverSlot).Select(m => (Domain.Actions.LoadoutSlotMark?)m).FirstOrDefault()
-						?? throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).")
-					: null;
-				markTooltip = equipment.AutomationHoverMark(hovered).Select(line => new { text = line.Text, color = AutomationJson.HexOrNull(line.Color) }).ToList();
-				action = null;
+				case null or "":
+					break;
+				// Hovering a mark, the loadout panel's arrows and comparing only show or read: any character.
+				case "hover":
+					markTooltip = HoverMark(stash.EquipmentPanel, slot);
+					break;
+				case "back" or "previous" or "next":
+					ClickLoadoutPanelArrow(stash, action.Trim().ToLowerInvariant());
+					break;
+				case "compare":
+					CompareMark(stash.EquipmentPanel, slot);
+					break;
+				default:
+					LoadoutBarAct(form, stash, action, name, newName, to);
+					break;
 			}
 
-			// The buttons of the loadout panel only show the statistics or another loadout: any character.
-			if (action?.Trim().ToLowerInvariant() is "back" or "previous" or "next" && stash.LoadoutView is var view0)
-			{
-				if (view0 is not { Visible: true } shown)
-					throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
-				var button = action.Trim().ToLowerInvariant() switch
-				{
-					"back" => shown.BackButton,
-					"previous" => shown.PreviousButton,
-					_ => shown.NextButton,
-				};
-				if (button != shown.BackButton && !shown.CanTurn)
-					throw new McpException("The button is greyed: the character has a single loadout.");
-				AutomationInput.SendClick(button, AutomationInput.Center(button), MouseButtons.Left, Keys.None);
-				action = null;
-			}
-
-			// Comparing only reads the pieces: any character.
-			if (string.Equals(action?.Trim(), "compare", StringComparison.OrdinalIgnoreCase))
-			{
-				// A user cannot click the panel while a modal dialog is open (a message box); the comparisons are modeless.
-				if (System.Windows.Forms.Application.OpenForms.OfType<Form>().Any(f => f.Modal))
-					throw new McpException("A modal dialog is open: close it first.");
-				if (slot is not { } markSlot || equipment.LoadoutMarks.Where(m => m.Slot == markSlot).Select(m => (Domain.Actions.LoadoutSlotMark?)m).FirstOrDefault() is not { } mark)
-					throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).");
-				// Through the panel's own click handler, at the middle of the mark.
-				var bounds = equipment.MarkScreenBounds(mark);
-				var center = new Point(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
-				equipment.AutomationMouseDown(center, MouseButtons.Left);
-				action = null;
-			}
-
-			if (!string.IsNullOrWhiteSpace(action))
-			{
-				if (player is null)
-					throw new McpException("No character is shown.");
-				if (!AutomationTestNames.IsTestFile(player.PlayerName))
-					throw new McpException($"Loadout actions only on test characters ({AutomationTestNames.Accepted}).");
-				if (bar is null)
-					throw new McpException("The loadout bar is not built yet: show the Equipment tab first.");
-
-				if (!bar.Visible)
-					throw new McpException("The loadout bar is hidden: show the Equipment tab first.");
-					if (string.Equals(action.Trim(), "emptyButton", StringComparison.OrdinalIgnoreCase))
-				{
-					// The Empty loadout button of the loadout panel opens the menu of destinations; the entry is clicked
-					// after the call returns.
-					if (stash.LoadoutView is not { Visible: true } view2)
-						throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
-					if (view2.EmptyLocked is { } emptyLocked)
-						throw new McpException($"Empty loadout is greyed: {emptyLocked}");
-					var target = EmptyTarget(to);
-					var emptyButton = view2.EmptyButton;
-					AutomationInput.SendClick(emptyButton, AutomationInput.Center(emptyButton), MouseButtons.Left, Keys.None);
-					var entry = bar.EmptyMenu.Items.OfType<ToolStripItem>().First(i => i.Tag is LoadoutBarAction tagged && tagged == target);
-					AutomationMenus.ClickLater(form, AutomationMenus.Clickable([entry]));
-				}
-				else if (string.Equals(action.Trim(), "swapButton", StringComparison.OrdinalIgnoreCase))
-				{
-					// The Gear swap button of the loadout panel, clicked after the call returns (it may ask when the game runs).
-					if (stash.LoadoutView is not { Visible: true } view1)
-						throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
-					var swapButton = view1.SwapButton;
-					if (view1.SwapLocked is { } locked)
-						throw new McpException($"Gear swap is greyed: {locked}");
-					form.BeginInvoke(() => AutomationInput.SendClick(swapButton, AutomationInput.Center(swapButton), MouseButtons.Left, Keys.None));
-				}
-				else
-				{
-					var barAction = string.Equals(action.Trim(), "empty", StringComparison.OrdinalIgnoreCase)
-						? EmptyTarget(to)
-						: ParseEnum<LoadoutBarAction>(action, "action");
-
-					// Another loadout than the selected one: picked in the bar's list first, as the user does.
-					if (name is not null && (barAction == LoadoutBarAction.Select || (barAction != LoadoutBarAction.Add && name != bar.Selected)))
-						PickInBar(bar, name);
-					if (barAction != LoadoutBarAction.Select)
-						ListBarAct(form, bar, barAction, barAction == LoadoutBarAction.Add ? name : newName);
-				}
-			}
-
-			object? menuEntries = null;
-			if (bar is not null && menu is not null)
-			{
-				menuEntries = BarMenuEntries(bar, menu);
-			}
-
-			var set = player is null ? null : form.Services.Loadouts.Find(Path.GetDirectoryName(player.PlayerFile) ?? string.Empty);
-			var worn = player?.EquipmentSack?.ToList();
-			return Serialize(new
-			{
-				character = player?.PlayerName,
-				useAlternate = player?.UseAlternate,
-#if DEBUG
-				gameRunningOverride = GameRunningOverride,
-#endif
-				bar = bar is null ? null : new
-				{
-					visible = bar.Visible,
-					bounds = stash.AutomationBounds(bar),
-					field = bar.FieldBounds,
-					add = bar.AddBounds,
-					names = bar.Names,
-					selected = bar.Selected,
-					canChange = bar.CanChange,
-					equipmentLocked = bar.EquipmentLocked,
-					copyLocked = bar.CopyLocked?.Invoke(),
-					font = bar.TextFont?.ToString(),
-				},
-				// Where the bar sits among its neighbours, in the stash panel's pixels: the statistics panel above, the
-				// Edit button, and the panel's own size (nothing may go past its bottom).
-				layout = bar is null ? null : new
-				{
-					statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? stash.AutomationBounds(stats) : (Rectangle?)null,
-					editButton = stash.AutomationEditButton is { } edit ? stash.AutomationBounds(edit) : (Rectangle?)null,
-					editButtonVisible = stash.AutomationEditButton?.Visible,
-					editButtonFont = stash.AutomationEditButton?.Font.ToString(),
-					stashClient = stash.ClientRectangle,
-				},
-				menu = menuEntries,
-				equipmentPanel = equipment.Bounds,
-				marks = equipment.LoadoutMarks.Select(m => new
-				{
-					slot = m.Slot,
-					match = m.Match.ToString(),
-					canCompare = m.CanCompare,
-					bounds = equipment.MarkScreenBounds(m),
-				}),
-				markTooltip,
-				panel = stash.LoadoutView is not { } view ? null : new
-				{
-					visible = AutomationPanels.IsShown(view) && view.Visible,
-					bounds = stash.AutomationBounds(view),
-					loadout = view.Panel.LoadoutName,
-					panelBounds = view.Panel.Bounds,
-					cellScaleFactor = view.Panel.CellScaleFactor,
-					unitSize = view.Panel.UnitSize,
-					back = view.BackButton.Bounds,
-					previous = view.PreviousButton.Bounds,
-					next = view.NextButton.Bounds,
-					canTurn = view.CanTurn,
-					swap = view.SwapButton.Bounds,
-					canSwap = view.CanSwap,
-					swapLocked = view.SwapLocked,
-					empty = view.EmptyButton.Bounds,
-					emptyLocked = view.EmptyLocked,
-					statsPanelVisible = stash.AutomationPlayerStatsPanel?.Visible,
-					slots = view.Panel.Sack?.Take(view.Panel.Sack.NumberOfSlots).Select((item, index) => ItemKey.IsEmptyItem(item) ? null : new
-					{
-						slot = index,
-						record = item.BaseItemId.Raw,
-						seed = item.Seed,
-						search = item.Place.SackType.ToString(),
-						size = item.Size,
-					}).Where(s => s is not null),
-				},
-				file = set?.FilePath,
-				fileExists = set is not null && File.Exists(set.FilePath),
-				readFailed = set?.ReadFailed,
-				modified = set?.IsModified,
-				loadouts = set?.Loadouts.Select(l => new
-				{
-					name = l.Name,
-					useAlternate = l.UseAlternate,
-					pieces = l.Pieces.Select((piece, slot) => piece is null ? null : new
-					{
-						slot,
-						record = piece.BaseItemId.Raw,
-						seed = piece.Seed,
-						worn = worn is not null && slot < worn.Count && ItemIdentityComparer.Instance.Equals(worn[slot], piece),
-						search = piece.Place.SackType.ToString(),
-					}).Where(p => p is not null),
-				}),
-				worn = worn?.Select((item, slot) => ItemKey.IsEmptyItem(item) ? null : new { slot, record = item.BaseItemId.Raw, seed = item.Seed }).Where(w => w is not null),
-				notification = form.AutomationNotificationText,
-			});
+			return LoadoutsState(form, stash, menu, markTooltip);
 		});
+
+	/// <summary>The loadout mark of an equipment slot, refused when there is none.</summary>
+	private static Domain.Actions.LoadoutSlotMark MarkAt(EquipmentPanel equipment, int slot)
+		=> equipment.LoadoutMarks.Where(m => m.Slot == slot).Select(m => (Domain.Actions.LoadoutSlotMark?)m).FirstOrDefault()
+			?? throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).");
+
+	/// <summary>Rests the pointer on the mark of <paramref name="slot"/> (none: leaves the panel) and returns its tool tip.</summary>
+	private static List<object> HoverMark(EquipmentPanel equipment, int? slot)
+	{
+		Domain.Actions.LoadoutSlotMark? hovered = slot is { } hoverSlot ? MarkAt(equipment, hoverSlot) : null;
+		return equipment.AutomationHoverMark(hovered).Select(line => (object)new { text = line.Text, color = AutomationJson.HexOrNull(line.Color) }).ToList();
+	}
+
+	/// <summary>Clicks the loadout panel's Back, previous or next arrow.</summary>
+	private static void ClickLoadoutPanelArrow(StashPanel stash, string arrow)
+	{
+		if (stash.LoadoutView is not { Visible: true } shown)
+			throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
+		var button = arrow switch
+		{
+			"back" => shown.BackButton,
+			"previous" => shown.PreviousButton,
+			_ => shown.NextButton,
+		};
+		if (button != shown.BackButton && !shown.CanTurn)
+			throw new McpException("The button is greyed: the character has a single loadout.");
+		AutomationInput.SendClick(button, AutomationInput.Center(button), MouseButtons.Left, Keys.None);
+	}
+
+	/// <summary>Clicks the mark of <paramref name="slot"/> through the panel's own click handler, which opens a comparison.</summary>
+	private static void CompareMark(EquipmentPanel equipment, int? slot)
+	{
+		// A user cannot click the panel while a modal dialog is open (a message box); the comparisons are modeless.
+		if (System.Windows.Forms.Application.OpenForms.OfType<Form>().Any(f => f.Modal))
+			throw new McpException("A modal dialog is open: close it first.");
+		if (slot is not { } markSlot)
+			throw new McpException("No mark at that slot (no loadout selected, or the slot is empty on both sides).");
+		equipment.AutomationMouseDown(AutomationInput.Center(equipment.MarkScreenBounds(MarkAt(equipment, markSlot))), MouseButtons.Left);
+	}
+
+	/// <summary>
+	/// An action that changes the loadouts or the equipment, on a test character: the loadout panel's Empty loadout and
+	/// Gear swap buttons, or an action of the bar (another loadout than the selected one picked in its list first).
+	/// </summary>
+	private static void LoadoutBarAct(Forms.MainForm form, StashPanel stash, string action, string? name, string? newName, string? to)
+	{
+		var player = stash.Player ?? throw new McpException("No character is shown.");
+		if (!AutomationTestNames.IsTestFile(player.PlayerName))
+			throw new McpException($"Loadout actions only on test characters ({AutomationTestNames.Accepted}).");
+		var bar = stash.LoadoutBar ?? throw new McpException("The loadout bar is not built yet: show the Equipment tab first.");
+		if (!bar.Visible)
+			throw new McpException("The loadout bar is hidden: show the Equipment tab first.");
+
+		if (string.Equals(action.Trim(), "emptyButton", StringComparison.OrdinalIgnoreCase))
+		{
+			// The Empty loadout button of the loadout panel opens the menu of destinations; the entry is clicked
+			// after the call returns.
+			if (stash.LoadoutView is not { Visible: true } view)
+				throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
+			if (view.EmptyLocked is { } emptyLocked)
+				throw new McpException($"Empty loadout is greyed: {emptyLocked}");
+			var target = EmptyTarget(to);
+			AutomationInput.SendClick(view.EmptyButton, AutomationInput.Center(view.EmptyButton), MouseButtons.Left, Keys.None);
+			var entry = bar.EmptyMenu.Items.OfType<ToolStripItem>().First(i => i.Tag is LoadoutBarAction tagged && tagged == target);
+			AutomationMenus.ClickLater(form, AutomationMenus.Clickable([entry]));
+		}
+		else if (string.Equals(action.Trim(), "swapButton", StringComparison.OrdinalIgnoreCase))
+		{
+			// The Gear swap button of the loadout panel, clicked after the call returns (it may ask when the game runs).
+			if (stash.LoadoutView is not { Visible: true } view)
+				throw new McpException("The loadout panel is not shown: choose a loadout first (action select).");
+			var swapButton = view.SwapButton;
+			if (view.SwapLocked is { } locked)
+				throw new McpException($"Gear swap is greyed: {locked}");
+			form.BeginInvoke(() => AutomationInput.SendClick(swapButton, AutomationInput.Center(swapButton), MouseButtons.Left, Keys.None));
+		}
+		else
+		{
+			var barAction = string.Equals(action.Trim(), "empty", StringComparison.OrdinalIgnoreCase)
+				? EmptyTarget(to)
+				: ParseEnum<LoadoutBarAction>(action, "action");
+
+			if (name is not null && (barAction == LoadoutBarAction.Select || (barAction != LoadoutBarAction.Add && name != bar.Selected)))
+				PickInBar(bar, name);
+			if (barAction != LoadoutBarAction.Select)
+				ListBarAct(form, bar, barAction, barAction == LoadoutBarAction.Add ? name : newName);
+		}
+	}
+
+	/// <summary>The loadouts tool's answer: the bar, its layout and menu, the marks, the loadout panel and the loadouts file.</summary>
+	private static string LoadoutsState(Forms.MainForm form, StashPanel stash, string? menu, object? markTooltip)
+	{
+		var player = stash.Player;
+		var bar = stash.LoadoutBar;
+		var equipment = stash.EquipmentPanel;
+		object? menuEntries = bar is not null && menu is not null ? BarMenuEntries(bar, menu) : null;
+		var set = player is null ? null : form.Services.Loadouts.Find(Path.GetDirectoryName(player.PlayerFile) ?? string.Empty);
+		var worn = player?.EquipmentSack?.ToList();
+		return Serialize(new
+		{
+			character = player?.PlayerName,
+			useAlternate = player?.UseAlternate,
+#if DEBUG
+			gameRunningOverride = GameRunningOverride,
+#endif
+			bar = bar is null ? null : new
+			{
+				visible = bar.Visible,
+				bounds = stash.AutomationBounds(bar),
+				field = bar.FieldBounds,
+				add = bar.AddBounds,
+				names = bar.Names,
+				selected = bar.Selected,
+				canChange = bar.CanChange,
+				equipmentLocked = bar.EquipmentLocked,
+				copyLocked = bar.CopyLocked?.Invoke(),
+				font = bar.TextFont?.ToString(),
+			},
+			// Where the bar sits among its neighbours, in the stash panel's pixels: the statistics panel above, the
+			// Edit button, and the panel's own size (nothing may go past its bottom).
+			layout = bar is null ? null : new
+			{
+				statsPanel = stash.AutomationPlayerStatsPanel is { } stats ? stash.AutomationBounds(stats) : (Rectangle?)null,
+				editButton = stash.AutomationEditButton is { } edit ? stash.AutomationBounds(edit) : (Rectangle?)null,
+				editButtonVisible = stash.AutomationEditButton?.Visible,
+				editButtonFont = stash.AutomationEditButton?.Font.ToString(),
+				stashClient = stash.ClientRectangle,
+			},
+			menu = menuEntries,
+			equipmentPanel = equipment.Bounds,
+			marks = equipment.LoadoutMarks.Select(m => new
+			{
+				slot = m.Slot,
+				match = m.Match.ToString(),
+				canCompare = m.CanCompare,
+				bounds = equipment.MarkScreenBounds(m),
+			}),
+			markTooltip,
+			panel = stash.LoadoutView is not { } view ? null : new
+			{
+				visible = AutomationPanels.IsShown(view) && view.Visible,
+				bounds = stash.AutomationBounds(view),
+				loadout = view.Panel.LoadoutName,
+				panelBounds = view.Panel.Bounds,
+				cellScaleFactor = view.Panel.CellScaleFactor,
+				unitSize = view.Panel.UnitSize,
+				back = view.BackButton.Bounds,
+				previous = view.PreviousButton.Bounds,
+				next = view.NextButton.Bounds,
+				canTurn = view.CanTurn,
+				swap = view.SwapButton.Bounds,
+				canSwap = view.CanSwap,
+				swapLocked = view.SwapLocked,
+				empty = view.EmptyButton.Bounds,
+				emptyLocked = view.EmptyLocked,
+				statsPanelVisible = stash.AutomationPlayerStatsPanel?.Visible,
+				slots = view.Panel.Sack?.Take(view.Panel.Sack.NumberOfSlots).Select((item, index) => ItemKey.IsEmptyItem(item) ? null : new
+				{
+					slot = index,
+					record = item.BaseItemId.Raw,
+					seed = item.Seed,
+					search = item.Place.SackType.ToString(),
+					size = item.Size,
+				}).Where(s => s is not null),
+			},
+			file = set?.FilePath,
+			fileExists = set is not null && File.Exists(set.FilePath),
+			readFailed = set?.ReadFailed,
+			modified = set?.IsModified,
+			loadouts = set?.Loadouts.Select(l => new
+			{
+				name = l.Name,
+				useAlternate = l.UseAlternate,
+				pieces = l.Pieces.Select((piece, slot) => piece is null ? null : new
+				{
+					slot,
+					record = piece.BaseItemId.Raw,
+					seed = piece.Seed,
+					worn = worn is not null && slot < worn.Count && ItemIdentityComparer.Instance.Equals(worn[slot], piece),
+					search = piece.Place.SackType.ToString(),
+				}).Where(p => p is not null),
+			}),
+			worn = worn?.Select((item, slot) => ItemKey.IsEmptyItem(item) ? null : new { slot, record = item.BaseItemId.Raw, seed = item.Seed }).Where(w => w is not null),
+			notification = form.AutomationNotificationText,
+		});
+	}
 
 
 	/// <summary>The Empty loadout entry of a destination: inventory, stash or vault.</summary>
@@ -278,8 +293,7 @@ internal static partial class AutomationTools
 	internal static void PickInBar<TAction>(GameListBar<TAction> bar, string name)
 		where TAction : struct, Enum
 	{
-		var field = bar.FieldBounds;
-		AutomationInput.SendClick(bar, new Point(field.X + (field.Width / 2), field.Y + (field.Height / 2)), MouseButtons.Left, Keys.None);
+		AutomationInput.SendClick(bar, AutomationInput.Center(bar.FieldBounds), MouseButtons.Left, Keys.None);
 		try
 		{
 			var entry = bar.ListMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => string.Equals(i.Tag as string, name, StringComparison.OrdinalIgnoreCase))
@@ -309,8 +323,7 @@ internal static partial class AutomationTools
 
 		if (EqualityComparer<TAction>.Default.Equals(action, bar.AddAction))
 		{
-			var button = bar.AddBounds;
-			var center = new Point(button.X + (button.Width / 2), button.Y + (button.Height / 2));
+			var center = AutomationInput.Center(bar.AddBounds);
 			form.BeginInvoke(() => AutomationInput.SendClick(bar, center, MouseButtons.Left, Keys.None));
 			return;
 		}
