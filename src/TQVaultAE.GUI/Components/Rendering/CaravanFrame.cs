@@ -44,24 +44,9 @@ internal static class CaravanFrame
 		g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
 		g.Clear(Color.Black);
 
-		var src = Source;
+		// The corners and the edges; the inside stays black.
 		int b = Math.Min(Border, Math.Min(result.Width, result.Height) / 2);
-		int sw = src.Width, sh = src.Height, w = result.Width, h = result.Height;
-		void Part(int dx, int dy, int dw, int dh, int sx, int sy, int sW, int sH)
-		{
-			if (dw > 0 && dh > 0)
-				g.DrawImage(src, new Rectangle(dx, dy, dw, dh), new Rectangle(sx, sy, sW, sH), GraphicsUnit.Pixel);
-		}
-
-		// Corners, then the edges stretched along their length.
-		Part(0, 0, b, b, 0, 0, b, b);
-		Part(w - b, 0, b, b, sw - b, 0, b, b);
-		Part(0, h - b, b, b, 0, sh - b, b, b);
-		Part(w - b, h - b, b, b, sw - b, sh - b, b, b);
-		Part(b, 0, w - 2 * b, b, b, 0, sw - 2 * b, b);
-		Part(b, h - b, w - 2 * b, b, b, sh - b, sw - 2 * b, b);
-		Part(0, b, b, h - 2 * b, 0, b, b, sh - 2 * b);
-		Part(w - b, b, b, h - 2 * b, sw - b, b, b, sh - 2 * b);
+		NineSlice.Draw(g, Source, new Rectangle(Point.Empty, Source.Size), b, new Rectangle(Point.Empty, result.Size), b, inside: false);
 		return result;
 	}
 

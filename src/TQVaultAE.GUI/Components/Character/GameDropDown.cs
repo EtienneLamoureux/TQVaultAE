@@ -243,25 +243,7 @@ internal sealed class GameDropDown : Control
 
 	/// <summary>The gold box of the character window, its corners kept and its edges stretched to the bounds.</summary>
 	private static void DrawBox(Graphics g, Bitmap box, Rectangle to, float scale)
-	{
-		int c = BoxCorner;
-		int cs = Math.Max(1, Convert.ToInt32(c * scale));
-		void Part(Rectangle dest, int x, int y, int w, int h) => g.DrawImage(box, dest, x, y, w, h, GraphicsUnit.Pixel);
-
-		int midW = box.Width - (2 * c), midH = box.Height - (2 * c);
-		int left = to.Left, top = to.Top, right = to.Right - cs, bottom = to.Bottom - cs;
-		int innerW = Math.Max(0, to.Width - (2 * cs)), innerH = Math.Max(0, to.Height - (2 * cs));
-
-		Part(new Rectangle(left, top, cs, cs), 0, 0, c, c);
-		Part(new Rectangle(left + cs, top, innerW, cs), c, 0, midW, c);
-		Part(new Rectangle(right, top, cs, cs), box.Width - c, 0, c, c);
-		Part(new Rectangle(left, top + cs, cs, innerH), 0, c, c, midH);
-		Part(new Rectangle(left + cs, top + cs, innerW, innerH), c, c, midW, midH);
-		Part(new Rectangle(right, top + cs, cs, innerH), box.Width - c, c, c, midH);
-		Part(new Rectangle(left, bottom, cs, cs), 0, box.Height - c, c, c);
-		Part(new Rectangle(left + cs, bottom, innerW, cs), c, box.Height - c, midW, c);
-		Part(new Rectangle(right, bottom, cs, cs), box.Width - c, box.Height - c, c, c);
-	}
+		=> NineSlice.Draw(g, box, new Rectangle(Point.Empty, box.Size), BoxCorner, to, Math.Max(1, Convert.ToInt32(BoxCorner * scale)));
 
 	protected override void Dispose(bool disposing)
 	{

@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation.Win32.Contracts;
 
@@ -115,25 +116,10 @@ internal sealed partial class CharacterSidePanel : Control
 	/// </summary>
 	private void DrawFrame(Graphics g)
 	{
-		int c = FrameCorner;
-		var s = FrameSource;
-		int[] sx = [s.Left, s.Left + c, s.Right - c, s.Right];
-		int[] sy = [s.Top, s.Top + c, s.Bottom - c, s.Bottom];
-		int dc = this.Scaled(c);
-		int[] dx = [0, dc, this.Width - dc, this.Width];
-		int[] dy = [0, dc, this.Height - dc, this.Height];
-
 		// Tiled edges keep the bicubic filter from blending in the pixels outside each piece.
 		using var attributes = new ImageAttributes();
 		attributes.SetWrapMode(WrapMode.TileFlipXY);
-		for (int row = 0; row < 3; row++)
-		{
-			for (int column = 0; column < 3; column++)
-			{
-				var target = Rectangle.FromLTRB(dx[column], dy[row], dx[column + 1], dy[row + 1]);
-				g.DrawImage(this._frame, target, sx[column], sy[row], sx[column + 1] - sx[column], sy[row + 1] - sy[row], GraphicsUnit.Pixel, attributes);
-			}
-		}
+		NineSlice.Draw(g, this._frame, FrameSource, FrameCorner, this.ClientRectangle, this.Scaled(FrameCorner), attributes: attributes);
 	}
 
 	protected override void OnPaint(PaintEventArgs e)
