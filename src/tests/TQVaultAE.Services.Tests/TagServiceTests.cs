@@ -541,4 +541,18 @@ public class TagServiceTests
 		// Assert
 		error.Should().Be(expected);
 	}
+
+	[Fact]
+	public void ReadConfig_CorruptFile_GivesNoTags_AndSavingLeavesTheFileAsItIs()
+	{
+		_mockFileIO.Setup(x => x.Exists(_testConfigPath)).Returns(true);
+		_mockFileIO.Setup(x => x.ReadAllText(_testConfigPath)).Returns("{ \"tags\": [");
+
+		_tagService.ReadConfig();
+		_tagService.AddTag("Farm", 1, 2, 3);
+		_tagService.SaveConfig();
+
+		_tagService.Tags.Should().ContainKey("Farm");
+		_mockFileIO.Verify(x => x.WriteAllText(_testConfigPath, It.IsAny<string>()), Times.Never);
+	}
 }

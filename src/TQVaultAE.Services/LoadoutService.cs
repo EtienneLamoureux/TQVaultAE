@@ -57,20 +57,10 @@ public partial class LoadoutService(
 			return kept;
 
 		var set = new LoadoutSet(file, characterName, characterMod);
-		if (this.FileIO.Exists(file))
-		{
-			try
-			{
-				var dto = JsonSerializer.Deserialize<LoadoutFileDto>(this.FileIO.ReadAllText(file), JsonOptions)
-					?? throw new JsonException("Empty loadouts file");
-				set.Loadouts = [.. dto.loadouts.Select(l => this.FromDto(l, characterMod))];
-			}
-			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
-			{
-				this.Log.LogError(ex, "Failed to read the loadouts {File}", file);
-				set.ReadFailed = true;
-			}
-		}
+		var (dto, failed) = JsonFile.Read<LoadoutFileDto>(this.FileIO, file, JsonOptions, this.Log, "loadouts");
+		set.ReadFailed = failed;
+		if (dto is not null)
+			set.Loadouts = [.. dto.loadouts.Select(l => this.FromDto(l, characterMod))];
 
 		this.Session.Loadouts[file] = set;
 		this.Changed(set);
@@ -253,7 +243,7 @@ public partial class LoadoutService(
 		}
 
 		var dto = new LoadoutFileDto { version = FileVersion, loadouts = [.. list.Select(ToDto)] };
-		this.FileIO.WriteAllText(file, JsonSerializer.Serialize(dto, JsonOptions));
+		JsonFile.Write(this.FileIO, file, dto, JsonOptions);
 	}
 
 	/// <summary>Once the loadouts of a character are read or changed: the search shows their pieces.</summary>

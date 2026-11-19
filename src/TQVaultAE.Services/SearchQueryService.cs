@@ -97,32 +97,23 @@ public class SearchQueryService(
 
 	private List<SearchQuery> Read()
 	{
-		var path = this.FilePath;
-		if (!this._fileIO.Exists(path))
+		// A file that cannot be read is left as it is until the next save.
+		var queries = JsonFile.Read<List<SearchQuery>>(this._fileIO, this.FilePath, JsonOptions, this._log, "saved search queries").Value;
+		if (queries is null)
 			return [];
 
-		try
+		// Missing members are left null by the deserializer.
+		queries.RemoveAll(q => q is null);
+		foreach (var query in queries)
 		{
-			var queries = JsonSerializer.Deserialize<List<SearchQuery>>(this._fileIO.ReadAllText(path), JsonOptions) ?? [];
-			// Missing members are left null by the deserializer.
-			queries.RemoveAll(q => q is null);
-			foreach (var query in queries)
-			{
-				query.QueryName ??= string.Empty;
-				query.Filter ??= string.Empty;
-				query.CheckedItems = query.CheckedItems?.Where(f => f is not null).ToList() ?? [];
-				query.Visible = query.Visible?.Where(v => v is not null).ToList() ?? [];
-			}
-			return queries;
+			query.QueryName ??= string.Empty;
+			query.Filter ??= string.Empty;
+			query.CheckedItems = query.CheckedItems?.Where(f => f is not null).ToList() ?? [];
+			query.Visible = query.Visible?.Where(v => v is not null).ToList() ?? [];
 		}
-		catch (JsonException ex)
-		{
-			// The file is left as it is until the next save.
-			this._log.LogError(ex, "Failed to read the saved search queries from {Path}", path);
-			return [];
-		}
+		return queries;
 	}
 
 	private void Write()
-		=> this._fileIO.WriteAllText(this.FilePath, JsonSerializer.Serialize(this.Loaded, JsonOptions));
+		=> JsonFile.Write(this._fileIO, this.FilePath, this.Loaded, JsonOptions);
 }
