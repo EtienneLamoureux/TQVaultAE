@@ -68,14 +68,11 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BagButtonTooltip";
-            this.Load += new System.EventHandler(this.BagButtonTooltip_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelFriendlyNames;
 	}
 }
