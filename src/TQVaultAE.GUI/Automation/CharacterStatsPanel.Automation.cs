@@ -14,12 +14,6 @@ internal sealed partial class CharacterStatsPanel
 			? [.. this.ToolTipAreas(view).Where(a => !a.ToolTip.IsEmpty).Select(a => (IReadOnlyList<GameTooltipLine>)ToolTipLines(a.ToolTip))]
 			: [];
 
-	/// <summary>The areas of the rollovers of the tab shown, in client pixels, in the order of <see cref="AutomationToolTips"/>.</summary>
-	internal IReadOnlyList<System.Drawing.Rectangle> AutomationToolTipBounds()
-		=> this.View?.Invoke() is { } view
-			? [.. this.ToolTipAreas(view).Where(a => !a.ToolTip.IsEmpty).Select(a => this.ScaledRect(a.Area))]
-			: [];
-
 	/// <summary>What the panel draws.</summary>
 	internal object AutomationState()
 	{

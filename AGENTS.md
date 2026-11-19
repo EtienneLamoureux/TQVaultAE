@@ -215,7 +215,7 @@ Rules:
 - Nothing blocks saves: work only in your own test files, vaults `vault-test1`, `vault-test2`, ... and characters `player-test1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
 - Put items back with `cancel_drag`.
 - `PlayerReadonly` blocks picking from and dropping on the equipment panel. A read-only character (its save files carry the read-only attribute) blocks all of its bags, equipment and storage area.
-- Release builds serve the user tools (methods of `AutomationTools`) when the setting is on. A developer tool goes in `Automation/Dev/` (nested class `AutomationTools.DevTools`, left out of Release builds) and its hooks inside `#if DEBUG`; add every new tool to one of the two lists of `AutomationToolLevelsTests` and mark it in `documentation/AUTOMATION.md` (and `documentation/mcp.md` for a user tool).
+- Release builds serve the user tools (methods of `AutomationTools`) when the setting is on. A developer tool goes in `Automation/Dev/` (nested class `AutomationTools.DevTools`, left out of Release builds), its accessors and helpers in `Automation/Dev/` partial files and its hooks elsewhere inside `#if DEBUG`; add every new tool to one of the two lists of `AutomationToolLevelsTests` and mark it in `documentation/AUTOMATION.md` (and `documentation/mcp.md` for a user tool).
 
 Full reference: `documentation/AUTOMATION.md`.
 

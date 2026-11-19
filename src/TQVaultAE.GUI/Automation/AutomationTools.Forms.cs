@@ -227,15 +227,4 @@ internal static partial class AutomationTools
 				highlighted = highlighted.Count,
 			});
 		});
-
-	private static IEnumerable<Type> FormTypes()
-	{
-		var check = Program.ServiceProvider.GetRequiredService<IServiceProviderIsService>();
-		return typeof(Program).Assembly.GetTypes()
-			.Where(t => typeof(Form).IsAssignableFrom(t) && !t.IsAbstract && check.IsService(t))
-			.OrderBy(t => t.Name);
-	}
-
-	private static int CountControls(Control control)
-		=> control.Controls.Cast<Control>().Sum(c => 1 + CountControls(c));
 }
