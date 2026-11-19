@@ -149,7 +149,7 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		}
 		catch (ArgumentException ex)
 		{
-			Log.LogError(ex, "ParseRawData fail !");
+			Log.LogError(ex, "Failed to parse the stash {StashFile}", sta.StashFile);
 			throw;
 		}
 

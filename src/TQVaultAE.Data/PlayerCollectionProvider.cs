@@ -230,11 +230,12 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// </summary>
 	/// <param name="pc"></param>
 	/// <param name="filePathToUse">if not <c>null</c>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+	/// <remarks>A file that cannot be parsed is logged here, once, and thrown as an <see cref="ArgumentException"/>.</remarks>
 	public void LoadFile(PlayerCollection pc, string? filePathToUse = null)
 	{
+		var path = filePathToUse ?? pc.PlayerFile;
 		try
 		{
-			var path = filePathToUse ?? pc.PlayerFile;
 			if (path.EndsWith(".json", StringComparison.Ordinal))
 			{
 				ParseJsonData(pc, path);
@@ -248,7 +249,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		}
 		catch (ArgumentException ex)
 		{
-			Log.LogError(ex, "ParseRawData() Failed !");
+			Log.LogError(ex, "Failed to parse {Player} ({File})", pc.PlayerName, path);
 			throw;
 		}
 	}
@@ -437,9 +438,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				}
 				catch (ArgumentException exception)
 				{
-					var ex = new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
-					this.Log.LogError(ex, "Failed to parse the item block of {Player} ({PlayerFile})", pc.PlayerName, pc.PlayerFile);
-					throw ex;
+					throw new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
 				}
 			}
 
@@ -452,9 +451,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				}
 				catch (ArgumentException exception)
 				{
-					var ex = new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
-					this.Log.LogError(ex, "Failed to parse the equipment block of {Player} ({PlayerFile})", pc.PlayerName, pc.PlayerFile);
-					throw ex;
+					throw new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
 				}
 			}
 
@@ -466,9 +463,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				}
 				catch (ArgumentException ex)
 				{
-					var exx = new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
-					this.Log.LogError(exx, "Failed to parse the player info of {Player} ({PlayerFile})", pc.PlayerName, pc.PlayerFile);
-					throw exx;
+					throw new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
 				}
 			}
 		}
@@ -747,30 +742,21 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// <param name="reader">BinaryReader instance</param>
 	private void ParseEquipmentBlock(PlayerCollection pc, int offset, BinaryReader reader)
 	{
-		try
+		//pc.equipmentBlockStart = offset;
+
+		reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+
+		if (pc.IsImmortalThrone)
 		{
-			//pc.equipmentBlockStart = offset;
-
-			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-
-			if (pc.IsImmortalThrone)
-			{
-				pc.equipmentCtrlIOStreamVersion = TQData.ReadKeyInt(reader, "equipmentCtrlIOStreamVersion");
-			}
-
-			pc.EquipmentSack = new SackCollection();
-			pc.EquipmentSack.SackType = SackType.Equipment;
-			pc.EquipmentSack.IsImmortalThrone = pc.IsImmortalThrone;
-			SackCollectionProvider.Parse(pc.EquipmentSack, reader);
-
-			//pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
-
+			pc.equipmentCtrlIOStreamVersion = TQData.ReadKeyInt(reader, "equipmentCtrlIOStreamVersion");
 		}
-		catch (ArgumentException ex)
-		{
-			Log.LogError(ex, "ParseEquipmentBlock fail ! offset={Offset}", offset);
-			throw;
-		}
+
+		pc.EquipmentSack = new SackCollection();
+		pc.EquipmentSack.SackType = SackType.Equipment;
+		pc.EquipmentSack.IsImmortalThrone = pc.IsImmortalThrone;
+		SackCollectionProvider.Parse(pc.EquipmentSack, reader);
+
+		//pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
 	}
 
 }
