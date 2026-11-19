@@ -58,7 +58,8 @@ public static partial class InstallLocations
 	/// <summary><see cref="GogCandidates()"/> with the registry reads given (tests).</summary>
 	internal static IEnumerable<string> GogCandidates(RegistryReader registry)
 	{
-		foreach (var key in new[] { $"""SOFTWARE\GOG.com\Games\{GogGameId}""", $"""SOFTWARE\WOW6432Node\GOG.com\Games\{GogGameId}""" }) {
+		foreach (var key in new[] { $"""SOFTWARE\GOG.com\Games\{GogGameId}""", $"""SOFTWARE\WOW6432Node\GOG.com\Games\{GogGameId}""" })
+		{
 			var path = registry(RegistryRoot.LocalMachine, key, "PATH");
 			if (path is not null)
 				yield return path;
@@ -85,7 +86,8 @@ public static partial class InstallLocations
 		foreach (Match m in VdfPath().Matches(vdf))
 			result.Add(Unescape(m.Groups[1].Value));
 
-		if (result.Count == 0) {
+		if (result.Count == 0)
+		{
 			foreach (Match m in VdfOldPath().Matches(vdf))
 				result.Add(Unescape(m.Groups[1].Value));
 		}
@@ -104,11 +106,16 @@ public static partial class InstallLocations
 
 	private static string? ReadTextFile(string path)
 	{
-		try {
+		try
+		{
 			return File.Exists(path) ? File.ReadAllText(path) : null;
-		} catch (IOException) {
+		}
+		catch (IOException)
+		{
 			return null;
-		} catch (UnauthorizedAccessException) {
+		}
+		catch (UnauthorizedAccessException)
+		{
 			return null;
 		}
 	}
@@ -116,15 +123,22 @@ public static partial class InstallLocations
 	[SupportedOSPlatform("windows")]
 	private static string? ReadRegistry(RegistryRoot root, string subKey, string name)
 	{
-		try {
+		try
+		{
 			var hive = root == RegistryRoot.CurrentUser ? Microsoft.Win32.Registry.CurrentUser : Microsoft.Win32.Registry.LocalMachine;
 			using var key = hive.OpenSubKey(subKey);
 			return key?.GetValue(name) is string s && s.Length > 0 ? s : null;
-		} catch (System.Security.SecurityException) {
+		}
+		catch (System.Security.SecurityException)
+		{
 			return null;
-		} catch (IOException) {
+		}
+		catch (IOException)
+		{
 			return null;
-		} catch (UnauthorizedAccessException) {
+		}
+		catch (UnauthorizedAccessException)
+		{
 			return null;
 		}
 	}

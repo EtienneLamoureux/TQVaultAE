@@ -39,6 +39,31 @@ public static partial class TextTags
 	}
 
 	/// <summary>
+	/// The first grammatical variant of a text, without its markers: <c>[ms]renforcé[fs]renforcée</c> gives
+	/// <c>renforcé</c>, <c>Lame [fs]crochue[ms]crochu</c> gives <c>Lame crochue</c>. A text wholly in brackets loses them;
+	/// a leading bracketed word (<c>[surpris] Aaaah!</c>) is dropped. Other texts are returned unchanged.
+	/// </summary>
+	public static string FirstVariant(string text)
+	{
+		ArgumentNullException.ThrowIfNull(text);
+		if (LeadingMarkerOrBrackets().Match(text) is { Success: true } leading)
+			return leading.Groups["Label"].Value.Trim();
+
+		var marker = VariantMarker().Match(text);
+		if (!marker.Success)
+			return text;
+		int start = marker.Index + marker.Length;
+		var next = VariantMarker().Match(text, start);
+		return text[..marker.Index] + (next.Success ? text[start..next.Index] : text[start..]);
+	}
+
+	[GeneratedRegex(@"^(?<Tag>\[\w+\])(?<Label>[^\[]+)|^\[(?<Label>[^\]]+)\]$")]
+	private static partial Regex LeadingMarkerOrBrackets();
+
+	[GeneratedRegex(@"\[[a-zA-Z]{1,3}\]")]
+	private static partial Regex VariantMarker();
+
+	/// <summary>
 	/// The lines of a game text, split at its line breaks (<c>{^n}</c>, <c>^n</c>); colour codes stay in the lines. Two
 	/// breaks in a row give an empty line.
 	/// </summary>

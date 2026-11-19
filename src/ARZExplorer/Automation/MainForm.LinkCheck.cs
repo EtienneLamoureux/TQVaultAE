@@ -28,7 +28,7 @@ public partial class MainForm
 		var watch = Stopwatch.StartNew();
 		var problems = new ConcurrentQueue<LinkProblem>();
 		var targets = new ConcurrentDictionary<string, (string Record, string Variable)>(StringComparer.OrdinalIgnoreCase);
-		int records = 0, links = 0, resolved = 0, multiValueCells = 0, unstyled = 0;
+		int records = 0, links = 0, resolved = 0, multiValueCells = 0;
 
 		// File name -> node keys of every loaded leaf, to tell a missing file from one under another path.
 		var fileNames = new Lazy<ILookup<string, string>>(() => this.NodesByKey
@@ -69,8 +69,6 @@ public partial class MainForm
 
 				if (values.Length > 1)
 					multiValueCells++;
-				else if (!IsGridLink(cells[1]))
-					unstyled++;
 
 				foreach (var value in linkValues)
 				{
@@ -119,7 +117,6 @@ public partial class MainForm
 			uniqueTargets = targets.Count,
 			rendered = render ? rendered : (int?)null,
 			multiValueCells,
-			unstyledSingleLinks = unstyled,
 			problems = byKind.ToDictionary(g => g.Key, g => g.Count()),
 			examples = byKind.ToDictionary(g => g.Key, g => g.Take(examplesPerKind).ToArray()),
 			targetsByExtension = targets.Keys.GroupBy(k => Path.GetExtension(k).ToUpperInvariant()).ToDictionary(g => g.Key, g => g.Count()),

@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace TQVaultAE.DbCli.Core;
+namespace TQVaultAE.GameFiles;
 
 /// <summary>Located game install.</summary>
 /// <param name="Root">Install folder.</param>
@@ -47,13 +47,15 @@ public static class GameLocator
 	/// <summary><see cref="Locate(string?)"/> with the environment value and the detected folders given (tests).</summary>
 	internal static GameInstall Locate(string? explicitRoot, string? env, IEnumerable<string> candidates)
 	{
-		if (!string.IsNullOrWhiteSpace(explicitRoot)) {
+		if (!string.IsNullOrWhiteSpace(explicitRoot))
+		{
 			return IsGameRoot(explicitRoot)
 				? FromRoot(explicitRoot)
 				: throw new DirectoryNotFoundException($"'{explicitRoot}' is not a Titan Quest install (Database\\database.arz not found).");
 		}
 
-		if (!string.IsNullOrWhiteSpace(env)) {
+		if (!string.IsNullOrWhiteSpace(env))
+		{
 			return IsGameRoot(env)
 				? FromRoot(env)
 				: throw new DirectoryNotFoundException($"{EnvironmentVariable}='{env}' is not a Titan Quest install (Database\\database.arz not found).");
@@ -63,7 +65,8 @@ public static class GameLocator
 			if (IsGameRoot(candidate))
 				return FromRoot(candidate);
 
-		throw new DirectoryNotFoundException($"Titan Quest Anniversary Edition not found. Pass the install folder explicitly or set {EnvironmentVariable}.");
+		// No hint here: each caller says how its user gives the folder (tqdb: --game or TQ_GAME_PATH).
+		throw new DirectoryNotFoundException("Titan Quest Anniversary Edition not found.");
 	}
 
 	/// <summary>Builds the install description for a known root (enumerates every .arc recursively).</summary>
@@ -79,14 +82,18 @@ public static class GameLocator
 	/// <summary>True when <paramref name="root"/> contains Database\database.arz.</summary>
 	internal static bool IsGameRoot(string root)
 	{
-		try {
+		try
+		{
 			return File.Exists(DatabasePath(root.Trim().Trim('"')));
-		} catch (ArgumentException) {
+		}
+		catch (ArgumentException)
+		{
 			return false;
 		}
 	}
 
-	internal static string DatabasePath(string root) => Path.Combine(root, "Database", "database.arz");
+	/// <summary><c>Database\database.arz</c> under a game folder.</summary>
+	public static string DatabasePath(string root) => Path.Combine(root, "Database", "database.arz");
 
 	private static IEnumerable<string> Candidates()
 		=> Candidates(InstallLocations.SteamCandidates(), InstallLocations.GogCandidates());

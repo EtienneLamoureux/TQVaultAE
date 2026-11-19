@@ -203,7 +203,7 @@ Search records.
 | `--follow <field>` | Inline the records referenced by this field (string values ending with `.dbr`; glob allowed), one level. |
 | `-s, --sort <field[:desc]>` | Sort by a column or variable; numbers numerically; records without the field last. |
 | `--limit <N>` | Maximum records. |
-| `--count` | Print only the number of matches; `--limit` is ignored. |
+| `--count` | Print only the number of matches, at most `--limit`. |
 | `--format json\|jsonl\|tsv\|dbr` | Default `tsv`, or inferred from the `--out` extension. |
 | `--compact` | Non-indented JSON. |
 | `-o, --out <path>` | Output file. With `--format dbr`, a **directory** receiving one `.dbr` per record (path mirrored, like ARZ Explorer), unless the path ends with `.dbr`/`.txt`. |
@@ -244,7 +244,7 @@ Search localization tags (`Text\Text_XX.arc`): tag code <-> display text.
 | `-k, --key <glob\|/re/>` | Tag name (`tagItem*`). |
 | `-v, --value <glob\|/re/>` | Text (`"*hooked*"`). |
 | `-l, --lang <code>` | Default `EN`. |
-| `--limit`, `--count` | As for `records`, except that the count stops at `--limit`. |
+| `--limit`, `--count` | As for `records`. |
 | `--format json\|jsonl\|tsv` | Default `tsv`. Columns `tag`, `text`, sorted by tag. `tag` spells the tag as the game does, whatever the case given to `--key`. |
 
 ```

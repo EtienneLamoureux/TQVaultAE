@@ -5,6 +5,7 @@ using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
+using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Services;
 
@@ -114,7 +115,7 @@ public class StartupService(
 
 		foreach (var gamePath in gamePaths)
 		{
-			if (this._fileIO.Exists(Path.Combine(gamePath, "Database", "database.arz")))
+			if (this._fileIO.Exists(GameLocator.DatabasePath(gamePath)))
 				continue;
 
 			this._log.LogWarning("No game database in {GamePath}", gamePath);

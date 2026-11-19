@@ -6,12 +6,16 @@
 
 using System.Text;
 
-namespace TQVaultAE.DbCli.Export;
+namespace TQVaultAE.GameFiles;
 
-/// <summary>Turns archive entry names and record ids into safe relative paths under an output root.</summary>
-internal static class PathSanitizer
+/// <summary>
+/// Turns archive entry names and record ids into safe relative paths under an output root (tqdb extract and
+/// exports, ARZExplorer Extract All).
+/// </summary>
+public static class PathSanitizer
 {
-	private static readonly HashSet<string> Reserved = new(StringComparer.OrdinalIgnoreCase) {
+	private static readonly HashSet<string> Reserved = new(StringComparer.OrdinalIgnoreCase)
+	{
 		"CON", "PRN", "AUX", "NUL",
 		"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
 		"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
@@ -22,14 +26,16 @@ internal static class PathSanitizer
 	/// control and invalid characters replaced by '_', trailing dots/spaces trimmed, reserved device names prefixed with '_'.
 	/// cp1252 letters are kept. Throws <see cref="InvalidDataException"/> on '..' segments or rooted names.
 	/// </summary>
-	public static string Relative(string name) {
+	public static string Relative(string name)
+	{
 		if (string.IsNullOrWhiteSpace(name))
 			throw new InvalidDataException("Empty entry name.");
 		if (name[0] is '/' or '\\' || (name.Length >= 2 && name[1] == ':'))
 			throw new InvalidDataException($"Rooted entry name '{name}' rejected.");
 
 		var sb = new StringBuilder(name.Length);
-		foreach (var raw in name.Split('/', '\\')) {
+		foreach (var raw in name.Split('/', '\\'))
+		{
 			if (raw.Length == 0 || raw == ".")
 				continue;
 			if (raw == "..")
@@ -49,7 +55,8 @@ internal static class PathSanitizer
 	}
 
 	/// <summary>Combines <paramref name="root"/> with a sanitized <paramref name="name"/> and checks the result stays under root.</summary>
-	public static string Combine(string root, string name) {
+	public static string Combine(string root, string name)
+	{
 		var fullRoot = Path.GetFullPath(root);
 		var full = Path.GetFullPath(Path.Combine(fullRoot, Relative(name)));
 		var prefix = fullRoot.EndsWith(Path.DirectorySeparatorChar) ? fullRoot : fullRoot + Path.DirectorySeparatorChar;
@@ -58,9 +65,11 @@ internal static class PathSanitizer
 		return full;
 	}
 
-	private static string CleanSegment(string segment) {
+	private static string CleanSegment(string segment)
+	{
 		var chars = segment.ToCharArray();
-		for (int i = 0; i < chars.Length; i++) {
+		for (int i = 0; i < chars.Length; i++)
+		{
 			char c = chars[i];
 			if (c < 32 || c is '<' or '>' or ':' or '"' or '|' or '?' or '*')
 				chars[i] = '_';

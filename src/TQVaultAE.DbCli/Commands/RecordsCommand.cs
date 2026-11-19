@@ -35,7 +35,7 @@ internal sealed class RecordsCommand : ICommand
 			new("follow", null, "field", "Inline records referenced by this field (glob allowed), one level.", Repeatable: true),
 			new("sort", 's', "field[:desc]", "Sort by a column or variable."),
 			new("limit", null, "N", "Maximum number of records."),
-			new("count", null, null, "Print only the number of matches."),
+			CliContext.CountOption,
 			new("format", null, "fmt", "json | jsonl | tsv | dbr (default tsv, or from the --out extension)."),
 			new("compact", null, null, "Non-indented JSON."),
 			new("out", 'o', "path", "Output file (dbr: directory, one .dbr per record), default stdout."),
@@ -94,8 +94,7 @@ internal sealed class RecordsCommand : ICommand
 
 		if (args.Has("count")) {
 			int count = RecordSearch.Count(db, query, namer, context.Threads, context.CancellationToken);
-			using var w = CliContext.OpenTextOutput(outPath);
-			w.WriteLine(count);
+			CliContext.WriteCount(outPath, count, limit);
 			return ExitCodes.Ok;
 		}
 

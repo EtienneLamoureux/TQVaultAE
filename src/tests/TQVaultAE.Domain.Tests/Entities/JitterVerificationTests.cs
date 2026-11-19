@@ -71,7 +71,7 @@ public class JitterVerificationTests
 	public void RealItem_FullRollTable_MatchesInGameTooltip(uint seed, bool isArmor, string baseId, string? prefixId, string? suffixId, string expected)
 	{
 		// Arrange: real database records, full roll table.
-		var game = TQVaultAE.DbCli.Core.GameLocator.Locate(TestingConditions.TitanQuestPath);
+		var game = GameLocator.Locate(TestingConditions.TitanQuestPath);
 		using var db = ArzDatabaseFactory.Open(game.Database);
 
 		// Act

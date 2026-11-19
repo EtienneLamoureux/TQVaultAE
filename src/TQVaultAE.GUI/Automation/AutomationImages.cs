@@ -6,6 +6,7 @@
 using System.Buffers.Binary;
 using System.Drawing.Imaging;
 using ModelContextProtocol.Protocol;
+using TQVaultAE.Automation;
 
 namespace TQVaultAE.GUI.Automation;
 
@@ -15,23 +16,13 @@ namespace TQVaultAE.GUI.Automation;
 internal static class AutomationImages
 {
 	/// <summary>Encodes <paramref name="image"/> as PNG.</summary>
-	public static byte[] Png(Image image)
-	{
-		using var stream = new MemoryStream();
-		image.Save(stream, ImageFormat.Png);
-		return stream.ToArray();
-	}
+	public static byte[] Png(Image image) => ControlImages.Png(image);
 
 	/// <summary>Draws <paramref name="control"/> to a bitmap of its size with <see cref="Control.DrawToBitmap"/>.</summary>
 	public static Bitmap Render(Control control) => Render(control, control.Size);
 
 	/// <summary>Draws <paramref name="control"/> to a bitmap of <paramref name="size"/> with <see cref="Control.DrawToBitmap"/>.</summary>
-	public static Bitmap Render(Control control, Size size)
-	{
-		var bitmap = new Bitmap(size.Width, size.Height);
-		control.DrawToBitmap(bitmap, new Rectangle(Point.Empty, size));
-		return bitmap;
-	}
+	public static Bitmap Render(Control control, Size size) => ControlImages.Render(control, size);
 
 	/// <summary>
 	/// Draws <paramref name="control"/> like <see cref="Render(Control)"/>, then its children again from the back to the

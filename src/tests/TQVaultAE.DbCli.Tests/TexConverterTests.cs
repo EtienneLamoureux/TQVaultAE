@@ -84,6 +84,28 @@ public sealed class TexConverterTests
 	}
 
 	[Fact]
+	public void ToDds_FirstFrame_DoesNotReadTheCutFramesAfterIt()
+	{
+		var tex = Tex(2, GameDds(1, 1, 32, [1, 1, 1, 1]), GameDds(1, 1, 32, [2, 2, 2, 2]));
+		Array.Resize(ref tex, tex.Length - 2);
+
+		TexConverter.ToDds(tex)[128].Should().Be(1);
+		var second = () => TexConverter.ToDds(tex, 1);
+		second.Should().Throw<InvalidDataException>();
+	}
+
+	[Theory]
+	[InlineData(1, true)]
+	[InlineData(2, true)]
+	[InlineData(3, false)]
+	public void IsTex_KnownVersionsOnly(int version, bool expected)
+	{
+		byte[] tex = [(byte)'T', (byte)'E', (byte)'X', (byte)version, 0, 0, 0, 0, 0];
+
+		TexConverter.IsTex(tex).Should().Be(expected);
+	}
+
+	[Fact]
 	public void ToDds_NotTex_Throws()
 	{
 		var act = () => TexConverter.ToDds("DDS xxxxxxxxxx"u8);
@@ -94,7 +116,7 @@ public sealed class TexConverterTests
 	[Fact]
 	public void ToPng_KeepsChannelOrder()
 	{
-		var png = TexConverter.ToPng(Tex(1, GameDds(2, 1, 32, RedBlue)));
+		var png = TexPng.FromTex(Tex(1, GameDds(2, 1, 32, RedBlue)));
 
 		using var image = new MagickImage(png);
 		image.Format.Should().Be(MagickFormat.Png);

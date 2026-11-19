@@ -17,13 +17,12 @@ public partial class SimpleSoundPlayer
 		{
 			play = this.buttonPlay.Visible,
 			loop = this.buttonLoop.Visible,
-			pause = this.buttonPause.Visible,
 			stop = this.buttonStop.Visible,
 		},
 	};
 
 	/// <summary>
-	/// Clicks a button (play, loop, pause, stop), then loads the sound, which reads and checks the wave data: a sound
+	/// Clicks a button (play, loop, stop), then loads the sound, which reads and checks the wave data: a sound
 	/// that cannot play throws here.
 	/// </summary>
 	internal object AutomationClick(string button)
@@ -32,9 +31,8 @@ public partial class SimpleSoundPlayer
 		{
 			"play" => this.buttonPlay,
 			"loop" => this.buttonLoop,
-			"pause" => this.buttonPause,
 			"stop" => this.buttonStop,
-			_ => throw new ArgumentException($"No button '{button}': play, loop, pause or stop.", nameof(button)),
+			_ => throw new ArgumentException($"No button '{button}': play, loop or stop.", nameof(button)),
 		};
 		target.PerformClick();
 		this.CurrentSoundPlayer?.Load();

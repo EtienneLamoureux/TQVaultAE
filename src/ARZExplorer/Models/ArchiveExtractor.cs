@@ -1,5 +1,6 @@
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.GameFiles;
 
 namespace ArzExplorer.Models;
 
@@ -58,8 +59,8 @@ public sealed class ArchiveExtractor(IArcFileProvider arcProvider, IArzFileProvi
 
 				onEntry(recordId);
 
-				// Files keep the names stored in the archive, not the upper case ids
-				var relativePath = recordId.Raw.Replace('/', Path.DirectorySeparatorChar);
+				// Files keep the names stored in the archive, not the upper case ids; names leaving the folder are refused
+				var relativePath = PathSanitizer.Relative(recordId.Raw);
 				if (file.FileType == CompressedFileType.ArcFile)
 					this._arcProvider.Write(file.Arc, baseFolder, recordId, relativePath);
 				else

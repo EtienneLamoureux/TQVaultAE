@@ -15,8 +15,10 @@ public static partial class TextDatabaseFactory
 	{
 		ArgumentNullException.ThrowIfNull(textArchivePath);
 		var entries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-		using (var arc = ArcArchiveFactory.Open(textArchivePath)) {
-			foreach (var entry in arc.Entries) {
+		using (var arc = ArcArchiveFactory.Open(textArchivePath))
+		{
+			foreach (var entry in arc.Entries)
+			{
 				if (!entry.Name.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
 					continue;
 				TextDatabase.Parse(TextDatabase.DecodeText(arc.ReadAll(entry)), entries);
@@ -80,7 +82,8 @@ internal sealed class TextDatabase : ITextDatabase
 	/// <summary>Parses key=value lines into <paramref name="into"/> (split on the first '=', '//' comments, last wins).</summary>
 	internal static void Parse(string text, Dictionary<string, string> into)
 	{
-		foreach (var rawLine in text.AsSpan().EnumerateLines()) {
+		foreach (var rawLine in text.AsSpan().EnumerateLines())
+		{
 			var line = rawLine.Trim();
 			if (line.IsEmpty || line.StartsWith("//"))
 				continue;

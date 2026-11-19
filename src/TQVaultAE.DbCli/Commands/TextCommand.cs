@@ -22,7 +22,7 @@ internal sealed class TextCommand : ICommand
 			new("value", 'v', "glob|/re/", "Text, e.g. \"*hooked*\".", Repeatable: true),
 			new("lang", 'l', "code", "Language (default EN)."),
 			new("limit", null, "N", "Maximum number of rows."),
-			new("count", null, null, "Print only the number of matches."),
+			CliContext.CountOption,
 			new("format", null, "fmt", "json | jsonl | tsv (default tsv, or from the --out extension)."),
 			new("out", 'o', "path", "Output file, default stdout."),
 		],
@@ -81,8 +81,7 @@ internal sealed class TextCommand : ICommand
 			hits = Search(text, keys, values);
 
 		if (args.Has("count")) {
-			using var w = CliContext.OpenTextOutput(outPath);
-			w.WriteLine(limit > 0 ? Math.Min(limit, hits.Count) : hits.Count);
+			CliContext.WriteCount(outPath, hits.Count, limit);
 			return ExitCodes.Ok;
 		}
 

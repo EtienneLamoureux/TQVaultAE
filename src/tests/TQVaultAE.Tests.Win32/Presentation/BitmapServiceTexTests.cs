@@ -47,6 +47,36 @@ public class BitmapServiceTexTests
 		act.Should().Throw<InvalidDataException>();
 	}
 
+	[Fact]
+	public void LoadFromTexMemory_LaterFrameCut_StillDecodesFirstFrame()
+	{
+		byte[] tex = BuildTex(version: 2, fps: 15, Dds(4, 4), Dds(8, 8));
+		Array.Resize(ref tex, tex.Length - 10);
+
+		using var bitmap = this._service.LoadFromTexMemory(tex, 0, tex.Length)!;
+
+		bitmap.Width.Should().Be(4);
+	}
+
+	[Fact]
+	public void LoadFromTexMemory_NotATexture_ReturnsNull()
+	{
+		byte[] data = [.. "DDS "u8, .. new byte[20]];
+
+		this._service.LoadFromTexMemory(data, 0, data.Length).Should().BeNull();
+	}
+
+	[Fact]
+	public void LoadFromTexMemory_TextureInsideALargerBuffer_ReadsOnlyItsRange()
+	{
+		byte[] tex = BuildTex(version: 1, fps: 0, Dds(3, 2));
+		byte[] buffer = [1, 2, 3, .. tex, 9, 9];
+
+		using var bitmap = this._service.LoadFromTexMemory(buffer, 3, tex.Length)!;
+
+		bitmap.Width.Should().Be(3);
+	}
+
 	private static byte[] BuildTex(int version, int fps, params byte[][] frames)
 	{
 		var ms = new MemoryStream();

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- Code shared by the automation endpoints of TQVaultAE and ARZExplorer (UI thread access, control walks, headless
-	     mode). TQVaultAE references it in every build, since its Release builds serve the user tools (documentation/mcp.md);
+	<!-- Code shared by the automation endpoints of TQVaultAE and ARZExplorer (server start, control pictures, UI thread
+	     access, control walks, headless mode). TQVaultAE references it in every build, since its Release builds serve the user tools (documentation/mcp.md);
 	     ARZExplorer in Debug builds only. The headless mode is Debug-only: Release builds leave it out.
 	     See documentation/AUTOMATION.md -->
 	<PropertyGroup>
@@ -16,6 +16,12 @@
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- The MCP server (McpEndpoint). -->
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="ModelContextProtocol.AspNetCore" />
+	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
 		<Compile Remove="HeadlessDesktop.cs" />

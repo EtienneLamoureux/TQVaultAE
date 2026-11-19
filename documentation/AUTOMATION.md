@@ -1072,9 +1072,10 @@ Debug builds of `ARZExplorer` host their own MCP server, built the same way (`sr
 `http://127.0.0.1:47020/mcp` (`ARZEXPLORER_MCP_PORT` to change it, `ARZEXPLORER_MCP_DISABLED=1` to turn it off).
 Release builds contain none of it.
 
-Code shared by both endpoints, in `src/TQVaultAE.Automation/`: the headless mode's hidden desktop (`HeadlessDesktop`),
-the calls on the main form's UI thread (`UiThread`), the control walk (`ControlTree`), the window helpers
-(`Win32Window`). Each app references that project in Debug builds only, and keeps its own part in its
+Code shared by both endpoints, in `src/TQVaultAE.Automation/`: the server start (`McpEndpoint`), control pictures
+(`ControlImages`), the headless mode's hidden desktop (`HeadlessDesktop`), the calls on the main form's UI thread
+(`UiThread`), the control walk (`ControlTree`), the window helpers (`Win32Window`). TQVault references that project in
+every build, ARZExplorer in Debug builds only; each keeps its own part in its
 `Automation/Headless.cs` (desktop name, how a cancelled dialog is recorded, ARZExplorer's muting).
 
 - `ARZExplorer.exe --headless` runs it on a hidden desktop, like TQVault.
@@ -1100,7 +1101,7 @@ the calls on the main form's UI thread (`UiThread`), the control walk (`ControlT
 | `capture` | PNG of the window (`DrawToBitmap`). |
 | `about` | Help > About without blocking: its texts and a PNG, then closes it. |
 | `drop_files(paths)` | Drops files on the window through its DragEnter and DragDrop handlers, as Explorer does. |
-| `sound_player(action)` | The sound player of a .wav or .mp3 entry: `state`, or a click on `play`, `loop`, `pause`, `stop`; the sound is then loaded, which checks its wave data. |
+| `sound_player(action)` | The sound player of a .wav or .mp3 entry: `state`, or a click on `play`, `loop`, `stop`; the sound is then loaded, which checks its wave data. |
 | `forms`, `close_form(name)` | The open forms (name, title, visible, modal); closes one as its title bar X does (see below). |
 | `mouse_click(form, control, x, y)`, `alt_f4(form)` | User input through the message loop, returning at once (see below). |
 | `process_resources(collect)` | GDI and USER object counts, handles, private and managed bytes, and the disposables the root service provider keeps until exit, by type. `collect=true` runs a full GC with finalizers first. Leak checks: compare before and after repeating an action. |

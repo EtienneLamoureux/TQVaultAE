@@ -11,7 +11,8 @@ namespace TQVaultAE.GameFiles;
 /// <summary>Encodings used by the game files.</summary>
 public static class TextEncodings
 {
-	private static readonly Lazy<Encoding> LazyCp1252 = new(() => {
+	private static readonly Lazy<Encoding> LazyCp1252 = new(() =>
+	{
 		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 		return Encoding.GetEncoding(1252);
 	});

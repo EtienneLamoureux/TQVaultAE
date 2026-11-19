@@ -1,7 +1,4 @@
 using System.Net;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using TQVaultAE.Automation;
@@ -80,25 +77,9 @@ internal static class AutomationHost
 	{
 		try
 		{
-			var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
-			{
-				ContentRootPath = AppContext.BaseDirectory,
-				Args = [],
-			});
-
-			builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, port));
-			builder.Logging.ClearProviders();
-
-			builder.Services
-				.AddMcpServer(options => options.ServerInfo = new() { Name = "arzexplorer", Version = "1.0.0" })
-				.WithHttpTransport(options => options.Stateless = true)
-				.WithTools([typeof(AutomationTools), typeof(FeatureTools), typeof(DiagnosticTools)]);
-
-			var app = builder.Build();
-			app.MapMcp("/mcp");
-
-			await app.StartAsync().ConfigureAwait(false);
-			Address = $"http://127.0.0.1:{port}/mcp";
+			await McpEndpoint.StartAsync("arzexplorer", new IPEndPoint(IPAddress.Loopback, port)
+				, [typeof(AutomationTools), typeof(FeatureTools), typeof(DiagnosticTools)]).ConfigureAwait(false);
+			Address = McpEndpoint.AddressOf(port);
 			_log?.LogInformation("Automation MCP endpoint listening on {Address}", Address);
 		}
 		catch (Exception ex)

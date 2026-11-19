@@ -56,14 +56,20 @@ internal sealed class CliContext : IDisposable
 					return this._install ??= GameLocator.Locate(this.GamePath);
 				}
 				catch (DirectoryNotFoundException ex) {
-					// With --game, only that folder is tried: say why it is not an install, without suggesting --game.
-					throw new NotFoundException(string.IsNullOrWhiteSpace(this.GamePath)
-						? $"{ex.Message.TrimEnd('.')}. Use --game <path> or set TQ_GAME_PATH."
-						: ex.Message);
+					throw new NotFoundException(NotFoundMessage(ex.Message, this.GamePath));
 				}
 			}
 		}
 	}
+
+	/// <summary>
+	/// Message of a failed game search: with --game, only that folder is tried, so the locator's reason alone;
+	/// otherwise the reason and how to give the folder.
+	/// </summary>
+	internal static string NotFoundMessage(string locatorMessage, string? gamePath)
+		=> string.IsNullOrWhiteSpace(gamePath)
+			? $"{locatorMessage.TrimEnd('.')}. Use --game <path> or set {GameLocator.EnvironmentVariable}."
+			: locatorMessage;
 
 	/// <summary>database.arz (lazy).</summary>
 	public IArzDatabase Database {
@@ -125,6 +131,15 @@ internal sealed class CliContext : IDisposable
 
 	/// <summary>Text writer over <see cref="OpenOutput"/>.</summary>
 	public static StreamWriter OpenTextOutput(string? path) => new(OpenOutput(path), Formats.Utf8, Formats.BufferSize);
+
+	/// <summary><c>--count</c> of the listing commands (records, text, files).</summary>
+	public static readonly OptionSpec CountOption = new("count", null, null, "Print only the number of matches, at most --limit.");
+
+	/// <summary>Writes the <c>--count</c> result: the number of rows the listing would print (at most <paramref name="limit"/>, 0 = no limit).</summary>
+	public static void WriteCount(string? outPath, long count, int limit) {
+		using var w = OpenTextOutput(outPath);
+		w.WriteLine(limit > 0 ? Math.Min(limit, count) : count);
+	}
 
 	/// <summary>Informational message on stderr unless quiet.</summary>
 	public void Info(string message) {
