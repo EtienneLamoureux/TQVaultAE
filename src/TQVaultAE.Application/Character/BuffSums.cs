@@ -62,6 +62,6 @@ public static class BuffSums
 		if (string.IsNullOrEmpty(item.ItemClass))
 			return BuffGearRole.None;
 
-		return item.ItemClass.Equals("WeaponArmor_Shield", StringComparison.OrdinalIgnoreCase) ? BuffGearRole.Shield : BuffGearRole.Weapon;
+		return item.ItemClass.Equals(Item.ICLASS_SHIELD, StringComparison.OrdinalIgnoreCase) ? BuffGearRole.Shield : BuffGearRole.Weapon;
 	}
 }

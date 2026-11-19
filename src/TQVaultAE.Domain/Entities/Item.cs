@@ -947,6 +947,7 @@ public class Item
 	public const string ICLASS_PREFIX_ARMORJEWELRY = "ArmorJewelry";
 	/// <summary>Start of the classes of weapons and shields.</summary>
 	public const string ICLASS_PREFIX_WEAPON = "Weapon";
+	public const string ICLASS_PREFIX_MELEE = "WeaponMelee_";
 	public const string ICLASS_HEAD = "ArmorProtective_Head";
 	public const string ICLASS_FOREARM = "ArmorProtective_Forearm";
 	public const string ICLASS_UPPERBODY = "ArmorProtective_UpperBody";

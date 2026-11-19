@@ -1,3 +1,5 @@
+using TQVaultAE.Domain.Entities;
+
 namespace TQVaultAE.Application.Character;
 
 /// <summary>
@@ -39,22 +41,22 @@ public static class WeaponStances
 	public static WeaponStance FromWeapons(IEnumerable<string> weaponClasses)
 	{
 		var classes = weaponClasses
-			.Where(c => !string.IsNullOrEmpty(c) && !c.Equals("WeaponArmor_Shield", StringComparison.OrdinalIgnoreCase))
+			.Where(c => !string.IsNullOrEmpty(c) && !c.Equals(Item.ICLASS_SHIELD, StringComparison.OrdinalIgnoreCase))
 			.ToList();
 
 		bool Is(string itemClass, string expected) => itemClass.Equals(expected, StringComparison.OrdinalIgnoreCase);
-		if (classes.Any(c => Is(c, "WeaponHunting_Bow")))
+		if (classes.Any(c => Is(c, Item.ICLASS_BOW)))
 			return WeaponStance.Bow;
-		if (classes.Any(c => Is(c, "WeaponMagical_Staff")))
+		if (classes.Any(c => Is(c, Item.ICLASS_STAFF)))
 			return WeaponStance.Staff;
-		if (classes.Any(c => Is(c, "WeaponHunting_Spear")))
+		if (classes.Any(c => Is(c, Item.ICLASS_SPEAR)))
 			return WeaponStance.Spear;
 
-		int thrown = classes.Count(c => Is(c, "WeaponHunting_RangedOneHand"));
+		int thrown = classes.Count(c => Is(c, Item.ICLASS_RANGEDONEHAND));
 		if (thrown > 0)
 			return thrown > 1 ? WeaponStance.DualThrown : WeaponStance.Thrown;
 
-		int melee = classes.Count(c => c.StartsWith("WeaponMelee_", StringComparison.OrdinalIgnoreCase));
+		int melee = classes.Count(c => c.StartsWith(Item.ICLASS_PREFIX_MELEE, StringComparison.OrdinalIgnoreCase));
 		return melee switch
 		{
 			0 => WeaponStance.Unarmed,
