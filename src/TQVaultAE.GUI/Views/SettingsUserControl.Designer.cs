@@ -305,7 +305,6 @@ internal partial class SettingsUserControl
 		allowItemCopyCheckBox.Text = "Allow Item Copying";
 		toolTip.SetToolTip(allowItemCopyCheckBox, "Enables copy selection in the context menu.");
 		allowItemCopyCheckBox.UseVisualStyleBackColor = true;
-		allowItemCopyCheckBox.CheckedChanged += AllowItemCopyCheckBoxCheckedChanged;
 		// 
 		// loadLastCharacterCheckBox
 		// 
@@ -318,7 +317,6 @@ internal partial class SettingsUserControl
 		loadLastCharacterCheckBox.Text = "Automatically Load the last opened Character";
 		toolTip.SetToolTip(loadLastCharacterCheckBox, "Selecting this option will automatically load\r\nthe last open character when TQVault was closed.");
 		loadLastCharacterCheckBox.UseVisualStyleBackColor = true;
-		loadLastCharacterCheckBox.CheckedChanged += LoadLastCharacterCheckBoxCheckedChanged;
 		// 
 		// loadLastVaultCheckBox
 		// 
@@ -331,7 +329,6 @@ internal partial class SettingsUserControl
 		loadLastVaultCheckBox.Text = "Automatically Load the last opened Vault";
 		toolTip.SetToolTip(loadLastVaultCheckBox, "Selecting this item will automatically load the\r\nlast opened vault when TQVault was closed.\r\nTQVault will automatically open Main Vault\r\nif nothing is chosen.");
 		loadLastVaultCheckBox.UseVisualStyleBackColor = true;
-		loadLastVaultCheckBox.CheckedChanged += LoadLastVaultCheckBoxCheckedChanged;
 		// 
 		// vaultPathTextBox
 		// 
@@ -450,7 +447,6 @@ internal partial class SettingsUserControl
 		loadAllFilesCheckBox.Text = "Pre-Load All Vault And Character Files";
 		toolTip.SetToolTip(loadAllFilesCheckBox, "Selecting this item will automatically load all\r\nof the available character, stash and vault files\r\non startup.  This aids the search function, but\r\nincreases startup time.");
 		loadAllFilesCheckBox.UseVisualStyleBackColor = true;
-		loadAllFilesCheckBox.CheckedChanged += LoadAllFilesCheckBoxCheckedChanged;
 		// 
 		// suppressWarningsCheckBox
 		// 
@@ -463,7 +459,6 @@ internal partial class SettingsUserControl
 		suppressWarningsCheckBox.Text = "Bypass Confirmation Messages";
 		toolTip.SetToolTip(suppressWarningsCheckBox, "When enabled, confirmation messages will no\r\nlonger be shown for item deletion and\r\nrelic removal or if there are items in the trash\r\nwhen TQVault is closed.");
 		suppressWarningsCheckBox.UseVisualStyleBackColor = true;
-		suppressWarningsCheckBox.CheckedChanged += SuppressWarningsCheckBoxCheckedChanged;
 		// 
 		// playerReadonlyCheckbox
 		// 
@@ -476,7 +471,6 @@ internal partial class SettingsUserControl
 		playerReadonlyCheckbox.Text = "Player Equipment ReadOnly";
 		toolTip.SetToolTip(playerReadonlyCheckbox, "Avoid save game corruption that occurs (randomly). When enabled, player equipment will be read-only,  you won't be able to select or move any item.");
 		playerReadonlyCheckbox.UseVisualStyleBackColor = true;
-		playerReadonlyCheckbox.CheckedChanged += PlayerReadonlyCheckboxCheckedChanged;
 		// 
 		// characterEditCheckBox
 		// 
@@ -489,7 +483,6 @@ internal partial class SettingsUserControl
 		characterEditCheckBox.Text = "Allow Character Editing Features";
 		toolTip.SetToolTip(characterEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
 		characterEditCheckBox.UseVisualStyleBackColor = true;
-		characterEditCheckBox.CheckedChanged += CharacterEditCheckBox_CheckedChanged;
 		// 
 		// groupBoxTooltipEnhanced
 		//
@@ -548,7 +541,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipDetailedView.Text = "Enable detailed view";
 		toolTip.SetToolTip(scalingCheckBoxTooltipDetailedView, "Split item tooltip attributes into Prefix/Base/Suffix categories");
 		scalingCheckBoxTooltipDetailedView.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipDetailedView.CheckedChanged += scalingCheckBoxTooltipDetailedView_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipInGameRolls
 		//
@@ -559,7 +551,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipInGameRolls.TabIndex = 1;
 		scalingCheckBoxTooltipInGameRolls.Text = "Display in game rolls";
 		scalingCheckBoxTooltipInGameRolls.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipInGameRolls.CheckedChanged += scalingCheckBoxTooltipInGameRolls_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipValueRanges
 		//
@@ -570,7 +561,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipValueRanges.TabIndex = 2;
 		scalingCheckBoxTooltipValueRanges.Text = "Display min/max values";
 		scalingCheckBoxTooltipValueRanges.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipValueRanges.CheckedChanged += scalingCheckBoxTooltipValueRanges_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipGrantedSkills
 		//
@@ -581,7 +571,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipGrantedSkills.TabIndex = 3;
 		scalingCheckBoxTooltipGrantedSkills.Text = "Display item skills";
 		scalingCheckBoxTooltipGrantedSkills.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipGrantedSkills.CheckedChanged += scalingCheckBoxTooltipGrantedSkills_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipSetPieceCounts
 		//
@@ -592,7 +581,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipSetPieceCounts.TabIndex = 4;
 		scalingCheckBoxTooltipSetPieceCounts.Text = "Display items set pieces count";
 		scalingCheckBoxTooltipSetPieceCounts.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipSetPieceCounts.CheckedChanged += scalingCheckBoxTooltipSetPieceCounts_CheckedChanged;
 		//
 		// ShowInGameValuesCheckBox
 		// 
@@ -602,7 +590,6 @@ internal partial class SettingsUserControl
 		ShowInGameValuesCheckBox.Size = new Size(213, 22);
 		ShowInGameValuesCheckBox.Text = "Show In-Game Values";
 		ShowInGameValuesCheckBox.UseVisualStyleBackColor = true;
-		ShowInGameValuesCheckBox.CheckedChanged += ShowInGameValuesCheckBox_CheckedChanged;
 		// 
 		// ItemBGColorOpacityLabel
 		// 
@@ -626,7 +613,6 @@ internal partial class SettingsUserControl
 		EnableItemRequirementRestrictionCheckBox.Text = "Enable Character Requierement BG Color";
 		toolTip.SetToolTip(EnableItemRequirementRestrictionCheckBox, resources.GetString("EnableItemRequirementRestrictionCheckBox.ToolTip"));
 		EnableItemRequirementRestrictionCheckBox.UseVisualStyleBackColor = true;
-		EnableItemRequirementRestrictionCheckBox.CheckedChanged += EnableItemRequirementRestrictionCheckBox_CheckedChanged;
 		// 
 		// hotReloadCheckBox
 		// 
@@ -640,7 +626,6 @@ internal partial class SettingsUserControl
 		hotReloadCheckBox.Text = "Allow Hot Reload Features";
 		toolTip.SetToolTip(hotReloadCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
 		hotReloadCheckBox.UseVisualStyleBackColor = true;
-		hotReloadCheckBox.CheckedChanged += hotReloadCheckBox_CheckedChanged;
 		// 
 		// scalingCheckBoxEnableEpicLegendaryAffixes
 		// 
@@ -654,7 +639,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxEnableEpicLegendaryAffixes.Text = "Enable Epic and Legendary affixes";
 		toolTip.SetToolTip(scalingCheckBoxEnableEpicLegendaryAffixes, "Allow affixes pickup on Epic and Legendary items");
 		scalingCheckBoxEnableEpicLegendaryAffixes.UseVisualStyleBackColor = true;
-		scalingCheckBoxEnableEpicLegendaryAffixes.CheckedChanged += scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged;
 		// 
 		// scalingCheckBoxDisableAutoStacking
 		// 
@@ -667,7 +651,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxDisableAutoStacking.Text = "Disable auto stacking";
 		toolTip.SetToolTip(scalingCheckBoxDisableAutoStacking, "Disable auto stacking for relic, charms and potions");
 		scalingCheckBoxDisableAutoStacking.UseVisualStyleBackColor = true;
-		scalingCheckBoxDisableAutoStacking.CheckedChanged += scalingCheckBoxDisableAutoStacking_CheckedChanged;
 		// 
 		// scalingCheckBoxMergeRelicsOnSort
 		// 
@@ -679,7 +662,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxMergeRelicsOnSort.TabIndex = 57;
 		scalingCheckBoxMergeRelicsOnSort.Text = "Merge relic shards when sorting";
 		scalingCheckBoxMergeRelicsOnSort.UseVisualStyleBackColor = true;
-		scalingCheckBoxMergeRelicsOnSort.CheckedChanged += scalingCheckBoxMergeRelicsOnSort_CheckedChanged;
 		// 
 		// checkGroupBoxGitBackup
 		// 
@@ -723,7 +705,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxDisableLegacyBackup.Text = "Disable legacy backup";
 		toolTip.SetToolTip(scalingCheckBoxDisableLegacyBackup, "Optionaly disable the old backup system");
 		scalingCheckBoxDisableLegacyBackup.UseVisualStyleBackColor = true;
-		scalingCheckBoxDisableLegacyBackup.CheckedChanged += scalingCheckBoxDisableLegacyBackup_CheckedChanged;
 		// 
 		// scalingCheckBoxBackupPlayerSaves
 		// 
@@ -736,7 +717,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxBackupPlayerSaves.Text = "Backup player saves";
 		toolTip.SetToolTip(scalingCheckBoxBackupPlayerSaves, "Include your character save files in the backup");
 		scalingCheckBoxBackupPlayerSaves.UseVisualStyleBackColor = true;
-		scalingCheckBoxBackupPlayerSaves.CheckedChanged += scalingCheckBoxBackupPlayerSaves_CheckedChanged;
 		// 
 		// scalingLabelGitRepository
 		// 
@@ -770,7 +750,6 @@ internal partial class SettingsUserControl
 		checkGroupBoxOriginalTQSupport.TabStop = false;
 		checkGroupBoxOriginalTQSupport.Text = "TQ original support";
 		toolTip.SetToolTip(checkGroupBoxOriginalTQSupport, "Provide support for original Titan Quest character file editing");
-		checkGroupBoxOriginalTQSupport.CheckedChanged += checkGroupBoxOriginalTQSupport_CheckedChanged;
 		// 
 		// bufferedFlowLayoutPanelTQOriginalSupport
 		// 
@@ -809,7 +788,6 @@ internal partial class SettingsUserControl
 		checkGroupBoxMcpServer.TabIndex = 55;
 		checkGroupBoxMcpServer.TabStop = false;
 		checkGroupBoxMcpServer.Text = "MCP endpoint for AI agents";
-		checkGroupBoxMcpServer.CheckedChanged += checkGroupBoxMcpServer_CheckedChanged;
 		//
 		// bufferedFlowLayoutPanelMcpServer
 		//
@@ -1015,7 +993,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxEnableSounds.TabIndex = 43;
 		scalingCheckBoxEnableSounds.Text = "Enable TQVault Sounds";
 		scalingCheckBoxEnableSounds.UseVisualStyleBackColor = true;
-		scalingCheckBoxEnableSounds.CheckedChanged += scalingCheckBoxEnableSounds_CheckedChanged;
 		// 
 		// scalingLabelCSVDelim
 		// 

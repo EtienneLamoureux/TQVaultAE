@@ -31,15 +31,23 @@ internal partial class SettingsUserControl
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
 	private void VaultPathBrowseButtonClick(object? sender, EventArgs e)
+		=> this.BrowseFolder(Resources.SettingsBrowseVault, Environment.SpecialFolder.Desktop, this.VaultPath
+			, this.editor.SetVaultPath, this.vaultPathTextBox, () => this.VaultPath);
+
+	/// <summary>
+	/// Lets the user pick a folder from <paramref name="current"/>, gives it to <paramref name="set"/>, and when taken shows
+	/// the folder kept (<paramref name="shown"/>) in <paramref name="box"/>.
+	/// </summary>
+	private void BrowseFolder(string description, Environment.SpecialFolder root, string current, Func<string, bool> set, TextBox box, Func<string> shown)
 	{
-		this.folderBrowserDialog.Description = Resources.SettingsBrowseVault;
-		this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
-		this.folderBrowserDialog.SelectedPath = this.VaultPath;
+		this.folderBrowserDialog.Description = description;
+		this.folderBrowserDialog.RootFolder = root;
+		this.folderBrowserDialog.SelectedPath = current;
 		this.folderBrowserDialog.ShowDialog();
-		if (this.editor.SetVaultPath(this.folderBrowserDialog.SelectedPath))
+		if (set(this.folderBrowserDialog.SelectedPath))
 		{
-			this.vaultPathTextBox.Text = this.VaultPath;
-			this.vaultPathTextBox.Invalidate();
+			box.Text = shown();
+			box.Invalidate();
 		}
 	}
 
@@ -125,30 +133,6 @@ internal partial class SettingsUserControl
 	}
 
 	/// <summary>
-	/// Handler for clicking the allow item copy check box
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void AllowItemCopyCheckBoxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.AllowItemCopy = this.allowItemCopyCheckBox.Checked;
-
-	/// <summary>
-	/// Handler for clicking the load last character check box
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void LoadLastCharacterCheckBoxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.LoadLastCharacter = this.loadLastCharacterCheckBox.Checked;
-
-	/// <summary>
-	/// Handler for clicking the load last vault check box
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void LoadLastVaultCheckBoxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.LoadLastVault = this.loadLastVaultCheckBox.Checked;
-
-	/// <summary>
 	/// Handler for clicking the detect language check box
 	/// </summary>
 	/// <param name="sender">sender object</param>
@@ -230,17 +214,8 @@ internal partial class SettingsUserControl
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
 	private void TitanQuestPathBrowseButtonClick(object? sender, EventArgs e)
-	{
-		this.folderBrowserDialog.Description = Resources.SettingsBrowseTQ;
-		this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-		this.folderBrowserDialog.SelectedPath = this.editor.Current.TQPath;
-		this.folderBrowserDialog.ShowDialog();
-		if (this.editor.SetTitanQuestPath(this.folderBrowserDialog.SelectedPath))
-		{
-			this.titanQuestPathTextBox.Text = this.editor.Current.TQPath;
-			this.titanQuestPathTextBox.Invalidate();
-		}
-	}
+		=> this.BrowseFolder(Resources.SettingsBrowseTQ, Environment.SpecialFolder.MyComputer, this.editor.Current.TQPath
+			, this.editor.SetTitanQuestPath, this.titanQuestPathTextBox, () => this.editor.Current.TQPath);
 
 	/// <summary>
 	/// Handler for clicking the Immortal Throne game path browse button
@@ -248,39 +223,8 @@ internal partial class SettingsUserControl
 	/// <param name="sender">sender object</param>
 	/// <param name="e">EventArgs data</param>
 	private void ImmortalThronePathBrowseButtonClick(object? sender, EventArgs e)
-	{
-		this.folderBrowserDialog.Description = Resources.SettingsBrowseIT;
-		this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-		this.folderBrowserDialog.SelectedPath = this.editor.Current.TQITPath;
-		this.folderBrowserDialog.ShowDialog();
-		if (this.editor.SetImmortalThronePath(this.folderBrowserDialog.SelectedPath))
-		{
-			this.immortalThronePathTextBox.Text = this.editor.Current.TQITPath;
-			this.immortalThronePathTextBox.Invalidate();
-		}
-	}
-
-	/// <summary>
-	/// Handler for clicking the load all files check box
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void LoadAllFilesCheckBoxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.LoadAllFiles = this.loadAllFilesCheckBox.Checked;
-
-	/// <summary>
-	/// Handler for clicking the suppress warnings check box
-	/// </summary>
-	/// <param name="sender">sender object</param>
-	/// <param name="e">EventArgs data</param>
-	private void SuppressWarningsCheckBoxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.SuppressWarnings = this.suppressWarningsCheckBox.Checked;
-
-	private void PlayerReadonlyCheckboxCheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.PlayerReadonly = this.playerReadonlyCheckbox.Checked;
-
-	private void CharacterEditCheckBox_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.AllowCharacterEdit = this.characterEditCheckBox.Checked;
+		=> this.BrowseFolder(Resources.SettingsBrowseIT, Environment.SpecialFolder.MyComputer, this.editor.Current.TQITPath
+			, this.editor.SetImmortalThronePath, this.immortalThronePathTextBox, () => this.editor.Current.TQITPath);
 
 	private void FontComboBoxBase_SelectedIndexChanged(object? sender, EventArgs e)
 	{
@@ -288,47 +232,11 @@ internal partial class SettingsUserControl
 			this.editor.Current.BaseFont = font.Value;
 	}
 
-	private void scalingCheckBoxTooltipDetailedView_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableDetailedTooltipView = this.scalingCheckBoxTooltipDetailedView.Checked;
-
-	private void scalingCheckBoxTooltipInGameRolls_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.TooltipShowInGameRolls = this.scalingCheckBoxTooltipInGameRolls.Checked;
-
-	private void scalingCheckBoxTooltipValueRanges_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.TooltipShowValueRanges = this.scalingCheckBoxTooltipValueRanges.Checked;
-
-	private void scalingCheckBoxTooltipGrantedSkills_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.TooltipShowGrantedSkills = this.scalingCheckBoxTooltipGrantedSkills.Checked;
-
-	private void scalingCheckBoxTooltipSetPieceCounts_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.TooltipShowSetPieceCounts = this.scalingCheckBoxTooltipSetPieceCounts.Checked;
-
-	private void ShowInGameValuesCheckBox_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.ShowInGameValues = this.ShowInGameValuesCheckBox.Checked;
-
-	private void EnableItemRequirementRestrictionCheckBox_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableItemRequirementRestriction = this.EnableItemRequirementRestrictionCheckBox.Checked;
-
-	private void hotReloadCheckBox_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableHotReload = this.hotReloadCheckBox.Checked;// Force restart
-
-	private void scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableEpicLegendaryAffixes = this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked;
-
-	private void scalingCheckBoxEnableSounds_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableTQVaultSounds = this.scalingCheckBoxEnableSounds.Checked;
-
 	private void scalingComboBoxCSVDelim_SelectedIndexChanged(object? sender, EventArgs e)
 	{
 		if (this.scalingComboBoxCSVDelim.SelectedItem is ComboBoxItem<CsvDelimiter, char> delim)
 			this.editor.Current.CSVDelimiter = delim.ComboValue.ToString();
 	}
-
-	private void scalingCheckBoxDisableAutoStacking_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.DisableAutoStacking = this.scalingCheckBoxDisableAutoStacking.Checked;
-
-	private void scalingCheckBoxMergeRelicsOnSort_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.MergeRelicsOnSort = this.scalingCheckBoxMergeRelicsOnSort.Checked;
 
 	private void checkGroupBoxCheats_CheckedChanged(object? sender, EventArgs e)
 	{
@@ -353,18 +261,6 @@ internal partial class SettingsUserControl
 		if (!this.checkGroupBoxGitBackup.Checked)
 			this.scalingCheckBoxDisableLegacyBackup.Checked = this.editor.Current.DisableLegacyBackup;
 	}
-
-	private void scalingCheckBoxDisableLegacyBackup_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.DisableLegacyBackup = this.scalingCheckBoxDisableLegacyBackup.Checked;
-
-	private void scalingCheckBoxBackupPlayerSaves_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.GitBackupPlayerSavesEnabled = this.scalingCheckBoxBackupPlayerSaves.Checked;
-
-	private void checkGroupBoxOriginalTQSupport_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableOriginalTQSupport = this.checkGroupBoxOriginalTQSupport.Checked;
-
-	private void checkGroupBoxMcpServer_CheckedChanged(object? sender, EventArgs e)
-		=> this.editor.Current.EnableMcpServer = this.checkGroupBoxMcpServer.Checked;
 
 	private void numericUpDownMcpServerPort_ValueChanged(object? sender, EventArgs e)
 		=> this.editor.Current.McpServerPort = (int)this.numericUpDownMcpServerPort.Value;
