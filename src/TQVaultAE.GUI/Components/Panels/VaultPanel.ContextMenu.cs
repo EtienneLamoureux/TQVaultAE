@@ -75,29 +75,17 @@ public partial class VaultPanel
 			this.ExchangeService?.HasPasteBinApiKey == true));
 
 	private void ExportTabToClipboardClicked(object? sender, EventArgs e)
-	{
-		var exchangeService = this.ExchangeService;
-		if (exchangeService is not null && this.BagSackPanel?.Sack is not null)
-		{
-			var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
-			Clipboard.SetText(json);
-		}
-	}
+		=> ExportActions.ToClipboard(
+			() => this.BagSackPanel?.Sack is { } sack
+				? this.ExchangeService?.SerializeSackCollection(sack, this.CurrentBag, this.BagSackPanel.ContainerMap)
+				: null,
+			this.Services.Logger<VaultPanel>(),
+			"tab");
 
 	private void ExportTabToFileClicked(object? sender, EventArgs e)
 	{
-		if (this.ExchangeService is null || this.BagSackPanel?.Sack is null)
-			return;
-
-		using var dialog = new SaveFileDialog
-		{
-			Filter = Resources.GlobalJsonFileFilter,
-			DefaultExt = "json",
-			FileName = IItemExchangeService.TabExportFileName
-		};
-
-		if (dialog.ShowDialog() == DialogResult.OK)
-			this.ExportTabToFile(dialog.FileName);
+		if (this.ExchangeService is not null && this.BagSackPanel?.Sack is not null)
+			ExportActions.ToFile(IItemExchangeService.TabExportFileName, path => this.ExportTabToFile(path), this.Services.Logger<VaultPanel>(), "tab");
 	}
 
 	/// <summary>Writes the shown tab to a JSON file, as "Export tab > File" does once its file is chosen.</summary>
@@ -115,21 +103,13 @@ public partial class VaultPanel
 
 	private async void ExportTabToPasteBinClicked(object? sender, EventArgs e)
 	{
-		var exchangeService = this.ExchangeService;
-		if (exchangeService is not null && this.BagSackPanel?.Sack is not null)
-		{
-			try
-			{
-				var url = await exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
-				Clipboard.SetText(url);
-				this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ExportTabSuccessPasteBin, url));
-			}
-			catch (Exception ex)
-			{
-				this.Services.Logger<VaultPanel>().LogError(ex, "Failed to export tab to PasteBin");
-				this.UIService.ShowError(string.Format(CultureInfo.CurrentCulture, Resources.ExportFailPasteBin, ex.Message));
-			}
-		}
+		if (this.ExchangeService is { } exchangeService && this.BagSackPanel?.Sack is { } sack)
+			await ExportActions.ToPasteBinAsync(
+				() => exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, sack, this.CurrentBag, this.BagSackPanel.ContainerMap),
+				this.UIService,
+				Resources.ExportTabSuccessPasteBin,
+				this.Services.Logger<VaultPanel>(),
+				"tab");
 	}
 
 	/// <summary>
