@@ -432,7 +432,6 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		// A row whose rollover lists its sources: the value shown from an evaluation, the variables it reads.
 		StatRowView Sourced(string tag, string fallback, string value, Func<Evaluation, double> shown, IReadOnlyList<string> variables, string toolTip = "")
 			=> new(Game(tag, fallback), value, composition.Append(StatToolTip.Sentence(toolTip), shown, variables));
-		string[] Own(string field) => [field, field + "Modifier"];
 
 		// A damage's rollover blocks: its name, its bonus and its Global Multiplier, then the damage over time's name, its
 		// bonus "with +n% Improved Duration" and its multiplier.
@@ -533,7 +532,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		return new CharacterStatsView
 		{
 			DefenseTitle = Game("tagCDefense", "Defense"),
-			Armor = Sourced("tagCCombineArmor", "Combined Armor", stats.CombinedArmor.ToString(culture), e => e.Stats.CombinedArmor, Own("defensiveProtection")),
+			Armor = Sourced("tagCCombineArmor", "Combined Armor", stats.CombinedArmor.ToString(culture), e => e.Stats.CombinedArmor, CharacterStatsCalculator.Variables.CombinedArmor),
 			Resistances = [.. Enum.GetValues<StatResistance>().Select(r => new StatIconView(
 				ResistanceIcons[(int)r].Icon,
 				Percent(stats.Resistances[r]),
@@ -547,23 +546,23 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				Sourced("tagCTotalDamage", "Average Damage", offense.AverageDamage.ToString(culture), e => e.Offense.AverageDamage, [],
 					string.Format(culture, Resources.CEOffenseDamageToolTip, offense.WeaponDamage, offense.AddedDamage)),
 				Sourced("tagCAttackSpeed", "Attack Speed", Percent(CharacterStatsCalculator.Round(attackSpeed)), e => CharacterStatsCalculator.Round(e.AttackSpeed),
-					[.. Own("characterAttackSpeed"), "characterTotalSpeedModifier"]),
+					CharacterOffenseCalculator.AttackSpeedVariables),
 				Sourced("tagCDPS", "Damage Per Second (DPS)", offense.Dps.ToString(culture), e => e.Offense.Dps, []),
 			],
 			SecondaryTitle = Game("tagCSecondaryResist", "Secondary Resistances:"),
 			Tab2Rows =
 			[
-				Sourced("tagCLifeRegen", "Health Regeneration", stats.LifeRegen.ToString("0.00", culture), e => Math.Round(e.Stats.LifeRegen, 2), Own("characterLifeRegen")),
-				Sourced("tagCEnergyRegen", "Energy Regeneration", stats.ManaRegen.ToString("0.00", culture), e => Math.Round(e.Stats.ManaRegen, 2), Own("characterManaRegen")),
-				Sourced("x4tagCManaCostReduction", "Energy Cost Reduction", Percent(stats.ManaCostReduction), e => e.Stats.ManaCostReduction, Own("skillManaCostReduction")),
-				Sourced("x4tagCCooldownReduction", "Recharge Reduction", Percent(stats.CooldownReduction), e => e.Stats.CooldownReduction, Own("skillCooldownReduction")),
-				Sourced("tagCCastSpeed", "Casting Speed", Percent(stats.CastSpeed), e => e.Stats.CastSpeed, [.. Own("characterSpellCastSpeed"), "characterTotalSpeedModifier"]),
-				Sourced("tagCRunSpeed", "Movement Speed", Percent(stats.RunSpeed), e => e.Stats.RunSpeed, [.. Own("characterRunSpeed"), "characterTotalSpeedModifier"]),
-				Sourced("tagCOffensiveAbility", "Offensive Ability", stats.OffensiveAbility.ToString(culture), e => e.Stats.OffensiveAbility, Own("characterOffensiveAbility")),
-				Sourced("tagCDefensiveAbility", "Defensive Ability", stats.DefensiveAbility.ToString(culture), e => e.Stats.DefensiveAbility, Own("characterDefensiveAbility")),
-				Sourced("x4tagCDodgePercent", "Chance to Dodge Attacks", Percent(stats.Dodge), e => e.Stats.Dodge, Own("characterDodgePercent")),
-				Sourced("x4tagCDeflectProjectileChance", "Chance to Avoid Projectiles", Percent(stats.DeflectProjectile), e => e.Stats.DeflectProjectile, Own("characterDeflectProjectile")),
-				Sourced("tagCBlockPercent", "Block Chance", Percent(stats.Block), e => e.Stats.Block, ["defensiveBlockChance", "defensiveBlockModifier"]),
+				Sourced("tagCLifeRegen", "Health Regeneration", stats.LifeRegen.ToString("0.00", culture), e => Math.Round(e.Stats.LifeRegen, 2), CharacterStatsCalculator.Variables.LifeRegen),
+				Sourced("tagCEnergyRegen", "Energy Regeneration", stats.ManaRegen.ToString("0.00", culture), e => Math.Round(e.Stats.ManaRegen, 2), CharacterStatsCalculator.Variables.ManaRegen),
+				Sourced("x4tagCManaCostReduction", "Energy Cost Reduction", Percent(stats.ManaCostReduction), e => e.Stats.ManaCostReduction, CharacterStatsCalculator.Variables.ManaCostReduction),
+				Sourced("x4tagCCooldownReduction", "Recharge Reduction", Percent(stats.CooldownReduction), e => e.Stats.CooldownReduction, CharacterStatsCalculator.Variables.CooldownReduction),
+				Sourced("tagCCastSpeed", "Casting Speed", Percent(stats.CastSpeed), e => e.Stats.CastSpeed, CharacterStatsCalculator.Variables.CastSpeed),
+				Sourced("tagCRunSpeed", "Movement Speed", Percent(stats.RunSpeed), e => e.Stats.RunSpeed, CharacterStatsCalculator.Variables.RunSpeed),
+				Sourced("tagCOffensiveAbility", "Offensive Ability", stats.OffensiveAbility.ToString(culture), e => e.Stats.OffensiveAbility, CharacterStatsCalculator.Variables.OffensiveAbility),
+				Sourced("tagCDefensiveAbility", "Defensive Ability", stats.DefensiveAbility.ToString(culture), e => e.Stats.DefensiveAbility, CharacterStatsCalculator.Variables.DefensiveAbility),
+				Sourced("x4tagCDodgePercent", "Chance to Dodge Attacks", Percent(stats.Dodge), e => e.Stats.Dodge, CharacterStatsCalculator.Variables.Dodge),
+				Sourced("x4tagCDeflectProjectileChance", "Chance to Avoid Projectiles", Percent(stats.DeflectProjectile), e => e.Stats.DeflectProjectile, CharacterStatsCalculator.Variables.DeflectProjectile),
+				Sourced("tagCBlockPercent", "Block Chance", Percent(stats.Block), e => e.Stats.Block, CharacterStatsCalculator.Variables.Block),
 			],
 			DamageTitle = Game("x4tagCDamageStats2", "Damage & Duration Bonuses"),
 			// As the game's rollover: one block per damage, its name then its bonus; the damage over time "with +n%
@@ -597,8 +596,8 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			})],
 			Tab3Rows =
 			[
-				Sourced("x4tagCADctH", "Weapon Damage as Health", Percent(stats.AttackDamageToHealth), e => e.Stats.AttackDamageToHealth, ["offensiveLifeLeechMin"]),
-				Sourced("x4tagCEleConversion", "Weapon Base as Elemental", Percent(stats.PhysicalToElemental), e => e.Stats.PhysicalToElemental, ["characterPhysToElementalRatio"]),
+				Sourced("x4tagCADctH", "Weapon Damage as Health", Percent(stats.AttackDamageToHealth), e => e.Stats.AttackDamageToHealth, CharacterStatsCalculator.Variables.AttackDamageToHealth),
+				Sourced("x4tagCEleConversion", "Weapon Base as Elemental", Percent(stats.PhysicalToElemental), e => e.Stats.PhysicalToElemental, CharacterStatsCalculator.Variables.PhysicalToElemental),
 			],
 			RaceTitle = Game("x4tagCMonsterStats", "Monster Race Bonuses"),
 			Races = [.. Enum.GetValues<StatRace>().Select(r =>

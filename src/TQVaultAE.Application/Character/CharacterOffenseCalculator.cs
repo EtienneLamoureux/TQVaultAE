@@ -46,6 +46,13 @@ public static class CharacterOffenseCalculator
 	/// <param name="all">The gear (weapons in hand) and skill sums.</param>
 	/// <param name="unarmedDuration">Mean attack animation duration without weapon, in seconds.</param>
 	/// <param name="stanceDuration">Mean attack animation duration of the stance, in seconds.</param>
+	private const string AttackSpeedField = "characterAttackSpeed";
+	private const string WeaponAttackSpeedField = "characterBaseAttackSpeed";
+
+	/// <summary>The bonus fields <see cref="AttackSpeed"/> reads, for the sources of its rollover.</summary>
+	public static readonly IReadOnlyList<string> AttackSpeedVariables =
+		[.. CharacterStatsCalculator.WithModifier(AttackSpeedField), CharacterStatsCalculator.TotalSpeedModifierField, WeaponAttackSpeedField];
+
 	public static double AttackSpeed(AttributeSum all, WeaponStance stance, GameBalance balance, int difficulty, double unarmedDuration, double stanceDuration)
 	{
 		ArgumentNullException.ThrowIfNull(all);
@@ -54,9 +61,9 @@ public static class CharacterOffenseCalculator
 		if (template <= 0)
 			return 100;
 
-		double modifier = 1 + (all["characterAttackSpeedModifier"] + all["characterTotalSpeedModifier"]) / 100;
-		double character = Math.Max(0, (template + all["characterAttackSpeed"]) * modifier);
-		double weapons = Math.Max(0, all["characterBaseAttackSpeed"] * modifier);
+		double modifier = 1 + (all[AttackSpeedField + "Modifier"] + all[CharacterStatsCalculator.TotalSpeedModifierField]) / 100;
+		double character = Math.Max(0, (template + all[AttackSpeedField]) * modifier);
+		double weapons = Math.Max(0, all[WeaponAttackSpeedField] * modifier);
 		if (stance == WeaponStance.DualWield)
 			weapons *= 0.5;
 

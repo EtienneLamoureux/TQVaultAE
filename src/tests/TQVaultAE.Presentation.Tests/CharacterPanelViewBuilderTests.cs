@@ -343,6 +343,19 @@ public class CharacterPanelViewBuilderTests
 
 	#endregion
 
+	[Fact]
+	public void StatsView_AttackSpeedRollover_ShowsTheWeaponsBaseSpeed()
+	{
+		// A weapon's own speed (characterBaseAttackSpeed) counts in the attack speed: its source shows its raw value.
+		this._stats.Setup(s => s.GetGameBalance()).Returns(new GameBalance());
+		this._sources = _ => [Source("item:0", BuffGroup.Gear, true, ("characterBaseAttackSpeed", 1))];
+
+		var stats = this._builder.StatsView(Input());
+
+		var sources = stats.Offense[1].ToolTip.Blocks.Should().ContainSingle(b => b.Title == "Sources").Subject;
+		sources.Lines.Should().ContainSingle().Which.Should().StartWith("item:0: +1 (");
+	}
+
 	#region Rollovers
 
 	[Fact]
