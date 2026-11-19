@@ -93,7 +93,7 @@ internal partial class SettingsUserControl
 		// Validation
 		if (!this.editor.IsGitRepositoryValid)
 		{
-			this.UIService.ShowError(Resources.SettingsGitRepositoryUrlInvalid, Buttons: Application.Contracts.Services.ShowMessageButtons.OK);
+			this.Services.MessageBoxes.Inform(Resources.SettingsGitRepositoryUrlInvalid, Resources.GlobalError, MessageBoxIcon.Error);
 			return;
 		}
 

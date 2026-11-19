@@ -178,12 +178,12 @@ public partial class MainFormUserControl
 			try
 			{
 				this.Services.ItemExchangeService.ExportVaultToFile(vault, saveDialog.FileName);
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultSuccessFile, saveDialog.FileName));
+				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ExportVaultSuccessFile, saveDialog.FileName));
 			}
 			catch (Exception ex)
 			{
 				Log.LogError(ex, "Failed to export vault to file");
-				this.Services.UIService.ShowError(Resources.ExportVaultFailFile);
+				this.Services.MessageBoxes.Inform(Resources.ExportVaultFailFile, Resources.GlobalError, MessageBoxIcon.Error);
 			}
 		}
 	}
@@ -206,7 +206,7 @@ public partial class MainFormUserControl
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "Failed to export vault to clipboard");
-			this.Services.UIService.ShowError(Resources.ExportVaultFailClipboard);
+			this.Services.MessageBoxes.Inform(Resources.ExportVaultFailClipboard, Resources.GlobalError, MessageBoxIcon.Error);
 		}
 	}
 
@@ -224,12 +224,12 @@ public partial class MainFormUserControl
 			var json = this.Services.ItemExchangeService.SerializePlayerCollection(vault);
 			var url = await this.Services.ItemExchangeService.ExportToPasteBinAsync(json, vault.PlayerName);
 			Clipboard.SetText(url);
-			this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultSuccessPasteBin, url));
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ExportVaultSuccessPasteBin, url));
 		}
 		catch (Exception ex)
 		{
 			Log.LogError(ex, "Failed to export vault to PasteBin");
-			this.Services.UIService.ShowError(string.Format(CultureInfo.InvariantCulture, Resources.ExportVaultFailPasteBin, ex.Message));
+			this.Services.MessageBoxes.Inform(string.Format(CultureInfo.CurrentCulture, Resources.ExportVaultFailPasteBin, ex.Message), Resources.GlobalError, MessageBoxIcon.Error);
 		}
 	}
 
@@ -291,7 +291,7 @@ public partial class MainFormUserControl
 	{
 		if (this.vaultPanel.Player is null)
 		{
-			this.Services.UIService.ShowError(Resources.GlobalNoVaultImportTarget);
+			this.Services.MessageBoxes.Inform(Resources.GlobalNoVaultImportTarget, Resources.GlobalError, MessageBoxIcon.Error);
 			return;
 		}
 
@@ -299,7 +299,7 @@ public partial class MainFormUserControl
 		var sack = sackPanel.Sack;
 		if (sack is null)
 		{
-			this.Services.UIService.ShowError(Resources.GlobalNoActiveTabImport);
+			this.Services.MessageBoxes.Inform(Resources.GlobalNoActiveTabImport, Resources.GlobalError, MessageBoxIcon.Error);
 			return;
 		}
 
@@ -315,7 +315,7 @@ public partial class MainFormUserControl
 		}
 
 		this.vaultPanel.Refresh();
-		this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportSuccessCount, imported.Count, importResult.TotalCount));
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ImportSuccessCount, imported.Count, importResult.TotalCount));
 		this.NotifyDroppedMods(importResult);
 	}
 
@@ -333,7 +333,7 @@ public partial class MainFormUserControl
 		var targetVault = this.vaultPanel.Player;
 		if (targetVault is null)
 		{
-			this.Services.UIService.ShowError(Resources.GlobalNoVaultImportTarget);
+			this.Services.MessageBoxes.Inform(Resources.GlobalNoVaultImportTarget, Resources.GlobalError, MessageBoxIcon.Error);
 			return;
 		}
 
@@ -342,7 +342,7 @@ public partial class MainFormUserControl
 
 		var page = new TaskDialogPage
 		{
-			Text = string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultDialogText, importResult.VaultName),
+			Text = string.Format(CultureInfo.CurrentCulture, Resources.ImportVaultDialogText, importResult.VaultName),
 			Heading = Resources.ImportVaultHeading,
 			Icon = TaskDialogIcon.Information,
 			Buttons = { replaceButton, createButton, TaskDialogButton.Cancel }
@@ -370,7 +370,7 @@ public partial class MainFormUserControl
 			this.GetVaultList(false);
 			this.SelectVault(newName);
 
-			this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccessCreate, newName));
+			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ImportVaultSuccessCreate, newName));
 			this.NotifyDroppedMods(importResult);
 			return;
 		}
@@ -400,7 +400,7 @@ public partial class MainFormUserControl
 				this.vaultPanel.BagButtons[i].ApplyIconInfo(sack);
 		}
 
-		this.Services.UIService.NotifyUser(string.Format(CultureInfo.InvariantCulture, Resources.ImportVaultSuccess, importResult.TotalCount));
+		this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ImportVaultSuccess, importResult.TotalCount));
 		this.NotifyDroppedMods(importResult);
 	}
 
