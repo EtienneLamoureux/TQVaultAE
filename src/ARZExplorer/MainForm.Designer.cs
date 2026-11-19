@@ -386,7 +386,6 @@ public partial class MainForm
         // 
         // capsToolStripMenuItem
         // 
-        this.capsToolStripMenuItem.CheckOnClick = true;
         this.capsToolStripMenuItem.Name = "capsToolStripMenuItem";
         this.capsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
         this.capsToolStripMenuItem.Text = "&Caps";

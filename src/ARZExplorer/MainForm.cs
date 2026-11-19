@@ -895,6 +895,8 @@ public partial class MainForm : Form
 	private void ToggleTocCaps()
 	{
 		var caps = this.toolStripButtonCaps.Checked;
+		// The button holds the state; the menu entry shows it, whichever of the two was clicked
+		this.capsToolStripMenuItem.Checked = caps;
 		// Each Resources access creates a new Icon, and ToBitmap a new Bitmap: free both, and the replaced picture
 		using (var icon = caps ? Resources.CapsDown : Resources.CapsUP)
 		{
