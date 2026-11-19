@@ -36,6 +36,8 @@ internal static class AutomationInstructions
 		6. Vaults are TQVault's own files: the game never reads them, so changing a vault is always safe for the game.
 
 		Start with get_state, character_list and select_character / select_vault; capture renders PNG pictures of the
-		window, panels and dialogs. Full guide: documentation/mcp.md of TQVaultAE.
+		window, panels and dialogs. control_values, set_control and click_control, named in some tool descriptions, exist
+		only in developer (Debug) builds: without them, leave a dialog with close_dialog. Full guide: documentation/mcp.md
+		of TQVaultAE.
 		""";
 }

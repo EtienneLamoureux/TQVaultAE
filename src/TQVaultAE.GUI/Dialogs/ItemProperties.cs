@@ -48,8 +48,8 @@ internal sealed partial class ItemProperties : VaultForm
 	{
 		this.Owner = instance;
 
-		this.InitializeComponent();
 		CaravanDialog.SetUpWindow(this, nameof(ItemProperties));
+		this.InitializeComponent();
 
 		this.sectionControls =
 		[

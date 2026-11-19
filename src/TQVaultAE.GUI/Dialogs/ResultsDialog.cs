@@ -78,8 +78,8 @@ public partial class ResultsDialog : VaultForm
 		// scales them to the monitor's DPI with the rest of the dialog when it resumes (it scales only the controls
 		// present then: the buttons kept their 96 dpi size, their text cut at a higher DPI).
 		this.SuspendLayout();
-		this.InitializeComponent();
 		CaravanDialog.SetUpWindow(this, nameof(ResultsDialog));
+		this.InitializeComponent();
 		// A modeless window: it keeps its taskbar button.
 		this.ShowInTaskbar = true;
 

@@ -161,6 +161,22 @@ public class SearchQueryServiceTests
 		this._files[FilePath].Should().Be("{ not json");
 	}
 
+	[Fact]
+	public void Save_WhileTheFileCannotBeRead_LeavesIt_AndReadsItAgainLater()
+	{
+		// A file locked for a moment (an antivirus, a sync client) must not be replaced by the one query saved meanwhile.
+		this._files[FilePath] = FileOfEarlierVersions;
+		this._fileIO.Setup(f => f.ReadAllText(FilePath)).Throws(new IOException("locked"));
+
+		this._service.Queries.Should().BeEmpty();
+		this._service.Save("new", WithFilter());
+
+		this._files[FilePath].Should().Be(FileOfEarlierVersions);
+
+		this._fileIO.Setup(f => f.ReadAllText(It.IsAny<string>())).Returns((string p) => this._files[p]);
+		this._service.Queries.Select(q => q.QueryName).Should().Equal("Fire swords", "charms");
+	}
+
 	[Theory]
 	[InlineData("", SearchQuerySaveCheck.NameMissing)]
 	[InlineData("   ", SearchQuerySaveCheck.NameMissing)]

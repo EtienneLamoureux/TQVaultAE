@@ -92,8 +92,9 @@ inventory), `playerBag`, `stash`, `equipment`.
 | Dialogs | `list_windows`, `close_dialog`, `close_form`, `open_item_dialog` (item Properties or Seed dialog), `queue_dialog_answers` / `dialog_answers` (answer TQVault's next boxes, only after you agreed) |
 | Pictures | `capture`, `capture_menu` |
 
-Every tool describes its parameters and result to the agent. Full reference, with the Debug developer tools:
-[AUTOMATION.md](AUTOMATION.md).
+Every tool describes its parameters and result to the agent. Some descriptions name `control_values`, `set_control`
+and `click_control`: these are Debug developer tools; in a release build leave a dialog with `close_dialog`. Full
+reference, with the Debug developer tools: [AUTOMATION.md](AUTOMATION.md).
 
 ## Pictures for your game documentation
 

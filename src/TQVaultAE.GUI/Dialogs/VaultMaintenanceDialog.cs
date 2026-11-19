@@ -63,8 +63,8 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.mainForm = instance;
 		this.vaultService = vaultService;
 
-		this.InitializeComponent();
 		CaravanDialog.SetUpWindow(this, nameof(VaultMaintenanceDialog));
+		this.InitializeComponent();
 
 		#region Apply custom font
 

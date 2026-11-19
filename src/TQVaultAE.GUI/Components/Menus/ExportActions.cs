@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Presentation;
 using TQVaultAE.Presentation.Win32.Contracts;
 
@@ -62,7 +63,7 @@ internal static class ExportActions
 		catch (Exception ex)
 		{
 			log.LogError(ex, "Failed to export {What} to PasteBin", what);
-			uiService.ShowError(string.Format(CultureInfo.CurrentCulture, Resources.ExportFailPasteBin, ex.Message));
+			uiService.ShowError(string.Format(CultureInfo.CurrentCulture, Resources.ExportFailPasteBin, ex.Message), Buttons: ShowMessageButtons.OK);
 		}
 	}
 }

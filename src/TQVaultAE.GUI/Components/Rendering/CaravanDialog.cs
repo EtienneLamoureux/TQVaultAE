@@ -16,6 +16,8 @@ internal static class CaravanDialog
 	/// The window settings every dialog laid out in code shares: designed at 96 dpi and scaled by Windows Forms to its
 	/// monitor's DPI, the dialog background and white text, no maximize, minimize or zoom reset button, no icon nor
 	/// taskbar button, centered on its owner. The caller then sets its text, font, buttons and content.
+	/// A designer dialog calls it before <c>InitializeComponent</c>, as its designer set these: after it, the settings
+	/// lay the dialog out again and move some controls 1-2 px.
 	/// </summary>
 	/// <param name="dialog">The dialog, while it is built.</param>
 	/// <param name="name">Its name, used by the automation.</param>

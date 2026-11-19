@@ -28,6 +28,13 @@ public readonly record struct OffenseValues(int WeaponDamage, int AddedDamage, i
 /// </summary>
 public static class CharacterOffenseCalculator
 {
+	private const string AttackSpeedField = "characterAttackSpeed";
+	private const string WeaponAttackSpeedField = "characterBaseAttackSpeed";
+
+	/// <summary>The bonus fields <see cref="AttackSpeed"/> reads, for the sources of its rollover.</summary>
+	public static readonly IReadOnlyList<string> AttackSpeedVariables =
+		[.. CharacterStatsCalculator.WithModifier(AttackSpeedField), CharacterStatsCalculator.TotalSpeedModifierField, WeaponAttackSpeedField];
+
 	/// <summary>
 	/// The attack speed shown, in %, as the game computes it:
 	/// attacks per second / template speed × (unarmed attack duration / stance attack duration) × 100.
@@ -46,13 +53,6 @@ public static class CharacterOffenseCalculator
 	/// <param name="all">The gear (weapons in hand) and skill sums.</param>
 	/// <param name="unarmedDuration">Mean attack animation duration without weapon, in seconds.</param>
 	/// <param name="stanceDuration">Mean attack animation duration of the stance, in seconds.</param>
-	private const string AttackSpeedField = "characterAttackSpeed";
-	private const string WeaponAttackSpeedField = "characterBaseAttackSpeed";
-
-	/// <summary>The bonus fields <see cref="AttackSpeed"/> reads, for the sources of its rollover.</summary>
-	public static readonly IReadOnlyList<string> AttackSpeedVariables =
-		[.. CharacterStatsCalculator.WithModifier(AttackSpeedField), CharacterStatsCalculator.TotalSpeedModifierField, WeaponAttackSpeedField];
-
 	public static double AttackSpeed(AttributeSum all, WeaponStance stance, GameBalance balance, int difficulty, double unarmedDuration, double stanceDuration)
 	{
 		ArgumentNullException.ThrowIfNull(all);

@@ -407,6 +407,14 @@ internal static class AutomationHost
 		catch (Exception ex)
 		{
 			_log?.LogError(ex, "Failed to start the automation MCP endpoint on port {Port}", port);
+
+			// A hidden TQVault without its endpoint can't be reached or closed: quit rather than linger (and let a client
+			// believe it drives this instance while another one holds the port).
+			if (Headless)
+			{
+				_log?.LogError("Headless mode without an endpoint: TQVault quits");
+				Environment.Exit(1);
+			}
 		}
 	}
 }

@@ -31,7 +31,8 @@ public class SearchQueryService(
 	/// <inheritdoc/>
 	public IReadOnlyList<SearchQuery> Queries => this.Loaded;
 
-	private List<SearchQuery> Loaded => this._queries ??= this.Read();
+	// Not kept when the file could not be read: the next access reads it again, and nothing is written meanwhile.
+	private List<SearchQuery> Loaded => this._queries ?? this.Read();
 
 	/// <inheritdoc/>
 	public SearchQuerySaveCheck CheckSave(string name, SearchQuery draft)
@@ -97,10 +98,12 @@ public class SearchQueryService(
 
 	private List<SearchQuery> Read()
 	{
-		// A file that cannot be read is left as it is until the next save.
-		var queries = JsonFile.Read<List<SearchQuery>>(this._fileIO, this.FilePath, JsonOptions, this._log, "saved search queries").Value;
-		if (queries is null)
+		// A file that cannot be read is left as it is: saving now would replace every query it holds.
+		var (queries, failed) = JsonFile.Read<List<SearchQuery>>(this._fileIO, this.FilePath, JsonOptions, this._log, "saved search queries");
+		if (failed)
 			return [];
+
+		queries ??= [];
 
 		// Missing members are left null by the deserializer.
 		queries.RemoveAll(q => q is null);
@@ -111,9 +114,17 @@ public class SearchQueryService(
 			query.CheckedItems = query.CheckedItems?.Where(f => f is not null).ToList() ?? [];
 			query.Visible = query.Visible?.Where(v => v is not null).ToList() ?? [];
 		}
-		return queries;
+		return this._queries = queries;
 	}
 
 	private void Write()
-		=> JsonFile.Write(this._fileIO, this.FilePath, this.Loaded, JsonOptions);
+	{
+		if (this._queries is null)
+		{
+			this._log.LogError("The saved search queries file could not be read: not overwritten");
+			return;
+		}
+
+		JsonFile.Write(this._fileIO, this.FilePath, this._queries, JsonOptions);
+	}
 }

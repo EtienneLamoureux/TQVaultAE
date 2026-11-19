@@ -45,10 +45,10 @@ internal static partial class AutomationTools
 	#region Windows
 
 	[McpServerTool(Name = "list_windows", ReadOnly = true)]
-	[Description("Lists TQVault's visible top-level windows (forms and native message boxes) with title, class, modal state and buttons.")]
+	[Description("Lists TQVault's visible top-level windows (forms and native message boxes) with title, class, modal state and buttons; for TQVault's forms also their window: screen bounds, DPI, owner and its bounds, start position, taskbar button and icon.")]
 	public static string ListWindows()
 	{
-		var forms = new Dictionary<IntPtr, (string Type, bool Modal)>();
+		var forms = new Dictionary<IntPtr, (string Type, bool Modal, object Window)>();
 		if (AutomationHost.MainForm is { IsHandleCreated: true })
 		{
 			AutomationHost.OnUi(_ =>
@@ -56,7 +56,19 @@ internal static partial class AutomationTools
 				foreach (Form form in System.Windows.Forms.Application.OpenForms)
 				{
 					if (form.IsHandleCreated)
-						forms[form.Handle] = (form.GetType().Name, form.Modal);
+					{
+						var window = new
+						{
+							bounds = form.Bounds,
+							deviceDpi = form.DeviceDpi,
+							owner = form.Owner?.Text,
+							ownerBounds = form.Owner?.Bounds,
+							startPosition = form.StartPosition.ToString(),
+							showInTaskbar = form.ShowInTaskbar,
+							showIcon = form.ShowIcon,
+						};
+						forms[form.Handle] = (form.GetType().Name, form.Modal, window);
+					}
 				}
 			});
 		}
@@ -75,6 +87,7 @@ internal static partial class AutomationTools
 				enabled = w.Enabled,
 				text = w.IsDialogClass ? NativeWindows.GetStaticTexts(w.Handle) : null,
 				buttons = NativeWindows.GetButtons(w.Handle).Select(b => b.Text).Where(t => t.Length > 0).ToList(),
+				window = isForm ? info.Window : null,
 			};
 		});
 
