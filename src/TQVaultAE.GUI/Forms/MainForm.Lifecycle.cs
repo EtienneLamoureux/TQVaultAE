@@ -243,7 +243,7 @@ public partial class MainForm
 	/// <param name="e">EventArgs data</param>
 	private void AboutButtonClick(object? sender, EventArgs e)
 	{
-		AboutBox dlg = this.Services.Forms.Create<AboutBox>();
+		using AboutBox dlg = this.Services.Forms.Create<AboutBox>();
 		dlg.ShowDialog();
 	}
 
