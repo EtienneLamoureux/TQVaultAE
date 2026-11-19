@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel;
+﻿using System.ComponentModel;
 using TQVaultAE.GUI.Infrastructure;
 
 namespace TQVaultAE.GUI.Components.Character;

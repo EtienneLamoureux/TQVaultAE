@@ -1,4 +1,4 @@
-﻿﻿using TQVaultAE.Application;
+﻿using TQVaultAE.Application;
 using TQVaultAE.Application.Layout;
 using TQVaultAE.GUI.Components.Buttons;
 using TQVaultAE.GUI.Components;

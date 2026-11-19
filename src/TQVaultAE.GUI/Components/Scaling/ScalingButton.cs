@@ -1,4 +1,4 @@
-﻿﻿using TQVaultAE.Presentation.Win32;
+﻿using TQVaultAE.Presentation.Win32;
 
 //-----------------------------------------------------------------------
 // <copyright file="ScalingButton.cs" company="None">
