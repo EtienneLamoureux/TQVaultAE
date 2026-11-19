@@ -590,6 +590,24 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			old.Dispose();
 	}
 
+	protected override void Dispose(bool disposing)
+	{
+		// After the controls it holds, whose going may still repaint the panel.
+		base.Dispose(disposing);
+
+		if (disposing)
+		{
+			// The scaled copy, if one is shown, then the two source pictures the panel read.
+			this.ReplaceBackground(null);
+			this.wideEquipmentBackground?.Dispose();
+			this.wideEquipmentBackground = null;
+			this.equipmentBackground?.Dispose();
+			this.equipmentBackground = null;
+			this.stashBackground?.Dispose();
+			this.stashBackground = null;
+		}
+	}
+
 	/// <summary>
 	/// The equipment background as wide as the panel: the slots as they are, then the black field with its gold border
 	/// stretched to the right edge, in place of the box the picture has for the old list of player values.

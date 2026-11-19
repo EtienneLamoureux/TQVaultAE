@@ -17,6 +17,9 @@ internal static class UIPictures
 	/// <inheritdoc cref="MainButtonUp"/>
 	public static Bitmap MainButtonDown => field ??= Images.MainButtonDown;
 
+	/// <summary>The medallion an item grid shows when it has no sack.</summary>
+	public static Bitmap Medallion => field ??= Images.tqmedallion;
+
 	/// <summary>The accent drawn over an item, tinted.</summary>
 	public static Bitmap ItemAccent => field ??= Images.ItemAccent;
 
