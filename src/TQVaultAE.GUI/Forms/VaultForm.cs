@@ -48,8 +48,6 @@ public partial class VaultForm : Form, IScalingControl
 	protected readonly UserSettings USettings;
 	protected readonly ITranslationService TranslationService;
 	protected readonly IPathIO PathIO;
-	protected readonly IFileIO FileIO;
-	protected readonly IDirectoryIO DirectoryIO;
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
 	protected readonly IItemTextFormatter ItemText;
@@ -81,8 +79,6 @@ public partial class VaultForm : Form, IScalingControl
 		this.Log = this.Services.Logger<VaultForm>();
 		this.TranslationService = this.Services.TranslationService;
 		this.PathIO = this.Services.PathIO;
-		this.FileIO = this.Services.FileIO;
-		this.DirectoryIO = this.Services.DirectoryIO;
 		this.USettings = this.Services.Settings;
 
 		InitForm();

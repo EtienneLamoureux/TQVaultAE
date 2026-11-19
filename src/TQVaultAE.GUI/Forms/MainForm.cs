@@ -30,9 +30,7 @@ public partial class MainForm : VaultForm
 	/// <summary>
 	/// Application layer services, from <see cref="GuiServices"/>
 	/// </summary>
-	private readonly IPlayerService playerService;
 	private readonly IVaultService vaultService;
-	private readonly IStashService stashService;
 	private readonly IItemExchangeService itemExchangeService;
 	private readonly ISettingsPersistenceService settingsPersistenceService;
 
@@ -110,9 +108,7 @@ public partial class MainForm : VaultForm
 	{
 		this.mainView = mainView;
 		this.userContext = services.Session;
-		this.playerService = services.PlayerService;
 		this.vaultService = services.VaultService;
-		this.stashService = services.StashService;
 		this.itemExchangeService = services.ItemExchangeService;
 		this.settingsPersistenceService = services.SettingsPersistence;
 		this.commandLineArgs = commandLineArgs;
