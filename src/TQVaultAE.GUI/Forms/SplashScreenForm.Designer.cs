@@ -64,6 +64,10 @@ internal partial class SplashScreenForm
 			this.components.Dispose();
 		}
 
+		// Not in the components: the designer adds no System.Timers.Timer to them.
+		if (disposing)
+			this.waitTimer.Dispose();
+
 		base.Dispose(disposing);
 	}
 
