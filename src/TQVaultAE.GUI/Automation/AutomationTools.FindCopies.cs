@@ -26,8 +26,7 @@ internal static partial class AutomationTools
 		var before = AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged: a right click would cancel it. Use cancel_drag first.");
+			RequireNoDrag(form, "An item is being dragged: a right click would cancel it. Use cancel_drag first.");
 
 			var opened = OpenResultsDialogs();
 			try

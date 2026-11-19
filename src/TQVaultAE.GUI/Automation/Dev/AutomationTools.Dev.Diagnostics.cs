@@ -22,13 +22,12 @@ internal static partial class AutomationTools
 				if (AutomationPanels.Resolve(form, "stash").Container is not StashPanel stash)
 					throw new McpException("No stash panel.");
 
-				if (bag < 0 || bag >= stash.BagButtons.Count)
-					throw new McpException($"Bag {bag} is out of range 0..{stash.BagButtons.Count - 1}.");
+				stash.RequireBag(bag);
 
 				var before = stash.AutomationBackground;
 				var beforeIsSource = before is not null && stash.AutomationIsSourceBackground(before);
 				var button = stash.BagButtons[bag];
-				OnMouseDownMethod.Invoke(button, [new MouseEventArgs(MouseButtons.Left, 1, button.Width / 2, button.Height / 2, 0)]);
+				OnMouseDownMethod.Invoke(button, [AutomationInput.CenterClick(button, MouseButtons.Left)]);
 				stash.Refresh();
 				var after = stash.AutomationBackground;
 

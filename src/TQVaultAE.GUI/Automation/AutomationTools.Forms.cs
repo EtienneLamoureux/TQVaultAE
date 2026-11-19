@@ -68,8 +68,7 @@ internal static partial class AutomationTools
 		[Description("Entry to click, texts separated by ' > '; empty to only read the menu.")] string? path = null)
 		=> AutomationHost.OnUi(form =>
 		{
-			var container = AutomationPanels.Resolve(form, panel).Container
-				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			var container = AutomationPanels.ResolveContainer(form, panel).Container;
 			var (entries, clicked) = container.AutomationBagMenu(bag, MenuPath(path));
 			return Serialize(new { panel, bag, currentBag = container.ShownBag(), entries, clicked, icons = container.AutomationBagIcons });
 		});
@@ -81,10 +80,9 @@ internal static partial class AutomationTools
 		[Description("Entry to click; empty to only read the menu.")] string? path = null)
 		=> AutomationHost.OnUi(form =>
 		{
-			var named = AutomationPanels.Resolve(form, panel);
-			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
-			var (entries, clicked) = container.AutomationSortMenu(named.Panel, MenuPath(path));
-			return Serialize(new { panel, entries, clicked, sort = SortChoices(form, container, named.Panel) });
+			var (namedPanel, container) = AutomationPanels.ResolveContainer(form, panel, "sort button");
+			var (entries, clicked) = container.AutomationSortMenu(namedPanel, MenuPath(path));
+			return Serialize(new { panel, entries, clicked, sort = SortChoices(form, container, namedPanel) });
 		});
 
 	[McpServerTool(Name = "sort_click", Destructive = true)]
@@ -93,10 +91,9 @@ internal static partial class AutomationTools
 		[Description("Panel id with a sort button: vault, secondaryVault, player (main inventory), playerBag or stash (the shown transfer, storage or relic tab; refused on the equipment tab, where the button is hidden).")] string panel)
 		=> AutomationHost.OnUi(form =>
 		{
-			var named = AutomationPanels.Resolve(form, panel);
-			var container = named.Container ?? throw new McpException($"Panel '{panel}' has no sort button.");
-			var sort = SortChoices(form, container, named.Panel);
-			container.AutomationSortClickLater(named.Panel);
+			var (namedPanel, container) = AutomationPanels.ResolveContainer(form, panel, "sort button");
+			var sort = SortChoices(form, container, namedPanel);
+			container.AutomationSortClickLater(namedPanel);
 			return Serialize(new { panel, queued = true, sort });
 		});
 
@@ -147,8 +144,7 @@ internal static partial class AutomationTools
 	{
 		AutomationHost.OnUi(form =>
 		{
-			var container = AutomationPanels.Resolve(form, panel).Container
-				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			var container = AutomationPanels.ResolveContainer(form, panel).Container;
 			return container.AutomationChangeIcon(bag ?? container.ShownBag());
 		});
 

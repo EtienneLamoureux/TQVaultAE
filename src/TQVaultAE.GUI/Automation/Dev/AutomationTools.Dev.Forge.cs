@@ -44,8 +44,7 @@ internal static partial class AutomationTools
 					return (Serialize(new { slot = value.ToString(), tooltips = DescribeTooltips() }), (byte[]?)null);
 				}
 
-				if (form.AutomationDragInfo.IsActive)
-					throw new McpException("An item is being dragged: the forge shows no tooltip then. Drop it or cancel_drag first.");
+				RequireNoDrag(form, "An item is being dragged: the forge shows no tooltip then. Drop it or cancel_drag first.");
 
 				forge.AutomationHover(value);
 				var tooltip = OpenTooltips().LastOrDefault();

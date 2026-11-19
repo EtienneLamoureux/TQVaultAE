@@ -73,7 +73,7 @@ internal static partial class AutomationTools
 				};
 				if (button != shown.BackButton && !shown.CanTurn)
 					throw new McpException("The button is greyed: the character has a single loadout.");
-				AutomationInput.SendClick(button, new Point(button.Width / 2, button.Height / 2), MouseButtons.Left, Keys.None);
+				AutomationInput.SendClick(button, AutomationInput.Center(button), MouseButtons.Left, Keys.None);
 				action = null;
 			}
 
@@ -113,7 +113,7 @@ internal static partial class AutomationTools
 						throw new McpException($"Empty loadout is greyed: {emptyLocked}");
 					var target = EmptyTarget(to);
 					var emptyButton = view2.EmptyButton;
-					AutomationInput.SendClick(emptyButton, new Point(emptyButton.Width / 2, emptyButton.Height / 2), MouseButtons.Left, Keys.None);
+					AutomationInput.SendClick(emptyButton, AutomationInput.Center(emptyButton), MouseButtons.Left, Keys.None);
 					var entry = bar.EmptyMenu.Items.OfType<ToolStripItem>().First(i => i.Tag is LoadoutBarAction tagged && tagged == target);
 					AutomationMenus.ClickLater(form, AutomationMenus.Clickable([entry]));
 				}
@@ -125,7 +125,7 @@ internal static partial class AutomationTools
 					var swapButton = view1.SwapButton;
 					if (view1.SwapLocked is { } locked)
 						throw new McpException($"Gear swap is greyed: {locked}");
-					form.BeginInvoke(() => AutomationInput.SendClick(swapButton, new Point(swapButton.Width / 2, swapButton.Height / 2), MouseButtons.Left, Keys.None));
+					form.BeginInvoke(() => AutomationInput.SendClick(swapButton, AutomationInput.Center(swapButton), MouseButtons.Left, Keys.None));
 				}
 				else
 				{
