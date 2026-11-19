@@ -64,13 +64,6 @@ internal static class Values
 		_ => value.ToString() ?? string.Empty,
 	};
 
-	/// <summary>.dbr text form, as ARZExplorer writes it: floats with 6 decimals, bools 1/0.</summary>
-	public static string ToDbrText(object? value) => value switch {
-		float f => f.ToString("f6", CultureInfo.InvariantCulture),
-		double d => d.ToString("f6", CultureInfo.InvariantCulture),
-		_ => ToText(value),
-	};
-
 	/// <summary>String equality ignoring case and treating '/' and '\' as equal.</summary>
 	public static bool PathInsensitiveEquals(ReadOnlySpan<char> a, ReadOnlySpan<char> b) {
 		if (a.Length != b.Length)

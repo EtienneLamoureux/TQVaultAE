@@ -430,14 +430,7 @@ internal sealed class DbrRecordSink : IRecordSink
 	/// <summary>Writes the variable lines of a record.</summary>
 	internal static void WriteBody(TextWriter w, ArzRecord record) {
 		foreach (var v in record.Variables) {
-			w.Write(v.Name);
-			w.Write(',');
-			for (int i = 0; i < v.Values.Length; i++) {
-				if (i > 0)
-					w.Write(';');
-				w.Write(Values.ToDbrText(v.Values[i]));
-			}
-			w.Write(',');
+			DbrText.Write(w, v.Name, v.Values);
 			w.WriteLine();
 		}
 	}
