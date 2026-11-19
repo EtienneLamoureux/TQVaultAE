@@ -68,7 +68,7 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The build shown in the editor now: masteries with their skill levels, attribute points.</summary>
 	internal ClassSet CaptureClassSet(string name)
 		=> new(name, this._skills?.CaptureClassSet() ?? [],
-			ClassSetAttributeRules.PointsOf([.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))]));
+			ClassSetAttributeRules.PointsOf(this.AttributeValues));
 
 	private void ClassSetAction(ClassSetBarAction action, string? name)
 	{
@@ -118,8 +118,8 @@ internal sealed partial class CharacterEditorUserControl
 			return;
 
 		var boxes = this.AttributeBoxes;
-		var values = boxes.Select(b => Convert.ToInt32(b.Value)).ToArray();
-		var pool = Convert.ToInt32(this.attributeNumericUpDown.Value);
+		var values = this.AttributeValues;
+		var pool = ValueOf(this.attributeNumericUpDown);
 		var applied = ClassSetApplication.Apply(skills, values, pool, set);
 		var targets = applied.Attributes;
 		this.RefreshSkills();

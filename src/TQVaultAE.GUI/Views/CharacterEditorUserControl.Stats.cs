@@ -30,9 +30,9 @@ internal sealed partial class CharacterEditorUserControl
 		{
 			Player = this.PlayerCollection,
 			Info = this.Info,
-			Attributes = [.. this.AttributeBoxes.Select(box => Convert.ToInt32(box.Value))],
-			AttributePoints = Convert.ToInt32(this.attributeNumericUpDown.Value),
-			Level = Convert.ToInt32(this.levelNumericUpDown.Value),
+			Attributes = this.AttributeValues,
+			AttributePoints = ValueOf(this.attributeNumericUpDown),
+			Level = ValueOf(this.levelNumericUpDown),
 			Xp = long.TryParse(this.xpTextBox.Text, NumberStyles.Integer, culture, out var xp) ? xp : 0,
 			// The skills as the editor has them now.
 			Skills = skills?.BuildSkillRecords() ?? this.Info.SkillRecordList,
@@ -43,7 +43,7 @@ internal sealed partial class CharacterEditorUserControl
 			AlternateWeapons = this._alternateWeapons,
 			ClassCleared = skills?.MasteriesChanged == true,
 			Editable = true,
-			CanUndo = this.AttributeBoxes.Where((b, i) => Convert.ToInt32(b.Value) != this._startAttributes.ElementAtOrDefault(i)).Any(),
+			CanUndo = this.AttributeBoxes.Where((b, i) => ValueOf(b) != this._startAttributes.ElementAtOrDefault(i)).Any(),
 		};
 	}
 

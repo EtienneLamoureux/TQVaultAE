@@ -278,7 +278,7 @@ internal sealed partial class CharacterEditorUserControl
 		if (tab.Updating || this._skills is null)
 			return;
 
-		this._skills.SetMasteryLevel(tab.Slot, Convert.ToInt32(tab.Level.Value));
+		this._skills.SetMasteryLevel(tab.Slot, ValueOf(tab.Level));
 		this.RefreshSkills();
 	}
 
@@ -305,7 +305,7 @@ internal sealed partial class CharacterEditorUserControl
 		if (this._syncingSkillPoints || this._skills is null)
 			return;
 
-		this._skills.AvailablePoints = Convert.ToInt32(this.skillPointsNumericUpDown.Value);
+		this._skills.AvailablePoints = ValueOf(this.skillPointsNumericUpDown);
 		this.RefreshSkills();
 	}
 }

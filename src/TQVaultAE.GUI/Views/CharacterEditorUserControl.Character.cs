@@ -51,6 +51,9 @@ internal sealed partial class CharacterEditorUserControl
 	/// <summary>The attribute boxes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
 	private NumericUpDown[] AttributeBoxes => [this.healthUpDown, this.manacUpDown, this.strengthUpDown, this.intelligenceUpDown, this.dexterityUpDown];
 
+	/// <summary>The values of <see cref="AttributeBoxes"/>, in their order.</summary>
+	private int[] AttributeValues => [.. this.AttributeBoxes.Select(ValueOf)];
+
 	/// <summary>The leveling editors, in row order under the "Leveling" title of the side panel.</summary>
 	private Control[] LevelingEditors => [this.levelNumericUpDown, this.xpTextBox, this.skillPointsNumericUpDown, this.difficultlyComboBox, this.levelingCheckBox];
 
@@ -602,7 +605,7 @@ internal sealed partial class CharacterEditorUserControl
 	{
 		var info = this.Info;
 		var culture = CultureInfo.CurrentCulture;
-		var level = Convert.ToInt32(this.levelNumericUpDown.Value);
+		var level = ValueOf(this.levelNumericUpDown);
 		var xp = long.TryParse(this.xpTextBox.Text, NumberStyles.Integer, culture, out var xpValue) ? xpValue : 0;
 		var skills = this._skills;
 
@@ -621,7 +624,7 @@ internal sealed partial class CharacterEditorUserControl
 			[
 				this.levelNumericUpDown.Enabled ? string.Empty : level.ToString(culture),
 				this.xpTextBox.Enabled ? string.Empty : xp.ToString("N0", culture),
-				this.skillPointsNumericUpDown.Enabled ? string.Empty : Convert.ToInt32(this.skillPointsNumericUpDown.Value).ToString(culture),
+				this.skillPointsNumericUpDown.Enabled ? string.Empty : ValueOf(this.skillPointsNumericUpDown).ToString(culture),
 				this.difficultlyComboBox.Enabled ? string.Empty : this.TranslationService.TranslateDifficulty(info.DifficultyUnlocked) ?? string.Empty,
 				string.Empty,
 			],
@@ -642,7 +645,7 @@ internal sealed partial class CharacterEditorUserControl
 	private void CharacterAttributes_Undo()
 	{
 		var boxes = this.AttributeBoxes;
-		foreach (var i in PlayerLevel.AttributeUndoOrder([.. boxes.Select(b => Convert.ToInt32(b.Value))], this._startAttributes))
+		foreach (var i in PlayerLevel.AttributeUndoOrder(this.AttributeValues, this._startAttributes))
 			boxes[i].Value = Math.Clamp(this._startAttributes[i], Convert.ToInt32(boxes[i].Minimum), Convert.ToInt32(boxes[i].Maximum));
 
 		this.InvalidateStats();
@@ -655,10 +658,10 @@ internal sealed partial class CharacterEditorUserControl
 	private void CharacterAttribute_Clicked(int attribute, int step, bool toEnd)
 	{
 		var box = this.AttributeBoxes[attribute];
-		var current = Convert.ToInt32(box.Value);
+		var current = ValueOf(box);
 		var target = PlayerLevel.AttributeClickTarget(current, this._startAttributes[attribute],
 			PlayerLevel.IncrementPerPoint(attribute is CharacterPanelInput.Health or CharacterPanelInput.Energy),
-			Convert.ToInt32(this.attributeNumericUpDown.Value), step, toEnd, Convert.ToInt32(box.Minimum), Convert.ToInt32(box.Maximum));
+			ValueOf(this.attributeNumericUpDown), step, toEnd, Convert.ToInt32(box.Minimum), Convert.ToInt32(box.Maximum));
 		if (target != current)
 			box.Value = target;
 
