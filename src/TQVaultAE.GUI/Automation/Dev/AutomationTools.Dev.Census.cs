@@ -17,7 +17,7 @@ internal static partial class AutomationTools
 	internal static partial class DevTools
 	{
 		[McpServerTool(Name = "gdi_census", Destructive = true)]
-		[Description("Runs an action count times and reports what it leaves: GDI and USER objects (GetGuiResources) and handles, before, right after and after the finalizers ran, and 'undisposed': the finalizable objects (bitmaps, fonts, pens, brushes, graphics...) the action dropped without disposing them, counted by a full garbage collection run without garbage collections during the action ('gcDuring' must be 0 for an exact count). Actions: 'repaint' (target: a panel name as in get_state, or empty for the whole main window), 'zoom' (zoom in then out, like zoom), 'characterList' (describes the character list entries again, as after a tag change), 'openForm' (target: a form type as in list_forms, created like open_form and disposed), 'none'.")]
+		[Description("Runs an action count times and reports what it leaves: GDI and USER objects (GetGuiResources) and handles, before, right after and after the finalizers ran, and 'undisposed': the finalizable objects (bitmaps, fonts, pens, brushes, graphics...) the action dropped without disposing them, counted by a full garbage collection run without garbage collections during the action ('gcDuring' must be 0 for an exact count). Actions: 'repaint' (target: a control name of the main window, a panel name as in get_state, or empty for the whole main window), 'zoom' (zoom in then out, like zoom), 'characterList' (describes the character list entries again, as after a tag change), 'openForm' (target: a form type as in list_forms, created like open_form and disposed), 'none'.")]
 		public static string GdiCensus(
 			[Description("repaint, zoom, characterList, openForm or none.")] string action,
 			[Description("The panel to repaint or the form to open.")] string target = "",
@@ -85,9 +85,12 @@ internal static partial class AutomationTools
 			return false;
 		}
 
-		/// <summary>The panel holding the bag buttons of the named grid, or the grid itself.</summary>
+		/// <summary>The panel holding the bag buttons of the named grid, or the grid itself; else the control of that name.</summary>
 		private static Control PanelOf(Forms.MainForm main, string name)
 		{
+			if (main.Controls.Find(name, searchAllChildren: true).FirstOrDefault() is { } control)
+				return control;
+
 			var panel = AutomationPanels.Resolve(main, name);
 			return (Control?)panel.Container ?? panel.Panel;
 		}
