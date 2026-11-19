@@ -261,47 +261,6 @@ public partial class Database : IDatabase
 
 	#region Database Public Methods
 
-	#region Database Public Static Methods
-
-	/// <summary>
-	/// Used to Extract an ARC file into the destination directory.
-	/// The ARC file will not be added to the cache.
-	/// </summary>
-	/// <remarks>Added by VillageIdiot</remarks>
-	/// <param name="arcFileName">Name of the arc file</param>
-	/// <param name="destination">Destination path for extracted data</param>
-	/// <returns>Returns true on success otherwise false</returns>
-	public bool ExtractArcFile(string arcFileName, string destination)
-	{
-		bool result = false;
-
-		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Database.ExtractARCFile('{ArcFileName}', '{Destination}')", arcFileName, destination);
-
-		try
-		{
-			ArcFile arcFile = new ArcFile(arcFileName);
-
-			// Extract the files
-			result = arcProv.ExtractArcFile(arcFile, destination);
-		}
-		catch (IOException exception)
-		{
-			Log.LogError(exception, "Exception occurred");
-			result = false;
-		}
-
-		if (USettings.DatabaseDebugLevel > 1)
-			Log.LogDebug("Extraction Result = {Result}", result);
-
-		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Exiting Database.ReadARCFile()");
-
-		return result;
-	}
-
-	#endregion Database Public Static Methods
-
 	/// <summary>
 	/// Gets the Infor for a specific item id.
 	/// </summary>
@@ -393,18 +352,13 @@ public partial class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, DBRecordCollection> ReadAllLootRandomizerTable()
 	{
 		// Load all available loot randomizer table
-		var lootRandomizerTableList = this.ArzFilesByPriority()
-		.SelectMany(db =>
-			db.ArzFile.RecordInfo.Where(r =>
-				r.Value.Class.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
-				&& !r.Key.IsOld // Remove old loot table
-			).Select(ri => (RecordInfo: ri, db.Priority))
-		)
+		var lootRandomizerTableList = this.RecordsOfClass(RCLASS_LOOTRANDOMIZERTABLE)
+		.Where(r => !r.Id.IsOld) // Remove old loot table
 		.Select(r =>
 		{
-			var DBRecords = GetRecordFromFile(r.RecordInfo.Key);
+			var DBRecords = GetRecordFromFile(r.Id);
 
-			return (RecordInfoKey: r.RecordInfo.Key, DBRecords, r.Priority);
+			return (RecordInfoKey: r.Id, DBRecords, r.Priority);
 		})
 		.GroupBy(r => r.RecordInfoKey)
 		.Select(grp =>
@@ -427,15 +381,11 @@ public partial class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, LootRandomizerItem> ReadAllLootRandomizer()
 	{
 		// Load all available loot randomizer
-		var lootRandomizerList = this.ArzFilesByPriority()
-		.SelectMany(db =>
-			db.ArzFile.RecordInfo.Where(r => r.Value.Class.Equals(RCLASS_LOOTRANDOMIZER, noCase))
-			.Select(ri => (RecordInfo: ri, db.Priority))
-		)
+		var lootRandomizerList = this.RecordsOfClass(RCLASS_LOOTRANDOMIZER)
 		.Select(r =>
 			{
 				// Listed in the record table, so it can be read.
-				var rec = GetRecordFromFile(r.RecordInfo.Key)!;
+				var rec = GetRecordFromFile(r.Id)!;
 
 				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
 				int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
@@ -444,19 +394,19 @@ public partial class Database : IDatabase
 				string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
 
 				var val = new LootRandomizerItem(
-					r.RecordInfo.Key
+					r.Id
 					, Tag
 					, Cost
 					, LevelRequirement
 					, ItemClass
 					, FileDescription
-					, r.RecordInfo.Key.PrettyFileName
+					, r.Id.PrettyFileName
 				)
 				{
 					FromMod = r.Priority == 0, // the custom map's database
 				};
 
-				return (RecordInfoKey: r.RecordInfo.Key, LootRandomizerItem: val, r.Priority);
+				return (RecordInfoKey: r.Id, LootRandomizerItem: val, r.Priority);
 			}
 		)
 		.GroupBy(r => r.RecordInfoKey)
@@ -487,16 +437,10 @@ public partial class Database : IDatabase
 	/// </remarks>
 	private void BuildItemAffixTableMap()
 	{
-		var data = this.ArzFilesByPriority()
-			.SelectMany(db => db.ArzFile.RecordInfo
-				.Where(r =>
-					r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase)
-					|| r.Value.Class.Equals(RCLASS_LOOTITEMTABLE_DYNWEIGHT, noCase)
-				)
-			)
-			.DistinctBy(r => r.Key) // An overridden table is read once, in the version that wins.
+		var data = this.RecordsOfClass(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, RCLASS_LOOTITEMTABLE_DYNWEIGHT)
+			.DistinctBy(r => r.Id) // An overridden table is read once, in the version that wins.
 			// Listed in the record table, so it can be read.
-			.SelectMany(r => ReadLootItemTable(r.Key, this.GetRecordFromFile(r.Key)!, r.Value.Class))
+			.SelectMany(r => ReadLootItemTable(r.Id, this.GetRecordFromFile(r.Id)!, r.Class))
 			.GroupBy(i => i.Item)
 			.ToDictionary(i =>
 				i.Key
@@ -650,22 +594,6 @@ public partial class Database : IDatabase
 	}
 
 	#endregion
-
-	/// <summary>
-	/// The loaded databases, the one whose records win first: the custom map, Immortal Throne when it is a separate
-	/// file, the base game.
-	/// </summary>
-	private IEnumerable<(int Priority, ArzFile ArzFile)> ArzFilesByPriority()
-	{
-		if (this.ArzFileMod is not null)
-			yield return (0, this.ArzFileMod);
-
-		if (this.ArzFileIT is not null && this.ArzFileIT != this.ArzFile)
-			yield return (1, this.ArzFileIT);
-
-		if (this.ArzFile is not null)
-			yield return (2, this.ArzFile);
-	}
 
 	/// <summary>
 	/// Gets a DBRecord for the specified item ID string.

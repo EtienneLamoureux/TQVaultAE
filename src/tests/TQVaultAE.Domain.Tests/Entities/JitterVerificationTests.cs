@@ -79,7 +79,8 @@ public class JitterVerificationTests
 			prefixId is null ? null : Load(db, prefixId), suffixId is null ? null : Load(db, suffixId));
 
 		// Assert: tooltip value = base + prefix + suffix contributions.
-		foreach (var pair in expected.Split(';')) {
+		foreach (var pair in expected.Split(';'))
+		{
 			var (name, value) = (pair.Split('=')[0], float.Parse(pair.Split('=')[1], System.Globalization.CultureInfo.InvariantCulture));
 			var total = result.Base!.GetSingle(name, 0) + (result.Prefix?.GetSingle(name, 0) ?? 0f) + (result.Suffix?.GetSingle(name, 0) ?? 0f);
 			total.Should().Be(value, name);
@@ -90,7 +91,8 @@ public class JitterVerificationTests
 	{
 		var rec = db.Read(db.Find(id) ?? throw new InvalidOperationException($"Missing record {id}"));
 		var record = new TQVaultAE.Domain.Entities.DBRecordCollection(TQVaultAE.Domain.Entities.RecordId.Create(id), rec.Info.Class);
-		foreach (var v in rec.Variables) {
+		foreach (var v in rec.Variables)
+		{
 			var type = v.Type switch {
 				ArzValueType.Int => TQVaultAE.Domain.Entities.VariableDataType.Integer,
 				ArzValueType.Float => TQVaultAE.Domain.Entities.VariableDataType.Float,

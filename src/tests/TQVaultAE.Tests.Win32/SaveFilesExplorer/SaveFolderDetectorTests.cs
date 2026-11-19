@@ -31,7 +31,6 @@ public class SaveFolderDetectorTests
 	{
 		var gamePath = new GamePathServiceWin(
 			new Mock<ILogger<GamePathServiceWin>>().Object
-			, new Mock<ITQDataService>().Object
 			, new Mock<IFileIO>().Object
 			, new PathIO()
 			, this._directoryIO.Object

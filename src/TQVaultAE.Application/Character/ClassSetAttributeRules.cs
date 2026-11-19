@@ -8,16 +8,13 @@ namespace TQVaultAE.Application.Character;
 /// </summary>
 public static class ClassSetAttributeRules
 {
-	/// <summary>The minimum of each attribute.</summary>
-	private static readonly int[] Minimums = [PlayerLevel.MinHealth, PlayerLevel.MinMana, PlayerLevel.MinStrength, PlayerLevel.MinIntelligence, PlayerLevel.MinDexterity];
-
 	/// <summary>How much of each attribute one point buys.</summary>
 	private static int Increment(int attribute) => PlayerLevel.IncrementPerPoint(attribute < 2);
 
 	/// <summary>The points spent in each attribute over its minimum (a value under it counts none).</summary>
 	/// <param name="values">The attribute values.</param>
 	public static ClassSetAttributes PointsOf(IReadOnlyList<int> values)
-		=> ClassSetAttributes.FromArray([.. Enumerable.Range(0, 5).Select(i => Math.Max(0, values[i] - Minimums[i]) / Increment(i))]);
+		=> ClassSetAttributes.FromArray([.. Enumerable.Range(0, 5).Select(i => PlayerLevel.InvestedPoints(i, values[i]))]);
 
 	/// <summary>
 	/// The attribute values a class set asks for, within the points the character has: the points left plus those spent

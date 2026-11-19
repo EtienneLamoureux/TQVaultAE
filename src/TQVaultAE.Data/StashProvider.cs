@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Stash.cs" company="None">
+// <copyright file="StashProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -149,7 +149,7 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		}
 		catch (ArgumentException ex)
 		{
-			Log.LogError(ex, "ParseRawData fail !");
+			Log.LogError(ex, "Failed to parse the stash {StashFile}", sta.StashFile);
 			throw;
 		}
 

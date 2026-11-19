@@ -222,6 +222,10 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	IEnumerator IEnumerable.GetEnumerator()
 		=> this.GetEnumerator();
 
+	/// <summary>The items of every sack, the equipment left out.</summary>
+	public IEnumerable<Item> SackItems()
+		=> this.Where(s => s is not null).SelectMany(s => s);
+
 	/// <summary>
 	/// Creates empty sacks within the file.
 	/// </summary>
@@ -256,13 +260,8 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	/// <returns>true if successful</returns>
 	public bool MoveSack(int source, int destination)
 	{
-		// Do a little bit of error handling
-		if (this.Sacks is null
-		    || destination < 0 || destination > this.Sacks.Length
-		    || source < 0 || source > this.Sacks.Length || source == destination)
-		{
+		if (!this.IsSackTransfer(source, destination))
 			return false;
-		}
 
 		List<SackCollection> tmp = new List<SackCollection>(this.Sacks.Length);
 
@@ -281,6 +280,14 @@ public class PlayerCollection : IEnumerable<SackCollection>
 		return true;
 	}
 
+	/// <summary>Whether two distinct sack numbers are both in range.</summary>
+	[MemberNotNullWhen(true, nameof(Sacks))]
+	private bool IsSackTransfer(int source, int destination)
+		=> this.Sacks is not null
+			&& (uint)source < (uint)this.Sacks.Length
+			&& (uint)destination < (uint)this.Sacks.Length
+			&& source != destination;
+
 	/// <summary>
 	/// Copies a sack within the instance
 	/// </summary>
@@ -289,13 +296,8 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	/// <returns>true if successful</returns>
 	public bool CopySack(int source, int destination)
 	{
-		// Do a little bit of error handling
-		if (this.Sacks is null
-		    || destination < 0 || destination > this.Sacks.Length
-		    || source < 0 || source > this.Sacks.Length || source == destination)
-		{
+		if (!this.IsSackTransfer(source, destination))
 			return false;
-		}
 
 		SackCollection newSack = this.Sacks[source].Duplicate();
 

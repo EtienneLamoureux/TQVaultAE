@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Item.cs" company="None">
+// <copyright file="ItemProvider.Filter.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -174,11 +174,7 @@ public partial class ItemProvider
 	/// <param name="itemClass">string containing the item class</param>
 	/// <returns>string containing the prefix of the item class for use in the requirements equation</returns>
 	public string GetRequirementEquationPrefix(string itemClass)
-		=> GearTypeExtension.GearTypeMap
-			.Where(m => m.Value.ICLASS.Equals(itemClass, noCase))
-			.Select(m => m.Value.RequirementEquationPrefix)
-			.Where(m => !string.IsNullOrWhiteSpace(m))
-			.FirstOrDefault() ?? "none";
+		=> GearTypeExtension.FromItemClass(itemClass).GetRequirementEquationPrefix() is { Length: > 0 } prefix ? prefix : "none";
 	/// <summary>
 	/// Gets whether or not the variable contains a value which we are filtering.
 	/// </summary>
@@ -375,7 +371,7 @@ public partial class ItemProvider
 			string keyRaw = variable.Name;
 			string key = variable.Name.Replace(prefix, string.Empty);
 			key = key.Replace("Equation", string.Empty);
-			key = key.Replace(key[0], char.ToUpperInvariant(key[0]));
+			key = key.AsSpan().ToFirstCharUpperCase();
 
 			// We need to ignore the cost equations.
 			// Shields have costs so they will cause an overflow.

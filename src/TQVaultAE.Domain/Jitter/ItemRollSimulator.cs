@@ -119,14 +119,16 @@ public static class ItemRollSimulator
 		float suffixPct = s.Record?.GetSingle(LootRandomizerJitter, 0) ?? 0f;
 
 		// 1. Store loads (jitter), in store order.
-		foreach (var attr in table) {
+		foreach (var attr in table)
+		{
 			if (!IsLoaded(attr, isArmor))
 				continue;
 
 			if (attr.Scope == RollScope.None)
 				continue; // AddJitter (and, for BaseAttackSpeed, the affix loaders) are no-ops.
 
-			if (attr.Store is RollStore.Character or RollStore.Skill) {
+			if (attr.Store is RollStore.Character or RollStore.Skill)
+			{
 				// Character and skill affixes: every non-zero affix value rolls, uncapped.
 				RollFields(attr, p, v => ItemJitterService.RollCharAffix(v, prefixPct, rng), v => ItemJitterService.JitterBounds(v, prefixPct));
 				RollFields(attr, s, v => ItemJitterService.RollCharAffix(v, suffixPct, rng), v => ItemJitterService.JitterBounds(v, suffixPct));
@@ -135,7 +137,8 @@ public static class ItemRollSimulator
 				continue;
 			}
 
-			switch (attr.Scope) {
+			switch (attr.Scope)
+			{
 				case RollScope.All:
 					AddJitter(attr, b, attr.BaseJitterPercent, rng);
 					AddJitter(attr, p, prefixPct, rng);
@@ -150,14 +153,17 @@ public static class ItemRollSimulator
 
 		// 2. The base item's attributeScalePercent scales every store.
 		float scale = Read(b.Record?[AttributeScalePercent]);
-		if (scale != 0f) {
-			foreach (var attr in table) {
+		if (scale != 0f)
+		{
+			foreach (var attr in table)
+			{
 				if (!IsLoaded(attr, isArmor) || !attr.Scales)
 					continue;
 
 				// Base armor protection and absorption scale the base item's armor only.
 				ScaleFields(attr, b, scale);
-				if (attr.Scope != RollScope.AffixOnlyArmor) {
+				if (attr.Scope != RollScope.AffixOnlyArmor)
+				{
 					ScaleFields(attr, p, scale);
 					ScaleFields(attr, s, scale);
 				}
@@ -165,7 +171,8 @@ public static class ItemRollSimulator
 		}
 
 		// 3. The base Skill values roll last, at 20%, after scaling.
-		foreach (var attr in table) {
+		foreach (var attr in table)
+		{
 			if (attr.Store == RollStore.Skill && attr.Scope == RollScope.All && IsLoaded(attr, isArmor))
 				AddJitter(attr, b, SkillStoreBaseJitterPercent, rng);
 		}
@@ -228,10 +235,12 @@ public static class ItemRollSimulator
 		// (the record is updated in place, so the original min must be kept).
 		Dictionary<string, (float Original, float Rolled)>? byName = null;
 
-		foreach (var field in attr.Fields) {
+		foreach (var field in attr.Fields)
+		{
 			var variable = record[field.Variable];
 
-			if (field.RangeOf is not null) {
+			if (field.RangeOf is not null)
+			{
 				// Engine pair is (min, range): roll the range, in-game max = rolled min + rolled range.
 				(float Original, float Rolled) minValues = default;
 				var hasMin = byName is not null && byName.TryGetValue(field.RangeOf, out minValues);
@@ -243,13 +252,15 @@ public static class ItemRollSimulator
 
 				float rolledRange = range == 0f ? 0f : roll(range);
 				var (rangeMin, rangeMax) = range == 0f ? (0f, 0f) : bounds(range);
-				if (field.RoundToInt) {
+				if (field.RoundToInt)
+				{
 					rolledRange = (uint)rolledRange;
 					(rangeMin, rangeMax) = ((uint)rangeMin, (uint)rangeMax);
 				}
 
 				float rolledMin = hasMin ? minValues.Rolled : min;
-				if (variable is not null && max > min) {
+				if (variable is not null && max > min)
+				{
 					Set(variable, rolledMin + rolledRange);
 					var minBound = instance.Bounds.GetValueOrDefault(field.RangeOf);
 					instance.Bounds[field.Variable] = new Bound {
@@ -272,13 +283,15 @@ public static class ItemRollSimulator
 
 			float rolled = roll(value);
 			var (lo, hi) = bounds(value);
-			if (field.RoundToInt) {
+			if (field.RoundToInt)
+			{
 				rolled = (int)rolled;
 				(lo, hi) = ((int)lo, (int)hi);
 			}
 
 			(byName ??= new(StringComparer.OrdinalIgnoreCase))[field.Variable] = (value, rolled);
-			if (variable is not null) {
+			if (variable is not null)
+			{
 				Set(variable, rolled);
 				instance.Bounds[field.Variable] = new Bound { Min = lo, Max = hi };
 			}
@@ -293,18 +306,21 @@ public static class ItemRollSimulator
 
 		// Damage pairs are (min, range): only the min scales, so the max moves with it.
 		Dictionary<string, float>? minDelta = null;
-		foreach (var field in attr.Fields) {
+		foreach (var field in attr.Fields)
+		{
 			var variable = record[field.Variable];
 			if (variable is null || !field.Scales)
 				continue;
 
 			var bound = instance.Bounds.GetValueOrDefault(field.Variable);
 			float value = Read(variable);
-			if (field.RangeOf is not null) {
+			if (field.RangeOf is not null)
+			{
 				if (minDelta is not null && minDelta.TryGetValue(field.RangeOf, out var delta) && value != 0f)
 					Set(variable, value + delta);
 
-				if (bound is not null && instance.Bounds.GetValueOrDefault(field.RangeOf) is { } minBound) {
+				if (bound is not null && instance.Bounds.GetValueOrDefault(field.RangeOf) is { } minBound)
+				{
 					bound.Min = minBound.Min + bound.RangeMin;
 					bound.Max = minBound.Max + bound.RangeMax;
 				}
@@ -315,7 +331,8 @@ public static class ItemRollSimulator
 			(minDelta ??= new(StringComparer.OrdinalIgnoreCase))[field.Variable] = scaled - value;
 			Set(variable, scaled);
 
-			if (bound is not null) {
+			if (bound is not null)
+			{
 				bound.Min = Scale(bound.Min, percent);
 				bound.Max = Scale(bound.Max, percent);
 			}
@@ -329,7 +346,8 @@ public static class ItemRollSimulator
 
 		var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		foreach (var attr in table)
-			foreach (var field in attr.Fields) {
+			foreach (var field in attr.Fields)
+			{
 				if (!seen.Add(field.Variable) || final[field.Variable] is not { } variable)
 					continue;
 

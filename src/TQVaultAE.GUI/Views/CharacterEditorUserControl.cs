@@ -399,8 +399,7 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 	private void ResetAttributesScalingButton_Click(object? sender, EventArgs e)
 	{
 		var pool = Convert.ToInt32(this.attributeNumericUpDown.Value) + PlayerLevel.GetInvestedAttributePoints(
-			Convert.ToInt32(this.strengthUpDown.Value), Convert.ToInt32(this.dexterityUpDown.Value), Convert.ToInt32(this.intelligenceUpDown.Value),
-			Convert.ToInt32(this.healthUpDown.Value), Convert.ToInt32(this.manacUpDown.Value));
+			[.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))]);
 		if (pool > this.attributeNumericUpDown.Maximum)
 			this.attributeNumericUpDown.Maximum = pool;
 

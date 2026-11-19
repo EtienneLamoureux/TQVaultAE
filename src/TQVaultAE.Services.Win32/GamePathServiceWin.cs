@@ -15,7 +15,7 @@ namespace TQVaultAE.Services.Win32;
 /// <summary>
 /// Win32 IGamePathResolver implementation
 /// </summary>
-public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQDataService tQDataService, IFileIO fileIO, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings uSettings) : IGamePathService
+public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, IFileIO fileIO, IPathIO pathIO, IDirectoryIO directoryIO, UserSettings uSettings) : IGamePathService
 {
 	[GeneratedRegex(@"^(?<SteamappsRoot>.+steamapps).*", RegexOptions.IgnoreCase)]
 	private static partial Regex SteamappsRootRegex();
@@ -53,7 +53,6 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 	public string VaultFileNameExtensionOld => VAULTFILENAME_EXTENSION_OLD;
 
 	private readonly ILogger Log = log;
-	private readonly ITQDataService TQData = tQDataService;
 	private readonly IFileIO FileIO = fileIO;
 	private readonly IPathIO PathIO = pathIO;
 	private readonly IDirectoryIO DirectoryIO = directoryIO;
@@ -73,41 +72,6 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 	public string LocalGitRepositoryDirectory => this.PathIO.Combine(ResolveTQVaultPath, LOCAL_GIT_REPOSITORY_DIRNAME);
 	public string LocalGitRepositoryGitDir => this.PathIO.Combine(ResolveTQVaultPath, LOCAL_GIT_REPOSITORY_DIRNAME, @".git");
 	public bool LocalGitRepositoryGitDirExist => DirectoryIO.Exists(LocalGitRepositoryGitDir);
-
-	/// <summary>
-	/// Parses filename to try to determine the base character name.
-	/// </summary>
-	/// <param name="filename">filename of the character file</param>
-	/// <returns>string containing the character name</returns>
-	public string? GetNameFromFile(string filename)
-	{
-		// Strip off the filename
-		string basePath = this.PathIO.GetDirectoryName(filename);
-
-		// Get the containing folder
-		string? charName = this.PathIO.GetFileName(basePath);
-
-		if (charName.Equals("SYS", StringComparison.OrdinalIgnoreCase))
-		{
-			string fileAndExtension = this.PathIO.GetFileName(filename);
-			if (fileAndExtension.Contains("MISC", StringComparison.OrdinalIgnoreCase))
-				// Check for the relic vault stash.
-				charName = SharedStashNames.RelicVault;
-			else if (fileAndExtension.Contains("WIN", StringComparison.OrdinalIgnoreCase))
-				// Check for the transfer stash.
-				charName = SharedStashNames.TransferStash;
-			else
-				charName = null;
-		}
-		else if (charName.StartsWith('_'))
-			// See if it is a character folder.
-			charName = charName.Substring(1);
-		else
-			// The name is bogus so return a null.
-			charName = null;
-
-		return charName;
-	}
 
 	/// <summary>
 	/// Name of the vault folder
@@ -244,14 +208,6 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 
 	public string GetPlayerFile(string characterName, bool IsTQIT, bool isArchive)
 		=> this.PathIO.Combine(GetBaseCharacterFolder(IsTQIT, isArchive), string.Concat("_", characterName), PLAYERSAVEFILENAME);
-
-	/// <summary>
-	/// Gets the full path to the player's stash file.
-	/// </summary>
-	/// <param name="characterName">name of the character</param>
-	/// <returns>full path to the player stash file</returns>
-	public string GetPlayerStashFile(string characterName, bool isArchive)
-		=> this.PathIO.Combine(GetBaseCharacterFolder(true, isArchive), string.Concat("_", characterName), PLAYERSTASHFILENAMEB);
 
 	/// <summary>
 	/// Gets a list of all of the character files in the save folder.
@@ -457,10 +413,6 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 		}
 	}
 
-	public string TransferStashFileName => TRANSFERSTASHFILENAME;
-
-	public string RelicVaultStashFileName => RELICVAULTSTASHFILENAME;
-
 	public string PlayerSaveFileName => PLAYERSAVEFILENAME;
 
 	public string PlayerStashFileNameB => PLAYERSTASHFILENAMEB;
@@ -614,8 +566,8 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 		// Disc version detection logic -old
 		if (string.IsNullOrEmpty(titanQuestGamePath))
 		{
-			string[] path = ["SOFTWARE", "Iron Lore", "Titan Quest", "Install Location"];
-			titanQuestGamePath = ReadRegistryKey(Microsoft.Win32.Registry.LocalMachine, path);
+			using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("""SOFTWARE\Iron Lore\Titan Quest""");
+			titanQuestGamePath = key?.GetValue("Install Location") as string;
 		}
 
 		if (string.IsNullOrEmpty(titanQuestGamePath))
@@ -623,48 +575,6 @@ public partial class GamePathServiceWin(ILogger<GamePathServiceWin> log, ITQData
 Please select the game installation directory.");
 
 		return titanQuestGamePath;
-	}
-
-	/// <summary>
-	/// Reads a value from the registry
-	/// </summary>
-	/// <param name="key">registry hive to be read</param>
-	/// <param name="path">path of the value to be read</param>
-	/// <returns>string value of the key and value that was read or empty string if there was a problem.</returns>
-	string ReadRegistryKey(Microsoft.Win32.RegistryKey key, string[] path)
-	{
-		// The last item in the path array is the actual value name.
-		int valueKey = path.Length - 1;
-
-		// All other values in the path are keys which will need to be navigated.
-		int lastSubKey = path.Length - 2;
-
-		for (int i = 0; i <= lastSubKey; ++i)
-		{
-			var subKey = key.OpenSubKey(path[i]);
-			if (subKey is null)
-				return string.Empty;
-			key = subKey;
-		}
-
-		return key.GetValue(path[valueKey]) as string ?? string.Empty;
-	}
-
-	/// <summary>
-	/// Return the vault name from <paramref name="vaultFilePath"/>
-	/// </summary>
-	/// <param name="vaultFilePath"></param>
-	/// <returns>name stripted from path and extension</returns>
-	public string? GetVaultNameFromPath(string vaultFilePath)
-	{
-		string? vaultname = null;
-
-		if (vaultFilePath.EndsWith(VAULTFILENAME_EXTENSION_JSON, StringComparison.OrdinalIgnoreCase))
-			vaultname = this.PathIO.GetFileNameWithoutExtension(this.PathIO.GetFileNameWithoutExtension(vaultFilePath));
-		else if (vaultFilePath.EndsWith(VAULTFILENAME_EXTENSION_OLD, StringComparison.OrdinalIgnoreCase))
-			vaultname = this.PathIO.GetFileNameWithoutExtension(vaultFilePath);
-
-		return vaultname;
 	}
 
 	/// <summary>

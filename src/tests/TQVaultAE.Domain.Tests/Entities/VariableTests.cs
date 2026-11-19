@@ -348,11 +348,36 @@ public class VariableTests
 
 		// Act
 		var result1 = variable.ToString();
-		variable[0] = 999; // Modify after first call
 		var result2 = variable.ToString();
 
-		// Assert - Should be cached, so same value
-		result1.Should().Be(result2);
+		// Assert - built once while the values don't change
+		result2.Should().BeSameAs(result1);
 		result1.Should().Contain("100");
+	}
+
+	[Fact]
+	public void ToString_AfterValueSet_ShowsTheNewValue()
+	{
+		var variable = new Variable("testVar", VariableDataType.Integer, 1);
+		variable[0] = 10;
+		_ = variable.ToString();
+
+		variable[0] = 20;
+
+		variable.ToString().Should().Be("testVar,20,");
+	}
+
+	[Fact]
+	public void ToString_OfCloneSetAfterCloning_ShowsTheCloneValue()
+	{
+		var original = new Variable("testVar", VariableDataType.Integer, 1);
+		original[0] = 10;
+		_ = original.ToString();
+
+		var clone = original.Clone();
+		clone[0] = 20;
+
+		clone.ToString().Should().Be("testVar,20,");
+		original.ToString().Should().Be("testVar,10,");
 	}
 }

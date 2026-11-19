@@ -54,15 +54,6 @@ public interface IDatabase
 	string TQLanguage { get; set; }
 
 	/// <summary>
-	/// Used to Extract an ARC file into the destination directory.
-	/// The ARC file will not be added to the cache.
-	/// </summary>
-	/// <remarks>Added by VillageIdiot</remarks>
-	/// <param name="arcFileName">Name of the arc file</param>
-	/// <param name="destination">Destination path for extracted data</param>
-	/// <returns>Returns true on success otherwise false</returns>
-	bool ExtractArcFile(string arcFileName, string destination);
-	/// <summary>
 	/// Uses the text database to convert the tag to a name in the localized language.
 	/// The tag is normalized to upper case internally.
 	/// </summary>

@@ -125,7 +125,7 @@ internal sealed partial class CharacterEditorUserControl
 		this.RefreshSkills();
 
 		// The pool box takes every point given back, as for Reset Attributes: a value past its maximum would be dropped.
-		var total = pool + PlayerLevel.GetInvestedAttributePoints(values[2], values[4], values[3], values[0], values[1]);
+		var total = pool + PlayerLevel.GetInvestedAttributePoints(values);
 		if (total > this.attributeNumericUpDown.Maximum)
 			this.attributeNumericUpDown.Maximum = total;
 

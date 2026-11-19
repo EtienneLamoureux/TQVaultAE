@@ -8139,5 +8139,76 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("ClassSetStatusHint", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid or unsupported export format..
+        /// </summary>
+        public static string ImportErrorFormat {
+            get {
+                return ResourceManager.GetString("ImportErrorFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing scope in export format..
+        /// </summary>
+        public static string ImportErrorMissingScope {
+            get {
+                return ResourceManager.GetString("ImportErrorMissingScope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported scope: {0}.
+        /// </summary>
+        public static string ImportErrorScope {
+            get {
+                return ResourceManager.GetString("ImportErrorScope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing data in export format..
+        /// </summary>
+        public static string ImportErrorMissingData {
+            get {
+                return ResourceManager.GetString("ImportErrorMissingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid JSON format: {0}.
+        /// </summary>
+        public static string ImportErrorJson {
+            get {
+                return ResourceManager.GetString("ImportErrorJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The data of the export could not be read..
+        /// </summary>
+        public static string ImportErrorData {
+            get {
+                return ResourceManager.GetString("ImportErrorData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing to import..
+        /// </summary>
+        public static string ImportErrorNothing {
+            get {
+                return ResourceManager.GetString("ImportErrorNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to import from PasteBin: {0}.
+        /// </summary>
+        public static string ImportErrorPasteBin {
+            get {
+                return ResourceManager.GetString("ImportErrorPasteBin", resourceCulture);
+            }
+        }
     }
 }

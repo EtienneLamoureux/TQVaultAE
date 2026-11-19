@@ -1,5 +1,6 @@
 using System.Globalization;
 using TQVaultAE.Application.Character;
+using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -270,14 +271,9 @@ public partial class CharacterStatsService
 
 	/// <summary>The records of the loaded databases (the custom map's, Immortal Throne's, the base game's), each once.</summary>
 	private IEnumerable<RecordId> AllRecordIds()
-		=> this.ArzFiles().SelectMany(a => a.RecordInfo.Keys).Distinct();
+		=> this._database.ArzFilesByPriority().SelectMany(a => a.ArzFile.RecordInfo.Keys).Distinct();
 
 	/// <summary>The records of some classes in the loaded databases, each once.</summary>
 	private IEnumerable<RecordId> RecordsOfClass(params string[] classes)
-		=> this.ArzFiles()
-			.SelectMany(a => a.RecordInfo.Where(r => classes.Contains(r.Value.Class, StringComparer.OrdinalIgnoreCase)).Select(r => r.Key))
-			.Distinct();
-
-	private IEnumerable<ArzFile> ArzFiles()
-		=> new[] { this._database.ArzFileMod, this._database.ArzFileIT, this._database.ArzFile }.OfType<ArzFile>().Distinct();
+		=> this._database.RecordsOfClass(classes).Select(r => r.Id).Distinct();
 }

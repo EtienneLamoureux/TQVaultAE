@@ -99,7 +99,7 @@ public static class EquipmentRules
 	/// <param name="slot">The slot.</param>
 	public static bool CanEquip(SackCollection sack, Item? item, int slot)
 	{
-		if (item is null || slot < 0 || slot > sack.NumberOfSlots)
+		if (item is null || slot < 0 || slot >= sack.NumberOfSlots)
 			return false;
 
 		switch (slot)

@@ -250,8 +250,6 @@ public sealed class DatabaseSelector(ILogger<DatabaseSelector> log, Func<Databas
 		}
 	}
 
-	public bool ExtractArcFile(string arcFileName, string destination) => this.Active.ExtractArcFile(arcFileName, destination);
-
 	public string GetFriendlyName(string tagId) => this.Active.GetFriendlyName(tagId);
 
 	public Info? GetInfo(RecordId itemId) => this.Active.GetInfo(itemId);

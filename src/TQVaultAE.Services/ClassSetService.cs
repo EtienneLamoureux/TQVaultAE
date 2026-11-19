@@ -26,20 +26,12 @@ public class ClassSetService(ILogger<ClassSetService> log, IFileIO fileIO, IPath
 	public ClassSetBook Read(string saveFolder)
 	{
 		var book = new ClassSetBook(this.PathIO.Combine(saveFolder, IClassSetService.FileName));
-		if (!this.FileIO.Exists(book.FilePath))
-			return book;
-
-		try
+		var (dto, failed) = JsonFile.Read<ClassSetFileDto>(this.FileIO, book.FilePath, JsonOptions, this.Log, "class sets");
+		book.ReadFailed = failed;
+		if (dto is not null)
 		{
-			var dto = JsonSerializer.Deserialize<ClassSetFileDto>(this.FileIO.ReadAllText(book.FilePath), JsonOptions)
-				?? throw new JsonException("Empty class sets file");
 			book.Sets = [.. dto.classSets.Select(FromDto)];
 			book.LastApplied = dto.lastApplied;
-		}
-		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
-		{
-			this.Log.LogError(ex, "Failed to read the class sets {File}", book.FilePath);
-			book.ReadFailed = true;
 		}
 
 		return book;
@@ -59,7 +51,7 @@ public class ClassSetService(ILogger<ClassSetService> log, IFileIO fileIO, IPath
 		else
 		{
 			var dto = new ClassSetFileDto { version = FileVersion, lastApplied = lastApplied, classSets = [.. sets.Select(ToDto)] };
-			this.FileIO.WriteAllText(book.FilePath, JsonSerializer.Serialize(dto, JsonOptions));
+			JsonFile.Write(this.FileIO, book.FilePath, dto, JsonOptions);
 		}
 
 		book.Sets = [.. sets];

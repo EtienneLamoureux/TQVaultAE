@@ -24,4 +24,15 @@ public class ItemSeedTests
 		for (int i = 0; i < 100_000; i++)
 			Item.IsValidSeed(Item.GenerateSeed()).Should().BeTrue();
 	}
+
+	[Fact]
+	public void GenerateSeed_FromParallelLoads_StaysValidAndVaried()
+	{
+		// Items are created by parallel loads: a shared Random that is not thread-safe ends up returning 0 forever.
+		var seeds = new int[200_000];
+		Parallel.For(0, seeds.Length, i => seeds[i] = Item.GenerateSeed());
+
+		seeds.Should().OnlyContain(seed => Item.IsValidSeed(seed));
+		seeds.Distinct().Count().Should().BeGreaterThan(1000);
+	}
 }

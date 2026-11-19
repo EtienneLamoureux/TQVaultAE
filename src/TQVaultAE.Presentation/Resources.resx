@@ -2949,4 +2949,28 @@ Read documentation/mcp.md first: the agent must ask before each change, and the 
   <data name="ClassSetStatusHint" xml:space="preserve">
     <value>Save to keep it in the class set, pick the class set to go back to it.</value>
   </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>Invalid or unsupported export format.</value>
+  </data>
+  <data name="ImportErrorMissingScope" xml:space="preserve">
+    <value>Missing scope in export format.</value>
+  </data>
+  <data name="ImportErrorScope" xml:space="preserve">
+    <value>Unsupported scope: {0}</value>
+  </data>
+  <data name="ImportErrorMissingData" xml:space="preserve">
+    <value>Missing data in export format.</value>
+  </data>
+  <data name="ImportErrorJson" xml:space="preserve">
+    <value>Invalid JSON format: {0}</value>
+  </data>
+  <data name="ImportErrorData" xml:space="preserve">
+    <value>The data of the export could not be read.</value>
+  </data>
+  <data name="ImportErrorNothing" xml:space="preserve">
+    <value>Nothing to import.</value>
+  </data>
+  <data name="ImportErrorPasteBin" xml:space="preserve">
+    <value>Failed to import from PasteBin: {0}</value>
+  </data>
 </root>

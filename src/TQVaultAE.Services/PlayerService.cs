@@ -91,10 +91,7 @@ public class PlayerService(
 						PlayerCollectionProvider.LoadFile(resultPC);
 
 					string? characterMod = this.GameMapService.ModNameFor(selectedSave);
-					foreach (var item in resultPC.Where(s => s is not null).SelectMany(s => s))
-						item.SetContainerMod(characterMod);
-
-					foreach (var item in resultPC.EquipmentSack ?? [])
+					foreach (var item in resultPC.SackItems().Concat(resultPC.EquipmentSack ?? []))
 						item.SetContainerMod(characterMod);
 
 					// Once the sacks exist: a read-only character marks them all.

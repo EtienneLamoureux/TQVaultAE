@@ -87,14 +87,6 @@ public class DBRecordCollection : IEnumerable<Variable>
 		=> this.variables.Add(variable.Name, variable);
 
 	/// <summary>
-	/// Returns a short descriptive string in the format of:
-	/// recordID,recordType,numVariables
-	/// </summary>
-	/// <returns>string: recordID,recordType,numVariables</returns>
-	public string ToShortString() 
-		=> string.Format(CultureInfo.CurrentCulture, "{0},{1},{2}", this.Id, this.RecordType, this.Count);
-
-	/// <summary>
 	/// Gets the integer value for the variable, or 0 if the variable does not exist.
 	/// throws exception of the variable is not integer type
 	/// </summary>
@@ -167,18 +159,6 @@ public class DBRecordCollection : IEnumerable<Variable>
 		}
 
 		return groups;
-	}
-
-	KeyValuePair<string, Variable>[]? _RelevantVars;
-	/// <summary>
-	/// Get the relevant vars, meaning there is something to display.
-	/// </summary>
-	public KeyValuePair<string, Variable>[] RelevantVars
-	{
-		get
-		{
-			return this._RelevantVars ??= this.variables.Where(v => v.Value.IsValueRelevant).ToArray();
-		}
 	}
 
 }

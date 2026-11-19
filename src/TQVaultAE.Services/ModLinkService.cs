@@ -84,21 +84,9 @@ public class ModLinkService(
 	/// <inheritdoc/>
 	public ModLinkFile? ReadLink(string saveFolder)
 	{
-		string file = this.LinkFile(saveFolder);
-		if (!this.FileIO.Exists(file))
-			return null;
-
-		try
-		{
-			var link = JsonSerializer.Deserialize<ModLinkFile>(this.FileIO.ReadAllText(file), JsonOptions);
-			// The name and the source make the mod: without both, the character is not linked.
-			return string.IsNullOrWhiteSpace(link?.Mod) || string.IsNullOrWhiteSpace(link.Source) ? null : link;
-		}
-		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
-		{
-			this.Log.LogError(ex, "Failed to read the mod link {File}", file);
-			return null;
-		}
+		var link = JsonFile.Read<ModLinkFile>(this.FileIO, this.LinkFile(saveFolder), JsonOptions, this.Log, "mod link").Value;
+		// The name and the source make the mod: without both, the character is not linked.
+		return string.IsNullOrWhiteSpace(link?.Mod) || string.IsNullOrWhiteSpace(link.Source) ? null : link;
 	}
 
 	/// <inheritdoc/>
@@ -129,7 +117,7 @@ public class ModLinkService(
 
 		try
 		{
-			this.FileIO.WriteAllText(this.LinkFile(saveFolder), JsonSerializer.Serialize(link, JsonOptions));
+			JsonFile.Write(this.FileIO, this.LinkFile(saveFolder), link, JsonOptions);
 			return ModLinkResult.Succeeded;
 		}
 		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

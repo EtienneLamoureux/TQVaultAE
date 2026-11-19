@@ -19,6 +19,7 @@ public class TagService : ITagService
 	protected readonly IPathIO PathIO;
 	protected readonly JsonSerializerOptions JsonOptions;
 	protected TagConfig TagConfig = new();
+	private bool _readFailed;
 	public Dictionary<string, Color> Tags => this.TagConfig.tags.OrderBy(t => t.name).ToDictionary(
 		t => t.name,
 		t => Color.FromArgb(t.color.R, t.color.G, t.color.B)
@@ -163,32 +164,23 @@ public class TagService : ITagService
 
 	public void ReadConfig()
 	{
-		string configFilePath = this.ResolveConfigFilePath();
-
-		if (this.FileIO.Exists(configFilePath))
-		{
-			var content = this.FileIO.ReadAllText(configFilePath);
-			this.TagConfig = JsonSerializer.Deserialize<TagConfig>(content, JsonOptions) ?? new();
-			return;
-		}
-
-		this.TagConfig = new TagConfig();
+		var (config, failed) = JsonFile.Read<TagConfig>(this.FileIO, this.ResolveConfigFilePath(), JsonOptions, this.Log, "tags");
+		this.TagConfig = config ?? new TagConfig();
+		// A file that cannot be read is kept for the user to repair: tags changed meanwhile are not saved over it.
+		this._readFailed = failed;
 	}
 
 	private string ResolveConfigFilePath() => this.PathIO.Combine(this.GamePathService.TQVaultConfigFolder, @"TagConfig.json");
 
 	public void SaveConfig()
 	{
-		if (this.TagConfig is null)
+		if (this.TagConfig is null || this._readFailed)
 			return;
 
 		// A character left without tags (last tag unassigned or deleted) keeps no entry.
 		this.TagConfig.mapping.RemoveAll(m => m.tags is null || m.tags.Count == 0);
 
-		string configFilePath = this.ResolveConfigFilePath();
-
-		var content = JsonSerializer.Serialize(this.TagConfig, JsonOptions);
-		this.FileIO.WriteAllText(configFilePath, content);
+		JsonFile.Write(this.FileIO, this.ResolveConfigFilePath(), this.TagConfig, JsonOptions);
 	}
 
 

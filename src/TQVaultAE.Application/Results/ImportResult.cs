@@ -3,6 +3,25 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Results;
 
+/// <summary>Why an import failed; the GUI shows it in the user's language.</summary>
+public enum ImportError
+{
+	None,
+	/// <summary>No export format, or a version this version does not read.</summary>
+	UnsupportedFormat,
+	MissingScope,
+	/// <summary>A scope this version does not know (<see cref="ImportResult.ErrorDetail"/>).</summary>
+	UnsupportedScope,
+	MissingData,
+	/// <summary>Not JSON (<see cref="ImportResult.ErrorDetail"/>: the parser's message).</summary>
+	InvalidJson,
+	/// <summary>The data of the scope could not be read.</summary>
+	UnreadableData,
+	NothingToImport,
+	/// <summary>The paste could not be fetched (<see cref="ImportResult.ErrorDetail"/>: the error's message).</summary>
+	PasteBinFailed,
+}
+
 public class ImportResult
 {
 	public bool Success { get; set; }
@@ -18,7 +37,10 @@ public class ImportResult
 	public Dictionary<int, List<Item>>? SackItems { get; set; }
 	public int ImportedCount { get; set; }
 	public int TotalCount { get; set; }
-	public string? ErrorMessage { get; set; }
+	public ImportError Error { get; set; }
+
+	/// <summary>What the error names: the scope, the parser's or the download's message; untranslated.</summary>
+	public string? ErrorDetail { get; set; }
 	public BagButtonIconInfo? TabIconInfo { get; set; }
 
 	/// <summary>The mods the export names that are not installed here: their links were dropped.</summary>
@@ -83,10 +105,11 @@ public class ImportResult
 			TotalCount = items.Count
 		};
 
-	public static ImportResult Failed(string errorMessage)
+	public static ImportResult Failed(ImportError error, string? detail = null)
 		=> new()
 		{
 			Success = false,
-			ErrorMessage = errorMessage
+			Error = error,
+			ErrorDetail = detail,
 		};
 }

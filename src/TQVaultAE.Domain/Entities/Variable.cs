@@ -76,7 +76,11 @@ public class Variable
 	public object this[int index]
 	{
 		get => this.values[index];
-		set => this.values[index] = value;
+		set
+		{
+			this.values[index] = value;
+			this._toString = null;
+		}
 	}
 
 	/// <summary>
@@ -137,28 +141,31 @@ public class Variable
 		if (_toString is not null)
 			return _toString;
 
-		// First set our val format string based on the data type
-		string formatSpec = "{0}";
-		if (this.DataType == VariableDataType.Float)
-			formatSpec = "{0:f6}";
-
 		StringBuilder ans = new(64);
 		ans.Append(this.Name);
 		ans.Append(',');
-
-		for (int i = 0; i < this.NumberOfValues; ++i)
-		{
-			if (i > 0)
-				ans.Append(';');
-
-			ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
-		}
-
+		this.AppendValues(ans, ";");
 		ans.Append(',');
 
 		_toString = ans.ToString();
 
 		return _toString;
+	}
+
+	/// <summary>How a value is written: floats with 6 decimals, invariant culture.</summary>
+	private string FormatSpec => this.DataType == VariableDataType.Float ? "{0:f6}" : "{0}";
+
+	/// <summary>Appends the values, formatted by <see cref="FormatSpec"/>, between <paramref name="separator"/>s.</summary>
+	private void AppendValues(StringBuilder text, string separator)
+	{
+		string formatSpec = this.FormatSpec;
+		for (int i = 0; i < this.NumberOfValues; ++i)
+		{
+			if (i > 0)
+				text.Append(separator);
+
+			text.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
+		}
 	}
 
 	/// <summary>Characters a value formatted by <see cref="ToString"/> can hold, NaN and infinity aside.</summary>
@@ -179,7 +186,7 @@ public class Variable
 			return true;
 
 		bool numberLike = text.AsSpan().IndexOfAnyExcept(NumberChars) < 0;
-		string formatSpec = this.DataType == VariableDataType.Float ? "{0:f6}" : "{0}";
+		string formatSpec = this.FormatSpec;
 		for (int i = 0; i < this.NumberOfValues; ++i)
 		{
 			var value = this.values[i];
@@ -241,20 +248,8 @@ public class Variable
 	/// <returns>Returns converted string for the values.</returns>
 	public string ToStringValue()
 	{
-		// First set our val format string based on the data type
-		string formatSpec = "{0}";
-		if (this.DataType == VariableDataType.Float)
-			formatSpec = "{0:f6}";
-
 		StringBuilder ans = new StringBuilder(64);
-		for (int i = 0; i < this.NumberOfValues; ++i)
-		{
-			if (i > 0)
-				ans.Append(", ");
-
-			ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
-		}
-
+		this.AppendValues(ans, ", ");
 		return ans.ToString();
 	}
 }

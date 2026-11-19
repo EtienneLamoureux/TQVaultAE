@@ -370,70 +370,70 @@ public class PlayerCollectionProviderTests
 
 		// Setup mock TQDataService
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "headerVersion", It.IsAny<int>()))
-			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsByteArray: [], valueAsInt: 1));
+			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsInt: 1));
 		_mockTQDataService.Setup(x => x.ReadCStringAfter(It.IsAny<byte[]>(), "playerCharacterClass", It.IsAny<int>()))
-			.Returns((indexOf: 8, valueOffset: 12, nextOffset: 20, valueLen: 4, valueAsByteArray: [], valueAsString: "Conqueror"));
+			.Returns((indexOf: 8, valueOffset: 12, nextOffset: 20, valueLen: 4, valueAsString: "Conqueror"));
 		_mockTQDataService.Setup(x => x.ReadCStringAfter(It.IsAny<byte[]>(), "playerClassTag", It.IsAny<int>()))
-			.Returns((indexOf: 20, valueOffset: 24, nextOffset: 32, valueLen: 4, valueAsByteArray: [], valueAsString: "ClassConqueror"));
+			.Returns((indexOf: 20, valueOffset: 24, nextOffset: 32, valueLen: 4, valueAsString: "ClassConqueror"));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "money", It.IsAny<int>()))
-			.Returns((indexOf: 32, valueOffset: 36, nextOffset: 40, valueAsByteArray: [], valueAsInt: 1000));
+			.Returns((indexOf: 32, valueOffset: 36, nextOffset: 40, valueAsInt: 1000));
 		// An "altMoney" found further in the file, not right after "money": not the Electrum.
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "altMoney", It.IsAny<int>()))
-			.Returns((indexOf: 500, valueOffset: 504, nextOffset: 508, valueAsByteArray: [], valueAsInt: 77));
+			.Returns((indexOf: 500, valueOffset: 504, nextOffset: 508, valueAsInt: 77));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "masteriesAllowed", It.IsAny<int>()))
-			.Returns((indexOf: 40, valueOffset: 44, nextOffset: 48, valueAsByteArray: [], valueAsInt: 2));
+			.Returns((indexOf: 40, valueOffset: 44, nextOffset: 48, valueAsInt: 2));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "temp", It.IsAny<int>()))
-			.Returns((indexOf: 48, valueOffset: 52, nextOffset: 56, valueAsByteArray: [], valueAsInt: 3));
+			.Returns((indexOf: 48, valueOffset: 52, nextOffset: 56, valueAsInt: 3));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "hasBeenInGame", It.IsAny<int>()))
-			.Returns((indexOf: 56, valueOffset: 60, nextOffset: 64, valueAsByteArray: [], valueAsInt: 1));
+			.Returns((indexOf: 56, valueOffset: 60, nextOffset: 64, valueAsInt: 1));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "currentStats.charLevel", It.IsAny<int>()))
-			.Returns((indexOf: 64, valueOffset: 68, nextOffset: 72, valueAsByteArray: [], valueAsInt: 10));
+			.Returns((indexOf: 64, valueOffset: 68, nextOffset: 72, valueAsInt: 10));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "currentStats.experiencePoints", It.IsAny<int>()))
-			.Returns((indexOf: 72, valueOffset: 76, nextOffset: 80, valueAsByteArray: [], valueAsInt: 5000));
+			.Returns((indexOf: 72, valueOffset: 76, nextOffset: 80, valueAsInt: 5000));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "modifierPoints", It.IsAny<int>()))
-			.Returns((indexOf: 80, valueOffset: 84, nextOffset: 88, valueAsByteArray: [], valueAsInt: 5));
+			.Returns((indexOf: 80, valueOffset: 84, nextOffset: 88, valueAsInt: 5));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "skillPoints", It.IsAny<int>()))
-			.Returns((indexOf: 88, valueOffset: 92, nextOffset: 96, valueAsByteArray: [], valueAsInt: 3));
+			.Returns((indexOf: 88, valueOffset: 92, nextOffset: 96, valueAsInt: 3));
 		_mockTQDataService.SetupSequence(x => x.ReadFloatAfter(It.IsAny<byte[]>(), "temp", It.IsAny<int>()))
-			.Returns((indexOf: 96, valueOffset: 100, nextOffset: 104, valueAsByteArray: [], valueAsFloat: 50.0f))
-			.Returns((indexOf: 104, valueOffset: 108, nextOffset: 112, valueAsByteArray: [], valueAsFloat: 40.0f))
-			.Returns((indexOf: 112, valueOffset: 116, nextOffset: 120, valueAsByteArray: [], valueAsFloat: 30.0f))
-			.Returns((indexOf: 120, valueOffset: 124, nextOffset: 128, valueAsByteArray: [], valueAsFloat: 500.0f))
-			.Returns((indexOf: 128, valueOffset: 132, nextOffset: 136, valueAsByteArray: [], valueAsFloat: 300.0f));
+			.Returns((indexOf: 96, valueOffset: 100, nextOffset: 104, valueAsFloat: 50.0f))
+			.Returns((indexOf: 104, valueOffset: 108, nextOffset: 112, valueAsFloat: 40.0f))
+			.Returns((indexOf: 112, valueOffset: 116, nextOffset: 120, valueAsFloat: 30.0f))
+			.Returns((indexOf: 120, valueOffset: 124, nextOffset: 128, valueAsFloat: 500.0f))
+			.Returns((indexOf: 128, valueOffset: 132, nextOffset: 136, valueAsFloat: 300.0f));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "playTimeInSeconds", It.IsAny<int>()))
-			.Returns((indexOf: 136, valueOffset: 140, nextOffset: 144, valueAsByteArray: [], valueAsInt: 3600));
+			.Returns((indexOf: 136, valueOffset: 140, nextOffset: 144, valueAsInt: 3600));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "numberOfDeaths", It.IsAny<int>()))
-			.Returns((indexOf: 144, valueOffset: 148, nextOffset: 152, valueAsByteArray: [], valueAsInt: 0));
+			.Returns((indexOf: 144, valueOffset: 148, nextOffset: 152, valueAsInt: 0));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "numberOfKills", It.IsAny<int>()))
-			.Returns((indexOf: 152, valueOffset: 156, nextOffset: 160, valueAsByteArray: [], valueAsInt: 100));
+			.Returns((indexOf: 152, valueOffset: 156, nextOffset: 160, valueAsInt: 100));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "experienceFromKills", It.IsAny<int>()))
-			.Returns((indexOf: 160, valueOffset: 164, nextOffset: 168, valueAsByteArray: [], valueAsInt: 2000));
+			.Returns((indexOf: 160, valueOffset: 164, nextOffset: 168, valueAsInt: 2000));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "healthPotionsUsed", It.IsAny<int>()))
-			.Returns((indexOf: 168, valueOffset: 172, nextOffset: 176, valueAsByteArray: [], valueAsInt: 50));
+			.Returns((indexOf: 168, valueOffset: 172, nextOffset: 176, valueAsInt: 50));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "manaPotionsUsed", It.IsAny<int>()))
-			.Returns((indexOf: 176, valueOffset: 180, nextOffset: 184, valueAsByteArray: [], valueAsInt: 30));
+			.Returns((indexOf: 176, valueOffset: 180, nextOffset: 184, valueAsInt: 30));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "maxLevel", It.IsAny<int>()))
-			.Returns((indexOf: 184, valueOffset: 188, nextOffset: 192, valueAsByteArray: [], valueAsInt: 85));
+			.Returns((indexOf: 184, valueOffset: 188, nextOffset: 192, valueAsInt: 85));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "numHitsReceived", It.IsAny<int>()))
-			.Returns((indexOf: 192, valueOffset: 196, nextOffset: 200, valueAsByteArray: [], valueAsInt: 500));
+			.Returns((indexOf: 192, valueOffset: 196, nextOffset: 200, valueAsInt: 500));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "numHitsInflicted", It.IsAny<int>()))
-			.Returns((indexOf: 200, valueOffset: 204, nextOffset: 208, valueAsByteArray: [], valueAsInt: 1000));
+			.Returns((indexOf: 200, valueOffset: 204, nextOffset: 208, valueAsInt: 1000));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "greatestDamageInflicted", It.IsAny<int>()))
-			.Returns((indexOf: 208, valueOffset: 212, nextOffset: 216, valueAsByteArray: [], valueAsInt: 5000));
+			.Returns((indexOf: 208, valueOffset: 212, nextOffset: 216, valueAsInt: 5000));
 		_mockTQDataService.Setup(x => x.ReadUnicodeStringAfter(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<int>()))
-			.Returns((indexOf: 216, valueOffset: 220, nextOffset: 230, valueLen: 4, valueAsByteArray: [], valueAsString: "Giant Spider"));
+			.Returns((indexOf: 216, valueOffset: 220, nextOffset: 230, valueLen: 4, valueAsString: "Giant Spider"));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), It.Is<string>(s => s.Contains("greatestMonsterKilledLevel")), It.IsAny<int>()))
-			.Returns((indexOf: 230, valueOffset: 234, nextOffset: 238, valueAsByteArray: [], valueAsInt: 25));
+			.Returns((indexOf: 230, valueOffset: 234, nextOffset: 238, valueAsInt: 25));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), It.Is<string>(s => s.Contains("greatestMonsterKilledLifeAndMana")), It.IsAny<int>()))
-			.Returns((indexOf: 238, valueOffset: 242, nextOffset: 246, valueAsByteArray: [], valueAsInt: 1000));
+			.Returns((indexOf: 238, valueOffset: 242, nextOffset: 246, valueAsInt: 1000));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "criticalHitsInflicted", It.IsAny<int>()))
-			.Returns((indexOf: 246, valueOffset: 250, nextOffset: 254, valueAsByteArray: [], valueAsInt: 50));
+			.Returns((indexOf: 246, valueOffset: 250, nextOffset: 254, valueAsInt: 50));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "criticalHitsReceived", It.IsAny<int>()))
-			.Returns((indexOf: 254, valueOffset: 258, nextOffset: 262, valueAsByteArray: [], valueAsInt: 25));
+			.Returns((indexOf: 254, valueOffset: 258, nextOffset: 262, valueAsInt: 25));
 		_mockTQDataService.Setup(x => x.BinaryFindKey(It.IsAny<byte[]>(), "begin_block", It.IsAny<int>()))
 			.Returns((indexOf: 262, nextOffset: 266));
 		_mockTQDataService.Setup(x => x.ReadIntAfter(It.IsAny<byte[]>(), "max", It.IsAny<int>()))
-			.Returns((indexOf: 266, valueOffset: 270, nextOffset: 274, valueAsByteArray: [], valueAsInt: 0));
+			.Returns((indexOf: 266, valueOffset: 270, nextOffset: 274, valueAsInt: 0));
 
 		// Act
 		var result = _provider.ReadPlayerInfo(pc);
@@ -978,9 +978,9 @@ public class PlayerCollectionProviderTests
 
 		// Setup mock TQDataService
 		_mockTQDataService.Setup(x => x.WriteIntAfter(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<int>()))
-			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsByteArray: [], valueAsInt: 0));
+			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsInt: 0));
 		_mockTQDataService.Setup(x => x.WriteFloatAfter(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<float>(), It.IsAny<int>()))
-			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsByteArray: [], valueAsFloat: 0f));
+			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsFloat: 0f));
 
 		// Act
 		_provider.CommitPlayerInfo(pc, pc.PlayerInfo);
@@ -1013,9 +1013,9 @@ public class PlayerCollectionProviderTests
 
 		// Setup mock TQDataService
 		_mockTQDataService.Setup(x => x.WriteIntAfter(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<int>()))
-			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsByteArray: [], valueAsInt: 0));
+			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsInt: 0));
 		_mockTQDataService.Setup(x => x.WriteFloatAfter(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<float>(), It.IsAny<int>()))
-			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsByteArray: [], valueAsFloat: 0f));
+			.Returns((indexOf: 0, valueOffset: 4, nextOffset: 8, valueAsFloat: 0f));
 
 		// Act
 		_provider.CommitPlayerInfo(pc, sourceInfo);

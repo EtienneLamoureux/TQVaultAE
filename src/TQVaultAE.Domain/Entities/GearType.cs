@@ -68,6 +68,10 @@ public static class GearTypeExtension
 		}
 	}
 
+	/// <summary>The gear type of an item class (ignoring case), <see cref="GearType.Undefined"/> when not a piece of gear.</summary>
+	public static GearType FromItemClass(string? itemClass)
+		=> GearTypeMap.FirstOrDefault(m => m.Value.ICLASS.Equals(itemClass, StringComparison.OrdinalIgnoreCase)).Key;
+
 	/// <summary>
 	/// Return ItemClass constant for <paramref name="type"/> like <see cref="Item.ICLASS_AMULET"/> or <see cref="string.Empty"/> if none
 	/// </summary>

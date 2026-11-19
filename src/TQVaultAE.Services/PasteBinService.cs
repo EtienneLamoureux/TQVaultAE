@@ -27,9 +27,9 @@ public class PasteBinService(HttpClient httpClient, UserSettings userSettings) :
 		if (!string.IsNullOrWhiteSpace(pasteName))
 			formData["api_paste_name"] = pasteName;
 
-		var content = new FormUrlEncodedContent(formData);
+		using var content = new FormUrlEncodedContent(formData);
 
-		var response = await _httpClient.PostAsync(PasteBinApiUrl, content);
+		using var response = await _httpClient.PostAsync(PasteBinApiUrl, content);
 		var result = await response.Content.ReadAsStringAsync();
 
 		if (!response.IsSuccessStatusCode)
@@ -46,7 +46,7 @@ public class PasteBinService(HttpClient httpClient, UserSettings userSettings) :
 		var pasteId = GetPasteIdFromUrl(pasteUrl);
 		var rawUrl = string.Format(PasteBinRawUrl, pasteId);
 
-		var response = await _httpClient.GetAsync(rawUrl);
+		using var response = await _httpClient.GetAsync(rawUrl);
 		var result = await response.Content.ReadAsStringAsync();
 
 		if (!response.IsSuccessStatusCode)

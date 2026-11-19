@@ -112,17 +112,17 @@ public class ItemExchangeService(
 			var root = doc.RootElement;
 
 			if (!root.TryGetProperty("formatVersion", out var fv) || fv.GetInt32() != 1)
-				return ImportResult.Failed("Invalid or unsupported export format.");
+				return ImportResult.Failed(ImportError.UnsupportedFormat);
 
 			if (!root.TryGetProperty("scope", out var scopeElem))
-				return ImportResult.Failed("Missing scope in export format.");
+				return ImportResult.Failed(ImportError.MissingScope);
 
 			var scopeText = scopeElem.GetString();
 			if (!Enum.TryParse<ExportScope>(scopeText, ignoreCase: true, out var scope))
-				return ImportResult.Failed($"Unsupported scope: {scopeText}");
+				return ImportResult.Failed(ImportError.UnsupportedScope, scopeText);
 
 			if (!root.TryGetProperty("data", out var dataElement))
-				return ImportResult.Failed("Missing data in export format.");
+				return ImportResult.Failed(ImportError.MissingData);
 
 			var dropped = new List<string>();
 			var result = this.Import(scope, dataElement, dropped);
@@ -131,7 +131,7 @@ public class ItemExchangeService(
 		}
 		catch (JsonException ex)
 		{
-			return ImportResult.Failed($"Invalid JSON format: {ex.Message}");
+			return ImportResult.Failed(ImportError.InvalidJson, ex.Message);
 		}
 	}
 
@@ -145,7 +145,7 @@ public class ItemExchangeService(
 						var dto = JsonSerializer.Deserialize<ItemDto>(dataElement.GetRawText(), _jsonOptions);
 
 						if (dto is null)
-							return ImportResult.Failed("Failed to deserialize item data.");
+							return ImportResult.Failed(ImportError.UnreadableData);
 
 						// Read with the data in use; placed, it takes its container's map.
 						var item = dto.ToItem();
@@ -158,7 +158,7 @@ public class ItemExchangeService(
 						var dto = JsonSerializer.Deserialize<TabExportDTO>(dataElement.GetRawText(), _jsonOptions);
 
 						if (dto is null)
-							return ImportResult.Failed("Failed to deserialize tab data.");
+							return ImportResult.Failed(ImportError.UnreadableData);
 
 						// The items are read with the map of the tab's container (a mod, or the base game) until placed,
 						// where they take their target's map. A mod not installed here is dropped: they are read with the
@@ -184,7 +184,7 @@ public class ItemExchangeService(
 					var dtos = JsonSerializer.Deserialize<List<ItemDto>>(dataElement.GetRawText(), _jsonOptions);
 
 					if (dtos is null || dtos.Count == 0)
-						return ImportResult.Failed("Failed to deserialize multi-select item data.");
+						return ImportResult.Failed(ImportError.UnreadableData);
 
 					var items = dtos
 						.Select(dto =>
@@ -203,7 +203,7 @@ public class ItemExchangeService(
 						var dto = JsonSerializer.Deserialize<VaultExportDTO>(dataElement.GetRawText(), _jsonOptions);
 
 						if (dto is null)
-							return ImportResult.Failed("Failed to deserialize vault data.");
+							return ImportResult.Failed(ImportError.UnreadableData);
 
 						string? vaultMod = this.Installed(dto.ModKey, dropped);
 						var sackItems = new Dictionary<int, List<Item>>();
@@ -229,7 +229,7 @@ public class ItemExchangeService(
 					}
 
 				default:
-					return ImportResult.Failed($"Unsupported scope: {scope}");
+					return ImportResult.Failed(ImportError.UnsupportedScope, scope.ToString());
 			}
 		}
 	}
@@ -327,7 +327,7 @@ public class ItemExchangeService(
 	public async Task<ImportResult> ImportFromTextAsync(string text)
 	{
 		if (string.IsNullOrWhiteSpace(text))
-			return ImportResult.Failed("Nothing to import.");
+			return ImportResult.Failed(ImportError.NothingToImport);
 
 		var trimmed = text.Trim();
 		if (!this.IsPasteBinUrl(trimmed))
@@ -340,7 +340,7 @@ public class ItemExchangeService(
 		}
 		catch (Exception ex)
 		{
-			return ImportResult.Failed($"Failed to import from PasteBin: {ex.Message}");
+			return ImportResult.Failed(ImportError.PasteBinFailed, ex.Message);
 		}
 
 		return this.ImportFromJson(json);

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="PlayerCollection.cs" company="None">
+// <copyright file="PlayerCollectionProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -175,22 +175,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			sacks = pc.Select(sack => new SackDto()
 			{
 				iconinfo = sack.BagButtonIconInfo,
-				items = sack.Select(i => new ItemDto()
-				{
-					stackSize = i.StackSize,
-					seed = i.Seed,
-					baseName = RecordId.RawOf(i.BaseItemId),
-					prefixName = RecordId.RawOf(i.prefixID),
-					suffixName = RecordId.RawOf(i.suffixID),
-					relicName = RecordId.RawOf(i.relicID),
-					relicBonus = RecordId.RawOf(i.RelicBonusId),
-					var1 = i.Var1,
-					relicName2 = RecordId.RawOf(i.relic2ID),
-					relicBonus2 = RecordId.RawOf(i.RelicBonus2Id),
-					var2 = i.Var2,
-					pointX = i.PositionX,
-					pointY = i.PositionY,
-				}).ToList()
+				items = sack.Select(i => i.ToDto()).ToList()
 			}).ToList()
 		};
 
@@ -245,11 +230,12 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// </summary>
 	/// <param name="pc"></param>
 	/// <param name="filePathToUse">if not <c>null</c>, use this file instead of <see cref="PlayerCollection.PlayerFile"/> </param>
+	/// <remarks>A file that cannot be parsed is logged here, once, and thrown as an <see cref="ArgumentException"/>.</remarks>
 	public void LoadFile(PlayerCollection pc, string? filePathToUse = null)
 	{
+		var path = filePathToUse ?? pc.PlayerFile;
 		try
 		{
-			var path = filePathToUse ?? pc.PlayerFile;
 			if (path.EndsWith(".json", StringComparison.Ordinal))
 			{
 				ParseJsonData(pc, path);
@@ -263,7 +249,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 		}
 		catch (ArgumentException ex)
 		{
-			Log.LogError(ex, "ParseRawData() Failed !");
+			Log.LogError(ex, "Failed to parse {Player} ({File})", pc.PlayerName, path);
 			throw;
 		}
 	}
@@ -296,35 +282,10 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					Place = new ContainerPlace { SackType = SackType.Player },
 					beginBlockCrap1 = this.TQData.BeginBlockValue,
 					beginBlockCrap2 = this.TQData.BeginBlockValue,
-					BaseItemId = s.baseName,
-					prefixID = s.prefixName,
-					suffixID = s.suffixName,
-					relicID = s.relicName,
-					RelicBonusId = s.relicBonus,
-					Seed = s.seed,
-					Var1 = s.var1,
 					endBlockCrap2 = this.TQData.EndBlockValue,
-					PositionX = s.pointX,
-					PositionY = s.pointY,
 					endBlockCrap1 = this.TQData.EndBlockValue,
-					StackSize = s.stackSize,
-					// Atlantis
-					relic2ID = RecordId.Empty,
-					RelicBonus2Id = RecordId.Empty,
-					Var2 = Item.var2Default,
 				};
-
-				// The json has no atlantis flag: the game also writes the second relic fields empty, with a var2 to keep,
-				// so an item has them whenever they hold anything but the defaults of an item without them.
-				if (!string.IsNullOrWhiteSpace(s.relicName2)
-					|| !string.IsNullOrWhiteSpace(s.relicBonus2)
-					|| s.var2 != Item.var2Default)
-				{
-					itm.atlantis = true;
-					itm.relic2ID = s.relicName2 ?? string.Empty;
-					itm.RelicBonus2Id = s.relicBonus2 ?? string.Empty;
-					itm.Var2 = s.var2;
-				}
+				s.ApplyTo(itm);
 
 				// Read with the vault's map: its mod, Item.Mod, comes from the records found.
 				itm.SetContainerMod(pc.Mod);
@@ -477,9 +438,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				}
 				catch (ArgumentException exception)
 				{
-					var ex = new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
-					this.Log.LogError(ex, "Failed to parse the item block of {Player} ({PlayerFile})", pc.PlayerName, pc.PlayerFile);
-					throw ex;
+					throw new ArgumentException($"Error parsing player file Item Block- '{pc.PlayerName}'", exception);
 				}
 			}
 
@@ -492,9 +451,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				}
 				catch (ArgumentException exception)
 				{
-					var ex = new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
-					this.Log.LogError(ex, "Failed to parse the equipment block of {Player} ({PlayerFile})", pc.PlayerName, pc.PlayerFile);
-					throw ex;
+					throw new ArgumentException($"Error parsing player file Equipment Block - '{pc.PlayerName}'", exception);
 				}
 			}
 
@@ -506,9 +463,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 				}
 				catch (ArgumentException ex)
 				{
-					var exx = new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
-					this.Log.LogError(exx, "Failed to parse the player info of {Player} ({PlayerFile})", pc.PlayerName, pc.PlayerFile);
-					throw exx;
+					throw new ArgumentException($"Error parsing player player info Block - '{pc.PlayerName}'", ex);
 				}
 			}
 		}
@@ -787,30 +742,21 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// <param name="reader">BinaryReader instance</param>
 	private void ParseEquipmentBlock(PlayerCollection pc, int offset, BinaryReader reader)
 	{
-		try
+		//pc.equipmentBlockStart = offset;
+
+		reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+
+		if (pc.IsImmortalThrone)
 		{
-			//pc.equipmentBlockStart = offset;
-
-			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-
-			if (pc.IsImmortalThrone)
-			{
-				pc.equipmentCtrlIOStreamVersion = TQData.ReadKeyInt(reader, "equipmentCtrlIOStreamVersion");
-			}
-
-			pc.EquipmentSack = new SackCollection();
-			pc.EquipmentSack.SackType = SackType.Equipment;
-			pc.EquipmentSack.IsImmortalThrone = pc.IsImmortalThrone;
-			SackCollectionProvider.Parse(pc.EquipmentSack, reader);
-
-			//pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
-
+			pc.equipmentCtrlIOStreamVersion = TQData.ReadKeyInt(reader, "equipmentCtrlIOStreamVersion");
 		}
-		catch (ArgumentException ex)
-		{
-			Log.LogError(ex, "ParseEquipmentBlock fail ! offset={Offset}", offset);
-			throw;
-		}
+
+		pc.EquipmentSack = new SackCollection();
+		pc.EquipmentSack.SackType = SackType.Equipment;
+		pc.EquipmentSack.IsImmortalThrone = pc.IsImmortalThrone;
+		SackCollectionProvider.Parse(pc.EquipmentSack, reader);
+
+		//pc.equipmentBlockEnd = (int)reader.BaseStream.Position;
 	}
 
 }

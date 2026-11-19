@@ -292,11 +292,15 @@ public class UserSettings
 	/// <summary>
 	/// Saves the settings to <paramref name="xmlPath"/>, replacing the file.
 	/// </summary>
+	/// <remarks>Written to a temporary file first, then moved over the old one: an interrupted save keeps the old file.</remarks>
 	public void Save(string xmlPath)
 	{
 		XmlSerializer serializer = new XmlSerializer(typeof(UserSettings));
-		using var stream = new FileStream(xmlPath, FileMode.Create);
-		serializer.Serialize(stream, this);
+		string tempPath = xmlPath + ".tmp";
+		using (var stream = new FileStream(tempPath, FileMode.Create))
+			serializer.Serialize(stream, this);
+
+		File.Move(tempPath, xmlPath, overwrite: true);
 	}
 
 	private static string ResolveUserSettingsFilePath()

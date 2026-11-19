@@ -1,5 +1,5 @@
-﻿﻿//-----------------------------------------------------------------------
-// <copyright file="ItemAttributes.cs" company="None">
+﻿//-----------------------------------------------------------------------
+// <copyright file="ItemAttributeProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -838,7 +838,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 	{
 		// database orphan tag with no substitute => return as is
 		if (effect.Equals("defensiveTotalSpeedChance", StringComparison.OrdinalIgnoreCase)
-		    || effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
+			|| effect.Equals("defensiveAbsorption", StringComparison.OrdinalIgnoreCase))
 			return effect;
 
 		// Check for specific strings.

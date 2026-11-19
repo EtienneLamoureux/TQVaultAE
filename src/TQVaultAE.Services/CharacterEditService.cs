@@ -81,7 +81,7 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 
 			// Return invested points into attributes point pool
 			playerInfo.AttributesPoints = source.AttributesPoints + PlayerLevel.GetInvestedAttributePoints(
-				source.BaseStrength, source.BaseDexterity, source.BaseIntelligence, source.BaseHealth, source.BaseMana);
+				[source.BaseHealth, source.BaseMana, source.BaseStrength, source.BaseIntelligence, source.BaseDexterity]);
 		}
 
 		playerInfo.MasteriesResetRequiered = request.ResetMasteries;

@@ -26,11 +26,6 @@ public class Item
 	public const int var2Default = 2035248;
 
 	/// <summary>
-	/// Random number used as a seed for new items
-	/// </summary>
-	private static Random random = new Random();
-
-	/// <summary>
 	/// Binary marker for the beginning of a block
 	/// </summary>
 	public int beginBlockCrap1;
@@ -200,6 +195,26 @@ public class Item
 	/// Gets the number of relics for the second relic slot
 	/// </summary>
 	public int Var2 { get; set; }
+
+	/// <summary>
+	/// The records the item is made of, always in this order: base, prefix, suffix, first relic or charm at its number of
+	/// pieces (<see cref="Var1"/>), its completion bonus, second relic (<see cref="Var2"/>), its completion bonus. An empty
+	/// slot gives a null or empty id; the other records count 1.
+	/// </summary>
+	public (RecordId? Id, int Pieces)[] RecordSources()
+		=> [
+			(this.BaseItemId, 1),
+			(this.prefixID, 1),
+			(this.suffixID, 1),
+			(this.relicID, this.Var1),
+			(this.RelicBonusId, 1),
+			(this.relic2ID, this.Var2),
+			(this.RelicBonus2Id, 1),
+		];
+
+	/// <summary>The records of <see cref="RecordSources"/> the item has, each once.</summary>
+	public IEnumerable<RecordId> RecordIds()
+		=> this.RecordSources().Select(s => s.Id!).Where(id => !RecordId.IsNullOrEmpty(id)).Distinct();
 
 	/// <summary>
 	/// Gets or sets the stack size.
@@ -422,37 +437,22 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
-	public bool IsImmortalThrone
-		=> (this.BaseItemId?.Dlc == GameDlc.ImmortalThrone
-		|| (this.prefixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
-		) && !IsRagnarok && !IsAtlantis && !IsEmbers;
+	public bool IsImmortalThrone => this.GameDlc == GameDlc.ImmortalThrone;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 	/// </summary>
-	public bool IsRagnarok
-		=> (this.BaseItemId?.Dlc == GameDlc.Ragnarok
-		|| (this.prefixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
-		) && !IsAtlantis && !IsEmbers;
+	public bool IsRagnarok => this.GameDlc == GameDlc.Ragnarok;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Atlantis DLC.
 	/// </summary>
-	public bool IsAtlantis
-		=> (this.BaseItemId?.Dlc == GameDlc.Atlantis
-		|| (this.prefixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
-		) && !IsEmbers;
+	public bool IsAtlantis => this.GameDlc == GameDlc.Atlantis;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
 	/// </summary>
-	public bool IsEmbers
-		=> this.BaseItemId?.Dlc == GameDlc.EternalEmbers
-		|| (this.prefixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false);
+	public bool IsEmbers => this.GameDlc == GameDlc.EternalEmbers;
 
 
 	/// <summary>
@@ -882,20 +882,6 @@ public class Item
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether the item is a relic and only a relic.
-	/// </summary>
-	public bool IsRelicOnly
-	{
-		get
-		{
-			if (this.baseItemInfo is not null)
-				return this.baseItemInfo.ItemClass.Equals(ICLASS_RELIC, noCase);
-
-			return this.BaseItemId is not null && this.BaseItemId.IsRelic;
-		}
-	}
-
-	/// <summary>
 	/// Gets a value indicating whether the item first relic is a charm and only a charm.
 	/// </summary>
 	public bool IsRelic1Charm => SocketedKind(this.relicID, this.RelicInfo) == SocketedRecordKind.Charm;
@@ -946,6 +932,7 @@ public class Item
 	public const string ICLASS_PREFIX_ARMORJEWELRY = "ArmorJewelry";
 	/// <summary>Start of the classes of weapons and shields.</summary>
 	public const string ICLASS_PREFIX_WEAPON = "Weapon";
+	public const string ICLASS_PREFIX_MELEE = "WeaponMelee_";
 	public const string ICLASS_HEAD = "ArmorProtective_Head";
 	public const string ICLASS_FOREARM = "ArmorProtective_Forearm";
 	public const string ICLASS_UPPERBODY = "ArmorProtective_UpperBody";
@@ -1050,7 +1037,7 @@ public class Item
 	/// </summary>
 	/// <returns>New seed from 1 to <see cref="MaxSeed"/></returns>
 	public static int GenerateSeed()
-		=> random.Next(1, MaxSeed + 1);
+		=> Random.Shared.Next(1, MaxSeed + 1);
 
 	#endregion Item Public Static Methods
 
@@ -1185,9 +1172,7 @@ public class Item
 	/// </summary>
 	/// <remarks>return <see cref="GearType.Undefined"/> if not a piece of gear</remarks>
 	public GearType GearType
-		=> GearTypeExtension.GearTypeMap
-			.Where(m => m.Value.ICLASS.Equals(this.ItemClass, noCase))
-			.Select(m => m.Key).FirstOrDefault();
+		=> GearTypeExtension.FromItemClass(this.ItemClass);
 
 	#endregion
 
@@ -1295,15 +1280,17 @@ public class Item
 
 	#region GameDlc
 
+	/// <summary>The latest game the item's base record or affixes come from (<see cref="GameDlc"/> is in release order).</summary>
 	public GameDlc GameDlc
 	{
 		get
 		{
-			if (this.IsImmortalThrone) return GameDlc.ImmortalThrone;
-			else if (this.IsRagnarok) return GameDlc.Ragnarok;
-			else if (this.IsAtlantis) return GameDlc.Atlantis;
-			else if (this.IsEmbers) return GameDlc.EternalEmbers;
-			else return GameDlc.TitanQuest;
+			static GameDlc Of(RecordId? id) => id?.Dlc ?? GameDlc.TitanQuest;
+			var dlc = Of(this.BaseItemId);
+			if (Of(this.prefixID) > dlc)
+				dlc = Of(this.prefixID);
+
+			return Of(this.suffixID) > dlc ? Of(this.suffixID) : dlc;
 		}
 	}
 

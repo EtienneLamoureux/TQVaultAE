@@ -194,6 +194,12 @@ public class CharacterStatsCalculatorTests
 	public void LifeLeech_IsTheAttackDamageConvertedToHealth()
 		=> Compute(Sum(("offensiveLifeLeechMin", 12))).AttackDamageToHealth.Should().Be(12);
 
+	[Theory]
+	[InlineData(25, 25)]
+	[InlineData(-10, 0)]
+	public void PhysicalToElemental_ReadsTheRatioField_NeverBelowZero(double ratio, int expected)
+		=> Compute(Sum(("characterPhysToElementalRatio", ratio))).PhysicalToElemental.Should().Be(expected);
+
 	[Fact]
 	public void RaceBonuses_SingularAndPluralNames_GoToTheSameIcon()
 	{

@@ -136,6 +136,52 @@ public static class CharacterStatsCalculator
 		[StatRace.Constructs] = ["Construct", "Constructs"],
 	};
 
+	// The bonus fields the statistics read (their % is the field + "Modifier").
+	private const string ProtectionField = "defensiveProtection";
+	private const string LifeRegenField = "characterLifeRegen";
+	private const string ManaRegenField = "characterManaRegen";
+	private const string ManaCostReductionField = "skillManaCostReduction";
+	private const string CooldownReductionField = "skillCooldownReduction";
+	private const string CastSpeedField = "characterSpellCastSpeed";
+	private const string RunSpeedField = "characterRunSpeed";
+	private const string OffensiveAbilityField = "characterOffensiveAbility";
+	private const string DefensiveAbilityField = "characterDefensiveAbility";
+	private const string DodgeField = "characterDodgePercent";
+	private const string DeflectProjectileField = "characterDeflectProjectile";
+	private const string BlockChanceField = "defensiveBlockChance";
+	private const string BlockModifierField = "defensiveBlockModifier";
+	private const string LifeLeechField = "offensiveLifeLeechMin";
+	private const string PhysicalToElementalField = "characterPhysToElementalRatio";
+
+	/// <summary>The % every speed adds (attack, cast, run).</summary>
+	internal const string TotalSpeedModifierField = "characterTotalSpeedModifier";
+
+	/// <summary>A bonus field and its % (<c>field</c>, <c>fieldModifier</c>).</summary>
+	internal static string[] WithModifier(string field) => [field, field + "Modifier"];
+
+	/// <summary>
+	/// The bonus fields each statistic reads, as <see cref="Compute"/> reads them: the panel lists the sources holding
+	/// them in the statistic's rollover. Resistances and damages: <see cref="ResistanceVariables"/>,
+	/// <see cref="DamageVariables"/>; attack speed: <see cref="CharacterOffenseCalculator.AttackSpeedVariables"/>.
+	/// </summary>
+	public static class Variables
+	{
+		public static readonly IReadOnlyList<string> CombinedArmor = WithModifier(ProtectionField);
+		public static readonly IReadOnlyList<string> LifeRegen = WithModifier(LifeRegenField);
+		public static readonly IReadOnlyList<string> ManaRegen = WithModifier(ManaRegenField);
+		public static readonly IReadOnlyList<string> ManaCostReduction = WithModifier(ManaCostReductionField);
+		public static readonly IReadOnlyList<string> CooldownReduction = WithModifier(CooldownReductionField);
+		public static readonly IReadOnlyList<string> CastSpeed = [.. WithModifier(CastSpeedField), TotalSpeedModifierField];
+		public static readonly IReadOnlyList<string> RunSpeed = [.. WithModifier(RunSpeedField), TotalSpeedModifierField];
+		public static readonly IReadOnlyList<string> OffensiveAbility = WithModifier(OffensiveAbilityField);
+		public static readonly IReadOnlyList<string> DefensiveAbility = WithModifier(DefensiveAbilityField);
+		public static readonly IReadOnlyList<string> Dodge = WithModifier(DodgeField);
+		public static readonly IReadOnlyList<string> DeflectProjectile = WithModifier(DeflectProjectileField);
+		public static readonly IReadOnlyList<string> Block = [BlockChanceField, BlockModifierField];
+		public static readonly IReadOnlyList<string> AttackDamageToHealth = [LifeLeechField];
+		public static readonly IReadOnlyList<string> PhysicalToElemental = [PhysicalToElementalField];
+	}
+
 	public static CharacterStats Compute(CharacterStatsInput input)
 	{
 		ArgumentNullException.ThrowIfNull(input);
@@ -157,30 +203,31 @@ public static class CharacterStatsCalculator
 			CombinedArmor = CombinedArmor(input.Gear, input.Skills),
 			LifeRegen = GameEquation.Evaluate(balance.LifeRegenEquation, new Dictionary<string, double>
 			{
-				["lifeRegen"] = Total(balance.BaseLifeRegen, all, "characterLifeRegen"),
+				["lifeRegen"] = Total(balance.BaseLifeRegen, all, LifeRegenField),
 				["elapsedTime"] = 1,
 			}),
 			ManaRegen = GameEquation.Evaluate(balance.ManaRegenEquation, new Dictionary<string, double>
 			{
-				["manaRegen"] = Total(balance.BaseManaRegen, all, "characterManaRegen"),
+				["manaRegen"] = Total(balance.BaseManaRegen, all, ManaRegenField),
 				["intelligence"] = intelligence,
 				["elapsedTime"] = 1,
 			}),
 			// The window caps the energy cost reduction at 100 (gameengine's 80 applies in play).
-			ManaCostReduction = Round(Math.Min(100, Scaled(all, "skillManaCostReduction"))),
-			CooldownReduction = Round(Math.Min(balance.EngineValue("playerCooldownReductionCap", difficulty), Scaled(all, "skillCooldownReduction"))),
-			CastSpeed = Round(Speed(balance.BaseCastSpeed, all, "characterSpellCastSpeed",
+			ManaCostReduction = Round(Math.Min(100, Scaled(all, ManaCostReductionField))),
+			CooldownReduction = Round(Math.Min(balance.EngineValue("playerCooldownReductionCap", difficulty), Scaled(all, CooldownReductionField))),
+			CastSpeed = Round(Speed(balance.BaseCastSpeed, all, CastSpeedField,
 				balance.EngineValue("playerSpellCastSpeedCapMin", difficulty, 0), balance.EngineValue("playerSpellCastSpeedCapMax", difficulty, 0))),
-			RunSpeed = Round(Speed(balance.BaseRunSpeed, all, "characterRunSpeed",
+			RunSpeed = Round(Speed(balance.BaseRunSpeed, all, RunSpeedField,
 				balance.EngineValue("playerRunSpeedCapMin", difficulty, 0), balance.EngineValue("playerRunSpeedCapMax", difficulty, 0))),
 			// Truncated: a character in the game with (254 + 365.2 dexterity) × 1.28 = 792.6 shows 792.
-			OffensiveAbility = (int)Ability(balance.OffensiveAbilityEquation, "offensiveAbility", all, "characterOffensiveAbility", dexterity),
-			DefensiveAbility = (int)Ability(balance.DefensiveAbilityEquation, "defensiveAbility", all, "characterDefensiveAbility", dexterity),
-			Dodge = Round(Math.Min(balance.EngineValue("playerDodgePercentCap", difficulty), Total(0, all, "characterDodgePercent"))),
-			DeflectProjectile = Round(Math.Min(balance.EngineValue("playerDodgeProjectilePercentCap", difficulty), Total(0, all, "characterDeflectProjectile"))),
+			OffensiveAbility = (int)Ability(balance.OffensiveAbilityEquation, "offensiveAbility", all, OffensiveAbilityField, dexterity),
+			DefensiveAbility = (int)Ability(balance.DefensiveAbilityEquation, "defensiveAbility", all, DefensiveAbilityField, dexterity),
+			Dodge = Round(Math.Min(balance.EngineValue("playerDodgePercentCap", difficulty), Total(0, all, DodgeField))),
+			DeflectProjectile = Round(Math.Min(balance.EngineValue("playerDodgeProjectilePercentCap", difficulty), Total(0, all, DeflectProjectileField))),
 			Block = Round(Block(input.Gear, all)),
-			AttackDamageToHealth = Round(all["offensiveLifeLeechMin"]),
-			PhysicalToElemental = 0,
+			AttackDamageToHealth = Round(all[LifeLeechField]),
+			// No record of the base game has this field: 0 unless a mod adds it.
+			PhysicalToElemental = Round(Math.Max(0, all[PhysicalToElementalField])),
 			DamageBonuses = Enum.GetValues<StatDamage>().Where(DamageFields.ContainsKey).ToDictionary(d => d, d => Damage(d, all)),
 			RaceBonuses = Enum.GetValues<StatRace>().ToDictionary(r => r, r => RaceBonus(r, all)),
 			PetBonuses = PetBonuses(all),
@@ -253,8 +300,8 @@ public static class CharacterStatsCalculator
 	/// </summary>
 	public static int CombinedArmor(AttributeSum gear, AttributeSum skills)
 	{
-		double protection = gear["defensiveProtection"] + skills["defensiveProtection"];
-		double modifier = gear["defensiveProtectionModifier"] + skills["defensiveProtectionModifier"];
+		double protection = gear[ProtectionField] + skills[ProtectionField];
+		double modifier = gear[ProtectionField + "Modifier"] + skills[ProtectionField + "Modifier"];
 		if (modifier > 0)
 			protection *= 1 + modifier / 100;
 
@@ -270,7 +317,7 @@ public static class CharacterStatsCalculator
 		if (baseValue <= 0)
 			return 100;
 
-		double total = Math.Max(0, (baseValue + sum[field]) * (1 + (sum[field + "Modifier"] + sum["characterTotalSpeedModifier"]) / 100));
+		double total = Math.Max(0, (baseValue + sum[field]) * (1 + (sum[field + "Modifier"] + sum[TotalSpeedModifierField]) / 100));
 		double percent = 100 * total / baseValue;
 		if (capMax > 0)
 			percent = Math.Min(percent, capMax);
@@ -294,8 +341,8 @@ public static class CharacterStatsCalculator
 	/// <summary>The block chance: the shield's <c>defensiveBlockChance</c> plus the block modifiers, 0 without a shield, at most 100.</summary>
 	private static double Block(AttributeSum gear, AttributeSum all)
 	{
-		double shield = gear["defensiveBlockChance"];
-		return shield <= 0 ? 0 : Math.Min(100, shield + all["defensiveBlockModifier"]);
+		double shield = gear[BlockChanceField];
+		return shield <= 0 ? 0 : Math.Min(100, shield + all[BlockModifierField]);
 	}
 
 	/// <summary>A damage bonus of tab III: its own % plus the total damage % (and the elemental % for fire, cold and lightning).</summary>

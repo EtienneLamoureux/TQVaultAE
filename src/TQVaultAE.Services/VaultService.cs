@@ -55,7 +55,7 @@ public class VaultService(
 
 			// The old format is read like a character's file: its items are vault items, read with the vault's map, the
 			// base game (the old format has no link).
-			foreach (var item in vault.Where(s => s is not null).SelectMany(s => s))
+			foreach (var item in vault.SackItems())
 			{
 				item.SetContainerMod(vault.Mod);
 				this.ItemProvider.GetDBData(item);

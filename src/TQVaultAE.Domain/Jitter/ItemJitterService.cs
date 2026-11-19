@@ -75,7 +75,8 @@ public static class ItemJitterService
 
 		var (lo, hi) = TitanQuestRNG.GenerateRangeBounds(-k, k);
 		float min = float.MaxValue, max = float.MinValue;
-		for (int offset = lo; offset <= hi; offset++) {
+		for (int offset = lo; offset <= hi; offset++)
+		{
 			float rolled = (float)offset + value;
 			float result = System.Math.Abs(rolled) < 1f ? value : rolled;
 			min = System.Math.Min(min, result);

@@ -473,46 +473,6 @@ public class DatabaseTests
 
 	#endregion
 
-	#region ExtractArcFile Tests
-
-	[Fact]
-	public void ExtractArcFile_WithValidArcFileName_ReturnsTrue()
-	{
-		// Arrange
-		var arcFileName = "test.arc";
-		var destination = Path.GetTempPath();
-
-		_mockArcFileProvider
-			.Setup(x => x.ExtractArcFile(It.IsAny<ArcFile>(), destination))
-			.Returns(true);
-
-		// Act
-		var result = _database.ExtractArcFile(arcFileName, destination);
-
-		// Assert
-		result.Should().BeTrue();
-	}
-
-	[Fact]
-	public void ExtractArcFile_WhenArcFileProviderThrows_ReturnsFalse()
-	{
-		// Arrange
-		var arcFileName = "test.arc";
-		var destination = Path.GetTempPath();
-
-		_mockArcFileProvider
-			.Setup(x => x.ExtractArcFile(It.IsAny<ArcFile>(), destination))
-			.Throws(new IOException("Test exception"));
-
-		// Act
-		var result = _database.ExtractArcFile(arcFileName, destination);
-
-		// Assert
-		result.Should().BeFalse();
-	}
-
-	#endregion
-
 	#region GetInfo Tests
 
 	[Fact]

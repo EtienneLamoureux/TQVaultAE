@@ -2772,4 +2772,28 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="ClassSetStatusHint" xml:space="preserve">
     <value>Enregistrer pour le garder dans le profil de classe, choisir le profil de classe pour y revenir.</value>
   </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>Format d'exportation invalide ou non pris en charge.</value>
+  </data>
+  <data name="ImportErrorMissingScope" xml:space="preserve">
+    <value>Portée manquante dans le format d'exportation.</value>
+  </data>
+  <data name="ImportErrorScope" xml:space="preserve">
+    <value>Portée non prise en charge : {0}</value>
+  </data>
+  <data name="ImportErrorMissingData" xml:space="preserve">
+    <value>Données manquantes dans le format d'exportation.</value>
+  </data>
+  <data name="ImportErrorJson" xml:space="preserve">
+    <value>Format JSON invalide : {0}</value>
+  </data>
+  <data name="ImportErrorData" xml:space="preserve">
+    <value>Les données de l'exportation n'ont pas pu être lues.</value>
+  </data>
+  <data name="ImportErrorNothing" xml:space="preserve">
+    <value>Rien à importer.</value>
+  </data>
+  <data name="ImportErrorPasteBin" xml:space="preserve">
+    <value>Échec de l'importation depuis PasteBin : {0}</value>
+  </data>
 </root>

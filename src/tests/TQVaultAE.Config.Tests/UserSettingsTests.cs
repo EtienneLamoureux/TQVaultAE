@@ -164,6 +164,17 @@ public sealed class UserSettingsTests : IDisposable
 		File.ReadAllText(this._xmlPath).Should().NotContain("Garbage");
 	}
 
+	[Fact]
+	public void Save_OverAnExistingFile_ReplacesItAndLeavesNoTemporaryFile()
+	{
+		new UserSettings { VaultPath = """D:\Old""" }.Save(this._xmlPath);
+
+		new UserSettings { VaultPath = """D:\New""" }.Save(this._xmlPath);
+
+		UserSettings.Read(this._xmlPath).VaultPath.Should().Be("""D:\New""");
+		Directory.GetFiles(this._folder).Should().ContainSingle().Which.Should().Be(this._xmlPath);
+	}
+
 	#endregion
 
 	#region Loadouts

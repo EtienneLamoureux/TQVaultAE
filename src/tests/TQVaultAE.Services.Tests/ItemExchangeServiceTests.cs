@@ -238,7 +238,7 @@ public class ItemExchangeServiceTests
 
 		result.Should().NotBeNull();
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Contain("Unsupported scope");
+		result.Error.Should().Be(ImportError.UnsupportedScope);
 	}
 
 	[Fact]
@@ -309,7 +309,7 @@ public class ItemExchangeServiceTests
 		var result = _service.ImportFromJson(json);
 
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Contain("Failed to deserialize multi-select");
+		result.Error.Should().Be(ImportError.UnreadableData);
 	}
 
 	[Fact]
@@ -354,7 +354,7 @@ public class ItemExchangeServiceTests
 		var result = _service.ImportFromJson(json);
 
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Contain("Invalid or unsupported export format");
+		result.Error.Should().Be(ImportError.UnsupportedFormat);
 	}
 
 	[Fact]
@@ -365,7 +365,7 @@ public class ItemExchangeServiceTests
 		var result = _service.ImportFromJson(json);
 
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Contain("Invalid or unsupported export format");
+		result.Error.Should().Be(ImportError.UnsupportedFormat);
 	}
 
 	[Fact]
@@ -376,7 +376,7 @@ public class ItemExchangeServiceTests
 		var result = _service.ImportFromJson(json);
 
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Contain("Missing scope");
+		result.Error.Should().Be(ImportError.MissingScope);
 	}
 
 	[Fact]
@@ -387,7 +387,7 @@ public class ItemExchangeServiceTests
 		var result = _service.ImportFromJson(json);
 
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Contain("Missing data");
+		result.Error.Should().Be(ImportError.MissingData);
 	}
 
 	[Fact]

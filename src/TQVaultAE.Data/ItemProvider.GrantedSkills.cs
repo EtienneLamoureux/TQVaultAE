@@ -15,14 +15,8 @@ public partial class ItemProvider
 	/// <inheritdoc/>
 	public IEnumerable<(DBRecordCollection Source, RecordId SkillId, int Level)> GetGrantedSkillSources(Item itm)
 	{
-		RecordId?[] sources = [itm.BaseItemId, itm.prefixID, itm.suffixID, itm.relicID, itm.RelicBonusId, itm.relic2ID, itm.RelicBonus2Id];
-
-		var seen = new HashSet<RecordId>();
-		foreach (var sourceId in sources)
+		foreach (var sourceId in itm.RecordIds())
 		{
-			if (RecordId.IsNullOrEmpty(sourceId) || !seen.Add(sourceId))
-				continue;
-
 			if (Database.GetRecordFromFile(sourceId) is not { } source)
 				continue;
 

@@ -1,4 +1,4 @@
-﻿﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using TQVaultAE.Domain.Comparison;
 using TQVaultAE.Domain.Entities;
@@ -264,8 +264,6 @@ public partial class ToFriendlyNameResult
 
 	#region RelicInfo 1 & 2
 
-	public string? ItemRelicBonus1Format { get; internal set; }
-	public string? ItemRelicBonus2Format { get; internal set; }
 	public string? RelicInfo1Description { get; internal set; }
 	public string? RelicInfo2Description { get; internal set; }
 	public string[] Relic1Attributes { get; internal set; } = [];
@@ -275,103 +273,40 @@ public partial class ToFriendlyNameResult
 	public DBRecordCollection? RelicBonus1InfoRecords { get; internal set; }
 	public DBRecordCollection? RelicBonus2InfoRecords { get; internal set; }
 	public DBRecordCollection? Relic2InfoRecords { get; internal set; }
-	/// <summary>
-	/// Resolve first relic completion label
-	/// </summary>
+	/// <summary>Resolve first relic completion label</summary>
 	public string? RelicInfo1CompletionResolved
-	{
-		get
-		{
-			if (this.Item.RelicInfo is null) return null;
-			else
-			{
-				if (this.Item.IsRelic1Charm)
-				{
-					if (this.Item.IsRelicBonus1Complete)
-						return this.AnimalPartComplete;
-					else
-						return string.Format(this.AnimalPartRatio ?? string.Empty
-							, this.AnimalPart
-							, this.Item.Var1
-							, this.Item.RelicInfo.CompletedRelicLevel
-						);
-				}
-				else
-				{
-					if (this.Item.IsRelicBonus1Complete)
-						return this.RelicComplete;
-					else
-						return string.Format(this.RelicRatio ?? string.Empty
-							, this.RelicShard
-							, this.Item.Var1
-							, this.Item.RelicInfo.CompletedRelicLevel
-						);
-				}
-			}
-		}
-	}
-	/// <summary>
-	/// Resolve first relic completion bonus label
-	/// </summary>
+		=> this.CompletionLabel(this.Item.RelicInfo, this.Item.IsRelic1Charm, this.Item.IsRelicBonus1Complete, this.Item.Var1);
+
+	/// <summary>Resolve first relic completion bonus label</summary>
 	public string? RelicInfo1CompletionBonusResolved
-	{
-		get
-		{
-			if (this.Item.IsRelic1Charm)
-				return this.Item.IsRelicBonus1Complete ? this.AnimalPartCompleteBonus : null;
-			else
-				return this.Item.IsRelicBonus1Complete ? this.RelicBonus : null;
-		}
-	}
-	/// <summary>
-	/// Resolve second relic completion label
-	/// </summary>
+		=> this.CompletionBonusLabel(this.Item.IsRelic1Charm, this.Item.IsRelicBonus1Complete);
+
+	/// <summary>Resolve second relic completion label</summary>
 	public string? RelicInfo2CompletionResolved
+		=> this.CompletionLabel(this.Item.Relic2Info, this.Item.IsRelic2Charm, this.Item.IsRelicBonus2Complete, this.Item.Var2);
+
+	/// <summary>Resolve second relic completion bonus label</summary>
+	public string? RelicInfo2CompletionBonusResolved
+		=> this.CompletionBonusLabel(this.Item.IsRelic2Charm, this.Item.IsRelicBonus2Complete);
+
+	/// <summary>A relic or charm slot's completion: complete, or its pieces out of those it needs; null without relic.</summary>
+	private string? CompletionLabel(Info? relic, bool charm, bool complete, int pieces)
 	{
-		get
-		{
-			if (this.Item.Relic2Info is null) return null;
-			else
-			{
-				if (this.Item.IsRelic2Charm)
-				{
-					if (this.Item.IsRelicBonus2Complete)
-						return this.AnimalPartComplete;
-					else
-						return string.Format(this.AnimalPartRatio ?? string.Empty
-							, this.AnimalPart
-							, this.Item.Var2
-							, this.Item.Relic2Info.CompletedRelicLevel
-						);
-				}
-				else
-				{
-					if (this.Item.IsRelicBonus2Complete)
-						return this.RelicComplete;
-					else
-						return string.Format(this.RelicRatio ?? string.Empty
-							, this.RelicShard
-							, this.Item.Var2
-							, this.Item.Relic2Info.CompletedRelicLevel
-						);
-				}
-			}
-		}
+		if (relic is null)
+			return null;
+
+		if (complete)
+			return charm ? this.AnimalPartComplete : this.RelicComplete;
+
+		return string.Format(charm ? this.AnimalPartRatio ?? string.Empty : this.RelicRatio ?? string.Empty
+			, charm ? this.AnimalPart : this.RelicShard
+			, pieces
+			, relic.CompletedRelicLevel);
 	}
 
-	/// <summary>
-	/// Resolve second relic completion bonus label
-	/// </summary>
-	public string? RelicInfo2CompletionBonusResolved
-	{
-		get
-		{
-			if (this.Item.IsRelic2Charm)
-				return this.Item.IsRelicBonus2Complete ? this.AnimalPartCompleteBonus : null;
-			else
-				return this.Item.IsRelicBonus2Complete ? this.RelicBonus : null;
-		}
-	}
+	/// <summary>A relic or charm slot's completion bonus label, once complete.</summary>
+	private string? CompletionBonusLabel(bool charm, bool complete)
+		=> !complete ? null : charm ? this.AnimalPartCompleteBonus : this.RelicBonus;
 
 	#endregion
 
