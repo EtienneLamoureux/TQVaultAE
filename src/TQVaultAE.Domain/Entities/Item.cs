@@ -437,37 +437,22 @@ public class Item
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Immortal Throne expansion pack.
 	/// </summary>
-	public bool IsImmortalThrone
-		=> (this.BaseItemId?.Dlc == GameDlc.ImmortalThrone
-		|| (this.prefixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.ImmortalThrone) ?? false)
-		) && !IsRagnarok && !IsAtlantis && !IsEmbers;
+	public bool IsImmortalThrone => this.GameDlc == GameDlc.ImmortalThrone;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Ragnarok DLC.
 	/// </summary>
-	public bool IsRagnarok
-		=> (this.BaseItemId?.Dlc == GameDlc.Ragnarok
-		|| (this.prefixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.Ragnarok) ?? false)
-		) && !IsAtlantis && !IsEmbers;
+	public bool IsRagnarok => this.GameDlc == GameDlc.Ragnarok;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Atlantis DLC.
 	/// </summary>
-	public bool IsAtlantis
-		=> (this.BaseItemId?.Dlc == GameDlc.Atlantis
-		|| (this.prefixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.Atlantis) ?? false)
-		) && !IsEmbers;
+	public bool IsAtlantis => this.GameDlc == GameDlc.Atlantis;
 
 	/// <summary>
 	/// Gets a value indicating whether or not the item comes from Eternal Embers DLC.
 	/// </summary>
-	public bool IsEmbers
-		=> this.BaseItemId?.Dlc == GameDlc.EternalEmbers
-		|| (this.prefixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false)
-		|| (this.suffixID?.Dlc.Equals(GameDlc.EternalEmbers) ?? false);
+	public bool IsEmbers => this.GameDlc == GameDlc.EternalEmbers;
 
 
 	/// <summary>
@@ -1295,15 +1280,17 @@ public class Item
 
 	#region GameDlc
 
+	/// <summary>The latest game the item's base record or affixes come from (<see cref="GameDlc"/> is in release order).</summary>
 	public GameDlc GameDlc
 	{
 		get
 		{
-			if (this.IsImmortalThrone) return GameDlc.ImmortalThrone;
-			else if (this.IsRagnarok) return GameDlc.Ragnarok;
-			else if (this.IsAtlantis) return GameDlc.Atlantis;
-			else if (this.IsEmbers) return GameDlc.EternalEmbers;
-			else return GameDlc.TitanQuest;
+			static GameDlc Of(RecordId? id) => id?.Dlc ?? GameDlc.TitanQuest;
+			var dlc = Of(this.BaseItemId);
+			if (Of(this.prefixID) > dlc)
+				dlc = Of(this.prefixID);
+
+			return Of(this.suffixID) > dlc ? Of(this.suffixID) : dlc;
 		}
 	}
 

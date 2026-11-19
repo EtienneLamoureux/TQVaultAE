@@ -290,4 +290,16 @@ public class ItemTests
 
 		item.RecordIds().Select(id => id.Raw).Should().Equal("records/items/base.dbr", "records/items/suffix.dbr", "records/items/relic_a.dbr");
 	}
+
+	[Theory]
+	[InlineData(@"records\xpack\items\base.dbr", @"records\items\prefix.dbr", @"records\xpack3\items\suffix.dbr", GameDlc.Atlantis)]
+	[InlineData(@"records\items\base.dbr", @"records\xpack2\items\prefix.dbr", @"records\items\suffix.dbr", GameDlc.Ragnarok)]
+	[InlineData(@"records\items\base.dbr", @"records\items\prefix.dbr", @"records\items\suffix.dbr", GameDlc.TitanQuest)]
+	public void GameDlc_IsTheLatestGameOfTheBaseAndAffixes(string baseId, string prefix, string suffix, GameDlc expected)
+	{
+		var item = new Item { BaseItemId = RecordId.Create(baseId), prefixID = RecordId.Create(prefix), suffixID = RecordId.Create(suffix) };
+
+		item.GameDlc.Should().Be(expected);
+		item.IsImmortalThrone.Should().Be(expected == GameDlc.ImmortalThrone);
+	}
 }
