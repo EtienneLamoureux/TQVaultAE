@@ -57,7 +57,8 @@ internal sealed unsafe class MappedFile : IDisposable
 		using var src = this.Stream(offset, compressedSize);
 		using var z = new ZLibStream(src, CompressionMode.Decompress);
 		int total = 0;
-		while (total < destination.Length) {
+		while (total < destination.Length)
+		{
 			int n = z.Read(destination[total..]);
 			if (n == 0)
 				break;
@@ -75,8 +76,10 @@ internal sealed unsafe class MappedFile : IDisposable
 		using var src = this.Stream(offset, compressedSize);
 		using var z = new ZLibStream(src, CompressionMode.Decompress);
 		int total = 0;
-		while (true) {
-			if (total == pooledBuffer.Length) {
+		while (true)
+		{
+			if (total == pooledBuffer.Length)
+			{
 				var bigger = ArrayPool<byte>.Shared.Rent(pooledBuffer.Length * 2);
 				pooledBuffer.AsSpan(0, total).CopyTo(bigger);
 				ArrayPool<byte>.Shared.Return(pooledBuffer);
@@ -100,7 +103,8 @@ internal sealed unsafe class MappedFile : IDisposable
 	{
 		if (Interlocked.Exchange(ref this._disposed, 1) != 0)
 			return;
-		if (this._view is not null) {
+		if (this._view is not null)
+		{
 			this._view.SafeMemoryMappedViewHandle.ReleasePointer();
 			this._view.Dispose();
 		}

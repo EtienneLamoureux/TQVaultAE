@@ -24,7 +24,8 @@ public struct Adler32
 	/// <summary>Adds bytes to the checksum.</summary>
 	public void Append(ReadOnlySpan<byte> data)
 	{
-		if (!this._started) {
+		if (!this._started)
+		{
 			this._a = 1;
 			this._b = 0;
 			this._started = true;
@@ -32,11 +33,13 @@ public struct Adler32
 
 		uint a = this._a;
 		uint b = this._b;
-		while (data.Length > 0) {
+		while (data.Length > 0)
+		{
 			int n = Math.Min(data.Length, NMax);
 			var chunk = data[..n];
 			int i = 0;
-			for (; i + 4 <= n; i += 4) {
+			for (; i + 4 <= n; i += 4)
+			{
 				a += chunk[i];
 				b += a;
 				a += chunk[i + 1];
@@ -46,7 +49,8 @@ public struct Adler32
 				a += chunk[i + 3];
 				b += a;
 			}
-			for (; i < n; i++) {
+			for (; i < n; i++)
+			{
 				a += chunk[i];
 				b += a;
 			}

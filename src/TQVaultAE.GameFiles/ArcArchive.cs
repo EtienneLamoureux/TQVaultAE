@@ -43,7 +43,8 @@ internal sealed class ArcArchive : IArcArchive
 		this.Path = path;
 		this.ResourcePrefix = ArchiveLayout.ResourcePrefix(path);
 		this._file = new MappedFile(path);
-		try {
+		try
+		{
 			if (this._file.Length < HeaderSize)
 				throw new InvalidDataException($"{path}: file too small to be an .arc.");
 			var h = this._file.Span(0, HeaderSize);
@@ -56,7 +57,8 @@ internal sealed class ArcArchive : IArcArchive
 
 			this._parts = new Part[numParts];
 			var pt = this._file.Span(tocOffset, checked(numParts * PartEntrySize));
-			for (int i = 0; i < numParts; i++) {
+			for (int i = 0; i < numParts; i++)
+			{
 				var p = pt[(i * PartEntrySize)..];
 				this._parts[i] = new Part(
 					BinaryPrimitives.ReadUInt32LittleEndian(p),
@@ -70,7 +72,8 @@ internal sealed class ArcArchive : IArcArchive
 
 			var entries = new List<ArcEntry>(numFiles);
 			this._byName = new Dictionary<string, ArcEntry>(numFiles, StringComparer.OrdinalIgnoreCase);
-			for (int i = 0; i < numFiles; i++) {
+			for (int i = 0; i < numFiles; i++)
+			{
 				var e = ft[(i * FileEntrySize)..];
 				int type = BinaryPrimitives.ReadInt32LittleEndian(e);
 				uint offset = BinaryPrimitives.ReadUInt32LittleEndian(e[4..]);
@@ -105,7 +108,9 @@ internal sealed class ArcArchive : IArcArchive
 				this._byName.TryAdd(NormalizeName(name), entry);
 			}
 			this._entries = [.. entries];
-		} catch {
+		}
+		catch
+		{
 			this._file.Dispose();
 			throw;
 		}
@@ -128,7 +133,8 @@ internal sealed class ArcArchive : IArcArchive
 		ArgumentNullException.ThrowIfNull(destination);
 		var adler = new Adler32();
 		long written = 0;
-		this.ForEachChunk(entry, chunk => {
+		this.ForEachChunk(entry, chunk =>
+		{
 			if (verify)
 				adler.Append(chunk);
 			destination.Write(chunk);
@@ -143,13 +149,15 @@ internal sealed class ArcArchive : IArcArchive
 		if (entry.Size > Array.MaxLength)
 			throw new InvalidOperationException($"{entry.Name} is too large ({entry.Size} bytes) to read into memory; use CopyTo.");
 		var result = new byte[entry.Size];
-		if (entry.StorageType == Stored) {
+		if (entry.StorageType == Stored)
+		{
 			this._file.Span(layout.Offset, (int)entry.Size).CopyTo(result);
 			return result;
 		}
 
 		int pos = 0;
-		for (int i = 0; i < layout.PartCount; i++) {
+		for (int i = 0; i < layout.PartCount; i++)
+		{
 			var part = this._parts[layout.FirstPart + i];
 			if (part.Size > result.Length - pos)
 				throw new InvalidDataException($"{entry.Name}: parts exceed the declared size {entry.Size}.");
@@ -179,9 +187,11 @@ internal sealed class ArcArchive : IArcArchive
 	private void ForEachChunk(ArcEntry entry, ChunkAction action)
 	{
 		var layout = this.LayoutOf(entry);
-		if (entry.StorageType == Stored) {
+		if (entry.StorageType == Stored)
+		{
 			const int Chunk = 1 << 20;
-			for (long done = 0; done < entry.Size;) {
+			for (long done = 0; done < entry.Size;)
+			{
 				int n = (int)Math.Min(Chunk, entry.Size - done);
 				action(this._file.Span(layout.Offset + done, n));
 				done += n;
@@ -193,8 +203,10 @@ internal sealed class ArcArchive : IArcArchive
 		for (int i = 0; i < layout.PartCount; i++)
 			max = Math.Max(max, this._parts[layout.FirstPart + i].Size);
 		byte[] buffer = ArrayPool<byte>.Shared.Rent(Math.Max(max, 1));
-		try {
-			for (int i = 0; i < layout.PartCount; i++) {
+		try
+		{
+			for (int i = 0; i < layout.PartCount; i++)
+			{
 				// Type 3 parts are always zlib, even when csize == usize.
 				var part = this._parts[layout.FirstPart + i];
 				int n = this._file.Inflate(part.Offset, part.CompressedSize, buffer.AsSpan(0, part.Size));
@@ -202,7 +214,9 @@ internal sealed class ArcArchive : IArcArchive
 					throw new InvalidDataException($"{entry.Name}: part {i} inflated to {n} bytes, expected {part.Size}.");
 				action(buffer.AsSpan(0, n));
 			}
-		} finally {
+		}
+		finally
+		{
 			ArrayPool<byte>.Shared.Return(buffer);
 		}
 	}
@@ -218,7 +232,8 @@ internal sealed class ArcArchive : IArcArchive
 	private Layout LayoutOf(ArcEntry entry)
 	{
 		ArgumentNullException.ThrowIfNull(entry);
-		if (ReferenceEquals(entry.Archive, this)) {
+		if (ReferenceEquals(entry.Archive, this))
+		{
 			if (this._layouts.TryGetValue(entry, out var layout))
 				return layout;
 

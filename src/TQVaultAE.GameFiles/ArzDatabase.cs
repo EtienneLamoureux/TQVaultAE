@@ -43,7 +43,8 @@ internal sealed class ArzDatabase : IArzDatabase
 	{
 		this.Path = path;
 		this._file = new MappedFile(path);
-		try {
+		try
+		{
 			if (this._file.Length < HeaderSize)
 				throw new InvalidDataException($"{path}: file too small to be a database.arz.");
 			var h = this._file.Span(0, HeaderSize);
@@ -61,7 +62,9 @@ internal sealed class ArzDatabase : IArzDatabase
 			this._byId = new Dictionary<string, ArzRecordInfo>(this._records.Length, StringComparer.OrdinalIgnoreCase);
 			foreach (var r in this._records)
 				this._byId.TryAdd(NormalizeId(r.Id), r);
-		} catch {
+		}
+		catch
+		{
 			this._file.Dispose();
 			throw;
 		}
@@ -84,10 +87,13 @@ internal sealed class ArzDatabase : IArzDatabase
 	{
 		ArgumentNullException.ThrowIfNull(info);
 		byte[] buffer = ArrayPool<byte>.Shared.Rent(Math.Max(4096, info.CompressedSize * 6));
-		try {
+		try
+		{
 			int length = this.InflateRecord(info, ref buffer);
 			return new ArzRecord(info, this.Decode(info, buffer.AsSpan(0, length)));
-		} finally {
+		}
+		finally
+		{
 			ArrayPool<byte>.Shared.Return(buffer);
 		}
 	}
@@ -120,7 +126,8 @@ internal sealed class ArzDatabase : IArzDatabase
 	{
 		// Count variables first so the result array is allocated exactly once.
 		int count = 0;
-		for (int p = 0; p + 8 <= data.Length;) {
+		for (int p = 0; p + 8 <= data.Length;)
+		{
 			int n = BinaryPrimitives.ReadUInt16LittleEndian(data[(p + 2)..]);
 			p += 8 + (n * 4);
 			count++;
@@ -128,7 +135,8 @@ internal sealed class ArzDatabase : IArzDatabase
 
 		var vars = new ArzVariable[count];
 		int pos = 0;
-		for (int v = 0; v < count; v++) {
+		for (int v = 0; v < count; v++)
+		{
 			var type = (ArzValueType)BinaryPrimitives.ReadInt16LittleEndian(data[pos..]);
 			int n = BinaryPrimitives.ReadUInt16LittleEndian(data[(pos + 2)..]);
 			int nameId = BinaryPrimitives.ReadInt32LittleEndian(data[(pos + 4)..]);
@@ -138,9 +146,11 @@ internal sealed class ArzDatabase : IArzDatabase
 
 			var values = n == 0 ? [] : new object[n];
 			var raw = data.Slice(pos, n * 4);
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < n; i++)
+			{
 				int x = BinaryPrimitives.ReadInt32LittleEndian(raw[(i * 4)..]);
-				values[i] = type switch {
+				values[i] = type switch
+				{
 					ArzValueType.Int => BoxInt(x),
 					ArzValueType.Float => BoxFloat(BitConverter.Int32BitsToSingle(x)),
 					ArzValueType.String => this.GetString(info, x),
@@ -178,7 +188,8 @@ internal sealed class ArzDatabase : IArzDatabase
 		int count = BinaryPrimitives.ReadInt32LittleEndian(table);
 		var strings = new string[count];
 		int pos = 4;
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++)
+		{
 			int len = BinaryPrimitives.ReadInt32LittleEndian(table[pos..]);
 			pos += 4;
 			strings[i] = TextEncodings.Cp1252.GetString(table.Slice(pos, len));
@@ -192,7 +203,8 @@ internal sealed class ArzDatabase : IArzDatabase
 		var records = new ArzRecordInfo[count];
 		var classes = new Dictionary<string, string>(StringComparer.Ordinal);
 		int pos = 0;
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++)
+		{
 			int nameId = BinaryPrimitives.ReadInt32LittleEndian(table[pos..]);
 			int classLen = BinaryPrimitives.ReadInt32LittleEndian(table[(pos + 4)..]);
 			pos += 8;
