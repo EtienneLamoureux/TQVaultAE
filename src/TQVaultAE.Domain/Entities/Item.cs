@@ -197,6 +197,26 @@ public class Item
 	public int Var2 { get; set; }
 
 	/// <summary>
+	/// The records the item is made of, always in this order: base, prefix, suffix, first relic or charm at its number of
+	/// pieces (<see cref="Var1"/>), its completion bonus, second relic (<see cref="Var2"/>), its completion bonus. An empty
+	/// slot gives a null or empty id; the other records count 1.
+	/// </summary>
+	public (RecordId? Id, int Pieces)[] RecordSources()
+		=> [
+			(this.BaseItemId, 1),
+			(this.prefixID, 1),
+			(this.suffixID, 1),
+			(this.relicID, this.Var1),
+			(this.RelicBonusId, 1),
+			(this.relic2ID, this.Var2),
+			(this.RelicBonus2Id, 1),
+		];
+
+	/// <summary>The records of <see cref="RecordSources"/> the item has, each once.</summary>
+	public IEnumerable<RecordId> RecordIds()
+		=> this.RecordSources().Select(s => s.Id!).Where(id => !RecordId.IsNullOrEmpty(id)).Distinct();
+
+	/// <summary>
 	/// Gets or sets the stack size.
 	/// Used for stackable items like potions.
 	/// </summary>

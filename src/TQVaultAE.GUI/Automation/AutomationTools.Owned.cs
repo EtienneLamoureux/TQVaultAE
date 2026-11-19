@@ -26,8 +26,7 @@ internal static partial class AutomationTools
 			{
 				var item = result.Item;
 				var skills = new List<object>();
-				RecordId[] sources = [item.BaseItemId, item.prefixID, item.suffixID, item.relicID, item.RelicBonusId, item.relic2ID, item.RelicBonus2Id];
-				foreach (var source in sources.Where(s => !RecordId.IsNullOrEmpty(s)).Distinct())
+				foreach (var source in item.RecordIds())
 				{
 					if (database.GetRecordFromFile(source) is not { } record)
 						continue;

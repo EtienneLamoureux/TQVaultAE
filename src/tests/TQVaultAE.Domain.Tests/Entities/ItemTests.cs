@@ -274,4 +274,20 @@ public class ItemTests
 	}
 
 	#endregion
+
+	[Fact]
+	public void RecordIds_ListsTheRecordsOnce_InTheirOrder_WithoutEmptySlots()
+	{
+		var relic = RecordId.Create("records/items/relic_a.dbr");
+		var item = new Item
+		{
+			BaseItemId = RecordId.Create("records/items/base.dbr"),
+			prefixID = RecordId.Empty,
+			suffixID = RecordId.Create("records/items/suffix.dbr"),
+			relicID = relic,
+			relic2ID = relic,
+		};
+
+		item.RecordIds().Select(id => id.Raw).Should().Equal("records/items/base.dbr", "records/items/suffix.dbr", "records/items/relic_a.dbr");
+	}
 }

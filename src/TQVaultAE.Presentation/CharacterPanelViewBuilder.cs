@@ -205,8 +205,8 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 	private void TrackGear(CharacterPanelInput input)
 	{
 		var key = (input.CountsAlternateWeapons ? "+" : "-") + string.Join(";", Equipment(input).Select(i =>
-			string.Join(",", i.BaseItemId?.Raw, i.prefixID?.Raw, i.suffixID?.Raw, i.relicID?.Raw, i.RelicBonusId?.Raw, i.relic2ID?.Raw, i.RelicBonus2Id?.Raw,
-				i.Seed.ToString(CultureInfo.InvariantCulture), i.Var1.ToString(CultureInfo.InvariantCulture), i.Var2.ToString(CultureInfo.InvariantCulture), i.Mod)));
+			string.Join(",", i.RecordSources().Select(s => s.Id?.Raw)) + ","
+				+ string.Join(",", i.Seed.ToString(CultureInfo.InvariantCulture), i.Var1.ToString(CultureInfo.InvariantCulture), i.Var2.ToString(CultureInfo.InvariantCulture), i.Mod)));
 		if (key == this._gearKey)
 			return;
 

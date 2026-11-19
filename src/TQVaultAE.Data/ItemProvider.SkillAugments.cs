@@ -16,18 +16,7 @@ public partial class ItemProvider
 		var augments = new List<SkillAugment>();
 
 		// The item and its affixes, then each relic or charm at its number of pieces, and its completion bonus.
-		(RecordId? Id, int Level)[] sources =
-		[
-			(item.BaseItemId, 1),
-			(item.prefixID, 1),
-			(item.suffixID, 1),
-			(item.relicID, item.Var1),
-			(item.RelicBonusId, 1),
-			(item.relic2ID, item.Var2),
-			(item.RelicBonus2Id, 1),
-		];
-
-		foreach (var (id, level) in sources)
+		foreach (var (id, level) in item.RecordSources())
 		{
 			if (!RecordId.IsNullOrEmpty(id))
 				AddSkillAugments(augments, Database.GetRecordFromFile(id), level);
