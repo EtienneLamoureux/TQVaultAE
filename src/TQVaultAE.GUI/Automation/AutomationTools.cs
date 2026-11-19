@@ -796,8 +796,12 @@ internal static partial class AutomationTools
 		=> OpenTooltips().Select(t => new
 		{
 			type = t.GetType().Name,
+			x = t.Left,
+			y = t.Top,
 			width = t.Width,
 			height = t.Height,
+			// The working area of the tool tip's monitor (virtual screen pixels): a placement check per monitor.
+			workingArea = Screen.FromControl(t).WorkingArea,
 			// The font of the tool tip's first text control: shows a tool tip whose text grows or shrinks over time.
 			font = t.Controls.Cast<Control>().FirstOrDefault(c => c is Label) is { } label
 				? FontText(label.Font) : null,

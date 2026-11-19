@@ -442,8 +442,9 @@ General rules:
 ### Tool tips and menus
 
 - **`hover_item(panel, x, y)`**: rests the virtual cursor on a cell without dragging. TQVault shows the item's tooltip
-  and writes its name in the notification bar. Returns the item, the notification text, the tooltips shown, and a PNG
-  of the tooltip taken at once (a tooltip can close by itself).
+  and writes its name in the notification bar. Returns the item, the notification text, the tooltips shown (position,
+  size, and the working area of their monitor: checks the placement on any monitor), and a PNG of the tooltip taken at
+  once (a tooltip can close by itself).
 - **`hover_bag(panel, bag, hide?)`**: shows a bag button's tooltips like resting the pointer on it: the summary of the
   bag's items and, for a bag with a custom label, the label above the button.
   - Returns each tooltip shown with its size and text font (checks a tooltip keeps its size over zoom and
