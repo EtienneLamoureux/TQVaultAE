@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Item.cs" company="None">
+// <copyright file="ItemTextFormatter.Item.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

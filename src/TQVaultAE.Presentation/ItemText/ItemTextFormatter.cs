@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Item.cs" company="None">
+// <copyright file="ItemTextFormatter.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -205,7 +205,8 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 	{
 		using var modScope = this.ModScope(itm);
 		// Cached results depend on the in-game values setting: drop them when it changes.
-		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues) {
+		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues)
+		{
 			this.FriendlyNamesCache.Clear();
 			this._cachedShowInGameValues = this.USettings.ShowInGameValues;
 		}
