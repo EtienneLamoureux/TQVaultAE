@@ -134,10 +134,24 @@ public static partial class HeadlessDesktop
 				_cancelled.Enqueue($"{DateTime.Now:HH:mm:ss} {description}");
 				_onCancelled?.Invoke(description);
 			}
-			Win32Window.Post(wParam, WM_COMMAND, IDCANCEL, IntPtr.Zero);
+			Win32Window.Post(wParam, WM_COMMAND, DefaultAnswer(wParam), IntPtr.Zero);
 		}
 
 		return CallNextHookEx(_cbtHook, code, wParam, lParam);
+	}
+
+	/// <summary>
+	/// The command that closes a dialog with its default answer: Cancel, else No (a Yes/No box ignores Cancel and would
+	/// stay open), else Ignore (Abort/Retry/Ignore); Cancel for the others (an OK box takes it as OK).
+	/// </summary>
+	private static IntPtr DefaultAnswer(IntPtr dialog)
+	{
+		foreach (var id in (ReadOnlySpan<int>)[IDCANCEL, IDNO, IDIGNORE])
+		{
+			if (Win32Window.DialogItem(dialog, id) != IntPtr.Zero)
+				return id;
+		}
+		return IDCANCEL;
 	}
 
 	private static bool IsTopLevelDialog(IntPtr hwnd)
@@ -181,7 +195,9 @@ public static partial class HeadlessDesktop
 	private const int WM_COMMAND = 0x0111;
 	private const int GWL_STYLE = -16;
 	private const int WS_CHILD = 0x40000000;
-	private static readonly IntPtr IDCANCEL = 2;
+	private const int IDCANCEL = 2;
+	private const int IDIGNORE = 5;
+	private const int IDNO = 7;
 
 	[LibraryImport("user32.dll", EntryPoint = "CreateDesktopW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
 	private static partial IntPtr CreateDesktop(string name, IntPtr device, IntPtr devmode, uint flags, uint access, IntPtr attributes);
