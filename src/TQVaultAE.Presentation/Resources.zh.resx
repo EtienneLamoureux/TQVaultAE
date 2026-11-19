@@ -694,12 +694,6 @@ TQVault关闭仍有物品在垃圾桶时将不会有提示信息。</value>
     <data name="ItemRagnarok" xml:space="preserve">
     <value>诸神黄昏(Ragnarök)物品</value>
   </data>
-  <data name="AlbertusMTLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Fonts\albertus mt light.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AlbertusMT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Fonts\albertus mt.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ItemAtlantis" xml:space="preserve">
     <value>亚特兰蒂斯物品</value>
   </data>

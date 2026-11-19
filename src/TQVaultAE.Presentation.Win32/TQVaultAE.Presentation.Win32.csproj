@@ -30,6 +30,12 @@
 		</Compile>
 	</ItemGroup>
 
+	<!-- Files that are the same in every language, read by EmbeddedAssets. -->
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Fonts\*.ttf" LogicalName="Fonts.%(Filename)%(Extension)" />
+		<EmbeddedResource Include="Resources\Files\IconServiceList.json" LogicalName="IconServiceList.json" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<EmbeddedResource Update="Images.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>

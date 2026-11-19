@@ -168,26 +168,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] AlbertusMT {
-            get {
-                object obj = ResourceManager.GetObject("AlbertusMT", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] AlbertusMTLight {
-            get {
-                object obj = ResourceManager.GetObject("AlbertusMTLight", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Attribute Points.
         /// </summary>
         public static string AttributesPoints {
@@ -1857,39 +1837,6 @@ namespace TQVaultAE.Presentation {
         public static string HighlightFiltersZeroToIgnore {
             get {
                 return ResourceManager.GetString("HighlightFiltersZeroToIgnore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///	&quot;list&quot;: [
-        ///		{
-        ///			&quot;file&quot;: &quot;ITEMS&quot;,
-        ///			&quot;img&quot;: [
-        ///				{
-        ///					&quot;ca&quot;: &quot;Relics&quot;,
-        ///					&quot;pa&quot;: &quot;ANIMALRELICS\\\\ANIMALPART[^_\\.]+\\.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;.TEX|_E.TEX&quot;,
-        ///					&quot;ov&quot;: &quot;.TEX|_L.TEX&quot;
-        ///				},
-        ///				{
-        ///					&quot;ca&quot;: &quot;Jewellery&quot;,
-        ///					&quot;pa&quot;: &quot;(EQUIPMENT AMULET|EQUIPMENTRING)\\\\UIBITMAPS\\\\\\w+\\.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;|&quot;,
-        ///					&quot;ov&quot;: &quot;|&quot;
-        ///				},
-        ///				{
-        ///					&quot;ca&quot;: &quot;Helmets&quot;,
-        ///					&quot;pa&quot;: &quot;EQUIPMENTHELM\\\\UIBITMAPS\\\\\\w+.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;|&quot;,
-        ///					&quot;ov&quot;: &quot; [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string IconServiceList {
-            get {
-                return ResourceManager.GetString("IconServiceList", resourceCulture);
             }
         }
         

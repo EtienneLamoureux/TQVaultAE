@@ -814,12 +814,6 @@ Would you like to disable loading all files?</value>
 	<data name="ItemRagnarok" xml:space="preserve">
     <value>Ragnarök Item</value>
   </data>
-	<data name="AlbertusMTLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Fonts\albertus mt light.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</data>
-	<data name="AlbertusMT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Fonts\albertus mt.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</data>
 	<data name="ItemAtlantis" xml:space="preserve">
     <value>Atlantis Item</value>
   </data>
@@ -1279,9 +1273,6 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="SavedAtNotification" xml:space="preserve">
     <value>Saved at {0:g}</value>
   </data>
-	<data name="IconServiceList" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>resources\files\iconservicelist.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</data>
 	<data name="PlayerPanelChangeIcon" xml:space="preserve">
     <value>Change icon</value>
   </data>

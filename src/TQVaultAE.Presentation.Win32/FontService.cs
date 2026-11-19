@@ -76,8 +76,8 @@ public class FontService : IFontService
 		FontFamily? family = baseFont switch
 		{
 			FontFamilyList.AlbertusMT => light
-				? this.FontLoader.AddFontToOS(ALBERTUSMTLIGHT_NAME, Resources.AlbertusMTLight)
-				: this.FontLoader.AddFontToOS(ALBERTUSMT_NAME, Resources.AlbertusMT),
+				? this.FontLoader.AddFontToOS(ALBERTUSMTLIGHT_NAME, EmbeddedAssets.AlbertusMTLight)
+				: this.FontLoader.AddFontToOS(ALBERTUSMT_NAME, EmbeddedAssets.AlbertusMT),
 			FontFamilyList.Arial or FontFamilyList.Verdana => new FontFamily(baseFont.ToString()),
 			FontFamilyList.TimesNewRoman => new FontFamily(baseFont.AsString(EnumFormat.Description) ?? baseFont.ToString()),
 			_ => null,
