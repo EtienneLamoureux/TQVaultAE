@@ -225,6 +225,11 @@ public partial class ComboBoxCharacterItem : UserControl
 	{
 		this.bufferedFlowLayoutPanelTags.Controls.OfType<ScalingLabel>()
 			.Where(ctr => ctr.Name.StartsWith(ComboBoxCharacter.TAGKEY, StringComparison.Ordinal))
-			.ToList().ForEach(ctr => this.bufferedFlowLayoutPanelTags.Controls.Remove(ctr));
+			.ToList().ForEach(ctr =>
+			{
+				// Removing a control keeps its window handle: each refresh of the list left one per tag.
+				this.bufferedFlowLayoutPanelTags.Controls.Remove(ctr);
+				ctr.Dispose();
+			});
 	}
 }

@@ -28,8 +28,6 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 	private IPlayerService PlayerService = null!;
 	private UserSettings USettings = null!;
 	private Bitmap HUDCHARACTERBUTTONUP01 = null!;
-	private Bitmap HUDCHARACTERBUTTONOVER01 = null!;
-	private Bitmap HUDCHARACTERBUTTONDOWN01 = null!;
 	private Bitmap HUDMENUSKILLBUTTONUP01 = null!;
 	private Bitmap HUDMENUSKILLBUTTONDOWN01 = null!;
 	private Bitmap HUDMENUSKILLBUTTONOVER01 = null!;
@@ -241,8 +239,6 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 		if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
 		{
 			HUDCHARACTERBUTTONUP01 = UIService.LoadBitmap(@"INGAMEUI\HUDCHARACTERBUTTONUP01.TEX");
-			HUDCHARACTERBUTTONOVER01 = UIService.LoadBitmap(@"INGAMEUI\HUDCHARACTERBUTTONOVER01.TEX");
-			HUDCHARACTERBUTTONDOWN01 = UIService.LoadBitmap(@"INGAMEUI\HUDCHARACTERBUTTONDOWN01.TEX");
 
 			HUDMENUSKILLBUTTONUP01 = UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONUP01.TEX");
 			HUDMENUSKILLBUTTONDOWN01 = UIService.LoadBitmap(@"INGAMEUI\HUDMENUSKILLBUTTONDOWN01.TEX");
