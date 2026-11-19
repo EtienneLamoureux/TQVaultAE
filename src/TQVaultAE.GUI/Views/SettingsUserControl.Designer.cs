@@ -850,6 +850,7 @@ internal partial class SettingsUserControl
 		// 
 		languageComboBox.DrawMode = DrawMode.OwnerDrawFixed;
 		languageComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+		languageComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		languageComboBox.FormattingEnabled = true;
 		languageComboBox.Location = new Point(3, 21);
 		languageComboBox.Name = "languageComboBox";
@@ -963,6 +964,7 @@ internal partial class SettingsUserControl
 		// 
 		baseFontComboBox.DrawMode = DrawMode.OwnerDrawFixed;
 		baseFontComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+		baseFontComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		baseFontComboBox.FormattingEnabled = true;
 		baseFontComboBox.Location = new Point(3, 21);
 		baseFontComboBox.Name = "baseFontComboBox";
@@ -1030,6 +1032,7 @@ internal partial class SettingsUserControl
 		scalingComboBoxCSVDelim.BackColor = SystemColors.Window;
 		scalingComboBoxCSVDelim.DrawMode = DrawMode.OwnerDrawFixed;
 		scalingComboBoxCSVDelim.DropDownStyle = ComboBoxStyle.DropDownList;
+		scalingComboBoxCSVDelim.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingComboBoxCSVDelim.FormattingEnabled = true;
 		scalingComboBoxCSVDelim.Location = new Point(3, 271);
 		scalingComboBoxCSVDelim.Name = "scalingComboBoxCSVDelim";
@@ -1283,6 +1286,7 @@ internal partial class SettingsUserControl
 		// 
 		pasteBinExpirationComboBox.DrawMode = DrawMode.OwnerDrawFixed;
 		pasteBinExpirationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+		pasteBinExpirationComboBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinExpirationComboBox.Name = "pasteBinExpirationComboBox";
 		pasteBinExpirationComboBox.Size = new Size(150, 30);
 		pasteBinExpirationComboBox.TabIndex = 3;

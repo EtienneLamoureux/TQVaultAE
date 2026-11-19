@@ -1267,6 +1267,7 @@ public partial class SearchDialogAdvanced
 		// scalingComboBoxQueryList
 		// 
 		scalingComboBoxQueryList.DrawMode = DrawMode.OwnerDrawFixed;
+		scalingComboBoxQueryList.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingComboBoxQueryList.FormattingEnabled = true;
 		scalingComboBoxQueryList.Items.AddRange(new object[] { "Search term 1", "Search term 2" });
 		scalingComboBoxQueryList.Location = new Point(77, 3);
@@ -1580,6 +1581,7 @@ public partial class SearchDialogAdvanced
 		// 
 		scalingComboBoxOperator.DrawMode = DrawMode.OwnerDrawFixed;
 		scalingComboBoxOperator.DropDownStyle = ComboBoxStyle.DropDownList;
+		scalingComboBoxOperator.Font = new Font("Microsoft Sans Serif", 9F);
 		scalingComboBoxOperator.FormattingEnabled = true;
 		scalingComboBoxOperator.Items.AddRange(new object[] { "And", "Or" });
 		scalingComboBoxOperator.Location = new Point(792, 3);

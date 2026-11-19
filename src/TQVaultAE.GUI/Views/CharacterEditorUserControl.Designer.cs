@@ -294,6 +294,7 @@ internal partial class CharacterEditorUserControl
         // difficultlyComboBox
         // 
         this.difficultlyComboBox.Enabled = false;
+        this.difficultlyComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.difficultlyComboBox.FormattingEnabled = true;
         this.difficultlyComboBox.Location = new System.Drawing.Point(184, 147);
         this.difficultlyComboBox.Name = "difficultlyComboBox";

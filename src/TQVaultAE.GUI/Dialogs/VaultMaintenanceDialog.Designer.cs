@@ -181,6 +181,7 @@ internal partial class VaultMaintenanceDialog
         // vaultListComboBox
         // 
         this.vaultListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.vaultListComboBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
         this.vaultListComboBox.FormattingEnabled = true;
         this.vaultListComboBox.Location = new System.Drawing.Point(90, 275);
         this.vaultListComboBox.Name = "vaultListComboBox";
@@ -252,6 +253,7 @@ internal partial class VaultMaintenanceDialog
         // sourceLabel
         // 
         this.sourceLabel.AutoSize = true;
+        this.sourceLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
         this.sourceLabel.Location = new System.Drawing.Point(12, 278);
         this.sourceLabel.Name = "sourceLabel";
         this.sourceLabel.Size = new System.Drawing.Size(51, 17);
