@@ -267,7 +267,7 @@ internal partial class SettingsUserControl
 
 	private void PasteBinExpirationComboBoxSelectedIndexChanged(object? sender, EventArgs e)
 	{
-		if (this.pasteBinExpirationComboBox.SelectedItem is PasteBinExpirationComboBoxItem item)
-			this.editor.Current.PasteBinExpiration = item.Key;
+		if (this.pasteBinExpirationComboBox.SelectedItem is DisplayItem<string> item)
+			this.editor.Current.PasteBinExpiration = item.Value;
 	}
 }

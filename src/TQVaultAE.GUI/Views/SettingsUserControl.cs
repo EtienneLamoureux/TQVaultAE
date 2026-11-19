@@ -121,11 +121,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		["N"] = "Never"
 	};
 
-	private sealed record PasteBinExpirationComboBoxItem(string Key, string Label)
-	{
-		public override string ToString() => this.Label;
-	}
-
 	/// <summary>
 	/// Opens the key binds dialog, in the free first cell of the button row. Made here rather than in the designer file,
 	/// with the look of the other buttons.
@@ -155,7 +150,7 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 
 		foreach (var kvp in PasteBinExpirationOptions)
 		{
-			this.pasteBinExpirationComboBox.Items.Add(new PasteBinExpirationComboBoxItem(kvp.Key, kvp.Value));
+			this.pasteBinExpirationComboBox.Items.Add(new DisplayItem<string>(kvp.Key, kvp.Value));
 		}
 
 		this.SuspendLayout();
@@ -409,8 +404,8 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		if (expLabel is not null)
 		{
 			this.pasteBinExpirationComboBox.SelectedItem = this.pasteBinExpirationComboBox.Items
-				.OfType<PasteBinExpirationComboBoxItem>()
-				.FirstOrDefault(i => i.Key == values.PasteBinExpiration);
+				.OfType<DisplayItem<string>>()
+				.FirstOrDefault(i => i.Value == values.PasteBinExpiration);
 		}
 
 		this.languageComboBox.SelectedItem = languages.FirstOrDefault(cb => cb.Value.Equals(language,StringComparison.OrdinalIgnoreCase));

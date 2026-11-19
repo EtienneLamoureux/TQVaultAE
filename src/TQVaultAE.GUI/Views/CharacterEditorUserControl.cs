@@ -1,3 +1,4 @@
+using TQVaultAE.GUI.Models;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Session;
@@ -23,14 +24,6 @@ using Microsoft.Extensions.Logging;
 /// </summary>
 internal sealed partial class CharacterEditorUserControl : MainWindowView, IMainWindowView, IIgnoresZoom
 {
-	private struct DifficultData
-	{
-		public string Text;
-		public int Id;
-
-		public override string ToString() => Text;
-	}
-
 	private readonly ILogger Log;
 	private readonly GuiServices Services;
 	private readonly UserSettings USettings;
@@ -260,9 +253,9 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		this.InitSkills();
 
 		difficultlyComboBox.Items.Clear();
-		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(0), Id = 0 });
-		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(1), Id = 1 });
-		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(2), Id = 2 });
+		difficultlyComboBox.Items.Add(new DisplayItem<int>(0, TranslationService.TranslateDifficulty(0)));
+		difficultlyComboBox.Items.Add(new DisplayItem<int>(1, TranslationService.TranslateDifficulty(1)));
+		difficultlyComboBox.Items.Add(new DisplayItem<int>(2, TranslationService.TranslateDifficulty(2)));
 
 		levelingCheckBox.Checked = false;
 
