@@ -203,8 +203,6 @@ public interface IGamePathService
 	/// <returns></returns>
 	string ResolveGamePath();
 
-	string TransferStashFileName { get; }
-	string RelicVaultStashFileName { get; }
 	string PlayerSaveFileName { get; }
 	string PlayerStashFileNameB { get; }
 	string PlayerStashFileNameG { get; }

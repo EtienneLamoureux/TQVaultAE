@@ -31,7 +31,6 @@ public class GamePathServiceWinTests
 		this._directoryIO.Setup(d => d.GetDirectories(It.IsAny<string>(), It.IsAny<string>())).Throws<DirectoryNotFoundException>();
 		this._service = new GamePathServiceWin(
 			new Mock<ILogger<GamePathServiceWin>>().Object
-			, new Mock<ITQDataService>().Object
 			, this._fileIO.Object
 			, new PathIO()
 			, this._directoryIO.Object
