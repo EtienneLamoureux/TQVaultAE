@@ -175,22 +175,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			sacks = pc.Select(sack => new SackDto()
 			{
 				iconinfo = sack.BagButtonIconInfo,
-				items = sack.Select(i => new ItemDto()
-				{
-					stackSize = i.StackSize,
-					seed = i.Seed,
-					baseName = RecordId.RawOf(i.BaseItemId),
-					prefixName = RecordId.RawOf(i.prefixID),
-					suffixName = RecordId.RawOf(i.suffixID),
-					relicName = RecordId.RawOf(i.relicID),
-					relicBonus = RecordId.RawOf(i.RelicBonusId),
-					var1 = i.Var1,
-					relicName2 = RecordId.RawOf(i.relic2ID),
-					relicBonus2 = RecordId.RawOf(i.RelicBonus2Id),
-					var2 = i.Var2,
-					pointX = i.PositionX,
-					pointY = i.PositionY,
-				}).ToList()
+				items = sack.Select(i => i.ToDto()).ToList()
 			}).ToList()
 		};
 
@@ -296,35 +281,10 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 					Place = new ContainerPlace { SackType = SackType.Player },
 					beginBlockCrap1 = this.TQData.BeginBlockValue,
 					beginBlockCrap2 = this.TQData.BeginBlockValue,
-					BaseItemId = s.baseName,
-					prefixID = s.prefixName,
-					suffixID = s.suffixName,
-					relicID = s.relicName,
-					RelicBonusId = s.relicBonus,
-					Seed = s.seed,
-					Var1 = s.var1,
 					endBlockCrap2 = this.TQData.EndBlockValue,
-					PositionX = s.pointX,
-					PositionY = s.pointY,
 					endBlockCrap1 = this.TQData.EndBlockValue,
-					StackSize = s.stackSize,
-					// Atlantis
-					relic2ID = RecordId.Empty,
-					RelicBonus2Id = RecordId.Empty,
-					Var2 = Item.var2Default,
 				};
-
-				// The json has no atlantis flag: the game also writes the second relic fields empty, with a var2 to keep,
-				// so an item has them whenever they hold anything but the defaults of an item without them.
-				if (!string.IsNullOrWhiteSpace(s.relicName2)
-					|| !string.IsNullOrWhiteSpace(s.relicBonus2)
-					|| s.var2 != Item.var2Default)
-				{
-					itm.atlantis = true;
-					itm.relic2ID = s.relicName2 ?? string.Empty;
-					itm.RelicBonus2Id = s.relicBonus2 ?? string.Empty;
-					itm.Var2 = s.var2;
-				}
+				s.ApplyTo(itm);
 
 				// Read with the vault's map: its mod, Item.Mod, comes from the records found.
 				itm.SetContainerMod(pc.Mod);
