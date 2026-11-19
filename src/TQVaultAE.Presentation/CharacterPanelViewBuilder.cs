@@ -358,11 +358,11 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			// The class goes with the masteries: after a change, the one the new masteries make.
 			ClassName = this._translation.TranslateXTag(
 				(input.ClassCleared ? CharacterClasses.TagOf(input.Trees.Select(t => t.Mastery)) : info.ClassTag) ?? string.Empty, true, true) ?? string.Empty,
-			LevelText = CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), input.Level),
-			XpText = CharacterPanelLayout.FormatGameText(Game("xtagCXP", "XP : {%t0}"), input.Xp),
+			LevelText = GameText.Format(Game("tagCLevel", "Level : {%d0}"), input.Level),
+			XpText = GameText.Format(Game("xtagCXP", "XP : {%t0}"), input.Xp),
 			AttributesTitle = Game("tagCAttributes", Resources.CEAttributes),
 			PointsText = points <= 0 ? string.Empty
-				: CharacterPanelLayout.FormatGameText(this._translation.TranslateXTag(points == 1 ? "tagCPointsSingular" : "tagCPoints") ?? "{%d0}", points),
+				: GameText.Format(this._translation.TranslateXTag(points == 1 ? "tagCPointsSingular" : "tagCPoints") ?? "{%d0}", points),
 			CanRaise = input.Editable && points > 0,
 			CanUndo = input.Editable && input.CanUndo,
 			UndoText = Game("tagSkillUndo", "Undo"),
@@ -379,12 +379,12 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			GreatestMonsterTitle = Game("tagCHighestMonster", "Greatest Monster Killed"),
 			GreatestMonster = this._translation.TranslateOr(info.GreatestMonster, info.GreatestMonster),
 			GreatestMonsterLevel = info.GreatestMonsterKilledLevel == 0 ? string.Empty
-				: CharacterPanelLayout.FormatGameText(Game("tagCLevel", "Level : {%d0}"), info.GreatestMonsterKilledLevel),
+				: GameText.Format(Game("tagCLevel", "Level : {%d0}"), info.GreatestMonsterKilledLevel),
 			Statistics =
 			[
 				(Game("tagCMonsterKills", "Monsters Killed"), info.NumberOfKills.ToString("N0", culture)),
 				(Game("tagCHighestDamage", "Greatest Damage Dealt"), info.GreatestDamageInflicted.ToString("N0", culture)),
-				(Game("tagCTime", "Elapsed Time"), CharacterPanelLayout.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
+				(Game("tagCTime", "Elapsed Time"), GameText.PlayTime(Game("tagCTimeNumber", "{%d0}:{%d1}:{%d2}"), info.PlayTimeInSeconds)),
 				(Game("tagCDeaths", "Total Deaths"), info.NumberOfDeaths.ToString("N0", culture)),
 			],
 			TabNames = [Game("tagCPrimaryStats", "I"), Game("tagCSecondaryStats", "II"), Game("x4tagCThirdStats", "III"), "IV"],
@@ -427,7 +427,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		var balance = this._service.GetGameBalance();
 		string Game(string tag, string fallback) => this._translation.TranslateOr(tag, fallback);
 		string Percent(int value) => value.ToString(culture) + "%";
-		string Signed(string tag, string fallback, int value) => CharacterPanelLayout.FormatGameText(Game(tag, fallback), value);
+		string Signed(string tag, string fallback, int value) => GameText.Format(Game(tag, fallback), value);
 		StatRowView Row(string tag, string fallback, string value, string toolTip = "") => new(Game(tag, fallback), value, StatToolTip.Sentence(toolTip));
 
 		// A row whose rollover lists its sources: the value shown from an evaluation, the variables it reads.
@@ -507,7 +507,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 			foreach (var kind in kinds)
 				yield return Signed(kind.Tag, kind.Fallback, kind.Percent);
 			foreach (var kind in kinds)
-				yield return CharacterPanelLayout.FormatGameText(Game(kind.Tag, kind.Fallback).Replace("{%+.0f0}%", "{%.0f0}", StringComparison.Ordinal), kind.Flat);
+				yield return GameText.Format(Game(kind.Tag, kind.Fallback).Replace("{%+.0f0}%", "{%.0f0}", StringComparison.Ordinal), kind.Flat);
 		}
 
 		// The sources of a damage bonus: one block for the damage %, one for the damage over time %, one for its duration %
@@ -607,7 +607,7 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 				var (icon, tag, fallback) = RaceIcons[(int)r];
 				var name = Game(tag, fallback);
 				string Line(string lineTag, string lineFallback, double value)
-					=> CharacterPanelLayout.FormatGameText(Game(lineTag, lineFallback), (long)Math.Round(value), name);
+					=> GameText.Format(Game(lineTag, lineFallback), (long)Math.Round(value), name);
 				// In the game's order: the flat damage, the damage %, the damage taken %.
 				IEnumerable<string> Lines(RacialBonus bonus) =>
 				[
