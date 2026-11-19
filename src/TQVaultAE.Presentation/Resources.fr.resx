@@ -2484,4 +2484,70 @@ Lisez d'abord documentation/mcp.md : l'agent doit demander avant chaque modifica
   <data name="ClassSetStatusHint" xml:space="preserve">
     <value>Enregistrer pour le garder dans le profil de classe, choisir le profil de classe pour y revenir.</value>
   </data>
+  <data name="TextTag_tagSword" xml:space="preserve">
+    <value>Épée</value>
+  </data>
+  <data name="TextTag_bonusLifePercent" xml:space="preserve">
+    <value>{%.0f0}% de santé en bonus</value>
+  </data>
+  <data name="TextTag_bonusLifePoints" xml:space="preserve">
+    <value>{%.0f0} de santé en bonus</value>
+  </data>
+  <data name="TextTag_bonusManaPercent" xml:space="preserve">
+    <value>{%.0f0}% d'énergie en bonus</value>
+  </data>
+  <data name="TextTag_bonusManaPoints" xml:space="preserve">
+    <value>{%.0f0} d'énergie en bonus</value>
+  </data>
+  <data name="TextTag_alwaysUseSpecialAnimation" xml:space="preserve">
+    <value>{^O}Utilise toujours l'animation spéciale</value>
+  </data>
+  <data name="TextTag_DisplayAsQuestItem" xml:space="preserve">
+    <value>{^O}Affiché comme objet de quête</value>
+  </data>
+  <data name="TextTag_headVelocity" xml:space="preserve">
+    <value>{%.0f0} Vitesse de tête</value>
+  </data>
+  <data name="TextTag_tailVelocity" xml:space="preserve">
+    <value>{%.0f0} Vitesse de queue</value>
+  </data>
+  <data name="TextTag_maxDistance" xml:space="preserve">
+    <value>{%.0f0} mètres de distance maximale</value>
+  </data>
+  <data name="TextTag_notDispelable" xml:space="preserve">
+    <value>{^O}Ne peut pas être dissipé</value>
+  </data>
+  <data name="TextTag_dropMeshDontOverrideTextures" xml:space="preserve">
+    <value>{^D}Le modèle au sol ne remplace pas les textures</value>
+  </data>
+  <data name="TextTag_defensiveTotalSpeedChance" xml:space="preserve">
+    <value>{%.0f0}% de chance de vitesse totale défensive</value>
+  </data>
+  <data name="GlobalStyle" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="GlobalType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="GlobalVaults" xml:space="preserve">
+    <value>Coffres</value>
+  </data>
+  <data name="GlobalInputWarning" xml:space="preserve">
+    <value>Avertissement de saisie</value>
+  </data>
+  <data name="ExportToCSV" xml:space="preserve">
+    <value>Exporter en CSV</value>
+  </data>
+  <data name="GitUnableToClone" xml:space="preserve">
+    <value>le client Git est incapable de cloner "{0}"</value>
+  </data>
+  <data name="GlobalInformation" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="GlobalWarning" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="SettingsGitRepositoryUrlInvalid" xml:space="preserve">
+    <value>Vous devez saisir une URL Git valide.</value>
+  </data>
 </root>
