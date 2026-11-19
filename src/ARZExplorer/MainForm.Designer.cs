@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Form1.Designer.cs" company="VillageIdiot">
+// <copyright file="MainForm.Designer.cs" company="VillageIdiot">
 //     Copyright (c) Village Idiot. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

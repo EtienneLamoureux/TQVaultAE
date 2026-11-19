@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="AboutBox1.Designer.cs" company="VillageIdiot">
+// <copyright file="AboutBox.Designer.cs" company="VillageIdiot">
 //     Copyright (c) Village Idiot. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
