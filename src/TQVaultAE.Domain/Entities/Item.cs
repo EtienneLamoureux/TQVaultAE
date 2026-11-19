@@ -1187,9 +1187,7 @@ public class Item
 	/// </summary>
 	/// <remarks>return <see cref="GearType.Undefined"/> if not a piece of gear</remarks>
 	public GearType GearType
-		=> GearTypeExtension.GearTypeMap
-			.Where(m => m.Value.ICLASS.Equals(this.ItemClass, noCase))
-			.Select(m => m.Key).FirstOrDefault();
+		=> GearTypeExtension.FromItemClass(this.ItemClass);
 
 	#endregion
 

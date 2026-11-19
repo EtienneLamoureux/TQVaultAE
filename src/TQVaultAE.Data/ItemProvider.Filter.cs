@@ -174,11 +174,7 @@ public partial class ItemProvider
 	/// <param name="itemClass">string containing the item class</param>
 	/// <returns>string containing the prefix of the item class for use in the requirements equation</returns>
 	public string GetRequirementEquationPrefix(string itemClass)
-		=> GearTypeExtension.GearTypeMap
-			.Where(m => m.Value.ICLASS.Equals(itemClass, noCase))
-			.Select(m => m.Value.RequirementEquationPrefix)
-			.Where(m => !string.IsNullOrWhiteSpace(m))
-			.FirstOrDefault() ?? "none";
+		=> GearTypeExtension.FromItemClass(itemClass).GetRequirementEquationPrefix() is { Length: > 0 } prefix ? prefix : "none";
 	/// <summary>
 	/// Gets whether or not the variable contains a value which we are filtering.
 	/// </summary>

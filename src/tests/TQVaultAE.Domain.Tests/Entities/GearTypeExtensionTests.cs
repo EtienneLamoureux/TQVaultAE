@@ -302,4 +302,12 @@ public class GearTypeExtensionTests
 	}
 
 	#endregion
+
+	[Theory]
+	[InlineData("ArmorProtective_Head", GearType.Head)]
+	[InlineData("weaponhunting_bow", GearType.Bow)]
+	[InlineData("ItemRelic", GearType.Undefined)]
+	[InlineData(null, GearType.Undefined)]
+	public void FromItemClass_FindsTheGearTypeIgnoringCase(string? itemClass, GearType expected)
+		=> GearTypeExtension.FromItemClass(itemClass).Should().Be(expected);
 }
