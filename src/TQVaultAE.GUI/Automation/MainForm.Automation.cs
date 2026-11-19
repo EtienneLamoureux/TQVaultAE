@@ -185,7 +185,7 @@ public partial class MainForm
 		// Off the UI thread, as the paste awaits it: a PasteBin link is downloaded.
 		var result = Task.Run(() => this.itemExchangeService.ImportFromTextAsync(text)).GetAwaiter().GetResult();
 		this.mainView.HandleImportResult(result);
-		return result.Success ? null : result.ErrorMessage;
+		return result.Success ? null : Presentation.ImportText.Message(result);
 	}
 
 	internal string? AutomationCurrentPlayerFile => this.userContext?.CurrentPlayer?.PlayerFile;

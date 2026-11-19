@@ -73,7 +73,8 @@ public class ItemExchangeServiceImportTests
 		var result = await this._service.ImportFromTextAsync("https://pastebin.com/gone");
 
 		result.Success.Should().BeFalse();
-		result.ErrorMessage.Should().Be("Failed to import from PasteBin: 404");
+		result.Error.Should().Be(ImportError.PasteBinFailed);
+		result.ErrorDetail.Should().Be("404");
 	}
 
 	[Fact]

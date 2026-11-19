@@ -277,7 +277,7 @@ public partial class MainFormUserControl
 	{
 		if (!result.Success)
 		{
-			this.Services.UIService.NotifyUser(result.ErrorMessage ?? string.Empty);
+			this.Services.UIService.NotifyUser(ImportText.Message(result));
 			return;
 		}
 
