@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Layout;
 using TQVaultAE.GUI.Components.Layout;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
@@ -548,7 +549,7 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		var screen = Screen.FromControl(this).WorkingArea;
 		int height = Math.Min(this.Height + overflow, screen.Height);
-		int top = Math.Max(screen.Top, Math.Min(this.Top, screen.Bottom - height));
+		int top = WindowLayout.KeepOnScreen(this.Location, new Size(this.Width, height), [screen]).Y;
 		this.SetBounds(this.Left, top, this.Width, height);
 		this.LastFormSize = this.Size;
 		this.KeepLayoutSize();
