@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="PlayerCollection.cs" company="None">
+// <copyright file="PlayerCollectionProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

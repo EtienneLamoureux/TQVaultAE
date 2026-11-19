@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Stash.cs" company="None">
+// <copyright file="StashProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="SackCollection.cs" company="None">
+// <copyright file="SackCollectionProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

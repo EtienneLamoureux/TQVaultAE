@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TQData.cs" company="None">
+// <copyright file="TQDataService.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

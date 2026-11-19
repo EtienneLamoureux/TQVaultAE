@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Result.cs" company="None">
+// <copyright file="SearchResult.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
