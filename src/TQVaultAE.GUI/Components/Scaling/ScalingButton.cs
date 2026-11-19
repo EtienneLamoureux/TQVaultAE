@@ -226,10 +226,14 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 
 	protected override void Dispose(bool disposing)
 	{
+		// Disposed after the control, which may still draw with it while it goes.
+		var fitted = disposing && !ReferenceEquals(this.fittedFont, this.baseFont) ? this.fittedFont : null;
 		if (disposing)
 			this.ReleaseScaledImages();
 
 		base.Dispose(disposing);
+		fitted?.Dispose();
+		this.fittedFont = null;
 	}
 
 	/// <inheritdoc/>
@@ -375,6 +379,7 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 			? new Font(previous.FontFamily, previous.Size * this.DeviceDpi / this.baseFontDpi, previous.Style, previous.Unit)
 			: this.Font;
 		this.baseFontDpi = this.DeviceDpi;
+		this.ReleaseFittedFont();
 		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
 	}
 
@@ -408,8 +413,17 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	/// </summary>
 	private void SetFittedFont(Font? font)
 	{
-		if (font is null || font.Equals(this.Font))
+		if (font is null)
 			return;
+
+		if (font.Equals(this.Font))
+		{
+			// An equal copy made by the fit is not needed.
+			if (!this.IsKept(font))
+				font.Dispose();
+
+			return;
+		}
 
 		this.fittingFont = true;
 		try
@@ -420,6 +434,26 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		{
 			this.fittingFont = false;
 		}
+
+		this.ReleaseFittedFont();
+		if (!ReferenceEquals(font, this.baseFont))
+			this.fittedFont = font;
+	}
+
+	/// <summary>The font made smaller to fit the text, which the button owns; null while it shows its base font.</summary>
+	private Font? fittedFont;
+
+	/// <summary>Whether <paramref name="font"/> is shown or is the base font.</summary>
+	private bool IsKept(Font font) => ReferenceEquals(font, this.Font) || ReferenceEquals(font, this.baseFont) || ReferenceEquals(font, this.fittedFont);
+
+	/// <summary>Disposes the fitted font once the button shows another one.</summary>
+	private void ReleaseFittedFont()
+	{
+		if (this.fittedFont is { } font && !ReferenceEquals(font, this.Font) && !ReferenceEquals(font, this.baseFont))
+			font.Dispose();
+
+		if (!ReferenceEquals(this.fittedFont, this.Font))
+			this.fittedFont = null;
 	}
 
 	/// <summary>The room kept around the text, at the DPI of the monitor (12 px at 144 dpi, 8 at 96).</summary>
@@ -446,22 +480,6 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 		// The room left around the text, at the DPI of the monitor: a fixed 12 px left less room at 96 dpi, where a
 		// long text (French "Appliquer") was fitted smaller than its neighbour's.
 		int room = newWidth - this.TextMargin;
-
-		// See if the text can fit on the button and if it does we do not need to do anything.
-		if (TextRenderer.MeasureText(this.Text, font).Width < room)
-			return font;
-
-		float fontSize = font.Size;
-
-		// Measure bolded text just in case the bolding will cause the text to exceed the bounging box.
-		// We do not want the font to change size as we mouse over.
-		while (TextRenderer.MeasureText(this.Text, font).Width >= room && fontSize > 0.5F)
-		{
-			fontSize -= 0.25F;
-			// By its family: the game fonts are private, a font made from their name was Microsoft Sans Serif.
-			font = new Font(font.FontFamily, fontSize, font.Style, font.Unit);
-		}
-
-		return font;
+		return TextFit.Shrink(font, 0.25F, 0.5F, f => TextRenderer.MeasureText(this.Text, f).Width < room);
 	}
 }

@@ -11,6 +11,7 @@ using TQVaultAE.Services;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
 using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.GUI.Components.Scaling;
 
 namespace TQVaultAE.GUI.Components.Buttons;
 
@@ -292,12 +293,7 @@ public class BagButtonBase : Panel
 			return;
 
 		// Draw the icon
-		Image bmp;
-		if (this.Parent is VaultPanel vp && vp.Vault is not null)
-			bmp = this.BitmapService.ResizeImage(bitmap, this.Width, this.Height, maintainAspectRatio: true);
-		else
-			bmp = bitmap;
-
+		Image bmp = this.Parent is VaultPanel vp && vp.Vault is not null ? this.FittedIcon(bitmap) : bitmap;
 		e.Graphics.DrawImage(bmp, 0, 0, this.Width, this.Height);
 
 		if (// If it's not a vault with a number restriction
@@ -327,6 +323,35 @@ public class BagButtonBase : Panel
 		if (highlight) PaintHighlightAreaOnTopOfButton(e);
 	}
 
+	/// <summary>A vault bag's icon at the button size, keeping its shape: made again only when the icon or the size changes.</summary>
+	private Image FittedIcon(Bitmap icon)
+	{
+		if (this.fittedIcon is null || !ReferenceEquals(this.fittedIconSource, icon) || this.fittedIcon.Size != this.Size)
+		{
+			this.fittedIcon?.Dispose();
+			this.fittedIcon = this.BitmapService.ResizeImage(icon, this.Width, this.Height, maintainAspectRatio: true);
+			this.fittedIconSource = icon;
+		}
+
+		return this.fittedIcon;
+	}
+
+	private Image? fittedIcon;
+
+	private Bitmap? fittedIconSource;
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			this.fittedIcon?.Dispose();
+			this.fittedIcon = null;
+			this.HighlightSearchItemBorder?.Dispose();
+		}
+
+		base.Dispose(disposing);
+	}
+
 	/// <summary>Centers the button text; shared by every button, only the UI thread draws with it.</summary>
 	private static readonly StringFormat CenteredText = new(StringFormatFlags.NoClip)
 	{
@@ -354,52 +379,24 @@ public class BagButtonBase : Panel
 			return null;
 		}
 
-		// Make sure we use the bolded font for testing since the passed font may not be bolded.
-		Font testFont = FontService.GetFont(font.Size, FontStyle.Bold, GraphicsUnit.Pixel, font.GdiCharSet);
+		// Measured in bold, the text under the mouse: it must not change size when the mouse comes over.
+		Font Bold(float size) => FontService.GetFont(size, FontStyle.Bold, GraphicsUnit.Pixel, font.GdiCharSet);
+		bool WholeFits(float size) => TextRenderer.MeasureText(this.ButtonText, Bold(size)).Width < this.Width;
 
-		// See if the text can fit on the button and if it does we do not need to do anything.
-		if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
-		{
+		if (WholeFits(font.Size))
 			return font;
-		}
 
-		// Try to get a substring of the button text to find the best size.
-		string teststring = this.GetTestString(this.ButtonText);
-		float fontSize = font.Size;
+		// Split at the space nearest the middle: the longer part must fit the width, and both lines the height.
+		string part = this.GetTestString(this.ButtonText);
+		float size = TextFit.LargestSize(font.Size, 1F, MinTextSize, s => TextRenderer.MeasureText(part, Bold(s)).Width < this.Width);
+		if (part != this.ButtonText)
+			size = TextFit.LargestSize(size, 1F, MinTextSize, s => TextRenderer.MeasureText(part, Bold(s)).Height * 2 < this.Height || WholeFits(s));
 
-		// Measure bolded text just in case the bolding will cause the text to exceed the bounging box.
-		// We do not want the font to change size as we mouse over.
-		while (TextRenderer.MeasureText(teststring, testFont).Width >= this.Width)
-		{
-			--fontSize;
-			font = FontService.GetFont(fontSize, font.Style, GraphicsUnit.Pixel, font.GdiCharSet);
-
-			// Update comparison font.
-			testFont = FontService.GetFont(fontSize, testFont.Style, GraphicsUnit.Pixel, testFont.GdiCharSet);
-		}
-
-		// We might need to resize vertically if the line was split.
-		if (teststring != this.ButtonText)
-		{
-			// Use 2xHeight since there are 2 lines of text.
-			while ((TextRenderer.MeasureText(teststring, testFont).Height * 2) >= this.Height)
-			{
-				--fontSize;
-				font = FontService.GetFont(fontSize, font.Style, GraphicsUnit.Pixel, font.GdiCharSet);
-
-				// Update comparison font.
-				testFont = FontService.GetFont(fontSize, testFont.Style, GraphicsUnit.Pixel, testFont.GdiCharSet);
-
-				// Check to see if the whole string will fit inside the button on a single line.
-				if (TextRenderer.MeasureText(this.ButtonText, testFont).Width < this.Width)
-				{
-					break;
-				}
-			}
-		}
-
-		return font;
+		return FontService.GetFont(size, font.Style, GraphicsUnit.Pixel, font.GdiCharSet);
 	}
+
+	/// <summary>The smallest text size, in pixels: a long label on a tiny button stops there (a size of 0 throws).</summary>
+	private const float MinTextSize = 1F;
 
 	/// <summary>
 	/// Gets a substring of the button text which can be used for font sizing.
