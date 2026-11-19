@@ -16,8 +16,6 @@ internal static partial class AutomationTools
 {
 	#region Form controls
 
-
-
 	[McpServerTool(Name = "queue_dialog_answers", Destructive = true)]
 	[Description("Queues answers for the next message boxes (comma separated: OK, Cancel, Yes, No, Abort, Retry, Ignore), so they are answered at once without being shown and nothing waits for a click. A box takes the next answer only when it is one of its buttons; an OK-only box takes only an OK answer, so an unexpected message keeps the answer meant for a question. 'text:<name>' answers the next text input dialog (the name asked by Duplicate Character and the loadout actions): the dialog opens, the text is typed and its OK button clicked, so its own checks run (Cancel cancels it; no comma in the text). 'clear' empties the queue and the record. Covers every message box, the startup notices included, and the vault import dialog (Yes replaces the vault, No imports it as a new vault, Cancel cancels). In headless mode a box without a queued answer is not shown either: it takes Cancel, No, Ignore or OK and is listed by dialog_answers; a text input dialog without one stays open (close_dialog, or set_control and click_control).")]
 	public static string QueueDialogAnswers([Description("Answers in order, e.g. 'Cancel,No' or 'text:test-set1,OK', or 'clear'.")] string answers)
@@ -57,46 +55,11 @@ internal static partial class AutomationTools
 	private static Control FormOrMain(Forms.MainForm main, string? form)
 		=> string.IsNullOrEmpty(form) ? main : FindOpenForm(form);
 
-	/// <summary>The control of <paramref name="target"/> named <paramref name="name"/> (ignoring case), at any depth.</summary>
-	/// <param name="hint">Added to the error message.</param>
-	private static Control FindControl(Control target, string name, string? hint = null)
-		=> AllControls(target).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase))
-			?? throw new McpException($"No control '{name}' in '{target.Text}'.{hint}");
-
 	/// <summary>The shown dialog of type <typeparamref name="T"/>; <paramref name="what"/> names it in the error message.</summary>
 	private static T OpenDialog<T>(string what)
 		where T : Form
 		=> System.Windows.Forms.Application.OpenForms.OfType<T>().FirstOrDefault(f => f.Visible)
 			?? throw new McpException($"The {what} is not open.");
-
-
-	/// <summary>Raises a protected event method of a control (OnScroll, OnLeave...), as its own input handling does.</summary>
-	private static void RaiseProtected(Control c, string method, EventArgs? args = null)
-		=> c.GetType().GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic, [args?.GetType() ?? typeof(EventArgs)])!.Invoke(c, [args ?? EventArgs.Empty]);
-
-	private static bool IsInputControl(Control c)
-		=> c is NumericUpDown or TrackBar or ComboBox or ListBox or TextBoxBase or CheckBox or RadioButton
-		|| c.GetType().GetProperty("Checked", typeof(bool)) is not null;
-
-	private static object? ValueOf(Control c) => c switch
-	{
-		NumericUpDown number => number.Value,
-		TrackBar track => track.Value,
-		ComboBox combo => combo.SelectedItem is not null ? combo.GetItemText(combo.SelectedItem) : combo.DropDownStyle != ComboBoxStyle.DropDownList && combo.Text.Length > 0 ? combo.Text : null,
-		ListBox list => list.SelectedItem is not null ? list.GetItemText(list.SelectedItem) : null,
-		TextBoxBase text => text.Text,
-		Label label => label.Text,
-		_ => c.GetType().GetProperty("Checked", typeof(bool))?.GetValue(c) ?? c.Text,
-	};
-
-	private static object DescribeValue(Control c) => new
-	{
-		name = c.Name,
-		type = c.GetType().Name,
-		enabled = c.Enabled,
-		visible = c.Visible,
-		value = ValueOf(c),
-	};
 
 	#endregion
 
@@ -261,7 +224,7 @@ internal static partial class AutomationTools
 	public static string ListTags()
 		=> AutomationHost.OnUi(form =>
 		{
-			var tags = Program.ServiceProvider.GetRequiredService<ITagService>().Tags;
+			var tags = Service<ITagService>().Tags;
 			var selected = form.AutomationCharacterCombo.SelectedItem as PlayerSave;
 			return Serialize(new
 			{

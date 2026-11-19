@@ -19,7 +19,7 @@ public partial class EquipmentPanel
 		}
 
 		var bounds = this.MarkScreenBounds(shown);
-		var center = new Point(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
+		var center = AutomationInput.Center(bounds);
 		VirtualCursor.Set(this, center);
 		try
 		{

@@ -90,7 +90,10 @@ internal static class AutomationHost
 	public static MainForm? MainForm => _mainForm;
 
 
-	private static readonly System.Collections.Concurrent.ConcurrentQueue<QueuedAnswer> _dialogAnswers = new();
+	// Answers are taken by the UI thread while tools queue, put first or withdraw them from request threads: every
+	// read-modify-write of the list holds this lock, so no answer is lost or taken twice.
+	private static readonly Lock _dialogAnswersLock = new();
+	private static readonly List<QueuedAnswer> _dialogAnswers = [];
 	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogAnswered = new();
 	private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _dialogUnanswered = new();
 
@@ -99,34 +102,29 @@ internal static class AutomationHost
 	/// </summary>
 	public static void QueueDialogAnswers(IEnumerable<QueuedAnswer> answers)
 	{
-		foreach (var answer in answers)
-			_dialogAnswers.Enqueue(answer);
+		lock (_dialogAnswersLock)
+			_dialogAnswers.AddRange(answers);
 	}
 
 	/// <summary>Puts an answer before the ones already queued: the answer of the dialog a tool is about to open.</summary>
 	public static void QueueDialogAnswerFirst(QueuedAnswer answer)
 	{
-		var rest = _dialogAnswers.ToList();
-		_dialogAnswers.Clear();
-		_dialogAnswers.Enqueue(answer);
-		foreach (var queued in rest)
-			_dialogAnswers.Enqueue(queued);
+		lock (_dialogAnswersLock)
+			_dialogAnswers.Insert(0, answer);
 	}
 
 	/// <summary>Takes back the first queued answer equal to <paramref name="answer"/> (a click refused after queueing it).</summary>
 	public static void WithdrawDialogAnswer(QueuedAnswer answer)
 	{
-		var rest = _dialogAnswers.ToList();
-		rest.Remove(answer);
-		_dialogAnswers.Clear();
-		foreach (var queued in rest)
-			_dialogAnswers.Enqueue(queued);
+		lock (_dialogAnswersLock)
+			_dialogAnswers.Remove(answer);
 	}
 
 	/// <summary>Removes the answers not used yet and the record of the answered boxes.</summary>
 	public static void ClearDialogAnswers()
 	{
-		_dialogAnswers.Clear();
+		lock (_dialogAnswersLock)
+			_dialogAnswers.Clear();
 		_dialogAnswered.Clear();
 		_dialogUnanswered.Clear();
 #if DEBUG
@@ -135,7 +133,30 @@ internal static class AutomationHost
 	}
 
 	/// <summary>Gets the answers not used yet.</summary>
-	public static IReadOnlyList<QueuedAnswer> PendingDialogAnswers => [.. _dialogAnswers];
+	public static IReadOnlyList<QueuedAnswer> PendingDialogAnswers
+	{
+		get
+		{
+			lock (_dialogAnswersLock)
+				return [.. _dialogAnswers];
+		}
+	}
+
+	/// <summary>Removes and returns the first queued answer when <paramref name="accepts"/> takes it.</summary>
+	private static bool TryTakeFirst(Func<QueuedAnswer, bool> accepts, out QueuedAnswer taken)
+	{
+		lock (_dialogAnswersLock)
+		{
+			if (_dialogAnswers.Count > 0 && accepts(_dialogAnswers[0]))
+			{
+				taken = _dialogAnswers[0];
+				_dialogAnswers.RemoveAt(0);
+				return true;
+			}
+		}
+		taken = default;
+		return false;
+	}
 
 	/// <summary>Gets the boxes answered from the queue, oldest first.</summary>
 	public static IReadOnlyList<string> AnsweredDialogs => [.. _dialogAnswered];
@@ -154,7 +175,7 @@ internal static class AutomationHost
 	public static bool TryTakeDialogAnswer(string caption, string message, MessageBoxButtons buttons, out DialogResult answer, DialogResult? headlessAnswer = null)
 	{
 		var shortMessage = message.Length > 120 ? message[..120] + "..." : message;
-		if (_dialogAnswers.TryPeek(out var next) && next.Text is null && ButtonsOf(buttons).Contains(next.Result) && _dialogAnswers.TryDequeue(out _))
+		if (TryTakeFirst(a => a.Text is null && ButtonsOf(buttons).Contains(a.Result), out var next))
 		{
 			answer = next.Result;
 			_dialogAnswered.Enqueue($"{caption}: {shortMessage} -> {answer}");
@@ -182,7 +203,7 @@ internal static class AutomationHost
 	public static bool TryTakeInputAnswer(string title, out string? text)
 	{
 		text = null;
-		if (!_dialogAnswers.TryPeek(out var next) || (next.Text is null && next.Result != DialogResult.Cancel) || !_dialogAnswers.TryDequeue(out _))
+		if (!TryTakeFirst(a => a.Text is not null || a.Result == DialogResult.Cancel, out var next))
 		{
 			if (Headless)
 				_dialogUnanswered.Enqueue($"{DateTime.Now:HH:mm:ss} {title} (text input): no queued text, left open");

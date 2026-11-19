@@ -118,7 +118,6 @@ internal partial class VaultMaintenanceDialog
         // 
         // targetTextBox
         // 
-        this.targetTextBox.Font = new System.Drawing.Font("Albertus MT Light", 11F);
         this.targetTextBox.Location = new System.Drawing.Point(90, 316);
         this.targetTextBox.MaxLength = 256;
         this.targetTextBox.Name = "targetTextBox";
@@ -128,7 +127,6 @@ internal partial class VaultMaintenanceDialog
         // 
         // instructionsLabel
         // 
-        this.instructionsLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
         this.instructionsLabel.Location = new System.Drawing.Point(12, 178);
         this.instructionsLabel.Name = "instructionsLabel";
         this.instructionsLabel.Size = new System.Drawing.Size(440, 94);
@@ -143,7 +141,6 @@ internal partial class VaultMaintenanceDialog
         this.okayButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.okayButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.okayButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.okayButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
         this.okayButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.okayButton.Image = ((System.Drawing.Image)(resources.GetObject("okayButton.Image")));
         this.okayButton.Location = new System.Drawing.Point(70, 377);
@@ -167,7 +164,6 @@ internal partial class VaultMaintenanceDialog
         this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.cancelButton.Font = new System.Drawing.Font("Albertus MT Light", 12F);
         this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
         this.cancelButton.Location = new System.Drawing.Point(258, 377);
@@ -196,7 +192,6 @@ internal partial class VaultMaintenanceDialog
         // newRadioButton
         // 
         this.newRadioButton.AutoSize = true;
-        this.newRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.newRadioButton.Location = new System.Drawing.Point(6, 20);
         this.newRadioButton.Name = "newRadioButton";
         this.newRadioButton.Size = new System.Drawing.Size(150, 21);
@@ -212,7 +207,6 @@ internal partial class VaultMaintenanceDialog
         this.selectFunctionGroupBox.Controls.Add(this.copyRadioButton);
         this.selectFunctionGroupBox.Controls.Add(this.deleteRadioButton);
         this.selectFunctionGroupBox.Controls.Add(this.newRadioButton);
-        this.selectFunctionGroupBox.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.selectFunctionGroupBox.Location = new System.Drawing.Point(119, 38);
         this.selectFunctionGroupBox.Name = "selectFunctionGroupBox";
         this.selectFunctionGroupBox.Size = new System.Drawing.Size(225, 126);
@@ -223,7 +217,6 @@ internal partial class VaultMaintenanceDialog
         // renameRadioButton
         // 
         this.renameRadioButton.AutoSize = true;
-        this.renameRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.renameRadioButton.Location = new System.Drawing.Point(6, 92);
         this.renameRadioButton.Name = "renameRadioButton";
         this.renameRadioButton.Size = new System.Drawing.Size(124, 21);
@@ -236,7 +229,6 @@ internal partial class VaultMaintenanceDialog
         // copyRadioButton
         // 
         this.copyRadioButton.AutoSize = true;
-        this.copyRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.copyRadioButton.Location = new System.Drawing.Point(6, 68);
         this.copyRadioButton.Name = "copyRadioButton";
         this.copyRadioButton.Size = new System.Drawing.Size(109, 21);
@@ -249,7 +241,6 @@ internal partial class VaultMaintenanceDialog
         // deleteRadioButton
         // 
         this.deleteRadioButton.AutoSize = true;
-        this.deleteRadioButton.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.deleteRadioButton.Location = new System.Drawing.Point(6, 44);
         this.deleteRadioButton.Name = "deleteRadioButton";
         this.deleteRadioButton.Size = new System.Drawing.Size(114, 21);
@@ -272,7 +263,6 @@ internal partial class VaultMaintenanceDialog
         // targetLabel
         // 
         this.targetLabel.AutoSize = true;
-        this.targetLabel.Font = new System.Drawing.Font("Albertus MT Light", 11F);
         this.targetLabel.Location = new System.Drawing.Point(12, 319);
         this.targetLabel.Name = "targetLabel";
         this.targetLabel.Size = new System.Drawing.Size(49, 17);
@@ -283,7 +273,6 @@ internal partial class VaultMaintenanceDialog
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
         this.CancelButton = this.cancelButton;
         this.ClientSize = new System.Drawing.Size(464, 419);
         this.Controls.Add(this.cancelButton);
@@ -295,14 +284,8 @@ internal partial class VaultMaintenanceDialog
         this.Controls.Add(this.vaultListComboBox);
         this.Controls.Add(this.targetTextBox);
         this.DrawCustomBorder = true;
-        this.Font = new System.Drawing.Font("Albertus MT Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.MaximizeBox = false;
-        this.MinimizeBox = false;
         this.Name = "VaultMaintenanceDialog";
-        this.ShowInTaskbar = false;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         this.Text = "Vault Maintenance";
         this.Load += new System.EventHandler(this.VaultMaintenanceDialogLoad);
         this.Controls.SetChildIndex(this.targetTextBox, 0);

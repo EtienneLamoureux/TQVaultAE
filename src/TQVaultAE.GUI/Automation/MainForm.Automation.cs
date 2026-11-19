@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
 using TQVaultAE.GUI.Automation;
 using TQVaultAE.GUI.Components.Panels;
@@ -30,26 +31,7 @@ public partial class MainForm
 	/// <summary>The floating character windows open, oldest first.</summary>
 	internal IReadOnlyList<Dialogs.CharacterWindow> AutomationCharacterWindows => this.mainView.CharacterWindows;
 
-	/// <summary>Opens a floating character window like the button beside Edit.</summary>
-	internal Dialogs.CharacterWindow? AutomationOpenCharacterWindow(TQVaultAE.Application.Session.PlayerSave save, Point? place)
-		=> this.mainView.OpenCharacterWindow(save, place);
-
-	/// <summary>The characters of the drop-down list.</summary>
-	internal TQVaultAE.Application.Session.PlayerSave[] AutomationListedCharacters => this.mainView.ListedCharacters();
-
-	/// <summary>Zooms like Ctrl + / Ctrl - (delta 0.1 / -0.1) or Ctrl Home (delta 1, back to 100 %).</summary>
-	internal void AutomationZoom(float delta) => this.ResizeFormCallback(this, new ResizeEventArgs(delta));
-
 	internal UserSettings AutomationSettings => this.USettings;
-
-	/// <summary>The largest client size Windows lets the window take, and the largest zoom step that fits it.</summary>
-	internal (Size MaxClientSize, int LargestStep) AutomationZoomLimit => (this.MaxClientSize, this.LargestStep());
-
-	/// <summary>The window's zoom step.</summary>
-	internal int AutomationZoomStep => this.ZoomStep;
-
-	/// <summary>Gets the table that lays out the vault, player and stash panels.</summary>
-	internal TableLayoutPanel AutomationLayoutTable => this.mainView.tableLayoutPanelMain;
 
 	/// <summary>
 	/// The view shown under the toolbar: <c>main</c> (the main content), <c>settings</c> or <c>characterEditor</c>.
@@ -179,11 +161,16 @@ public partial class MainForm
 	/// Imports text like a paste (Ctrl+V) of the clipboard holding it, without touching the clipboard: the same parsing
 	/// (exported JSON, or a PasteBin link) and the same placement as <see cref="Views.MainFormUserControl.PasteFromClipboardAsync"/>.
 	/// </summary>
+	/// <remarks>
+	/// Called from the request thread, not the UI thread: a PasteBin link is downloaded, and the UI thread stays free
+	/// meanwhile. The result is then placed on the UI thread with <see cref="AutomationHandleImportResult"/>.
+	/// </remarks>
+	internal Task<ImportResult> AutomationParseImportTextAsync(string text) => this.itemExchangeService.ImportFromTextAsync(text);
+
+	/// <summary>Places an import's items like the paste does, on the UI thread.</summary>
 	/// <returns>The import's error, or null when it succeeded.</returns>
-	internal string? AutomationImportText(string text)
+	internal string? AutomationHandleImportResult(ImportResult result)
 	{
-		// Off the UI thread, as the paste awaits it: a PasteBin link is downloaded.
-		var result = Task.Run(() => this.itemExchangeService.ImportFromTextAsync(text)).GetAwaiter().GetResult();
 		this.mainView.HandleImportResult(result);
 		return result.Success ? null : Presentation.ImportText.Message(result);
 	}
@@ -227,7 +214,6 @@ public partial class MainForm
 		return this.mainView.highlightFilters;
 	}
 
-
 	/// <summary>
 	/// Creates a vault like the New action of the vault maintenance dialog: adds it to the list, selects and loads it.
 	/// </summary>
@@ -243,13 +229,11 @@ public partial class MainForm
 		return VaultMaintenanceError.None;
 	}
 
-
 	/// <summary>
 	/// Saves the modified characters, vaults and stashes like the Save button, file errors included
 	/// (the Abort/Retry/Ignore box). Returns whether characters were saved.
 	/// </summary>
 	internal bool AutomationSaveFiles() => this.SaveAllModifiedFiles();
-
 
 	/// <summary>The character drop down, whose context menu holds the tag boxes.</summary>
 	internal ComboBoxCharacter AutomationCharacterCombo => this.mainView.comboBoxCharacter;

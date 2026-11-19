@@ -16,10 +16,9 @@ internal static partial class AutomationTools
 	public static string OwnedSkillItems()
 		=> AutomationHost.OnUi(_ =>
 		{
-			var services = Program.ServiceProvider;
-			var database = services.GetRequiredService<IDatabase>();
-			var uiService = services.GetRequiredService<IUIService>();
-			var owned = services.GetRequiredService<IItemDatabaseService>().ItemDatabase;
+			var database = Service<IDatabase>();
+			var uiService = Services.UIService;
+			var owned = Services.ItemDatabaseService.ItemDatabase;
 
 			var entries = new List<object>();
 			foreach (var result in owned)

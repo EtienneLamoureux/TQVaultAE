@@ -121,11 +121,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		["N"] = "Never"
 	};
 
-	private sealed record PasteBinExpirationComboBoxItem(string Key, string Label)
-	{
-		public override string ToString() => this.Label;
-	}
-
 	/// <summary>
 	/// Opens the key binds dialog, in the free first cell of the button row. Made here rather than in the designer file,
 	/// with the look of the other buttons.
@@ -147,6 +142,7 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.Log = services.Logger<SettingsUserControl>();
 
 		this.InitializeComponent();
+		this.BindCheckBoxes();
 
 		// The control follows its inner table: the font, a translation, a group shown or a monitor of another DPI change it.
 		this.AutoSize = true;
@@ -154,7 +150,7 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 
 		foreach (var kvp in PasteBinExpirationOptions)
 		{
-			this.pasteBinExpirationComboBox.Items.Add(new PasteBinExpirationComboBoxItem(kvp.Key, kvp.Value));
+			this.pasteBinExpirationComboBox.Items.Add(new DisplayItem<string>(kvp.Key, kvp.Value));
 		}
 
 		this.SuspendLayout();
@@ -408,8 +404,8 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		if (expLabel is not null)
 		{
 			this.pasteBinExpirationComboBox.SelectedItem = this.pasteBinExpirationComboBox.Items
-				.OfType<PasteBinExpirationComboBoxItem>()
-				.FirstOrDefault(i => i.Key == values.PasteBinExpiration);
+				.OfType<DisplayItem<string>>()
+				.FirstOrDefault(i => i.Value == values.PasteBinExpiration);
 		}
 
 		this.languageComboBox.SelectedItem = languages.FirstOrDefault(cb => cb.Value.Equals(language,StringComparison.OrdinalIgnoreCase));
@@ -468,5 +464,49 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 	private void PasteBinApiKeyTextBoxTextChanged(object? sender, EventArgs e)
 	{
 		this.editor.Current.PasteBinApiKey = this.pasteBinApiKeyTextBox.Text ?? string.Empty;
+	}
+
+	/// <summary>
+	/// The settings a check box or check group box holds by itself: a click writes its value to the edited settings.
+	/// The settings with rules between them have their own handlers (SettingsUserControl.EventHandlers.cs).
+	/// </summary>
+	private void BindCheckBoxes()
+	{
+		void Bind(Control box, Action<SettingsValues, bool> set)
+		{
+			switch (box)
+			{
+				case CheckBox check:
+					check.CheckedChanged += (_, _) => set(this.editor.Current, check.Checked);
+					break;
+				case Components.CheckGroupBox group:
+					group.CheckedChanged += (_, _) => set(this.editor.Current, group.Checked);
+					break;
+			}
+		}
+
+		Bind(this.allowItemCopyCheckBox, (s, on) => s.AllowItemCopy = on);
+		Bind(this.loadLastCharacterCheckBox, (s, on) => s.LoadLastCharacter = on);
+		Bind(this.loadLastVaultCheckBox, (s, on) => s.LoadLastVault = on);
+		Bind(this.loadAllFilesCheckBox, (s, on) => s.LoadAllFiles = on);
+		Bind(this.suppressWarningsCheckBox, (s, on) => s.SuppressWarnings = on);
+		Bind(this.playerReadonlyCheckbox, (s, on) => s.PlayerReadonly = on);
+		Bind(this.characterEditCheckBox, (s, on) => s.AllowCharacterEdit = on);
+		Bind(this.scalingCheckBoxTooltipDetailedView, (s, on) => s.EnableDetailedTooltipView = on);
+		Bind(this.scalingCheckBoxTooltipInGameRolls, (s, on) => s.TooltipShowInGameRolls = on);
+		Bind(this.scalingCheckBoxTooltipValueRanges, (s, on) => s.TooltipShowValueRanges = on);
+		Bind(this.scalingCheckBoxTooltipGrantedSkills, (s, on) => s.TooltipShowGrantedSkills = on);
+		Bind(this.scalingCheckBoxTooltipSetPieceCounts, (s, on) => s.TooltipShowSetPieceCounts = on);
+		Bind(this.ShowInGameValuesCheckBox, (s, on) => s.ShowInGameValues = on);
+		Bind(this.EnableItemRequirementRestrictionCheckBox, (s, on) => s.EnableItemRequirementRestriction = on);
+		Bind(this.hotReloadCheckBox, (s, on) => s.EnableHotReload = on); // Force restart
+		Bind(this.scalingCheckBoxEnableEpicLegendaryAffixes, (s, on) => s.EnableEpicLegendaryAffixes = on);
+		Bind(this.scalingCheckBoxEnableSounds, (s, on) => s.EnableTQVaultSounds = on);
+		Bind(this.scalingCheckBoxDisableAutoStacking, (s, on) => s.DisableAutoStacking = on);
+		Bind(this.scalingCheckBoxMergeRelicsOnSort, (s, on) => s.MergeRelicsOnSort = on);
+		Bind(this.scalingCheckBoxDisableLegacyBackup, (s, on) => s.DisableLegacyBackup = on);
+		Bind(this.scalingCheckBoxBackupPlayerSaves, (s, on) => s.GitBackupPlayerSavesEnabled = on);
+		Bind(this.checkGroupBoxOriginalTQSupport, (s, on) => s.EnableOriginalTQSupport = on);
+		Bind(this.checkGroupBoxMcpServer, (s, on) => s.EnableMcpServer = on);
 	}
 }

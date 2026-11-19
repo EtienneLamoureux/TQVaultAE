@@ -80,7 +80,6 @@ internal partial class CharacterEditorUserControl
         this.ok.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ok.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ok.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ok.Image = ((System.Drawing.Image)(resources.GetObject("ok.Image")));
         this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -104,7 +103,6 @@ internal partial class CharacterEditorUserControl
         this.cancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.cancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancel.Image = ((System.Drawing.Image)(resources.GetObject("cancel.Image")));
         this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -285,7 +283,6 @@ internal partial class CharacterEditorUserControl
         // 
         this.levelingCheckBox.AutoSize = true;
         this.levelingCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-        this.levelingCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.64F);
         this.levelingCheckBox.Location = new System.Drawing.Point(69, 179);
         this.levelingCheckBox.Name = "levelingCheckBox";
         this.levelingCheckBox.Size = new System.Drawing.Size(114, 19);
@@ -308,7 +305,6 @@ internal partial class CharacterEditorUserControl
         // skillPointsNumericUpDown
         // 
         this.skillPointsNumericUpDown.Enabled = false;
-        this.skillPointsNumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.skillPointsNumericUpDown.Location = new System.Drawing.Point(184, 117);
         this.skillPointsNumericUpDown.Maximum = new decimal(new int[] {
         286,
@@ -338,7 +334,6 @@ internal partial class CharacterEditorUserControl
         // xpTextBox
         // 
         this.xpTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-        this.xpTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.xpTextBox.Location = new System.Drawing.Point(184, 57);
         this.xpTextBox.Name = "xpTextBox";
         this.xpTextBox.ReadOnly = true;
@@ -349,7 +344,6 @@ internal partial class CharacterEditorUserControl
         // levelNumericUpDown
         // 
         this.levelNumericUpDown.Enabled = false;
-        this.levelNumericUpDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.levelNumericUpDown.Location = new System.Drawing.Point(184, 27);
         this.levelNumericUpDown.Maximum = new decimal(new int[] {
         84,
@@ -380,7 +374,6 @@ internal partial class CharacterEditorUserControl
         this.ResetMasteriesScalingButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetMasteriesScalingButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetMasteriesScalingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.ResetMasteriesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ResetMasteriesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetMasteriesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetMasteriesScalingButton.Image")));
         this.ResetMasteriesScalingButton.Location = new System.Drawing.Point(8, 330);
@@ -405,7 +398,6 @@ internal partial class CharacterEditorUserControl
         this.ResetAttributesScalingButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetAttributesScalingButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetAttributesScalingButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.ResetAttributesScalingButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.6F);
         this.ResetAttributesScalingButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.ResetAttributesScalingButton.Image = ((System.Drawing.Image)(resources.GetObject("ResetAttributesScalingButton.Image")));
         this.ResetAttributesScalingButton.Location = new System.Drawing.Point(166, 330);
@@ -427,7 +419,6 @@ internal partial class CharacterEditorUserControl
         this.BackColor = System.Drawing.Color.Transparent;
         this.Controls.Add(this.cancel);
         this.Controls.Add(this.ok);
-        this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.ForeColor = System.Drawing.Color.White;
         this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
         this.Name = "CharacterEditorUserControl";

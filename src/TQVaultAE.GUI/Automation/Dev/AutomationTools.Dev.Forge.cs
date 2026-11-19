@@ -44,8 +44,7 @@ internal static partial class AutomationTools
 					return (Serialize(new { slot = value.ToString(), tooltips = DescribeTooltips() }), (byte[]?)null);
 				}
 
-				if (form.AutomationDragInfo.IsActive)
-					throw new McpException("An item is being dragged: the forge shows no tooltip then. Drop it or cancel_drag first.");
+				RequireNoDrag(form, "An item is being dragged: the forge shows no tooltip then. Drop it or cancel_drag first.");
 
 				forge.AutomationHover(value);
 				var tooltip = OpenTooltips().LastOrDefault();
@@ -77,7 +76,7 @@ internal static partial class AutomationTools
 		public static string RecentSounds([Description("Number of sounds (default 20).")] int n = 20)
 			=> Serialize(new
 			{
-				soundsEnabled = Program.ServiceProvider.GetService(typeof(TQVaultAE.Application.Contracts.Services.ISoundService)) is RecordingSoundService recorder
+				soundsEnabled = Services.SoundService is RecordingSoundService recorder
 					? recorder.SoundsEnabled
 					: (bool?)null,
 				sounds = RecordingSoundService.Last(Math.Clamp(n, 1, 200)).Select(DescribeSound),

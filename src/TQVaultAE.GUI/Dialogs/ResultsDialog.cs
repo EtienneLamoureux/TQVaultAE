@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
+using TQVaultAE.Application.Layout;
 using TQVaultAE.Application.Search;
 using TQVaultAE.GUI.Components.Menus;
 using TQVaultAE.GUI.Components.Rendering;
@@ -78,6 +79,9 @@ public partial class ResultsDialog : VaultForm
 		// present then: the buttons kept their 96 dpi size, their text cut at a higher DPI).
 		this.SuspendLayout();
 		this.InitializeComponent();
+		CaravanDialog.SetUpWindow(this, nameof(ResultsDialog));
+		// A modeless window: it keeps its taskbar button.
+		this.ShowInTaskbar = true;
 
 		// Several rows (Ctrl or Shift click, Ctrl+A): Move To and Undo act on the selection.
 		this.resultsDataGridView.MultiSelect = true;
@@ -115,7 +119,6 @@ public partial class ResultsDialog : VaultForm
 		this.columnSack.HeaderText = Resources.ResultsSack;
 		this.columnLevel.HeaderText = Resources.ResultsLevel;
 
-		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
 
 		this.LastFormSize = this.Size;
@@ -205,9 +208,7 @@ public partial class ResultsDialog : VaultForm
 		int scrollBarHeight = this.HorizontalScrollBarHeight();
 		this.Width = Math.Min(area.Width, totalWidth + this.Padding.Horizontal);
 		this.Height = Math.Max(this.Height, Math.Min(area.Height - scrollBarHeight, totalHeight - scrollBarHeight));
-		this.Location = new Point(
-			Math.Clamp(this.Location.X, area.Left, Math.Max(area.Left, area.Right - this.Width)),
-			area.Top + (area.Height - this.Height) / 2);
+		this.Location = WindowLayout.KeepOnScreen(new Point(this.Location.X, area.Top + ((area.Height - this.Height) / 2)), this.Size, [area]);
 
 		this.selectedResult = null;
 
@@ -488,6 +489,13 @@ public partial class ResultsDialog : VaultForm
 		this.moveMenu = new ContextMenuStrip() { Name = "moveMenu", ShowImageMargin = false };
 		MenuStyle.Apply(this.moveMenu, this.FontService, this.UIService.FontZoom);
 		this.moveMenu.FillOnOpening(() => this.FillMenu(this.moveMenu, full: false));
+
+		// Made in code, outside the designer's components: disposed with the dialog, their entries with them.
+		this.Disposed += (_, _) =>
+		{
+			this.resultsMenu.Dispose();
+			this.moveMenu.Dispose();
+		};
 
 		this.resultsDataGridView.SelectionChanged += (_, _) => this.UpdateMoveButtons();
 		this.UpdateMoveButtons();

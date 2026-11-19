@@ -257,18 +257,28 @@ internal static partial class AutomationTools
 
 	[McpServerTool(Name = "import_text", Destructive = true)]
 	[Description("Pastes text like Ctrl+V with the clipboard holding it, without touching the clipboard: exported JSON (an item, items, a tab or a vault, as copied by 'Share to Clipboard') or a PasteBin link. Items go into the current tab of the vault shown; a whole vault asks to replace the vault shown or import it as a new vault (queue_dialog_answers first: Yes replaces, No creates a new vault, Cancel). Give the text, or the path of a file holding it. The vault shown must be a test vault ('vault-...').")]
-	public static string ImportText(
+	public static async Task<string> ImportText(
 		[Description("Text to paste; empty to read it from path.")] string? text = null,
 		[Description("File holding the text to paste, when text is empty.")] string? path = null)
-		=> AutomationHost.OnUi(form =>
+	{
+		var form = AutomationHost.OnUi(form =>
 		{
 			RequireTestName(form.AutomationSelectedVault ?? string.Empty);
-			string content = !string.IsNullOrEmpty(text) ? text
-				: !string.IsNullOrEmpty(path) ? File.ReadAllText(path)
-				: throw new McpException("Give the text to paste, or the path of a file holding it.");
-			string? error = form.AutomationImportText(content);
+			return form;
+		});
+		string content = !string.IsNullOrEmpty(text) ? text
+			: !string.IsNullOrEmpty(path) ? await File.ReadAllTextAsync(path).ConfigureAwait(false)
+			: throw new McpException("Give the text to paste, or the path of a file holding it.");
+
+		// Parsed off the UI thread (a PasteBin link is downloaded), placed on it.
+		var result = await form.AutomationParseImportTextAsync(content).ConfigureAwait(false);
+		return AutomationHost.OnUi(form =>
+		{
+			RequireTestName(form.AutomationSelectedVault ?? string.Empty);
+			string? error = form.AutomationHandleImportResult(result);
 			return Serialize(new { vault = form.AutomationSelectedVault, vaultMod = form.AutomationSelectedVaultMod, error });
 		});
+	}
 
 	/// <summary>Debug builds: automation creates and changes only test characters and vaults (see <see cref="AutomationTestNames"/>).</summary>
 	private static void RequireTestName(string name)
@@ -331,14 +341,12 @@ internal static partial class AutomationTools
 		[Description("Zero-based bag button index.")] int bag)
 		=> AutomationHost.OnUi(form =>
 		{
-			var container = AutomationPanels.Resolve(form, panel).Container
-				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			var container = AutomationPanels.ResolveContainer(form, panel).Container;
 
-			if (bag < 0 || bag >= container.BagButtons.Count)
-				throw new McpException($"Bag {bag} is out of range 0..{container.BagButtons.Count - 1}.");
+			container.RequireBag(bag);
 
 			var button = container.BagButtons[bag];
-			OnMouseDownMethod.Invoke(button, [new MouseEventArgs(MouseButtons.Left, 1, button.Width / 2, button.Height / 2, 0)]);
+			OnMouseDownMethod.Invoke(button, [AutomationInput.CenterClick(button, MouseButtons.Left)]);
 			container.Refresh();
 			return Serialize(new { panel, currentBag = container.ShownBag() });
 		});
@@ -427,8 +435,7 @@ internal static partial class AutomationTools
 		var (json, png) = AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged: use move_drag to hover with it, or cancel_drag first.");
+			RequireNoDrag(form, "An item is being dragged: use move_drag to hover with it, or cancel_drag first.");
 
 			var cell = new Point(x, y);
 			var item = named.Panel.AutomationFindItem(cell);
@@ -462,8 +469,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged: a right click would cancel it. Use cancel_drag first.");
+			RequireNoDrag(form, "An item is being dragged: a right click would cancel it. Use cancel_drag first.");
 
 			var cell = new Point(x, y);
 			var item = named.Panel.AutomationFindItem(cell);
@@ -483,8 +489,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged: a right click would cancel it. Use cancel_drag first.");
+			RequireNoDrag(form, "An item is being dragged: a right click would cancel it. Use cancel_drag first.");
 
 			var cell = new Point(x, y);
 			var item = named.Panel.AutomationFindItem(cell);
@@ -511,8 +516,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged: a right click would cancel it. Use cancel_drag first.");
+			RequireNoDrag(form, "An item is being dragged: a right click would cancel it. Use cancel_drag first.");
 
 			bool exported;
 			try
@@ -535,8 +539,7 @@ internal static partial class AutomationTools
 		[Description("Panel id of a vault: vault or secondaryVault.")] string panel = "vault")
 		=> AutomationHost.OnUi(form =>
 		{
-			var container = AutomationPanels.Resolve(form, panel).Container
-				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			var container = AutomationPanels.ResolveContainer(form, panel).Container;
 			return Serialize(new { panel, bag, exported = container.AutomationExportTab(bag, path), path });
 		});
 
@@ -550,8 +553,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged. Use cancel_drag first.");
+			RequireNoDrag(form);
 
 			var held = ClickModifiers(modifiers);
 			var item = named.Panel.AutomationFindItem(new Point(x, y));
@@ -576,8 +578,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var named = ResolveShownPanel(form, panel);
-			if (form.AutomationDragInfo.IsActive)
-				throw new McpException("An item is being dragged. Use cancel_drag first.");
+			RequireNoDrag(form);
 
 			foreach (var pair in cells.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
 			{
@@ -599,18 +600,16 @@ internal static partial class AutomationTools
 		[Description("True to close the bag tooltip instead.")] bool hide = false)
 		=> AutomationHost.OnUi(form =>
 		{
-			var container = AutomationPanels.Resolve(form, panel).Container
-				?? throw new McpException($"Panel '{panel}' has no bag buttons.");
+			var container = AutomationPanels.ResolveContainer(form, panel).Container;
 
-			if (bag < 0 || bag >= container.BagButtons.Count)
-				throw new McpException($"Bag {bag} is out of range 0..{container.BagButtons.Count - 1}.");
+			container.RequireBag(bag);
 
 			Tooltips.BagButtonTooltip.HideTooltip();
 			Tooltips.BagButtonLabelTooltip.HideTooltip();
 			if (!hide)
 			{
 				// Both tool tips the pointer shows: the bag's custom label above the button, and the summary of its items.
-				var services = Program.ServiceProvider.GetRequiredService<GuiServices>();
+				var services = Services;
 				Tooltips.BagButtonLabelTooltip.ShowTooltip(services, container.BagButtons[bag]);
 				Tooltips.BagButtonTooltip.ShowTooltip(services, container.BagButtons[bag]);
 			}
@@ -719,17 +718,15 @@ internal static partial class AutomationTools
 	/// <summary>The right-click menu of <paramref name="panel"/>'s bag button <paramref name="bag"/>, drawn as it opens.</summary>
 	private static Bitmap RenderBagMenu(MainForm form, string panel, int bag, IReadOnlyList<string> open)
 	{
-		var container = AutomationPanels.Resolve(form, panel).Container
-			?? throw new InvalidOperationException($"Panel '{panel}' has no bag buttons.");
+		var container = AutomationPanels.ResolveContainer(form, panel).Container;
 		return container.AutomationRenderBagMenu(bag, open);
 	}
 
 	/// <summary>The sort menu of <paramref name="panel"/>'s sort button, drawn as it opens.</summary>
 	private static Bitmap RenderSortMenu(MainForm form, string panel)
 	{
-		var named = AutomationPanels.Resolve(form, panel);
-		var container = named.Container ?? throw new AutomationRefusedException($"Panel '{panel}' has no sort button.");
-		return container.AutomationRenderSortMenu(named.Panel);
+		var (sortPanel, container) = AutomationPanels.ResolveContainer(form, panel, "sort button");
+		return container.AutomationRenderSortMenu(sortPanel);
 	}
 
 	#endregion
@@ -737,6 +734,19 @@ internal static partial class AutomationTools
 	#region Helpers
 
 	private static string Serialize(object value) => JsonSerializer.Serialize(value, JsonOptions);
+
+	/// <summary>Refuses an action while an item is dragged, with <paramref name="message"/>.</summary>
+	private static void RequireNoDrag(MainForm form, string message = "An item is being dragged. Use cancel_drag first.")
+	{
+		if (form.AutomationDragInfo.IsActive)
+			throw new McpException(message);
+	}
+
+	/// <summary>The services of the forms and controls (the bundle each form gets).</summary>
+	private static GuiServices Services => Service<GuiServices>();
+
+	/// <summary>A service the forms do not get through <see cref="GuiServices"/> (tags, mod links, the databases).</summary>
+	private static T Service<T>() where T : notnull => Program.ServiceProvider.GetRequiredService<T>();
 
 	private static AutomationPanels.NamedPanel ResolveShownPanel(MainForm form, string panel)
 	{
@@ -869,7 +879,7 @@ internal static partial class AutomationTools
 	{
 		try
 		{
-			var names = Program.ServiceProvider.GetRequiredService<IItemTextFormatter>();
+			var names = Services.ItemText;
 			return names.GetFriendlyNames(item).FullNameClean;
 		}
 		catch (Exception)
@@ -888,7 +898,7 @@ internal static partial class AutomationTools
 		string? baseName = null;
 		try
 		{
-			var names = Program.ServiceProvider.GetRequiredService<IItemTextFormatter>().GetFriendlyNames(item);
+			var names = Services.ItemText.GetFriendlyNames(item);
 			name = names.FullNameClean;
 			baseName = names.BaseItemInfoDescription?.RemoveAllTQTags();
 		}
@@ -942,7 +952,7 @@ internal static partial class AutomationTools
 	{
 		try
 		{
-			return Program.ServiceProvider.GetRequiredService<IItemProvider>().GetRequirementInfo(item).Lvl;
+			return Services.ItemProvider.GetRequirementInfo(item).Lvl;
 		}
 		catch (Exception)
 		{

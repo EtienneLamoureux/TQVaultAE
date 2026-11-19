@@ -124,10 +124,6 @@ internal static partial class NativeWindows
 		return result;
 	}
 
-	/// <summary>The bounds of a window on the screen, as Windows gives them; empty when it gives none.</summary>
-	public static Rectangle WindowRect(IntPtr hwnd)
-		=> GetWindowRect(hwnd, out var r) ? Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom) : Rectangle.Empty;
-
 	private static string Normalize(string text) => text.Replace("&", string.Empty).Trim();
 
 	private static NativeWindow Describe(IntPtr hwnd)
@@ -179,19 +175,6 @@ internal static partial class NativeWindows
 
 	/// <summary>Posts <paramref name="msg"/> to a window's message queue, handled by its thread's message loop.</summary>
 	public static bool Post(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => Win32Window.Post(hwnd, msg, wParam, lParam);
-
-	[StructLayout(LayoutKind.Sequential)]
-	private struct NativeRect
-	{
-		public int Left;
-		public int Top;
-		public int Right;
-		public int Bottom;
-	}
-
-	[LibraryImport("user32.dll")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool GetWindowRect(IntPtr hWnd, out NativeRect rect);
 
 	/// <summary>PrintWindow: the window's content as the desktop composes it, not a WM_PRINT repaint.</summary>
 	private const uint PW_RENDERFULLCONTENT = 0x2;

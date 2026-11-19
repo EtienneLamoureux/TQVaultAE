@@ -131,7 +131,6 @@ internal partial class ItemProperties
 		this.ButtonOK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 		this.ButtonOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 		this.ButtonOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-		this.ButtonOK.Font = new System.Drawing.Font("Albertus MT Light", 12F);
 		this.ButtonOK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
 		this.ButtonOK.Image = ((System.Drawing.Image)(resources.GetObject("ButtonOK.Image")));
 		this.ButtonOK.Location = new System.Drawing.Point(851, 418);
@@ -149,7 +148,6 @@ internal partial class ItemProperties
 		// labelItemName
 		//
 		this.labelItemName.AutoEllipsis = true;
-		this.labelItemName.Font = new System.Drawing.Font("Albertus MT Light", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 		this.labelItemName.Location = new System.Drawing.Point(12, 34);
 		this.labelItemName.Name = "labelItemName";
 		this.labelItemName.Size = new System.Drawing.Size(830, 46);
@@ -164,7 +162,6 @@ internal partial class ItemProperties
 		this.checkBoxFilterExtraInfo.BackColor = System.Drawing.Color.Transparent;
 		this.checkBoxFilterExtraInfo.Checked = true;
 		this.checkBoxFilterExtraInfo.CheckState = System.Windows.Forms.CheckState.Checked;
-		this.checkBoxFilterExtraInfo.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
 		this.checkBoxFilterExtraInfo.Location = new System.Drawing.Point(862, 47);
 		this.checkBoxFilterExtraInfo.Name = "checkBoxFilterExtraInfo";
 		this.checkBoxFilterExtraInfo.Size = new System.Drawing.Size(126, 21);
@@ -351,7 +348,6 @@ internal partial class ItemProperties
 		//
 		this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 		this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-		this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
 		this.ClientSize = new System.Drawing.Size(1000, 460);
 		this.Controls.Add(this.groupBoxSuffixProperties);
 		this.Controls.Add(this.checkBoxFilterExtraInfo);
@@ -360,16 +356,10 @@ internal partial class ItemProperties
 		this.Controls.Add(this.labelItemName);
 		this.Controls.Add(this.ButtonOK);
 		this.DrawCustomBorder = true;
-		this.Font = new System.Drawing.Font("Albertus MT Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-		this.ForeColor = System.Drawing.Color.White;
 		this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 		this.Margin = new System.Windows.Forms.Padding(4);
-		this.MaximizeBox = false;
-		this.MinimizeBox = false;
 		this.Name = "ItemProperties";
-		this.ShowInTaskbar = false;
 		this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-		this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 		this.Text = "Item Properties";
 		this.TopMost = true;
 		this.Load += new System.EventHandler(this.ItemProperties_Load);

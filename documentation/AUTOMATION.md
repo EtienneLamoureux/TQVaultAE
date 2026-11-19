@@ -20,7 +20,8 @@ reads the app's own models instead, and drives drags through the panels' own mou
   reference, `TQVaultAE.Automation`) and the user tools (methods of `AutomationTools`).
 - Debug only: the developer tools (methods of the nested class `AutomationTools.DevTools`, in `Automation/Dev/`), the
   headless mode (`Dev/Headless.cs`, `TQVaultAE.Automation/HeadlessDesktop.cs`), the recorded sounds and the in-memory
-  log. The hooks only these need stay inside `#if DEBUG`.
+  log. The accessors and helpers only these need go in `Automation/Dev/` partial files (`<Class>.Dev.Automation.cs`),
+  or inside `#if DEBUG` in code outside `Automation/`.
 - The test `AutomationToolLevelsTests` holds both lists: a new tool goes in one of them (run it with `-c Release` to
   check a Release build).
 - At connection, the server sends the agent the rules of [mcp.md](mcp.md) (the `instructions` field,

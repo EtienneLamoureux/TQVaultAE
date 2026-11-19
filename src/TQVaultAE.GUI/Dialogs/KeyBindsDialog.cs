@@ -181,39 +181,11 @@ internal sealed partial class KeyBindsDialog : VaultForm
 		this.buttonCancel = NewButton(nameof(this.buttonCancel), Resources.GlobalCancel);
 		this.buttonCancel.DialogResult = DialogResult.Cancel;
 
-		var buttons = new FlowLayoutPanel()
-		{
-			Anchor = AnchorStyles.None,
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			FlowDirection = FlowDirection.LeftToRight,
-			Margin = new Padding(0, Zoomed(4), 0, 0),
-			WrapContents = false,
-		};
-		buttons.Controls.AddRange([this.buttonClear, this.buttonDefaults, this.buttonOk, this.buttonCancel]);
-
-		this.layout = new TableLayoutPanel()
-		{
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			ColumnCount = 1,
-			Margin = new Padding(0),
-		};
-		this.layout.Controls.AddRange([this.listPanel, this.labelStatus, buttons]);
+		var buttons = CaravanDialog.Row(Zoomed(4), this.buttonClear, this.buttonDefaults, this.buttonOk, this.buttonCancel);
+		this.layout = CaravanDialog.Table(this.listPanel, this.labelStatus, buttons);
 		CaravanFrame.FrameAround(this.listPanel);
 
-		this.SuspendLayout();
-		CaravanDialog.SetUpWindow(this, nameof(KeyBindsDialog));
-		this.CancelButton = this.buttonCancel;
-		this.Font = font;
-		this.Text = Resources.KeyBindsTitle;
-		this.Padding = CaravanDialog.ContentPadding(zoom);
-		this.layout.Location = new Point(this.Padding.Left, this.Padding.Top);
-		this.Controls.Add(this.layout);
-		this.DrawCustomBorder = true;
-		CaravanLook.Apply(this, this.layout, buttons);
-		this.ResumeLayout(false);
-		this.PerformLayout();
+		CaravanDialog.Lay(this, nameof(KeyBindsDialog), Resources.KeyBindsTitle, this.layout, font, zoom, null, this.buttonCancel, [buttons]);
 
 		this.RefreshCells();
 		this.FitAround(this.layout);

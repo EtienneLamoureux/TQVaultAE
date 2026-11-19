@@ -97,7 +97,7 @@ internal static partial class AutomationTools
 				throw new McpException($"The bar shows no {part} now.");
 
 			const int WM_MOUSEMOVE = 0x0200;
-			var center = new Point(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
+			var center = AutomationInput.Center(bounds);
 			User32.SendMessage(bar.Handle, WM_MOUSEMOVE, IntPtr.Zero, User32.MakeLParam(center));
 			var text = bar.AutomationToolTip;
 			if (string.IsNullOrEmpty(text))

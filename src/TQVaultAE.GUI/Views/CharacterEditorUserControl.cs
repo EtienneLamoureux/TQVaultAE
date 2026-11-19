@@ -1,3 +1,4 @@
+using TQVaultAE.GUI.Models;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Session;
@@ -23,14 +24,6 @@ using Microsoft.Extensions.Logging;
 /// </summary>
 internal sealed partial class CharacterEditorUserControl : MainWindowView, IMainWindowView, IIgnoresZoom
 {
-	private struct DifficultData
-	{
-		public string Text;
-		public int Id;
-
-		public override string ToString() => Text;
-	}
-
 	private readonly ILogger Log;
 	private readonly GuiServices Services;
 	private readonly UserSettings USettings;
@@ -102,18 +95,29 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 	/// <summary>The values of the editors once the character is shown.</summary>
 	private EditorState _startState;
 
+	/// <summary>Shows <paramref name="value"/> in <paramref name="box"/>, its maximum raised to it when lower.</summary>
+	private static void Fill(NumericUpDown box, int value)
+	{
+		if (value > box.Maximum)
+			box.Maximum = value;
+		box.Value = value;
+	}
+
+	/// <summary>The whole number a numeric box shows.</summary>
+	private static int ValueOf(NumericUpDown box) => Convert.ToInt32(box.Value);
+
 	private EditorState CurrentState() => new(
-		Convert.ToInt32(this.levelNumericUpDown.Value),
+		ValueOf(this.levelNumericUpDown),
 		this.xpTextBox.Text,
 		// Ticking Enable leveling selects the difficulty unlocked: no change until another one is chosen.
 		this.difficultlyComboBox.Enabled ? this.difficultlyComboBox.SelectedIndex : this.Info.DifficultyUnlocked,
-		Convert.ToInt32(this.skillPointsNumericUpDown.Value),
-		Convert.ToInt32(this.attributeNumericUpDown.Value),
-		Convert.ToInt32(this.healthUpDown.Value),
-		Convert.ToInt32(this.manacUpDown.Value),
-		Convert.ToInt32(this.strengthUpDown.Value),
-		Convert.ToInt32(this.intelligenceUpDown.Value),
-		Convert.ToInt32(this.dexterityUpDown.Value));
+		ValueOf(this.skillPointsNumericUpDown),
+		ValueOf(this.attributeNumericUpDown),
+		ValueOf(this.healthUpDown),
+		ValueOf(this.manacUpDown),
+		ValueOf(this.strengthUpDown),
+		ValueOf(this.intelligenceUpDown),
+		ValueOf(this.dexterityUpDown));
 
 
 	/// <summary>
@@ -161,16 +165,16 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		try
 		{
 			var request = new CharacterEditRequest(
-				Level: Convert.ToInt32(levelNumericUpDown.Value)
+				Level: ValueOf(levelNumericUpDown)
 				, XpText: xpTextBox.Text
 				, DifficultyUnlocked: difficultlyComboBox.Enabled ? difficultlyComboBox.SelectedIndex : null
-				, SkillPoints: Convert.ToInt32(skillPointsNumericUpDown.Value)
-				, AttributePoints: Convert.ToInt32(attributeNumericUpDown.Value)
-				, Strength: Convert.ToInt32(strengthUpDown.Value)
-				, Dexterity: Convert.ToInt32(dexterityUpDown.Value)
-				, Intelligence: Convert.ToInt32(intelligenceUpDown.Value)
-				, Health: Convert.ToInt32(healthUpDown.Value)
-				, Mana: Convert.ToInt32(manacUpDown.Value)
+				, SkillPoints: ValueOf(skillPointsNumericUpDown)
+				, AttributePoints: ValueOf(attributeNumericUpDown)
+				, Strength: ValueOf(strengthUpDown)
+				, Dexterity: ValueOf(dexterityUpDown)
+				, Intelligence: ValueOf(intelligenceUpDown)
+				, Health: ValueOf(healthUpDown)
+				, Mana: ValueOf(manacUpDown)
 				, SkillRecords: this._skills?.Changed == true ? this._skills.BuildSkillRecords() : null
 				, MasteriesChanged: this._skills?.MasteriesChanged == true);
 
@@ -221,61 +225,37 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		// A read-only character can be looked at, not changed: OK would apply nothing (CharacterEditService.Apply).
 		this.ok.Enabled = !this.PlayerCollection.IsReadOnly;
 
-		if (Info.BaseStrength > Convert.ToInt32(strengthUpDown.Maximum))
-			strengthUpDown.Maximum = Info.BaseStrength;
-
-		strengthUpDown.Value = Info.BaseStrength;
+		Fill(strengthUpDown, Info.BaseStrength);
 		var attrTag = new TagData { IncrementValue = PlayerLevel.AtrributeIncrementPerPoint };
 		strengthUpDown.Tag = attrTag;
 
-		if (Info.BaseDexterity > Convert.ToInt32(dexterityUpDown.Maximum))
-			dexterityUpDown.Maximum = Info.BaseDexterity;
-
-		dexterityUpDown.Value = Info.BaseDexterity;
+		Fill(dexterityUpDown, Info.BaseDexterity);
 		dexterityUpDown.Tag = attrTag;
 
-		if (Info.BaseIntelligence > Convert.ToInt32(intelligenceUpDown.Maximum))
-			intelligenceUpDown.Maximum = Info.BaseIntelligence;
-
-		intelligenceUpDown.Value = Info.BaseIntelligence;
+		Fill(intelligenceUpDown, Info.BaseIntelligence);
 		intelligenceUpDown.Tag = attrTag;
 
-		if (Info.BaseHealth > Convert.ToInt32(healthUpDown.Maximum))
-			healthUpDown.Maximum = Info.BaseHealth;
-
-		healthUpDown.Value = Info.BaseHealth;
+		Fill(healthUpDown, Info.BaseHealth);
 		var attrHMTag = new TagData { IncrementValue = PlayerLevel.HealthAndManaIncrementPerPoint };
 		healthUpDown.Tag = attrHMTag;
 
-		if (Info.BaseMana > Convert.ToInt32(manacUpDown.Maximum))
-			manacUpDown.Maximum = Info.BaseMana;
-
-		manacUpDown.Value = Info.BaseMana;
+		Fill(manacUpDown, Info.BaseMana);
 		manacUpDown.Tag = attrHMTag;
 
-		if (Info.CurrentLevel > Convert.ToInt32(levelNumericUpDown.Maximum))
-			levelNumericUpDown.Maximum = Info.CurrentLevel;
-
-		levelNumericUpDown.Value = Info.CurrentLevel;
+		Fill(levelNumericUpDown, Info.CurrentLevel);
 
 		xpTextBox.Text = string.Format("{0}", Info.CurrentXP);
 
-		if (Info.AttributesPoints > Convert.ToInt32(attributeNumericUpDown.Maximum))
-			attributeNumericUpDown.Maximum = Info.AttributesPoints;
+		Fill(attributeNumericUpDown, Info.AttributesPoints);
 
-		attributeNumericUpDown.Value = Info.AttributesPoints;
-
-		if (Info.SkillPoints > Convert.ToInt32(skillPointsNumericUpDown.Maximum))
-			skillPointsNumericUpDown.Maximum = Info.SkillPoints;
-
-		skillPointsNumericUpDown.Value = Info.SkillPoints;
+		Fill(skillPointsNumericUpDown, Info.SkillPoints);
 
 		this.InitSkills();
 
 		difficultlyComboBox.Items.Clear();
-		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(0), Id = 0 });
-		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(1), Id = 1 });
-		difficultlyComboBox.Items.Add(new DifficultData { Text = TranslationService.TranslateDifficulty(2), Id = 2 });
+		difficultlyComboBox.Items.Add(new DisplayItem<int>(0, TranslationService.TranslateDifficulty(0)));
+		difficultlyComboBox.Items.Add(new DisplayItem<int>(1, TranslationService.TranslateDifficulty(1)));
+		difficultlyComboBox.Items.Add(new DisplayItem<int>(2, TranslationService.TranslateDifficulty(2)));
 
 		levelingCheckBox.Checked = false;
 
@@ -286,9 +266,9 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		}
 
 		foreach (var upDown in new[] { strengthUpDown, dexterityUpDown, intelligenceUpDown, healthUpDown, manacUpDown, levelNumericUpDown })
-			this._previousValues[upDown] = Convert.ToInt32(upDown.Value);
+			this._previousValues[upDown] = ValueOf(upDown);
 
-		this._startAttributes = [.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))];
+		this._startAttributes = this.AttributeValues;
 		this.InitClassSets();
 		this.FitToFrame();
 		_loaded = true;
@@ -304,7 +284,7 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		{
 			var upDown = (NumericUpDown)sender!;
 			var prevLvl = this._previousValues[upDown];
-			var level = Convert.ToInt32(upDown.Value);
+			var level = ValueOf(upDown);
 			this._previousValues[upDown] = level;
 
 			xpTextBox.Text = PlayerLevel.LevelStartXp(level).ToString();
@@ -342,10 +322,10 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 		if (upDwnCtrl.Tag is null) return;
 
 		var prevValue = this._previousValues[upDwnCtrl];
-		var value = Convert.ToInt32(upDwnCtrl.Value);
+		var value = ValueOf(upDwnCtrl);
 
 		var tag = (TagData)upDwnCtrl.Tag;
-		if (!PlayerLevel.TryChangeAttribute(prevValue, value, tag.IncrementValue, Convert.ToInt32(attributeNumericUpDown.Value), out var newAttr))
+		if (!PlayerLevel.TryChangeAttribute(prevValue, value, tag.IncrementValue, ValueOf(attributeNumericUpDown), out var newAttr))
 		{
 			// Not enough points: undo, which raises this handler again with no change.
 			upDwnCtrl.Value = prevValue;
@@ -398,8 +378,8 @@ internal sealed partial class CharacterEditorUserControl : MainWindowView, IMain
 	/// </summary>
 	private void ResetAttributesScalingButton_Click(object? sender, EventArgs e)
 	{
-		var pool = Convert.ToInt32(this.attributeNumericUpDown.Value) + PlayerLevel.GetInvestedAttributePoints(
-			[.. this.AttributeBoxes.Select(b => Convert.ToInt32(b.Value))]);
+		var pool = ValueOf(this.attributeNumericUpDown) + PlayerLevel.GetInvestedAttributePoints([
+			.. this.AttributeBoxes.Select(ValueOf)]);
 		if (pool > this.attributeNumericUpDown.Maximum)
 			this.attributeNumericUpDown.Maximum = pool;
 

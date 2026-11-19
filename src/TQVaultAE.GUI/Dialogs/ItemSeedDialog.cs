@@ -59,8 +59,7 @@ internal sealed class ItemSeedDialog : VaultForm
 			Text = Resources.SeedLabel1,
 			UseMnemonic = false,
 		};
-		int space = CaravanFrame.Border + CaravanFrame.CharacterWidth(font);
-		CaravanFrame.ApplyTo(this.labelInfos, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
+		CaravanDialog.FrameText(this.labelInfos, font);
 
 		this.itemSeedBox = new ScalingTextBox()
 		{
@@ -75,54 +74,19 @@ internal sealed class ItemSeedDialog : VaultForm
 		this.ButtonRandom.Click += this.RandomButtonClicked;
 		this.ButtonOk = CaravanDialog.Button(this.FontService, zoom, nameof(this.ButtonOk), Resources.GlobalOK);
 		this.ButtonOk.Click += this.OKButton_Click;
-		this.ButtonCancel = CaravanDialog.Button(this.FontService, zoom, nameof(this.ButtonCancel), Resources.GlobalCancel);
-		this.ButtonCancel.DialogResult = DialogResult.Cancel;
-		// Also closes the dialog shown modeless (automation).
-		this.ButtonCancel.Click += (_, _) => this.Close();
+		this.ButtonCancel = CaravanDialog.CancelButton(this, zoom, nameof(this.ButtonCancel), Resources.GlobalCancel);
 
 		// The seed box as wide as a button, beside Random; OK and Cancel under them.
-		var seedRow = NewRow(0);
-		seedRow.Controls.AddRange([this.itemSeedBox, this.ButtonRandom]);
-		var buttons = NewRow(Zoomed(14));
-		buttons.Controls.AddRange([this.ButtonOk, this.ButtonCancel]);
+		var seedRow = CaravanDialog.Row(0, this.itemSeedBox, this.ButtonRandom);
+		var buttons = CaravanDialog.Row(Zoomed(14), this.ButtonOk, this.ButtonCancel);
 		this.itemSeedBox.Width = this.ButtonRandom.Width;
+		var layout = CaravanDialog.Table(this.labelInfos, seedRow, buttons);
 
-		var layout = new TableLayoutPanel()
-		{
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			ColumnCount = 1,
-			Margin = new Padding(0),
-		};
-		layout.Controls.AddRange([this.labelInfos, seedRow, buttons]);
-
-		this.SuspendLayout();
-		CaravanDialog.SetUpWindow(this, nameof(ItemSeedDialog));
-		this.AcceptButton = this.ButtonOk;
-		this.CancelButton = this.ButtonCancel;
-		this.Font = font;
-		this.Text = Resources.SeedText;
 		this.TopMost = true;
-		this.Padding = CaravanDialog.ContentPadding(zoom);
-		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
-		this.Controls.Add(layout);
-		this.DrawCustomBorder = true;
-		CaravanLook.Apply(this, layout, seedRow, buttons);
-		this.ResumeLayout(false);
-		this.PerformLayout();
+		CaravanDialog.Lay(this, nameof(ItemSeedDialog), Resources.SeedText, layout, font, zoom, this.ButtonOk, this.ButtonCancel, [seedRow, buttons]);
 
 		this.FitAround(layout);
 		this.Load += this.ItemSeedDlg_Load;
-
-		static FlowLayoutPanel NewRow(int top) => new()
-		{
-			Anchor = AnchorStyles.None,
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			FlowDirection = FlowDirection.LeftToRight,
-			Margin = new Padding(0, top, 0, 0),
-			WrapContents = false,
-		};
 	}
 
 	/// <summary>

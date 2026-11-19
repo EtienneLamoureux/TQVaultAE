@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Layout;
 using TQVaultAE.GUI.Components.Layout;
 using TQVaultAE.GUI.Components.Rendering;
 using TQVaultAE.GUI.Components.Scaling;
@@ -22,8 +23,6 @@ public partial class SearchDialogAdvanced : VaultForm
 {
 	private readonly IItemDatabaseService ItemDatabaseService;
 	private readonly ILogger Log;
-	private readonly Bitmap ButtonImageUp;
-	private readonly Bitmap ButtonImageDown;
 	/// <summary>
 	/// One search category: its navigation button, the panel it shows or hides, the title over the list, the list, and the
 	/// localized title shown by both the button and the label.
@@ -58,14 +57,13 @@ public partial class SearchDialogAdvanced : VaultForm
 		this.ItemDatabaseService = itemDatabaseService;
 
 		this.InitializeComponent();
+		CaravanDialog.SetUpWindow(this, nameof(SearchDialogAdvanced));
 		// The main window's marble shows behind every panel, around the dark lists; the labels and check boxes over it are
 		// drawn like the captions over the frames.
 		CaravanLook.Apply(this, MarbleBackground.Marble.MainWindow, this.tableLayoutPanelContent, this.tableLayoutPanelBottom);
 		CaravanLook.OutlineText(this);
 		this.CenterHeaderRows();
 
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
 		this.MaximizeBox = true;
 
 		#region Apply custom font
@@ -81,8 +79,8 @@ public partial class SearchDialogAdvanced : VaultForm
 			button.Margin = new Padding(button.Margin.Left, 1, button.Margin.Right, 1);
 			if (button is ScalingButton category)
 			{
+				// Its setter gives the standard button's frame and hover colors.
 				category.UseCustomGraphic = false;
-				category.Image = null;
 				category.FlatStyle = this.buttonCollapseAll.FlatStyle;
 				category.BackColor = this.buttonCollapseAll.BackColor;
 				category.ForeColor = this.buttonCollapseAll.ForeColor;
@@ -137,10 +135,6 @@ public partial class SearchDialogAdvanced : VaultForm
 		scalingCheckBoxModded.Text = Resources.SearchModded;
 
 		#endregion
-
-		// Keep reference of base Up & Down button image
-		this.ButtonImageUp = this.scalingButtonMenuAttribute.UpBitmap;
-		this.ButtonImageDown = this.scalingButtonMenuAttribute.DownBitmap;
 
 		this.scalingComboBoxOperator.SelectedIndex = (int)SearchOperator.And;
 
@@ -555,7 +549,7 @@ public partial class SearchDialogAdvanced : VaultForm
 
 		var screen = Screen.FromControl(this).WorkingArea;
 		int height = Math.Min(this.Height + overflow, screen.Height);
-		int top = Math.Max(screen.Top, Math.Min(this.Top, screen.Bottom - height));
+		int top = WindowLayout.KeepOnScreen(this.Location, new Size(this.Width, height), [screen]).Y;
 		this.SetBounds(this.Left, top, this.Width, height);
 		this.LastFormSize = this.Size;
 		this.KeepLayoutSize();

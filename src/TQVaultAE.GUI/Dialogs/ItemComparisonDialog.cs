@@ -501,16 +501,13 @@ internal sealed partial class ItemComparisonDialog : VaultForm
 		this.ClientSize = new Size(width, height);
 		if (keepLocation)
 		{
-			this.Location = new Point(
-				Math.Clamp(this.Left, area.Left, Math.Max(area.Left, area.Right - this.Width)),
-				Math.Clamp(this.Top, area.Top, Math.Max(area.Top, area.Bottom - this.Height)));
+			this.Location = WindowLayout.KeepOnScreen(this.Location, this.Size, [area]);
 		}
 		else if (this.Owner is not null)
 		{
 			var owner = this.Owner.Bounds;
-			var centered = new Point(
-				Math.Clamp(owner.Left + ((owner.Width - this.Width) / 2), area.Left, Math.Max(area.Left, area.Right - this.Width)),
-				Math.Clamp(owner.Top + ((owner.Height - this.Height) / 2), area.Top, Math.Max(area.Top, area.Bottom - this.Height)));
+			var centered = WindowLayout.KeepOnScreen(
+				new Point(owner.Left + ((owner.Width - this.Width) / 2), owner.Top + ((owner.Height - this.Height) / 2)), this.Size, [area]);
 			var others = this.Owner.OwnedForms.OfType<ItemComparisonDialog>()
 				.Where(f => f != this && f.Visible && !f.IsDisposed).Select(f => f.Location).ToList();
 			this.StartPosition = FormStartPosition.Manual;

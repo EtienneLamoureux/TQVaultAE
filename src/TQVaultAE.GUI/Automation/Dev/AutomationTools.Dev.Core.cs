@@ -76,8 +76,7 @@ internal static partial class AutomationTools
 			=> AutomationHost.OnUi(form =>
 			{
 				var named = ResolveShownPanel(form, panel);
-				if (form.AutomationDragInfo.IsActive)
-					throw new McpException("An item is being dragged. Use cancel_drag first.");
+				RequireNoDrag(form);
 
 				var held = ClickModifiers(modifiers);
 				named.Panel.AutomationDragSelect(new Point(x1, y1), new Point(x2, y2), held);

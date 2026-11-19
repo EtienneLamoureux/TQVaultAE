@@ -284,7 +284,6 @@ internal partial class SettingsUserControl
 		// allowItemEditCheckBox
 		// 
 		allowItemEditCheckBox.AutoSize = true;
-		allowItemEditCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		allowItemEditCheckBox.ForeColor = Color.White;
 		allowItemEditCheckBox.Location = new Point(3, 59);
 		allowItemEditCheckBox.Name = "allowItemEditCheckBox";
@@ -298,7 +297,6 @@ internal partial class SettingsUserControl
 		// allowItemCopyCheckBox
 		// 
 		allowItemCopyCheckBox.AutoSize = true;
-		allowItemCopyCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		allowItemCopyCheckBox.ForeColor = Color.White;
 		allowItemCopyCheckBox.Location = new Point(3, 31);
 		allowItemCopyCheckBox.Name = "allowItemCopyCheckBox";
@@ -307,12 +305,10 @@ internal partial class SettingsUserControl
 		allowItemCopyCheckBox.Text = "Allow Item Copying";
 		toolTip.SetToolTip(allowItemCopyCheckBox, "Enables copy selection in the context menu.");
 		allowItemCopyCheckBox.UseVisualStyleBackColor = true;
-		allowItemCopyCheckBox.CheckedChanged += AllowItemCopyCheckBoxCheckedChanged;
 		// 
 		// loadLastCharacterCheckBox
 		// 
 		loadLastCharacterCheckBox.AutoSize = true;
-		loadLastCharacterCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		loadLastCharacterCheckBox.ForeColor = Color.White;
 		loadLastCharacterCheckBox.Location = new Point(3, 31);
 		loadLastCharacterCheckBox.Name = "loadLastCharacterCheckBox";
@@ -321,12 +317,10 @@ internal partial class SettingsUserControl
 		loadLastCharacterCheckBox.Text = "Automatically Load the last opened Character";
 		toolTip.SetToolTip(loadLastCharacterCheckBox, "Selecting this option will automatically load\r\nthe last open character when TQVault was closed.");
 		loadLastCharacterCheckBox.UseVisualStyleBackColor = true;
-		loadLastCharacterCheckBox.CheckedChanged += LoadLastCharacterCheckBoxCheckedChanged;
 		// 
 		// loadLastVaultCheckBox
 		// 
 		loadLastVaultCheckBox.AutoSize = true;
-		loadLastVaultCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		loadLastVaultCheckBox.ForeColor = Color.White;
 		loadLastVaultCheckBox.Location = new Point(3, 59);
 		loadLastVaultCheckBox.Name = "loadLastVaultCheckBox";
@@ -335,11 +329,9 @@ internal partial class SettingsUserControl
 		loadLastVaultCheckBox.Text = "Automatically Load the last opened Vault";
 		toolTip.SetToolTip(loadLastVaultCheckBox, "Selecting this item will automatically load the\r\nlast opened vault when TQVault was closed.\r\nTQVault will automatically open Main Vault\r\nif nothing is chosen.");
 		loadLastVaultCheckBox.UseVisualStyleBackColor = true;
-		loadLastVaultCheckBox.CheckedChanged += LoadLastVaultCheckBoxCheckedChanged;
 		// 
 		// vaultPathTextBox
 		// 
-		vaultPathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		vaultPathTextBox.Location = new Point(3, 3);
 		vaultPathTextBox.Name = "vaultPathTextBox";
 		vaultPathTextBox.Size = new Size(397, 24);
@@ -357,7 +349,6 @@ internal partial class SettingsUserControl
 		cancelButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		cancelButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		cancelButton.FlatStyle = FlatStyle.Flat;
-		cancelButton.Font = new Font("Microsoft Sans Serif", 12F);
 		cancelButton.ForeColor = Color.FromArgb(51, 44, 28);
 		cancelButton.Image = (Image)resources.GetObject("cancelButton.Image");
 		cancelButton.Location = new Point(609, 3);
@@ -380,7 +371,6 @@ internal partial class SettingsUserControl
 		okayButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		okayButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		okayButton.FlatStyle = FlatStyle.Flat;
-		okayButton.Font = new Font("Microsoft Sans Serif", 12F);
 		okayButton.ForeColor = Color.FromArgb(51, 44, 28);
 		okayButton.Image = (Image)resources.GetObject("okayButton.Image");
 		okayButton.Location = new Point(446, 3);
@@ -408,7 +398,6 @@ internal partial class SettingsUserControl
 		resetButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		resetButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		resetButton.FlatStyle = FlatStyle.Flat;
-		resetButton.Font = new Font("Microsoft Sans Serif", 12F);
 		resetButton.ForeColor = Color.FromArgb(51, 44, 28);
 		resetButton.Image = (Image)resources.GetObject("resetButton.Image");
 		resetButton.Location = new Point(1052, 3);
@@ -432,7 +421,6 @@ internal partial class SettingsUserControl
 		vaultPathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		vaultPathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		vaultPathBrowseButton.FlatStyle = FlatStyle.Flat;
-		vaultPathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
 		vaultPathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
 		vaultPathBrowseButton.Image = (Image)resources.GetObject("vaultPathBrowseButton.Image");
 		vaultPathBrowseButton.Location = new Point(406, 0);
@@ -451,7 +439,6 @@ internal partial class SettingsUserControl
 		// loadAllFilesCheckBox
 		// 
 		loadAllFilesCheckBox.AutoSize = true;
-		loadAllFilesCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		loadAllFilesCheckBox.ForeColor = Color.White;
 		loadAllFilesCheckBox.Location = new Point(3, 87);
 		loadAllFilesCheckBox.Name = "loadAllFilesCheckBox";
@@ -460,12 +447,10 @@ internal partial class SettingsUserControl
 		loadAllFilesCheckBox.Text = "Pre-Load All Vault And Character Files";
 		toolTip.SetToolTip(loadAllFilesCheckBox, "Selecting this item will automatically load all\r\nof the available character, stash and vault files\r\non startup.  This aids the search function, but\r\nincreases startup time.");
 		loadAllFilesCheckBox.UseVisualStyleBackColor = true;
-		loadAllFilesCheckBox.CheckedChanged += LoadAllFilesCheckBoxCheckedChanged;
 		// 
 		// suppressWarningsCheckBox
 		// 
 		suppressWarningsCheckBox.AutoSize = true;
-		suppressWarningsCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		suppressWarningsCheckBox.ForeColor = Color.White;
 		suppressWarningsCheckBox.Location = new Point(3, 141);
 		suppressWarningsCheckBox.Name = "suppressWarningsCheckBox";
@@ -474,12 +459,10 @@ internal partial class SettingsUserControl
 		suppressWarningsCheckBox.Text = "Bypass Confirmation Messages";
 		toolTip.SetToolTip(suppressWarningsCheckBox, "When enabled, confirmation messages will no\r\nlonger be shown for item deletion and\r\nrelic removal or if there are items in the trash\r\nwhen TQVault is closed.");
 		suppressWarningsCheckBox.UseVisualStyleBackColor = true;
-		suppressWarningsCheckBox.CheckedChanged += SuppressWarningsCheckBoxCheckedChanged;
 		// 
 		// playerReadonlyCheckbox
 		// 
 		playerReadonlyCheckbox.AutoSize = true;
-		playerReadonlyCheckbox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		playerReadonlyCheckbox.ForeColor = Color.White;
 		playerReadonlyCheckbox.Location = new Point(3, 197);
 		playerReadonlyCheckbox.Name = "playerReadonlyCheckbox";
@@ -488,12 +471,10 @@ internal partial class SettingsUserControl
 		playerReadonlyCheckbox.Text = "Player Equipment ReadOnly";
 		toolTip.SetToolTip(playerReadonlyCheckbox, "Avoid save game corruption that occurs (randomly). When enabled, player equipment will be read-only,  you won't be able to select or move any item.");
 		playerReadonlyCheckbox.UseVisualStyleBackColor = true;
-		playerReadonlyCheckbox.CheckedChanged += PlayerReadonlyCheckboxCheckedChanged;
 		// 
 		// characterEditCheckBox
 		// 
 		characterEditCheckBox.AutoSize = true;
-		characterEditCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		characterEditCheckBox.ForeColor = Color.White;
 		characterEditCheckBox.Location = new Point(3, 3);
 		characterEditCheckBox.Name = "characterEditCheckBox";
@@ -502,7 +483,6 @@ internal partial class SettingsUserControl
 		characterEditCheckBox.Text = "Allow Character Editing Features";
 		toolTip.SetToolTip(characterEditCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
 		characterEditCheckBox.UseVisualStyleBackColor = true;
-		characterEditCheckBox.CheckedChanged += CharacterEditCheckBox_CheckedChanged;
 		// 
 		// groupBoxTooltipEnhanced
 		//
@@ -554,7 +534,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxTooltipDetailedView
 		//
 		scalingCheckBoxTooltipDetailedView.AutoSize = true;
-		scalingCheckBoxTooltipDetailedView.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipDetailedView.ForeColor = Color.White;
 		scalingCheckBoxTooltipDetailedView.Name = "scalingCheckBoxTooltipDetailedView";
 		scalingCheckBoxTooltipDetailedView.Size = new Size(213, 22);
@@ -562,71 +541,59 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipDetailedView.Text = "Enable detailed view";
 		toolTip.SetToolTip(scalingCheckBoxTooltipDetailedView, "Split item tooltip attributes into Prefix/Base/Suffix categories");
 		scalingCheckBoxTooltipDetailedView.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipDetailedView.CheckedChanged += scalingCheckBoxTooltipDetailedView_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipInGameRolls
 		//
 		scalingCheckBoxTooltipInGameRolls.AutoSize = true;
-		scalingCheckBoxTooltipInGameRolls.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipInGameRolls.ForeColor = Color.White;
 		scalingCheckBoxTooltipInGameRolls.Name = "scalingCheckBoxTooltipInGameRolls";
 		scalingCheckBoxTooltipInGameRolls.Size = new Size(213, 22);
 		scalingCheckBoxTooltipInGameRolls.TabIndex = 1;
 		scalingCheckBoxTooltipInGameRolls.Text = "Display in game rolls";
 		scalingCheckBoxTooltipInGameRolls.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipInGameRolls.CheckedChanged += scalingCheckBoxTooltipInGameRolls_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipValueRanges
 		//
 		scalingCheckBoxTooltipValueRanges.AutoSize = true;
-		scalingCheckBoxTooltipValueRanges.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipValueRanges.ForeColor = Color.White;
 		scalingCheckBoxTooltipValueRanges.Name = "scalingCheckBoxTooltipValueRanges";
 		scalingCheckBoxTooltipValueRanges.Size = new Size(213, 22);
 		scalingCheckBoxTooltipValueRanges.TabIndex = 2;
 		scalingCheckBoxTooltipValueRanges.Text = "Display min/max values";
 		scalingCheckBoxTooltipValueRanges.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipValueRanges.CheckedChanged += scalingCheckBoxTooltipValueRanges_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipGrantedSkills
 		//
 		scalingCheckBoxTooltipGrantedSkills.AutoSize = true;
-		scalingCheckBoxTooltipGrantedSkills.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipGrantedSkills.ForeColor = Color.White;
 		scalingCheckBoxTooltipGrantedSkills.Name = "scalingCheckBoxTooltipGrantedSkills";
 		scalingCheckBoxTooltipGrantedSkills.Size = new Size(213, 22);
 		scalingCheckBoxTooltipGrantedSkills.TabIndex = 3;
 		scalingCheckBoxTooltipGrantedSkills.Text = "Display item skills";
 		scalingCheckBoxTooltipGrantedSkills.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipGrantedSkills.CheckedChanged += scalingCheckBoxTooltipGrantedSkills_CheckedChanged;
 		//
 		// scalingCheckBoxTooltipSetPieceCounts
 		//
 		scalingCheckBoxTooltipSetPieceCounts.AutoSize = true;
-		scalingCheckBoxTooltipSetPieceCounts.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxTooltipSetPieceCounts.ForeColor = Color.White;
 		scalingCheckBoxTooltipSetPieceCounts.Name = "scalingCheckBoxTooltipSetPieceCounts";
 		scalingCheckBoxTooltipSetPieceCounts.Size = new Size(213, 22);
 		scalingCheckBoxTooltipSetPieceCounts.TabIndex = 4;
 		scalingCheckBoxTooltipSetPieceCounts.Text = "Display items set pieces count";
 		scalingCheckBoxTooltipSetPieceCounts.UseVisualStyleBackColor = true;
-		scalingCheckBoxTooltipSetPieceCounts.CheckedChanged += scalingCheckBoxTooltipSetPieceCounts_CheckedChanged;
 		//
 		// ShowInGameValuesCheckBox
 		// 
 		ShowInGameValuesCheckBox.AutoSize = true;
-		ShowInGameValuesCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		ShowInGameValuesCheckBox.ForeColor = Color.White;
 		ShowInGameValuesCheckBox.Name = "ShowInGameValuesCheckBox";
 		ShowInGameValuesCheckBox.Size = new Size(213, 22);
 		ShowInGameValuesCheckBox.Text = "Show In-Game Values";
 		ShowInGameValuesCheckBox.UseVisualStyleBackColor = true;
-		ShowInGameValuesCheckBox.CheckedChanged += ShowInGameValuesCheckBox_CheckedChanged;
 		// 
 		// ItemBGColorOpacityLabel
 		// 
 		ItemBGColorOpacityLabel.AutoSize = true;
-		ItemBGColorOpacityLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		ItemBGColorOpacityLabel.ForeColor = Color.White;
 		ItemBGColorOpacityLabel.Location = new Point(3, 105);
 		ItemBGColorOpacityLabel.Name = "ItemBGColorOpacityLabel";
@@ -638,7 +605,6 @@ internal partial class SettingsUserControl
 		// EnableItemRequirementRestrictionCheckBox
 		// 
 		EnableItemRequirementRestrictionCheckBox.AutoSize = true;
-		EnableItemRequirementRestrictionCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		EnableItemRequirementRestrictionCheckBox.ForeColor = Color.Orange;
 		EnableItemRequirementRestrictionCheckBox.Location = new Point(3, 80);
 		EnableItemRequirementRestrictionCheckBox.Name = "EnableItemRequirementRestrictionCheckBox";
@@ -647,12 +613,10 @@ internal partial class SettingsUserControl
 		EnableItemRequirementRestrictionCheckBox.Text = "Enable Character Requierement BG Color";
 		toolTip.SetToolTip(EnableItemRequirementRestrictionCheckBox, resources.GetString("EnableItemRequirementRestrictionCheckBox.ToolTip"));
 		EnableItemRequirementRestrictionCheckBox.UseVisualStyleBackColor = true;
-		EnableItemRequirementRestrictionCheckBox.CheckedChanged += EnableItemRequirementRestrictionCheckBox_CheckedChanged;
 		// 
 		// hotReloadCheckBox
 		// 
 		hotReloadCheckBox.AutoSize = true;
-		hotReloadCheckBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		hotReloadCheckBox.ForeColor = Color.White;
 		hotReloadCheckBox.Location = new Point(2, 114);
 		hotReloadCheckBox.Margin = new Padding(2);
@@ -662,13 +626,11 @@ internal partial class SettingsUserControl
 		hotReloadCheckBox.Text = "Allow Hot Reload Features";
 		toolTip.SetToolTip(hotReloadCheckBox, "Turns on the editing features in the context menu.\r\nThese include item creation and modification.");
 		hotReloadCheckBox.UseVisualStyleBackColor = true;
-		hotReloadCheckBox.CheckedChanged += hotReloadCheckBox_CheckedChanged;
 		// 
 		// scalingCheckBoxEnableEpicLegendaryAffixes
 		// 
 		scalingCheckBoxEnableEpicLegendaryAffixes.AutoSize = true;
 		scalingCheckBoxEnableEpicLegendaryAffixes.Enabled = false;
-		scalingCheckBoxEnableEpicLegendaryAffixes.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxEnableEpicLegendaryAffixes.ForeColor = Color.White;
 		scalingCheckBoxEnableEpicLegendaryAffixes.Location = new Point(3, 87);
 		scalingCheckBoxEnableEpicLegendaryAffixes.Name = "scalingCheckBoxEnableEpicLegendaryAffixes";
@@ -677,12 +639,10 @@ internal partial class SettingsUserControl
 		scalingCheckBoxEnableEpicLegendaryAffixes.Text = "Enable Epic and Legendary affixes";
 		toolTip.SetToolTip(scalingCheckBoxEnableEpicLegendaryAffixes, "Allow affixes pickup on Epic and Legendary items");
 		scalingCheckBoxEnableEpicLegendaryAffixes.UseVisualStyleBackColor = true;
-		scalingCheckBoxEnableEpicLegendaryAffixes.CheckedChanged += scalingCheckBoxEnableEpicLegendaryAffixes_CheckedChanged;
 		// 
 		// scalingCheckBoxDisableAutoStacking
 		// 
 		scalingCheckBoxDisableAutoStacking.AutoSize = true;
-		scalingCheckBoxDisableAutoStacking.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxDisableAutoStacking.ForeColor = Color.White;
 		scalingCheckBoxDisableAutoStacking.Location = new Point(3, 225);
 		scalingCheckBoxDisableAutoStacking.Name = "scalingCheckBoxDisableAutoStacking";
@@ -691,12 +651,10 @@ internal partial class SettingsUserControl
 		scalingCheckBoxDisableAutoStacking.Text = "Disable auto stacking";
 		toolTip.SetToolTip(scalingCheckBoxDisableAutoStacking, "Disable auto stacking for relic, charms and potions");
 		scalingCheckBoxDisableAutoStacking.UseVisualStyleBackColor = true;
-		scalingCheckBoxDisableAutoStacking.CheckedChanged += scalingCheckBoxDisableAutoStacking_CheckedChanged;
 		// 
 		// scalingCheckBoxMergeRelicsOnSort
 		// 
 		scalingCheckBoxMergeRelicsOnSort.AutoSize = true;
-		scalingCheckBoxMergeRelicsOnSort.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxMergeRelicsOnSort.ForeColor = Color.White;
 		scalingCheckBoxMergeRelicsOnSort.Location = new Point(3, 253);
 		scalingCheckBoxMergeRelicsOnSort.Name = "scalingCheckBoxMergeRelicsOnSort";
@@ -704,7 +662,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxMergeRelicsOnSort.TabIndex = 57;
 		scalingCheckBoxMergeRelicsOnSort.Text = "Merge relic shards when sorting";
 		scalingCheckBoxMergeRelicsOnSort.UseVisualStyleBackColor = true;
-		scalingCheckBoxMergeRelicsOnSort.CheckedChanged += scalingCheckBoxMergeRelicsOnSort_CheckedChanged;
 		// 
 		// checkGroupBoxGitBackup
 		// 
@@ -740,7 +697,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxDisableLegacyBackup
 		// 
 		scalingCheckBoxDisableLegacyBackup.AutoSize = true;
-		scalingCheckBoxDisableLegacyBackup.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxDisableLegacyBackup.ForeColor = Color.White;
 		scalingCheckBoxDisableLegacyBackup.Location = new Point(3, 3);
 		scalingCheckBoxDisableLegacyBackup.Name = "scalingCheckBoxDisableLegacyBackup";
@@ -749,12 +705,10 @@ internal partial class SettingsUserControl
 		scalingCheckBoxDisableLegacyBackup.Text = "Disable legacy backup";
 		toolTip.SetToolTip(scalingCheckBoxDisableLegacyBackup, "Optionaly disable the old backup system");
 		scalingCheckBoxDisableLegacyBackup.UseVisualStyleBackColor = true;
-		scalingCheckBoxDisableLegacyBackup.CheckedChanged += scalingCheckBoxDisableLegacyBackup_CheckedChanged;
 		// 
 		// scalingCheckBoxBackupPlayerSaves
 		// 
 		scalingCheckBoxBackupPlayerSaves.AutoSize = true;
-		scalingCheckBoxBackupPlayerSaves.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxBackupPlayerSaves.ForeColor = Color.White;
 		scalingCheckBoxBackupPlayerSaves.Location = new Point(3, 31);
 		scalingCheckBoxBackupPlayerSaves.Name = "scalingCheckBoxBackupPlayerSaves";
@@ -763,12 +717,10 @@ internal partial class SettingsUserControl
 		scalingCheckBoxBackupPlayerSaves.Text = "Backup player saves";
 		toolTip.SetToolTip(scalingCheckBoxBackupPlayerSaves, "Include your character save files in the backup");
 		scalingCheckBoxBackupPlayerSaves.UseVisualStyleBackColor = true;
-		scalingCheckBoxBackupPlayerSaves.CheckedChanged += scalingCheckBoxBackupPlayerSaves_CheckedChanged;
 		// 
 		// scalingLabelGitRepository
 		// 
 		scalingLabelGitRepository.AutoSize = true;
-		scalingLabelGitRepository.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingLabelGitRepository.ForeColor = Color.White;
 		scalingLabelGitRepository.Location = new Point(3, 56);
 		scalingLabelGitRepository.Name = "scalingLabelGitRepository";
@@ -778,7 +730,6 @@ internal partial class SettingsUserControl
 		// 
 		// scalingTextBoxGitRepository
 		// 
-		scalingTextBoxGitRepository.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingTextBoxGitRepository.Location = new Point(3, 77);
 		scalingTextBoxGitRepository.Name = "scalingTextBoxGitRepository";
 		scalingTextBoxGitRepository.Size = new Size(397, 24);
@@ -799,7 +750,6 @@ internal partial class SettingsUserControl
 		checkGroupBoxOriginalTQSupport.TabStop = false;
 		checkGroupBoxOriginalTQSupport.Text = "TQ original support";
 		toolTip.SetToolTip(checkGroupBoxOriginalTQSupport, "Provide support for original Titan Quest character file editing");
-		checkGroupBoxOriginalTQSupport.CheckedChanged += checkGroupBoxOriginalTQSupport_CheckedChanged;
 		// 
 		// bufferedFlowLayoutPanelTQOriginalSupport
 		// 
@@ -838,7 +788,6 @@ internal partial class SettingsUserControl
 		checkGroupBoxMcpServer.TabIndex = 55;
 		checkGroupBoxMcpServer.TabStop = false;
 		checkGroupBoxMcpServer.Text = "MCP endpoint for AI agents";
-		checkGroupBoxMcpServer.CheckedChanged += checkGroupBoxMcpServer_CheckedChanged;
 		//
 		// bufferedFlowLayoutPanelMcpServer
 		//
@@ -857,7 +806,6 @@ internal partial class SettingsUserControl
 		//
 		scalingLabelMcpServerPort.Anchor = AnchorStyles.Left;
 		scalingLabelMcpServerPort.AutoSize = true;
-		scalingLabelMcpServerPort.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingLabelMcpServerPort.ForeColor = Color.White;
 		scalingLabelMcpServerPort.Location = new Point(3, 8);
 		scalingLabelMcpServerPort.Name = "scalingLabelMcpServerPort";
@@ -867,7 +815,6 @@ internal partial class SettingsUserControl
 		//
 		// numericUpDownMcpServerPort
 		//
-		numericUpDownMcpServerPort.Font = new Font("Microsoft Sans Serif", 11.25F);
 		numericUpDownMcpServerPort.Location = new Point(57, 3);
 		numericUpDownMcpServerPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
 		numericUpDownMcpServerPort.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
@@ -892,7 +839,6 @@ internal partial class SettingsUserControl
 		// languageLabel
 		// 
 		languageLabel.AutoSize = true;
-		languageLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		languageLabel.ForeColor = Color.White;
 		languageLabel.Location = new Point(3, 0);
 		languageLabel.Name = "languageLabel";
@@ -902,7 +848,6 @@ internal partial class SettingsUserControl
 		// 
 		// titanQuestPathTextBox
 		// 
-		titanQuestPathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		titanQuestPathTextBox.Location = new Point(3, 3);
 		titanQuestPathTextBox.Name = "titanQuestPathTextBox";
 		titanQuestPathTextBox.Size = new Size(397, 24);
@@ -912,7 +857,6 @@ internal partial class SettingsUserControl
 		// titanQuestPathLabel
 		// 
 		titanQuestPathLabel.AutoSize = true;
-		titanQuestPathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		titanQuestPathLabel.ForeColor = Color.White;
 		titanQuestPathLabel.Location = new Point(3, 0);
 		titanQuestPathLabel.Name = "titanQuestPathLabel";
@@ -923,7 +867,6 @@ internal partial class SettingsUserControl
 		// immortalThronePathLabel
 		// 
 		immortalThronePathLabel.AutoSize = true;
-		immortalThronePathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		immortalThronePathLabel.ForeColor = Color.White;
 		immortalThronePathLabel.Location = new Point(3, 57);
 		immortalThronePathLabel.Name = "immortalThronePathLabel";
@@ -933,7 +876,6 @@ internal partial class SettingsUserControl
 		// 
 		// immortalThronePathTextBox
 		// 
-		immortalThronePathTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		immortalThronePathTextBox.Location = new Point(3, 3);
 		immortalThronePathTextBox.Name = "immortalThronePathTextBox";
 		immortalThronePathTextBox.Size = new Size(397, 24);
@@ -948,7 +890,6 @@ internal partial class SettingsUserControl
 		titanQuestPathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		titanQuestPathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		titanQuestPathBrowseButton.FlatStyle = FlatStyle.Flat;
-		titanQuestPathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
 		titanQuestPathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
 		titanQuestPathBrowseButton.Image = (Image)resources.GetObject("titanQuestPathBrowseButton.Image");
 		titanQuestPathBrowseButton.Location = new Point(406, 0);
@@ -972,7 +913,6 @@ internal partial class SettingsUserControl
 		immortalThronePathBrowseButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 51, 44, 28);
 		immortalThronePathBrowseButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 51, 44, 28);
 		immortalThronePathBrowseButton.FlatStyle = FlatStyle.Flat;
-		immortalThronePathBrowseButton.Font = new Font("Microsoft Sans Serif", 12F);
 		immortalThronePathBrowseButton.ForeColor = Color.FromArgb(51, 44, 28);
 		immortalThronePathBrowseButton.Image = (Image)resources.GetObject("immortalThronePathBrowseButton.Image");
 		immortalThronePathBrowseButton.Location = new Point(406, 0);
@@ -991,7 +931,6 @@ internal partial class SettingsUserControl
 		// baseFontLabel
 		// 
 		baseFontLabel.AutoSize = true;
-		baseFontLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		baseFontLabel.ForeColor = Color.White;
 		baseFontLabel.Location = new Point(3, 0);
 		baseFontLabel.Name = "baseFontLabel";
@@ -1047,7 +986,6 @@ internal partial class SettingsUserControl
 		// scalingCheckBoxEnableSounds
 		// 
 		scalingCheckBoxEnableSounds.AutoSize = true;
-		scalingCheckBoxEnableSounds.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingCheckBoxEnableSounds.ForeColor = Color.White;
 		scalingCheckBoxEnableSounds.Location = new Point(3, 52);
 		scalingCheckBoxEnableSounds.Name = "scalingCheckBoxEnableSounds";
@@ -1055,12 +993,10 @@ internal partial class SettingsUserControl
 		scalingCheckBoxEnableSounds.TabIndex = 43;
 		scalingCheckBoxEnableSounds.Text = "Enable TQVault Sounds";
 		scalingCheckBoxEnableSounds.UseVisualStyleBackColor = true;
-		scalingCheckBoxEnableSounds.CheckedChanged += scalingCheckBoxEnableSounds_CheckedChanged;
 		// 
 		// scalingLabelCSVDelim
 		// 
 		scalingLabelCSVDelim.AutoSize = true;
-		scalingLabelCSVDelim.Font = new Font("Microsoft Sans Serif", 11.25F);
 		scalingLabelCSVDelim.ForeColor = Color.White;
 		scalingLabelCSVDelim.Location = new Point(3, 250);
 		scalingLabelCSVDelim.Name = "scalingLabelCSVDelim";
@@ -1337,7 +1273,6 @@ internal partial class SettingsUserControl
 		// 
 		pasteBinApiKeyLabel.AutoSize = true;
 		pasteBinFlowPanel.SetColumnSpan(pasteBinApiKeyLabel, 2);
-		pasteBinApiKeyLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinApiKeyLabel.ForeColor = Color.White;
 		pasteBinApiKeyLabel.Location = new Point(3, 0);
 		pasteBinApiKeyLabel.Name = "pasteBinApiKeyLabel";
@@ -1348,7 +1283,6 @@ internal partial class SettingsUserControl
 		// pasteBinApiKeyTextBox
 		// 
 		pasteBinFlowPanel.SetColumnSpan(pasteBinApiKeyTextBox, 2);
-		pasteBinApiKeyTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinApiKeyTextBox.Location = new Point(3, 21);
 		pasteBinApiKeyTextBox.Name = "pasteBinApiKeyTextBox";
 		pasteBinApiKeyTextBox.Size = new Size(250, 24);
@@ -1358,7 +1292,6 @@ internal partial class SettingsUserControl
 		// pasteBinExpirationLabel
 		// 
 		pasteBinExpirationLabel.AutoSize = true;
-		pasteBinExpirationLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
 		pasteBinExpirationLabel.ForeColor = Color.White;
 		pasteBinExpirationLabel.Location = new Point(3, 48);
 		pasteBinExpirationLabel.Name = "pasteBinExpirationLabel";
@@ -1430,7 +1363,6 @@ internal partial class SettingsUserControl
 		AutoValidate = AutoValidate.EnablePreventFocusChange;
 		BackColor = Color.FromArgb(46, 31, 21);
 		Controls.Add(bufferedTableLayoutPanelSkeleton);
-		Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
 		ForeColor = Color.White;
 		Margin = new Padding(0);
 		Name = "SettingsUserControl";

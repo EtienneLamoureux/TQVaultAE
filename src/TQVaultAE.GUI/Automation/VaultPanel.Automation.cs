@@ -23,12 +23,11 @@ public partial class VaultPanel
 	/// <returns>The menu entries, and the entry clicked; no entries when the bag has no menu (not a vault bag).</returns>
 	internal (IReadOnlyList<AutomationMenuEntry> Entries, string? Clicked) AutomationBagMenu(int bag, IReadOnlyList<string>? path)
 	{
-		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new AutomationRefusedException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+		this.RequireBag(bag);
 
 		this.contextMenu.Items.Clear();
 		var button = this.BagButtons[bag];
-		this.BagButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		this.BagButtonClick(button, AutomationInput.CenterClick(button, MouseButtons.Right));
 		try
 		{
 			var entries = AutomationMenus.Describe(this.contextMenu.Items);
@@ -51,12 +50,11 @@ public partial class VaultPanel
 	/// <exception cref="InvalidOperationException">The bag has no such entry: only the vault bags have it.</exception>
 	internal string AutomationChangeIcon(int bag)
 	{
-		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new AutomationRefusedException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+		this.RequireBag(bag);
 
 		this.contextMenu.Items.Clear();
 		var button = this.BagButtons[bag];
-		this.BagButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		this.BagButtonClick(button, AutomationInput.CenterClick(button, MouseButtons.Right));
 		var entry = this.contextMenu.Items.OfType<ToolStripItem>().FirstOrDefault(i => i.Tag is BagMenuAction.ChangeIcon);
 		if (entry is null)
 		{
@@ -75,12 +73,11 @@ public partial class VaultPanel
 	/// <exception cref="InvalidOperationException">The bag's menu has no such entry: only the vault bags holding items have it.</exception>
 	internal bool AutomationExportTab(int bag, string path)
 	{
-		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new AutomationRefusedException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+		this.RequireBag(bag);
 
 		this.contextMenu.Items.Clear();
 		var button = this.BagButtons[bag];
-		this.BagButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		this.BagButtonClick(button, AutomationInput.CenterClick(button, MouseButtons.Right));
 		var exportTab = this.contextMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text == Resources.PlayerPanelMenuExportTab);
 		bool hasFile = exportTab?.DropDownItems.OfType<ToolStripItem>().Any(i => i.Text == Resources.PlayerPanelMenuExportTabFile && i.Enabled) == true;
 		this.contextMenu.Close();
@@ -109,7 +106,7 @@ public partial class VaultPanel
 	{
 		var button = this.SortButtonOf(target);
 		this.contextMenu.Items.Clear();
-		this.AutoSortButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		this.AutoSortButtonClick(button, AutomationInput.CenterClick(button, MouseButtons.Right));
 		try
 		{
 			var entries = AutomationMenus.Describe(this.contextMenu.Items);
@@ -129,11 +126,10 @@ public partial class VaultPanel
 	/// </summary>
 	internal Bitmap AutomationRenderBagMenu(int bag, IReadOnlyList<string> open)
 	{
-		if (bag < 0 || bag >= this.BagButtons.Count)
-			throw new InvalidOperationException($"Bag {bag} out of range 0..{this.BagButtons.Count - 1}.");
+		this.RequireBag(bag);
 
 		var button = this.BagButtons[bag];
-		var at = new Point(button.Width / 2, button.Height / 2);
+		var at = AutomationInput.Center(button);
 		if (button.ContextMenuStrip is { } own)
 		{
 			own.Show(button, at);
@@ -156,7 +152,7 @@ public partial class VaultPanel
 	{
 		var button = this.SortButtonOf(target);
 		this.contextMenu.Items.Clear();
-		this.AutoSortButtonClick(button, new MouseEventArgs(MouseButtons.Right, 1, button.Width / 2, button.Height / 2, 0));
+		this.AutoSortButtonClick(button, AutomationInput.CenterClick(button, MouseButtons.Right));
 		return AutomationMenus.Render(this.contextMenu, []);
 	}
 
@@ -171,7 +167,7 @@ public partial class VaultPanel
 	internal void AutomationSortClickLater(SackPanel target)
 	{
 		var button = this.SortButtonOf(target);
-		this.BeginInvoke(() => this.AutoSortButtonClick(button, new MouseEventArgs(MouseButtons.Left, 1, button.Width / 2, button.Height / 2, 0)));
+		this.BeginInvoke(() => this.AutoSortButtonClick(button, AutomationInput.CenterClick(button, MouseButtons.Left)));
 	}
 
 	/// <summary>The icon settings of each bag: display mode, label and the On/Off/Over pictures, null for the default.</summary>

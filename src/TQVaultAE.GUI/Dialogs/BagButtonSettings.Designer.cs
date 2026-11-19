@@ -167,7 +167,6 @@ partial class BagButtonSettings
         // scalingTextBoxDebug
         // 
         this.scalingTextBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-        this.scalingTextBoxDebug.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingTextBoxDebug.Location = new System.Drawing.Point(152, 6);
         this.scalingTextBoxDebug.Name = "scalingTextBoxDebug";
         this.scalingTextBoxDebug.Size = new System.Drawing.Size(691, 25);
@@ -183,7 +182,6 @@ partial class BagButtonSettings
         this.applyButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.applyButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.applyButton.Font = new System.Drawing.Font("Albertus MT", 12F);
         this.applyButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.applyButton.Image = ((System.Drawing.Image)(resources.GetObject("applyButton.Image")));
         this.applyButton.Location = new System.Drawing.Point(3, 3);
@@ -208,7 +206,6 @@ partial class BagButtonSettings
         this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.cancelButton.Font = new System.Drawing.Font("Albertus MT", 12F);
         this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
         this.cancelButton.Location = new System.Drawing.Point(911, 3);
@@ -238,7 +235,6 @@ partial class BagButtonSettings
         // scalingLabelSelectedButton
         // 
         this.scalingLabelSelectedButton.AutoSize = true;
-        this.scalingLabelSelectedButton.Font = new System.Drawing.Font("Albertus MT", 12F);
         this.scalingLabelSelectedButton.ForeColor = System.Drawing.Color.Gold;
         this.scalingLabelSelectedButton.Location = new System.Drawing.Point(3, 0);
         this.scalingLabelSelectedButton.Name = "scalingLabelSelectedButton";
@@ -250,7 +246,6 @@ partial class BagButtonSettings
         // scalingLabelSelectedButtonValue
         // 
         this.scalingLabelSelectedButtonValue.AutoSize = true;
-        this.scalingLabelSelectedButtonValue.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingLabelSelectedButtonValue.Location = new System.Drawing.Point(128, 0);
         this.scalingLabelSelectedButtonValue.Name = "scalingLabelSelectedButtonValue";
         this.scalingLabelSelectedButtonValue.Size = new System.Drawing.Size(156, 17);
@@ -264,7 +259,6 @@ partial class BagButtonSettings
         this.groupBoxEdit.AutoSize = true;
         this.groupBoxEdit.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
         this.groupBoxEdit.Controls.Add(this.flowLayoutPanelRadioProperties);
-        this.groupBoxEdit.Font = new System.Drawing.Font("Albertus MT", 12F);
         this.groupBoxEdit.ForeColor = System.Drawing.Color.Gold;
         this.groupBoxEdit.Location = new System.Drawing.Point(3, 3);
         this.groupBoxEdit.Margin = new System.Windows.Forms.Padding(3, 3, 10, 3);
@@ -293,7 +287,6 @@ partial class BagButtonSettings
         // 
         this.scalingRadioButtonDefaultIcon.AutoSize = true;
         this.scalingRadioButtonDefaultIcon.Checked = true;
-        this.scalingRadioButtonDefaultIcon.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingRadioButtonDefaultIcon.ForeColor = System.Drawing.Color.White;
         this.scalingRadioButtonDefaultIcon.Location = new System.Drawing.Point(3, 3);
         this.scalingRadioButtonDefaultIcon.Name = "scalingRadioButtonDefaultIcon";
@@ -307,7 +300,6 @@ partial class BagButtonSettings
         // scalingRadioButtonCustomIcon
         // 
         this.scalingRadioButtonCustomIcon.AutoSize = true;
-        this.scalingRadioButtonCustomIcon.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingRadioButtonCustomIcon.ForeColor = System.Drawing.Color.White;
         this.scalingRadioButtonCustomIcon.Location = new System.Drawing.Point(3, 30);
         this.scalingRadioButtonCustomIcon.Name = "scalingRadioButtonCustomIcon";
@@ -320,7 +312,6 @@ partial class BagButtonSettings
         // scalingCheckBoxNumber
         // 
         this.scalingCheckBoxNumber.AutoSize = true;
-        this.scalingCheckBoxNumber.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingCheckBoxNumber.ForeColor = System.Drawing.Color.White;
         this.scalingCheckBoxNumber.Location = new System.Drawing.Point(3, 57);
         this.scalingCheckBoxNumber.Name = "scalingCheckBoxNumber";
@@ -344,7 +335,6 @@ partial class BagButtonSettings
         // scalingCheckBoxLabel
         // 
         this.scalingCheckBoxLabel.AutoSize = true;
-        this.scalingCheckBoxLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingCheckBoxLabel.ForeColor = System.Drawing.Color.White;
         this.scalingCheckBoxLabel.Location = new System.Drawing.Point(0, 0);
         this.scalingCheckBoxLabel.Margin = new System.Windows.Forms.Padding(0);
@@ -357,7 +347,6 @@ partial class BagButtonSettings
         // 
         // scalingTextBoxLabel
         // 
-        this.scalingTextBoxLabel.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingTextBoxLabel.Location = new System.Drawing.Point(66, 0);
         this.scalingTextBoxLabel.Margin = new System.Windows.Forms.Padding(0);
         this.scalingTextBoxLabel.Name = "scalingTextBoxLabel";
@@ -371,7 +360,6 @@ partial class BagButtonSettings
         this.groupBoxSelectedPictures.Controls.Add(this.flowLayoutPanelPicturePickupMode);
         this.groupBoxSelectedPictures.Controls.Add(this.flowLayoutPanelPicturePickup);
         this.groupBoxSelectedPictures.Dock = System.Windows.Forms.DockStyle.Bottom;
-        this.groupBoxSelectedPictures.Font = new System.Drawing.Font("Albertus MT", 12F);
         this.groupBoxSelectedPictures.ForeColor = System.Drawing.Color.Gold;
         this.groupBoxSelectedPictures.Location = new System.Drawing.Point(266, 6);
         this.groupBoxSelectedPictures.Name = "groupBoxSelectedPictures";
@@ -396,7 +384,6 @@ partial class BagButtonSettings
         // 
         this.radioButtonPictureSimple.AutoSize = true;
         this.radioButtonPictureSimple.Checked = true;
-        this.radioButtonPictureSimple.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.radioButtonPictureSimple.ForeColor = System.Drawing.Color.White;
         this.radioButtonPictureSimple.Location = new System.Drawing.Point(3, 3);
         this.radioButtonPictureSimple.Name = "radioButtonPictureSimple";
@@ -410,7 +397,6 @@ partial class BagButtonSettings
         // radioButtonPictureDetailed
         // 
         this.radioButtonPictureDetailed.AutoSize = true;
-        this.radioButtonPictureDetailed.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.radioButtonPictureDetailed.ForeColor = System.Drawing.Color.White;
         this.radioButtonPictureDetailed.Location = new System.Drawing.Point(75, 3);
         this.radioButtonPictureDetailed.Name = "radioButtonPictureDetailed";
@@ -437,7 +423,6 @@ partial class BagButtonSettings
         // groupBoxSimpleImage
         // 
         this.groupBoxSimpleImage.Controls.Add(this.pictureBoxSimple);
-        this.groupBoxSimpleImage.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.groupBoxSimpleImage.ForeColor = System.Drawing.Color.DarkOrange;
         this.groupBoxSimpleImage.Location = new System.Drawing.Point(3, 3);
         this.groupBoxSimpleImage.Name = "groupBoxSimpleImage";
@@ -461,7 +446,6 @@ partial class BagButtonSettings
         // groupBoxOffBitmap
         // 
         this.groupBoxOffBitmap.Controls.Add(this.pictureBoxOff);
-        this.groupBoxOffBitmap.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.groupBoxOffBitmap.ForeColor = System.Drawing.Color.DarkOrange;
         this.groupBoxOffBitmap.Location = new System.Drawing.Point(73, 3);
         this.groupBoxOffBitmap.Name = "groupBoxOffBitmap";
@@ -485,7 +469,6 @@ partial class BagButtonSettings
         // groupBoxOnBitmap
         // 
         this.groupBoxOnBitmap.Controls.Add(this.pictureBoxOn);
-        this.groupBoxOnBitmap.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.groupBoxOnBitmap.ForeColor = System.Drawing.Color.DarkOrange;
         this.groupBoxOnBitmap.Location = new System.Drawing.Point(143, 3);
         this.groupBoxOnBitmap.Name = "groupBoxOnBitmap";
@@ -509,7 +492,6 @@ partial class BagButtonSettings
         // groupBoxOverBitmap
         // 
         this.groupBoxOverBitmap.Controls.Add(this.pictureBoxOver);
-        this.groupBoxOverBitmap.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.groupBoxOverBitmap.ForeColor = System.Drawing.Color.DarkOrange;
         this.groupBoxOverBitmap.Location = new System.Drawing.Point(213, 3);
         this.groupBoxOverBitmap.Name = "groupBoxOverBitmap";
@@ -547,7 +529,6 @@ partial class BagButtonSettings
         this.groupBoxAvailablePictures.Dock = System.Windows.Forms.DockStyle.Fill;
         this.groupBoxAvailablePictures.Controls.Add(this.tabControlPics);
         this.groupBoxAvailablePictures.Controls.Add(this.scalingLabelDragDropNotice);
-        this.groupBoxAvailablePictures.Font = new System.Drawing.Font("Albertus MT", 12F);
         this.groupBoxAvailablePictures.ForeColor = System.Drawing.Color.Gold;
         this.groupBoxAvailablePictures.Location = new System.Drawing.Point(26, 251);
         this.groupBoxAvailablePictures.Name = "groupBoxAvailablePictures";
@@ -829,7 +810,6 @@ partial class BagButtonSettings
         // 
         this.scalingLabelDragDropNotice.AutoSize = true;
         this.scalingLabelDragDropNotice.Dock = System.Windows.Forms.DockStyle.Top;
-        this.scalingLabelDragDropNotice.Font = new System.Drawing.Font("Albertus MT Light", 11.25F);
         this.scalingLabelDragDropNotice.ForeColor = System.Drawing.Color.White;
         this.scalingLabelDragDropNotice.Location = new System.Drawing.Point(14, 19);
         this.scalingLabelDragDropNotice.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
@@ -857,22 +837,14 @@ partial class BagButtonSettings
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
         this.ClientSize = new System.Drawing.Size(1047, 680);
         this.Controls.Add(this.iconMagnifier);
         this.Controls.Add(this.tableLayoutPanelSkeleton);
         this.DrawCustomBorder = true;
-        this.Font = new System.Drawing.Font("Albertus MT", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.MaximizeBox = false;
-        this.MinimizeBox = false;
         this.MinimumSize = new System.Drawing.Size(630, 586);
         this.Name = "BagButtonSettings";
         this.ResizeCustomAllowed = true;
-        this.ShowIcon = false;
-        this.ShowInTaskbar = false;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         this.Text = "Vault button settings";
         this.TitleTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.TopMost = true;

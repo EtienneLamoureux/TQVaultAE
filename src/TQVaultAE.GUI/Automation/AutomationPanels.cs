@@ -86,6 +86,23 @@ internal static class AutomationPanels
 	}
 
 	/// <summary>
+	/// Finds an item grid by id and the panel that hosts its bag buttons and sort button. Must run on the UI thread.
+	/// </summary>
+	/// <param name="lacks">What a grid without such a panel lacks, for the refusal: <c>bag buttons</c>, <c>sort button</c>.</param>
+	public static (SackPanel Panel, VaultPanel Container) ResolveContainer(MainForm form, string id, string lacks = "bag buttons")
+	{
+		var named = Resolve(form, id);
+		return (named.Panel, named.Container ?? throw new AutomationRefusedException($"Panel '{id}' has no {lacks}."));
+	}
+
+	/// <summary>Refuses a bag number that is not one of the panel's bag buttons.</summary>
+	public static void RequireBag(this VaultPanel container, int bag)
+	{
+		if (bag < 0 || bag >= container.BagButtons.Count)
+			throw new AutomationRefusedException($"Bag {bag} is out of range 0..{container.BagButtons.Count - 1}.");
+	}
+
+	/// <summary>
 	/// Gets the id of a panel instance, or null when it is not one of the named grids.
 	/// </summary>
 	public static string? IdOf(MainForm form, SackPanel? panel)

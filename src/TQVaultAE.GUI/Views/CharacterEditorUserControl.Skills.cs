@@ -1,3 +1,4 @@
+using TQVaultAE.GUI.Models;
 using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Services;
 using System.Drawing;
@@ -46,21 +47,15 @@ internal sealed partial class CharacterEditorUserControl
 		public bool Updating { get; set; }
 	}
 
-	/// <summary>An entry of the mastery list.</summary>
-	private sealed record MasteryChoice(Masteries? Mastery, string Text)
-	{
-		public override string ToString() => this.Text;
-	}
-
 	/// <summary>Builds a page per mastery slot of the character in the frame.</summary>
 	private void InitSkills()
 	{
 		this._skills = this.Services.CharacterEditService.CreateSkillEditor(this.Info);
 		this._gearAugments = this.GearAugments();
 
-		var choices = new List<MasteryChoice> { new(null, Resources.CEMasteryNone) };
+		var choices = new List<DisplayItem<Masteries?>> { new(null, Resources.CEMasteryNone) };
 		foreach (var tree in this._skills.KnownMasteries)
-			choices.Add(new MasteryChoice(tree.Mastery, this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString())));
+			choices.Add(new DisplayItem<Masteries?>(tree.Mastery, this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString())));
 
 		for (int slot = 0; slot < this._skills.Slots.Count; slot++)
 			this._skillTabs.Add(this.CreateSkillTab(slot, choices));
@@ -70,7 +65,7 @@ internal sealed partial class CharacterEditorUserControl
 		this.RefreshSkills();
 	}
 
-	private SkillTab CreateSkillTab(int slot, List<MasteryChoice> choices)
+	private SkillTab CreateSkillTab(int slot, List<DisplayItem<Masteries?>> choices)
 	{
 		var font = this.SkillHeaderFont;
 
@@ -227,7 +222,7 @@ internal sealed partial class CharacterEditorUserControl
 			{
 				var tree = skills.Slots[tab.Slot];
 				this._tabs.SetPageText(tab.PageIndex, tree is null ? string.Format(Resources.CEMasterySlot, tab.Slot + 1) : this.TranslationService.TranslateOr(tree.NameTag, tree.Mastery.ToString()));
-				tab.Mastery.SelectedItem = tab.Mastery.Items.Cast<MasteryChoice>().First(c => c.Mastery == tree?.Mastery);
+				tab.Mastery.SelectedItem = tab.Mastery.Items.Cast<DisplayItem<Masteries?>>().First(c => c.Value == tree?.Mastery);
 
 				var masteryLevel = skills.GetMasteryLevel(tab.Slot);
 				tab.Level.Enabled = tree is not null;
@@ -265,11 +260,11 @@ internal sealed partial class CharacterEditorUserControl
 
 	private void SkillMastery_Changed(SkillTab tab)
 	{
-		if (tab.Updating || this._skills is null || tab.Mastery.SelectedItem is not MasteryChoice choice)
+		if (tab.Updating || this._skills is null || tab.Mastery.SelectedItem is not DisplayItem<Masteries?> choice)
 			return;
 
 		// A refused choice (mastery in the other slot, no point left) is put back by the refresh.
-		this._skills.SetMastery(tab.Slot, choice.Mastery);
+		this._skills.SetMastery(tab.Slot, choice.Value);
 		this.RefreshSkills();
 	}
 
@@ -278,7 +273,7 @@ internal sealed partial class CharacterEditorUserControl
 		if (tab.Updating || this._skills is null)
 			return;
 
-		this._skills.SetMasteryLevel(tab.Slot, Convert.ToInt32(tab.Level.Value));
+		this._skills.SetMasteryLevel(tab.Slot, ValueOf(tab.Level));
 		this.RefreshSkills();
 	}
 
@@ -305,7 +300,7 @@ internal sealed partial class CharacterEditorUserControl
 		if (this._syncingSkillPoints || this._skills is null)
 			return;
 
-		this._skills.AvailablePoints = Convert.ToInt32(this.skillPointsNumericUpDown.Value);
+		this._skills.AvailablePoints = ValueOf(this.skillPointsNumericUpDown);
 		this.RefreshSkills();
 	}
 }

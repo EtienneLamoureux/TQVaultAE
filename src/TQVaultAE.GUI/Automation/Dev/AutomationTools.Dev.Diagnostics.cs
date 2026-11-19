@@ -22,20 +22,19 @@ internal static partial class AutomationTools
 				if (AutomationPanels.Resolve(form, "stash").Container is not StashPanel stash)
 					throw new McpException("No stash panel.");
 
-				if (bag < 0 || bag >= stash.BagButtons.Count)
-					throw new McpException($"Bag {bag} is out of range 0..{stash.BagButtons.Count - 1}.");
+				stash.RequireBag(bag);
 
 				var before = stash.AutomationBackground;
 				var beforeIsSource = before is not null && stash.AutomationIsSourceBackground(before);
 				var button = stash.BagButtons[bag];
-				OnMouseDownMethod.Invoke(button, [new MouseEventArgs(MouseButtons.Left, 1, button.Width / 2, button.Height / 2, 0)]);
+				OnMouseDownMethod.Invoke(button, [AutomationInput.CenterClick(button, MouseButtons.Left)]);
 				stash.Refresh();
 				var after = stash.AutomationBackground;
 
 				return Serialize(new
 				{
 					currentBag = stash.ShownBag(),
-					zoom = Program.ServiceProvider.GetRequiredService<IUIService>().Scale,
+					zoom = Services.UIService.Scale,
 					before = before is null ? null : new { source = beforeIsSource, replaced = !ReferenceEquals(before, after), disposed = IsDisposed(before) },
 					after = after is null ? null : new { source = stash.AutomationIsSourceBackground(after), size = IsDisposed(after) ? null : (object)after.Size },
 				});
@@ -53,7 +52,7 @@ internal static partial class AutomationTools
 
 				return Serialize(new
 				{
-					baseFont = Describe(Program.ServiceProvider.GetRequiredService<IFontService>().GetFontLight(11F)),
+					baseFont = Describe(Services.FontService.GetFontLight(11F)),
 					nameFont = Describe(panel.NameFont),
 					classFont = Describe(panel.ClassFont),
 					textFont = Describe(panel.TextFont),
