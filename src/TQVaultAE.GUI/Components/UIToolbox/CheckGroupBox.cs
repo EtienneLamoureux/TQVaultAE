@@ -22,7 +22,7 @@ public enum CheckGroupBoxCheckedBehavior
 	Hide = 1 << 2,
 	Show = 1 << 3,
 	EnableShow = Show | Enable,
-	DisableHide = Hide | Show
+	DisableHide = Disable | Hide
 }
 
 /// <summary>
