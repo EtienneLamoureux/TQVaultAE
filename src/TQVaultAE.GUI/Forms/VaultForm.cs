@@ -263,7 +263,7 @@ public partial class VaultForm : Form, IScalingControl
 	{
 		// The user's zoom of a dialog grows its font: the controls without a font of their own follow it.
 		if (this.applyingUserZoom)
-			this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+			ZoomScope.Grow(this, factor.Height);
 
 		if (this.DrawCustomBorder)
 		{

@@ -20,7 +20,7 @@ public class ScalingTextBox : TextBox, IScalingControl, IZoomedFont
 	/// <param name="specified">BoundsSpecified value.</param>
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+		ZoomScope.Grow(this, factor.Height);
 
 		base.ScaleControl(factor, specified);
 	}
