@@ -179,7 +179,7 @@ public class FontServiceTests
 	[Fact]
 	public void Covers_TellsWhetherTheFamilyHasEveryLetter()
 	{
-		var service = new FontService(new TQVaultAE.Services.Win32.AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
+		var service = new FontService(new AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
 		var game = service.GetFont(10F).FontFamily;
 		using var arial = new FontFamily("Arial");
 
@@ -193,7 +193,7 @@ public class FontServiceTests
 	[Fact]
 	public void EnsureCovers_LettersTheGameFontLacks_TakeArial_AtTheSameSize_AndTheWindowsAreTold()
 	{
-		var service = new FontService(new TQVaultAE.Services.Win32.AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
+		var service = new FontService(new AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
 		var before = service.GetFontLight(10F);
 		int changes = 0;
 		service.FontChanged += (_, _) => changes++;
@@ -211,7 +211,7 @@ public class FontServiceTests
 	[Fact]
 	public void EnsureCovers_LettersTheGameFontHas_KeepTheGameFont()
 	{
-		var service = new FontService(new TQVaultAE.Services.Win32.AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
+		var service = new FontService(new AddFontToOSWin(), new UserSettings { BaseFont = "AlbertusMT" });
 		int changes = 0;
 		service.FontChanged += (_, _) => changes++;
 
@@ -219,5 +219,19 @@ public class FontServiceTests
 
 		service.GetFont(10F).FontFamily.Name.Should().Be("Albertus MT");
 		changes.Should().Be(0);
+	}
+
+	[Fact]
+	public void AddFontToOS_LoadsAFontOnce_AndAnUnknownNameGivesNull()
+	{
+		var loader = new AddFontToOSWin();
+		byte[] data = TQVaultAE.Presentation.Resources.AlbertusMT;
+
+		var first = loader.AddFontToOS("Albertus MT", data);
+		var again = loader.AddFontToOS("Albertus MT", data);
+
+		first.Should().NotBeNull();
+		again.Should().Be(first, "a reload gives the family already loaded");
+		loader.AddFontToOS("No Such Font", data).Should().BeNull();
 	}
 }

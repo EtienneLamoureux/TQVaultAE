@@ -127,7 +127,7 @@ dotnet test --project src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Test
 The project references, each project with the ones it references (`src/*/*.csproj`):
 ```
 GUI                → all the projects below
-Services.Win32     → Services, Presentation.Win32 (font loading only, no text), Config, Domain
+Services.Win32     → Services, Config, Domain
 Presentation.Win32 → Presentation, Application, Config, Domain
 Services           → Data, Application, Config, Domain
 Presentation       → Application, Config, Domain

@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace TQVaultAE.Services.Win32;
+namespace TQVaultAE.Presentation.Win32;
 
 /// <summary>Reads which characters a font has a glyph for, as GDI draws it (a font added from memory included).</summary>
 internal static partial class NativeGlyphs
