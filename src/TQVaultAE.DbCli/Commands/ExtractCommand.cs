@@ -175,7 +175,7 @@ internal sealed class ExtractCommand : ICommand
 		try {
 			int frames = allFrames ? Math.Max(1, TexConverter.FrameCount(tex)) : 1;
 			for (int f = 0; f < frames; f++) {
-				var data = convert == "png" ? TexConverter.ToPng(tex, f) : TexConverter.ToDds(tex, f);
+				var data = convert == "png" ? TexPng.FromTex(tex, f) : TexConverter.ToDds(tex, f);
 				var path = frames == 1
 					? Path.ChangeExtension(target, ext)
 					: Path.Combine(Path.GetDirectoryName(target)!, $"{Path.GetFileNameWithoutExtension(target)}_frame{f}{ext}");

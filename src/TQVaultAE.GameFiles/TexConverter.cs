@@ -5,12 +5,17 @@
 //-----------------------------------------------------------------------
 
 using System.Buffers.Binary;
-using ImageMagick;
 
-namespace TQVaultAE.DbCli.Core;
+namespace TQVaultAE.GameFiles;
 
-/// <summary>Texture conversion.</summary>
-public static partial class TexConverter
+/// <summary>
+/// Turns a <c>.tex</c> texture into standard DDS images, one per frame (tqdb extract, TQVault and ARZExplorer pictures).
+/// </summary>
+/// <remarks>
+/// A <c>.tex</c> is <c>"TEX" 0x01</c>, <c>u32 fps</c> (version 1) or <c>"TEX" 0x02</c>, <c>u32 fps</c>, <c>u8 flag</c>
+/// (version 2), then frames of <c>u32 size</c> and a DDS image whose magic is <c>"DDS "</c> or <c>"DDSR"</c>.
+/// </remarks>
+public static class TexConverter
 {
 	// DDS layout, offsets from the start of the file (magic included).
 	internal const int DdsHeaderSize = 128;
@@ -30,17 +35,31 @@ public static partial class TexConverter
 	internal const uint DdpfRgb = 0x40;
 	internal const uint DdsCapsTexture = 0x1000;
 
-	private const uint MagicDds = 0x20534444; // "DDS "
-	private const uint MagicDdsr = 0x52534444; // "DDSR"
+	internal const uint MagicDds = 0x20534444; // "DDS "
+	internal const uint MagicDdsr = 0x52534444; // "DDSR"
 
-	/// <summary>Number of frames in a .tex (animated textures have several).</summary>
-	public static int FrameCount(ReadOnlySpan<byte> tex) => Frames(tex).Count;
+	/// <summary>
+	/// <see langword="true"/> when the data starts with a <c>.tex</c> header of a known version.
+	/// </summary>
+	public static bool IsTex(ReadOnlySpan<byte> tex)
+		=> FirstFrameOffset(tex) > 0;
 
-	/// <summary>Valid .dds for one frame: magic fixed to "DDS ", RGB(A) masks and ALPHAPIXELS filled for uncompressed formats, DDSCAPS_TEXTURE set.</summary>
+	/// <summary>
+	/// Number of frames in a .tex (animated textures have several).
+	/// </summary>
+	public static int FrameCount(ReadOnlySpan<byte> tex)
+		=> Frames(tex, int.MaxValue).Count;
+
+	/// <summary>
+	/// Valid .dds of one frame: magic set to "DDS ", RGB(A) masks, RGB and ALPHAPIXELS flags filled for uncompressed
+	/// formats, DDSCAPS_TEXTURE set. Only the frames up to <paramref name="frame"/> are read.
+	/// </summary>
+	/// <exception cref="InvalidDataException">The data is not a texture, or is cut or damaged.</exception>
 	public static byte[] ToDds(ReadOnlySpan<byte> tex, int frame = 0)
 	{
-		var frames = Frames(tex);
-		if ((uint)frame >= (uint)frames.Count)
+		ArgumentOutOfRangeException.ThrowIfNegative(frame);
+		var frames = Frames(tex, frame + 1);
+		if (frame >= frames.Count)
 			throw new ArgumentOutOfRangeException(nameof(frame), $"Texture has {frames.Count} frame(s).");
 		var (offset, length) = frames[frame];
 		var dds = tex.Slice(offset, length).ToArray();
@@ -48,27 +67,35 @@ public static partial class TexConverter
 		return dds;
 	}
 
-	/// <summary>PNG of one frame (Magick.NET).</summary>
-	public static byte[] ToPng(ReadOnlySpan<byte> tex, int frame = 0)
-	{
-		var dds = ToDds(tex, frame);
-		using var image = new MagickImage(dds, MagickFormat.Dds);
-		return image.ToByteArray(MagickFormat.Png);
-	}
-
-	/// <summary>Frame ranges (offset, length) of the embedded DDS images.</summary>
-	internal static List<(int Offset, int Length)> Frames(ReadOnlySpan<byte> tex)
+	/// <summary>
+	/// Offset of the first frame's size, 0 when the data is not a known <c>.tex</c>.
+	/// </summary>
+	private static int FirstFrameOffset(ReadOnlySpan<byte> tex)
 	{
 		if (tex.Length < 8 || tex[0] != (byte)'T' || tex[1] != (byte)'E' || tex[2] != (byte)'X')
-			throw new InvalidDataException("Not a TEX texture.");
-		int pos = tex[3] switch {
+			return 0;
+		return tex[3] switch
+		{
 			1 => 8, // 'TEX' 01, u32 fps
 			2 => 9, // 'TEX' 02, u32 fps, u8 flag
-			_ => throw new InvalidDataException($"Unsupported TEX version {tex[3]}."),
+			_ => 0,
 		};
+	}
+
+	/// <summary>
+	/// Ranges (offset, length) of the first <paramref name="maxFrames"/> embedded DDS images.
+	/// </summary>
+	internal static List<(int Offset, int Length)> Frames(ReadOnlySpan<byte> tex, int maxFrames)
+	{
+		int pos = FirstFrameOffset(tex);
+		if (pos == 0)
+			throw new InvalidDataException(tex.Length >= 4 && tex[..3].SequenceEqual("TEX"u8)
+				? $"Unsupported TEX version {tex[3]}."
+				: "Not a TEX texture.");
 
 		var frames = new List<(int, int)>();
-		while (pos + 4 <= tex.Length) {
+		while (frames.Count < maxFrames && pos + 4 <= tex.Length)
+		{
 			int size = BinaryPrimitives.ReadInt32LittleEndian(tex[pos..]);
 			pos += 4;
 			if (size <= 0)
@@ -83,7 +110,9 @@ public static partial class TexConverter
 		return frames;
 	}
 
-	/// <summary>In-place DDS header fix-ups (same logic as the GUI's BitmapService.LoadFromTexMemory).</summary>
+	/// <summary>
+	/// In-place DDS header fix-ups that make the game's images readable by standard decoders.
+	/// </summary>
 	internal static void FixDdsHeader(Span<byte> dds)
 	{
 		if (dds.Length < DdsHeaderSize)
@@ -98,12 +127,14 @@ public static partial class TexConverter
 
 		uint flags = BinaryPrimitives.ReadUInt32LittleEndian(dds[OffPfFlags..]);
 		int bitCount = BinaryPrimitives.ReadInt32LittleEndian(dds[OffPfBitCount..]);
-		if ((flags & DdpfFourCC) == 0 && bitCount >= 24) {
+		if ((flags & DdpfFourCC) == 0 && bitCount >= 24)
+		{
 			BinaryPrimitives.WriteUInt32LittleEndian(dds[OffPfRMask..], 0x00FF0000);
 			BinaryPrimitives.WriteUInt32LittleEndian(dds[OffPfGMask..], 0x0000FF00);
 			BinaryPrimitives.WriteUInt32LittleEndian(dds[OffPfBMask..], 0x000000FF);
 			flags |= DdpfRgb;
-			if (bitCount == 32) {
+			if (bitCount == 32)
+			{
 				flags |= DdpfAlphaPixels;
 				BinaryPrimitives.WriteUInt32LittleEndian(dds[OffPfAMask..], 0xFF000000);
 			}

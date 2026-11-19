@@ -20,8 +20,6 @@ public static class TexHeader
 {
 	private const uint TexVersion1 = 0x01584554;
 	private const uint TexVersion2 = 0x02584554;
-	private const uint DdsMagic = 0x20534444;
-	private const uint DdsrMagic = 0x52534444;
 
 	/// <summary>
 	/// Reads the width and height in pixels of the first frame.
@@ -47,7 +45,7 @@ public static class TexHeader
 			return false;
 
 		uint ddsMagic = BinaryPrimitives.ReadUInt32LittleEndian(tex[ddsOffset..]);
-		if (ddsMagic != DdsMagic && ddsMagic != DdsrMagic)
+		if (ddsMagic != TexConverter.MagicDds && ddsMagic != TexConverter.MagicDdsr)
 			return false;
 
 		height = BinaryPrimitives.ReadInt32LittleEndian(tex[(ddsOffset + 12)..]);

@@ -1,16 +1,16 @@
 //-----------------------------------------------------------------------
-// <copyright file="BitmapCode.cs" company="None">
+// <copyright file="BitmapService.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
 using ImageMagick;
 using Microsoft.Extensions.Logging;
-using System.Buffers.Binary;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.GameFiles;
 using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.Presentation.Win32;
@@ -31,17 +31,15 @@ public class BitmapService : IBitmapService
 	}
 
 	/// <summary>
-	/// Loads a .tex from memory and converts to bitmap
+	/// Loads the first frame of a .tex from memory and converts it to a bitmap.
 	/// </summary>
 	/// <param name="data">raw tex data array</param>
 	/// <param name="offset">offset into the array</param>
 	/// <param name="count">number of bytes</param>
-	/// <returns>bitmap of tex file.</returns>
+	/// <returns>bitmap of the first frame, <see langword="null"/> when the data is not a texture.</returns>
+	/// <exception cref="InvalidDataException">The texture is cut or damaged.</exception>
 	public Bitmap? LoadFromTexMemory(byte[] data, int offset, int count)
 	{
-		// AMS: Yet another hack to new offset needed for Atlantis and Eternal Ember Images...
-		int newTextureOffsetAdd = int.MinValue;
-
 		ArgumentNullException.ThrowIfNull(data);
 
 		if (offset < 0 || offset > data.Length)
@@ -50,126 +48,20 @@ public class BitmapService : IBitmapService
 		if (count < 0 || (data.Length - offset) < count)
 			throw new ArgumentOutOfRangeException(nameof(count));
 
-		if (data.Length < 12)
+		var tex = new ReadOnlySpan<byte>(data, offset, count);
+		if (tex.Length < 12)
 		{
 			Log.LogError("TEX is not long enough to be valid.");
 			return null;
 		}
 
-		// Read magic using ReadOnlySpan for bounds-check elimination
-		var dataSpan = new ReadOnlySpan<byte>(data);
-		uint magic = BinaryPrimitives.ReadUInt32LittleEndian(dataSpan.Slice(offset));
-
-		if (magic == 0x01584554)
-		{
-			newTextureOffsetAdd = 0;
-		}
-		else if (magic == 39339348)
-		{
-			newTextureOffsetAdd = 1;
-		}
-		else
+		if (!TexConverter.IsTex(tex))
 		{
 			Log.LogError("Unexpected TEX magic found in game files, ignoring.");
 			return null;
 		}
 
-		// We need to convert from TEX to DDS format as follows:
-		// TEX header: 'TEX' + version (1 or 2), u32 frames per second (non-zero for animated textures),
-		// one extra flag byte for version 2, then a sequence of frames, each a u32 length followed by a DDS image.
-		// We only decode the first frame. We need to change the DDS magic bytes to: 0x44 0x44 0x53 0x20
-		int frameHeaderOffset = 8 + newTextureOffsetAdd;
-		int textureLength = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(offset + frameHeaderOffset));
-		if (textureLength < 0 || textureLength > (count - frameHeaderOffset - 4))
-			throw new InvalidDataException("TEX texture length is invalid.");
-
-		if (textureLength < 4)
-			throw new InvalidDataException("Cannot read TEX texture image magic.");
-
-		int realOffset = offset + frameHeaderOffset + 4;
-
-		// realOffset + 0           = DDSmagic "DDS " or "DDSR"
-		//                            Following DDSmagic we have the DDS_HEADER structure.
-		// realOffset + 4 + 0       = DDS_HEADER Structure size.  It should be 124 bytes unless its a DXT10 texture.
-		//                            at offset 72 within DDS_HEADER we have the DDS_PIXELFORMAT structure.
-		// realOffset + 8 + 0       = DDS_HEADER flags.
-		// realOffset + 12 + 0      = DDS_HEADER Surface height (in pixels).
-		// realOffset + 16 + 0      = DDS_HEADER Surface width (in pixels).
-		// realOffset + 20 + 0      = DDS_HEADER Pitch Or LinearSize.
-		// realOffset + 24 + 0      = DDS_HEADER Depth of a volume texture (in pixels).
-		// realOffset + 28 + 0      = DDS_HEADER Number of mipmap levels
-		// realOffset + 4 + 72 + 0  = DDS_PIXELFORMAT Structure size.  Should be 32 bytes.
-		// realOffset + 4 + 72 + 4  = DDS_PIXELFORMAT Flags / 0x1 = DDPF_ALPHAPIXELS flag
-		// realOffset + 4 + 72 + 8  = DDS_PIXELFORMAT FOURCC - Four-character codes for specifying compressed or custom formats.
-		// realOffset + 4 + 72 + 12 = DDS_PIXELFORMAT RGBBitCount.  Make sure it's 32 bit since we have an alpha channel.
-		// realOffset + 4 + 72 + 16 = Red Bitmask for A8R8G8B8 the red mask would be 0x00ff0000
-		// realOffset + 4 + 72 + 20 = Green Bitmask for A8R8G8B8 the green mask would be 0x0000ff00.
-		// realOffset + 4 + 72 + 24 = Blue Bitmask for A8R8G8B8 the blue mask would be 0x000000ff.
-		// realOffset + 4 + 72 + 28 = Alpha Bitmask for A8R8G8B8 the alpha mask would be 0xff000000.
-		// realOffset + 4 + 104     = DDS_HEADER Complexity of the surfaces stored.  Should always set at least 0x1000.
-		uint textureMagic = BinaryPrimitives.ReadUInt32LittleEndian(dataSpan.Slice(realOffset));
-
-		// Check for both "DDS " and "DDSR".
-		if ((textureMagic == 0x52534444 || textureMagic == 0x20534444) && textureLength >= 128)
-		{
-			// Make sure the DDS header is "valid".
-			if (BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(realOffset + 4)) == 124 &&
-				BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(realOffset + 76)) == 32)
-			{
-				// Copy the texture data to a new buffer and fix the magic so it is a valid DDS texture.
-				// Using Span-based copy
-				var ddsData = new byte[textureLength];
-				dataSpan.Slice(realOffset, textureLength).CopyTo(ddsData);
-
-				// Change "DDSR" to "DDS "
-				ddsData[3] = 0x20;
-
-				int bitDepth = BinaryPrimitives.ReadInt32LittleEndian(ddsData.AsSpan().Slice(88));
-				if (bitDepth >= 24)
-				{
-					// Set the Red pixel mask
-					ddsData[92] = 0;
-					ddsData[93] = 0;
-					ddsData[94] = 0xff;
-					ddsData[95] = 0;
-
-					// Set the Green pixel mask
-					ddsData[96] = 0;
-					ddsData[97] = 0xff;
-					ddsData[98] = 0;
-					ddsData[99] = 0;
-
-					// Set the Blue pixel mask
-					ddsData[100] = 0xff;
-					ddsData[101] = 0;
-					ddsData[102] = 0;
-					ddsData[103] = 0;
-
-					// HACK: Fix to make 32-bit DDS files use transparency.
-					if (bitDepth == 32)
-					{
-						// Add the alpha bit to the pixel format.
-						ddsData[80] |= 1;
-
-						// Set the Alpha pixel mask
-						ddsData[104] = 0;
-						ddsData[105] = 0;
-						ddsData[106] = 0;
-						ddsData[107] = 0xff;
-					}
-				}
-
-				// Set the DDS caps flag
-				ddsData[109] |= 0x10;
-
-				// now create it from this memory buffer
-				return LoadFromMemory(ddsData);
-			}
-			else
-				throw new InvalidDataException("Invalid Header format.");
-		}
-		else
-			throw new InvalidDataException("Unknown texture format.");
+		return LoadFromMemory(TexConverter.ToDds(tex));
 	}
 
 	/// <summary>

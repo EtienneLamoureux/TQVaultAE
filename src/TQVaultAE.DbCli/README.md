@@ -13,10 +13,10 @@ src/TQVaultAE.DbCli/bin/Debug/net10.0/tqdb.exe --help
 
 | Folder | Content |
 |---|---|
-| `Core/` | `.tex` conversion (`TexConverter`), display names (`DisplayNames`). The game locator (`GameLocator`) and the readers (`.arz` memory-mapped with parallel `ReadMany`, `.arc`, `Text_XX.arc`) are in `src/TQVaultAE.GameFiles`, whose `Contracts.cs` and `Factories.cs` are the surface the CLI uses. |
+| `Core/` | PNG conversion of textures (`TexPng`), display names (`DisplayNames`). The game locator (`GameLocator`), `.tex` to DDS (`TexConverter`), `PathSanitizer` and the readers (`.arz` memory-mapped with parallel `ReadMany`, `.arc`, `Text_XX.arc`) are in `src/TQVaultAE.GameFiles`, whose `Contracts.cs` and `Factories.cs` are the surface the CLI uses. |
 | `Commands/` | `ArgParser` (sub-command, `--long`/`-s`, `--opt=value`, repeatable options, `--`, generated help, usage errors = exit 2), `CliContext` (global options, lazily opened game data, outputs) and one class per command. |
 | `Query/` | `Pattern` (glob / `/regex/` to cached compiled `Regex`), `WhereClause`, `Projection`, `RecordQuery` (table filters before decompression, value filters on worker threads), `RecordSearch` (plan, run, sort, limit, follow), `ArchiveSelection`. |
-| `Export/` | Streaming sinks: `JsonRecordSink` (`Utf8JsonWriter`, json/jsonl), `TsvRecordSink` (wide or long format), `DbrRecordSink` (stream or one file per record), `TableSink` (flat rows), `PathSanitizer`. |
+| `Export/` | Streaming sinks: `JsonRecordSink` (`Utf8JsonWriter`, json/jsonl), `TsvRecordSink` (wide or long format), `DbrRecordSink` (stream or one file per record), `TableSink` (flat rows). |
 
 ## Adding a command
 1. Implement `ICommand` in `Commands/` (declare options in `Spec`; help is generated from it).
