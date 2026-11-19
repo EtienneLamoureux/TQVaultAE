@@ -2,7 +2,7 @@
 
 	<!-- Code shared by the automation endpoints of TQVaultAE and ARZExplorer (server start, control pictures, UI thread
 	     access, control walks, headless mode). TQVaultAE references it in every build, since its Release builds serve the user tools (documentation/mcp.md);
-	     ARZExplorer in Debug builds only. The headless mode is Debug-only: Release builds leave it out.
+	     ARZExplorer in Debug builds only (so its headless mode is Debug-only; TQVaultAE has it in every build).
 	     See documentation/AUTOMATION.md -->
 	<PropertyGroup>
 		<TargetFramework>net10.0-windows</TargetFramework>
@@ -21,10 +21,6 @@
 		<!-- The MCP server (McpEndpoint). -->
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="ModelContextProtocol.AspNetCore" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
-		<Compile Remove="HeadlessDesktop.cs" />
 	</ItemGroup>
 
 </Project>

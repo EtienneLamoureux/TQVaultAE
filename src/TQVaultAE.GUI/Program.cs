@@ -75,7 +75,6 @@ public static class Program
 			LoggerFactory.AddLog4Net();
 			Log = LoggerFactory.CreateLogger(typeof(Program));// Make static level logger
 
-#if DEBUG
 			// --headless: TQVault runs on a hidden desktop, driven through the automation endpoint. See documentation/AUTOMATION.md
 			if (TQVaultAE.Automation.HeadlessDesktop.IsRequested(commandLine))
 			{
@@ -95,6 +94,7 @@ public static class Program
 				Log.LogInformation("Headless mode: running on the hidden desktop {Desktop}", TQVaultAE.Automation.HeadlessDesktop.DesktopName);
 			}
 
+#if DEBUG
 			// In-app MCP automation endpoint with the developer tools, started early whatever the settings, so that startup
 			// dialogs can be answered. See documentation/AUTOMATION.md
 			LoggerFactory.AddProvider(TQVaultAE.GUI.Automation.AutomationHost.RecentLog);
@@ -369,11 +369,9 @@ public static class Program
 		{
 			Log.LogError(t.Exception, "UI Thread Exception");
 			DialogResult? headlessAnswer = null;
-#if DEBUG
 			// Headless: an error before the main form has loaded leaves nothing usable, so quit rather than ignore it.
 			if (TQVaultAE.GUI.Automation.AutomationHost.MainForm?.AutomationLoadingComplete != true)
 				headlessAnswer = DialogResult.Abort;
-#endif
 			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxService.ReadingOptions, headlessAnswer);
 		}
 		catch

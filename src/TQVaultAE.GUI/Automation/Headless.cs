@@ -9,7 +9,7 @@ using TQVaultAE.Automation;
 namespace TQVaultAE.GUI.Automation;
 
 /// <summary>
-/// TQVault's part of the Debug-only <c>--headless</c> mode (<see cref="HeadlessDesktop"/>): the name of its desktop and
+/// TQVault's part of the <c>--headless</c> mode (<see cref="HeadlessDesktop"/>): the name of its desktop and
 /// of the variable that hands it to the started instance. Message boxes never reach the hidden desktop, they are
 /// answered without being shown (see <see cref="AutomationHost.TryTakeDialogAnswer"/>); the native dialogs that do
 /// (common dialogs, task dialogs) are cancelled, recorded by title and logged.

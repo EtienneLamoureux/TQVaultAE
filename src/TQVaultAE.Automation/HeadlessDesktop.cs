@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace TQVaultAE.Automation;
 
 /// <summary>
-/// The Debug-only <c>--headless</c> mode of the apps: the app runs on a hidden Win32 desktop of its own, so no window,
+/// The <c>--headless</c> mode of the apps (TQVaultAE in every build, ARZExplorer in Debug builds): the app runs on a hidden Win32 desktop of its own, so no window,
 /// taskbar button or focus change ever reaches the user's screen, while every window is still created, shown, laid out
 /// and painted as usual (captures, tooltips and dialogs work) and is driven through the app's automation endpoint.
 /// </summary>

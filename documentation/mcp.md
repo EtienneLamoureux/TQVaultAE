@@ -114,3 +114,14 @@ publishing.
 - Message boxes shown during an agent's action wait for your answer, unless you let the agent answer them
   (`queue_dialog_answers`).
 - To stop the agent at once: untick the setting, or close TQVault.
+
+## Headless
+
+`TQVaultAE.exe --headless` runs TQVault without any window, on a hidden desktop, for an agent that works alone: the
+endpoint starts whatever the setting, on its port.
+- Nothing shows on your screen, so **TQVault's confirmation boxes don't either**: each takes the answer that changes
+  nothing (Cancel, No), unless the agent queued one (`queue_dialog_answers`). Your yes in the conversation is then the
+  only confirmation: rule 3 matters even more.
+- File and folder pickers are cancelled.
+- To stop it: end `TQVaultAE.exe` in the Task Manager. Changes not saved yet are lost: have the agent save first
+  (`save_files`).

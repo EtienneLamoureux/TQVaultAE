@@ -47,7 +47,7 @@ reads the app's own models instead, and drives drags through the panels' own mou
 
 ## Headless mode (`--headless`)
 
-`TQVaultAE.exe --headless` (Debug builds only) runs TQVault on a hidden Win32 desktop of its own: no window, taskbar
+`TQVaultAE.exe --headless` (every build) runs TQVault on a hidden Win32 desktop of its own: no window, taskbar
 button or focus change reaches the user while an agent drives it.
 
 - The process started with the switch creates the desktop, starts TQVault again on it, and exits once that instance is
@@ -78,8 +78,10 @@ button or focus change reaches the user while an agent drives it.
 TQVAULT_MCP_PORT=47018 src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe --headless
 ```
 
-Release builds ignore the switch: its code is in the Debug-only `Automation/Dev/` folder and `HeadlessDesktop.cs`, and
-the call is in `#if DEBUG`.
+Release builds: the endpoint starts whatever the settings (a hidden TQVault is driven through it only), on the settings'
+port (`McpServerPort`; the environment variables stay Debug-only), with the user tools. The rules above hold, the
+fatal-error grace delay excepted. Agent rules for that case: [mcp.md](mcp.md#headless). ARZExplorer's `--headless`
+stays Debug-only (it references `TQVaultAE.Automation` in Debug builds only).
 
 ## Register it in an MCP client
 

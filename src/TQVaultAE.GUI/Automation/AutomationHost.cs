@@ -58,24 +58,14 @@ internal static class AutomationHost
 	public static RecentLogProvider RecentLog { get; } = new();
 #endif
 
-	/// <summary>Whether the app runs in the Debug-only headless mode, where no box is ever shown.</summary>
-#if DEBUG
+	/// <summary>Whether the app runs in headless mode (<c>--headless</c>), where no box is ever shown.</summary>
 	private static bool Headless => HeadlessDesktop.Enabled;
 
-	/// <summary>Gets the name of the hidden desktop in headless mode (Debug), or null.</summary>
+	/// <summary>Gets the name of the hidden desktop in headless mode, or null.</summary>
 	public static string? HeadlessDesktopName => HeadlessDesktop.DesktopName;
 
-	/// <summary>Gets the native dialogs cancelled in headless mode because nobody could answer them (Debug).</summary>
+	/// <summary>Gets the native dialogs cancelled in headless mode because nobody could answer them.</summary>
 	public static IReadOnlyList<string> CancelledNativeDialogs => HeadlessDesktop.CancelledDialogs;
-#else
-	private static bool Headless => false;
-
-	/// <summary>Gets the name of the hidden desktop in headless mode: always null, the mode is Debug-only.</summary>
-	public static string? HeadlessDesktopName => null;
-
-	/// <summary>Gets the native dialogs cancelled in headless mode: always empty, the mode is Debug-only.</summary>
-	public static IReadOnlyList<string> CancelledNativeDialogs => [];
-#endif
 
 	/// <summary>
 	/// Gets the endpoint address, or null when the endpoint is not running.
@@ -125,9 +115,7 @@ internal static class AutomationHost
 			_dialogAnswers.Clear();
 		_dialogAnswered.Clear();
 		_dialogUnanswered.Clear();
-#if DEBUG
 		HeadlessDesktop.ClearCancelled();
-#endif
 	}
 
 	/// <summary>Gets the answers not used yet.</summary>
@@ -282,7 +270,8 @@ internal static class AutomationHost
 
 	/// <summary>
 	/// Starts, restarts on another port or stops the endpoint as the settings say, in the background (Release: at startup
-	/// and when the settings change). Debug builds keep the endpoint started by <c>Start</c>.
+	/// and when the settings change). Debug builds keep the endpoint started by <c>Start</c>. In headless mode the endpoint
+	/// is on whatever the settings: a hidden TQVault is driven through it only.
 	/// </summary>
 	/// <param name="enabled">Whether the endpoint is on (<see cref="Config.UserSettings.EnableMcpServer"/>).</param>
 	/// <param name="port">Its port (<see cref="Config.UserSettings.McpServerPort"/>); an invalid one takes <see cref="DefaultPort"/>.</param>
@@ -297,6 +286,12 @@ internal static class AutomationHost
 			return;
 		}
 #endif
+		if (Headless && !enabled)
+		{
+			_log?.LogInformation("Automation MCP endpoint: headless mode, the endpoint stays on (settings: off)");
+			enabled = true;
+		}
+
 		_ = Task.Run(() => ApplyAsync(enabled, Config.UserSettings.ValidMcpServerPort(port)));
 	}
 
