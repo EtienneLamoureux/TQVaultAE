@@ -79,7 +79,7 @@ public class LoadMessagesTests
 
 		var message = LoadMessages.ForPlayerStash(result, save).Should().ContainSingle().Subject;
 
-		message.Text.Should().Be($"{Resources.StashNotFoundMsg}\n\nCharacter : {save}");
+		message.Text.Should().Be($"{Resources.StashNotFoundMsg}\n\n{string.Format(Resources.ModLinkCharacter, save)}");
 	}
 
 	[Fact]
@@ -87,8 +87,8 @@ public class LoadMessagesTests
 	{
 		var result = new StashLoadResult { Stash = new Stash("Shared", StashFile) { StashFound = false }, StashFile = StashFile };
 
-		LoadMessages.ForTransferStash(result).Single().Text.Should().Be($"{Resources.StashNotFoundMsg}\n\nTransfer Stash\n\n{StashFile}");
-		LoadMessages.ForRelicVaultStash(result).Single().Text.Should().Be($"{Resources.StashNotFoundMsg}\n\nRelic Stash\n\n{StashFile}");
+		LoadMessages.ForTransferStash(result).Single().Text.Should().Be($"{Resources.StashNotFoundMsg}\n\n{Resources.GlobalTransferStash}\n\n{StashFile}");
+		LoadMessages.ForRelicVaultStash(result).Single().Text.Should().Be($"{Resources.StashNotFoundMsg}\n\n{Resources.GlobalRelicVaultStash}\n\n{StashFile}");
 	}
 
 	[Fact]

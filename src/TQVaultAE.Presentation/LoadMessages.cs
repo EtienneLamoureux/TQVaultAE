@@ -58,7 +58,7 @@ public static class LoadMessages
 	/// <param name="character">The character.</param>
 	/// <returns>The messages in the order to show them.</returns>
 	public static IReadOnlyList<LoadMessage> ForPlayerStash(StashLoadResult result, PlayerSave character)
-		=> ForStash(result, $"Character : {ModLinkText.CharacterLabel(character)}");
+		=> ForStash(result, string.Format(CultureInfo.CurrentCulture, Resources.ModLinkCharacter, ModLinkText.CharacterLabel(character)));
 
 	/// <summary>
 	/// Gets the messages for the load of the transfer stash.
@@ -66,7 +66,7 @@ public static class LoadMessages
 	/// <param name="result">The load result.</param>
 	/// <returns>The messages in the order to show them.</returns>
 	public static IReadOnlyList<LoadMessage> ForTransferStash(StashLoadResult result)
-		=> ForStash(result, $"Transfer Stash\n\n{result.StashFile}");
+		=> ForStash(result, $"{Resources.GlobalTransferStash}\n\n{result.StashFile}");
 
 	/// <summary>
 	/// Gets the messages for the load of the relic vault stash.
@@ -74,7 +74,7 @@ public static class LoadMessages
 	/// <param name="result">The load result.</param>
 	/// <returns>The messages in the order to show them.</returns>
 	public static IReadOnlyList<LoadMessage> ForRelicVaultStash(StashLoadResult result)
-		=> ForStash(result, $"Relic Stash\n\n{result.StashFile}");
+		=> ForStash(result, $"{Resources.GlobalRelicVaultStash}\n\n{result.StashFile}");
 
 	/// <summary>
 	/// Gets the message shown when a file cannot be read.
@@ -83,7 +83,7 @@ public static class LoadMessages
 	/// <param name="exception">The read error.</param>
 	/// <returns>The message text.</returns>
 	public static string ReadError(string? file, Exception exception)
-		=> string.Format(CultureInfo.InvariantCulture, Resources.MainFormReadError, file, exception.ToString());
+		=> string.Format(CultureInfo.CurrentCulture, Resources.MainFormReadError, file, exception.ToString());
 
 	/// <summary>
 	/// Gets the message shown when a file is read with an error (a format error, or a failed read).
@@ -92,7 +92,7 @@ public static class LoadMessages
 	/// <param name="error">The error's message.</param>
 	/// <returns>The message text.</returns>
 	public static string ReadFailure(string? file, string error)
-		=> string.Format(CultureInfo.CurrentUICulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, file, error);
+		=> string.Format(CultureInfo.CurrentCulture, "{0}\n{1}\n{2}", Resources.MainFormPlayerReadError, file, error);
 
 	private static LoadMessage ParseError(string? file, ArgumentException error)
 		=> new(ReadFailure(file, error.Message), Resources.GlobalError, true);
