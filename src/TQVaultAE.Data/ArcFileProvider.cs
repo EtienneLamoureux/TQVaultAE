@@ -111,47 +111,6 @@ public class ArcFileProvider(ILogger<ArcFileProvider> log, IPathIO pathIO, IDire
 		return data;
 	}
 
-	/// <summary>
-	/// Extracts the decoded ARC file contents into a folder.
-	/// </summary>
-	/// <param name="destination">Destination folder for the files.</param>
-	/// <returns>true if successful, false on error.</returns>
-	public bool ExtractArcFile(ArcFile file, string destination)
-	{
-		try
-		{
-			if (USettings.ARCFileDebugLevel > 0)
-				Log.LogDebug("ARCFile.ReadARCFile()");
-
-			if (!file.FileHasBeenRead)
-				this.ReadARCToC(file);
-
-			foreach (ArcEntry dirEntry in file.DirectoryEntries.Values)
-			{
-				string filename = destination;
-				if (!filename.EndsWith('\\'))
-					filename = string.Concat(filename, "\\");
-
-				filename = string.Concat(filename, dirEntry.Name);
-
-				if (USettings.ARCFileDebugLevel > 1)
-					Log.LogDebug("Creating File - {Filename}", filename);
-
-				this.WriteEntry(file, dirEntry, filename);
-			}
-
-			if (USettings.ARCFileDebugLevel > 0)
-				Log.LogDebug("Exiting ARCFile.ReadARCFile()");
-
-			return true;
-		}
-		catch (IOException exception)
-		{
-			Log.LogError(exception, "ARCFile.ReadARCFile() - Error reading arcfile");
-			return false;
-		}
-	}
-
 	#endregion ArcFile Public Methods
 
 	/// <summary>

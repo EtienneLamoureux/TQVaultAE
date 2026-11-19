@@ -87,18 +87,4 @@ public sealed class ArcFileProviderTests : IDisposable
 		this._provider.Read(new ArcFile(path)).Should().BeFalse();
 	}
 
-	[Fact]
-	public void ExtractArcFile_WritesEveryEntryUnderItsPath()
-	{
-		var a = Content(50, 5);
-		var b = Content(70_000, 6);
-		var file = this.Open(Stored("root.txt", a), Compressed("sub/dir/file.bin", b, partSize: 16_384));
-		var destination = Path.Combine(Path.GetTempPath(), $"arc-extract-{Guid.NewGuid():N}");
-		this._tempFiles.Add(destination);
-
-		this._provider.ExtractArcFile(file, destination).Should().BeTrue();
-
-		File.ReadAllBytes(Path.Combine(destination, "root.txt")).Should().Equal(a);
-		File.ReadAllBytes(Path.Combine(destination, "sub", "dir", "file.bin")).Should().Equal(b);
-	}
 }

@@ -261,47 +261,6 @@ public partial class Database : IDatabase
 
 	#region Database Public Methods
 
-	#region Database Public Static Methods
-
-	/// <summary>
-	/// Used to Extract an ARC file into the destination directory.
-	/// The ARC file will not be added to the cache.
-	/// </summary>
-	/// <remarks>Added by VillageIdiot</remarks>
-	/// <param name="arcFileName">Name of the arc file</param>
-	/// <param name="destination">Destination path for extracted data</param>
-	/// <returns>Returns true on success otherwise false</returns>
-	public bool ExtractArcFile(string arcFileName, string destination)
-	{
-		bool result = false;
-
-		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Database.ExtractARCFile('{ArcFileName}', '{Destination}')", arcFileName, destination);
-
-		try
-		{
-			ArcFile arcFile = new ArcFile(arcFileName);
-
-			// Extract the files
-			result = arcProv.ExtractArcFile(arcFile, destination);
-		}
-		catch (IOException exception)
-		{
-			Log.LogError(exception, "Exception occurred");
-			result = false;
-		}
-
-		if (USettings.DatabaseDebugLevel > 1)
-			Log.LogDebug("Extraction Result = {Result}", result);
-
-		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Exiting Database.ReadARCFile()");
-
-		return result;
-	}
-
-	#endregion Database Public Static Methods
-
 	/// <summary>
 	/// Gets the Infor for a specific item id.
 	/// </summary>
