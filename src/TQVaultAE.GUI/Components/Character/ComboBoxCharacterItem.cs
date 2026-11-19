@@ -19,7 +19,6 @@ public partial class ComboBoxCharacterItem : UserControl
 
 	// Set by Init: the drop down creates the item before giving it its save.
 	private IPlayerService PlayerService = null!;
-	private ITagService TagService = null!;
 	private ITranslationService TranslationService = null!;
 	private IFontService FontService = null!;
 
@@ -87,13 +86,12 @@ public partial class ComboBoxCharacterItem : UserControl
 		SelectedItemChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	public void Init(object item, ITranslationService translationService, IFontService fontService, IPlayerService playerService, ITagService tagService)
+	public void Init(object item, ITranslationService translationService, IFontService fontService, IPlayerService playerService)
 	{
 		this.Item = item;
 		this.TranslationService = translationService;
 		this.FontService = fontService;
 		this.PlayerService = playerService;
-		this.TagService = tagService;
 
 		this.scalingLabelCharName.Font = FontService.GetFont(this.scalingLabelCharName.Font.Size);
 		this.scalingLabelPlayerHeader.Font =

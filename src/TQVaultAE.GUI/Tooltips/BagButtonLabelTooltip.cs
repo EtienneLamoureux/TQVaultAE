@@ -13,15 +13,12 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 
 	private static BagButtonLabelTooltip? _Current = null;
 	private string _Label = string.Empty;
-	private Control? _AnchorControl;
 	private readonly Bitmap? bgimg;
 
 	internal Control AnchorControl
 	{
 		set
 		{
-			_AnchorControl = value;
-
 			// Move it on top of anchor
 			var loc = value.PointToScreen(Point.Empty);
 

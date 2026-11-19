@@ -32,8 +32,6 @@ public class BagButtonBase : Panel
 	protected readonly IUIService UIService;
 	protected readonly IBitmapService BitmapService;
 	protected readonly IHighlightService HighlightService;
-	private readonly SessionContext userContext;
-	private readonly UserSettings USettings;
 	internal SackCollection? Sack;
 
 	private BagButtonIconInfo _DefaultIconInfo = new BagButtonIconInfo()
@@ -136,8 +134,6 @@ public class BagButtonBase : Panel
 		this.Services = services;
 		this.FontService = this.Services.FontService;
 		this.UIService = this.Services.UIService;
-		this.userContext = this.Services.Session;
-		this.USettings = this.Services.Settings;
 		this.BitmapService = this.Services.BitmapService;
 		this.HighlightService = this.Services.HighlightService;
 

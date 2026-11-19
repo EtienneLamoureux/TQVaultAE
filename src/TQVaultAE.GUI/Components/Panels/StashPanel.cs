@@ -129,8 +129,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		+ Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT * this.UIService.Scale);
 	int PLAYERINFO_WIDTH => Convert.ToInt32(NORMAL_PLAYERINFO_WIDTH * this.UIService.Scale);
 
-	private readonly ITranslationService TranslationService;
-
 	private System.ComponentModel.IContainer components;
 	private ContextMenuStrip buttonContextMenuStrip;
 	private ToolStripMenuItem toolStripMenuItemEnableTooltip;
@@ -156,7 +154,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	{
 		InitializeComponent();
 
-		this.TranslationService = this.Services.TranslationService;
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 

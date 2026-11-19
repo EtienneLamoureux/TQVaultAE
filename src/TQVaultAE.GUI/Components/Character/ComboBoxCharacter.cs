@@ -590,7 +590,7 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 				var save = this.Items[e.NewIndex];
 
 				var item = new ComboBoxCharacterItem();
-				item.Init(save, TranslationService, FontService, PlayerService, TagService);
+				item.Init(save, TranslationService, FontService, PlayerService);
 				item.SelectedItemChanged += Item_SelectedItemChanged;
 				this.DropDown.Items.Add(item);
 				item.RefreshContent();
