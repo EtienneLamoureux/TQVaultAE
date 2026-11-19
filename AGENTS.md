@@ -153,7 +153,7 @@ data (Application types), and the GUI or Presentation turns them into translated
 | TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | `System.Drawing` bitmaps, fonts, icons, tooltip image cache, UI images (`Images`) |
 | TQVaultAE.GameFiles | .NET 10.0 | Game file readers (`.arz`, `.arc`, text), shared by Data and `tqdb` |
 | TQVaultAE.DbCli | .NET 10.0 | `tqdb` command line |
-| TQVaultAE.Automation | .NET 10.0 Windows | Code shared by the automation endpoints of the GUI and ARZExplorer (UI thread calls, control walks, headless mode); referenced by the GUI in every build (its headless mode in Debug builds only), by ARZExplorer in Debug builds only |
+| TQVaultAE.Automation | .NET 10.0 Windows | Code shared by the automation endpoints of the GUI and ARZExplorer (server start, control pictures, UI thread calls, control walks, headless mode); referenced by the GUI in every build (its headless mode in Debug builds only), by ARZExplorer in Debug builds only |
 | TQVaultAE.<Layer>.Tests | .NET 10.0 | Unit tests, one project per layer (Domain, Application, Config, Data, Services, Presentation, DbCli), plus TQVaultAE.Services.Git.Tests (`GitBackup` against real git) |
 | TQVaultAE.Tests.Win32 | .NET 10.0 Windows | Unit tests of the Windows-only projects |
 
