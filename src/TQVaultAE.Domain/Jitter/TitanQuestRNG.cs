@@ -120,20 +120,6 @@ public class TitanQuestRNG
 	}
 
 	/// <summary>
-	/// A float in [min, max], as the game draws it: <c>(float)((double)(max - min) * ((uint)r / m) + min)</c>,
-	/// with <c>max - min</c> computed in single precision.
-	/// </summary>
-	/// <param name="min">Lower bound.</param>
-	/// <param name="max">Upper bound.</param>
-	/// <returns>Engine result for the next PRNG step.</returns>
-	public float GenerateFloat(float min, float max)
-	{
-		int raw = this.AdvanceSeed();
-		double d = ((double)raw + (raw < 0 ? 4294967296.0 : 0.0)) / 2147483647.0;
-		return (float)((double)(max - min) * d + (double)min);
-	}
-
-	/// <summary>
 	/// Current internal seed value (for debugging / replay).
 	/// </summary>
 	public uint CurrentSeed => this._currentSeed;

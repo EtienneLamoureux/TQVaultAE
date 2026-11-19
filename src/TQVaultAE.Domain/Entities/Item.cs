@@ -877,20 +877,6 @@ public class Item
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether the item is a relic and only a relic.
-	/// </summary>
-	public bool IsRelicOnly
-	{
-		get
-		{
-			if (this.baseItemInfo is not null)
-				return this.baseItemInfo.ItemClass.Equals(ICLASS_RELIC, noCase);
-
-			return this.BaseItemId is not null && this.BaseItemId.IsRelic;
-		}
-	}
-
-	/// <summary>
 	/// Gets a value indicating whether the item first relic is a charm and only a charm.
 	/// </summary>
 	public bool IsRelic1Charm => SocketedKind(this.relicID, this.RelicInfo) == SocketedRecordKind.Charm;

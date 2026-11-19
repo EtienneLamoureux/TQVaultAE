@@ -69,11 +69,6 @@ public class Info
 	private string styleVar = string.Empty;
 
 	/// <summary>
-	/// itemscalepercent attribute
-	/// </summary>
-	private string itemScalePercent = string.Empty;
-
-	/// <summary>
 	/// Initializes a new instance of the Info class.
 	/// </summary>
 	/// <param name="record">database record for which this info is for.</param>
@@ -135,11 +130,6 @@ public class Info
 	/// Gets the relic level
 	/// </summary>
 	public int CompletedRelicLevel => this.GetInt32(this.completedRelicLevelVar);
-
-	/// <summary>
-	/// Gets the item scale percentage
-	/// </summary>
-	public float ItemScalePercent => 1.0F + (this.GetSingle(this.itemScalePercent) / 100);
 
 	#endregion Info Properties
 
@@ -290,8 +280,6 @@ public class Info
 			this.qualityVar = "itemQualityTag";
 			this.styleVar = "itemStyleTag";
 		}
-
-		this.itemScalePercent = "itemScalePercent";
 	}
 
 	#endregion Info Private Methods

@@ -22,7 +22,6 @@ public class PlayerLevel
 	//
 	//By the end of the Immortal Throne expansion, the player would have recieved 
 	//a total of 855 Health, 42 Strength, 18 Intelligence, 18 Dexterity and 18 attribute points.
-	public static int MaxAttributePoints => 168;
 
 	public static int HealthAndManaIncrementPerPoint => 40;
 
@@ -55,8 +54,6 @@ public class PlayerLevel
 
 	//30 from the 10 new character levels
 	//9 for completing quests in Act V(3 per difficulty)
-
-	public static int MaxSkillPoints => 282;
 
 	public static int SkillPointsPerLevel => 3;
 

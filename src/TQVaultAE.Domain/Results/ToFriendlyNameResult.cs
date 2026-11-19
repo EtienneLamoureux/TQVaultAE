@@ -264,8 +264,6 @@ public partial class ToFriendlyNameResult
 
 	#region RelicInfo 1 & 2
 
-	public string? ItemRelicBonus1Format { get; internal set; }
-	public string? ItemRelicBonus2Format { get; internal set; }
 	public string? RelicInfo1Description { get; internal set; }
 	public string? RelicInfo2Description { get; internal set; }
 	public string[] Relic1Attributes { get; internal set; } = [];
