@@ -137,48 +137,22 @@ internal sealed class ModLinkDialog : VaultForm
 		this.buttonClose = NewButton(nameof(this.buttonClose), Resources.GlobalClose);
 		this.buttonClose.DialogResult = DialogResult.Cancel;
 
-		var buttons = new FlowLayoutPanel()
-		{
-			Anchor = AnchorStyles.None,
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			FlowDirection = FlowDirection.LeftToRight,
-			Margin = new Padding(0, Zoomed(8), 0, 0),
-			WrapContents = false,
-		};
-		buttons.Controls.AddRange([this.buttonSuggest, this.buttonLink, this.buttonUnlink, this.buttonClose]);
-
-		var layout = new TableLayoutPanel()
-		{
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			ColumnCount = 1,
-			Margin = new Padding(0),
-		};
-		layout.Controls.AddRange([characterLine, this.labelState, this.labelMods, this.listBoxMods, this.labelFolder, this.labelSuggestion, buttons]);
+		var buttons = CaravanDialog.Row(Zoomed(8), this.buttonSuggest, this.buttonLink, this.buttonUnlink, this.buttonClose);
+		var layout = CaravanDialog.Table(characterLine, this.labelState, this.labelMods, this.listBoxMods, this.labelFolder, this.labelSuggestion, buttons);
 		CaravanFrame.FrameAround(this.listBoxMods);
 
-		this.SuspendLayout();
-		CaravanDialog.SetUpWindow(this, nameof(ModLinkDialog));
 		// Enter links the chosen mod, like a double click (nothing while Link is disabled); Escape closes.
-		this.AcceptButton = this.buttonLink;
-		this.CancelButton = this.buttonClose;
-		this.Font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);
-		this.Text = Resources.ModLinkDialogTitle;
-		this.Padding = CaravanDialog.ContentPadding(zoom);
-		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
-		this.Controls.Add(layout);
-		this.labelFolder.Height = this.labelFolder.Font.Height;
-		this.DrawCustomBorder = true;
-		CaravanLook.Apply(this, layout, buttons, characterLine);
-		// The texts over the marble in gold, outlined like the group titles over the frames; the name stays white, the
-		// mod list and its folder line keep their colours.
-		foreach (var label in new[] { this.labelCharacter, this.labelState, this.labelMods, this.labelSuggestion })
-			label.ForeColor = Color.Gold;
-		this.labelCharacterName.ForeColor = Color.White;
-		CaravanLook.OutlineText(this);
-		this.ResumeLayout(false);
-		this.PerformLayout();
+		CaravanDialog.Lay(this, nameof(ModLinkDialog), Resources.ModLinkDialogTitle, layout, this.FontService.GetFontLight(CaravanLook.TextSize, zoom), zoom
+			, this.buttonLink, this.buttonClose, [buttons, characterLine], () =>
+			{
+				this.labelFolder.Height = this.labelFolder.Font.Height;
+				// The texts over the marble in gold, outlined like the group titles over the frames; the name stays white,
+				// the mod list and its folder line keep their colours.
+				foreach (var label in new[] { this.labelCharacter, this.labelState, this.labelMods, this.labelSuggestion })
+					label.ForeColor = Color.Gold;
+				this.labelCharacterName.ForeColor = Color.White;
+				CaravanLook.OutlineText(this);
+			});
 
 		// The window follows its table: a longer state or a suggestion changes its height.
 		this.FitAround(layout);

@@ -55,8 +55,7 @@ internal sealed class InputDialog : VaultForm
 			MinimumSize = new Size(width, 0),
 			UseMnemonic = false,
 		};
-		int space = CaravanFrame.Border + CaravanFrame.CharacterWidth(font);
-		CaravanFrame.ApplyTo(this.promptLabel, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
+		CaravanDialog.FrameText(this.promptLabel, font);
 
 		this.textBox = new ScalingTextBox()
 		{
@@ -69,44 +68,13 @@ internal sealed class InputDialog : VaultForm
 
 		this.okButton = CaravanDialog.Button(this.FontService, zoom, nameof(this.okButton), Resources.GlobalOK);
 		this.okButton.Click += this.OkButton_Click;
-		this.cancelButton = CaravanDialog.Button(this.FontService, zoom, nameof(this.cancelButton), Resources.GlobalCancel);
-		this.cancelButton.DialogResult = DialogResult.Cancel;
-		// Also closes the dialog shown modeless (automation).
-		this.cancelButton.Click += (_, _) => this.Close();
+		this.cancelButton = CaravanDialog.CancelButton(this, zoom, nameof(this.cancelButton), Resources.GlobalCancel);
 
-		var buttons = new FlowLayoutPanel()
-		{
-			Anchor = AnchorStyles.None,
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			FlowDirection = FlowDirection.LeftToRight,
-			Margin = new Padding(0, Zoomed(14), 0, 0),
-			WrapContents = false,
-		};
-		buttons.Controls.AddRange([this.okButton, this.cancelButton]);
+		var buttons = CaravanDialog.Row(Zoomed(14), this.okButton, this.cancelButton);
+		var layout = CaravanDialog.Table(this.promptLabel, this.textBox, buttons);
 
-		var layout = new TableLayoutPanel()
-		{
-			AutoSize = true,
-			AutoSizeMode = AutoSizeMode.GrowAndShrink,
-			ColumnCount = 1,
-			Margin = new Padding(0),
-		};
-		layout.Controls.AddRange([this.promptLabel, this.textBox, buttons]);
-
-		this.SuspendLayout();
-		CaravanDialog.SetUpWindow(this, nameof(InputDialog));
-		// Enter accepts the text, Escape cancels.
-		this.AcceptButton = this.okButton;
-		this.CancelButton = this.cancelButton;
-		this.Font = font;
-		this.Padding = CaravanDialog.ContentPadding(zoom);
-		layout.Location = new Point(this.Padding.Left, this.Padding.Top);
-		this.Controls.Add(layout);
-		this.DrawCustomBorder = true;
-		CaravanLook.Apply(this, layout, buttons);
-		this.ResumeLayout(false);
-		this.PerformLayout();
+		// Enter accepts the text, Escape cancels; the caller sets the title.
+		CaravanDialog.Lay(this, nameof(InputDialog), null, layout, font, zoom, this.okButton, this.cancelButton, [buttons]);
 
 		// The window follows its table: a longer prompt makes it higher.
 		this.FitAround(layout);

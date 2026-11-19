@@ -67,6 +67,84 @@ internal static class CaravanDialog
 	}
 
 	/// <summary>
+	/// A Cancel button: the dialog's result Cancel, and a click closes it, also when it is shown modeless (automation).
+	/// </summary>
+	public static ScalingButton CancelButton(VaultForm dialog, float zoom, string name, string text)
+	{
+		var button = Button(dialog.Services.FontService, zoom, name, text);
+		button.DialogResult = DialogResult.Cancel;
+		button.Click += (_, _) => dialog.Close();
+		return button;
+	}
+
+	/// <summary>A row of controls side by side (buttons), centred in the dialog's table, <paramref name="top"/> pixels under the row above.</summary>
+	public static FlowLayoutPanel Row(int top, params Control[] controls)
+	{
+		var row = new FlowLayoutPanel()
+		{
+			Anchor = AnchorStyles.None,
+			AutoSize = true,
+			AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			FlowDirection = FlowDirection.LeftToRight,
+			Margin = new Padding(0, top, 0, 0),
+			WrapContents = false,
+		};
+		row.Controls.AddRange(controls);
+		return row;
+	}
+
+	/// <summary>The dialog's table: one column of <paramref name="rows"/>, sized to its content.</summary>
+	public static TableLayoutPanel Table(params Control[] rows)
+	{
+		var table = new TableLayoutPanel()
+		{
+			AutoSize = true,
+			AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			ColumnCount = 1,
+			Margin = new Padding(0),
+		};
+		table.Controls.AddRange(rows);
+		return table;
+	}
+
+	/// <summary>
+	/// Puts a text in a caravan frame with one character of space inside it on the left and right, as the instructions
+	/// of Vault Maintenance.
+	/// </summary>
+	public static void FrameText(ScalingLabel label, Font font)
+	{
+		int space = CaravanFrame.Border + CaravanFrame.CharacterWidth(font);
+		CaravanFrame.ApplyTo(label, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
+	}
+
+	/// <summary>
+	/// Builds the window of a dialog laid out in code around its <paramref name="table"/>: <see cref="SetUpWindow"/>, its
+	/// Enter and Escape buttons, font, title (null: set later) and padding, the table inside the border, the marble look
+	/// (<see cref="CaravanLook.Apply(Control, Control[])"/>, <paramref name="transparent"/> showing it), then
+	/// <paramref name="finish"/> (colours set after the look) before the layout runs. The dialog then calls
+	/// <c>FitAround(table)</c> so the window follows its table.
+	/// </summary>
+	public static void Lay(VaultForm dialog, string name, string? title, TableLayoutPanel table, Font font, float zoom
+		, IButtonControl? accept, IButtonControl? cancel, Control[] transparent, Action? finish = null)
+	{
+		dialog.SuspendLayout();
+		SetUpWindow(dialog, name);
+		dialog.AcceptButton = accept;
+		dialog.CancelButton = cancel;
+		dialog.Font = font;
+		if (title is not null)
+			dialog.Text = title;
+		dialog.Padding = ContentPadding(zoom);
+		table.Location = new Point(dialog.Padding.Left, dialog.Padding.Top);
+		dialog.Controls.Add(table);
+		dialog.DrawCustomBorder = true;
+		CaravanLook.Apply(dialog, [table, .. transparent]);
+		finish?.Invoke();
+		dialog.ResumeLayout(false);
+		dialog.PerformLayout();
+	}
+
+	/// <summary>
 	/// The padding of a dialog around its table: the custom border's thickness, and a gap of 10 on the sides, 4 under the
 	/// title and 6 at the bottom.
 	/// </summary>
