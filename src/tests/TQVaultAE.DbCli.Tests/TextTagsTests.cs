@@ -53,4 +53,16 @@ public sealed class TextTagsTests
 		namer.ResolveTag("tagUnknown").Should().BeNull();
 		namer.ResolveTag(null).Should().BeNull();
 	}
+
+	[Theory]
+	[InlineData("[ms]renforcé[mp]renforcés[fs]renforcée", "renforcé")]
+	[InlineData("[fs]Lame crochue[ms]Autre", "Lame crochue")]
+	[InlineData("{^l}[ms]Kostur Glebin", "{^l}Kostur Glebin")]
+	[InlineData("terra[fs]Cota animados.", "terraCota animados.")]
+	[InlineData("[Right Click to Use]", "Right Click to Use")]
+	[InlineData("[surpris] Aaaah !", "Aaaah !")]
+	[InlineData("Plain text [not a marker]", "Plain text [not a marker]")]
+	[InlineData("No marker", "No marker")]
+	public void FirstVariant_KeepsTheFirstVariantWithoutMarkers(string text, string expected)
+		=> TextTags.FirstVariant(text).Should().Be(expected);
 }

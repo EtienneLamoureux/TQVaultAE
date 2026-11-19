@@ -1272,8 +1272,6 @@ public partial class Database : IDatabase
 		this.ParseTextDB(databaseFile, "text\\tutorial.txt");
 	}
 
-	[GeneratedRegex(@"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$")]
-	private static partial Regex ParseTextDBRegEx();
 	/// <summary>
 	/// Parses the text database to put the entries into a hash table.
 	/// </summary>
@@ -1312,9 +1310,7 @@ public partial class Database : IDatabase
 			// noun form.  I don' want to code all that so this next code will just take the first version of the adjective and then
 			// throw away all the metadata.
 
-			// hguy : one expression to rule them all
-			if (ParseTextDBRegEx().Match(label) is { Success: true } match)
-				label = match.Groups["Label"].Value.Trim();
+			label = TextTags.FirstVariant(label);
 
 			// A tag already in the db is replaced: the last file loaded wins.
 			this.textDB[tag] = label;

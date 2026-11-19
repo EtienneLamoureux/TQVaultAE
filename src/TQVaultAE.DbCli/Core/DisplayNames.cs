@@ -50,19 +50,11 @@ public static partial class DisplayNames
 		return LooksLikeLiteral(tag) ? NullIfEmpty(Clean(tag)) : null;
 	}
 
-	/// <summary>Strips game format codes (<see cref="TextTags"/>, line breaks become spaces) and [xx] gender/plural markers, keeping the first variant when several are given.</summary>
+	/// <summary>Strips game format codes (<see cref="TextTags"/>, line breaks become spaces) and keeps the first grammatical variant (<see cref="TextTags.FirstVariant"/>).</summary>
 	public static string Clean(string value)
 	{
 		ArgumentNullException.ThrowIfNull(value);
-		var s = TextTags.ToPlainText(value, " ");
-
-		// "[ms]Name[fs]Other" lists grammatical variants: keep the first one.
-		var m = GenderMarker().Match(s);
-		if (m.Success) {
-			int start = m.Index + m.Length;
-			var next = GenderMarker().Match(s, start);
-			s = s[..m.Index] + (next.Success ? s[start..next.Index] : s[start..]);
-		}
+		var s = TextTags.ToPlainText(TextTags.FirstVariant(value), " ");
 		return WhiteSpace().Replace(s, " ").Trim();
 	}
 
@@ -122,9 +114,6 @@ public static partial class DisplayNames
 	private static partial Regex TagPrefix();
 
 	private static string? NullIfEmpty(string s) => s.Length == 0 ? null : s;
-
-	[GeneratedRegex(@"\[[a-zA-Z]{1,3}\]")]
-	private static partial Regex GenderMarker();
 
 	[GeneratedRegex(@"\s+")]
 	private static partial Regex WhiteSpace();
