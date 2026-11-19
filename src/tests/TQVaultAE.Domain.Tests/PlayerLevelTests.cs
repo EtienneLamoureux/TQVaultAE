@@ -16,13 +16,13 @@ public class PlayerLevelTests
 
 	[Fact]
 	public void GetInvestedAttributePoints_AtTheMinimum_IsZero()
-		=> PlayerLevel.GetInvestedAttributePoints(50, 50, 50, 300, 300).Should().Be(0);
+		=> PlayerLevel.GetInvestedAttributePoints([300, 300, 50, 50, 50]).Should().Be(0);
 
 	[Fact]
 	public void GetInvestedAttributePoints_CountsEachAttributeByItsIncrement()
 	{
 		// 3 points of strength, 2 of dexterity, 1 of intelligence, 2 of health, 1 of mana.
-		var points = PlayerLevel.GetInvestedAttributePoints(62, 58, 54, 380, 340);
+		var points = PlayerLevel.GetInvestedAttributePoints([380, 340, 62, 54, 58]);
 
 		points.Should().Be(9);
 	}
@@ -31,9 +31,18 @@ public class PlayerLevelTests
 	public void GetInvestedAttributePoints_DropsTheRemainderOfEachAttribute()
 	{
 		// 55 strength is one point and one over, 339 health is no full point.
-		var points = PlayerLevel.GetInvestedAttributePoints(55, 50, 50, 339, 300);
+		var points = PlayerLevel.GetInvestedAttributePoints([339, 300, 55, 50, 50]);
 
 		points.Should().Be(1);
+	}
+
+	[Fact]
+	public void GetInvestedAttributePoints_AValueUnderItsMinimum_CountsNone()
+	{
+		// 42 strength is under the minimum: it takes no point from the others (it took 2 before).
+		var points = PlayerLevel.GetInvestedAttributePoints([380, 300, 42, 50, 50]);
+
+		points.Should().Be(2);
 	}
 
 	[Theory]

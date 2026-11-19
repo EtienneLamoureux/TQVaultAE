@@ -180,15 +180,30 @@ public class PlayerLevel
 		: level < 8 ? 1
 		: 2;
 
+	/// <summary>The minimum of an attribute, in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
+	public static int MinimumOf(int attribute)
+		=> attribute switch
+		{
+			0 => MinHealth,
+			1 => MinMana,
+			2 => MinStrength,
+			3 => MinIntelligence,
+			_ => MinDexterity,
+		};
+
+	/// <summary>
+	/// The whole points invested in an attribute over its minimum (none for a value under it); the attribute in the
+	/// game's order (<see cref="MinimumOf"/>).
+	/// </summary>
+	public static int InvestedPoints(int attribute, int value)
+		=> Math.Max(0, value - MinimumOf(attribute)) / IncrementPerPoint(attribute < 2);
+
 	/// <summary>
 	/// Attribute points invested in the base attributes over their minimum, which a reset of the attributes gives back.
 	/// </summary>
-	public static int GetInvestedAttributePoints(int strength, int dexterity, int intelligence, int health, int mana)
-		=> (strength - MinStrength) / AtrributeIncrementPerPoint
-		+ (dexterity - MinDexterity) / AtrributeIncrementPerPoint
-		+ (intelligence - MinIntelligence) / AtrributeIncrementPerPoint
-		+ (health - MinHealth) / HealthAndManaIncrementPerPoint
-		+ (mana - MinMana) / HealthAndManaIncrementPerPoint;
+	/// <param name="values">The base attributes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</param>
+	public static int GetInvestedAttributePoints(IReadOnlyList<int> values)
+		=> Enumerable.Range(0, 5).Sum(i => InvestedPoints(i, values[i]));
 
 	/// <summary>
 	/// Money of a character that unlocked another difficulty: at least 5M for Epic, 7.5M for Legendary.
