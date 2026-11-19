@@ -145,68 +145,6 @@
     <data name="AboutVersion" xml:space="preserve">
     <value>版本 {0}</value>
   </data>
-    <data name="ARZExtractBtnExtract" xml:space="preserve">
-    <value>提取</value>
-  </data>
-    <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} 不存在。您是否想要创建它？</value>
-  </data>
-    <data name="ARZExtractCreateFolder2" xml:space="preserve">
-    <value>创建文件夹？</value>
-  </data>
-    <data name="ARZExtractCreateFolderIT" xml:space="preserve">
-    <value>{0} 在不朽王座(IT)数据库中不存在.您是否想要创建它？</value>
-  </data>
-    <data name="ARZExtractDestination" xml:space="preserve">
-    <value>请选择文件夹用于提取提取数据库记录</value>
-  </data>
-    <data name="ARZExtractFileDest" xml:space="preserve">
-    <value>您必须指定一个文件，而不是一个文件！</value>
-  </data>
-    <data name="ARZExtractLabel1" xml:space="preserve">
-    <value>目前无法一次性提取所有游戏数据记录。此外，该工具集目前还存在一个当逐个提取记录时会破坏数组值的BUG。使用此工具，只需要一次，您就可以准确地提取所有记录。</value>
-  </data>
-    <data name="ARZExtractLabel2" xml:space="preserve">
-    <value>提取完记录后，只需将您想使用的记录复制到mod文件夹中即可。</value>
-  </data>
-    <data name="ARZExtractLabel3" xml:space="preserve">
-    <value>选择一个目标文件夹：</value>
-  </data>
-    <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>选择一个目标文件夹用来存放不朽王座(IT)数据库文件：</value>
-  </data>
-    <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>如果没有指定泰坦之旅原版(TQ)数据库文件和不朽王座(IT)数据库文件的存放文件夹，则它们默认会使用同一个文件夹。当有冲突时，IT文件将覆盖TQ文件。您可以通过选择不同的文件夹来避免覆盖文件。</value>
-  </data>
-    <data name="ARZExtractText" xml:space="preserve">
-    <value>提取database.arz</value>
-  </data>
-    <data name="ARZExtractValidDest" xml:space="preserve">
-    <value>您必须输入一个有效的目标文件夹。</value>
-  </data>
-    <data name="ARZProgressCancelledText" xml:space="preserve">
-    <value>提取取消。</value>
-  </data>
-    <data name="ARZProgressCompleteText" xml:space="preserve">
-    <value>提取完成。</value>
-  </data>
-    <data name="ARZProgressFailedText" xml:space="preserve">
-    <value>提取失败。</value>
-  </data>
-    <data name="ARZProgressLabel" xml:space="preserve">
-    <value>正在提取 {0} ...</value>
-  </data>
-    <data name="ARZProgressLabel1" xml:space="preserve">
-    <value>正在提取</value>
-  </data>
-    <data name="ARZProgressText" xml:space="preserve">
-    <value>正在提取 database.arz...</value>
-  </data>
-    <data name="CmdlineUsage" xml:space="preserve">
-    <value>命令行参数解析错误: {0}
-
-用法: TQVault [角色名称] [/mod:&lt;mod名称&gt;]</value>
-  </data>
     <data name="DataDefaultPath" xml:space="preserve">
     <value>默认仓库路径</value>
   </data>
@@ -241,12 +179,6 @@
     <data name="Form1Text" xml:space="preserve">
     <value>泰坦之旅物品仓库</value>
   </data>
-    <data name="GlobalAbout" xml:space="preserve">
-    <value>关于</value>
-  </data>
-    <data name="GlobalBrowse" xml:space="preserve">
-    <value>浏览...</value>
-  </data>
     <data name="GlobalCancel" xml:space="preserve">
     <value>取消</value>
   </data>
@@ -260,18 +192,11 @@
     <value>背包 #{0}</value>
     <comment>This entry must have the GlobalMenuBagDelimiter or it will break the item and bag move code.</comment>
   </data>
-    <data name="GlobalMenuBagDelimiter" xml:space="preserve">
-    <value>#</value>
-    <comment>Used with GlobalMenuBag to signify bag number in menus.</comment>
-  </data>
     <data name="GlobalOK" xml:space="preserve">
       <value>确定</value>
     </data>
     <data name="GlobalTransferStash" xml:space="preserve">
     <value>共享仓库</value>
-  </data>
-    <data name="GlobalTrash" xml:space="preserve">
-    <value>垃圾</value>
   </data>
     <data name="ItemIT" xml:space="preserve">
     <value>不朽王座物品</value>
@@ -312,17 +237,11 @@
     <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>配置</value>
   </data>
-    <data name="MainFormBtnExtract" xml:space="preserve">
-    <value>提取 database.arz ...</value>
-  </data>
     <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>显示仓库</value>
   </data>
     <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>显示角色</value>
-  </data>
-    <data name="MainFormDatabaseError" xml:space="preserve">
-    <value>提取数据库错误</value>
   </data>
     <data name="MainFormHoldingItem" xml:space="preserve">
     <value>您当前正在拿着一个物品。
@@ -355,18 +274,11 @@
     <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>没有检测到自定义地图的角色</value>
   </data>
-    <data name="MainFormNoItemQualityFound" xml:space="preserve">
-    <value>没有找到'{0}'类型
-和'{1}'品质的物品。</value>
-  </data>
     <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>没有找到带有'{0}'的物品.</value>
   </data>
     <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>没有找到物品</value>
-  </data>
-    <data name="MainFormNoItemTypesFound" xml:space="preserve">
-    <value>没有找到'{0}'类型的物品.</value>
   </data>
   <data name="MainFormPathsChanged" xml:space="preserve">
     <value>游戏路径已更改</value>
@@ -379,9 +291,6 @@
   </data>
     <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>读取玩家文件错误</value>
-  </data>
-    <data name="MainFormQuit" xml:space="preserve">
-    <value>您确定要退出吗？</value>
   </data>
     <data name="MainFormReadError" xml:space="preserve">
     <value>读取错误 {0}
@@ -407,50 +316,8 @@
 您需要重新启动TQVault以生效。
 您是否想要现在重新启动TQVault？</value>
   </data>
-  <data name="MainFormStartVaultMon" xml:space="preserve">
-    <value>您是否想要重新启动TQVaultMon？</value>
-  </data>
-    <data name="MainFormStartVaultMonMsg" xml:space="preserve">
-    <value>您刚刚修改了角色的库存。
-泰坦之旅会检测到并会认为您的角色已损坏
-并且不会让您加载您的角色。
-
-TQVaultMon是一款在运行时会让泰坦之旅游戏认为
-您的角色正常并会让您成功加载的软件。
-一旦您成功加载了您的角色，您不需要
-再去使用TQVaultMon，除非您做了进一步的更改。
-
-建议现在打开TQVaultMon然后运行泰坦之旅
-并加载您修改过的所有角色。
-
-您是否想要现在打开TQVaultMon？</value>
-  </data>
     <data name="MainFormStashReadError" xml:space="preserve">
     <value>读取储物文件错误</value>
-  </data>
-    <data name="MainFormTrashItems" xml:space="preserve">
-    <value>垃圾箱当前有{0}个物品。
-如果现在退出，这些物品将会永久丢失。
-
-您确定要丢掉这些物品吗？</value>
-  </data>
-    <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
-    <value>不能启动TQVaultMon</value>
-  </data>
-    <data name="MainFormVaultMonError" xml:space="preserve">
-    <value>尝试启动TQVaultMon错误</value>
-  </data>
-    <data name="MainFormVaultMonMsg" xml:space="preserve">
-    <value>我不知道TQVaultMon是否在运行。
-很可能TQVaultMon也没有起作用。
-因为您修改过您的角色，泰坦之旅会认为您的角色已经损坏。
-为了成功地加载游戏并游玩，您需要下载TQ Defiler
-然后使用它的'Patch'或'Fix Me'选项来让游戏认为您的角色是OK的。
-如果您不介意的话，请联系我并告诉我这个问题，
-因为我可能有解决方案，这样，您就少些麻烦。
-
-错误信息如下
-</value>
   </data>
     <data name="MaintenanceBadChars" xml:space="preserve">
     <value>您使用了无效的角色。</value>
@@ -593,10 +460,6 @@ TQVaultMon是一款在运行时会让泰坦之旅游戏认为
     <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>自动整理错误。</value>
   </data>
-    <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
-    <value>整理的时候发生错误。
-有些物品没有被放置。</value>
-  </data>
     <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>您当前正拿着一个物品。
 在整理前请把这个物品放到某个地方。</value>
@@ -700,18 +563,6 @@ TQVaultMon是一款在运行时会让泰坦之旅游戏认为
     <data name="SettingsAllowEdit" xml:space="preserve">
     <value>允许物品编辑功能</value>
   </data>
-    <data name="SettingsAllowEditTT" xml:space="preserve">
-    <value>启用右键菜单中的编辑功能选项。
-该功能包含了物品的创建和修改。</value>
-  </data>
-    <data name="SettingsAutoUpdate" xml:space="preserve">
-    <value>自动检查更新</value>
-  </data>
-    <data name="SettingsAutoUpdateTT" xml:space="preserve">
-    <value>勾选此选项将会在程序启动的时候，
-自动联网检查TQVault的新版本.
-如果网络不好的话，可能会导致启动时间变长。</value>
-  </data>
     <data name="SettingsBrowseIT" xml:space="preserve">
     <value>请选择不朽王座的游戏文件路径。</value>
   </data>
@@ -726,12 +577,6 @@ TQVaultMon是一款在运行时会让泰坦之旅游戏认为
   </data>
     <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>自动检测语言</value>
-  </data>
-    <data name="SettingsForceCheck" xml:space="preserve">
-    <value>检查更新</value>
-  </data>
-    <data name="SettingsForceCheckTT" xml:space="preserve">
-    <value>手动检查是否有可用的更新。</value>
   </data>
     <data name="SettingsLabel1" xml:space="preserve">
     <value>仓库路径</value>
@@ -802,78 +647,6 @@ TQVault关闭仍有物品在垃圾桶时将不会有提示信息。</value>
     <value>商队</value>
   </data>
     <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <data name="UpdateCompletion" xml:space="preserve">
-    <value>{0}    {1} % 完成。</value>
-  </data>
-    <data name="UpdateCompletion2" xml:space="preserve">
-    <value>{0}    0 % 完成。</value>
-  </data>
-    <data name="UpdateCurrentVer" xml:space="preserve">
-    <value>当前版本： {0}</value>
-  </data>
-    <data name="UpdateError" xml:space="preserve">
-    <value>无法启动安装程序</value>
-  </data>
-    <data name="UpdateErrorMsg" xml:space="preserve">
-    <value>下载或提取时出了问题。
-请下载最新的完整安装包并手动安装。
-点击确定退出。</value>
-  </data>
-    <data name="UpdateFullInstall" xml:space="preserve">
-    <value>发现了新版本的TQVault，需要进行完整安装。</value>
-  </data>
-    <data name="UpdateLatestVer" xml:space="preserve">
-    <value>最新版本： {0}</value>
-  </data>
-    <data name="UpdateMinVer" xml:space="preserve">
-    <value>最低版本： {0}</value>
-  </data>
-    <data name="UpdateNewTQVault" xml:space="preserve">
-    <value>发现了新版本的TQVault。</value>
-  </data>
-    <data name="UpdateNewUpdater" xml:space="preserve">
-    <value>发现了新版本的TQVault更新程序。</value>
-  </data>
-    <data name="UpdateNoUpdate" xml:space="preserve">
-    <value>您的版本是最新的。</value>
-  </data>
-    <data name="UpdatePerform" xml:space="preserve">
-    <value>点击确定开始更新。</value>
-  </data>
-  <data name="UpdatePerformBoth" xml:space="preserve">
-    <value>点击确定开始全部更新。</value>
-  </data>
-    <data name="UpdateRunInstall" xml:space="preserve">
-    <value>点击确定下载并运行安装包。</value>
-  </data>
-  <data name="UpdateStreamError" xml:space="preserve">
-    <value>更新服务器连接错误。
-无法开始更新。</value>
-  </data>
-    <data name="UpdateText" xml:space="preserve">
-    <value>更新TQVault</value>
-  </data>
-    <data name="UpdateUpdaterNotFound" xml:space="preserve">
-    <value>找不到TQVault更新程序，被重命名了？</value>
-  </data>
-    <data name="VaultProgressText" xml:space="preserve">
-    <value>正在加载玩家和仓库文件...</value>
-  </data>
-    <data name="AUEnglishName" xml:space="preserve">
-    <value>Chinese</value>
-        <comment>Do not Translate.  Used for AutoUpdate.
-Used to determine which language file to update.</comment>
-  </data>
-    <data name="AUFileVersion" xml:space="preserve">
-    <value>2</value>
-        <comment>Do not Translate.  Used for AutoUpdate.
-Used to track changes in the translation file.</comment>
-  </data>
-    <data name="AUMinTQVaultVersion" xml:space="preserve">
-    <value>2.3.1.0</value>
-        <comment>Do not Translate.  Used for AutoUpdate.
-Change this value to match program version when new keys are added.  Will trigger an update on next restart.</comment>
-  </data>
     <data name="VaultGroupBoxEmpty" xml:space="preserve">
     <value>&lt;空&gt;</value>
   </data>
@@ -889,18 +662,6 @@ Change this value to match program version when new keys are added.  Will trigge
   </data>
     <data name="SearchDialogCaption" xml:space="preserve">
     <value>搜索物品</value>
-  </data>
-    <data name="SearchDialogText" xml:space="preserve">
-    <value>在这些加载了的文件中搜索物品：仓库，储物箱，物品栏。
-
-您可以组合下列的所有选项(所有选项都是非必须的)：
-* 名称：必须是第一个搜索词。 例子：'北极的 &amp; 霜之'
-* 类型：在搜索词前使用 @ 符号来搜索。 例子：'@剑'
-* 属性：在搜索词前使用 # 符号来搜索。 例子：'#元素抗性'
-* 稀有度: 在搜索词前使用 $ 符号来搜索。 例子： '$稀有的'      
-您可以使用在搜索词之间使用 | 来表示或条件。 例子：'$普通的 | 稀有的' 将会返回所有普通和稀有物品。
-
-一个复杂的例子：'北极的 &amp; 霜之 @戒指 $稀有的 | 普通的'</value>
   </data>
     <data name="GlobalClose" xml:space="preserve">
     <value>关闭</value>
@@ -1014,21 +775,6 @@ Change this value to match program version when new keys are added.  Will trigge
     <data name="AttributesPoints" xml:space="preserve">
     <value>属性点</value>
   </data>
-    <data name="BaseStrength" xml:space="preserve">
-    <value>基础力量</value>
-  </data>
-    <data name="BaseDexterity" xml:space="preserve">
-    <value>基础敏捷</value>
-  </data>
-    <data name="BaseIntelligence" xml:space="preserve">
-    <value>基础智力</value>
-  </data>
-    <data name="BaseHealth" xml:space="preserve">
-    <value>基础生命</value>
-  </data>
-    <data name="BaseMana" xml:space="preserve">
-    <value>基础法力</value>
-  </data>
     <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>已游玩时间</value>
   </data>
@@ -1055,12 +801,6 @@ Change this value to match program version when new keys are added.  Will trigge
   </data>
     <data name="NumHitsInflicted" xml:space="preserve">
     <value>攻击次数</value>
-  </data>
-    <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>最大伤害</value>
-  </data>
-    <data name="GreatestMonster" xml:space="preserve">
-    <value>击杀的最强怪物</value>
   </data>
     <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>暴击次数</value>
@@ -1354,9 +1094,6 @@ Change this value to match program version when new keys are added.  Will trigge
 	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
     <value>从文件导入...</value>
   </data>
-	<data name="ExportVaultPasteBin" xml:space="preserve">
-    <value>分享仓库到PasteBin</value>
-  </data>
   <data name="GlobalNoVaultLoaded" xml:space="preserve">
     <value>未加载仓库。</value>
   </data>
@@ -1413,9 +1150,6 @@ Change this value to match program version when new keys are added.  Will trigge
   </data>
   <data name="ImportVaultSuccess" xml:space="preserve">
     <value>已导入 {0} 件物品到仓库。</value>
-  </data>
-  <data name="ShareVaultTooltip" xml:space="preserve">
-    <value>🔗 分享仓库</value>
   </data>
 	<data name="TextTag_DefenseManaBurnRatio" xml:space="preserve">
     <value>{%.0f0}% 法力燃烧伤害抗性</value>

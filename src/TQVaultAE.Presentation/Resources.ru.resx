@@ -137,67 +137,6 @@ Spanish translation by Kurrus.
   <data name="AboutVersion" xml:space="preserve">
     <value>Версия {0}</value>
   </data>
-  <data name="ARZExtractBtnExtract" xml:space="preserve">
-    <value>Распаковать</value>
-  </data>
-  <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} не существует. Хотите создать её сейчас?</value>
-  </data>
-  <data name="ARZExtractCreateFolder2" xml:space="preserve">
-    <value>Создать папку?</value>
-  </data>
-  <data name="ARZExtractCreateFolderIT" xml:space="preserve">
-    <value>{0} не существует для базы данных IT. Хотите создать её сейчас?</value>
-  </data>
-  <data name="ARZExtractDestination" xml:space="preserve">
-    <value>Выберите конечную директорию для распакованных записей базы данных.</value>
-  </data>
-  <data name="ARZExtractFileDest" xml:space="preserve">
-    <value>Вы должны указать не файл, а директорию!</value>
-  </data>
-  <data name="ARZExtractLabel1" xml:space="preserve">
-    <value>В данный момент не существует способа распаковать все записи базы данных игры сразу. Так же сейчас существует баг в утилите игры Art Manager, который уничтожает значения в массивах когда вы извлекаете записи по одной. Используя эту утилиту вы можете распаковать все записи сразу и все записи будут распакованы корректно.</value>
-  </data>
-  <data name="ARZExtractLabel2" xml:space="preserve">
-    <value>После того, как вы распакуете записи, просто скопируйте необходимые записи, которые вы хотите использовать в моде, в папку вашего мода.</value>
-  </data>
-  <data name="ARZExtractLabel3" xml:space="preserve">
-    <value>Укажите конечную директорию:</value>
-  </data>
-  <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>Укажите конечную директорию для файлов базы данных IT:</value>
-  </data>
-  <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>Если не задан путь для распаковки базы данных TQ и IT, будет использована общая директория. Файлы IT перезапишут файлы TQ если будут конфликты, однако вы можете указать разные папки чтобы избежать перезаписи.</value>
-  </data>
-  <data name="ARZExtractText" xml:space="preserve">
-    <value>Распаковать database.arz</value>
-  </data>
-  <data name="ARZExtractValidDest" xml:space="preserve">
-    <value>Вы должны указать существующую директорию назначения.</value>
-  </data>
-  <data name="ARZProgressCancelledText" xml:space="preserve">
-    <value>Распаковка отменена.</value>
-  </data>
-  <data name="ARZProgressCompleteText" xml:space="preserve">
-    <value>Распаковка завершена.</value>
-  </data>
-  <data name="ARZProgressFailedText" xml:space="preserve">
-    <value>Распаковка не удалась.</value>
-  </data>
-  <data name="ARZProgressLabel" xml:space="preserve">
-    <value>Извлечение {0} ...</value>
-  </data>
-  <data name="ARZProgressLabel1" xml:space="preserve">
-    <value>Распаковка</value>
-  </data>
-  <data name="ARZProgressText" xml:space="preserve">
-    <value>Распаковка database.arz...</value>
-  </data>
-  <data name="CmdlineUsage" xml:space="preserve">
-    <value>Ошибка при обработке аргументов командной строки: {0}
-Применение: TQVault [player name] [/mod:&lt;mod name&gt;]</value>
-  </data>
   <data name="DataDefaultPath" xml:space="preserve">
     <value>Стандартный путь к хранилищам</value>
   </data>
@@ -227,12 +166,6 @@ Spanish translation by Kurrus.
   <data name="Form1Text" xml:space="preserve">
     <value>Хранилище предметов Titan Quest</value>
   </data>
-  <data name="GlobalAbout" xml:space="preserve">
-    <value>Авторы</value>
-  </data>
-  <data name="GlobalBrowse" xml:space="preserve">
-    <value>Обзор...</value>
-  </data>
   <data name="GlobalCancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
@@ -246,18 +179,11 @@ Spanish translation by Kurrus.
     <value>Сумка #{0}</value>
     <comment>This entry must have the GlobalMenuBagDelimiter or it will break the item and bag move code.</comment>
   </data>
-  <data name="GlobalMenuBagDelimiter" xml:space="preserve">
-    <value>#</value>
-    <comment>Used with GlobalMenuBag to signify bag number in menus.</comment>
-  </data>
   <data name="GlobalOK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="GlobalTransferStash" xml:space="preserve">
     <value>Панель передачи</value>
-  </data>
-  <data name="GlobalTrash" xml:space="preserve">
-    <value>Корзина</value>
   </data>
   <data name="ItemIT" xml:space="preserve">
     <value>Предмет Immortal Throne</value>
@@ -298,17 +224,11 @@ Spanish translation by Kurrus.
   <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>Настройки</value>
   </data>
-  <data name="MainFormBtnExtract" xml:space="preserve">
-    <value>Распаковать database.arz ...</value>
-  </data>
   <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>Отображать хранилище</value>
   </data>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Отображать игрока</value>
-  </data>
-  <data name="MainFormDatabaseError" xml:space="preserve">
-    <value>Ошибка распаковки базы данных</value>
   </data>
   <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Вы сейчас удерживаете предмет.
@@ -341,18 +261,11 @@ Spanish translation by Kurrus.
   <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>Не обнаружено персонажей пользовательских карт</value>
   </data>
-  <data name="MainFormNoItemQualityFound" xml:space="preserve">
-    <value>Не найдено предметов типа '{0}'
-и качества '{1}'.</value>
-  </data>
   <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>Не найдено предметов по запросу '{0}'.</value>
   </data>
   <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>Предметов не найдено</value>
-  </data>
-  <data name="MainFormNoItemTypesFound" xml:space="preserve">
-    <value>Не найдено предметов типа '{0}'.</value>
   </data>
   <data name="MainFormPathsChanged" xml:space="preserve">
     <value>Путь к игре изменён</value>
@@ -365,9 +278,6 @@ Spanish translation by Kurrus.
   </data>
   <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>Ошибка чтения файла данных игрока</value>
-  </data>
-  <data name="MainFormQuit" xml:space="preserve">
-    <value>Вы действительно хотите выйти?</value>
   </data>
   <data name="MainFormReadError" xml:space="preserve">
     <value>Ошибка чтения {0}
@@ -393,50 +303,8 @@ Spanish translation by Kurrus.
 Необходимо перезапустить TQVault чтобы изменения вступили в силу.
 Хотите перезапустить TQVault сейчас?</value>
   </data>
-  <data name="MainFormStartVaultMon" xml:space="preserve">
-    <value>Хотите запустить TQVaultMon?</value>
-  </data>
-  <data name="MainFormStartVaultMonMsg" xml:space="preserve">
-    <value>Вы изменили инвентарь одного из ваших персонажей.
-Titan Quest увидит это, посчитает что ваш персонаж испорчен
-и не позволит вам загрузить его.
-
-TQVaultMon — это программа, которая пока запущена заставляет 
-Titan Quest считать что с вашим персонажем всё в порядке и позволяет 
-вам его загрузить. Единожды загрузив вашего персонажа вам больше не 
-нужно использовать TQVaultMon, пока вы не внесёте очередные изменения.
-
-Советуем сначала запускать TQVaultMon и только затем заходить в 
-Titan Quest и загружать всех персонажей, которые были изменены.
-
-Хотите запустить TQVaultMon сейчас?</value>
-  </data>
   <data name="MainFormStashReadError" xml:space="preserve">
     <value>Ошибка чтения файла погонщика</value>
-  </data>
-  <data name="MainFormTrashItems" xml:space="preserve">
-    <value>В корзине находится {0} предметов.
-Если вы выйдете, эти предметы будут ПОТЕРЯНЫ НАВСЕГДА.
-
-Вы действительно хотите избавиться от этих предметов?</value>
-  </data>
-  <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
-    <value>Невозможно запустить TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonError" xml:space="preserve">
-    <value>Ошибка при попытке запуска TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonMsg" xml:space="preserve">
-    <value>Мы не можем проверить запущен ли TQVaultMon.
-Скорее всего TQVaultMon не работает.
-Из-за того, что вы изменили одного из ваших персонажей, TQ будет считать что они 
-испорченны. Для успешной игры вам необходимо скачать TQ Defiler и использовать его 
-опции 'Patch' или 'Fix Me' для того, чтобы игра признала файлы ваших персонажей 
-исправными. Если вы не против, пожалуйста, свяжитесь со мной и расскажите мне о вашей 
-проблеме, потому что возможно у меня найдется решение которое сэкономит вам время.
-
-Текст ошибки приведён ниже
-</value>
   </data>
   <data name="MaintenanceBadChars" xml:space="preserve">
     <value>Вы используете неподходящих персонажей.</value>
@@ -578,10 +446,6 @@ Titan Quest и загружать всех персонажей, которые 
   <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>Ошибка автоматической сортировки.</value>
   </data>
-  <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
-    <value>Произошла ошибка во время сортировки.
-Не все предметы отсортированы.</value>
-  </data>
   <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>В данный момент вы удерживаете предмет.
 Пожалуйста, положите его куда-нибудь перед сортировкой.</value>
@@ -686,18 +550,6 @@ Titan Quest и загружать всех персонажей, которые 
   <data name="SettingsAllowEdit" xml:space="preserve">
     <value>Разрешить редактирование предметов</value>
   </data>
-  <data name="SettingsAllowEditTT" xml:space="preserve">
-    <value>Включает опции создания и изменения в контекстном меню предмета.
-Сюда входят создание артефактов, частей сетовых наборов и собирание реликвий.</value>
-  </data>
-  <data name="SettingsAutoUpdate" xml:space="preserve">
-    <value>Автоматически проверять обновления</value>
-  </data>
-  <data name="SettingsAutoUpdateTT" xml:space="preserve">
-    <value>Выбор этого пункта будет автоматически проверять наличие в сети
-новых версий TQVault когда программа запускается. Может сделать запуск более 
-долгим если у вас медленное подключение к Интернету.</value>
-  </data>
   <data name="SettingsBrowseIT" xml:space="preserve">
     <value>Пожалуйста укажите путь для игровых файлов Immortal Throne.</value>
   </data>
@@ -712,12 +564,6 @@ Titan Quest и загружать всех персонажей, которые 
   </data>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Автоматически определять язык</value>
-  </data>
-  <data name="SettingsForceCheck" xml:space="preserve">
-    <value>Проверить</value>
-  </data>
-  <data name="SettingsForceCheckTT" xml:space="preserve">
-    <value>Вручную проверить есть ли обновления.</value>
   </data>
   <data name="SettingsLabel1" xml:space="preserve">
     <value>Путь к хранилищам</value>
@@ -791,73 +637,6 @@ Titan Quest и загружать всех персонажей, которые 
   <data name="StashPanelText" xml:space="preserve">
     <value>Караван</value>
   </data>
-  <data name="UpdateCompletion" xml:space="preserve">
-    <value>{0}    {1} % завершено.</value>
-  </data>
-  <data name="UpdateCompletion2" xml:space="preserve">
-    <value>{0}    0 % завершено.</value>
-  </data>
-  <data name="UpdateCurrentVer" xml:space="preserve">
-    <value>Текущая версия: {0}</value>
-  </data>
-  <data name="UpdateError" xml:space="preserve">
-    <value>Невозможно запустить установку</value>
-  </data>
-  <data name="UpdateErrorMsg" xml:space="preserve">
-    <value>Возникла проблема во время скачивания или распаковки.
-Пожалуйста, скачайте последнюю версию полной установки и запустите её вручную.
-Нажмите OK для выхода.</value>
-  </data>
-  <data name="UpdateFullInstall" xml:space="preserve">
-    <value>Найдена более новая версия TQVault, потребуется полная установка.</value>
-  </data>
-  <data name="UpdateLatestVer" xml:space="preserve">
-    <value>Последняя версия: {0}</value>
-  </data>
-  <data name="UpdateMinVer" xml:space="preserve">
-    <value>Минимальная версия: {0}</value>
-  </data>
-  <data name="UpdateNewTQVault" xml:space="preserve">
-    <value>Найдена более новая версия TQVault.</value>
-  </data>
-  <data name="UpdateNewUpdater" xml:space="preserve">
-    <value>Найдена более новая версия программы обновления TQVault.</value>
-  </data>
-  <data name="UpdateNoUpdate" xml:space="preserve">
-    <value>Ваша версия самая последняя.</value>
-  </data>
-  <data name="UpdatePerform" xml:space="preserve">
-    <value>Нажмите OK для запуска обновления.</value>
-  </data>
-  <data name="UpdatePerformBoth" xml:space="preserve">
-    <value>Нажмите OK для выполнения обоих обновлений.</value>
-  </data>
-  <data name="UpdateRunInstall" xml:space="preserve">
-    <value>Нажмите OK для скачивания и запуска установщика.</value>
-  </data>
-  <data name="UpdateStreamError" xml:space="preserve">
-    <value>Возникла ошибка при подключении к серверу обновления.
-Обновление не может быть выполнено.</value>
-  </data>
-  <data name="UpdateText" xml:space="preserve">
-    <value>Обновления TQVault</value>
-  </data>
-  <data name="UpdateUpdaterNotFound" xml:space="preserve">
-    <value>Программа обновления TQVault не найдена, либо её имя было изменено.</value>
-  </data>
-  <data name="VaultProgressText" xml:space="preserve">
-    <value>Загрузка файлов игроков и хранилищ...</value>
-  </data>
-  <data name="AUEnglishName" xml:space="preserve">
-    <value>Russian</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to determine which language file to update.</comment>
-  </data>
-  <data name="AUFileVersion" xml:space="preserve">
-    <value>3</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to track changes in the translation file.</comment>
-  </data>
   <data name="VaultGroupBoxEmpty" xml:space="preserve">
     <value>&lt;Пусто&gt;</value>
   </data>
@@ -873,18 +652,6 @@ Used to track changes in the translation file.</comment>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Поиск предмета</value>
-  </data>
-  <data name="SearchDialogText" xml:space="preserve">
-    <value>Поиск предметов в загруженных файлах: хранилищах, сундуках, инвентарях.
-
-Вы можете комбинировать следующие параметры поиска:
-* Имя: Это должен быть первый поисковый запрос. Вот пример: 'арктическая &amp; инея'
-* Тип: используя @ в начале поискового запроса, например '@меч'
-* Атрибуты: используя # в начале поискового запроса, например '#сопротивления силам природы'
-* Раритет: используя $ в начале поискового запроса, например '$редкий'
-Вы можете использовать | в терминах как условие ИЛИ. '$обычный | редкий' возвращает все обычные и все редкие вещи.
-
-Вот полный пример: 'арктическая &amp; инея @меч $редкий | эпический'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Закрыть</value>
@@ -985,21 +752,6 @@ Used to track changes in the translation file.</comment>
   <data name="AttributesPoints" xml:space="preserve">
     <value>Очки атрибутов</value>
   </data>
-  <data name="BaseStrength" xml:space="preserve">
-    <value>Базовая сила</value>
-  </data>
-  <data name="BaseDexterity" xml:space="preserve">
-    <value>Базовая ловкость</value>
-  </data>
-  <data name="BaseIntelligence" xml:space="preserve">
-    <value>Базовый интеллект</value>
-  </data>
-  <data name="BaseHealth" xml:space="preserve">
-    <value>Базовое здоровье</value>
-  </data>
-  <data name="BaseMana" xml:space="preserve">
-    <value>Базовая энергия</value>
-  </data>
   <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Время в игре</value>
   </data>
@@ -1026,12 +778,6 @@ Used to track changes in the translation file.</comment>
   </data>
   <data name="NumHitsInflicted" xml:space="preserve">
     <value>Нанесено ударов</value>
-  </data>
-  <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>Сильнейший нанесенный урон</value>
-  </data>
-  <data name="GreatestMonster" xml:space="preserve">
-    <value>Сильнейшее убитое существо</value>
   </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Нанесено критических ударов</value>
@@ -1092,9 +838,6 @@ Used to track changes in the translation file.</comment>
 	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
     <value>Импортировать из файла...</value>
   </data>
-	<data name="ExportVaultPasteBin" xml:space="preserve">
-    <value>Поделиться хранилищем на PasteBin</value>
-  </data>
   <data name="GlobalNoVaultLoaded" xml:space="preserve">
     <value>Хранилище не загружено.</value>
   </data>
@@ -1151,9 +894,6 @@ Used to track changes in the translation file.</comment>
   </data>
   <data name="ImportVaultSuccess" xml:space="preserve">
     <value>{0} предметов импортировано в хранилище.</value>
-  </data>
-  <data name="ShareVaultTooltip" xml:space="preserve">
-    <value>🔗 Поделиться хранилищем</value>
   </data>
 	<data name="TextTag_DefenseManaBurnRatio" xml:space="preserve">
     <value>{%.0f0}% сопротивления урону от истощения энергии</value>

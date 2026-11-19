@@ -146,68 +146,6 @@ VillageIdiot (villij-idjit@sbcglobal.net)
   <data name="AboutVersion" xml:space="preserve">
     <value>Versão {0}</value>
   </data>
-  <data name="ARZExtractBtnExtract" xml:space="preserve">
-    <value>Extrair</value>
-  </data>
-  <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} Não existe. Deseja criá-lo agora?</value>
-  </data>
-  <data name="ARZExtractCreateFolder2" xml:space="preserve">
-    <value>Criar pasta?</value>
-  </data>
-  <data name="ARZExtractCreateFolderIT" xml:space="preserve">
-    <value>{0} Não existe para o banco de dados de TI. Deseja criá-lo agora?</value>
-  </data>
-  <data name="ARZExtractDestination" xml:space="preserve">
-    <value>Selecione a pasta de destino para os registros do banco de dados extraídos</value>
-  </data>
-  <data name="ARZExtractFileDest" xml:space="preserve">
-    <value>Você deve especificar uma pasta, não um arquivo!</value>
-  </data>
-  <data name="ARZExtractLabel1" xml:space="preserve">
-    <value>Atualmente, não há como extrair todos os registros do banco de dados do jogo de uma só vez. Também existe atualmente um bug no conjunto de ferramentas que destrói os valores da matriz quando você extrai os registros um por um. Usando esta ferramenta, agora você pode extrair todos os registros de uma só vez e todos os registros serão extraídos corretamente.</value>
-  </data>
-  <data name="ARZExtractLabel2" xml:space="preserve">
-    <value>Depois de extrair os registros, basta copiar os que você deseja usar no seu mod e enviá-los para a sua pasta mod.</value>
-  </data>
-  <data name="ARZExtractLabel3" xml:space="preserve">
-    <value>Escolha uma pasta de destino:</value>
-  </data>
-  <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>Escolha uma pasta de destino para os arquivos de banco de dados do TI:</value>
-  </data>
-  <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>Se não escolher as pastas de destino do banco de dados do TQ e o banco de dados do TI serão padronizados para a mesma pasta. Os arquivos do TI substituirão os arquivos do TQ quando houver conflitos, embora você possa selecionar pastas diferentes para evitar a substituição de arquivos.</value>
-  </data>
-  <data name="ARZExtractText" xml:space="preserve">
-    <value>Extrair database.arz</value>
-  </data>
-  <data name="ARZExtractValidDest" xml:space="preserve">
-    <value>Você deve inserir uma pasta de destino válida.</value>
-  </data>
-  <data name="ARZProgressCancelledText" xml:space="preserve">
-    <value>Extração cancelada.</value>
-  </data>
-  <data name="ARZProgressCompleteText" xml:space="preserve">
-    <value>Extração concluída.</value>
-  </data>
-  <data name="ARZProgressFailedText" xml:space="preserve">
-    <value>Falha na extração.</value>
-  </data>
-  <data name="ARZProgressLabel" xml:space="preserve">
-    <value>Extraindo {0} ...</value>
-  </data>
-  <data name="ARZProgressLabel1" xml:space="preserve">
-    <value>Extraindo</value>
-  </data>
-  <data name="ARZProgressText" xml:space="preserve">
-    <value>Extraindo database.arz ...</value>
-  </data>
-  <data name="CmdlineUsage" xml:space="preserve">
-    <value>Erro ao analisar argumentos da linha de comandos: {0}
-
-Uso: TQVault [nome do jogador] [/mod: &lt;nome do mod&gt;]</value>
-  </data>
   <data name="DataDefaultPath" xml:space="preserve">
     <value>Caminho padrão do Cofre</value>
   </data>
@@ -242,12 +180,6 @@ Deseja reiniciar o TQVault?</value>
   <data name="Form1Text" xml:space="preserve">
     <value>Cofre de itens do Titan Quest</value>
   </data>
-  <data name="GlobalAbout" xml:space="preserve">
-    <value>Sobre</value>
-  </data>
-  <data name="GlobalBrowse" xml:space="preserve">
-    <value>Examinar...</value>
-  </data>
   <data name="GlobalCancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
@@ -261,18 +193,11 @@ Deseja reiniciar o TQVault?</value>
     <value>Bolsa # {0}</value>
     <comment>Esta entrada deve ter o GlobalMenuBagDelimiter ou ele quebrará o código de movimentação do item e da bolsa.</comment>
   </data>
-  <data name="GlobalMenuBagDelimiter" xml:space="preserve">
-    <value>#</value>
-    <comment>Usado com GlobalMenuBag para indicar o número da bolsa nos menus.</comment>
-  </data>
   <data name="GlobalOK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="GlobalTransferStash" xml:space="preserve">
     <value>Área de Transferência)</value>
-  </data>
-  <data name="GlobalTrash" xml:space="preserve">
-    <value>Lixo</value>
   </data>
   <data name="ItemIT" xml:space="preserve">
     <value>Item de Immortal Throne</value>
@@ -313,17 +238,11 @@ Deseja reiniciar o TQVault?</value>
   <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>Configurar</value>
   </data>
-  <data name="MainFormBtnExtract" xml:space="preserve">
-    <value>Extrair database.arz ...</value>
-  </data>
   <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>Mostrar cofre</value>
   </data>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Mostrar Jogador</value>
-  </data>
-  <data name="MainFormDatabaseError" xml:space="preserve">
-    <value>Erro ao extrair o banco de dados</value>
   </data>
   <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Você está segurando um item no momento.
@@ -356,18 +275,11 @@ Deseja reiniciar o TQVault agora?</value>
   <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>Nenhum personagem do mapa personalizado encontrado</value>
   </data>
-  <data name="MainFormNoItemQualityFound" xml:space="preserve">
-    <value>Nenhum item do tipo '{0}'
-e qualidade '{1}' encontrado.</value>
-  </data>
   <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>Nenhum item com '{0}' encontrado.</value>
   </data>
   <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>Nenhum item encontrado</value>
-  </data>
-  <data name="MainFormNoItemTypesFound" xml:space="preserve">
-    <value>Nenhum item do tipo '{0}' encontrado.</value>
   </data>
   <data name="MainFormPathsChanged" xml:space="preserve">
     <value>Caminhos do jogo alterados</value>
@@ -380,9 +292,6 @@ Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>Erro ao ler o arquivo do personagem</value>
-  </data>
-  <data name="MainFormQuit" xml:space="preserve">
-    <value>Tem certeza de que deseja sair?</value>
   </data>
   <data name="MainFormReadError" xml:space="preserve">
     <value>Erro ao ler {0}
@@ -408,50 +317,8 @@ Tem certeza de que é um arquivo válido?
 Por favor, reinicie o TQVault para que elas entre em vigor.
 Deseja reiniciar o TQVault agora?</value>
   </data>
-  <data name="MainFormStartVaultMon" xml:space="preserve">
-    <value>Deseja iniciar o TQVaultMon?</value>
-  </data>
-  <data name="MainFormStartVaultMonMsg" xml:space="preserve">
-    <value>Você acabou de modificar o inventário de alguns de seus personagens.
-Titan Quest irá detectar isso e pensar que seu personagem está corrompido
-e não permitirá que você carregue seu personagem.
-
-O TQVaultMon é um programa que, ao ser executado, fará o Titan Quest
-pensar que o seu personagem está bem, e permitirá que você carregue-o com sucesso.
-Depois de carregar seu personagem com sucesso, você não precisará
-usar o TQVaultMon novamente, a menos que faça outras modificações.
-
-Recomenda-se que você inicie o TQVaultMon agora e, logo após, execute o Titan
-Quest e carregue brevemente todos os personagens que você acabou de modificar.
-
-Deseja iniciar o TQVaultMon agora?</value>
-  </data>
   <data name="MainFormStashReadError" xml:space="preserve">
     <value>Erro ao ler o arquivo da Área de Armazenamento</value>
-  </data>
-  <data name="MainFormTrashItems" xml:space="preserve">
-    <value>No momento, existem {0} itens na lixeira.
-Se você sair agora, esses itens serão EXCLUÍDOS PARA SEMPRE.
-
-Tem certeza de que deseja excluir esses itens?</value>
-  </data>
-  <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
-    <value>Não foi possível iniciar o TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonError" xml:space="preserve">
-    <value>Erro ao tentar iniciar o TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonMsg" xml:space="preserve">
-    <value>Não foi possível ver se o TQVaultMon estava em execução.
-Provavelmente, o TQVaultMon também não funcionará.
-Como você modificou alguns de seus personagens, o TQ pensará que os aquivos estão corrompidos.
-Para carregar o jogo e jogar com sucesso, você precisará baixar o TQ Defiler (em inglês)
-e usar as opções 'Patch' ou 'Fix Me' para permitir que o jogo valide seus personagens.
-Se você não se importa, por favor entre em contato comigo e me informe sobre este problema
-porque eu posso ter uma solução para o erro que lhe poupará alguns aborrecimentos.
-
-Segue a mensagem de erro
-</value>
   </data>
   <data name="MaintenanceBadChars" xml:space="preserve">
     <value>Você usou caracteres inválidos.</value>
@@ -594,10 +461,6 @@ Tem certeza de que deseja substituir?</value>
   <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>Erro de organização automática.</value>
   </data>
-  <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
-    <value>Ocorreu um erro durante a organização.
-Nem todos os itens foram realocados.</value>
-  </data>
   <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>Você está segurando um item no momento.
 Coloque o item em algum lugar antes de usar a organização automática.</value>
@@ -702,19 +565,6 @@ Escolha um número entre 1 e 32767</value>
   <data name="SettingsAllowEdit" xml:space="preserve">
     <value>Permitir recursos de edição de itens</value>
   </data>
-  <data name="SettingsAllowEditTT" xml:space="preserve">
-    <value>Ativa os recursos de edição no menu de contexto.
-Isso inclui a criação e modificação de itens.</value>
-  </data>
-  <data name="SettingsAutoUpdate" xml:space="preserve">
-    <value>Verificar atualizações automaticamente</value>
-  </data>
-  <data name="SettingsAutoUpdateTT" xml:space="preserve">
-    <value>Selecionar este item faz com que o programa pesquise 
-automaticamente atualizações do TQVault na Web sempre que iniciar.
-Se sua conexão com a Internet estiver lenta, essa opção pode retardar
-a inicialização do TQVault.</value>
-  </data>
   <data name="SettingsBrowseIT" xml:space="preserve">
     <value>Por favor, selecione o caminho para os arquivos do jogo Immortal Throne.</value>
   </data>
@@ -729,13 +579,6 @@ a inicialização do TQVault.</value>
   </data>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Detectar automaticamente o idioma</value>
-  </data>
-  <data name="SettingsForceCheck" xml:space="preserve">
-    <value>Verifique agora</value>
-  </data>
-  <data name="SettingsForceCheckTT" xml:space="preserve">
-    <value>Verifica manualmente se há alguma atualização
-disponível.</value>
   </data>
   <data name="SettingsLabel1" xml:space="preserve">
     <value>Caminho do cofre (TQVault)</value>
@@ -813,78 +656,6 @@ A guia área de armazenamento ficará indisponível para esse personagem.</value
   <data name="StashPanelText" xml:space="preserve">
     <value>Caravana</value>
   </data>
-  <data name="UpdateCompletion" xml:space="preserve">
-    <value>{0} {1}% concluída.</value>
-  </data>
-  <data name="UpdateCompletion2" xml:space="preserve">
-    <value>{0} 0% concluído.</value>
-  </data>
-  <data name="UpdateCurrentVer" xml:space="preserve">
-    <value>Versão atual: {0}</value>
-  </data>
-  <data name="UpdateError" xml:space="preserve">
-    <value>Não é possível iniciar a instalação</value>
-  </data>
-  <data name="UpdateErrorMsg" xml:space="preserve">
-    <value>Houve um problema com o download ou a extração.
-Faça o download do último pacote completo de instalação e execute-o manualmente.
-Clique em OK para sair.</value>
-  </data>
-  <data name="UpdateFullInstall" xml:space="preserve">
-    <value>Foi encontrada uma versão mais recente do TQVault, que requer uma instalação completa.</value>
-  </data>
-  <data name="UpdateLatestVer" xml:space="preserve">
-    <value>Versão mais recente: {0}</value>
-  </data>
-  <data name="UpdateMinVer" xml:space="preserve">
-    <value>Versão mínima: {0}</value>
-  </data>
-  <data name="UpdateNewTQVault" xml:space="preserve">
-    <value>Uma versão mais recente do TQVault foi encontrada.</value>
-  </data>
-  <data name="UpdateNewUpdater" xml:space="preserve">
-    <value>Foi encontrada uma versão mais recente do programa de atualização do TQVault.</value>
-  </data>
-  <data name="UpdateNoUpdate" xml:space="preserve">
-    <value>Sua versão está atualizada.</value>
-  </data>
-  <data name="UpdatePerform" xml:space="preserve">
-    <value>Clique em OK para executar uma atualização.</value>
-  </data>
-  <data name="UpdatePerformBoth" xml:space="preserve">
-    <value>Clique em OK para executar as duas atualizações.</value>
-  </data>
-  <data name="UpdateRunInstall" xml:space="preserve">
-    <value>Clique em OK para baixar e executar o instalador.</value>
-  </data>
-  <data name="UpdateStreamError" xml:space="preserve">
-    <value>Ocorreu um erro ao conectar-se ao servidor de atualização.
-Uma atualização não pode ser realizada.</value>
-  </data>
-  <data name="UpdateText" xml:space="preserve">
-    <value>Atualizações do TQVault</value>
-  </data>
-  <data name="UpdateUpdaterNotFound" xml:space="preserve">
-    <value>O programa de atualização do TQVault não foi encontrado ou o nome foi alterado.</value>
-  </data>
-  <data name="VaultProgressText" xml:space="preserve">
-    <value>Carregando arquivos do cofre e do personagem...</value>
-  </data>
-  <data name="AUEnglishName" xml:space="preserve">
-    <value>Inglês</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to determine which language file to update.</comment>
-  </data>
-  <data name="AUFileVersion" xml:space="preserve">
-    <value>2</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to track changes in the translation file.</comment>
-  </data>
-  <data name="AUMinTQVaultVersion" xml:space="preserve">
-    <value>2.3.1.0</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Change this value to match program version when new keys are added.  Will trigger an update on next restart.</comment>
-  </data>
   <data name="VaultGroupBoxEmpty" xml:space="preserve">
     <value>&lt;VAZIA&gt;</value>
   </data>
@@ -900,18 +671,6 @@ Deseja desativar o carregamento de todos os arquivos?</value>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Pesquisar um item</value>
-  </data>
-  <data name="SearchDialogText" xml:space="preserve">
-    <value>Pesquise itens nos arquivos carregados: cofres, esconderijos, inventários.
-
-Você pode combinar as seguintes opções de pesquisa (todas são opcionais):
-* Nome: deve ser o primeiro termo de pesquisa. Aqui está um exemplo:'glacial e &amp; gelo'
-* Digite: usando @ no início do termo de pesquisa, por exemplo '@espada'
-* Atributos: use # no início do termo de pesquisa, por exemplo, '#Resistência elemental'
-* Raridade: use $ no início do termo de pesquisa, por exemplo, '$ epico'
-
-Você pode usar | em um termo como condição ou por exemplo '$epico | raro'
-Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Fechar</value>
@@ -1026,21 +785,6 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="AttributesPoints" xml:space="preserve">
     <value>Pontos de Atributo</value>
   </data>
-  <data name="BaseStrength" xml:space="preserve">
-    <value>Base de força</value>
-  </data>
-  <data name="BaseDexterity" xml:space="preserve">
-    <value>Base de destreza</value>
-  </data>
-  <data name="BaseIntelligence" xml:space="preserve">
-    <value>Base de inteligência</value>
-  </data>
-  <data name="BaseHealth" xml:space="preserve">
-    <value>Base de Vida</value>
-  </data>
-  <data name="BaseMana" xml:space="preserve">
-    <value>Base de Energia</value>
-  </data>
   <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Tempo de jogo</value>
   </data>
@@ -1067,12 +811,6 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   </data>
   <data name="NumHitsInflicted" xml:space="preserve">
     <value>Golpes infligidos</value>
-  </data>
-  <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>Maior dano</value>
-  </data>
-  <data name="GreatestMonster" xml:space="preserve">
-    <value>Maior monstro</value>
   </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Golpes críticos</value>
@@ -1349,9 +1087,6 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
 	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
     <value>Importar de arquivo...</value>
   </data>
-	<data name="ExportVaultPasteBin" xml:space="preserve">
-    <value>Compartilhar baú no PasteBin</value>
-  </data>
   <data name="GlobalNoVaultLoaded" xml:space="preserve">
     <value>Nenhum baú carregado.</value>
   </data>
@@ -1408,9 +1143,6 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
   </data>
   <data name="ImportVaultSuccess" xml:space="preserve">
     <value>{0} itens importados para o baú.</value>
-  </data>
-  <data name="ShareVaultTooltip" xml:space="preserve">
-    <value>🔗 Compartilhar baú</value>
   </data>
 	<data name="TextTag_DefenseManaBurnRatio" xml:space="preserve">
     <value>{%.0f0}% de resistência ao dano de dreno de energia</value>
