@@ -108,15 +108,8 @@ public partial class VaultForm
 	/// The space the TQ border (<see cref="DrawCustomBorder"/>) takes on each side of the window: its pictures are drawn
 	/// at their own size. A dialog laid out in code keeps its content inside with this padding.
 	/// </summary>
-	internal static Padding CustomBorderThickness => customBorderThickness.Value;
-
-	private static readonly Lazy<Padding> customBorderThickness = new(() =>
-	{
-		using var top = Images.BorderTop;
-		using var side = Images.BorderSide;
-		using var bottom = Images.BorderBottom;
-		return new Padding(side.Width, top.Height, side.Width, bottom.Height);
-	});
+	internal static Padding CustomBorderThickness
+		=> new(UIPictures.BorderSide.Width, UIPictures.BorderTop.Height, UIPictures.BorderSide.Width, UIPictures.BorderBottom.Height);
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the custom borders will be drawn.
@@ -498,6 +491,19 @@ public partial class VaultForm
 				bitmap?.Dispose();
 	}
 
+	/// <summary>Disposes the caption button pictures <see cref="DrawCaptionButton"/> made, when the window goes.</summary>
+	private void ReleaseCaptionButtonArt()
+	{
+		foreach (var button in this.captionButtonArtSizes.Keys)
+		{
+			button.UpBitmap?.Dispose();
+			button.OverBitmap?.Dispose();
+			button.DownBitmap?.Dispose();
+		}
+
+		this.captionButtonArtSizes.Clear();
+	}
+
 	/// <summary>How far the resize grips reach past the side and bottom border pictures.</summary>
 	private const int GripMargin = 2;
 
@@ -514,13 +520,8 @@ public partial class VaultForm
 		? WindowLayout.ContentArea(client, this.sideBorder.Width, this.topBorder.Height, this.bottomBorder.Height, GripMargin)
 		: new Rectangle(Point.Empty, client);
 
-	/// <summary>
-	/// The top border picture at its design size, read once: the paint handler measures the title's background on it, and
-	/// a transparent control has its window painted behind it, so it was read from the resources several times per control.
-	/// </summary>
-	private static Bitmap DesignTopBorder => designTopBorder ??= Images.BorderTop;
-
-	private static Bitmap? designTopBorder;
+	/// <summary>The top border picture at its design size: the paint handler measures the title's background on it.</summary>
+	private static Bitmap DesignTopBorder => UIPictures.BorderTop;
 
 	/// <summary>
 	/// Handler for the form Paint callback

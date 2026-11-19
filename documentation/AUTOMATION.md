@@ -114,7 +114,7 @@ Developer tools are marked *(Debug)*; the others are user tools, served by Relea
     `key_binds_dialog`;
   - virtual cursor hovers of UI parts: `player_stats_hover`, `forge_hover`, `forge_drag_cursor`,
     `bag_settings_hover_icon`, `bag_settings_drag_icon`;
-  - diagnostics: `recent_log`, `recent_sounds`, `load_resource`, `player_stats_fonts`, `stash_background_switch`,
+  - diagnostics: `recent_log`, `recent_sounds`, `load_resource`, `player_stats_fonts`, `stash_background_switch`, `gdi_census`,
     `raw_tooltip_lines`, `tooltip_text_dump`, `item_properties_dump`;
   - item menu flows: `socket_click`;
   - the statistics panels' Buffs tab and weapon set gems: `character_buffs`, `character_buff_toggle`, `character_weapon_set`;
@@ -743,6 +743,10 @@ General rules:
 - **`stash_background_switch(bag)`** *(Debug)*: clicks a stash bag button like `select_bag` and reports the panel
   background before and after: whether the picture drawn before was a source picture or a scaled copy (zoom other than
   1), and whether that copy is disposed once replaced.
+- **`gdi_census(action, target?, count?)`** *(Debug)*: runs an action `count` times (`repaint` a panel or the main
+  window, `zoom` in and out, `characterList` refresh, `openForm` create and dispose) and reports GDI/USER objects and
+  handles before, after and after the finalizers, and `undisposed`: the finalizable objects (bitmaps, fonts, pens...)
+  dropped without `Dispose` (exact when `gcDuring` is 0). Proves a leak fix: run it on the build before and after.
 - **`archive_character(archived)`**: archives or unarchives the selected character like the user: opens the character
   tools menu and clicks *Archived* when its tick differs (`menu_click`), before returning; TQVault moves its save
   folder to or from `ArchivedCharacters`. Returns `clicked` (false when already so) and `isArchived`. Test characters

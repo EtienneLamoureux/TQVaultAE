@@ -197,18 +197,7 @@ public partial class SackPanel
 	}
 
 	private void ExportItemToClipboardClicked(object? sender, EventArgs e)
-	{
-		try
-		{
-			var json = this.ExchangeService?.SerializeSelection(this.ItemsToExport());
-			if (json is not null)
-				Clipboard.SetText(json);
-		}
-		catch (Exception ex)
-		{
-			this.Log.LogError(ex, "Failed to export item to clipboard");
-		}
-	}
+		=> ExportActions.ToClipboard(() => this.ExchangeService?.SerializeSelection(this.ItemsToExport()), this.Log, "item");
 
 	/// <summary>
 	/// Writes the export of <see cref="ItemsToExport"/> to a file.
@@ -226,46 +215,21 @@ public partial class SackPanel
 
 	private void ExportItemToFileClicked(object? sender, EventArgs e)
 	{
-		try
-		{
-			var items = this.ItemsToExport();
-			if (this.ExchangeService is null || items.Count == 0)
-				return;
-
-			using var dialog = new SaveFileDialog
-			{
-				Filter = Resources.GlobalJsonFileFilter,
-				DefaultExt = "json",
-				FileName = IItemExchangeService.ItemsExportFileName(items.Count)
-			};
-
-			if (dialog.ShowDialog() == DialogResult.OK)
-				this.ExportItemsToFile(dialog.FileName);
-		}
-		catch (Exception ex)
-		{
-			this.Log.LogError(ex, "Failed to export item to file");
-		}
+		var items = this.ItemsToExport();
+		if (this.ExchangeService is not null && items.Count != 0)
+			ExportActions.ToFile(IItemExchangeService.ItemsExportFileName(items.Count), path => this.ExportItemsToFile(path), this.Log, "item");
 	}
 
 	private async void ExportItemToPasteBinClicked(object? sender, EventArgs e)
 	{
-		try
-		{
-			var items = this.ItemsToExport();
-			if (this.ExchangeService is null || items.Count == 0)
-				return;
-
-			var url = await this.ExchangeService.ExportSelectionToPasteBinAsync(items);
-			Clipboard.SetText(url);
-			this.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture
-				, items.Count == 1 ? Resources.ExportItemSuccessPasteBin : Resources.ExportItemsSuccessPasteBin, url));
-		}
-		catch (Exception ex)
-		{
-			this.Log.LogError(ex, "Failed to export item to PasteBin");
-			this.UIService.ShowError(string.Format(CultureInfo.CurrentCulture, Resources.ExportFailPasteBin, ex.Message));
-		}
+		var items = this.ItemsToExport();
+		if (this.ExchangeService is { } exchangeService && items.Count != 0)
+			await ExportActions.ToPasteBinAsync(
+				() => exchangeService.ExportSelectionToPasteBinAsync(items),
+				this.UIService,
+				items.Count == 1 ? Resources.ExportItemSuccessPasteBin : Resources.ExportItemsSuccessPasteBin,
+				this.Log,
+				"item");
 	}
 
 	/// <summary>

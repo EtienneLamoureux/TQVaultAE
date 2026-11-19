@@ -115,9 +115,17 @@ public partial class SackPanel
 			this._pairSubscribed = false;
 		}
 
-		if (disposing)
-			this.numberFont.Dispose();
-
+		// After the controls it holds, whose going may still repaint the panel.
 		base.Dispose(disposing);
+
+		if (disposing)
+		{
+			this.numberFont.Dispose();
+			this.numberBrush.Dispose();
+			this.numberFormat.Dispose();
+			this.borderPen.Dispose();
+			this.gridPen.Dispose();
+			this.HighlightSearchItemBorder.Dispose();
+		}
 	}
 }

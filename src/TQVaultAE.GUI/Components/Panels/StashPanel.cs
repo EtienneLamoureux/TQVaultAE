@@ -129,8 +129,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		+ Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT * this.UIService.Scale);
 	int PLAYERINFO_WIDTH => Convert.ToInt32(NORMAL_PLAYERINFO_WIDTH * this.UIService.Scale);
 
-	private readonly ITranslationService TranslationService;
-
 	private System.ComponentModel.IContainer components;
 	private ContextMenuStrip buttonContextMenuStrip;
 	private ToolStripMenuItem toolStripMenuItemEnableTooltip;
@@ -156,7 +154,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	{
 		InitializeComponent();
 
-		this.TranslationService = this.Services.TranslationService;
 
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -588,6 +585,24 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.background = value;
 		if (old is not null && old != value && old != this.equipmentBackground && old != this.stashBackground)
 			old.Dispose();
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		// After the controls it holds, whose going may still repaint the panel.
+		base.Dispose(disposing);
+
+		if (disposing)
+		{
+			// The scaled copy, if one is shown, then the two source pictures the panel read.
+			this.ReplaceBackground(null);
+			this.wideEquipmentBackground?.Dispose();
+			this.wideEquipmentBackground = null;
+			this.equipmentBackground?.Dispose();
+			this.equipmentBackground = null;
+			this.stashBackground?.Dispose();
+			this.stashBackground = null;
+		}
 	}
 
 	/// <summary>

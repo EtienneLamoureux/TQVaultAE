@@ -9,7 +9,6 @@ namespace TQVaultAE.GUI.Forms;
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Windows.Forms;
 using TQVaultAE.Presentation;
@@ -20,11 +19,6 @@ using TQVaultAE.Presentation;
 internal sealed partial class SplashScreenForm : VaultForm
 {
 	/// <summary>
-	/// Holds the width of the border pen.
-	/// </summary>
-	private static int borderPenWidth = 4;
-
-	/// <summary>
 	/// Flag to signal color flip on please wait message.
 	/// </summary>
 	private int waitTimerFlip;
@@ -33,16 +27,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 	/// Holds the color of the label prior to flipping to white.
 	/// </summary>
 	private Color flipColor;
-
-	/// <summary>
-	/// Indicates whether the form will be drawn with the outer edges clipped to a rounded rectangle.
-	/// </summary>
-	private bool useRoundedRectangle;
-
-	/// <summary>
-	/// GraphicsPath used for clipping to a rounded rectangle.
-	/// </summary>
-	private GraphicsPath? graphicsPath;
 
 	/// <summary>
 	/// Initializes a new instance of the SplashScreenForm class.
@@ -75,25 +59,7 @@ internal sealed partial class SplashScreenForm : VaultForm
 		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
 
-		if (this.UseRoundedRectangle)
-		{
-			this.graphicsPath = this.CreatePath(20);
-			if (this.graphicsPath is not null)
-			{
-				this.Region = new Region(this.graphicsPath);
-			}
-		}
-
 		this.flipColor = this.labelPleaseWait.ForeColor;
-	}
-
-	/// <summary>
-	/// Gets or sets a value indicating whether the form will be drawn with the outer edges clipped to a rounded rectangle.
-	/// </summary>
-	public bool UseRoundedRectangle
-	{
-		get => (this.FormBorderStyle != FormBorderStyle.None || this.DrawCustomBorder) ? false : this.useRoundedRectangle;
-		set => this.useRoundedRectangle = value;
 	}
 
 	/// <summary>
@@ -117,62 +83,6 @@ internal sealed partial class SplashScreenForm : VaultForm
 	{
 		this.waitTimer.Stop();
 		this.Close();
-	}
-
-	/// <summary>
-	/// Paint handler.
-	/// </summary>
-	/// <param name="e">PaintEventArgs data</param>
-	protected override void OnPaint(PaintEventArgs e)
-	{
-		base.OnPaint(e);
-
-		// Paint a black border around the form.
-		if (this.UseRoundedRectangle && this.graphicsPath is not null)
-		{
-			using var pen = new Pen(Color.Black, borderPenWidth);
-			e.Graphics.DrawPath(pen, this.graphicsPath);
-		}
-	}
-
-	/// <summary>
-	/// Creates a rounded rectangle GraphicsPath around the edges of the Form.
-	/// </summary>
-	/// <param name="cornerRadius">Radius of the rounded corner</param>
-	/// <returns>GraphicsPath representing a rounded recangle around the Form.</returns>
-	private GraphicsPath CreatePath(int cornerRadius)
-	{
-		int doubleRadius = cornerRadius * 2;
-
-		GraphicsPath path = new GraphicsPath();
-		path.StartFigure();
-
-		// Top Left Corner
-		path.AddArc(0, 0, doubleRadius, doubleRadius, 180.0F, 90.0F);
-
-		// Top Edge
-		path.AddLine(cornerRadius, 0, this.Width - cornerRadius, 0);
-
-		// Top Right Corner
-		path.AddArc(this.Width - doubleRadius, 0, doubleRadius, doubleRadius, 270, 90);
-
-		// Right Edge
-		path.AddLine(this.Width, cornerRadius, this.Width, this.Height - cornerRadius);
-
-		// Bottom Right Corner
-		path.AddArc(this.Width - doubleRadius, this.Height - doubleRadius, doubleRadius, doubleRadius, 0, 90);
-
-		// Bottom Edge
-		path.AddLine(this.Width - cornerRadius, this.Height, cornerRadius, this.Height);
-
-		// Bottom Left Corner
-		path.AddArc(0, this.Height - doubleRadius, doubleRadius, doubleRadius, 90, 90);
-
-		// Left Edge
-		path.AddLine(0, this.Height - cornerRadius, 0, cornerRadius);
-
-		path.CloseFigure();
-		return path;
 	}
 
 	/// <summary>

@@ -48,8 +48,6 @@ public partial class VaultForm : Form, IScalingControl
 	protected readonly UserSettings USettings;
 	protected readonly ITranslationService TranslationService;
 	protected readonly IPathIO PathIO;
-	protected readonly IFileIO FileIO;
-	protected readonly IDirectoryIO DirectoryIO;
 	protected readonly IFontService FontService;
 	protected readonly IUIService UIService;
 	protected readonly IItemTextFormatter ItemText;
@@ -81,8 +79,6 @@ public partial class VaultForm : Form, IScalingControl
 		this.Log = this.Services.Logger<VaultForm>();
 		this.TranslationService = this.Services.TranslationService;
 		this.PathIO = this.Services.PathIO;
-		this.FileIO = this.Services.FileIO;
-		this.DirectoryIO = this.Services.DirectoryIO;
 		this.USettings = this.Services.Settings;
 
 		InitForm();
@@ -135,11 +131,11 @@ public partial class VaultForm : Form, IScalingControl
 	{
 		this.InitializeComponent();
 
-		this.topBorder = Images.BorderTop;
-		this.bottomBorder = Images.BorderBottom;
-		this.sideBorder = Images.BorderSide;
-		this.bottomRightCorner = Images.BorderBottomRightCorner;
-		this.bottomLeftCorner = Images.BorderBottomLeftCorner;
+		this.topBorder = UIPictures.BorderTop;
+		this.bottomBorder = UIPictures.BorderBottom;
+		this.sideBorder = UIPictures.BorderSide;
+		this.bottomRightCorner = UIPictures.BorderBottomRightCorner;
+		this.bottomLeftCorner = UIPictures.BorderBottomLeftCorner;
 
 		this.TitleTextColor = SystemColors.ControlText;
 
@@ -263,7 +259,7 @@ public partial class VaultForm : Form, IScalingControl
 	{
 		// The user's zoom of a dialog grows its font: the controls without a font of their own follow it.
 		if (this.applyingUserZoom)
-			this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+			ZoomScope.Grow(this, factor.Height);
 
 		if (this.DrawCustomBorder)
 		{

@@ -213,7 +213,7 @@ internal sealed class ZoomSnapshot
 		}
 
 		if (entry.Font is { } font && control is IZoomedFont zoomed && !SameFont(zoomed.ZoomedFont, font))
-			zoomed.ZoomedFont = (Font)font.Clone();
+			zoomed.ZoomedFont = ZoomScope.Give(control, (Font)font.Clone());
 
 		// Auto-sized controls too: one that only grows (GrowOnly) kept the size of the largest zoom and squeezed its
 		// neighbours; one that grows and shrinks takes the size of its content again at the next layout.

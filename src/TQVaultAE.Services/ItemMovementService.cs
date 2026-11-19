@@ -40,7 +40,7 @@ public class ItemMovementService(ILogger<ItemMovementService> log) : IItemMoveme
 			for (int y = 0; y < sackHeight; ++y)
 			{
 				var foundItems = FindAllItems(sack, new Rectangle(x, y, itemWidth, itemHeight), ignoredItem);
-                
+
 				if ((foundItems is null || foundItems.Count == 0) && itemWidth + x <= sackWidth)
 				{
 					if (y + itemHeight <= sackHeight)

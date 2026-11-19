@@ -143,71 +143,88 @@ public partial class SackPanel : Panel, IScalingControl
 	/// Draws the background of the items in the panel during a Paint call.
 	/// </summary>
 	/// <param name="e">PaintEventArgs data</param>
-	protected virtual void PaintAreaUnderItem(PaintEventArgs e)
+	protected void PaintAreaUnderItem(PaintEventArgs e)
 	{
 		Item? focusedItem = this.FindItem(this.LastCellWithFocus);
 		foreach (Item item in this.ShownSack)
 		{
 			// Do not draw the item being dragged.
-			if (item == this.DragInfo.Item)
-				continue;
-
-			// Figure out the background brush to use.
-			bool showAccent = true;
-			int alpha = this.UserAlpha;
-			Color backgroundColor = this.GetItemBackgroundColor(item);
-
-			var highlight = false;
-			// Highlight search
-			if (this.HighlightService.HighlightedItems.Count > 0 && this.HighlightService.HighlightedItems.Contains(item))
-			{
-				highlight = true;
-				backgroundColor = this.HighlightService.HighlightSearchItemColor;
-				alpha = AdjustAlpha(alpha);
-			}
-			// If we are showing the cannot equip background then 
-			// change to invalid color and adjust the alpha.
-			else if (
-				!this.SecondaryVaultShown
-				&& (
-					(USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
-					|| !IsSuitableForCurrentPlayer(item)
-				)
-			)
-			{
-				backgroundColor = this.HighlightInvalidItemColor;
-
-				// Un-equippable items do not show the accent.
-				showAccent = false;
-
-				// Make the background stand out since we are not showing the accent.
-				alpha = AdjustAlpha(alpha);
-			}
-
-			// Check if the item is selected and use adjust the alpha
-			if (this.IsItemSelected(item))
-				alpha = AdjustAlpha(alpha);
-
-			// See if this item is under the drag item
-			if (this.DragInfo.IsActive && this.ItemsUnderDragItem is not null && this.ItemsUnderDragItem.Contains(item))
-			{
-				// Use highlight color if it is the only item under the drag point, else use invalid
-				backgroundColor = this.ItemsUnderDragItem.Count > 1 ? this.HighlightInvalidItemColor : this.HighlightValidItemColor;
-				alpha = AdjustAlpha(alpha);
-			}
-
-			// See if this is the focused item and adjust the alpha again.
-			if (!this.DragInfo.IsActive && item == focusedItem)
-				alpha = AdjustAlpha(alpha);
-
-			// Now do the shading
-			this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha, highlight);
-
-			// Adjust the alpha and draw the accent.
-			if (showAccent && HasItemBackgroundColor(item))
-				this.DrawItemAccent(e.Graphics, item, backgroundColor, AdjustAlpha(alpha));
+			if (item != this.DragInfo.Item)
+				this.ShadeItem(e.Graphics, item, this.ShadingOf(item, focusedItem));
 		}
 	}
+
+	/// <summary>How the background of an item is drawn: its color and alpha, its accent, the search highlight.</summary>
+	protected readonly record struct ItemShading(Color Color, int Alpha, bool Accent, bool Highlight);
+
+	/// <summary>
+	/// The background of <paramref name="item"/>: its quality color, the search highlight, the invalid color when the
+	/// player cannot use it (without accent), the drag target color under a dragged item; each of these, a selection and
+	/// the focus make it stand out more.
+	/// </summary>
+	private ItemShading ShadingOf(Item item, Item? focusedItem)
+	{
+		bool showAccent = true;
+		bool highlight = false;
+		int alpha = this.UserAlpha;
+		Color backgroundColor = this.GetItemBackgroundColor(item);
+
+		if (this.HighlightService.HighlightedItems.Count > 0 && this.HighlightService.HighlightedItems.Contains(item))
+		{
+			highlight = true;
+			backgroundColor = this.HighlightService.HighlightSearchItemColor;
+			alpha = AdjustAlpha(alpha);
+		}
+		else if (!this.SecondaryVaultShown && this.CannotUse(item))
+		{
+			// Un-equippable items show no accent: their background stands out instead.
+			backgroundColor = this.HighlightInvalidItemColor;
+			showAccent = false;
+			alpha = AdjustAlpha(alpha);
+		}
+
+		if (this.IsItemSelected(item))
+			alpha = AdjustAlpha(alpha);
+
+		if (this.DragInfo.IsActive && this.ItemsUnderDragItem.Contains(item))
+		{
+			backgroundColor = this.DragTargetColor();
+			alpha = AdjustAlpha(alpha);
+		}
+
+		if (!this.DragInfo.IsActive && item == focusedItem)
+			alpha = AdjustAlpha(alpha);
+
+		return new ItemShading(backgroundColor, alpha, showAccent, highlight);
+	}
+
+	/// <summary>
+	/// The color of the items under a dragged item: valid when it is the only one (the drop swaps them), invalid otherwise.
+	/// </summary>
+	protected virtual Color DragTargetColor()
+		=> this.ItemsUnderDragItem.Count > 1 ? this.HighlightInvalidItemColor : this.HighlightValidItemColor;
+
+	/// <summary>Draws the background of <paramref name="item"/> and its accent.</summary>
+	protected virtual void ShadeItem(Graphics graphics, Item item, ItemShading shading)
+	{
+		this.ShadeAreaUnderItem(graphics, item, shading.Color, shading.Alpha, shading.Highlight);
+		this.DrawAccentOf(graphics, item, item, shading);
+	}
+
+	/// <summary>Draws the accent of <paramref name="item"/> on <paramref name="at"/>, when it shows one.</summary>
+	protected void DrawAccentOf(Graphics graphics, Item item, Item at, ItemShading shading)
+	{
+		if (shading.Accent && this.HasItemBackgroundColor(item))
+			this.DrawItemAccent(graphics, at, shading.Color, AdjustAlpha(shading.Alpha));
+	}
+
+	/// <summary>
+	/// Whether the player cannot use <paramref name="item"/>: requirements not met (when the setting checks them), or an
+	/// item for another kind of character.
+	/// </summary>
+	protected bool CannotUse(Item item)
+		=> (this.USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
+			|| !this.IsSuitableForCurrentPlayer(item);
 
 	/// <summary>
 	/// Draws an item on the screen at the specified coordinates without background shading.
@@ -325,7 +342,8 @@ public partial class SackPanel : Panel, IScalingControl
 		using var imgAttr = new System.Drawing.Imaging.ImageAttributes();
 		imgAttr.SetColorMatrix(colorMatrix);
 
-		graphics.DrawImage(Images.ItemAccent, itemRectangle, 0, 0, Images.ItemAccent.Width, Images.ItemAccent.Height, GraphicsUnit.Pixel, imgAttr);
+		var accent = UIPictures.ItemAccent;
+		graphics.DrawImage(accent, itemRectangle, 0, 0, accent.Width, accent.Height, GraphicsUnit.Pixel, imgAttr);
 	}
 
 	/// <summary>

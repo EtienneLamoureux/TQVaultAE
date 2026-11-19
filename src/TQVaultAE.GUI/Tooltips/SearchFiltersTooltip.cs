@@ -1,4 +1,4 @@
-﻿﻿﻿using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
@@ -10,13 +10,13 @@ using TQVaultAE.Presentation;
 
 namespace TQVaultAE.GUI.Tooltips;
 
-public partial class SearchFiltersTooltip : BaseTooltip
+/// <summary>The filters of a search and how they combine, under the search's control in the search dialog.</summary>
+public partial class SearchFiltersTooltip : FriendlyNamesTooltip
 {
 	private static object syncObj = new object();
 
 	private static SearchFiltersTooltip? _Current = null;
 
-	internal Control AnchorControl { get; private set; }
 	internal List<BoxItem> Filters { get; private set; } = [];
 	internal SearchOperator Operator { get; private set; }
 
@@ -28,18 +28,8 @@ public partial class SearchFiltersTooltip : BaseTooltip
 #pragma warning restore CS8618
 #endif
 
-	private SearchFiltersTooltip(SearchDialogAdvanced instance, GuiServices services, Control anchorControl) : base(services)
-	{
-		this.Owner = instance;
-		this.AnchorControl = anchorControl;
-
-		InitializeComponent();
-
-		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-
-		// Fill it outside of screen to avoid flickering
-		this.Location = new Point(0, Screen.FromControl(this).WorkingArea.Height);
-	}
+	private SearchFiltersTooltip(SearchDialogAdvanced instance, GuiServices services, Control anchorControl) : base(services, instance, anchorControl)
+		=> InitializeComponent();
 
 	public static void HideTooltip()
 	{
@@ -83,14 +73,14 @@ public partial class SearchFiltersTooltip : BaseTooltip
 	/// <summary>
 	/// Init the tooltip content.
 	/// </summary>
-	public void FillToolTip()
+	protected override void FillToolTip()
 	{
 		this.SuspendLayout();
 		this.flowLayoutPanelFriendlyNames.SuspendLayout();
 
 		// Operator description
 		var opeTranslate = this.Operator == SearchOperator.And ? Resources.SearchOperatorAnd : Resources.SearchOperatorOr;
-		AddRow($"{Resources.SearchOperatorTitle} : {opeTranslate}", FGColor: TQColor.Aqua.Color(), style: FontStyle.Bold);
+		AddRow($"{Resources.SearchOperatorTitle} : {opeTranslate}", color: TQColor.Aqua.Color(), style: FontStyle.Bold);
 		if (this.Operator == SearchOperator.And)
 			AddRow(Resources.SearchOperatorDescAnd);
 		else
@@ -112,9 +102,9 @@ public partial class SearchFiltersTooltip : BaseTooltip
 		{
 			foreach (var term in searchTermsGroup)
 			{
-				AddRow(term.Key, FGColor: TQColor.Orange.Color(), style: FontStyle.Bold);
+				AddRow(term.Key, color: TQColor.Orange.Color(), style: FontStyle.Bold);
 				foreach (var filter in term)
-					AddRow(filter.DisplayValue, FGColor: TQColor.Green.Color(), style: FontStyle.Regular);
+					AddRow(filter.DisplayValue, color: TQColor.Green.Color(), style: FontStyle.Regular);
 			}
 
 			AddRow(TOOLTIPDELIM);
@@ -135,29 +125,12 @@ public partial class SearchFiltersTooltip : BaseTooltip
 			else
 				AddRow(TOOLTIPSPACER);
 
-			AddRow(category.Key.Text, FGColor: category.Key.ForeColor, style: FontStyle.Bold);
+			AddRow(category.Key.Text, color: category.Key.ForeColor, style: FontStyle.Bold);
 			foreach (var filter in category)
-				AddRow(filter.DisplayValue, FGColor: filter.CheckedList?.ForeColor, style: FontStyle.Regular);
+				AddRow(filter.DisplayValue, color: filter.CheckedList?.ForeColor, style: FontStyle.Regular);
 		}
 
 		this.flowLayoutPanelFriendlyNames.ResumeLayout();
 		this.ResumeLayout();
 	}
-
-	private void AddRow(string? friendlyName = TOOLTIPSPACER, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null)
-	{
-		Control? row = MakeRow(this.UIService, this.FontService, friendlyName, FGColor, fontSize, style, BGColor: this.flowLayoutPanelFriendlyNames.BackColor);
-		this.flowLayoutPanelFriendlyNames.Controls.Add(row);
-	}
-
-	private void ItemTooltip_Load(object? sender, EventArgs e)
-	{
-		// The tool tip may go multi-column, up to the size of the anchor's monitor.
-		this.flowLayoutPanelFriendlyNames.MaximumSize = WorkingAreaOf(this.AnchorControl).Size;
-
-		this.FillToolTip();
-
-		this.PlaceUnder(this.AnchorControl);
-	}
-
 }

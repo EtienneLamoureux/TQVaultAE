@@ -34,101 +34,36 @@ public partial class EquipmentPanel
 	}
 
 	/// <summary>
-	/// Draws the background of the items in the panel during a Paint call.
+	/// Valid only when the one item under the dragged item is in a slot the dragged item can take, and the player can use
+	/// the dragged item.
 	/// </summary>
-	/// <param name="e">PaintEventArgs data</param>
-	protected override void PaintAreaUnderItem(PaintEventArgs e)
+	protected override Color DragTargetColor()
 	{
-		Item? focusedItem = this.FindItem(this.LastCellWithFocus);
-		foreach (Item item in this.ShownSack)
+		if (this.ItemsUnderDragItem.Count == 1 && this.DragInfo.Item is { } dragged)
 		{
-			// Do not draw the item being dragged.
-			if (item == this.DragInfo.Item)
-				continue;
+			int slot = EquipmentRules.FindSlot(this.ShownSack, this.ItemsUnderDragItem[0]);
+			if (slot != -1 && EquipmentRules.CanEquip(this.ShownSack, dragged, slot) && !this.CannotUse(dragged))
+				return this.HighlightValidItemColor;
+		}
 
-			// Figure out the background brush to use.
-			bool showAccent = true;
-			int alpha = this.UserAlpha;
-			Color backgroundColor = this.GetItemBackgroundColor(item);
+		return this.HighlightInvalidItemColor;
+	}
 
-			// Check if the item is selected and use a different background
-			if (this.IsItemSelected(item))
-				alpha = AdjustAlpha(alpha);
+	/// <summary>
+	/// An empty slot gets no background; a two-handed weapon also shades the empty slot of the other hand, with its accent.
+	/// </summary>
+	protected override void ShadeItem(Graphics graphics, Item item, ItemShading shading)
+	{
+		if (!RecordId.IsNullOrEmpty(item.BaseItemId))
+			this.ShadeAreaUnderItem(graphics, item, shading.Color, shading.Alpha, shading.Highlight);
 
-			var highlight = false;
-			// Highlight search
-			if (this.HighlightService.HighlightedItems.Count > 0 && this.HighlightService.HighlightedItems.Contains(item))
-			{
-				highlight = true;
-				backgroundColor = this.HighlightService.HighlightSearchItemColor;
-				alpha = AdjustAlpha(alpha);
-			}
-			// If we are showing the cannot equip background then 
-			// change to invalid color and adjust the alpha.
-			else if (
-				!this.SecondaryVaultShown
-				&& (
-					(this.USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
-					|| !IsSuitableForCurrentPlayer(item)
-				)
-			)
-			{
-				backgroundColor = this.HighlightInvalidItemColor;
+		this.DrawAccentOf(graphics, item, item, shading);
 
-				// Un-equippable items do not show the accent.
-				showAccent = false;
-
-				// Make the background stand out since we are not showing the accent.
-				alpha = AdjustAlpha(alpha);
-			}
-
-			// See if this item is under the drag item
-			if (this.DragInfo.IsActive && this.ItemsUnderDragItem.Contains(item))
-			{
-				// Use highlight color if it is the only item under the drag point, else use invalid
-				alpha = AdjustAlpha(alpha);
-				backgroundColor = this.HighlightInvalidItemColor;
-
-				if (this.ItemsUnderDragItem.Count == 1)
-				{
-					int slot = EquipmentRules.FindSlot(this.ShownSack, this.ItemsUnderDragItem[0]);
-					if (slot != -1 && EquipmentRules.CanEquip(this.ShownSack, this.DragInfo.Item, slot))
-					{
-						backgroundColor = this.HighlightValidItemColor;
-						if (
-							(this.USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(DragInfo.Item))
-							|| !IsSuitableForCurrentPlayer(DragInfo.Item)
-						) backgroundColor = this.HighlightInvalidItemColor;
-					}
-				}
-			}
-
-			if (!this.DragInfo.IsActive && item == focusedItem)
-				alpha = AdjustAlpha(alpha);
-
-			// Now do the shading
-			if (!RecordId.IsNullOrEmpty(item.BaseItemId))
-				this.ShadeAreaUnderItem(e.Graphics, item, backgroundColor, alpha, highlight);
-
-			// Adjust the alpha and draw the accent.
-			if (showAccent & HasItemBackgroundColor(item))
-				this.DrawItemAccent(e.Graphics, item, backgroundColor, AdjustAlpha(alpha));
-
-			// Check to see if we need to shade a 2H weapon slot
-			if (item.IsInWeaponSlot && item.Is2HWeapon)
-			{
-				Item? item2H = this.GetItemFromShadowSlot(item.PositionY);
-				if (item2H is not null && RecordId.IsNullOrEmpty(item2H.BaseItemId))
-				{
-					Rectangle rect = this.FindSlotRect(item2H.PositionX, item2H.PositionY);
-					this.ShadeAreaUnderItem(e.Graphics, rect, backgroundColor, alpha, highlight);
-
-					// Adjust the alpha and draw the accent.
-					if (showAccent & HasItemBackgroundColor(item))
-						this.DrawItemAccent(e.Graphics, item2H, backgroundColor, AdjustAlpha(alpha));
-				}
-			}
-
+		if (item.IsInWeaponSlot && item.Is2HWeapon
+			&& this.GetItemFromShadowSlot(item.PositionY) is { } item2H && RecordId.IsNullOrEmpty(item2H.BaseItemId))
+		{
+			this.ShadeAreaUnderItem(graphics, this.FindSlotRect(item2H.PositionX, item2H.PositionY), shading.Color, shading.Alpha, shading.Highlight);
+			this.DrawAccentOf(graphics, item, item2H, shading);
 		}
 	}
 
@@ -166,13 +101,7 @@ public partial class EquipmentPanel
 				{
 					backgroundColor = this.HighlightValidItemColor;
 
-					if (!EquipmentRules.CanEquip(this.ShownSack, this.DragInfo.Item, slot)
-						|| (
-							this.USettings.EnableItemRequirementRestriction
-							&& !this.PlayerMeetRequierements(DragInfo.Item)
-						)
-						|| !IsSuitableForCurrentPlayer(DragInfo.Item)
-					)
+					if (!EquipmentRules.CanEquip(this.ShownSack, this.DragInfo.Item, slot) || this.CannotUse(this.DragInfo.Item))
 					{
 						backgroundColor = this.HighlightInvalidItemColor;
 					}

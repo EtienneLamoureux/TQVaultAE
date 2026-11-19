@@ -46,24 +46,15 @@ public partial class VaultForm
 		if (disposing && this.FontService is not null)
 			this.FontService.FontChanged -= this.FontService_FontChanged;
 
-		// Child controls are disposed by base.Dispose, and a transparent child repaints the form while it goes.
-		// The border bitmaps must still be alive at that point, so they are released afterwards.
+		// Child controls are disposed by base.Dispose, and a transparent child repaints the form while it goes:
+		// the title font and the caption pictures are released afterwards. The border pictures are shared (UIPictures).
 		base.Dispose(disposing);
 
 		if (disposing)
 		{
-			this.topBorder?.Dispose();
-			this.topBorder = null;
-			this.bottomBorder?.Dispose();
-			this.bottomBorder = null;
-			this.sideBorder?.Dispose();
-			this.sideBorder = null;
-			this.bottomRightCorner?.Dispose();
-			this.bottomRightCorner = null;
-			this.bottomLeftCorner?.Dispose();
-			this.bottomLeftCorner = null;
 			this.titleFont?.Dispose();
 			this.titleFont = null;
+			this.ReleaseCaptionButtonArt();
 		}
 	}
 

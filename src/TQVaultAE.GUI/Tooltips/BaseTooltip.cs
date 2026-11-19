@@ -1,4 +1,4 @@
-﻿﻿using TQVaultAE.Application.Contracts.Providers;
+﻿using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -82,6 +82,14 @@ public class BaseTooltip : Form
 		int top = Math.Max(workingArea.Top, workingArea.Bottom - tooltip.Height);
 		return new(new Point(anchor.Right, top), anchor.Left - tooltip.Width);
 	}
+
+	/// <summary>
+	/// The top of a tool tip of <paramref name="height"/> wanted at <paramref name="top"/>, pushed up to end inside
+	/// <paramref name="workingArea"/>, at most to its top. The area of the panel's monitor, not the primary monitor's:
+	/// a monitor whose top is not 0 had the tool tip moved off its screen.
+	/// </summary>
+	internal static int TopWithin(int top, int height, Rectangle workingArea)
+		=> Math.Max(workingArea.Top, Math.Min(top, workingArea.Bottom - height));
 
 	/// <summary>The working area of the monitor <paramref name="anchor"/> is on.</summary>
 	protected static Rectangle WorkingAreaOf(Control anchor) => Screen.FromControl(anchor).WorkingArea;

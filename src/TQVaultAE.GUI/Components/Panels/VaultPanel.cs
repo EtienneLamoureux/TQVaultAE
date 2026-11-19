@@ -464,7 +464,7 @@ public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
 		this.contextMenu.Font = MenuStyle.MenuFont(this.FontService, UIService.FontZoom);
-		this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+		ZoomScope.Grow(this, factor.Height);
 
 		base.ScaleControl(factor, specified);
 		this.LayOut();

@@ -1,4 +1,4 @@
-﻿﻿using TQVaultAE.Application;
+﻿using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Session;
@@ -19,7 +19,6 @@ public partial class ComboBoxCharacterItem : UserControl
 
 	// Set by Init: the drop down creates the item before giving it its save.
 	private IPlayerService PlayerService = null!;
-	private ITagService TagService = null!;
 	private ITranslationService TranslationService = null!;
 	private IFontService FontService = null!;
 
@@ -87,13 +86,12 @@ public partial class ComboBoxCharacterItem : UserControl
 		SelectedItemChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	public void Init(object item, ITranslationService translationService, IFontService fontService, IPlayerService playerService, ITagService tagService)
+	public void Init(object item, ITranslationService translationService, IFontService fontService, IPlayerService playerService)
 	{
 		this.Item = item;
 		this.TranslationService = translationService;
 		this.FontService = fontService;
 		this.PlayerService = playerService;
-		this.TagService = tagService;
 
 		this.scalingLabelCharName.Font = FontService.GetFont(this.scalingLabelCharName.Font.Size);
 		this.scalingLabelPlayerHeader.Font =
@@ -225,6 +223,11 @@ public partial class ComboBoxCharacterItem : UserControl
 	{
 		this.bufferedFlowLayoutPanelTags.Controls.OfType<ScalingLabel>()
 			.Where(ctr => ctr.Name.StartsWith(ComboBoxCharacter.TAGKEY, StringComparison.Ordinal))
-			.ToList().ForEach(ctr => this.bufferedFlowLayoutPanelTags.Controls.Remove(ctr));
+			.ToList().ForEach(ctr =>
+			{
+				// Removing a control keeps its window handle: each refresh of the list left one per tag.
+				this.bufferedFlowLayoutPanelTags.Controls.Remove(ctr);
+				ctr.Dispose();
+			});
 	}
 }

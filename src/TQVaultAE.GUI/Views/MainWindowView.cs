@@ -34,7 +34,7 @@ internal class MainWindowView : UserControl
 	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 	{
 		if (this.FollowsUserZoom)
-			this.Font = ZoomScope.ScaleFont(this.Font, factor.Height);
+			ZoomScope.Grow(this, factor.Height);
 		base.ScaleControl(factor, specified);
 	}
 

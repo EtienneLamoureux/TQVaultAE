@@ -344,7 +344,6 @@ public partial class ItemTooltip : BaseTooltip
 	private void ItemTooltip_Load(object? sender, EventArgs e)
 	{
 		var usize = this.SackPanel?.UnitSize ?? UIService.ItemUnitSize;
-		var wa = Screen.FromControl(this).WorkingArea;
 
 		// Windows Forms scaled the designer padding to the DPI of this window, made out of view on the primary monitor, while
 		// the content is drawn for the monitor of the main window.
@@ -389,19 +388,7 @@ public partial class ItemTooltip : BaseTooltip
 				x = left >= screen.Left ? left : Math.Max(screen.Left, screen.Right - this.Width);
 			}
 
-			// Ajust position if tooltip size goes offscreen
-			var bottom = y + this.Height;
-			if (bottom > wa.Height)
-			{
-				// Maximize vertical view
-				var offScreenHeight = bottom - wa.Height;
-				if (y - offScreenHeight < 0)
-					y = 0;// Do your best
-				else
-					y -= offScreenHeight;
-			}
-
-			this.Location = new Point(x, y);
+			this.Location = new Point(x, TopWithin(y, this.Height, screen));
 			return;
 		}
 
