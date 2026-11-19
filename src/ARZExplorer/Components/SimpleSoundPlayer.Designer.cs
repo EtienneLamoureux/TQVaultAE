@@ -32,7 +32,6 @@
             this.flowLayoutPanelPlayer = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.buttonLoop = new System.Windows.Forms.Button();
-            this.buttonPause = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.labelFileName = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -44,7 +43,6 @@
             this.flowLayoutPanelPlayer.AutoSize = true;
             this.flowLayoutPanelPlayer.Controls.Add(this.buttonPlay);
             this.flowLayoutPanelPlayer.Controls.Add(this.buttonLoop);
-            this.flowLayoutPanelPlayer.Controls.Add(this.buttonPause);
             this.flowLayoutPanelPlayer.Controls.Add(this.buttonStop);
             this.flowLayoutPanelPlayer.Controls.Add(this.labelFileName);
             this.flowLayoutPanelPlayer.Dock = System.Windows.Forms.DockStyle.Top;
@@ -78,18 +76,6 @@
             this.toolTip1.SetToolTip(this.buttonLoop, "Loop");
             this.buttonLoop.UseVisualStyleBackColor = false;
             this.buttonLoop.Click += new System.EventHandler(this.buttonLoop_Click);
-            // 
-            // buttonPause
-            // 
-            this.buttonPause.Image = global::ArzExplorer.Properties.Resources.Pause;
-            this.buttonPause.Location = new System.Drawing.Point(67, 3);
-            this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(26, 22);
-            this.buttonPause.TabIndex = 2;
-            this.buttonPause.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip1.SetToolTip(this.buttonPause, "Pause");
-            this.buttonPause.UseVisualStyleBackColor = true;
-            this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
             // 
             // buttonStop
             // 
@@ -138,7 +124,6 @@
 		private System.Windows.Forms.Button buttonPlay;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Button buttonLoop;
-		private System.Windows.Forms.Button buttonPause;
 		private System.Windows.Forms.Button buttonStop;
 		private System.Windows.Forms.Label labelFileName;
 	}

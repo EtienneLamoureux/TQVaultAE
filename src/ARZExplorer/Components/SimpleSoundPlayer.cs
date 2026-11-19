@@ -61,9 +61,6 @@ public partial class SimpleSoundPlayer : UserControl
 	{
 		// Adjust UI
 		this.buttonLoop.BackColor = SystemColors.Control;
-
-		// TODO SoundPlayer doesn't have a Freeze/Resume
-		this.buttonPause.Visible = false;
 	}
 
 	private void buttonPlay_Click(object sender, EventArgs e)
@@ -80,9 +77,6 @@ public partial class SimpleSoundPlayer : UserControl
 			? SystemColors.Control
 			: SystemColors.ActiveCaption;
 	}
-
-	// SoundPlayer cannot pause: the hidden Pause button stops.
-	private void buttonPause_Click(object sender, EventArgs e) => this.CurrentSoundPlayer?.Stop();
 
 	private void buttonStop_Click(object sender, EventArgs e) => this.CurrentSoundPlayer?.Stop();
 }
