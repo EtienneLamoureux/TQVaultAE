@@ -222,6 +222,10 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	IEnumerator IEnumerable.GetEnumerator()
 		=> this.GetEnumerator();
 
+	/// <summary>The items of every sack, the equipment left out.</summary>
+	public IEnumerable<Item> SackItems()
+		=> this.Where(s => s is not null).SelectMany(s => s);
+
 	/// <summary>
 	/// Creates empty sacks within the file.
 	/// </summary>
