@@ -36,7 +36,6 @@ internal sealed record CharacterSideView
 internal sealed partial class CharacterSidePanel : Control
 {
 	private const int PanelWidth = 256;
-	private const string StatsBar = """InGameUI\CharacterScreen\StatsBar01.tex""";
 
 	/// <summary>
 	/// Top of the titles and first rows of the three parts, rows every 20 pixels. The statistics options come first: the
@@ -49,7 +48,7 @@ internal sealed partial class CharacterSidePanel : Control
 	/// <summary>Two lines per mastery (its name, then what it has), two masteries at most.</summary>
 	private const int PanelHeight = MasteriesTop + 20 + 4 * 18 + 12;
 
-	private static readonly Color Grey = Color.FromArgb(200, 200, 190);
+	private static readonly Color Grey = PanelPainter.Grey;
 
 	/// <summary>The frame of the statistics panel's picture: its gold border (5 pixels) around the black, under the tabs.</summary>
 	private static readonly Rectangle FrameSource = new(0, 19, 255, 375);
@@ -98,9 +97,9 @@ internal sealed partial class CharacterSidePanel : Control
 
 	private static int RowTop(int partTop, int row) => partTop + 22 + row * RowHeight;
 
-	private int Scaled(int value) => (int)Math.Round(value * this._panelScale);
+	private int Scaled(int value) => this.Painter.Scaled(value);
 
-	private Rectangle ScaledRect(Rectangle r) => new(this.Scaled(r.X), this.Scaled(r.Y), this.Scaled(r.Width), this.Scaled(r.Height));
+	private Rectangle ScaledRect(Rectangle r) => this.Painter.ScaledRect(r);
 
 	protected override void Dispose(bool disposing)
 	{
@@ -160,43 +159,23 @@ internal sealed partial class CharacterSidePanel : Control
 	/// value or to the editor shown on the row, whichever comes first: a long label ("Points de compétence") was cut at
 	/// the editors' column although only a short number or a check box follows it.
 	/// </summary>
+	/// <summary>A row of the panel; the label stops before an editor placed on the row.</summary>
 	private void DrawRow(Graphics g, string label, string value, int y)
 	{
-		const int right = 243;
-		var labelRight = right;
-		if (!string.IsNullOrEmpty(value) && (this.NumberFont ?? this.Font) is { } number)
-		{
-			var valueWidth = (int)Math.Ceiling(g.MeasureString(value, number).Width / this._panelScale) + 4;
-			this.DrawText(g, value, number, Color.White, new Rectangle(right - valueWidth, y, valueWidth, 16), StringAlignment.Far);
-			labelRight = right - valueWidth;
-		}
-
+		int labelLimit = int.MaxValue;
 		var row = this.ScaledRect(new Rectangle(0, y, PanelWidth, 16));
 		foreach (var editor in this.Editors)
 			if (editor.Visible && editor.Top + editor.Height / 2 is var middle && middle >= row.Top && middle < row.Bottom)
-				labelRight = Math.Min(labelRight, (int)(editor.Left / this._panelScale) - 4);
+				labelLimit = Math.Min(labelLimit, (int)(editor.Left / this._panelScale) - 4);
 
-		this.DrawText(g, label, this.TextFont, Grey, new Rectangle(15, y, Math.Max(0, labelRight - 15), 16), StringAlignment.Near);
+		this.Painter.Row(g, label, this.TextFont, value, this.NumberFont ?? this.Font, y, labelLimit);
 	}
 
-	private void Bar(Graphics g, int y)
-	{
-		var bar = this._uiService.LoadBitmap(StatsBar.ToRecordId());
-		g.DrawImage(bar, this.ScaledRect(new Rectangle(9, y, bar.Width, bar.Height)));
-	}
+	private void Bar(Graphics g, int y) => this.Painter.Bar(g, this._uiService.LoadBitmap(PanelPainter.StatsBar.ToRecordId()), y);
 
 	private void DrawText(Graphics g, string text, Font? font, Color color, Rectangle box, StringAlignment alignment)
-	{
-		if (string.IsNullOrEmpty(text))
-			return;
+		=> this.Painter.DrawText(g, text, font, color, box, alignment);
 
-		using var format = new StringFormat
-		{
-			Alignment = alignment,
-			Trimming = StringTrimming.EllipsisCharacter,
-			FormatFlags = StringFormatFlags.NoWrap,
-		};
-		using var brush = new SolidBrush(color);
-		g.DrawString(text, font ?? this.Font, brush, this.ScaledRect(box), format);
-	}
+	/// <summary>The panel's text and bars at its scale.</summary>
+	private PanelPainter Painter => new(this._panelScale, this.Font);
 }

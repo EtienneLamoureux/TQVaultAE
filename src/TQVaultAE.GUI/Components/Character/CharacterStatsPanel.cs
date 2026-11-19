@@ -68,7 +68,6 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>The third tab's unlit picture in the panel's, drawn narrower for the Buffs tab.</summary>
 	private static readonly Rectangle UnlitTabSource = new(137, 0, 62, 20);
 
-	private const string StatsBar = """InGameUI\CharacterScreen\StatsBar01.tex""";
 	private const string PlusUp = """InGameUI\CharacterScreen\StatIncrementButtonUp01.tex""";
 	private const string PlusOver = """InGameUI\CharacterScreen\StatIncrementButtonOver01.tex""";
 	private const string UndoUp = """XPack\UI\Character\ButtonAttributeUndo01Up.tex""";
@@ -113,7 +112,7 @@ internal sealed partial class CharacterStatsPanel : Control
 
 	/// <summary>NumberStandard_Green: pure green.</summary>
 	private static readonly Color Green = Color.FromArgb(0, 255, 0);
-	private static readonly Color Grey = Color.FromArgb(200, 200, 190);
+	private static readonly Color Grey = PanelPainter.Grey;
 	private static readonly Color Yellow = Color.FromArgb(255, 210, 60);
 	private static readonly Color Orange = Color.FromArgb(240, 160, 40);
 
@@ -278,9 +277,9 @@ internal sealed partial class CharacterStatsPanel : Control
 	/// <summary>A tab (I, II, III) on screen.</summary>
 	public Rectangle TabBounds(int tab) => this.ScaledRect(new Rectangle(TabX[tab] + 1, 0, TabWidth[tab] - 2, 22));
 
-	private int Scaled(int value) => (int)Math.Round(value * this._panelScale);
+	private int Scaled(int value) => this.Painter.Scaled(value);
 
-	private Rectangle ScaledRect(Rectangle r) => new(this.Scaled(r.X), this.Scaled(r.Y), this.Scaled(r.Width), this.Scaled(r.Height));
+	private Rectangle ScaledRect(Rectangle r) => this.Painter.ScaledRect(r);
 
 	protected override void Dispose(bool disposing)
 	{
@@ -658,34 +657,15 @@ internal sealed partial class CharacterStatsPanel : Control
 
 	/// <summary>A grey label and a white number right-aligned on the same row; the label gives way to the number.</summary>
 	private void Row(Graphics g, string label, string value, int y, Font? valueFont = null)
-	{
-		var number = valueFont ?? this.NumberFont ?? this.Font;
-		var valueWidth = string.IsNullOrEmpty(value) ? 0 : (int)Math.Ceiling(g.MeasureString(value, number).Width / this._panelScale) + 4;
-		this.DrawText(g, value, number, Color.White, new Rectangle(243 - valueWidth, y, valueWidth, 16), StringAlignment.Far);
-		this.DrawText(g, label, this.TextFont, Grey, new Rectangle(15, y, 228 - valueWidth, 16), StringAlignment.Near);
-	}
+		=> this.Painter.Row(g, label, this.TextFont, value, valueFont ?? this.NumberFont ?? this.Font, y);
 
-	private void Bar(Graphics g, int y)
-	{
-		var bar = this.Picture(StatsBar);
-		g.DrawImage(bar, this.ScaledRect(new Rectangle(9, y, bar.Width, bar.Height)));
-	}
+	private void Bar(Graphics g, int y) => this.Painter.Bar(g, this.Picture(PanelPainter.StatsBar), y);
 
 	private void DrawText(Graphics g, string text, Font? font, Color color, Rectangle box, StringAlignment alignment, bool wrap = false)
-	{
-		if (string.IsNullOrEmpty(text))
-			return;
+		=> this.Painter.DrawText(g, text, font, color, box, alignment, wrap);
 
-		using var format = new StringFormat
-		{
-			Alignment = alignment,
-			LineAlignment = wrap ? StringAlignment.Center : StringAlignment.Near,
-			Trimming = StringTrimming.EllipsisCharacter,
-			FormatFlags = wrap ? 0 : StringFormatFlags.NoWrap,
-		};
-		using var brush = new SolidBrush(color);
-		g.DrawString(text, font ?? this.Font, brush, this.ScaledRect(box), format);
-	}
+	/// <summary>The panel's text and bars at its scale.</summary>
+	private PanelPainter Painter => new(this._panelScale, this.Font);
 
 	/// <summary>A text with game colour codes (<c>{^y}</c> yellow, <c>{^w}</c> white), right-aligned by default.</summary>
 	private void ColoredText(Graphics g, string text, Font? font, Color color, Rectangle box, bool alignRight = true)
