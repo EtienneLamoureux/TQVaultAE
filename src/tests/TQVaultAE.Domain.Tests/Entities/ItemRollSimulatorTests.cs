@@ -21,7 +21,8 @@ public class ItemRollSimulatorTests
 	private static DBRecordCollection Record(string id, params (string Name, VariableDataType Type, object Value)[] vars)
 	{
 		var record = new DBRecordCollection(RecordId.Create(id), "test");
-		foreach (var (name, type, value) in vars) {
+		foreach (var (name, type, value) in vars)
+		{
 			var v = new Variable(name, type, 1);
 			v[0] = value;
 			record.Set(v);
@@ -219,7 +220,8 @@ public class ItemRollSimulatorTests
 
 		var mana = new HashSet<float>();
 		var regen = new HashSet<float>();
-		for (uint seed = 1; seed <= 4000; seed++) {
+		for (uint seed = 1; seed <= 4000; seed++)
+		{
 			var result = ItemRollSimulator.Roll(seed, false, ring, null, suffix, table);
 			mana.Add(result.Suffix!.GetSingle("characterMana", 0));
 			regen.Add(result.Base!.GetSingle("characterManaRegenModifier", 0));

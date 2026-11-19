@@ -58,7 +58,8 @@ public class PlayerLevel
 	public static int SkillPointsPerLevel => 3;
 
 
-	static Dictionary<int, int> _levelKey = new Dictionary<int, int>() {
+	static Dictionary<int, int> _levelKey = new Dictionary<int, int>()
+	{
 		{1    ,       0},
 		{2    ,     621},
 		{3    ,    2315},

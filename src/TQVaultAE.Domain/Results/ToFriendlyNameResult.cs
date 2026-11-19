@@ -1,4 +1,4 @@
-﻿﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using TQVaultAE.Domain.Comparison;
 using TQVaultAE.Domain.Entities;

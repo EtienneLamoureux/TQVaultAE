@@ -1,4 +1,4 @@
-﻿﻿using TQVaultAE.Domain.Entities;
+﻿using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Providers;
 

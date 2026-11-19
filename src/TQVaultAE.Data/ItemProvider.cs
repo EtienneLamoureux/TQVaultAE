@@ -75,11 +75,14 @@ public partial class ItemProvider : IItemProvider, IGameDataCache
 				|| itemClass.StartsWith(Item.ICLASS_PREFIX_WEAPON, StringComparison.OrdinalIgnoreCase)))
 			return null;
 
-		try {
+		try
+		{
 			var prefix = RecordId.IsNullOrEmpty(itm.prefixID) ? null : this.Database.GetRecordFromFile(itm.prefixID);
 			var suffix = RecordId.IsNullOrEmpty(itm.suffixID) ? null : this.Database.GetRecordFromFile(itm.suffixID);
 			return ItemRollSimulator.Roll((uint)itm.Seed, itm.IsArmor, baseRecord, prefix, suffix);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			this.Log.LogError(ex, "Failed to compute in-game values for {Item}", itm.BaseItemId);
 			return null;
 		}

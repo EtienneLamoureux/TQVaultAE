@@ -47,7 +47,8 @@ public class ItemJitterServiceTests
 		var rng = new TitanQuestRNG(seed);
 		ulong expected = seed;
 
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 1000; i++)
+		{
 			expected = expected * 16807UL % 2147483647UL;
 			rng.AdvanceSeed().Should().Be((int)expected, $"step {i} from seed {seed}");
 		}
@@ -61,7 +62,8 @@ public class ItemJitterServiceTests
 		var rng = new TitanQuestRNG(42);
 		var results = new HashSet<float>();
 
-		for (int i = 0; i < 400; i++) {
+		for (int i = 0; i < 400; i++)
+		{
 			var before = rng.CurrentSeed;
 			results.Add(ItemJitterService.RollCharAffix(10f, 0f, rng));
 			rng.CurrentSeed.Should().NotBe(before);
