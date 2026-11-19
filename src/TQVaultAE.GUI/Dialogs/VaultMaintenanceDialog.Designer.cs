@@ -273,7 +273,6 @@ internal partial class VaultMaintenanceDialog
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
         this.CancelButton = this.cancelButton;
         this.ClientSize = new System.Drawing.Size(464, 419);
         this.Controls.Add(this.cancelButton);
@@ -285,13 +284,8 @@ internal partial class VaultMaintenanceDialog
         this.Controls.Add(this.vaultListComboBox);
         this.Controls.Add(this.targetTextBox);
         this.DrawCustomBorder = true;
-        this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.MaximizeBox = false;
-        this.MinimizeBox = false;
         this.Name = "VaultMaintenanceDialog";
-        this.ShowInTaskbar = false;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         this.Text = "Vault Maintenance";
         this.Load += new System.EventHandler(this.VaultMaintenanceDialogLoad);
         this.Controls.SetChildIndex(this.targetTextBox, 0);

@@ -82,9 +82,7 @@ public partial class BagButtonSettings : VaultForm
 		this.Log = log;
 
 		this.InitializeComponent();
-
-		this.MinimizeBox = false;
-		this.NormalizeBox = false;
+		CaravanDialog.SetUpWindow(this, nameof(BagButtonSettings));
 		this.MaximizeBox = true;
 
 		// Map [Esc] and [Enter]

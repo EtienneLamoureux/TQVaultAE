@@ -837,21 +837,14 @@ partial class BagButtonSettings
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
         this.ClientSize = new System.Drawing.Size(1047, 680);
         this.Controls.Add(this.iconMagnifier);
         this.Controls.Add(this.tableLayoutPanelSkeleton);
         this.DrawCustomBorder = true;
-        this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.MaximizeBox = false;
-        this.MinimizeBox = false;
         this.MinimumSize = new System.Drawing.Size(630, 586);
         this.Name = "BagButtonSettings";
         this.ResizeCustomAllowed = true;
-        this.ShowIcon = false;
-        this.ShowInTaskbar = false;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         this.Text = "Vault button settings";
         this.TitleTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(44)))), ((int)(((byte)(28)))));
         this.TopMost = true;

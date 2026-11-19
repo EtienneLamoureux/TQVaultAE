@@ -196,20 +196,14 @@ public partial class ResultsDialog
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(31)))), ((int)(((byte)(21)))));
         this.ClientSize = new System.Drawing.Size(837, 497);
         this.Controls.Add(this.resultsDataGridView);
         this.DrawCustomBorder = true;
-        this.ForeColor = System.Drawing.Color.White;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
         this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-        this.MaximizeBox = false;
-        this.MinimizeBox = false;
         this.Name = "ResultsDialog";
         this.Padding = new System.Windows.Forms.Padding(8, 28, 8, 18);
         this.ResizeCustomAllowed = true;
-        this.ShowIcon = false;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         this.Text = "Results";
         this.Shown += new System.EventHandler(this.ResultsDialogShown);
         this.Controls.SetChildIndex(this.resultsDataGridView, 0);

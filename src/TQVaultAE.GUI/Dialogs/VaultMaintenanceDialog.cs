@@ -64,6 +64,7 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		this.vaultService = vaultService;
 
 		this.InitializeComponent();
+		CaravanDialog.SetUpWindow(this, nameof(VaultMaintenanceDialog));
 
 		#region Apply custom font
 
@@ -91,8 +92,7 @@ internal sealed partial class VaultMaintenanceDialog : VaultForm
 		// The function group and the instructions keep one character of space inside their frame, on the left and right:
 		// the instructions' three lines need their height.
 		CaravanFrame.ApplyTo(this.selectFunctionGroupBox, CaravanFrame.CharacterWidth(this.newRadioButton.Font));
-		int space = CaravanFrame.Border + CaravanFrame.CharacterWidth(this.instructionsLabel.Font);
-		CaravanFrame.ApplyTo(this.instructionsLabel, new Padding(space, CaravanFrame.Border, space, CaravanFrame.Border));
+		CaravanDialog.FrameText(this.instructionsLabel, this.instructionsLabel.Font);
 		CaravanFrame.FrameLabel(this.sourceLabel, this.vaultListComboBox);
 		CaravanFrame.FrameLabel(this.targetLabel, this.targetTextBox);
 		CaravanLook.Apply(this);

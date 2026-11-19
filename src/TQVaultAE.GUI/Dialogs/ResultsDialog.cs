@@ -78,6 +78,9 @@ public partial class ResultsDialog : VaultForm
 		// present then: the buttons kept their 96 dpi size, their text cut at a higher DPI).
 		this.SuspendLayout();
 		this.InitializeComponent();
+		CaravanDialog.SetUpWindow(this, nameof(ResultsDialog));
+		// A modeless window: it keeps its taskbar button.
+		this.ShowInTaskbar = true;
 
 		// Several rows (Ctrl or Shift click, Ctrl+A): Move To and Undo act on the selection.
 		this.resultsDataGridView.MultiSelect = true;
@@ -115,7 +118,6 @@ public partial class ResultsDialog : VaultForm
 		this.columnSack.HeaderText = Resources.ResultsSack;
 		this.columnLevel.HeaderText = Resources.ResultsLevel;
 
-		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
 
 		this.LastFormSize = this.Size;

@@ -49,6 +49,7 @@ internal sealed partial class ItemProperties : VaultForm
 		this.Owner = instance;
 
 		this.InitializeComponent();
+		CaravanDialog.SetUpWindow(this, nameof(ItemProperties));
 
 		this.sectionControls =
 		[
@@ -85,7 +86,6 @@ internal sealed partial class ItemProperties : VaultForm
 			grid.FontChanged += (_, _) => this.FitRowHeightsLater(grid, column);
 		}
 
-		this.NormalizeBox = false;
 		this.DrawCustomBorder = true;
 	}
 
