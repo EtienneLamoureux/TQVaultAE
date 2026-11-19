@@ -37,6 +37,19 @@ public class PlayerInfoTests
 		_playerInfo.ClassTag.Should().Be("x4tagNeidanWarfare", "a change of masteries clears the save's class until the game sets it again");
 	}
 
+	[Fact]
+	public void ClassTag_ClearedOnAModdedCharacter_TheOneThePaneMasteriesMake()
+	{
+		// A mod's masteries have their own records: only the map's skill panes tell which masteries they are.
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\ModMasteries\HealerMastery.dbr""", skillLevel = 32 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\ModMasteries\WitchMastery.dbr""", skillLevel = 32 });
+		_playerInfo.Class = string.Empty;
+		_playerInfo.ClassTag.Should().BeEmpty("the base game's records name no mastery");
+
+		_playerInfo.PaneMasteries = Masteries.Spirit | Masteries.Nature;
+		_playerInfo.ClassTag.Should().Be("tagCClass36");
+	}
+
 	#endregion
 
 	#region Stat Calculation Tests

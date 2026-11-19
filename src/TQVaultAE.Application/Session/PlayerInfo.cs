@@ -292,12 +292,19 @@ public class PlayerInfo
 	public string? Class { get; set; }
 
 	/// <summary>
-	/// The tag of the class: the save's (<see cref="Class"/>), else the one the masteries make. A change of masteries clears
-	/// the save's and the game sets it again when it loads the character; until then the masteries tell it.
+	/// The masteries the skill panes of the character's map find in its skills, null until read: a mod's masteries have
+	/// their own records, which <see cref="ActiveMasteries"/> (the base game's records) does not know.
+	/// </summary>
+	public Masteries? PaneMasteries { get; set; }
+
+	/// <summary>
+	/// The tag of the class: the save's (<see cref="Class"/>), else the one the masteries make (<see cref="PaneMasteries"/>,
+	/// else <see cref="ActiveMasteries"/>). A change of masteries clears the save's and the game sets it again when it
+	/// loads the character; until then the masteries tell it.
 	/// </summary>
 	public string? ClassTag
 		=> !string.IsNullOrEmpty(this.Class) ? this.Class
-			: this.ActiveMasteries is { } masteries ? CharacterClasses.TagOf(masteries) ?? this.Class
+			: (this.PaneMasteries ?? this.ActiveMasteries) is { } masteries ? CharacterClasses.TagOf(masteries) ?? this.Class
 			: this.Class;
 
 	/// <summary>

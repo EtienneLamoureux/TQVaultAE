@@ -5,6 +5,7 @@ using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Services;
 
 namespace TQVaultAE.Tests.Services;
@@ -61,6 +62,26 @@ public class CharacterEditServiceTests
 			, Intelligence: source.BaseIntelligence
 			, Health: source.BaseHealth
 			, Mana: source.BaseMana);
+
+	[Fact]
+	public void CreateSkillEditor_ModMasteriesWithAClearedClass_TheClassTheirPanesMake()
+	{
+		// A mod's masteries: own records, shown on the panes of Spirit and Nature; a class set changed them, which
+		// cleared the save's class.
+		const string healer = """Records\Skills\ModMasteries\HealerMastery.dbr""";
+		const string witch = """Records\Skills\ModMasteries\WitchMastery.dbr""";
+		var trees = new Mock<ISkillTreeProvider>();
+		trees.Setup(t => t.GetMasteryTree(Masteries.Spirit)).Returns(new MasteryTree(Masteries.Spirit, witch.ToRecordId(), "", "", "", 40, []));
+		trees.Setup(t => t.GetMasteryTree(Masteries.Nature)).Returns(new MasteryTree(Masteries.Nature, healer.ToRecordId(), "", "", "", 40, []));
+		var service = new CharacterEditService(this._pathIO.Object, this._provider.Object, trees.Object, this._itemProvider.Object, this._itemText.Object);
+		var info = new PlayerInfo(this._pathIO.Object) { Class = string.Empty, MasteriesAllowed = 2 };
+		info.SkillRecordList.Add(new SkillRecord { skillName = healer, skillLevel = 32 });
+		info.SkillRecordList.Add(new SkillRecord { skillName = witch, skillLevel = 32 });
+
+		service.CreateSkillEditor(info);
+
+		info.ClassTag.Should().Be("tagCClass36");
+	}
 
 	[Theory]
 	[InlineData("")]

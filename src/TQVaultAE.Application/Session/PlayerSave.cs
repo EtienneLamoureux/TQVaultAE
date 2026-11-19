@@ -152,7 +152,7 @@ public sealed class PlayerSave : IDisposable
 	{
 		return string.Join(string.Empty, new[] {
 			Info is null ? Name : $"{Name}"
-			, Info?.ClassTag is not { } classTag ? string.Empty : $", {(ClassLabel is { } label && label.Tag == classTag ? label.Text : Translate.TranslateXTag(classTag, true, true))}"
+			, Info?.ClassTag is not { Length: > 0 } classTag ? string.Empty : $", {(ClassLabel is { } label && label.Tag == classTag ? label.Text : Translate.TranslateXTag(classTag, true, true))}"
 			, !string.IsNullOrWhiteSpace(Info?.ClassTag) && Info?.CurrentLevel is not null ?  " -" : string.Empty
 			, Info?.CurrentLevel is null ? string.Empty : $" {Translate.TranslateXTag("tagMenuImport05")} : {Info.CurrentLevel}"
 			, IsImmortalThrone ? string.Empty : " (TQ)"
