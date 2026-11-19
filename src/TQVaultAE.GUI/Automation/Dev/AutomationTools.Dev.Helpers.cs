@@ -44,7 +44,7 @@ internal static partial class AutomationTools
 
 	private static IEnumerable<Type> FormTypes()
 	{
-		var check = Program.ServiceProvider.GetRequiredService<IServiceProviderIsService>();
+		var check = Service<IServiceProviderIsService>();
 		return typeof(Program).Assembly.GetTypes()
 			.Where(t => typeof(Form).IsAssignableFrom(t) && !t.IsAbstract && check.IsService(t))
 			.OrderBy(t => t.Name);

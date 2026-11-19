@@ -19,13 +19,13 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var maps = form.AutomationGameMapService;
-			var links = Program.ServiceProvider.GetRequiredService<IModLinkService>();
+			var links = Service<IModLinkService>();
 			return Serialize(new
 			{
 				activeMap = maps.ActiveMap,
-				loadedMaps = Program.ServiceProvider.GetRequiredService<IDatabaseMaps>().LoadedMapFolders,
-				transferStash = Program.ServiceProvider.GetRequiredService<IGamePathService>().TransferStashFileFullPath,
-				relicVault = Program.ServiceProvider.GetRequiredService<IGamePathService>().RelicVaultStashFileFullPath,
+				loadedMaps = Service<IDatabaseMaps>().LoadedMapFolders,
+				transferStash = Services.GamePathService.TransferStashFileFullPath,
+				relicVault = Services.GamePathService.RelicVaultStashFileFullPath,
 				installedMods = links.GetInstalledMods().Select(m => new { m.Name, m.Folder, source = m.Source.ToString() }),
 				characters = form.AutomationPlayerSaves.Select(save =>
 				{
@@ -50,7 +50,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(form =>
 		{
 			var save = FindSave(form, character);
-			var suggestion = Program.ServiceProvider.GetRequiredService<IModLinkService>().Suggest(save.Folder);
+			var suggestion = Service<IModLinkService>().Suggest(save.Folder);
 			return Serialize(new
 			{
 				character = save.Name,

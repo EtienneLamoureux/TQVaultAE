@@ -20,9 +20,8 @@ internal static partial class AutomationTools
 			[Description("Maximum number of examples per raw name (default 5).")] int examples = 5)
 			=> AutomationHost.OnUi(_ =>
 			{
-				var services = Program.ServiceProvider;
-				var provider = services.GetRequiredService<IItemTextFormatter>();
-				var owned = services.GetRequiredService<IItemDatabaseService>().ItemDatabase;
+				var provider = Services.ItemText;
+				var owned = Services.ItemDatabaseService.ItemDatabase;
 				var raw = new System.Text.RegularExpressions.Regex(@"\?[A-Za-z][\w ]*\?|<unknown>|\b[a-z0-9]+_[a-z0-9_]+\b");
 				var groups = new Dictionary<string, (int Count, HashSet<string> Where, string Sample)>(StringComparer.OrdinalIgnoreCase);
 

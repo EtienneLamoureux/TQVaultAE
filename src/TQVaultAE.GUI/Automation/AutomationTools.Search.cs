@@ -20,7 +20,7 @@ internal static partial class AutomationTools
 		=> AutomationHost.OnUi(_ =>
 		{
 			var wanted = RecordId.Create(baseItemId);
-			var entries = Program.ServiceProvider.GetRequiredService<IItemDatabaseService>().ItemDatabase
+			var entries = Services.ItemDatabaseService.ItemDatabase
 				.Where(r => r.Item.BaseItemId == wanted)
 				.Select(r => (object)new
 				{
@@ -49,7 +49,7 @@ internal static partial class AutomationTools
 		[Description("Optional text the container's file or name must contain (case does not matter).")] string? filter = null)
 		=> AutomationHost.OnUi(_ =>
 		{
-			var containers = Program.ServiceProvider.GetRequiredService<IItemDatabaseService>().ItemDatabase
+			var containers = Services.ItemDatabaseService.ItemDatabase
 				.Where(r => string.IsNullOrEmpty(filter)
 					|| r.Container.Contains(filter, StringComparison.OrdinalIgnoreCase)
 					|| r.ContainerName.Contains(filter, StringComparison.OrdinalIgnoreCase))
@@ -75,7 +75,7 @@ internal static partial class AutomationTools
 	{
 		var picked = AutomationHost.OnUi(form =>
 		{
-			var entry = Program.ServiceProvider.GetRequiredService<IItemDatabaseService>().ItemDatabase
+			var entry = Services.ItemDatabaseService.ItemDatabase
 				.FirstOrDefault(r => (r.Container.Contains(container, StringComparison.OrdinalIgnoreCase)
 						|| r.ContainerName.Contains(container, StringComparison.OrdinalIgnoreCase))
 					&& (x is null || r.Item.PositionX == x) && (y is null || r.Item.PositionY == y))

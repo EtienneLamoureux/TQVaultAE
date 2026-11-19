@@ -620,7 +620,7 @@ internal static partial class AutomationTools
 			if (!hide)
 			{
 				// Both tool tips the pointer shows: the bag's custom label above the button, and the summary of its items.
-				var services = Program.ServiceProvider.GetRequiredService<GuiServices>();
+				var services = Services;
 				Tooltips.BagButtonLabelTooltip.ShowTooltip(services, container.BagButtons[bag]);
 				Tooltips.BagButtonTooltip.ShowTooltip(services, container.BagButtons[bag]);
 			}
@@ -747,6 +747,12 @@ internal static partial class AutomationTools
 	#region Helpers
 
 	private static string Serialize(object value) => JsonSerializer.Serialize(value, JsonOptions);
+
+	/// <summary>The services of the forms and controls (the bundle each form gets).</summary>
+	private static GuiServices Services => Service<GuiServices>();
+
+	/// <summary>A service the forms do not get through <see cref="GuiServices"/> (tags, mod links, the databases).</summary>
+	private static T Service<T>() where T : notnull => Program.ServiceProvider.GetRequiredService<T>();
 
 	private static AutomationPanels.NamedPanel ResolveShownPanel(MainForm form, string panel)
 	{
@@ -879,7 +885,7 @@ internal static partial class AutomationTools
 	{
 		try
 		{
-			var names = Program.ServiceProvider.GetRequiredService<IItemTextFormatter>();
+			var names = Services.ItemText;
 			return names.GetFriendlyNames(item).FullNameClean;
 		}
 		catch (Exception)
@@ -898,7 +904,7 @@ internal static partial class AutomationTools
 		string? baseName = null;
 		try
 		{
-			var names = Program.ServiceProvider.GetRequiredService<IItemTextFormatter>().GetFriendlyNames(item);
+			var names = Services.ItemText.GetFriendlyNames(item);
 			name = names.FullNameClean;
 			baseName = names.BaseItemInfoDescription?.RemoveAllTQTags();
 		}
@@ -952,7 +958,7 @@ internal static partial class AutomationTools
 	{
 		try
 		{
-			return Program.ServiceProvider.GetRequiredService<IItemProvider>().GetRequirementInfo(item).Lvl;
+			return Services.ItemProvider.GetRequirementInfo(item).Lvl;
 		}
 		catch (Exception)
 		{

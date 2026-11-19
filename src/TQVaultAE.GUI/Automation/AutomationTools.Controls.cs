@@ -224,7 +224,7 @@ internal static partial class AutomationTools
 	public static string ListTags()
 		=> AutomationHost.OnUi(form =>
 		{
-			var tags = Program.ServiceProvider.GetRequiredService<ITagService>().Tags;
+			var tags = Service<ITagService>().Tags;
 			var selected = form.AutomationCharacterCombo.SelectedItem as PlayerSave;
 			return Serialize(new
 			{

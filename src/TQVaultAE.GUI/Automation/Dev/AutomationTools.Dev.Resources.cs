@@ -15,8 +15,8 @@ internal static partial class AutomationTools
 		[Description("Loads resources through the database as the app does (custom map first, then the game) and tells, for each id, the game archive it maps to, whether that archive exists and whether the data loaded, with its size. Ids are as the database references them, like 'Sounds\\XPack\\Monster\\x.wav' or 'Items\\EquipmentRing\\UIBitmaps\\x.tex'. Also gives the custom map in use.")]
 		public static string LoadResource([Description("Resource ids, separated by commas or new lines.")] string resourceIds)
 		{
-			var database = Program.ServiceProvider.GetRequiredService<IDatabase>();
-			var gamePath = Program.ServiceProvider.GetRequiredService<IGamePathService>();
+			var database = Service<IDatabase>();
+			var gamePath = Services.GamePathService;
 			var ids = resourceIds.Split([',', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 			return Serialize(new
 			{
@@ -44,7 +44,7 @@ internal static partial class AutomationTools
 			[Description("Resource id as an item record references it, like 'XPack2\\items\\equipmentweapon\\bow\\uibitmaps\\mi_skeletonbow.tex'.")] string resourceId,
 			[Description("'missing', 'corrupt' or 'clear'.")] string mode)
 		{
-			var database = Program.ServiceProvider.GetRequiredService<IDatabase>();
+			var database = Service<IDatabase>();
 			var faults = TQVaultAE.Data.Database.ResourceFaults;
 			faults.TryRemove(resourceId, out _);
 			switch (mode.Trim().ToLowerInvariant())
@@ -62,7 +62,7 @@ internal static partial class AutomationTools
 					throw new McpException("mode must be 'missing', 'corrupt' or 'clear'.");
 			}
 
-			(Program.ServiceProvider.GetRequiredService<TQVaultAE.Presentation.Win32.Contracts.IUIService>() as IGameDataCache)?.ClearGameDataCache();
+			(Services.UIService as IGameDataCache)?.ClearGameDataCache();
 			return Serialize(faults.Select(f => new { id = f.Key.Raw, bytes = f.Value?.Length }));
 		}
 	}

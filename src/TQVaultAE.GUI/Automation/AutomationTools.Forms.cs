@@ -153,7 +153,7 @@ internal static partial class AutomationTools
 		});
 
 		// Let the dialog load (its icons come from the icon service, already loading in the background).
-		var iconService = Program.ServiceProvider.GetRequiredService<Presentation.Win32.Contracts.IIconService>();
+		var iconService = Services.IconService;
 		var icons = await iconService.GetIconDatabaseAsync().WaitAsync(TimeSpan.FromSeconds(30));
 		await Task.Delay(500);
 
@@ -213,7 +213,7 @@ internal static partial class AutomationTools
 			if (apply)
 				panel.AutomationApply();
 
-			var highlighted = Program.ServiceProvider.GetRequiredService<Application.Contracts.Services.IHighlightService>().HighlightedItems;
+			var highlighted = Services.HighlightService.HighlightedItems;
 			return Serialize(new
 			{
 				shown = panel.Visible,

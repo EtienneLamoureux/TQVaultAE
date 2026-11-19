@@ -77,7 +77,7 @@ internal static partial class AutomationTools
 		public static string RecentSounds([Description("Number of sounds (default 20).")] int n = 20)
 			=> Serialize(new
 			{
-				soundsEnabled = Program.ServiceProvider.GetService(typeof(TQVaultAE.Application.Contracts.Services.ISoundService)) is RecordingSoundService recorder
+				soundsEnabled = Services.SoundService is RecordingSoundService recorder
 					? recorder.SoundsEnabled
 					: (bool?)null,
 				sounds = RecordingSoundService.Last(Math.Clamp(n, 1, 200)).Select(DescribeSound),

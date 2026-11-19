@@ -17,7 +17,7 @@ internal static partial class AutomationTools
 	[Description("Translates text tags with the loaded text database (game, expansions, then the custom map's strings): an empty text means the tag is unknown.")]
 	public static string GameText([Description("Text tags, separated by commas or new lines, like 'tagSkillName01'.")] string tags)
 	{
-		var database = Program.ServiceProvider.GetRequiredService<IDatabase>();
+		var database = Service<IDatabase>();
 		return Serialize(tags.Split([',', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
 			.Select(tag => new { tag, text = database.GetFriendlyName(tag) }));
 	}

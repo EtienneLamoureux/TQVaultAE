@@ -91,7 +91,7 @@ internal static partial class AutomationTools
 					?? throw new McpException($"Unknown form '{name}'. Forms: {string.Join(", ", FormTypes().Select(t => t.Name))}");
 
 				// As the app makes it (FormFactory), so a dialog designed at zoom 1 gets the user's zoom.
-				var form = Program.ServiceProvider.GetRequiredService<FormFactory>().Create(type);
+				var form = Services.Forms.Create(type);
 
 				// A transient registration returns a new instance on each call.
 				var other = (Form)Program.ServiceProvider.GetRequiredService(type);

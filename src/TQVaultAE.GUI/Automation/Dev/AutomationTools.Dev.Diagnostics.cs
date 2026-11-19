@@ -35,7 +35,7 @@ internal static partial class AutomationTools
 				return Serialize(new
 				{
 					currentBag = stash.ShownBag(),
-					zoom = Program.ServiceProvider.GetRequiredService<IUIService>().Scale,
+					zoom = Services.UIService.Scale,
 					before = before is null ? null : new { source = beforeIsSource, replaced = !ReferenceEquals(before, after), disposed = IsDisposed(before) },
 					after = after is null ? null : new { source = stash.AutomationIsSourceBackground(after), size = IsDisposed(after) ? null : (object)after.Size },
 				});
@@ -53,7 +53,7 @@ internal static partial class AutomationTools
 
 				return Serialize(new
 				{
-					baseFont = Describe(Program.ServiceProvider.GetRequiredService<IFontService>().GetFontLight(11F)),
+					baseFont = Describe(Services.FontService.GetFontLight(11F)),
 					nameFont = Describe(panel.NameFont),
 					classFont = Describe(panel.ClassFont),
 					textFont = Describe(panel.TextFont),

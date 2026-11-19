@@ -31,7 +31,7 @@ internal static partial class AutomationTools
 				if (drag.IsActive)
 					throw new McpException("An item is already being dragged. Use drop_item or cancel_drag first.");
 
-				var provider = Program.ServiceProvider.GetRequiredService<IItemProvider>();
+				var provider = Services.ItemProvider;
 				var sack = named.Panel.Sack!;
 
 				// Copy the save blocks of an existing item, as the app does for the items it creates.
@@ -59,7 +59,7 @@ internal static partial class AutomationTools
 					throw new McpException($"Unknown records: {missing.Trim()}.");
 
 				// The item size in cells comes from its bitmap.
-				Program.ServiceProvider.GetRequiredService<IUIService>().GetBitmap(item);
+				Services.UIService.GetBitmap(item);
 
 
 				// A modified drag has no source cell: like Duplicate, it can only be dropped.
