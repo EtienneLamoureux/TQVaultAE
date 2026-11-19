@@ -109,7 +109,6 @@ public partial class BagButtonLabelTooltip : BaseTooltip
 	public static BagButtonLabelTooltip? ShowTooltip(GuiServices services, BagButtonBase anchorControl)
 	{
 		var label = anchorControl.Sack?.BagButtonIconInfo?.Label;
-		if (anchorControl is null) return null;
 		if (string.IsNullOrWhiteSpace(label)) return null;
 
 		lock (syncObj)
