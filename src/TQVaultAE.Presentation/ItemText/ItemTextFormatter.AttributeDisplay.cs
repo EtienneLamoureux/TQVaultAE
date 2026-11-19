@@ -522,8 +522,7 @@ public partial class ItemTextFormatter
 		}
 
 		// The value of a variable at the index shown (the level of a skill, the shard count of a relic), 0 when missing.
-		float ValueAt(Variable? variable)
-			=> variable is null || variable.NumberOfValues == 0 ? 0F : variable.GetSingle(Math.Min(variable.NumberOfValues - 1, variableNumber));
+		float ValueAt(Variable? variable) => ShownSingle(variable, variableNumber);
 
 		// The game loads a damage attribute only with its min, and an effect over time only with its duration too, and
 		// writes nothing at a level where one of them is zero: no line for a chance alone (Frightening Power's vitality
@@ -536,9 +535,8 @@ public partial class ItemTextFormatter
 		bool dropZero = skillLevelIndex is not null;
 
 		// Figure out the label string
-		string? labelTag = null;
 		TQColor? labelColor = null;
-		string? label = GetLabelAndColorFromTag(itm, data, recordId, ref labelTag, ref labelColor);
+		string? label = GetLabelAndColorFromTag(itm, data, recordId, ref labelColor);
 
 		if (USettings.ItemDebugLevel > 1)
 		{
@@ -694,7 +692,7 @@ public partial class ItemTextFormatter
 
 		string? modifierChance = null;
 		if (modifierChanceVar is not null)
-			modifierChance = GetChanceModifier(variableNumber, modifierChanceVar);
+			modifierChance = GetChance(variableNumber, modifierChanceVar);
 
 		numberOfStrings = 0;
 		if (!string.IsNullOrEmpty(modifierChance))
@@ -852,18 +850,8 @@ public partial class ItemTextFormatter
 					if (!TranslationService.TryTranslateXTag(string.Concat("tagQualifyingDamage", damageTag), out var damageType))
 						damageType = damageTag;
 
-					if (!TranslationService.TryTranslateXTag("formatQualifyingDamage", out var formatSpec))
-						formatSpec = "{0}";
-					else
-					{
-						if (USettings.ItemDebugLevel > 2)
-							Log.LogDebug("Item.formatspec (Damage type) = {FormatSpec}", formatSpec);
-
-						formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-					}
-
 					color = ItemStyle.Mundane.TQColor();
-					line = Format(formatSpec, damageType);
+					line = Format(this.GameFormat("formatQualifyingDamage", "{0}"), damageType);
 				}
 
 				// We have no line so just show the raw attribute
@@ -931,19 +919,11 @@ public partial class ItemTextFormatter
 	/// </summary>
 	/// <param name="data">ItemAttributesData structure for the attribute</param>
 	/// <param name="recordId">string containing the database record id</param>
-	/// <param name="labelTag">the label tag</param>
 	/// <param name="labelColor">the label color which gets modified here</param>
 	/// <returns>string containing the label.</returns>
-	private string? GetLabelAndColorFromTag(Item itm, ItemAttributesData data, RecordId recordId, ref string? labelTag, ref TQColor? labelColor)
+	private string GetLabelAndColorFromTag(Item itm, ItemAttributesData data, RecordId recordId, ref TQColor? labelColor)
 	{
-		labelTag = ItemAttributeProvider.GetAttributeTextTag(data);
-		string label;
-
-		if (string.IsNullOrEmpty(labelTag))
-		{
-			labelTag = string.Concat("?", data.FullAttribute, "?");
-			labelColor = ItemStyle.Legendary.TQColor();
-		}
+		string labelTag = this.AttributeLabelTag(data, ref labelColor);
 
 		// if itm is an Armor effect and we are not armor, then change it to bonus
 		if (labelTag.Equals("DEFENSEABSORPTIONPROTECTION", noCase))
@@ -960,12 +940,6 @@ public partial class ItemTextFormatter
 			}
 		}
 
-		if (!TranslationService.TryTranslateXTag(labelTag, out label))
-		{
-			label = string.Concat("?", labelTag, "?");
-			labelColor = ItemStyle.Legendary.TQColor();
-		}
-
-		return label;
+		return this.TranslateLabel(labelTag, ref labelColor);
 	}
 }

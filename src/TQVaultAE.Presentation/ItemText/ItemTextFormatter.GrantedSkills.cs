@@ -72,6 +72,15 @@ public partial class ItemTextFormatter
 	}
 
 	/// <summary>
+	/// The translated name of a skill as shown: its buff's for a buff skill (<see cref="DisplayedSkillRecord"/>).
+	/// </summary>
+	/// <returns><see langword="null"/> when the record is missing or unnamed, or its name has no translation.</returns>
+	private string? TranslatedSkillName(RecordId skillId)
+		=> this.DisplayedSkillRecord(skillId) is { } shown && TranslationService.TryTranslateXTag(shown.GetString("skillDisplayName", 0), out var name)
+			? name
+			: null;
+
+	/// <summary>
 	/// What the game's skill window leaves out of a skill's effects: the projectile mechanics (speed, reach, spread), the
 	/// time a charge level lasts, the pierce ratio, the "can't be dispelled" and "special animation" flags, the layout of
 	/// a ring of projectiles and the skill linking flag.
@@ -133,8 +142,8 @@ public partial class ItemTextFormatter
 		if (cooldown > 0)
 		{
 			var recharge = SkillTooltipLayout.Recharge(cooldown, seconds, context.CooldownReduction + reduction, context.CooldownReductionCap);
-			var format = TranslationService.TryTranslateXTag("CooldownTime", out var text) ? text : "^a{%.1f0} Second(s) Recharge";
-			lines.Add(("skillCooldownTime", plain + Format(ItemAttributeProvider.ConvertFormat(format), recharge), seconds != 0 || reduction != 0));
+			var format = this.GameFormat("CooldownTime") ?? ItemAttributeProvider.ConvertFormat("^a{%.1f0} Second(s) Recharge");
+			lines.Add(("skillCooldownTime", plain + Format(format, recharge), seconds != 0 || reduction != 0));
 		}
 
 		if (manaCost > 0)
@@ -190,10 +199,7 @@ public partial class ItemTextFormatter
 
 		string[] description = this.GetSkillDescription(shown);
 
-		if (!TranslationService.TryTranslateXTag("MenuLevel", out var levelFormat))
-			levelFormat = "Level:   {0}";
-		else
-			levelFormat = ItemAttributeProvider.ConvertFormat(levelFormat);
+		string levelFormat = this.GameFormat("MenuLevel", "Level:   {0}");
 
 		var activation = this.GetSkillActivationText(autoController);
 
@@ -321,11 +327,11 @@ public partial class ItemTextFormatter
 		string? chanceLine = null;
 		if (castName is null)
 		{
-			if (chance > 0 && TranslationService.TryTranslateXTag("GlobalPercentChanceOfAllTag", out var chanceOfAll))
-				chanceLine = $"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceOfAll), chance)}";
+			if (chance > 0 && this.GameFormat("GlobalPercentChanceOfAllTag") is { } chanceOfAll)
+				chanceLine = $"{text}{Format(chanceOfAll, chance)}";
 		}
-		else if (chance > 0 && TranslationService.TryTranslateXTag("ChanceOfTag", out var chanceFormat))
-			chanceLine = $"{text}{Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance)} {name}{castName}";
+		else if (chance > 0 && this.GameFormat("ChanceOfTag") is { } chanceFormat)
+			chanceLine = $"{text}{Format(chanceFormat, chance)} {name}{castName}";
 		else
 			chanceLine = $"{name}{castName}";
 
@@ -377,9 +383,9 @@ public partial class ItemTextFormatter
 		// A skill that also casts a named skill writes its chance with that skill (GetCastSkill). The skill whose kills
 		// trigger it (triggeringSkill) follows the chance: "33.0% Chance to be Used : Shen Pao".
 		if (string.IsNullOrEmpty(skillRecord.GetString("skillCastName", 0))
-			&& TranslationService.TryTranslateXTag("SkillChanceWeightFloat", out var chanceFormat))
+			&& this.GameFormat("SkillChanceWeightFloat") is { } chanceFormat)
 		{
-			var chanceLine = Format(ItemAttributeProvider.ConvertFormat(chanceFormat), chance);
+			var chanceLine = Format(chanceFormat, chance);
 			if (this.TriggeringSkillName(skillRecord) is { } trigger)
 				chanceLine += " : " + trigger;
 			attributes.Add($"{text}{chanceLine}");
@@ -407,10 +413,7 @@ public partial class ItemTextFormatter
 	}
 
 	/// <summary>The value of a skill parameter at a level: one value per level, the last one beyond.</summary>
-	private static float ValueAtLevel(Variable? variable, int level)
-		=> variable is null || variable.NumberOfValues == 0
-			? 0F
-			: variable.GetSingle(Math.Clamp(level - 1, 0, variable.NumberOfValues - 1));
+	private static float ValueAtLevel(Variable? variable, int level) => ShownSingle(variable, level - 1);
 
 	/// <summary>Drops the blank lines at both ends; the ones between groups stay as separators.</summary>
 	private static string[] TrimEmptyLines(List<string> lines)

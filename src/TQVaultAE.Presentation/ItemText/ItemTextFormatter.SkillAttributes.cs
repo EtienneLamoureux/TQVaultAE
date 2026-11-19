@@ -28,23 +28,9 @@ public partial class ItemTextFormatter
 	/// <returns>formatted string for + to all skills</returns>
 	private string GetAugmentAllLevel(int variableNumber, Variable variable, ref TQColor? color)
 	{
-		string tag = "ItemAllSkillIncrement";
-
-		if (!TranslationService.TryTranslateXTag(tag, out var formatSpec))
-		{
-			formatSpec = "?+{0} to all skills?";
-			color = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (augment level) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-			color = ItemStyle.Epic.TQColor();
-		}
-
-		return Format(formatSpec, variable[System.Math.Min(variable.NumberOfValues - 1, variableNumber)]);
+		string? formatSpec = this.GameFormat("ItemAllSkillIncrement");
+		color = formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Epic.TQColor();
+		return Format(formatSpec ?? "?+{0} to all skills?", ShownValue(variable, variableNumber));
 	}
 
 	/// <summary>
@@ -67,41 +53,16 @@ public partial class ItemTextFormatter
 		if (string.IsNullOrEmpty(augmentMasteryValue))
 			return string.Empty;
 
-		string? skillName = null;
-		DBRecordCollection? skillRecord = Database.GetRecordFromFile(augmentMasteryValue);
-
-		if (skillRecord is not null)
-		{
-			string nameTag = skillRecord.GetString("skillDisplayName", 0);
-
-			if (!string.IsNullOrEmpty(nameTag))
-				TranslationService.TryTranslateXTag(nameTag, out skillName);
-		}
-
+		string? skillName = this.TranslatedSkillName(augmentMasteryValue);
 		if (string.IsNullOrEmpty(skillName))
 		{
 			skillName = PathIO.GetFileNameWithoutExtension(augmentMasteryValue);
 			font = ItemStyle.Legendary.TQColor();
 		}
 
-		// now get the formatSpec
-		if (!TranslationService.TryTranslateXTag("ItemMasteryIncrement", out var formatSpec))
-		{
-			formatSpec = "?+{0} to skills in {1}?";
-			if (font is null)
-				font = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (augment mastery) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-			if (!font.HasValue)
-				font = ItemStyle.Epic.TQColor();
-		}
-
-		return Format(formatSpec, variable[0], skillName);
+		string? formatSpec = this.GameFormat("ItemMasteryIncrement");
+		font ??= formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Epic.TQColor();
+		return Format(formatSpec ?? "?+{0} to skills in {1}?", variable[0], skillName);
 	}
 
 	/// <summary>
@@ -122,87 +83,19 @@ public partial class ItemTextFormatter
 
 		if (!string.IsNullOrEmpty(skillRecordID))
 		{
-			string? skillName = null;
-			string? nameTag = null;
-			DBRecordCollection? skillRecord = Database.GetRecordFromFile(skillRecordID);
-			if (skillRecord is not null)
-			{
-				// Changed by VillageIdiot
-				// for augmenting buff skills
-				string buffSkillName = skillRecord.GetString("buffSkillName", 0);
-				if (string.IsNullOrEmpty(buffSkillName))
-				{
-					// Not a buff so look up the name
-					nameTag = skillRecord.GetString("skillDisplayName", 0);
-					if (!string.IsNullOrEmpty(nameTag))
-						TranslationService.TryTranslateXTag(nameTag, out skillName);
-					else
-					{
-						// Added by VillageIdiot
-						// Check to see if this is a pet skill
-						nameTag = skillRecord.GetString("Class", 0);
-						if (nameTag.Contains("PetModifier"))
-						{
-							string petSkillID = skillRecord.GetString("petSkillName", 0);
-							DBRecordCollection? petSkillRecord = Database.GetRecordFromFile(petSkillID);
-							if (petSkillRecord is not null)
-							{
-								// Try to get display name
-								string petNameTag = petSkillRecord.GetString("skillDisplayName", 0);
-								if (!string.IsNullOrEmpty(petNameTag))
-									TranslationService.TryTranslateXTag(petNameTag, out skillName);
-								else
-								{ // It may fail because there is another level of redirection (records\xpack\skills\dream\nightmare_petmodifier_mastermind.dbr)
-									petNameTag = petSkillRecord.GetString("buffSkillName", 0);
-									if (!string.IsNullOrWhiteSpace(petNameTag))
-									{
-										var petSkillRecordLvl2 = Database.GetRecordFromFile(petNameTag);
-										if (petSkillRecordLvl2 is not null)
-										{
-											petNameTag = petSkillRecordLvl2.GetString("skillDisplayName", 0);
-											if (!string.IsNullOrEmpty(petNameTag))
-												TranslationService.TryTranslateXTag(petNameTag, out skillName);
-
-										}
-									}
-								}
-
-							}
-						}
-					}
-				}
-				else
-				{
-					// This is a buff skill
-					DBRecordCollection? buffSkillRecord = Database.GetRecordFromFile(buffSkillName);
-					if (buffSkillRecord is not null)
-					{
-						nameTag = buffSkillRecord.GetString("skillDisplayName", 0);
-						if (!string.IsNullOrEmpty(nameTag))
-							TranslationService.TryTranslateXTag(nameTag, out skillName);
-					}
-				}
-			}
+			// A buff skill is named by its buff; a pet upgrade without a name of its own by the skill it gives the pet
+			// (petSkillName), itself maybe named by its buff (records\xpack\skills\dream\nightmare_petmodifier_mastermind.dbr).
+			string? skillName = this.TranslatedSkillName(skillRecordID);
+			if (skillName is null && Database.GetRecordFromFile(skillRecordID) is { } skillRecord
+				&& skillRecord.GetString("Class", 0).Contains("PetModifier"))
+				skillName = this.TranslatedSkillName(skillRecord.GetString("petSkillName", 0));
 
 			if (string.IsNullOrEmpty(skillName))
 				skillName = PathIO.GetFileNameWithoutExtension(skillRecordID);
 
-			// now get the formatSpec
-			if (!TranslationService.TryTranslateXTag("ItemSkillIncrement", out var formatSpec))
-			{
-				formatSpec = "?+{0} to skill {1}?";
-				font = ItemStyle.Legendary.TQColor();
-			}
-			else
-			{
-				if (USettings.ItemDebugLevel > 2)
-					Log.LogDebug("Item.formatspec (item skill) = {FormatSpec}", formatSpec);
-
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-				font = ItemStyle.Epic.TQColor();
-			}
-
-			line = this.Format(formatSpec, variable[0], skillName);
+			string? formatSpec = this.GameFormat("ItemSkillIncrement");
+			font = formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Epic.TQColor();
+			line = this.Format(formatSpec ?? "?+{0} to skill {1}?", variable[0], skillName);
 		}
 
 		return line;
@@ -234,35 +127,8 @@ public partial class ItemTextFormatter
 
 			AddTextLine(itm, results, $"{font?.ColorTag()}{skillTag}");
 
-			string? skillName = null;
-			string? nameTag = null;
-
-			// Changed by VillageIdiot
-			// Let's actually test if there is a buff skill
-			string buffSkillName = skillRecord.GetString("buffSkillName", 0);
-			if (string.IsNullOrEmpty(buffSkillName))
-			{
-				nameTag = skillRecord.GetString("skillDisplayName", 0);
-				if (!string.IsNullOrEmpty(nameTag))
-				{
-					if (!TranslationService.TryTranslateXTag(nameTag, out skillName))
-						skillName = PathIO.GetFileNameWithoutExtension(variable.GetString(0));
-				}
-			}
-			else
-			{
-				// This is a buff skill
-				DBRecordCollection? buffSkillRecord = Database.GetRecordFromFile(buffSkillName);
-				if (buffSkillRecord is not null)
-				{
-					nameTag = buffSkillRecord.GetString("skillDisplayName", 0);
-					if (!string.IsNullOrEmpty(nameTag))
-					{
-						if (!TranslationService.TryTranslateXTag(nameTag, out skillName))
-							skillName = PathIO.GetFileNameWithoutExtension(variable.GetString(0));
-					}
-				}
-			}
+			// A buff skill is named by its buff; an unnamed skill writes only its activation.
+			string? skillName = this.DisplayedSkillRecord(grantedSkillId) is { } shown ? this.SkillDisplayName(shown, grantedSkillId) : null;
 
 			string activationText = this.GetSkillActivationText(record.GetString("itemSkillAutoController", 0));
 
@@ -392,9 +258,7 @@ public partial class ItemTextFormatter
 	/// </summary>
 	/// <returns><see langword="null"/> when the game text has no cost format.</returns>
 	private string? FormatSkillCost(float value, string label)
-		=> TranslationService.TryTranslateXTag(SkillCostFormatTag, out var format)
-			? Format(ItemAttributeProvider.ConvertFormat(format), value, label)
-			: null;
+		=> this.GameFormat(SkillCostFormatTag) is { } format ? Format(format, value, label) : null;
 
 	/// <summary>
 	/// Gets the skill effects string
@@ -408,18 +272,7 @@ public partial class ItemTextFormatter
 	/// <returns>formatted skill effect string</returns>
 	private string? GetSkillEffect(ItemAttributesData baseAttributeData, int variableNumber, Variable variable, ItemAttributesData currentAttributeData, string? line, ref TQColor? color)
 	{
-		string labelTag = ItemAttributeProvider.GetAttributeTextTag(baseAttributeData);
-		if (string.IsNullOrEmpty(labelTag))
-		{
-			labelTag = string.Concat("?", baseAttributeData.FullAttribute, "?");
-			color = ItemStyle.Legendary.TQColor();
-		}
-
-		if (!TranslationService.TryTranslateXTag(labelTag, out var label))
-		{
-			label = string.Concat("?", labelTag, "?");
-			color = ItemStyle.Legendary.TQColor();
-		}
+		string label = this.TranslateLabel(this.AttributeLabelTag(baseAttributeData, ref color), ref color);
 
 		if (USettings.ItemDebugLevel > 2)
 			Log.LogDebug("Item.label (scroll) = {Label}", label);
@@ -438,31 +291,16 @@ public partial class ItemTextFormatter
 		else if (currentAttributeData.FullAttribute.EndsWith("Radius", noCase))
 			formatSpecTag = "SkillDistanceFormat";
 
-		if (!string.IsNullOrEmpty(formatSpecTag))
-		{
-			if (!TranslationService.TryTranslateXTag(formatSpecTag, out formatSpec))
-			{
-				formatSpec = "?{0} {1}?";
-				color = ItemStyle.Legendary.TQColor();
-			}
-			else
-			{
-				if (USettings.ItemDebugLevel > 2)
-					Log.LogDebug("Item.formatspec (2 parameter) = {FormatSpec}", formatSpec);
-
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-				color = ItemStyle.Epic.TQColor();
-			}
-		}
-
 		if (string.IsNullOrEmpty(formatSpecTag))
 		{
 			color = ItemStyle.Epic.TQColor();
-			line = Format(label, variable[Math.Min(variable.NumberOfValues - 1, variableNumber)]);
+			line = Format(label, ShownValue(variable, variableNumber));
 		}
 		else
 		{
-			line = Format(formatSpec, variable[Math.Min(variable.NumberOfValues - 1, variableNumber)], label);
+			formatSpec = this.GameFormat(formatSpecTag);
+			color = formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Epic.TQColor();
+			line = Format(formatSpec ?? "?{0} {1}?", ShownValue(variable, variableNumber), label);
 		}
 
 		return line;
@@ -526,11 +364,7 @@ public partial class ItemTextFormatter
 								// Show granted skill level
 								if (this.USettings.ShowSkillLevel)
 								{
-									if (!TranslationService.TryTranslateXTag("MenuLevel", out var formatSpec))
-										formatSpec = "Level:   {0}";
-									else
-										formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
+									string formatSpec = this.GameFormat("MenuLevel", "Level:   {0}");
 									int skillLevel = record.GetInt32("itemSkillLevel", 0);
 									if (skillLevel > 0)
 									{
@@ -559,11 +393,7 @@ public partial class ItemTextFormatter
 								// Show granted skill level
 								if (this.USettings.ShowSkillLevel)
 								{
-									if (!TranslationService.TryTranslateXTag("MenuLevel", out var formatSpec))
-										formatSpec = "Level:   {0}";
-									else
-										formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
+									string formatSpec = this.GameFormat("MenuLevel", "Level:   {0}");
 									int skillLevel = record.GetInt32("itemSkillLevel", 0);
 									if (skillLevel > 0)
 									{

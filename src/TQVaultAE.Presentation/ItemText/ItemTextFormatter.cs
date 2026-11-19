@@ -130,6 +130,60 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 	}
 
 	/// <summary>
+	/// The game's text of <paramref name="tag"/> as a .NET format (<see cref="IItemAttributeProvider.ConvertFormat"/>), or
+	/// <see langword="null"/> when the game has no such text.
+	/// </summary>
+	private string? GameFormat(string tag)
+	{
+		if (!this.TranslationService.TryTranslateXTag(tag, out var text))
+			return null;
+
+		if (this.USettings.ItemDebugLevel > 2)
+			this.Log.LogDebug("Item.formatspec ({Tag}) = {FormatSpec}", tag, text);
+
+		return this.ItemAttributeProvider.ConvertFormat(text);
+	}
+
+	/// <summary>The game's format of <paramref name="tag"/>, else <paramref name="fallback"/> (a .NET format).</summary>
+	private string GameFormat(string tag, string fallback) => this.GameFormat(tag) ?? fallback;
+
+	/// <summary>
+	/// The index of the value shown for a variable that has one value per level or per relic shard (the skill level, the
+	/// relic's shard count): the last one beyond.
+	/// </summary>
+	private static int ShownIndex(Variable variable, int index) => Math.Max(0, Math.Min(variable.NumberOfValues - 1, index));
+
+	/// <summary>The value at <see cref="ShownIndex"/>.</summary>
+	private static object ShownValue(Variable variable, int index) => variable[ShownIndex(variable, index)];
+
+	/// <summary>The value at <see cref="ShownIndex"/> as a number; 0 for a missing variable or one without values.</summary>
+	private static float ShownSingle(Variable? variable, int index)
+		=> variable is null || variable.NumberOfValues == 0 ? 0F : variable.GetSingle(ShownIndex(variable, index));
+
+	/// <summary>
+	/// The text tag of an attribute's label, or "?attribute?" in the legendary colour when the attribute has none.
+	/// </summary>
+	private string AttributeLabelTag(ItemAttributesData data, ref TQColor? color)
+	{
+		string tag = this.ItemAttributeProvider.GetAttributeTextTag(data);
+		if (!string.IsNullOrWhiteSpace(tag))
+			return tag;
+
+		color = ItemStyle.Legendary.TQColor();
+		return string.Concat("?", data.FullAttribute, "?");
+	}
+
+	/// <summary>The game's text of a label tag, or "?tag?" in the legendary colour when the game has none.</summary>
+	private string TranslateLabel(string labelTag, ref TQColor? color)
+	{
+		if (this.TranslationService.TryTranslateXTag(labelTag, out var label))
+			return label;
+
+		color = ItemStyle.Legendary.TQColor();
+		return string.Concat("?", labelTag, "?");
+	}
+
+	/// <summary>
 	/// <see cref="ITranslationService.TryTranslateXTag"/> for a <see cref="ToFriendlyNameResult"/> property, which
 	/// cannot be an <c>out</c> argument: <paramref name="assign"/> always receives the translation, as the out value did.
 	/// </summary>
@@ -243,15 +297,8 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 					res.RelicShard = labelRelic;
 
 				var labelRelicPattern = "{0} - {1} / {2}";
-				if (this.TryTranslateXTag("tagAnimalPartRatio", v => res.AnimalPartRatio = v))
-					res.AnimalPartRatio = ItemAttributeProvider.ConvertFormat(res.AnimalPartRatio!);
-				else
-					res.AnimalPartRatio = labelRelicPattern;
-
-				if (this.TryTranslateXTag("tagRelicRatio", v => res.RelicRatio = v))
-					res.RelicRatio = ItemAttributeProvider.ConvertFormat(res.RelicRatio!);
-				else
-					res.RelicRatio = labelRelicPattern;
+				res.AnimalPartRatio = this.GameFormat("tagAnimalPartRatio", labelRelicPattern);
+				res.RelicRatio = this.GameFormat("tagRelicRatio", labelRelicPattern);
 			}
 
 			res.BaseItemId = k.Item.BaseItemId;
@@ -330,9 +377,7 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 						res.ArtifactRecipe = "Recipe";
 
 					// Get Reagents format
-					string reagents = TranslationService.TryTranslateXTag("xtagArtifactReagents", out var reagentsText)
-						? ItemAttributeProvider.ConvertFormat(reagentsText)
-						: "Required Reagents  ({0}/{1})";
+					string reagents = this.GameFormat("xtagArtifactReagents", "Required Reagents  ({0}/{1})");
 
 					// it looks like the formulae reagents is hard coded at 3
 					res.FormulaeFormat = Format(reagents, (object)0, 3);

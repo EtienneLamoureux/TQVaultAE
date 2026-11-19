@@ -47,10 +47,7 @@ public partial class ItemTextFormatter
 		SortedList<string, Variable> requirementVariables = this.ItemProvider.GetRequirementVariables(itm);
 
 		// Get the format string to use to list a requirement
-		if (!TranslationService.TryTranslateXTag("MeetsRequirement", out var requirementFormat))
-			requirementFormat = "?Required? {0}: {1:f0}";
-		else
-			requirementFormat = ItemAttributeProvider.ConvertFormat(requirementFormat);
+		string requirementFormat = this.GameFormat("MeetsRequirement", "?Required? {0}: {1:f0}");
 
 		// Now combine it all with spaces between
 		List<string> requirements = [];
