@@ -38,7 +38,6 @@ ItemSet.Translations (3)
   | tagSetHunter => {^G}Hunter's Garb
   | records\test\set_hunter_helm.dbr => {^Y}    Hunter's Hood
   | records\test\set_hunter_greaves.dbr => {^Y}    Hunter's Boots
-BaseItemInfoRecords: records\test\set_hunter_helm.dbr
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (0)
@@ -102,7 +101,6 @@ ItemSet.Translations (3)
   | tagSetHunter => {^G}Hunter's Garb
   | records\test\set_hunter_helm.dbr => {^Y}    Hunter's Hood
   | records\test\set_hunter_greaves.dbr => {^Y}    Hunter's Boots
-BaseItemInfoRecords: records\test\set_hunter_helm.dbr
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (0)

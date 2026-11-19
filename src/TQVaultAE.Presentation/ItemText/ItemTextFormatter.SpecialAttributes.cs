@@ -31,22 +31,11 @@ public partial class ItemTextFormatter
 			if (attributeList.Count > 1)
 				tag = "GlobalPercentChanceOfOneTag";
 
-			if (!TranslationService.TryTranslateXTag(tag, out var formatSpec))
-			{
-				// The chance stays a placeholder: formatting the tag into "{0:f1}% ?{0}?" lost the value.
-				formatSpec = string.Concat("{0:f1}% ?", tag, "?");
-				font = ItemStyle.Legendary.TQColor();
-			}
-			else
-			{
-				if (USettings.ItemDebugLevel > 2)
-					Log.LogDebug("Item.formatspec (chance of one) = {FormatSpec}", formatSpec);
+			string? formatSpec = this.GameFormat(tag);
+			font = formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Epic.TQColor();
 
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-				font = ItemStyle.Epic.TQColor();
-			}
-
-			line = Format(formatSpec, v[System.Math.Min(v.NumberOfValues - 1, varNum)]);
+			// The chance stays a placeholder: formatting the tag into "{0:f1}% ?{0}?" lost the value.
+			line = Format(formatSpec ?? string.Concat("{0:f1}% ?", tag, "?"), ShownValue(v, varNum));
 		}
 
 		return line;
@@ -86,16 +75,7 @@ public partial class ItemTextFormatter
 				// Optimized: use span-based ToFirstCharUpperCase
 				string formatTag = d.FullAttribute.AsSpan().ToFirstCharUpperCase();
 
-				if (!TranslationService.TryTranslateXTag(formatTag, out var formatSpec))
-					formatSpec = string.Concat(formatTag, " {0} {1}");
-				else
-				{
-					if (USettings.ItemDebugLevel > 2)
-						Log.LogDebug("Item.formatspec (race bonus) = {FormatSpec}", formatSpec);
-
-					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-				}
-
+				string formatSpec = this.GameFormat(formatTag, string.Concat(formatTag, " {0} {1}"));
 
 				if (line is not null)
 				{
@@ -115,10 +95,9 @@ public partial class ItemTextFormatter
 						line = string.Concat(globalIndent, line);
 
 					results.Add(line);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
 				}
 
-				line = Format(formatSpec, v[Math.Min(v.NumberOfValues - 1, varNum)], finalRace);
+				line = Format(formatSpec, ShownValue(v, varNum), finalRace);
 				color = ItemStyle.Epic.TQColor();
 			}
 		}
@@ -156,14 +135,7 @@ public partial class ItemTextFormatter
 		}
 		else if (attributeData.FullAttribute.Equals("artifactCreationCost", StringComparison.Ordinal))
 		{
-			if (!TranslationService.TryTranslateXTag("xtagArtifactCost", out var formatSpec))
-				formatSpec = "Gold Cost: {0}";
-			else
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (Artifact cost) = {FormatSpec}", formatSpec);
-
+			string formatSpec = this.GameFormat("xtagArtifactCost", "Gold Cost: {0}");
 			font = ItemStyle.Rare.TQColor();
 			results.Add(string.Empty);
 			line = Format(formatSpec, string.Format(CultureInfo.CurrentCulture, "{0:N0}", variable[0]));
@@ -184,24 +156,12 @@ public partial class ItemTextFormatter
 	{
 		string? line = null;
 
-		string labelTag = ItemAttributeProvider.GetAttributeTextTag(attributeData);
-		if (string.IsNullOrWhiteSpace(labelTag))
-		{
-			labelTag = string.Concat("?", attributeData.FullAttribute, "?");
-			color = ItemStyle.Legendary.TQColor();
-		}
-
-		if (!TranslationService.TryTranslateXTag(labelTag, out var label))
-		{
-			label = string.Concat("?", labelTag, "?");
-			color = ItemStyle.Legendary.TQColor();
-		}
-
+		string label = this.TranslateLabel(this.AttributeLabelTag(attributeData, ref color), ref color);
 		label = ItemAttributeProvider.ConvertFormat(label);
 		if (label is not null && label.Contains('{'))
 		{
 			// we have a format string.  try using it.
-			line = Format(label, variable[Math.Min(variable.NumberOfValues - 1, variableNumber)]);
+			line = Format(label, ShownValue(variable, variableNumber));
 			if (!color.HasValue)
 				color = ItemStyle.Epic.TQColor();
 		}

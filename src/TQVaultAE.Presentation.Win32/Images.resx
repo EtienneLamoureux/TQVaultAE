@@ -121,9 +121,6 @@
 	<data name="TQVIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Icon\app.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
-	<data name="AboutGraphic" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\aboutgraphic.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
 	<data name="autosortdown01" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\autosortdown01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
@@ -133,9 +130,6 @@
 	<data name="autosortup01" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\autosortup01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
-	<data name="EquipmentPanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\EquipmentPanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
 	<data name="inventorybagdown01" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\inventorybagdown01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
@@ -144,9 +138,6 @@
 	</data>
 	<data name="inventorybagup01" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\inventorybagup01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="MainForm_Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\MainForm Background.PNG;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="rotatedautosortdown01" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\rotatedautosortdown01.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -193,9 +184,6 @@
 	<data name="tqmedallion" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\tqmedallion.JPG;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
-	<data name="tqmedalliondoor" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\tqmedalliondoor.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
 	<data name="caravan_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\caravan_bg.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
@@ -207,12 +195,6 @@
 	</data>
 	<data name="MainButtonUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\mainbuttonup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="MainForm_NewBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\mainform_newbackground.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="Majestic_Chest" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\majestic chest.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="Majestic_Chest_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\majestic chest_small.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -232,44 +214,8 @@
 	<data name="BorderTop" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\bordertop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
-	<data name="ButtonMaximizeDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonmaximizedown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonMaximizeOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonmaximizeover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonMaximizeUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonmaximizeup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonMinimizeDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonminimizedown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonMinimizeOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonminimizeover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonMinimizeUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonminimizeup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonCloseDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttonclosedown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonCloseOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttoncloseover.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="ButtonCloseUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\buttoncloseup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="Equipment_bg_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\equipment_bg_new.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="NewAboutGraphic" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\newaboutgraphic.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
 	<data name="NewSplashScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\newsplashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-	</data>
-	<data name="SplashScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>Resources\Img\splashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
 	<data name="ProgressBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>Resources\Img\progressbar.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

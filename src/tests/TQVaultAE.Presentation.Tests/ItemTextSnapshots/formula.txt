@@ -37,20 +37,17 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\ItemArtifactFormula.dbr
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (0)
 RelicBonus2Attributes (0)
 ArtifactRecipe: Arcane Formula
-ArtifactReagents: Required Reagents ({0}/{1})
 FormulaeArtifactClass: Greater Artifact
 FormulaeArtifactName: Eye of Testing
 FormulaeFormat: {^O}Required Reagents (0/3)
 FormulaeArtifactAttributes (2)
   | {^B}+20 Strength
   | {^B}+150 Health
-FormulaeArtifactRecords: records\test\artifact_eye.dbr
 AttributesAll (5)
   |     Wolf Fang
   |     ?reagent2BaseName?: records\test\relic_ember.dbr
@@ -105,20 +102,17 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\ItemArtifactFormula.dbr
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (0)
 RelicBonus2Attributes (0)
 ArtifactRecipe: Arcane Formula
-ArtifactReagents: Required Reagents ({0}/{1})
 FormulaeArtifactClass: Greater Artifact
 FormulaeArtifactName: Eye of Testing
 FormulaeFormat: {^O}Required Reagents (0/3)
 FormulaeArtifactAttributes (2)
   | {^B}+20 Strength
   | {^B}+150 Health
-FormulaeArtifactRecords: records\test\artifact_eye.dbr
 AttributesAll (8)
   | ?Class?: ItemArtifactFormula
   | ?description?: tagFormulaEye

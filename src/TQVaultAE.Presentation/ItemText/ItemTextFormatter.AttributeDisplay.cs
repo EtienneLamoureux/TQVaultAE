@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Item.cs" company="None">
+// <copyright file="ItemTextFormatter.AttributeDisplay.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -18,30 +18,25 @@ public partial class ItemTextFormatter
 	/// <summary>
 	/// Gets the item's attributes from the database record.
 	/// </summary>
-	/// <remarks>
-	/// Changed by VillageIdiot
-	/// Added option to NOT translate the attributes to strings
-	/// </remarks>
 	/// <param name="record">DBRecord for the database record</param>
 	/// <param name="filtering">whether or not we are filtering strings</param>
 	/// <param name="recordId">string containing the database record id</param>
 	/// <param name="results">List for the results</param>
-	/// <param name="convertStrings">flag on whether we convert attributes to strings.</param>
 	/// <param name="lineSlots">Receives, for each line added to <paramref name="results"/>, where the game lists its attribute group.</param>
 	/// <param name="skillWindow">
 	/// The order and extra lines of the game's skill window, for a skill's effects: the groups follow
 	/// <see cref="SkillWindowAttributeOrder"/>, and the lines the skill window writes itself (a variable and its text, e.g.
 	/// the summon's life time) are placed where the game lists that variable.
 	/// </param>
-	private void GetAttributesFromRecord(Item itm, DBRecordCollection? record, bool filtering, RecordId recordId, List<string> results, bool convertStrings = true
+	private void GetAttributesFromRecord(Item itm, DBRecordCollection? record, bool filtering, RecordId recordId, List<string> results
 		, IReadOnlyDictionary<string, ValueRange>? valueRanges = null, List<string?>? lineRanges = null, int? skillLevelIndex = null
 		, List<GameAttributeSlot>? lineSlots = null, IReadOnlySet<string>? hiddenVariables = null
 		, SkillWindowLines? skillWindow = null)
 	{
 		if (USettings.ItemDebugLevel > 0)
 		{
-			Log.LogDebug("Item.GetAttributesFromRecord({Record}, {Filtering}, {RecordId}, {Results}, {ConvertStrings})"
-				, record, filtering, recordId, results, convertStrings
+			Log.LogDebug("Item.GetAttributesFromRecord({Record}, {Filtering}, {RecordId}, {Results})"
+				, record, filtering, recordId, results
 			);
 		}
 
@@ -251,10 +246,7 @@ public partial class ItemTextFormatter
 			if (ItemAttributeProvider.AttributeGroupIs(attrList, ItemAttributesEffectType.DamageQualifierEffect))
 				attrList.Sort(this.SortDamageQualifiers);
 
-			if (!convertStrings)
-				ConvertBareAttributeListToString(attrList, results);
-			else
-				ConvertAttributeListToString(itm, record, attrList, recordId, results, skillLevelIndex);
+			ConvertAttributeListToString(itm, record, attrList, recordId, results, skillLevelIndex);
 
 			if (lineSlots is not null)
 			{
@@ -530,8 +522,7 @@ public partial class ItemTextFormatter
 		}
 
 		// The value of a variable at the index shown (the level of a skill, the shard count of a relic), 0 when missing.
-		float ValueAt(Variable? variable)
-			=> variable is null || variable.NumberOfValues == 0 ? 0F : variable.GetSingle(Math.Min(variable.NumberOfValues - 1, variableNumber));
+		float ValueAt(Variable? variable) => ShownSingle(variable, variableNumber);
 
 		// The game loads a damage attribute only with its min, and an effect over time only with its duration too, and
 		// writes nothing at a level where one of them is zero: no line for a chance alone (Frightening Power's vitality
@@ -544,9 +535,8 @@ public partial class ItemTextFormatter
 		bool dropZero = skillLevelIndex is not null;
 
 		// Figure out the label string
-		string? labelTag = null;
 		TQColor? labelColor = null;
-		string? label = GetLabelAndColorFromTag(itm, data, recordId, ref labelTag, ref labelColor);
+		string? label = GetLabelAndColorFromTag(itm, data, recordId, ref labelColor);
 
 		if (USettings.ItemDebugLevel > 1)
 		{
@@ -682,7 +672,6 @@ public partial class ItemTextFormatter
 				amountOrDurationText = amountOrDurationText.InsertAfterColorPrefix(globalIndent);
 
 			results.Add(amountOrDurationText);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(amountOrDurationText);
 		}
 		else
 		{
@@ -703,7 +692,7 @@ public partial class ItemTextFormatter
 
 		string? modifierChance = null;
 		if (modifierChanceVar is not null)
-			modifierChance = GetChanceModifier(variableNumber, modifierChanceVar);
+			modifierChance = GetChance(variableNumber, modifierChanceVar);
 
 		numberOfStrings = 0;
 		if (!string.IsNullOrEmpty(modifierChance))
@@ -733,7 +722,6 @@ public partial class ItemTextFormatter
 				modifierText = $"{ItemStyle.Epic.TQColor().ColorTag()}{modifierText}";
 
 			results.Add(modifierText);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(modifierText);
 		}
 		else
 		{
@@ -862,18 +850,8 @@ public partial class ItemTextFormatter
 					if (!TranslationService.TryTranslateXTag(string.Concat("tagQualifyingDamage", damageTag), out var damageType))
 						damageType = damageTag;
 
-					if (!TranslationService.TryTranslateXTag("formatQualifyingDamage", out var formatSpec))
-						formatSpec = "{0}";
-					else
-					{
-						if (USettings.ItemDebugLevel > 2)
-							Log.LogDebug("Item.formatspec (Damage type) = {FormatSpec}", formatSpec);
-
-						formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-					}
-
 					color = ItemStyle.Mundane.TQColor();
-					line = Format(formatSpec, damageType);
+					line = Format(this.GameFormat("formatQualifyingDamage", "{0}"), damageType);
 				}
 
 				// We have no line so just show the raw attribute
@@ -881,7 +859,6 @@ public partial class ItemTextFormatter
 					line = GetRawAttribute(data, variableNumber, variable, ref color);
 
 				// Start finalizing the line of text
-				string? itemSkillAutoController = null;
 				if (line.Length > 0)
 				{
 					if (attributeData.Variable.Length > 0)
@@ -890,18 +867,6 @@ public partial class ItemTextFormatter
 							, ' '
 							, $"{ItemStyle.Legendary.TQColor().ColorTag()}{attributeData.Variable}"
 						);
-
-					// Add another special case for skill name formatting
-					// if it's an activated skill
-					if (normalizedFullAttribute == "ITEMSKILLNAME")
-					{
-						itemSkillAutoController = record.GetString("itemSkillAutoController", 0);
-						if (!string.IsNullOrEmpty(itemSkillAutoController))
-						{
-							// Granted Skill name BOLD. TODO must implement extended ColorTag {^(?<Color>.)(?<Style>.)} to support this.
-							//line = string.Concat("<b>", line, "</b>");
-						}
-					}
 
 					line = $"{color?.ColorTag()}{line}";
 
@@ -918,7 +883,6 @@ public partial class ItemTextFormatter
 					else
 					{
 						results.Add(line);
-						itm.CurrentFriendlyNameResult?.TmpAttrib.Add(line);
 					}
 				}
 
@@ -955,19 +919,11 @@ public partial class ItemTextFormatter
 	/// </summary>
 	/// <param name="data">ItemAttributesData structure for the attribute</param>
 	/// <param name="recordId">string containing the database record id</param>
-	/// <param name="labelTag">the label tag</param>
 	/// <param name="labelColor">the label color which gets modified here</param>
 	/// <returns>string containing the label.</returns>
-	private string? GetLabelAndColorFromTag(Item itm, ItemAttributesData data, RecordId recordId, ref string? labelTag, ref TQColor? labelColor)
+	private string GetLabelAndColorFromTag(Item itm, ItemAttributesData data, RecordId recordId, ref TQColor? labelColor)
 	{
-		labelTag = ItemAttributeProvider.GetAttributeTextTag(data);
-		string label;
-
-		if (string.IsNullOrEmpty(labelTag))
-		{
-			labelTag = string.Concat("?", data.FullAttribute, "?");
-			labelColor = ItemStyle.Legendary.TQColor();
-		}
+		string labelTag = this.AttributeLabelTag(data, ref labelColor);
 
 		// if itm is an Armor effect and we are not armor, then change it to bonus
 		if (labelTag.Equals("DEFENSEABSORPTIONPROTECTION", noCase))
@@ -984,26 +940,6 @@ public partial class ItemTextFormatter
 			}
 		}
 
-		if (!TranslationService.TryTranslateXTag(labelTag, out label))
-		{
-			label = string.Concat("?", labelTag, "?");
-			labelColor = ItemStyle.Legendary.TQColor();
-		}
-
-		return label;
-	}
-
-	/// <summary>
-	/// For displaying raw attribute data
-	/// </summary>
-	/// <param name="attributeList">List of the attribute variables of the group</param>
-	/// <param name="results">List containing the attribute strings.</param>
-	private void ConvertBareAttributeListToString(List<Variable?> attributeList, List<string> results)
-	{
-		foreach (Variable? variable in attributeList)
-		{
-			if (variable is not null)
-				results.Add(variable.ToString());
-		}
+		return this.TranslateLabel(labelTag, ref labelColor);
 	}
 }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Item.cs" company="None">
+// <copyright file="ItemTextFormatter.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -130,6 +130,60 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 	}
 
 	/// <summary>
+	/// The game's text of <paramref name="tag"/> as a .NET format (<see cref="IItemAttributeProvider.ConvertFormat"/>), or
+	/// <see langword="null"/> when the game has no such text.
+	/// </summary>
+	private string? GameFormat(string tag)
+	{
+		if (!this.TranslationService.TryTranslateXTag(tag, out var text))
+			return null;
+
+		if (this.USettings.ItemDebugLevel > 2)
+			this.Log.LogDebug("Item.formatspec ({Tag}) = {FormatSpec}", tag, text);
+
+		return this.ItemAttributeProvider.ConvertFormat(text);
+	}
+
+	/// <summary>The game's format of <paramref name="tag"/>, else <paramref name="fallback"/> (a .NET format).</summary>
+	private string GameFormat(string tag, string fallback) => this.GameFormat(tag) ?? fallback;
+
+	/// <summary>
+	/// The index of the value shown for a variable that has one value per level or per relic shard (the skill level, the
+	/// relic's shard count): the last one beyond.
+	/// </summary>
+	private static int ShownIndex(Variable variable, int index) => Math.Max(0, Math.Min(variable.NumberOfValues - 1, index));
+
+	/// <summary>The value at <see cref="ShownIndex"/>.</summary>
+	private static object ShownValue(Variable variable, int index) => variable[ShownIndex(variable, index)];
+
+	/// <summary>The value at <see cref="ShownIndex"/> as a number; 0 for a missing variable or one without values.</summary>
+	private static float ShownSingle(Variable? variable, int index)
+		=> variable is null || variable.NumberOfValues == 0 ? 0F : variable.GetSingle(ShownIndex(variable, index));
+
+	/// <summary>
+	/// The text tag of an attribute's label, or "?attribute?" in the legendary colour when the attribute has none.
+	/// </summary>
+	private string AttributeLabelTag(ItemAttributesData data, ref TQColor? color)
+	{
+		string tag = this.ItemAttributeProvider.GetAttributeTextTag(data);
+		if (!string.IsNullOrWhiteSpace(tag))
+			return tag;
+
+		color = ItemStyle.Legendary.TQColor();
+		return string.Concat("?", data.FullAttribute, "?");
+	}
+
+	/// <summary>The game's text of a label tag, or "?tag?" in the legendary colour when the game has none.</summary>
+	private string TranslateLabel(string labelTag, ref TQColor? color)
+	{
+		if (this.TranslationService.TryTranslateXTag(labelTag, out var label))
+			return label;
+
+		color = ItemStyle.Legendary.TQColor();
+		return string.Concat("?", labelTag, "?");
+	}
+
+	/// <summary>
 	/// <see cref="ITranslationService.TryTranslateXTag"/> for a <see cref="ToFriendlyNameResult"/> property, which
 	/// cannot be an <c>out</c> argument: <paramref name="assign"/> always receives the translation, as the out value did.
 	/// </summary>
@@ -151,7 +205,8 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 	{
 		using var modScope = this.ModScope(itm);
 		// Cached results depend on the in-game values setting: drop them when it changes.
-		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues) {
+		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues)
+		{
 			this.FriendlyNamesCache.Clear();
 			this._cachedShowInGameValues = this.USettings.ShowInGameValues;
 		}
@@ -208,6 +263,8 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 
 			#region Base Item translation
 
+			DBRecordCollection? baseRecord = null;
+
 			// Load common relic translations if item is relic related by any means
 			if (k.Item.IsRelicOrCharm || k.Item.HasRelicOrCharmSlot1 || k.Item.HasRelicOrCharmSlot2 || k.Item.RelicInfo is not null || k.Item.Relic2Info is not null)
 			{
@@ -241,15 +298,8 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 					res.RelicShard = labelRelic;
 
 				var labelRelicPattern = "{0} - {1} / {2}";
-				if (this.TryTranslateXTag("tagAnimalPartRatio", v => res.AnimalPartRatio = v))
-					res.AnimalPartRatio = ItemAttributeProvider.ConvertFormat(res.AnimalPartRatio!);
-				else
-					res.AnimalPartRatio = labelRelicPattern;
-
-				if (this.TryTranslateXTag("tagRelicRatio", v => res.RelicRatio = v))
-					res.RelicRatio = ItemAttributeProvider.ConvertFormat(res.RelicRatio!);
-				else
-					res.RelicRatio = labelRelicPattern;
+				res.AnimalPartRatio = this.GameFormat("tagAnimalPartRatio", labelRelicPattern);
+				res.RelicRatio = this.GameFormat("tagRelicRatio", labelRelicPattern);
 			}
 
 			res.BaseItemId = k.Item.BaseItemId;
@@ -280,7 +330,7 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 
 				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName, removeAllTQTags: true);
 
-				res.BaseItemInfoRecords = Database.GetRecordFromFile(k.Item.BaseItemId);
+				baseRecord = Database.GetRecordFromFile(k.Item.BaseItemId);
 
 				if (k.Item.IsRelicOrCharm)
 				{
@@ -298,35 +348,14 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 							res.RelicBonusTitle = res.RelicBonus;
 						}
 
-						if (!RecordId.IsNullOrEmpty(k.Item.RelicBonusId))
-						{
-							res.RelicBonusFileName = k.Item.RelicBonusId.PrettyFileName;
-							res.RelicBonusPattern = "{0} {1}";
-							res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern
-								, res.RelicBonusTitle
-								, TQColor.Yellow.ColorTag() + res.RelicBonusFileName
-							);
-						}
-						else
-						{
-							res.RelicBonusPattern = "{0}";
-							res.RelicBonusFormat = string.Format(CultureInfo.CurrentCulture, res.RelicBonusPattern, res.RelicBonusTitle);
-						}
+						res.RelicBonusFormat = RecordId.IsNullOrEmpty(k.Item.RelicBonusId)
+							? res.RelicBonusTitle ?? string.Empty
+							: $"{res.RelicBonusTitle} {TQColor.Yellow.ColorTag()}{k.Item.RelicBonusId.PrettyFileName}";
 					}
 					else
 					{
-						if (k.Item.IsCharmOnly)
-						{
-							res.RelicClass = res.AnimalPart;
-							res.RelicPattern = res.AnimalPartRatio;
-						}
-						else
-						{
-							res.RelicClass = res.RelicShard;
-							res.RelicPattern = res.RelicRatio;
-						}
-
-						res.RelicCompletionFormat = Format(res.RelicPattern, res.RelicClass, k.Item.Number, k.Item.baseItemInfo?.CompletedRelicLevel);
+						var (relicClass, relicPattern) = k.Item.IsCharmOnly ? (res.AnimalPart, res.AnimalPartRatio) : (res.RelicShard, res.RelicRatio);
+						res.RelicCompletionFormat = Format(relicPattern, relicClass, k.Item.Number, k.Item.baseItemInfo?.CompletedRelicLevel);
 						res.RelicBonusFormat = res.RelicCompletionFormat;
 					}
 
@@ -335,11 +364,7 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 				{
 					// Add Artifact completion bonus
 					if (!RecordId.IsNullOrEmpty(k.Item.RelicBonusId))
-					{
-						var RelicBonusIdExt = PathIO.GetFileNameWithoutExtension(k.Item.RelicBonusId.Normalized);
 						res.ArtifactBonus = TranslationService.TranslateXTag("xtagArtifactBonus");
-						res.ArtifactBonusFormat = string.Format(CultureInfo.CurrentCulture, "({0} {1})", res.ArtifactBonus, RelicBonusIdExt);
-					}
 
 					// Show Artifact Class (Lesser / Greater / Divine).
 					string artifactClassification = k.Item.baseItemInfo.GetString("artifactClassification").ToUpperInvariant();
@@ -353,14 +378,10 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 						res.ArtifactRecipe = "Recipe";
 
 					// Get Reagents format
-					if (this.TryTranslateXTag("xtagArtifactReagents", v => res.ArtifactReagents = v))
-						res.ArtifactReagents = ItemAttributeProvider.ConvertFormat(res.ArtifactReagents!);
-					else
-						res.ArtifactReagents = "Required Reagents  ({0}/{1})";
-
+					string reagents = this.GameFormat("xtagArtifactReagents", "Required Reagents  ({0}/{1})");
 
 					// it looks like the formulae reagents is hard coded at 3
-					res.FormulaeFormat = Format(res.ArtifactReagents, (object)0, 3);
+					res.FormulaeFormat = Format(reagents, (object)0, 3);
 					res.FormulaeFormat = $"{TQColor.Orange.ColorTag()}{res.FormulaeFormat}";
 
 				}
@@ -425,7 +446,7 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			if (this.USettings.ShowInGameValues)
 				k.Item.itemScalePercent = 1.00F;
 
-			var inGame = this.USettings.ShowInGameValues ? this.ItemProvider.RollInGameValues(k.Item, res.BaseItemInfoRecords) : null;
+			var inGame = this.USettings.ShowInGameValues ? this.ItemProvider.RollInGameValues(k.Item, baseRecord) : null;
 			if (inGame is not null)
 				res.InGameRolls = inGame.Rolls.Select(FormatInGameRoll).ToArray();
 
@@ -464,8 +485,8 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 				ranges.Clear();
 
 				// res.baseItemInfoRecords should be already loaded
-				if (res.BaseItemInfoRecords is { Count: > 0 })
-					GetAttributesFromRecord(k.Item, inGame?.Base ?? res.BaseItemInfoRecords, k.FilterExtra, k.Item.BaseItemId, results
+				if (baseRecord is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, inGame?.Base ?? baseRecord, k.FilterExtra, k.Item.BaseItemId, results
 						, valueRanges: inGame?.RangesOf(RollSource.Base), lineRanges: ranges, lineSlots: baseSlots);
 			}
 
@@ -496,11 +517,9 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			{
 				var tmp = new List<string>();
 
-				if (k.Item.RelicInfo is not null)
-					res.RelicInfoRecords = Database.GetRecordFromFile(k.Item.relicID);
-
-				if (res.RelicInfoRecords is { Count: > 0 })
-					GetAttributesFromRecord(k.Item, res.RelicInfoRecords, k.FilterExtra, k.Item.relicID, tmp);
+				var relicRecord = k.Item.RelicInfo is null ? null : Database.GetRecordFromFile(k.Item.relicID);
+				if (relicRecord is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, relicRecord, k.FilterExtra, k.Item.relicID, tmp);
 
 				res.Relic1Attributes = tmp.ToArray();
 			}
@@ -509,11 +528,9 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			{
 				var tmp = new List<string>();
 
-				if (k.Item.Relic2Info is not null)
-					res.Relic2InfoRecords = Database.GetRecordFromFile(k.Item.relic2ID);
-
-				if (res.Relic2InfoRecords is { Count: > 0 })
-					GetAttributesFromRecord(k.Item, res.Relic2InfoRecords, k.FilterExtra, k.Item.relic2ID, tmp);
+				var relic2Record = k.Item.Relic2Info is null ? null : Database.GetRecordFromFile(k.Item.relic2ID);
+				if (relic2Record is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, relic2Record, k.FilterExtra, k.Item.relic2ID, tmp);
 
 				res.Relic2Attributes = tmp.ToArray();
 			}
@@ -540,18 +557,18 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 				{
 					List<string> tmp = [];
 
-					res.FormulaeArtifactRecords = Database.GetRecordFromFile(artifactName);
+					var artifactRecord = Database.GetRecordFromFile(artifactName);
 
 					// Display the name of the Artifact
-					if (!this.TryTranslateXTag(res.FormulaeArtifactRecords?.GetString("description", 0) ?? string.Empty, v => res.FormulaeArtifactName = v))
+					if (!this.TryTranslateXTag(artifactRecord?.GetString("description", 0) ?? string.Empty, v => res.FormulaeArtifactName = v))
 						res.FormulaeArtifactName = "?Unknown Artifact Name?";
 
 					// Class
-					string artifactClassification = (res.FormulaeArtifactRecords?.GetString("artifactClassification", 0) ?? string.Empty).ToUpperInvariant();
+					string artifactClassification = (artifactRecord?.GetString("artifactClassification", 0) ?? string.Empty).ToUpperInvariant();
 					res.FormulaeArtifactClass = TranslateArtifactClassification(artifactClassification);
 
 					// Attributes
-					GetAttributesFromRecord(k.Item, res.FormulaeArtifactRecords, true, artifactName, tmp);
+					GetAttributesFromRecord(k.Item, artifactRecord, true, artifactName, tmp);
 					res.FormulaeArtifactAttributes = tmp.ToArray();
 				}
 			}
@@ -567,10 +584,9 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			{
 				var tmp = new List<string>();
 
-				res.RelicBonus1InfoRecords = Database.GetRecordFromFile(k.Item.RelicBonusId);
-
-				if (res.RelicBonus1InfoRecords is { Count: > 0 })
-					GetAttributesFromRecord(k.Item, res.RelicBonus1InfoRecords, k.FilterExtra, k.Item.RelicBonusId, tmp);
+				var bonusRecord = Database.GetRecordFromFile(k.Item.RelicBonusId);
+				if (bonusRecord is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, bonusRecord, k.FilterExtra, k.Item.RelicBonusId, tmp);
 
 				res.RelicBonus1Attributes = tmp.ToArray();
 			}
@@ -579,10 +595,9 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			if (k.Item.HasRelicOrCharmSlot2 && k.Item.RelicBonus2Info is not null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
 			{
 				var tmp = new List<string>();
-				res.RelicBonus2InfoRecords = Database.GetRecordFromFile(k.Item.RelicBonus2Id);
-
-				if (res.RelicBonus2InfoRecords is { Count: > 0 })
-					GetAttributesFromRecord(k.Item, res.RelicBonus2InfoRecords, k.FilterExtra, k.Item.RelicBonus2Id, tmp);
+				var bonus2Record = Database.GetRecordFromFile(k.Item.RelicBonus2Id);
+				if (bonus2Record is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, bonus2Record, k.FilterExtra, k.Item.RelicBonus2Id, tmp);
 
 				res.RelicBonus2Attributes = tmp.ToArray();
 			}
@@ -592,7 +607,6 @@ public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
 			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.GrantedSkills) ?? false)
 				res.GrantedSkills = this.GetGrantedSkills(k.Item);
 
-			res.TmpAttrib.Clear();
 			k.Item.CurrentFriendlyNameResult = previous;
 			return res;
 		}

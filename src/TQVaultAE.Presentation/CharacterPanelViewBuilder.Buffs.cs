@@ -229,7 +229,7 @@ public sealed partial class CharacterPanelViewBuilder
 		// "+1 to all skills" of a buff (Battle Standard, Stone of Mastery): the game writes it in the skill window, the item
 		// texts the description comes from leave it out.
 		var allSkills = source.Group == BuffGroup.Gear ? 0 : (long)Math.Round(source.Sum[AllSkills]);
-		IEnumerable<string> allSkillsLine = allSkills <= 0 ? [] : [Application.Layout.CharacterPanelLayout.FormatGameText(
+		IEnumerable<string> allSkillsLine = allSkills <= 0 ? [] : [GameText.Format(
 			this._translation.TranslateOr("ItemAllSkillIncrement", "+{%d0} to all skills") ?? "+{%d0} to all skills", allSkills)];
 		lines = [.. text
 			.Select(l => l.RemoveAllTQTags() ?? string.Empty)

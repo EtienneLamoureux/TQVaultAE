@@ -160,8 +160,6 @@ public class UIService : IUIService, IGameDataCache
 			// with no zoom: fonts made then (FontZoom) must not shrink by the system DPI.
 			this._DpiScale = this.SystemDpiScale;
 			this._Scale = this._DpiScale;
-
-			this.LoadRelicOverlayBitmap();
 		}
 	}
 
@@ -217,25 +215,25 @@ public class UIService : IUIService, IGameDataCache
 
 		// Make a bitmap with a small orange square with a ? mark in it.
 		Bitmap tempDefaultBitmap = new Bitmap(this.ItemUnitSize, this.ItemUnitSize);
-		Graphics graphics = Graphics.FromImage(tempDefaultBitmap);
+		using (Graphics graphics = Graphics.FromImage(tempDefaultBitmap))
+		{
+			// First fill the whole thing black so we can set our transparency
+			using (var black = new SolidBrush(Color.Black))
+				graphics.FillRectangle(black, 0, 0, this.ItemUnitSize, this.ItemUnitSize);
 
-		// First fill the whole thing black so we can set our transparency
-		SolidBrush black = new SolidBrush(Color.Black);
-		graphics.FillRectangle(black, 0, 0, this.ItemUnitSize, this.ItemUnitSize);
+			// Now draw the orange square
+			float border = 5.0F * this.Scale; // amount of area to leave black
+			using (var orange = new SolidBrush(Color.Orange))
+				graphics.FillRectangle(orange, Convert.ToInt32(border), Convert.ToInt32(border), this.ItemUnitSize - Convert.ToInt32(2.0F * border), this.ItemUnitSize - Convert.ToInt32(2.0F * border));
 
-		// Now draw the orange square
-		SolidBrush orange = new SolidBrush(Color.Orange);
-		float border = 5.0F * this.Scale; // amount of area to leave black
-		graphics.FillRectangle(orange, Convert.ToInt32(border), Convert.ToInt32(border), this.ItemUnitSize - Convert.ToInt32(2.0F * border), this.ItemUnitSize - Convert.ToInt32(2.0F * border));
+			// Now put the Question Mark at the center
+			// use a color that is slightly off-black so it does not become transparent
+			using var textBrush = new SolidBrush(Color.FromArgb(1, 1, 1));
+			using var textFont = new Font("Arial", (float)this.ItemUnitSize - Convert.ToInt32(4.0F * border), GraphicsUnit.Pixel);
+			using var textFormat = new StringFormat { Alignment = StringAlignment.Center };
 
-		// Now put the Question Mark at the center
-		// use a color that is slightly off-black so it does not become transparent
-		SolidBrush textBrush = new SolidBrush(Color.FromArgb(1, 1, 1));
-		Font textFont = new Font("Arial", (float)this.ItemUnitSize - Convert.ToInt32(4.0F * border), GraphicsUnit.Pixel);
-		StringFormat textFormat = new StringFormat();
-		textFormat.Alignment = StringAlignment.Center;
-
-		graphics.DrawString("?", textFont, textBrush, new RectangleF(border, border, (float)this.ItemUnitSize - (2.0F * border), (float)this.ItemUnitSize - (2.0F * border)), textFormat);
+			graphics.DrawString("?", textFont, textBrush, new RectangleF(border, border, (float)this.ItemUnitSize - (2.0F * border), (float)this.ItemUnitSize - (2.0F * border)), textFormat);
+		}
 
 		// now set our transparency
 		tempDefaultBitmap.MakeTransparent(Color.Black);

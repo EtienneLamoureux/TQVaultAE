@@ -225,7 +225,7 @@ public class FontServiceTests
 	public void AddFontToOS_LoadsAFontOnce_AndAnUnknownNameGivesNull()
 	{
 		var loader = new AddFontToOSWin();
-		byte[] data = TQVaultAE.Presentation.Resources.AlbertusMT;
+		byte[] data = EmbeddedAssets.AlbertusMT;
 
 		var first = loader.AddFontToOS("Albertus MT", data);
 		var again = loader.AddFontToOS("Albertus MT", data);

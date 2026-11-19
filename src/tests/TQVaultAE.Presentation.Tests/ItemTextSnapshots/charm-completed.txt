@@ -30,7 +30,6 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\charm_claw.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -40,16 +39,13 @@ RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
 RelicCompletionFormat: Completed Charm
-RelicBonusPattern: {0} {1}
 RelicBonusFormat: Completion Bonus: {^Y}Charm Claw Bonus
-RelicBonusFileName: Charm Claw Bonus
 RelicBonusTitle: Completion Bonus:
 Relic1Attributes (0)
 Relic2Attributes (0)
 RelicBonus1Attributes (1)
   | {^B}15% Poison Resistance
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\charm_claw_bonus.dbr
 RelicInfo1CompletionBonusResolved: Completion Bonus:
 FormulaeArtifactAttributes (0)
 AttributesAll (3)
@@ -97,7 +93,6 @@ InGameRolls (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
 BaseAttributeRanges (0)
-BaseItemInfoRecords: records\test\charm_claw.dbr
 AnimalPartComplete: Completed Charm
 AnimalPartCompleteBonus: Completion Bonus:
 AnimalPart: Charm
@@ -107,9 +102,7 @@ RelicBonus: Completion Bonus:
 RelicShard: Relic
 RelicRatio: {0} - {1} / {2}
 RelicCompletionFormat: Completed Charm
-RelicBonusPattern: {0} {1}
 RelicBonusFormat: Completion Bonus: {^Y}Charm Claw Bonus
-RelicBonusFileName: Charm Claw Bonus
 RelicBonusTitle: Completion Bonus:
 Relic1Attributes (0)
 Relic2Attributes (0)
@@ -117,7 +110,6 @@ RelicBonus1Attributes (2)
   | {^B}15% Poison Resistance
   | {^P}?Class?: LootRandomizer
 RelicBonus2Attributes (0)
-RelicBonus1InfoRecords: records\test\charm_claw_bonus.dbr
 RelicInfo1CompletionBonusResolved: Completion Bonus:
 FormulaeArtifactAttributes (0)
 AttributesAll (7)

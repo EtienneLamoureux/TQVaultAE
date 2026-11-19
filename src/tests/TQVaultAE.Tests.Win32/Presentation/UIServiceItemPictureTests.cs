@@ -145,6 +145,20 @@ public class UIServiceItemPictureTests
 		this.Warnings.Should().Be(0);
 	}
 
+	[Fact]
+	public void RelicOverlay_IsReadWhenFirstAsked_NotWhenTheServiceIsBuiltBeforeTheGameFilesLoad()
+	{
+		// Built before the database is loaded: an overlay read then would be missing and cached as such.
+		var service = this.NewService();
+		this._database.Verify(d => d.LoadResource(It.IsAny<RecordId>()), Times.Never);
+
+		using var overlay = new Bitmap(32, 32);
+		this._database.Setup(d => d.LoadResource(It.IsAny<RecordId>())).Returns(new byte[64]);
+		this._bitmaps.Setup(b => b.LoadFromTexMemory(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Returns(overlay);
+
+		service.LoadRelicOverlayBitmap().Should().BeSameAs(overlay);
+	}
+
 	private sealed class ListLogger : ILogger<UIService>
 	{
 		public List<(LogLevel Level, string Message)> Entries { get; } = [];

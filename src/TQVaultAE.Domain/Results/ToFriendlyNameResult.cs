@@ -239,7 +239,6 @@ public partial class ToFriendlyNameResult
 	/// <summary>Possible in-game values of each <see cref="BaseAttributes"/> line (see <see cref="PrefixAttributeRanges"/>).</summary>
 	public string?[] BaseAttributeRanges { get; internal set; } = [];
 	public SetItemInfo? ItemSet { get; internal set; }
-	public DBRecordCollection? BaseItemInfoRecords { get; internal set; }
 
 	#region Relic Common
 
@@ -251,14 +250,9 @@ public partial class ToFriendlyNameResult
 	public string? RelicBonus { get; internal set; }
 	public string? RelicShard { get; internal set; }
 	public string? RelicRatio { get; internal set; }
-	public string? RelicClass { get; internal set; }
 	public string? RelicCompletionFormat { get; internal set; }
-	public string? RelicPattern { get; internal set; }
-	public string? RelicBonusPattern { get; internal set; }
 	public string? RelicBonusFormat { get; internal set; }
-	public string? RelicBonusFileName { get; internal set; }
 	public string? RelicBonusTitle { get; internal set; }
-	public DBRecordCollection? RelicInfoRecords { get; internal set; }
 
 	#endregion
 
@@ -270,9 +264,6 @@ public partial class ToFriendlyNameResult
 	public string[] Relic2Attributes { get; internal set; } = [];
 	public string[] RelicBonus1Attributes { get; internal set; } = [];
 	public string[] RelicBonus2Attributes { get; internal set; } = [];
-	public DBRecordCollection? RelicBonus1InfoRecords { get; internal set; }
-	public DBRecordCollection? RelicBonus2InfoRecords { get; internal set; }
-	public DBRecordCollection? Relic2InfoRecords { get; internal set; }
 	/// <summary>Resolve first relic completion label</summary>
 	public string? RelicInfo1CompletionResolved
 		=> this.CompletionLabel(this.Item.RelicInfo, this.Item.IsRelic1Charm, this.Item.IsRelicBonus1Complete, this.Item.Var1);
@@ -312,15 +303,12 @@ public partial class ToFriendlyNameResult
 
 	public string? ArtifactClass { get; internal set; }
 	public string? ArtifactRecipe { get; internal set; }
-	public string? ArtifactReagents { get; internal set; }
 	public string? ArtifactBonus { get; internal set; }
-	public string? ArtifactBonusFormat { get; internal set; }
 
 	public string? FormulaeArtifactClass { get; internal set; }
 	public string? FormulaeArtifactName { get; internal set; }
 	public string? FormulaeFormat { get; internal set; }
 	public string[] FormulaeArtifactAttributes { get; internal set; } = [];
-	public DBRecordCollection? FormulaeArtifactRecords { get; internal set; }
 
 	public ToFriendlyNameResult(Item itm)
 	{
@@ -366,11 +354,6 @@ public partial class ToFriendlyNameResult
 		}
 	}
 
-
-	/// <summary>
-	/// Used to give attribute list factory some kind of global awareness during its process
-	/// </summary>
-	internal List<string> TmpAttrib { get; } = [];
 
 	/// <summary>The lines of the attribute lists that are text, not attributes, without their tags and trimmed.</summary>
 	private readonly HashSet<string> _textLines = new(StringComparer.Ordinal);

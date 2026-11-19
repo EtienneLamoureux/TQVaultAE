@@ -13,29 +13,10 @@ public partial class ItemTextFormatter
 	/// <returns>formatted pet bonus name</returns>
 	private string GetPetBonusName(ref TQColor? color)
 	{
-		string tag = "xtagPetBonusNameAllPets";
-		if (!TranslationService.TryTranslateXTag(tag, out var formatSpec))
-		{
-			formatSpec = "?Bonus to All Pets:?";
-			color = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (pet bonus) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-			color = ItemStyle.Relic.TQColor();
-		}
-
-		return formatSpec;
+		string? formatSpec = this.GameFormat("xtagPetBonusNameAllPets");
+		color = formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Relic.TQColor();
+		return formatSpec ?? "?Bonus to All Pets:?";
 	}
-
-	/// <summary>
-	/// The format of a pet statistic line, the game's text as it is ("{%.0f0}  Health"), or <paramref name="fallback"/>.
-	/// </summary>
-	private string PetStatFormat(string tag, string fallback)
-		=> TranslationService.TryTranslateXTag(tag, out var text) ? ItemAttributeProvider.ConvertFormat(text) : fallback;
 
 	/// <summary>
 	/// Used for showing the pet statistics
@@ -51,37 +32,29 @@ public partial class ItemTextFormatter
 	private void ConvertPetStats(Item itm, DBRecordCollection skillRecord, List<string> results, int level = 1
 		, IReadOnlySet<string>? hiddenVariables = null, int petSkillBonus = 0)
 	{
-		int levelIndex(string name) => skillRecord[name] is { NumberOfValues: > 0 } v ? Math.Clamp(level - 1, 0, v.NumberOfValues - 1) : 0;
+		int levelIndex(string name) => skillRecord[name] is { } v ? ShownIndex(v, level - 1) : 0;
 
 		string formatSpec, petLine;
 		int summonLimit = skillRecord.GetInt32("petLimit", levelIndex("petLimit"));
 		if (summonLimit > 1)
 		{
-			if (!TranslationService.TryTranslateXTag("SkillPetLimit", out formatSpec))
-				formatSpec = "{0} Summon Limit";
-			else
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
-			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, summonLimit.ToString(CultureInfo.CurrentCulture));
+			formatSpec = this.GameFormat("SkillPetLimit", "{0} Summon Limit");
+			petLine = this.Format(formatSpec, summonLimit.ToString(CultureInfo.CurrentCulture));
 			var value = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			results.Add(value);
-			itm.CurrentFriendlyNameResult?.TmpAttrib.Add(value);
 		}
 		var skillRecordspawnObjects = skillRecord.GetString("spawnObjects", levelIndex("spawnObjects"));
 		DBRecordCollection? petRecord = Database.GetRecordFromFile(skillRecordspawnObjects);
 		if (petRecord is not null)
 		{
 			// Print out Pet attributes
-			if (!TranslationService.TryTranslateXTag("SkillPetDescriptionHeading", out formatSpec))
-				formatSpec = "{0} Attributes:";
-			else
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
+			formatSpec = this.GameFormat("SkillPetDescriptionHeading", "{0} Attributes:");
 
 			string petNameTag = petRecord.GetString("description", 0);
 			string petName = TranslationService.TranslateXTag(petNameTag);
 			float value = 0.0F;
 
-			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
+			petLine = this.Format(formatSpec, petName);
 			var valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			AddTextLine(itm, results, valueStr);
 
@@ -89,49 +62,38 @@ public partial class ItemTextFormatter
 			float timeToLive = skillRecord.GetSingle("spawnObjectsTimeToLive", levelIndex("spawnObjectsTimeToLive"));
 			if (timeToLive > 0)
 			{
-				if (!TranslationService.TryTranslateXTag("tagSkillPetTimeToLive", out formatSpec))
-					formatSpec = "Life Time {0} Seconds";
-				else
-					formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
-				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, timeToLive);
+				formatSpec = this.GameFormat("tagSkillPetTimeToLive", "Life Time {0} Seconds");
+				petLine = this.Format(formatSpec, timeToLive);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 			}
 
 			// Health
 			value = petRecord.GetSingle("characterLife", 0);
 			if (value != 0.0F)
 			{
-				formatSpec = this.PetStatFormat("SkillPetDescriptionHealth", "{0}  Health");
+				formatSpec = this.GameFormat("SkillPetDescriptionHealth", "{0}  Health");
 
-				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
+				petLine = this.Format(formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 			}
 
 			// Energy
 			value = petRecord.GetSingle("characterMana", 0);
 			if (value != 0.0F)
 			{
-				formatSpec = this.PetStatFormat("SkillPetDescriptionMana", "{0}  Energy");
+				formatSpec = this.GameFormat("SkillPetDescriptionMana", "{0}  Energy");
 
-				petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
+				petLine = this.Format(formatSpec, value);
 				valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 			}
 
 			// Add abilities text
 			results.Add(string.Empty);
-			if (!TranslationService.TryTranslateXTag("tagSkillPetAbilities", out formatSpec))
-				formatSpec = "{0} Abilities:";
-			else
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
-			petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, petName);
+			formatSpec = this.GameFormat("tagSkillPetAbilities", "{0} Abilities:");
+			petLine = this.Format(formatSpec, petName);
 			valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 			AddTextLine(itm, results, valueStr);
 
@@ -143,21 +105,19 @@ public partial class ItemTextFormatter
 			{
 				if (value2 == 0.0F || value == value2)
 				{
-					formatSpec = this.PetStatFormat("SkillPetDescriptionDamageMinOnly", "{0}  Damage");
+					formatSpec = this.GameFormat("SkillPetDescriptionDamageMinOnly", "{0}  Damage");
 
-					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value);
+					petLine = this.Format(formatSpec, value);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 					results.Add(valueStr);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 				}
 				else
 				{
-					formatSpec = this.PetStatFormat("SkillPetDescriptionDamageMinMax", "{0} - {1}  Damage");
+					formatSpec = this.GameFormat("SkillPetDescriptionDamageMinMax", "{0} - {1}  Damage");
 
-					petLine = string.Format(CultureInfo.CurrentCulture, formatSpec, value, value2);
+					petLine = this.Format(formatSpec, value, value2);
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{petLine}";
 					results.Add(valueStr);
-					itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 				}
 			}
 
@@ -240,15 +200,14 @@ public partial class ItemTextFormatter
 					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{skillName}";
 
 				results.Add(valueStr);
-				itm.CurrentFriendlyNameResult?.TmpAttrib.Add(valueStr);
 
 				// "+1 to all Skills" of a pet's buff (allSkillEnhancement), which item tool tips leave out.
 				var ownLines = new List<(string Variable, string Text)>();
 				if (hiddenVariables is not null && record?["allSkillEnhancement"] is { NumberOfValues: > 0 } allSkills
-					&& allSkills.GetInt32(Math.Clamp(skillLevels[i] - 1, 0, allSkills.NumberOfValues - 1)) is var all and > 0
-					&& TranslationService.TryTranslateXTag("ItemAllSkillIncrement", out var allSkillsText))
+					&& allSkills.GetInt32(ShownIndex(allSkills, skillLevels[i] - 1)) is var all and > 0
+					&& this.GameFormat("ItemAllSkillIncrement") is { } allSkillsFormat)
 				{
-					ownLines.Add(("allSkillEnhancement", Format(ItemAttributeProvider.ConvertFormat(allSkillsText), all)));
+					ownLines.Add(("allSkillEnhancement", Format(allSkillsFormat, all)));
 				}
 
 				// The pet's skill at the level the pet record gives it, in the skill window's order there.

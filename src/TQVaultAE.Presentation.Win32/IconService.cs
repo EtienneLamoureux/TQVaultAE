@@ -58,7 +58,7 @@ public class IconService : IIconService
 	{
 		Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
 		var watch = Stopwatch.StartNew();
-		var configfile = JsonSerializer.Deserialize<ConfRoot>(Resources.IconServiceList, this.JsonOptions)!;
+		var configfile = JsonSerializer.Deserialize<ConfRoot>(EmbeddedAssets.IconServiceList, this.JsonOptions)!;
 		long configTime = watch.ElapsedMilliseconds;
 
 		// Every file name of the listed archives, read once.

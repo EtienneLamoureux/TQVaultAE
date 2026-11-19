@@ -56,6 +56,18 @@ public partial class ResourceTranslationTests
 		mismatches.Should().BeEmpty();
 	}
 
+	[Fact]
+	public void French_TranslatesEveryNeutralString_ButTheRedirectsToGameTexts()
+	{
+		// "@tag" sends to the game's own text, which is already in the game's language.
+		var neutral = ReadStrings(CultureInfo.InvariantCulture);
+		var french = ReadStrings(CultureInfo.GetCultureInfo("fr"));
+
+		neutral.Where(entry => !entry.Value.StartsWith('@') && !french.ContainsKey(entry.Key))
+			.Select(entry => entry.Key)
+			.Should().BeEmpty();
+	}
+
 	[Theory]
 	[MemberData(nameof(Cultures))]
 	public void Translation_OfACompositeFormat_Formats(string cultureName)

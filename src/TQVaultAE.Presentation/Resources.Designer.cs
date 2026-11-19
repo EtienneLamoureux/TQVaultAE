@@ -168,229 +168,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] AlbertusMT {
-            get {
-                object obj = ResourceManager.GetObject("AlbertusMT", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] AlbertusMTLight {
-            get {
-                object obj = ResourceManager.GetObject("AlbertusMTLight", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extract.
-        /// </summary>
-        public static string ARZExtractBtnExtract {
-            get {
-                return ResourceManager.GetString("ARZExtractBtnExtract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not exist.  Would you like to create it now?.
-        /// </summary>
-        public static string ARZExtractCreateFolder {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Create folder?.
-        /// </summary>
-        public static string ARZExtractCreateFolder2 {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolder2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not exist for IT database.  Would you like to create it now?.
-        /// </summary>
-        public static string ARZExtractCreateFolderIT {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolderIT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select the destination folder for the extracted database records.
-        /// </summary>
-        public static string ARZExtractDestination {
-            get {
-                return ResourceManager.GetString("ARZExtractDestination", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must specify a folder, not a file!.
-        /// </summary>
-        public static string ARZExtractFileDest {
-            get {
-                return ResourceManager.GetString("ARZExtractFileDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Currently there is no way to extract all of the game database records at once.  Also there currently exists a bug in the Toolset that destroys array values when you extract records one by one.  Using this tool, you can now extract all records at once and all the records will be extracted correctly..
-        /// </summary>
-        public static string ARZExtractLabel1 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to After you have extracted the records, just copy the ones you want to use in your mod over to your mod folder..
-        /// </summary>
-        public static string ARZExtractLabel2 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a destination folder:.
-        /// </summary>
-        public static string ARZExtractLabel3 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a destination folder for IT Database Files:.
-        /// </summary>
-        public static string ARZExtractLabel4 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to If not populated the destination folders for the TQ database and the IT database will default to the same folder.  The IT files will overwrite the TQ files when there are conflicts though you can select different folders to avoid overwriting files..
-        /// </summary>
-        public static string ARZExtractLabel5 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extract database.arz.
-        /// </summary>
-        public static string ARZExtractText {
-            get {
-                return ResourceManager.GetString("ARZExtractText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a valid destination folder..
-        /// </summary>
-        public static string ARZExtractValidDest {
-            get {
-                return ResourceManager.GetString("ARZExtractValidDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extraction cancelled..
-        /// </summary>
-        public static string ARZProgressCancelledText {
-            get {
-                return ResourceManager.GetString("ARZProgressCancelledText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extraction complete..
-        /// </summary>
-        public static string ARZProgressCompleteText {
-            get {
-                return ResourceManager.GetString("ARZProgressCompleteText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extraction Failed..
-        /// </summary>
-        public static string ARZProgressFailedText {
-            get {
-                return ResourceManager.GetString("ARZProgressFailedText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting {0} ....
-        /// </summary>
-        public static string ARZProgressLabel {
-            get {
-                return ResourceManager.GetString("ARZProgressLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting.
-        /// </summary>
-        public static string ARZProgressLabel1 {
-            get {
-                return ResourceManager.GetString("ARZProgressLabel1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting database.arz....
-        /// </summary>
-        public static string ARZProgressText {
-            get {
-                return ResourceManager.GetString("ARZProgressText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Attribute Points.
         /// </summary>
         public static string AttributesPoints {
             get {
                 return ResourceManager.GetString("AttributesPoints", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to English.
-        /// </summary>
-        public static string AUEnglishName {
-            get {
-                return ResourceManager.GetString("AUEnglishName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2.
-        /// </summary>
-        public static string AUFileVersion {
-            get {
-                return ResourceManager.GetString("AUFileVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2.3.1.0.
-        /// </summary>
-        public static string AUMinTQVaultVersion {
-            get {
-                return ResourceManager.GetString("AUMinTQVaultVersion", resourceCulture);
             }
         }
         
@@ -558,51 +340,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Base Dex.
-        /// </summary>
-        public static string BaseDexterity {
-            get {
-                return ResourceManager.GetString("BaseDexterity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Health.
-        /// </summary>
-        public static string BaseHealth {
-            get {
-                return ResourceManager.GetString("BaseHealth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Int.
-        /// </summary>
-        public static string BaseIntelligence {
-            get {
-                return ResourceManager.GetString("BaseIntelligence", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Mana.
-        /// </summary>
-        public static string BaseMana {
-            get {
-                return ResourceManager.GetString("BaseMana", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Str.
-        /// </summary>
-        public static string BaseStrength {
-            get {
-                return ResourceManager.GetString("BaseStrength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Base Attributes.
         /// </summary>
         public static string CEAttributes {
@@ -720,15 +457,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Character.
-        /// </summary>
-        public static string CECharacter {
-            get {
-                return ResourceManager.GetString("CECharacter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Left click: +1 point, right click: -1. With Shift: to the highest or lowest level.
         /// </summary>
         public static string CESkillPaneHint {
@@ -828,15 +556,6 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Requires mastery level {0}.
-        /// </summary>
-        public static string CESkillRequiresMastery {
-            get {
-                return ResourceManager.GetString("CESkillRequiresMastery", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to +{0} to {1} (equipment).
         /// </summary>
         public static string CEGearBonusSkill {
@@ -932,17 +651,6 @@ namespace TQVaultAE.Presentation {
         public static string Class {
             get {
                 return ResourceManager.GetString("Class", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error parsing command-line arguments: {0}
-        ///
-        ///Usage: TQVault [player name] [/mod:&lt;mod name&gt;].
-        /// </summary>
-        public static string CmdlineUsage {
-            get {
-                return ResourceManager.GetString("CmdlineUsage", resourceCulture);
             }
         }
         
@@ -1665,33 +1373,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you want to replace your local Titan Quest character save with git repository version?.
-        /// </summary>
-        public static string GitCloneDoYouWantToReplaceLocalCharacterSave {
-            get {
-                return ResourceManager.GetString("GitCloneDoYouWantToReplaceLocalCharacterSave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to replace your local vaults with git repository version?.
-        /// </summary>
-        public static string GitCloneDoYouWantToReplaceLocalVault {
-            get {
-                return ResourceManager.GetString("GitCloneDoYouWantToReplaceLocalVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Git Error.
-        /// </summary>
-        public static string GitError {
-            get {
-                return ResourceManager.GetString("GitError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Git client is unable to clone &quot;{0}&quot;.
         /// </summary>
         public static string GitUnableToClone {
@@ -1728,24 +1409,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to About.
-        /// </summary>
-        public static string GlobalAbout {
-            get {
-                return ResourceManager.GetString("GlobalAbout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Archive.
-        /// </summary>
-        public static string GlobalArchive {
-            get {
-                return ResourceManager.GetString("GlobalArchive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Archive all.
         /// </summary>
         public static string GlobalArchiveAll {
@@ -1769,15 +1432,6 @@ namespace TQVaultAE.Presentation {
         public static string GlobalBaseAttribute {
             get {
                 return ResourceManager.GetString("GlobalBaseAttribute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse....
-        /// </summary>
-        public static string GlobalBrowse {
-            get {
-                return ResourceManager.GetString("GlobalBrowse", resourceCulture);
             }
         }
         
@@ -1931,15 +1585,6 @@ namespace TQVaultAE.Presentation {
         public static string GlobalMenuBag {
             get {
                 return ResourceManager.GetString("GlobalMenuBag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #.
-        /// </summary>
-        public static string GlobalMenuBagDelimiter {
-            get {
-                return ResourceManager.GetString("GlobalMenuBagDelimiter", resourceCulture);
             }
         }
         
@@ -2142,29 +1787,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trash.
-        /// </summary>
-        public static string GlobalTrash {
-            get {
-                return ResourceManager.GetString("GlobalTrash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Type.
         /// </summary>
         public static string GlobalType {
             get {
                 return ResourceManager.GetString("GlobalType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unarchive.
-        /// </summary>
-        public static string GlobalUnArchive {
-            get {
-                return ResourceManager.GetString("GlobalUnArchive", resourceCulture);
             }
         }
         
@@ -2196,24 +1823,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Greatest Dmg.
-        /// </summary>
-        public static string GreatestDamageInflicted {
-            get {
-                return ResourceManager.GetString("GreatestDamageInflicted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Greatest Mob.
-        /// </summary>
-        public static string GreatestMonster {
-            get {
-                return ResourceManager.GetString("GreatestMonster", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Health Pots Used.
         /// </summary>
         public static string HealthPotionsUsed {
@@ -2228,39 +1837,6 @@ namespace TQVaultAE.Presentation {
         public static string HighlightFiltersZeroToIgnore {
             get {
                 return ResourceManager.GetString("HighlightFiltersZeroToIgnore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///	&quot;list&quot;: [
-        ///		{
-        ///			&quot;file&quot;: &quot;ITEMS&quot;,
-        ///			&quot;img&quot;: [
-        ///				{
-        ///					&quot;ca&quot;: &quot;Relics&quot;,
-        ///					&quot;pa&quot;: &quot;ANIMALRELICS\\\\ANIMALPART[^_\\.]+\\.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;.TEX|_E.TEX&quot;,
-        ///					&quot;ov&quot;: &quot;.TEX|_L.TEX&quot;
-        ///				},
-        ///				{
-        ///					&quot;ca&quot;: &quot;Jewellery&quot;,
-        ///					&quot;pa&quot;: &quot;(EQUIPMENT AMULET|EQUIPMENTRING)\\\\UIBITMAPS\\\\\\w+\\.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;|&quot;,
-        ///					&quot;ov&quot;: &quot;|&quot;
-        ///				},
-        ///				{
-        ///					&quot;ca&quot;: &quot;Helmets&quot;,
-        ///					&quot;pa&quot;: &quot;EQUIPMENTHELM\\\\UIBITMAPS\\\\\\w+.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;|&quot;,
-        ///					&quot;ov&quot;: &quot; [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string IconServiceList {
-            get {
-                return ResourceManager.GetString("IconServiceList", resourceCulture);
             }
         }
         
@@ -2481,15 +2057,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extract database.arz ....
-        /// </summary>
-        public static string MainFormBtnExtract {
-            get {
-                return ResourceManager.GetString("MainFormBtnExtract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Show Vault.
         /// </summary>
         public static string MainFormBtnPanelSelect {
@@ -2504,15 +2071,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormBtnShowPlayer {
             get {
                 return ResourceManager.GetString("MainFormBtnShowPlayer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error extracting database.
-        /// </summary>
-        public static string MainFormDatabaseError {
-            get {
-                return ResourceManager.GetString("MainFormDatabaseError", resourceCulture);
             }
         }
         
@@ -2630,16 +2188,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No items found of type &apos;{0}&apos;
-        ///and quality &apos;{1}&apos;..
-        /// </summary>
-        public static string MainFormNoItemQualityFound {
-            get {
-                return ResourceManager.GetString("MainFormNoItemQualityFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No items found with &apos;{0}&apos;..
         /// </summary>
         public static string MainFormNoItemsFound {
@@ -2654,15 +2202,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormNoItemsFound2 {
             get {
                 return ResourceManager.GetString("MainFormNoItemsFound2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No items found of type &apos;{0}&apos;..
-        /// </summary>
-        public static string MainFormNoItemTypesFound {
-            get {
-                return ResourceManager.GetString("MainFormNoItemTypesFound", resourceCulture);
             }
         }
         
@@ -2693,15 +2232,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormPlayerReadError {
             get {
                 return ResourceManager.GetString("MainFormPlayerReadError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you wish to quit?.
-        /// </summary>
-        public static string MainFormQuit {
-            get {
-                return ResourceManager.GetString("MainFormQuit", resourceCulture);
             }
         }
         
@@ -2775,85 +2305,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Would you like to start TQVaultMon?.
-        /// </summary>
-        public static string MainFormStartVaultMon {
-            get {
-                return ResourceManager.GetString("MainFormStartVaultMon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You have just modified the inventory of some of your characters.
-        ///Titan Quest will detect this and think that your character is corrupt
-        ///and will not let you load your character.
-        ///
-        ///TQVaultMon is a program that, when running, will make Titan Quest
-        ///think that your character is okay and will let you load it successfully.
-        ///Once you have successfully loaded your character you will not need to
-        ///use TQVaultMon again unless you make further edits.
-        ///
-        ///It is suggested that you start TQVaultMon now and then run Tita [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string MainFormStartVaultMonMsg {
-            get {
-                return ResourceManager.GetString("MainFormStartVaultMonMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error reading stash file.
         /// </summary>
         public static string MainFormStashReadError {
             get {
                 return ResourceManager.GetString("MainFormStashReadError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are currently {0} items in the trash.
-        ///If you quit these items will be LOST FOREVER.
-        ///
-        ///Are you sure you wish to throw away these items?.
-        /// </summary>
-        public static string MainFormTrashItems {
-            get {
-                return ResourceManager.GetString("MainFormTrashItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to start TQVaultMon.
-        /// </summary>
-        public static string MainFormUnableToStartVaultMon {
-            get {
-                return ResourceManager.GetString("MainFormUnableToStartVaultMon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error trying to start TQVaultMon.
-        /// </summary>
-        public static string MainFormVaultMonError {
-            get {
-                return ResourceManager.GetString("MainFormVaultMonError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to I was unable to see if TQVaultMon was running.
-        ///Most likely TQVaultMon will not work either.
-        ///Because you have modified some of your characters, TQ will think your characters are corrupt.
-        ///In order to successfully load the game and play, you will need to download TQ Defiler
-        ///and use its &apos;Patch&apos; or &apos;Fix Me&apos; options to let the game validate your character.
-        ///If you do not mind, please contact me and let me know about this problem
-        ///because I may have a solution to the error that will save you some hassles.
-        ///
-        ///E [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string MainFormVaultMonMsg {
-            get {
-                return ResourceManager.GetString("MainFormVaultMonMsg", resourceCulture);
             }
         }
         
@@ -3479,16 +2935,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There was an error during sorting.
-        ///Not all items have been placed..
-        /// </summary>
-        public static string SackPanelAutoSortErrorMsg {
-            get {
-                return ResourceManager.GetString("SackPanelAutoSortErrorMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You are currently holding an item.
         ///Please place the item down somewhere before sorting..
         /// </summary>
@@ -4022,22 +3468,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Search for items within the loaded files: vaults, stashes, inventories.
-        ///
-        ///You can combine the following search options(all are optional):
-        ///* Name: It must be the first search term. Here is an example: &apos;arctic &amp; of frost&apos;
-        ///* Type: by using @ at the beginning of the search term for example &apos;@sword&apos;
-        ///* Attributes: by using # at the beginning of the search term for example &apos;#elemental resistance&apos;
-        ///* Rarity: by using $ at the beginning of the search term for example &apos;$rare&apos;
-        ///You can use | in a term as an OR con [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string SearchDialogText {
-            get {
-                return ResourceManager.GetString("SearchDialogText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Search engine is ready.
         /// </summary>
         public static string SearchEngineReady {
@@ -4323,37 +3753,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turns on the editing features in the context menu.
-        ///These include item creation and modification..
-        /// </summary>
-        public static string SettingsAllowEditTT {
-            get {
-                return ResourceManager.GetString("SettingsAllowEditTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically Check For Updates.
-        /// </summary>
-        public static string SettingsAutoUpdate {
-            get {
-                return ResourceManager.GetString("SettingsAutoUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Selecting this item will automatically check
-        ///for new versions of TQVault on the web when
-        ///the program starts up.  May cause startup to
-        ///take longer if the network connection is slow..
-        /// </summary>
-        public static string SettingsAutoUpdateTT {
-            get {
-                return ResourceManager.GetString("SettingsAutoUpdateTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Backup player saves.
         /// </summary>
         public static string SettingsBackupPlayerSaves {
@@ -4368,15 +3767,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsBackupPlayerSavesTT {
             get {
                 return ResourceManager.GetString("SettingsBackupPlayerSavesTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please select the path for git.exe..
-        /// </summary>
-        public static string SettingsBrowseGitExe {
-            get {
-                return ResourceManager.GetString("SettingsBrowseGitExe", resourceCulture);
             }
         }
         
@@ -4525,34 +3915,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsEnableItemRequirementRestrictionTT {
             get {
                 return ResourceManager.GetString("SettingsEnableItemRequirementRestrictionTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Check Now.
-        /// </summary>
-        public static string SettingsForceCheck {
-            get {
-                return ResourceManager.GetString("SettingsForceCheck", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Manually checks if there are any updates
-        ///available..
-        /// </summary>
-        public static string SettingsForceCheckTT {
-            get {
-                return ResourceManager.GetString("SettingsForceCheckTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Git Backup.
-        /// </summary>
-        public static string SettingsGitBackup {
-            get {
-                return ResourceManager.GetString("SettingsGitBackup", resourceCulture);
             }
         }
         
@@ -5274,171 +4636,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OS unable to execute &quot;{0}&quot;.
-        /// </summary>
-        public static string UnableToExecute {
-            get {
-                return ResourceManager.GetString("UnableToExecute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}    {1} % complete..
-        /// </summary>
-        public static string UpdateCompletion {
-            get {
-                return ResourceManager.GetString("UpdateCompletion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}    0 % complete..
-        /// </summary>
-        public static string UpdateCompletion2 {
-            get {
-                return ResourceManager.GetString("UpdateCompletion2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Current Version: {0}.
-        /// </summary>
-        public static string UpdateCurrentVer {
-            get {
-                return ResourceManager.GetString("UpdateCurrentVer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot Start Setup.
-        /// </summary>
-        public static string UpdateError {
-            get {
-                return ResourceManager.GetString("UpdateError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There was a problem with the download or the extraction.
-        ///Please download the latest full setup install package and run it manually.
-        ///Click OK to exit..
-        /// </summary>
-        public static string UpdateErrorMsg {
-            get {
-                return ResourceManager.GetString("UpdateErrorMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A newer version of TQVault has been found which requires a full installation..
-        /// </summary>
-        public static string UpdateFullInstall {
-            get {
-                return ResourceManager.GetString("UpdateFullInstall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Latest Version: {0}.
-        /// </summary>
-        public static string UpdateLatestVer {
-            get {
-                return ResourceManager.GetString("UpdateLatestVer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Minimum Version: {0}.
-        /// </summary>
-        public static string UpdateMinVer {
-            get {
-                return ResourceManager.GetString("UpdateMinVer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A newer version of TQVault has been found..
-        /// </summary>
-        public static string UpdateNewTQVault {
-            get {
-                return ResourceManager.GetString("UpdateNewTQVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A newer version of the TQVault update program has been found..
-        /// </summary>
-        public static string UpdateNewUpdater {
-            get {
-                return ResourceManager.GetString("UpdateNewUpdater", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your version is up to date..
-        /// </summary>
-        public static string UpdateNoUpdate {
-            get {
-                return ResourceManager.GetString("UpdateNoUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK to perform an update..
-        /// </summary>
-        public static string UpdatePerform {
-            get {
-                return ResourceManager.GetString("UpdatePerform", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK to perform both updates..
-        /// </summary>
-        public static string UpdatePerformBoth {
-            get {
-                return ResourceManager.GetString("UpdatePerformBoth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK to download and run the installer..
-        /// </summary>
-        public static string UpdateRunInstall {
-            get {
-                return ResourceManager.GetString("UpdateRunInstall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There was an error connecting to the update server.
-        ///An update cannot be performed..
-        /// </summary>
-        public static string UpdateStreamError {
-            get {
-                return ResourceManager.GetString("UpdateStreamError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TQVault Updates.
-        /// </summary>
-        public static string UpdateText {
-            get {
-                return ResourceManager.GetString("UpdateText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The TQVault update program was either not found or the name has changed..
-        /// </summary>
-        public static string UpdateUpdaterNotFound {
-            get {
-                return ResourceManager.GetString("UpdateUpdaterNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;EMPTY&gt;.
         /// </summary>
         public static string VaultGroupBoxEmpty {
@@ -5447,15 +4644,6 @@ namespace TQVaultAE.Presentation {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Loading Player and Vault Files....
-        /// </summary>
-        public static string VaultProgressText {
-            get {
-                return ResourceManager.GetString("VaultProgressText", resourceCulture);
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized string similar to No vault is loaded..
         /// </summary>
@@ -5660,15 +4848,6 @@ namespace TQVaultAE.Presentation {
         public static string ImportVaultSuccess {
             get {
                 return ResourceManager.GetString("ImportVaultSuccess", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to 🔗 Share Vault.
-        /// </summary>
-        public static string ShareVaultTooltip {
-            get {
-                return ResourceManager.GetString("ShareVaultTooltip", resourceCulture);
             }
         }
 
@@ -6335,15 +5514,6 @@ namespace TQVaultAE.Presentation {
         public static string ModLinkSaveError {
             get {
                 return ResourceManager.GetString("ModLinkSaveError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Mod data: {0}.
-        /// </summary>
-        public static string ModLinkActiveMap {
-            get {
-                return ResourceManager.GetString("ModLinkActiveMap", resourceCulture);
             }
         }
         

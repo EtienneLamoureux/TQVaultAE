@@ -179,7 +179,7 @@ public sealed class SkillTooltipContentBuilder(ICharacterEditService editService
 
 	/// <summary>A game text with its values: <c>{%d0}</c>, <c>{%s1}</c>... (any printf format, by index).</summary>
 	private string GameText(string tag, string fallback, params object[] values)
-		=> CharacterPanelLayout.FormatGameText(this._translation.TranslateOr(tag, fallback, removeAllTQTags: false), values);
+		=> Presentation.GameText.Format(this._translation.TranslateOr(tag, fallback, removeAllTQTags: false), values);
 
 	/// <summary>
 	/// A description as the skill window writes it: with its colours, one wrapped line per line of the text, as its line

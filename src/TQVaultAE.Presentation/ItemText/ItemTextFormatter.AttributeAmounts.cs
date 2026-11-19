@@ -50,8 +50,7 @@ public partial class ItemTextFormatter
 	/// The duration of an effect over time at the index shown (the skill level, the relic's shard count), the last one
 	/// beyond: damage over time is written as its value per second times this duration.
 	/// </summary>
-	private static float DurationAt(Variable duration, int varNum)
-		=> (float)duration[Math.Min(duration.NumberOfValues - 1, varNum)];
+	private static float DurationAt(Variable duration, int varNum) => (float)ShownValue(duration, varNum);
 
 	/// <summary>
 	/// Gets a formatted range amount
@@ -89,17 +88,11 @@ public partial class ItemTextFormatter
 		else if (data.Effect.Equals("defensiveBlock", StringComparison.Ordinal))
 			tag = "DefenseBlock";
 
-		if (!TranslationService.TryTranslateXTag(tag, out var formatSpec))
+		string? formatSpec = this.GameFormat(tag);
+		if (formatSpec is null)
 		{
 			formatSpec = "{0}..{1}";
 			color = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (range) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 		}
 
 		if (label is not null && label.Contains('{'))
@@ -113,18 +106,19 @@ public partial class ItemTextFormatter
 		// Added by VillageIdiot
 		// Adjust for itemScalePercent
 		// AMS: Added If the value is reliant on the duration.
+		int minIndex = ShownIndex(min, varNum), maxIndex = ShownIndex(max, varNum);
 		if ((minDurVar is not null) && IsDurationReliantValue(data.Effect))
 		{
-			min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
-			max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
+			min[minIndex] = (float)min[minIndex] * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
+			max[maxIndex] = (float)max[maxIndex] * DurationAt(minDurVar, varNum) * itm.itemScalePercent;
 		}
 		else
 		{
-			min[Math.Min(min.NumberOfValues - 1, varNum)] = (float)min[Math.Min(min.NumberOfValues - 1, varNum)] * itm.itemScalePercent;
-			max[Math.Min(max.NumberOfValues - 1, varNum)] = (float)max[Math.Min(max.NumberOfValues - 1, varNum)] * itm.itemScalePercent;
+			min[minIndex] = (float)min[minIndex] * itm.itemScalePercent;
+			max[maxIndex] = (float)max[maxIndex] * itm.itemScalePercent;
 		}
 
-		amount = this.Format(formatSpec, min[Math.Min(min.NumberOfValues - 1, varNum)], max[Math.Min(max.NumberOfValues - 1, varNum)]);
+		amount = this.Format(formatSpec, min[minIndex], max[maxIndex]);
 		return color.HasValue ? $"{color?.ColorTag()}{amount}" : amount;
 	}
 
@@ -161,17 +155,11 @@ public partial class ItemTextFormatter
 			tag = "DamageInfluenceSingleFormat";
 		}
 
-		if (!TranslationService.TryTranslateXTag(tag, out var formatSpec))
+		string? formatSpec = this.GameFormat(tag);
+		if (formatSpec is null)
 		{
 			formatSpec = "{0}";
 			color = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (single) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 		}
 
 		if (label is not null && label.Contains('{'))
@@ -193,7 +181,8 @@ public partial class ItemTextFormatter
 		{
 			// Adjust for itemScalePercent
 			// only for floats
-			var curvar = currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)];
+			int index = ShownIndex(currentVariable, varNum);
+			var curvar = currentVariable[index];
 			if (currentVariable.DataType == VariableDataType.Float)
 			{
 				if ((minDurVar is not null) && IsDurationReliantValue(data.Effect))
@@ -204,7 +193,7 @@ public partial class ItemTextFormatter
 				{
 					curvar = (float)curvar * itm.itemScalePercent;
 				}
-				currentVariable[Math.Min(currentVariable.NumberOfValues - 1, varNum)] = curvar;
+				currentVariable[index] = curvar;
 
 				// Fix#246, double signed result on negative value Ex : string.Format("{0:+#0} d'intelligence", -10) by removing format sign.
 				// Fix "Dotted decimal mask" matching Ex : {0:#0.0} Health Regeneration per second
@@ -243,24 +232,18 @@ public partial class ItemTextFormatter
 		string? duration = null;
 		TQColor? color = null;
 
-		if (!TranslationService.TryTranslateXTag(fixedDuration ? "DamageFixedSingleFormatTime" : "DamageSingleFormatTime", out var formatSpec))
+		string? formatSpec = this.GameFormat(fixedDuration ? "DamageFixedSingleFormatTime" : "DamageSingleFormatTime");
+		if (formatSpec is null)
 		{
 			formatSpec = "{0}";
 			color = ItemStyle.Legendary.TQColor();
-		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (time single) = {FormatSpec}", formatSpec);
-
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
 		}
 
 		Variable? durationVariable = minDurVar ?? maxDurVar;
 
 		if (durationVariable is not null)
 		{
-			duration = this.Format(formatSpec, durationVariable[Math.Min(durationVariable.NumberOfValues - 1, varNum)]);
+			duration = this.Format(formatSpec, ShownValue(durationVariable, varNum));
 			duration = $"{color?.ColorTag()}{duration}";
 		}
 
@@ -276,59 +259,38 @@ public partial class ItemTextFormatter
 	/// <returns>formatted damage ratio string</returns>
 	private string GetDamageRatio(int varNum, ItemAttributesData damageRatioData, Variable damageRatioVar)
 	{
-		string? damageRatio = null;
 		TQColor? color = null;
-		string? formatSpec = null;
-
-		// Original: concatenating with substring (already optimized by compiler)
 		string tag = string.Concat("Damage", damageRatioData.FullAttribute.Substring(9, damageRatioData.FullAttribute.Length - 20), "Ratio");
-
-		if (!TranslationService.TryTranslateXTag(tag, out formatSpec))
+		string? formatSpec = this.GameFormat(tag);
+		if (formatSpec is null)
 		{
 			formatSpec = string.Concat("{0:f1}% ?", damageRatioData.FullAttribute, "?");
 			color = ItemStyle.Legendary.TQColor();
 		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (percent) = {FormatSpec}", formatSpec);
 
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-		}
-
-		damageRatio = this.Format(formatSpec, damageRatioVar[Math.Min(damageRatioVar.NumberOfValues - 1, varNum)]);
-
+		string damageRatio = this.Format(formatSpec, ShownValue(damageRatioVar, varNum));
 		return $"{color?.ColorTag()}{damageRatio}";
 	}
 
 	/// <summary>
-	/// Gets formatted chance string
+	/// Gets the formatted chance string ("25% Chance of"), of an effect or of its modifier
 	/// </summary>
 	/// <param name="varNum">offset number of the variable value that we are using</param>
 	/// <param name="chanceVar">chance variable</param>
 	/// <returns>formatted chance string.</returns>
-	private string? GetChance(int varNum, Variable chanceVar)
+	private string GetChance(int varNum, Variable chanceVar)
 	{
-		string? chance = null;
 		TQColor? color = null;
-
-		if (!TranslationService.TryTranslateXTag("ChanceOfTag", out var formatSpec))
+		string? formatSpec = this.GameFormat("ChanceOfTag");
+		if (formatSpec is null)
 		{
-			formatSpec = "?{%.1f0}% Chance of?";
+			// The fallback is in the game's format too: string.Format would throw on "{%.1f0}".
+			formatSpec = ItemAttributeProvider.ConvertFormat("?{%.1f0}% Chance of?");
 			color = ItemStyle.Legendary.TQColor();
 		}
 
-		if (USettings.ItemDebugLevel > 2)
-			Log.LogDebug("Item.formatspec (chance) = {FormatSpec}", formatSpec);
-
-		formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-		if (chanceVar is not null)
-		{
-			chance = this.Format(formatSpec, chanceVar[Math.Min(chanceVar.NumberOfValues - 1, varNum)]);
-			chance = $"{color?.ColorTag()}{chance}";
-		}
-
-		return chance;
+		string chance = this.Format(formatSpec, ShownValue(chanceVar, varNum));
+		return $"{color?.ColorTag()}{chance}";
 	}
 
 	/// <summary>
@@ -341,36 +303,18 @@ public partial class ItemTextFormatter
 	/// <returns>formatted modifier string</returns>
 	private string GetModifier(ItemAttributesData data, int varNum, ItemAttributesData modifierData, Variable modifierVar)
 	{
-		string? modifier = null;
 		TQColor? color = null;
-		string? formatSpec = null;
-
 		string tag = ItemAttributeProvider.GetAttributeTextTag(data);
-		if (string.IsNullOrEmpty(tag))
+		string? formatSpec = string.IsNullOrEmpty(tag)
+			? null
+			: this.GameFormat(tag) ?? (this.TryModifierOfEffectName(data, out var effectName) ? ItemAttributeProvider.ConvertFormat(effectName) : null);
+		if (formatSpec is null)
 		{
 			formatSpec = string.Concat("{0:f1}% ?", modifierData.FullAttribute, "?");
 			color = ItemStyle.Legendary.TQColor();
 		}
-		else
-		{
-			if (!TranslationService.TryTranslateXTag(tag, out formatSpec)
-				&& !this.TryModifierOfEffectName(data, out formatSpec))
-			{
-				formatSpec = string.Concat("{0:f1}% ?", modifierData.FullAttribute, "?");
-				color = ItemStyle.Legendary.TQColor();
-			}
-			else
-			{
-				if (USettings.ItemDebugLevel > 2)
-					Log.LogDebug("Item.formatspec (percent) = {FormatSpec}", formatSpec);
 
-				formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-			}
-
-		}
-
-		modifier = Format(formatSpec, modifierVar[Math.Min(modifierVar.NumberOfValues - 1, varNum)]);
-
+		string modifier = Format(formatSpec, ShownValue(modifierVar, varNum));
 		return $"{color?.ColorTag()}{modifier}";
 	}
 
@@ -409,52 +353,15 @@ public partial class ItemTextFormatter
 	/// <returns>formatted duration modifier string</returns>
 	private string GetDurationModifier(int varNum, Variable durationModifierVar)
 	{
-		string? durationModifier = null;
 		TQColor? color = null;
-
-		if (!TranslationService.TryTranslateXTag("ImprovedTimeFormat", out var formatSpec))
+		string? formatSpec = this.GameFormat("ImprovedTimeFormat");
+		if (formatSpec is null)
 		{
 			formatSpec = "?with {0:f0}% Improved Duration?";
 			color = ItemStyle.Legendary.TQColor();
 		}
-		else
-		{
-			if (USettings.ItemDebugLevel > 2)
-				Log.LogDebug("Item.formatspec (improved time) = {FormatSpec}", formatSpec);
 
-			formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-		}
-
-		durationModifier = Format(formatSpec, durationModifierVar[Math.Min(durationModifierVar.NumberOfValues - 1, varNum)]);
-
+		string durationModifier = Format(formatSpec, ShownValue(durationModifierVar, varNum));
 		return $"{color?.ColorTag()}{durationModifier}";
-	}
-
-	/// <summary>
-	/// Gets a formatted chance modifier string
-	/// </summary>
-	/// <param name="varNum">offset number of the variable value that we are using</param>
-	/// <param name="modifierChanceVar">Chance modifier variable</param>
-	/// <returns>formatted chance modifier string</returns>
-	private string GetChanceModifier(int varNum, Variable modifierChanceVar)
-	{
-		string? modifierChance = null;
-		TQColor? color = null;
-
-		if (!TranslationService.TryTranslateXTag("ChanceOfTag", out var formatSpec))
-		{
-			formatSpec = "?{%.1f0}% Chance of?";
-			color = ItemStyle.Legendary.TQColor();
-		}
-
-		if (USettings.ItemDebugLevel > 2)
-			Log.LogDebug("Item.formatspec (chance) = {FormatSpec}", formatSpec);
-
-		// The fallback is in the game's format too: string.Format would throw on "{%.1f0}".
-		formatSpec = ItemAttributeProvider.ConvertFormat(formatSpec);
-
-		modifierChance =this.Format(formatSpec, modifierChanceVar[Math.Min(modifierChanceVar.NumberOfValues - 1, varNum)]);
-
-		return $"{color?.ColorTag()}{modifierChance}";
 	}
 }

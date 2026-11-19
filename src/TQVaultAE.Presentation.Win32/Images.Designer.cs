@@ -63,16 +63,6 @@ namespace TQVaultAE.Presentation.Win32 {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap AboutGraphic {
-            get {
-                object obj = ResourceManager.GetObject("AboutGraphic", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap autosortdown01 {
             get {
                 object obj = ResourceManager.GetObject("autosortdown01", resourceCulture);
@@ -153,96 +143,6 @@ namespace TQVaultAE.Presentation.Win32 {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap ButtonCloseDown {
-            get {
-                object obj = ResourceManager.GetObject("ButtonCloseDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonCloseOver {
-            get {
-                object obj = ResourceManager.GetObject("ButtonCloseOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonCloseUp {
-            get {
-                object obj = ResourceManager.GetObject("ButtonCloseUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMaximizeDown {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMaximizeDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMaximizeOver {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMaximizeOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMaximizeUp {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMaximizeUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMinimizeDown {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMinimizeDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMinimizeOver {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMinimizeOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMinimizeUp {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMinimizeUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap caravan_bg {
             get {
                 object obj = ResourceManager.GetObject("caravan_bg", resourceCulture);
@@ -256,26 +156,6 @@ namespace TQVaultAE.Presentation.Win32 {
         public static System.Drawing.Bitmap equipment_bg_and_char {
             get {
                 object obj = ResourceManager.GetObject("equipment_bg_and_char", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Equipment_bg_new {
-            get {
-                object obj = ResourceManager.GetObject("Equipment_bg_new", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap EquipmentPanel {
-            get {
-                object obj = ResourceManager.GetObject("EquipmentPanel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -353,49 +233,9 @@ namespace TQVaultAE.Presentation.Win32 {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap MainForm_Background {
-            get {
-                object obj = ResourceManager.GetObject("MainForm_Background", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MainForm_NewBackground {
-            get {
-                object obj = ResourceManager.GetObject("MainForm_NewBackground", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Majestic_Chest {
-            get {
-                object obj = ResourceManager.GetObject("Majestic_Chest", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap Majestic_Chest_small {
             get {
                 object obj = ResourceManager.GetObject("Majestic_Chest_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap NewAboutGraphic {
-            get {
-                object obj = ResourceManager.GetObject("NewAboutGraphic", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -456,16 +296,6 @@ namespace TQVaultAE.Presentation.Win32 {
         public static System.Drawing.Bitmap rotatedautosortup01 {
             get {
                 object obj = ResourceManager.GetObject("rotatedautosortup01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap SplashScreen {
-            get {
-                object obj = ResourceManager.GetObject("SplashScreen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -586,16 +416,6 @@ namespace TQVaultAE.Presentation.Win32 {
         public static System.Drawing.Bitmap tqmedallion {
             get {
                 object obj = ResourceManager.GetObject("tqmedallion", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap tqmedalliondoor {
-            get {
-                object obj = ResourceManager.GetObject("tqmedalliondoor", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

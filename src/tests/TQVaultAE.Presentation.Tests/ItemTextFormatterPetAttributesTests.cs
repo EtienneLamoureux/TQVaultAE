@@ -133,6 +133,20 @@ public class ItemTextFormatterPetAttributesTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void PetStatistic_WithAMalformedTranslation_ShowsThatLineRaw_AndTheOthers()
+	{
+		this.Translations["SkillPetDescriptionHealth"] = "{%.0f0}  Health {%.0f3}";
+		this.CreateRecord(SpawnSkillId, "Skill_SpawnPet", Str("spawnObjects", PetId));
+		this.CreateRecord(PetId, "Monster", Str("description", "tagWolf"), Float("characterLife", 500f), Float("characterMana", 100f));
+		var scroll = this.CreateItem("OneShot_Scroll", Str("skillName", SpawnSkillId));
+
+		var lines = this.BaseAttributes(scroll);
+
+		lines.Should().Contain(line => line.Contains("FormatErr(\"{0:#0}  Health", StringComparison.Ordinal));
+		lines.Should().Contain($"{Mundane}100  Energy");
+	}
+
+	[Fact]
 	public void SummonSkill_WithAMissingPetRecord_ShowsOnlyTheLimit()
 	{
 		this.CreateRecord(SpawnSkillId, "Skill_SpawnPet", Int("petLimit", 3), Str("spawnObjects", PetId));
