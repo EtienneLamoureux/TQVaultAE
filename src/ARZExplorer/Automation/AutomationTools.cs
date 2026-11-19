@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.Text.Json;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
@@ -174,14 +173,7 @@ internal static class AutomationTools
 	[Description("Renders the main window to PNG with Control.DrawToBitmap (works when it is hidden behind others).")]
 	public static IEnumerable<ContentBlock> Capture()
 	{
-		var png = AutomationHost.OnUi(form =>
-		{
-			using var bitmap = new Bitmap(form.Width, form.Height);
-			form.DrawToBitmap(bitmap, new Rectangle(Point.Empty, form.Size));
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return stream.ToArray();
-		}, TimeSpan.FromSeconds(5));
+		var png = AutomationHost.OnUi(ControlImages.RenderPng, TimeSpan.FromSeconds(5));
 
 		var path = Path.Combine(Path.GetTempPath(), $"arzexplorer-capture-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
 		File.WriteAllBytes(path, png);

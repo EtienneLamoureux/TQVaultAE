@@ -1,4 +1,3 @@
-using System.Drawing.Imaging;
 using TQVaultAE.Automation;
 
 namespace ArzExplorer;
@@ -41,11 +40,7 @@ public partial class MainForm
 				.Prepend($"title: {box.Text}")
 				.ToArray();
 
-			using var bitmap = new Bitmap(box.Width, box.Height);
-			box.DrawToBitmap(bitmap, new Rectangle(Point.Empty, box.Size));
-			using var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			return (texts, stream.ToArray());
+			return (texts, ControlImages.RenderPng(box));
 		}
 		finally
 		{
