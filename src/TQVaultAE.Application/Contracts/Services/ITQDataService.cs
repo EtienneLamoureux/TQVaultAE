@@ -25,20 +25,20 @@ public interface ITQDataService
 
 	bool ReplaceUnicodeValueAfter(ref byte[] playerFileContent, string keyToLookFor, string replacement, int offset = 0);
 	bool RemoveCStringValueAfter(ref byte[] playerFileContent, string keyToLookFor, int offset = 0);
-	(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 
-	(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 
-	(int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, int valueLen, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 
-	(int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, int valueLen, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 
 	(int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, string key, int offset = 0);
 
 	(int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, byte[] key, int offset = 0);
 
-	(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0);
-	(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0);
 
 	/// <summary>
 	/// Find the "end_block" of <paramref name="keyToLookFor"/>
@@ -47,7 +47,7 @@ public interface ITQDataService
 	/// <param name="keyToLookFor"></param>
 	/// <param name="offset"></param>
 	/// <returns></returns>
-	(int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0);
+	(int indexOf, int valueOffset, int nextOffset, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0);
 
 	/// <summary>
 	/// Return value for "beginBlock" tag

@@ -112,7 +112,7 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 		return ans;
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0)
 	{
 		var found = ReadIntAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf != -1)
@@ -123,7 +123,7 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 		return found;
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0)
 	{
 		var found = ReadFloatAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf != -1)
@@ -134,74 +134,64 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 		return found;
 	}
 
-	static byte[] Empty = [];
-
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, value, 0);
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0);
 
-		var span = playerFileContent.AsSpan(idx.nextOffset, sizeof(float));
-		value = span.ToArray();
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(float), value, BitConverter.ToSingle(value, 0));
+		float value = BinaryPrimitives.ReadSingleLittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(float)));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(float), value);
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, value, 0);
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0);
 
-		var span = playerFileContent.AsSpan(idx.nextOffset, sizeof(int));
-		value = span.ToArray();
-		int intValue = BinaryPrimitives.ReadInt32LittleEndian(span);
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int), value, intValue);
+		int intValue = BinaryPrimitives.ReadInt32LittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(int)));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int), intValue);
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueLen, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, Empty, "");
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, "");
 
 		// Read the string length (4 bytes)
-		var lenSpan = playerFileContent.AsSpan(idx.nextOffset, sizeof(int));
-		int len = BinaryPrimitives.ReadInt32LittleEndian(lenSpan);
+		int len = BinaryPrimitives.ReadInt32LittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(int)));
 		// Read the string data
-		var stringSpan = playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len);
-		value = stringSpan.ToArray();
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len, len, value, Encoding1252.GetString(value));
+		var text = Encoding1252.GetString(playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len, len, text);
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueLen, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, Empty, "");
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, "");
 
 		// Read the string length (4 bytes) - multiply by 2 for 2-byte chars
-		var lenSpan = playerFileContent.AsSpan(idx.nextOffset, sizeof(int));
-		int len = BinaryPrimitives.ReadInt32LittleEndian(lenSpan);
+		int len = BinaryPrimitives.ReadInt32LittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(int)));
 		// Read the unicode string data (2 bytes per character)
-		var stringSpan = playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len * 2);
-		value = stringSpan.ToArray();
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len * 2, len, value, EncodingUnicode.GetString(value));
+		var text = EncodingUnicode.GetString(playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len * 2));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len * 2, len, text);
 	}
 
 	public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, string key, int offset = 0)
 	{
 		// Add the length of the key to help filter out unwanted hits.
-		byte[] keyWithLen = BitConverter.GetBytes(key.Length).Concat(Encoding1252.GetBytes(key)).ToArray();
-		var result = BinaryFindKey(dataSource.AsSpan(), keyWithLen.AsSpan(), offset);
+		int byteCount = sizeof(int) + Encoding1252.GetByteCount(key);
+		Span<byte> keyWithLen = byteCount <= 256 ? stackalloc byte[byteCount] : new byte[byteCount];
+		BinaryPrimitives.WriteInt32LittleEndian(keyWithLen, key.Length);
+		Encoding1252.GetBytes(key, keyWithLen[sizeof(int)..]);
+		var result = BinaryFindKey(dataSource.AsSpan(), keyWithLen, offset);
 		// compensate the added length before returning the value
 		return result.indexOf == -1 // not found
 			? (result.indexOf, offset)
@@ -215,23 +205,8 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 
 	private static (int indexOf, int nextOffset) BinaryFindKey(ReadOnlySpan<byte> dataSource, ReadOnlySpan<byte> key, int offset = 0)
 	{
-		// Use SIMD-optimized SequenceEqual for comparison when first byte matches
-		// adapted From https://www.codeproject.com/Questions/479424/C-23plusbinaryplusfilesplusfindingplusstrings
-		int i = offset;
-		var keyLength = key.Length;
-		var firstByte = key[0];
-
-		for (; i <= (dataSource.Length - keyLength); i++)
-		{
-			if (dataSource[i] == firstByte)
-			{
-				// Use Span.SequenceEqual which is SIMD-optimized in .NET
-				if (dataSource.Slice(i, keyLength).SequenceEqual(key))
-					return (i, i + keyLength);
-			}
-		}
-		// Not found
-		return (-1, 0);
+		int found = offset < 0 || offset > dataSource.Length ? -1 : dataSource[offset..].IndexOf(key);
+		return found == -1 ? (-1, 0) : (offset + found, offset + found + key.Length);
 	}
 
 	/// <summary>
@@ -241,12 +216,12 @@ public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 	/// <param name="keyToLookFor"></param>
 	/// <param name="offset"></param>
 	/// <returns></returns>
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		int level = 0;
 		var keybegin_block = "begin_block";
 		var keyend_block = "end_block";
-		var noMatch = (-1, 0, 0, Array.Empty<byte>(), 0);
+		var noMatch = (-1, 0, 0, 0);
 
 		var startPoint = BinaryFindKey(playerFileContent, keyToLookFor, offset);
 		if (startPoint.indexOf == -1)

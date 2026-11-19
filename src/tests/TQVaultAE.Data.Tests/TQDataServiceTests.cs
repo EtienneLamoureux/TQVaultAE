@@ -259,6 +259,27 @@ public class TQDataServiceTests
 		result.nextOffset.Should().Be(50);
 	}
 
+	[Fact]
+	public void BinaryFindKey_OffsetAtTheEnd_ReturnsNegativeOne()
+	{
+		var data = TQDataService.Encoding1252.GetBytes("end");
+
+		_tqData.BinaryFindKey(data, data, data.Length).indexOf.Should().Be(-1);
+	}
+
+	[Fact]
+	public void BinaryFindKey_StringOverload_LongKey_FindsItAfterItsLength()
+	{
+		// A key longer than the stack buffer of the length-prefixed search.
+		var key = new string('k', 300);
+		var data = new byte[10].Concat(BitConverter.GetBytes(key.Length)).Concat(TQDataService.Encoding1252.GetBytes(key)).Concat(new byte[4]).ToArray();
+
+		var result = _tqData.BinaryFindKey(data, key);
+
+		result.indexOf.Should().Be(14);
+		result.nextOffset.Should().Be(314);
+	}
+
 	#endregion
 
 	#region ValidateNextString Tests
