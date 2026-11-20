@@ -158,9 +158,6 @@ public sealed class SettingsEditor
 
 	public bool ItemBGColorOpacityChanged => this.Current.ItemBGColorOpacity != this.Original.ItemBGColorOpacity;
 
-	public bool EnableItemRequirementRestrictionChanged
-		=> this.Current.EnableItemRequirementRestriction != this.Original.EnableItemRequirementRestriction;
-
 	public bool EnableCharacterEditChanged => this.Current.AllowCharacterEdit != this.Original.AllowCharacterEdit;
 
 	public bool EnableTQVaultSoundsChanged => this.Current.EnableTQVaultSounds != this.Original.EnableTQVaultSounds;

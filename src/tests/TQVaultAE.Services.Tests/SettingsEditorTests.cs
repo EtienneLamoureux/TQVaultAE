@@ -280,7 +280,6 @@ public class SettingsEditorTests
 
 		editor.ItemBGColorOpacityChanged.Should().BeTrue();
 		editor.EnableTQVaultSoundsChanged.Should().BeTrue();
-		editor.EnableItemRequirementRestrictionChanged.Should().BeFalse();
 		editor.EnableCharacterEditChanged.Should().BeFalse();
 		editor.VaultPathChanged.Should().BeFalse();
 	}

@@ -380,7 +380,82 @@ public class PlayerService(
 		if (reqs is null || reqs.Count == 0)
 			return true;
 
-		return currPlayer.IsPlayerMeetRequierements(reqs, attributes);
+		return currPlayer.IsPlayerMeetRequierements(reqs, attributes, item.ItemClass);
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyDictionary<string, int>? ReducedRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null)
+	{
+		if (player is null)
+			return null;
+
+		var reqs = this.ItemText.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements).RequirementVariables;
+		return reqs is null || reqs.Count == 0 ? null : player.ReducedRequirements(reqs, attributes, item.ItemClass);
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyDictionary<string, int>? CurrentPlayerReducedRequirements(Item item)
+		=> this.ReducedRequirements(this.userContext.CurrentPlayer, item);
+
+	/// <summary>Passes before a loop of pieces detached and attached again (negative bonuses) stops where it is.</summary>
+	private const int MaxEquipmentPasses = 8;
+
+	/// <inheritdoc/>
+	public EquipmentState ResolveEquipment(RequirementBuild build, IReadOnlyList<Item> worn, bool useAlternate, AttributeSum? buffs = null)
+	{
+		var counted = worn.Where(item => !item.IsInInactiveWeaponSlot(useAlternate)).ToList();
+		var detached = new HashSet<Item>(ReferenceEqualityComparer.Instance);
+		var requirements = new Dictionary<Item, SortedList<string, Variable>?>(ReferenceEqualityComparer.Instance);
+
+		bool Meets(Item item, RequirementAttributes have)
+		{
+			if (!requirements.TryGetValue(item, out var reqs))
+				requirements[item] = reqs = this.ItemText.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements)?.RequirementVariables;
+
+			return reqs is not { Count: > 0 } || EquipmentRequirements.Meets(reqs, item.ItemClass, have);
+		}
+
+		var state = this.SumEquipment(build, worn, detached, useAlternate, buffs);
+		for (int pass = 0; pass < MaxEquipmentPasses; pass++)
+		{
+			// The attached pieces that fail, their own bonuses counted, are detached; when none, the detached pieces that
+			// pass without them are attached again.
+			var failing = counted.Where(item => !detached.Contains(item) && !Meets(item, state.Totals)).ToList();
+			var passing = failing.Count > 0 ? [] : counted.Where(item => detached.Contains(item) && Meets(item, state.Totals)).ToList();
+			if (failing.Count == 0 && passing.Count == 0)
+				break;
+
+			detached.UnionWith(failing);
+			detached.ExceptWith(passing);
+			state = this.SumEquipment(build, worn, detached, useAlternate, buffs);
+		}
+
+		return state;
+	}
+
+	/// <summary>The sums of <paramref name="build"/> wearing <paramref name="worn"/> without the <paramref name="detached"/> pieces.</summary>
+	private EquipmentState SumEquipment(RequirementBuild build, IReadOnlyList<Item> worn, HashSet<Item> detached, bool useAlternate, AttributeSum? buffs)
+	{
+		var active = worn.Where(item => !detached.Contains(item)).ToList();
+		var gear = this.CharacterStatsService.GetGearAttributes(active, useAlternate);
+		var skills = this.CharacterStatsService.GetSkillAttributes(build.Skills, this.CharacterEditService.GetGearSkillAugments(active, useAlternate), build.Trees, includeBuffs: false);
+		skills.Add(this.CharacterStatsService.GetItemSkillAttributes(active, useAlternate, includeBuffs: false));
+
+		// The totals count the buffs running too; the skill bonuses kept for the save do not.
+		var counted = skills;
+		if (buffs is not null)
+		{
+			counted = new AttributeSum();
+			counted.Add(skills);
+			counted.Add(buffs);
+		}
+
+		var totals = new RequirementAttributes(build.Level,
+			PlayerInfo.Total(build.Strength, "characterStrength", gear, counted),
+			PlayerInfo.Total(build.Dexterity, "characterDexterity", gear, counted),
+			PlayerInfo.Total(build.Intelligence, "characterIntelligence", gear, counted),
+			gear, counted);
+		return new EquipmentState(active, worn.Where(detached.Contains).ToList(), totals, gear, skills);
 	}
 
 	/// <inheritdoc/>
@@ -402,13 +477,9 @@ public class PlayerService(
 			return;
 
 		var worn = this.GetWornEquipment(equipment, ignored);
-		bool useAlternate = player.UseAlternate;
-		var trees = this.CharacterEditService.GetMasteries(info);
-		var augments = this.CharacterEditService.GetGearSkillAugments(worn, useAlternate);
-
-		info.GearBonus = this.CharacterStatsService.GetGearAttributes(worn, useAlternate);
-		var skills = this.CharacterStatsService.GetSkillAttributes(info.SkillRecordList, augments, trees, includeBuffs: false);
-		skills.Add(this.CharacterStatsService.GetItemSkillAttributes(worn, useAlternate, includeBuffs: false));
-		info.SkillBonus = skills;
+		var state = this.ResolveEquipment(RequirementBuild.Of(info, this.CharacterEditService.GetMasteries(info)), worn, player.UseAlternate);
+		info.GearBonus = state.Gear;
+		info.SkillBonus = state.Skills;
+		info.DetachedEquipment = state.Detached;
 	}
 }

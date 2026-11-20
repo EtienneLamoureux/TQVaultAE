@@ -35,7 +35,6 @@ public sealed record SettingsValues
 	public bool TooltipShowGrantedSkills { get; set; }
 	public bool TooltipShowSetPieceCounts { get; set; }
 	public int ItemBGColorOpacity { get; set; }
-	public bool EnableItemRequirementRestriction { get; set; }
 	public bool EnableHotReload { get; set; }
 	public bool EnableTQVaultSounds { get; set; }
 	public bool EnableEpicLegendaryAffixes { get; set; }
@@ -99,7 +98,6 @@ public sealed record SettingsValues
 			TooltipShowGrantedSkills = settings.TooltipShowGrantedSkills,
 			TooltipShowSetPieceCounts = settings.TooltipShowSetPieceCounts,
 			ItemBGColorOpacity = settings.ItemBGColorOpacity,
-			EnableItemRequirementRestriction = settings.EnableItemRequirementRestriction,
 			EnableHotReload = settings.EnableHotReload,
 			EnableTQVaultSounds = settings.EnableTQVaultSounds,
 			EnableEpicLegendaryAffixes = settings.EnableEpicLegendaryAffixes,
@@ -146,7 +144,6 @@ public sealed record SettingsValues
 		settings.TooltipShowGrantedSkills = this.TooltipShowGrantedSkills;
 		settings.TooltipShowSetPieceCounts = this.TooltipShowSetPieceCounts;
 		settings.ItemBGColorOpacity = this.ItemBGColorOpacity;
-		settings.EnableItemRequirementRestriction = this.EnableItemRequirementRestriction;
 		settings.EnableHotReload = this.EnableHotReload;
 		settings.EnableTQVaultSounds = this.EnableTQVaultSounds;
 		settings.DisableAutoStacking = this.DisableAutoStacking;

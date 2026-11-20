@@ -310,30 +310,24 @@ public class PlayerCollection : IEnumerable<SackCollection>
 		return false;
 	}
 
+	/// <summary>Whether the player meets the requirements of an item, reduced as the game reduces them (<see cref="EquipmentRequirements"/>).</summary>
 	/// <param name="attributes">The attributes to check against (another build shown); null for the save's.</param>
-	public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables, RequirementAttributes? attributes = null)
+	/// <param name="itemClass">The item's class, for its type's requirement reductions; null for the global ones only.</param>
+	public bool IsPlayerMeetRequierements(SortedList<string, Variable> requirementVariables, RequirementAttributes? attributes = null, string? itemClass = null)
 	{
 		if (this.IsVault || this.PlayerInfo is null) return true;
 
-		var have = attributes ?? RequirementAttributes.Of(this.PlayerInfo);
-
-		// "LevelRequirement"
-		int LevelRequirement = requirementVariables.TryGetValue(Variable.KEY_LEVELREQ, out Variable? levelRequirementVariable) ? levelRequirementVariable.GetInt32() : 0;
-
-		// "Strength"
-		int Strength = requirementVariables.TryGetValue(Variable.KEY_STRENGTH, out Variable? strengthVariable) ? strengthVariable.GetInt32() : 0;
-
-		// Dexterity
-		int Dexterity = requirementVariables.TryGetValue(Variable.KEY_DEXTERITY, out Variable? dexterityVariable) ? dexterityVariable.GetInt32() : 0;
-
-		// Intelligence
-		int Intelligence = requirementVariables.TryGetValue(Variable.KEY_INTELLIGENCE, out Variable? intelligenceVariable) ? intelligenceVariable.GetInt32() : 0;
-
-		return
-			LevelRequirement <= have.Level
-			&& Strength <= have.Strength
-			&& Dexterity <= have.Dexterity
-			&& Intelligence <= have.Intelligence
-			;
+		return EquipmentRequirements.Meets(requirementVariables, itemClass, attributes ?? RequirementAttributes.Of(this.PlayerInfo));
 	}
+
+	/// <summary>
+	/// The requirements of an item once reduced for this player (<see cref="EquipmentRequirements.ReducedValues"/>); null
+	/// for a vault or a player without information.
+	/// </summary>
+	/// <param name="attributes">The attributes and bonuses to reduce with (another build shown); null for the save's.</param>
+	/// <param name="itemClass">The item's class, for its type's requirement reductions.</param>
+	public IReadOnlyDictionary<string, int>? ReducedRequirements(SortedList<string, Variable> requirementVariables, RequirementAttributes? attributes = null, string? itemClass = null)
+		=> this.IsVault || this.PlayerInfo is null
+			? null
+			: EquipmentRequirements.ReducedValues(requirementVariables, itemClass, attributes ?? RequirementAttributes.Of(this.PlayerInfo));
 }

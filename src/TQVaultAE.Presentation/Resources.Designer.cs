@@ -3909,25 +3909,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Item Requirement Restriction.
-        /// </summary>
-        public static string SettingsEnableItemRequirementRestriction {
-            get {
-                return ResourceManager.GetString("SettingsEnableItemRequirementRestriction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to When enabled, a red background color is displayed on items where the selected character does not meet the item requirements.
-        ///The character will also not be able to equip items where the requirements are not met..
-        /// </summary>
-        public static string SettingsEnableItemRequirementRestrictionTT {
-            get {
-                return ResourceManager.GetString("SettingsEnableItemRequirementRestrictionTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to MCP endpoint for AI agents.
         /// </summary>
         public static string SettingsMcpServer {

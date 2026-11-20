@@ -201,6 +201,9 @@ public sealed class LoadoutPanel : EquipmentPanel
 		this.PiecesChanged?.Invoke(this, EventArgs.Empty);
 	}
 
+	/// <summary>A loadout is not worn: its pieces are checked as if put in a slot.</summary>
+	protected override bool WornByOwner => false;
+
 	/// <summary>The character's map: the pieces of a loadout are read with it, as the character's items.</summary>
 	protected override string? SlotMap => this.Loadouts?.Mod;
 

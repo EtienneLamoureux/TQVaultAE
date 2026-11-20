@@ -254,6 +254,19 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 	}
 
 	/// <summary>
+	/// The bonuses of the buffs turned on that the sums without buffs leave out (<see cref="IPlayerService.ResolveEquipment"/>):
+	/// every source but the gear and the passives (auras, buffs, pet auras, curses, shrines, Tartarus, the scroll).
+	/// </summary>
+	public AttributeSum RunningBuffs(CharacterPanelInput input)
+	{
+		var sum = new AttributeSum();
+		foreach (var source in this.Sources(input).Where(s => s.Group is not (BuffGroup.Gear or BuffGroup.Passive) && input.Buffs.IsOn(s)))
+			sum.Add(source.Sum);
+
+		return sum;
+	}
+
+	/// <summary>
 	/// Toggles a buff source of the character in <paramref name="selection"/> (a click in the Buffs tab).
 	/// </summary>
 	/// <returns>false when the character has no such source.</returns>

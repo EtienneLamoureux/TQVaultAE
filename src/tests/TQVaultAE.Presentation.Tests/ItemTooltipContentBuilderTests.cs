@@ -663,4 +663,21 @@ public class ItemTooltipContentBuilderTests
 		=> ItemTooltipContentBuilder.ScopesFor(view).Should().Be(expected);
 
 	#endregion
+
+	[Fact]
+	public void WithReduced_ShowsTheReducedValueAfterTheBase_OnlyWhenItDiffers()
+	{
+		var variables = new SortedList<string, Variable>
+		{
+			[Variable.KEY_LEVELREQ] = new Variable(Variable.KEY_LEVELREQ, VariableDataType.Integer, 1) { [0] = 30 },
+			[Variable.KEY_STRENGTH] = new Variable(Variable.KEY_STRENGTH, VariableDataType.Integer, 1) { [0] = 430 },
+		};
+		var reduced = new Dictionary<string, int> { [Variable.KEY_LEVELREQ] = 30, [Variable.KEY_STRENGTH] = 387 };
+		int level = variables.IndexOfKey(Variable.KEY_LEVELREQ);
+		int strength = variables.IndexOfKey(Variable.KEY_STRENGTH);
+
+		ItemTooltipContentBuilder.WithReduced("Required Strength: 430", strength, variables, reduced).Should().Be("Required Strength: 430 (387)");
+		ItemTooltipContentBuilder.WithReduced("Required Player Level: 30", level, variables, reduced).Should().Be("Required Player Level: 30");
+		ItemTooltipContentBuilder.WithReduced("Required Strength: 430", strength, variables, null).Should().Be("Required Strength: 430");
+	}
 }

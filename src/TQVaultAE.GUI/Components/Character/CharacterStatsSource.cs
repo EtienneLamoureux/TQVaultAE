@@ -37,9 +37,9 @@ internal sealed class CharacterStatsSource(GuiServices services)
 	public bool ClassSetComplete { get; private set; } = true;
 
 	/// <summary>
-	/// What the item requirements of the build shown are checked against: its attributes with the bonuses of the gear worn
-	/// and of its skills (<see cref="PlayerInfo.Total"/>, as the save's are summed), computed here for the save's build too
-	/// (the save's bonuses are kept up to date only for the main window's character).
+	/// What an item put in a slot is checked against for the build shown: its attributes with the bonuses of the attached
+	/// pieces and of its skills (<see cref="EquipmentState.Totals"/>), computed here for the save's build too (the save's
+	/// bonuses are kept up to date only for the main window's character).
 	/// </summary>
 	public RequirementAttributes? Requirements(PlayerCollection? player, IReadOnlyList<Item> worn)
 	{
@@ -48,6 +48,15 @@ internal sealed class CharacterStatsSource(GuiServices services)
 	}
 
 	private RequirementAttributes? _requirements;
+
+	/// <summary>The worn pieces detached for the build shown (<see cref="EquipmentState.Detached"/>).</summary>
+	public IReadOnlyList<Item> Detached(PlayerCollection? player, IReadOnlyList<Item> worn)
+	{
+		this.View(player, worn);
+		return this._detached;
+	}
+
+	private IReadOnlyList<Item> _detached = [];
 
 	/// <summary>
 	/// Makes the game data of the character answer while the view is built (its linked mod), or null when the active map
@@ -70,6 +79,7 @@ internal sealed class CharacterStatsSource(GuiServices services)
 		this.ClassSet = null;
 		this.ClassSetComplete = true;
 		this._requirements = null;
+		this._detached = [];
 		this._view = null;
 	}
 
@@ -118,7 +128,7 @@ internal sealed class CharacterStatsSource(GuiServices services)
 
 		using var scope = this.ReadScope?.Invoke();
 
-		// The items the item requirements count (PlayerInfo's calculated attributes): an equipped item in hand is left out.
+		// The items worn: an equipped item in hand is left out.
 		var skills = services.CharacterEditService.CreateSkillEditor(info);
 		var alternate = this.AlternateWeapons ?? player.UseAlternate;
 		var applied = this.ClassSet is { } set
@@ -126,33 +136,37 @@ internal sealed class CharacterStatsSource(GuiServices services)
 			: null;
 		this.ClassSetComplete = applied?.Complete ?? true;
 		IReadOnlyList<int> attributes = applied?.Attributes ?? [info.BaseHealth, info.BaseMana, info.BaseStrength, info.BaseIntelligence, info.BaseDexterity];
-		this._requirements = this.RequirementsOf(info, attributes, skills, worn, player.UseAlternate);
+		IReadOnlyList<MasteryTree> trees = [.. skills.Slots.OfType<MasteryTree>()];
 
-		var input = CharacterPanelInput.FromSave(
-			player, info, worn, [.. skills.Slots.OfType<MasteryTree>()], services.CharacterEditService.GetGearSkillAugments(worn, alternate),
-			this.Buffs, alternate);
-		if (applied is not null)
-			input = input with { Attributes = applied.Attributes, AttributePoints = applied.AttributePoints, Skills = skills.BuildSkillRecords(), ClassCleared = skills.MasteriesChanged };
+		// The pieces the game attaches for this build, with the weapon set counted and the buffs on: a detached piece gives
+		// nothing (an aura it grants included), which may change the buffs running; again until they hold.
+		var build = new RequirementBuild(info.CurrentLevel, attributes[CharacterPanelInput.Strength], attributes[CharacterPanelInput.Dexterity],
+			attributes[CharacterPanelInput.Intelligence], skills.BuildSkillRecords(), trees);
+		AttributeSum? buffs = null;
+		EquipmentState equipment;
+		CharacterPanelInput input;
+		int pass = 0;
+		while (true)
+		{
+			equipment = services.PlayerService.ResolveEquipment(build, worn, alternate, buffs);
+			input = CharacterPanelInput.FromSave(
+				player, info, equipment.Active, trees, services.CharacterEditService.GetGearSkillAugments(equipment.Active, alternate),
+				this.Buffs, alternate);
+			if (applied is not null)
+				input = input with { Attributes = applied.Attributes, AttributePoints = applied.AttributePoints, Skills = skills.BuildSkillRecords(), ClassCleared = skills.MasteriesChanged };
 
+			var running = this.Builder.RunningBuffs(input);
+			if (++pass == 3 || (buffs ?? new AttributeSum()).Values.Count == running.Values.Count
+				&& running.Values.All(v => (buffs?[v.Key] ?? 0) == v.Value))
+			{
+				break;
+			}
+
+			buffs = running;
+		}
+
+		this._requirements = equipment.Totals;
+		this._detached = equipment.Detached;
 		return this.Builder.Build(input);
-	}
-
-	/// <summary>
-	/// The attributes the item requirements count: the base attributes, the bonuses of the gear worn and those of the
-	/// skills and of the items' skills, without buffs, as <see cref="IPlayerService.UpdateAttributeBonuses"/> sums them.
-	/// </summary>
-	private RequirementAttributes RequirementsOf(PlayerInfo info, IReadOnlyList<int> attributes, CharacterSkillEditor skills, IReadOnlyList<Item> worn, bool useAlternate)
-	{
-		var stats = services.CharacterStatsService;
-		var gear = stats.GetGearAttributes(worn, useAlternate);
-		var bonus = stats.GetSkillAttributes(skills.BuildSkillRecords(), services.CharacterEditService.GetGearSkillAugments(worn, useAlternate),
-			[.. skills.Slots.OfType<MasteryTree>()], includeBuffs: false);
-		bonus.Add(stats.GetItemSkillAttributes(worn, useAlternate, includeBuffs: false));
-
-		int Total(int attribute, string field) => PlayerInfo.Total(attributes[attribute], field, gear, bonus);
-		return new RequirementAttributes(info.CurrentLevel,
-			Total(CharacterPanelInput.Strength, "characterStrength"),
-			Total(CharacterPanelInput.Dexterity, "characterDexterity"),
-			Total(CharacterPanelInput.Intelligence, "characterIntelligence"));
 	}
 }

@@ -100,10 +100,16 @@ public class PlayerInfo
 	public AttributeSum? SkillBonus { get; set; }
 
 	/// <summary>
-	/// The bonuses of the equipped items and their item sets (not the weapon set not in hand), summed by variable as the
-	/// statistics panel sums them; <see langword="null"/> until computed.
+	/// The bonuses of the attached equipped items and their item sets (not the weapon set not in hand, nor a detached
+	/// piece), summed by variable as the statistics panel sums them; <see langword="null"/> until computed.
 	/// </summary>
 	public AttributeSum? GearBonus { get; set; }
+
+	/// <summary>
+	/// The worn pieces whose requirements fail: in their slots but detached, giving nothing (<see cref="EquipmentState"/>);
+	/// set with <see cref="GearBonus"/>.
+	/// </summary>
+	public IReadOnlyList<Item> DetachedEquipment { get; set; } = [];
 
 	/// <summary>
 	/// An attribute with the bonuses of the gear and the skills, as the game's character window shows it:

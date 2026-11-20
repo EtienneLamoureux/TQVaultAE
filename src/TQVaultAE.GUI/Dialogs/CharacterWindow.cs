@@ -99,6 +99,7 @@ internal sealed class CharacterWindow : VaultForm, IItemComparisonHost
 
 		// The red items follow the class set shown.
 		this._equipment.RequirementAttributes = () => this._stats.Requirements(this.Player, this._equipment.WornItems);
+		this._equipment.DetachedItems = () => this._stats.Detached(this.Player, this._equipment.WornItems);
 		this._look = new CharacterStatsLook(this.FontService, this.UIService);
 		this._tabs = [.. Enumerable.Range(0, CharacterWindowLayout.StatsPanels).Select(tab => new CharacterStatsPanel(this.UIService, this.FontService)
 		{

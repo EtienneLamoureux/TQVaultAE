@@ -189,7 +189,6 @@ internal partial class SettingsUserControl
 		scalingCheckBoxTooltipGrantedSkills = new ScalingCheckBox();
 		scalingCheckBoxTooltipSetPieceCounts = new ScalingCheckBox();
 		ItemBGColorOpacityLabel = new ScalingLabel();
-		EnableItemRequirementRestrictionCheckBox = new ScalingCheckBox();
 		hotReloadCheckBox = new ScalingCheckBox();
 		scalingCheckBoxEnableEpicLegendaryAffixes = new ScalingCheckBox();
 		scalingCheckBoxDisableAutoStacking = new ScalingCheckBox();
@@ -601,18 +600,6 @@ internal partial class SettingsUserControl
 		ItemBGColorOpacityLabel.TabIndex = 40;
 		ItemBGColorOpacityLabel.Text = "Item BG Alpha Color :";
 		toolTip.SetToolTip(ItemBGColorOpacityLabel, "Item background color opacity level");
-		// 
-		// EnableItemRequirementRestrictionCheckBox
-		// 
-		EnableItemRequirementRestrictionCheckBox.AutoSize = true;
-		EnableItemRequirementRestrictionCheckBox.ForeColor = Color.Orange;
-		EnableItemRequirementRestrictionCheckBox.Location = new Point(3, 80);
-		EnableItemRequirementRestrictionCheckBox.Name = "EnableItemRequirementRestrictionCheckBox";
-		EnableItemRequirementRestrictionCheckBox.Size = new Size(304, 22);
-		EnableItemRequirementRestrictionCheckBox.TabIndex = 41;
-		EnableItemRequirementRestrictionCheckBox.Text = "Enable Character Requierement BG Color";
-		toolTip.SetToolTip(EnableItemRequirementRestrictionCheckBox, resources.GetString("EnableItemRequirementRestrictionCheckBox.ToolTip"));
-		EnableItemRequirementRestrictionCheckBox.UseVisualStyleBackColor = true;
 		// 
 		// hotReloadCheckBox
 		// 
@@ -1097,7 +1084,6 @@ internal partial class SettingsUserControl
 		bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(baseFontLabel);
 		bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(baseFontComboBox);
 		bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(scalingCheckBoxEnableSounds);
-		bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(EnableItemRequirementRestrictionCheckBox);
 		bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(ItemBGColorOpacityLabel);
 		bufferedFlowLayoutPanelGfxAndAudio.Controls.Add(ItemBGColorOpacityTrackBar);
 		bufferedFlowLayoutPanelGfxAndAudio.Dock = DockStyle.Fill;
@@ -1454,7 +1440,6 @@ internal partial class SettingsUserControl
 	private ScalingCheckBox scalingCheckBoxTooltipSetPieceCounts;
 	private System.Windows.Forms.TrackBar ItemBGColorOpacityTrackBar;
 	private ScalingLabel ItemBGColorOpacityLabel;
-	private ScalingCheckBox EnableItemRequirementRestrictionCheckBox;
 	private ScalingCheckBox hotReloadCheckBox;
 	private ScalingCheckBox scalingCheckBoxEnableSounds;
 	private ScalingLabel scalingLabelCSVDelim;

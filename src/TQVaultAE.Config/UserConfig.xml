@@ -27,7 +27,6 @@
 	<TooltipShowGrantedSkills>1</TooltipShowGrantedSkills>
 	<TooltipShowSetPieceCounts>0</TooltipShowSetPieceCounts>
 	<ItemBGColorOpacity>15</ItemBGColorOpacity>
-	<EnableItemRequirementRestriction>0</EnableItemRequirementRestriction>
 	<EnableHotReload>0</EnableHotReload>
 	<DisableTooltipEquipment>0</DisableTooltipEquipment>
 	<DisableTooltipStash>0</DisableTooltipStash>

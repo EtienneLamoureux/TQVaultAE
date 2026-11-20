@@ -103,9 +103,6 @@ public class UserSettings
 	[XmlElement(ElementName = nameof(ItemBGColorOpacity))]
 	public int ItemBGColorOpacity { get; set; } = 15;
 
-	[XmlElement(ElementName = nameof(EnableItemRequirementRestriction))]
-	public bool EnableItemRequirementRestriction { get; set; } = false;
-
 	[XmlElement(ElementName = nameof(EnableHotReload))]
 	public bool EnableHotReload { get; set; } = false;
 

@@ -112,6 +112,12 @@ box under the mastery pages, between **Reset Masteries** and **OK**, lists the c
 
 Computed with the game's formulas from the attributes, equipped items, item sets and skills.
 
+As in the game, a worn piece whose requirements are not met (level, strength, dexterity, intelligence, lowered by the
+requirement reductions; the buffs on in tab IV count) stays in its slot, red, and counts for nothing: its bonuses, its item
+set, the skills it grants or raises. A piece out of reach can still be put in a slot, red, as a warning. An item's tool tip
+shows each requirement as its base value, then the value once reduced for the character in brackets when it differs:
+`Required Strength: 430 (374)`.
+
 | Tab | Shows |
 |---|---|
 | I | Attributes, combined armor, main resistances, average damage, attack speed, DPS |
@@ -139,7 +145,7 @@ The gems **I** and **II** right of *Offense* (tab I) pick the weapon set the sta
   skill levels they grant, the Buffs tab's equipment. The pieces don't move and the save doesn't change.
 - Memory only, like the buff toggles: the main window's panel, the editor and each floating window keep their own
   choice; the main window's panel goes back to the save's set when the equipment changes, as its toggles do.
-- The item requirements (red items) still count the set in hand in the save.
+- The weapons of the set counted are checked for their requirements.
 
 ### Tab IV: buffs
 

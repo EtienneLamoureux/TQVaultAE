@@ -830,13 +830,6 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Nível de opacidade da cor de fundo do item</value>
   </data>
-  <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
-    <value>Ativar restrição de requisitos de item</value>
-  </data>
-  <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
-    <value>Quando ativada, uma cor de fundo vermelha é exibida nos itens em que o personagem selecionado não atende aos requisitos do item.
-O personagem também não poderá equipar itens onde os requisitos não forem atendidos..</value>
-  </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Redefinir Maestria</value>
   </data>

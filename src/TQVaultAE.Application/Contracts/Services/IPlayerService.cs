@@ -84,7 +84,8 @@ public interface IPlayerService
 
 	/// <summary>
 	/// Indicates whether the current player meets the requirements (level, strength, dexterity, intelligence) of
-	/// <paramref name="item"/>. Without a current player, or for an item without requirements, it does.
+	/// <paramref name="item"/>, reduced as the game reduces them (<see cref="EquipmentRequirements"/>). Without a current
+	/// player, or for an item without requirements, it does.
 	/// </summary>
 	/// <param name="item">Item to check.</param>
 	/// <returns><see langword="true"/> when the item can be equipped.</returns>
@@ -106,6 +107,16 @@ public interface IPlayerService
 	bool MeetsRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null);
 
 	/// <summary>
+	/// The requirements of <paramref name="item"/> reduced for <paramref name="player"/> as the game reduces them
+	/// (<see cref="EquipmentRequirements"/>), by requirement variable name. Null without a player or for a vault.
+	/// </summary>
+	/// <param name="attributes">The attributes and bonuses to reduce with (another build shown); null for the save's.</param>
+	IReadOnlyDictionary<string, int>? ReducedRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null);
+
+	/// <summary><see cref="ReducedRequirements"/> for the current player.</summary>
+	IReadOnlyDictionary<string, int>? CurrentPlayerReducedRequirements(Item item);
+
+	/// <summary>
 	/// Indicates whether <paramref name="item"/> suits <paramref name="player"/>, as <see cref="IsSuitableForCurrentPlayer"/>
 	/// does for the current player.
 	/// </summary>
@@ -121,11 +132,21 @@ public interface IPlayerService
 	IReadOnlyList<Item> GetWornEquipment(IEnumerable<Item> equipment, Item? held);
 
 	/// <summary>
+	/// The worn pieces as the game attaches them for <paramref name="build"/> (<see cref="EquipmentState"/>): every piece
+	/// starts attached; a pass detaches the attached pieces whose requirements fail (their own bonuses counted) or, when
+	/// none, attaches again the detached ones that pass without them, then sums again, until nothing changes.
+	/// </summary>
+	/// <param name="worn">The worn items (<see cref="GetWornEquipment"/>).</param>
+	/// <param name="useAlternate">Whether the second weapon set is the one in hand.</param>
+	/// <param name="buffs">The bonuses of the buffs running (auras, curses, shrines...), which the game's totals count too; null for none.</param>
+	EquipmentState ResolveEquipment(RequirementBuild build, IReadOnlyList<Item> worn, bool useAlternate, AttributeSum? buffs = null);
+
+	/// <summary>
 	/// Recomputes the bonuses behind the attributes of <paramref name="player"/> (<see cref="PlayerInfo.CalculatedStrength"/>
 	/// and the others, which the item requirements are checked against) with the sums of the statistics panel: the
-	/// equipped items and their sets (<see cref="ICharacterStatsService.GetGearAttributes"/>), the learned skills at
-	/// their level with the items' "+skill" levels and the skills the items grant, no buff. Does nothing for a player
-	/// without information.
+	/// attached pieces and their sets (<see cref="ResolveEquipment"/>), the learned skills at their level with their
+	/// "+skill" levels and the skills they grant, no buff; and its detached pieces
+	/// (<see cref="PlayerInfo.DetachedEquipment"/>). Does nothing for a player without information.
 	/// </summary>
 	/// <param name="player">Player to update.</param>
 	/// <param name="equipment">The equipped items.</param>

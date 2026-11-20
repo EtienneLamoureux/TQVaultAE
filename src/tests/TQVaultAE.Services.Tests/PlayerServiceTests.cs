@@ -1100,6 +1100,102 @@ public class PlayerServiceTests
 		player.PlayerInfo.CalculatedStrength.Should().Be(100);
 	}
 
+	/// <summary>Each item gives <paramref name="bonus"/> strength and needs <paramref name="needs"/> (0: no requirement).</summary>
+	private Item StrengthItem(Dictionary<Item, int> bonuses, int bonus, int needs, int x = 0, int y = 0)
+	{
+		var item = new Item { PositionX = x, PositionY = y };
+		bonuses[item] = bonus;
+		var result = new ToFriendlyNameResult(item);
+		if (needs > 0)
+			result.RequirementVariables.Add(Variable.KEY_STRENGTH, new Variable(Variable.KEY_STRENGTH, VariableDataType.Integer, 1) { [0] = needs });
+		_mockItemProvider.Setup(x => x.GetFriendlyNames(item, FriendlyNamesExtraScopes.Requirements, true)).Returns(result);
+		return item;
+	}
+
+	private Dictionary<Item, int> SetupStrengthGear()
+	{
+		var bonuses = new Dictionary<Item, int>(ReferenceEqualityComparer.Instance);
+		this.SetupAttributeSums(gear: 0, skills: 0, itemSkills: 0);
+		_mockStats.Setup(x => x.GetGearAttributes(It.IsAny<IEnumerable<Item>>(), It.IsAny<bool>()))
+			.Returns((IEnumerable<Item> items, bool alternate) =>
+			{
+				var sum = new AttributeSum();
+				sum.Add("characterStrength", items.Where(i => !i.IsInInactiveWeaponSlot(alternate)).Sum(i => bonuses[i]));
+				return sum;
+			});
+		return bonuses;
+	}
+
+	private static RequirementBuild Build(int strength) => new(50, strength, 100, 100, [], []);
+
+	[Fact]
+	public void ResolveEquipment_PieceOutOfReach_IsDetachedAndGivesNothing()
+	{
+		var bonuses = this.SetupStrengthGear();
+		var ring = this.StrengthItem(bonuses, bonus: 10, needs: 0);
+		var armor = this.StrengthItem(bonuses, bonus: 30, needs: 200, x: 1);
+
+		var state = _playerService.ResolveEquipment(Build(100), [ring, armor], useAlternate: false);
+
+		state.Detached.Should().Equal(armor);
+		state.Active.Should().Equal(ring);
+		state.Totals.Strength.Should().Be(110);
+	}
+
+	[Fact]
+	public void ResolveEquipment_PieceGivingTheStrengthItNeeds_StaysAttached()
+	{
+		// Worn, its own bonus counts (it could not be put in its slot without it).
+		var bonuses = this.SetupStrengthGear();
+		var belt = this.StrengthItem(bonuses, bonus: 20, needs: 115);
+
+		var state = _playerService.ResolveEquipment(Build(100), [belt], useAlternate: false);
+
+		state.Detached.Should().BeEmpty();
+		state.Totals.Strength.Should().Be(120);
+	}
+
+	[Fact]
+	public void ResolveEquipment_PieceNeedingADetachedPiecesBonus_IsDetachedNext()
+	{
+		var bonuses = this.SetupStrengthGear();
+		var gloves = this.StrengthItem(bonuses, bonus: 30, needs: 200);
+		var helmet = this.StrengthItem(bonuses, bonus: 0, needs: 120, x: 1);
+
+		var state = _playerService.ResolveEquipment(Build(100), [gloves, helmet], useAlternate: false);
+
+		state.Detached.Should().BeEquivalentTo([gloves, helmet]);
+		state.Totals.Strength.Should().Be(100);
+	}
+
+	[Fact]
+	public void ResolveEquipment_BuffsRunning_CountInTheTotals_NotInTheSkillBonuses()
+	{
+		var bonuses = this.SetupStrengthGear();
+		var armor = this.StrengthItem(bonuses, bonus: 0, needs: 130);
+		var aura = new AttributeSum();
+		aura.Add("characterStrength", 40);
+
+		_playerService.ResolveEquipment(Build(100), [armor], useAlternate: false).Detached.Should().Equal(armor);
+
+		var state = _playerService.ResolveEquipment(Build(100), [armor], useAlternate: false, aura);
+		state.Detached.Should().BeEmpty();
+		state.Totals.Strength.Should().Be(140);
+		state.Skills["characterStrength"].Should().Be(0, "the save's skill bonuses never count a buff");
+	}
+
+	[Fact]
+	public void ResolveEquipment_WeaponSetNotInHand_NeverDetached()
+	{
+		var bonuses = this.SetupStrengthGear();
+		var spareSword = this.StrengthItem(bonuses, bonus: 5, needs: 500, x: Item.WeaponSlotIndicator, y: 2);
+
+		var state = _playerService.ResolveEquipment(Build(100), [spareSword], useAlternate: false);
+
+		state.Detached.Should().BeEmpty("the set not in hand is left out of the sums anyway");
+		state.Totals.Strength.Should().Be(100);
+	}
+
 	[Fact]
 	public void UpdateAttributeBonuses_SecondSetInHand_IsPassedOn()
 	{

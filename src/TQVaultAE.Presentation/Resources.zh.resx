@@ -820,13 +820,6 @@ TQVault关闭仍有物品在垃圾桶时将不会有提示信息。</value>
     <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>物品背景颜色不透明度级别</value>
   </data>
-    <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
-    <value>启用物品需求限制</value>
-  </data>
-    <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
-    <value>启用时，当角色不满足物品的需求时，物品将显示红色背景。
-角色也不能装备这些物品。</value>
-  </data>
     <data name="ResetMasteriesButton" xml:space="preserve">
     <value>重置专精</value>
   </data>

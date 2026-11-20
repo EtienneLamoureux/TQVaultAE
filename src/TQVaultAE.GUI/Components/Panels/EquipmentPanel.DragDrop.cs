@@ -132,9 +132,7 @@ public partial class EquipmentPanel
 			if (decision == DropDecision.Refused)
 				return;
 
-			// If the requirement setting is enabled check to see if the item can be equipped.
-			if (this.USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(dragItem))
-				return;
+			// An item out of reach goes in all the same (owner's choice): it shows red and gives nothing, as a detached piece.
 
 			// Maybe we are putting the item back or dropping on an equipment shadow slot.
 			// Then we just cancel.

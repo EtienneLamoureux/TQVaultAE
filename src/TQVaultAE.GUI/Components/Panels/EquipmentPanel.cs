@@ -120,9 +120,34 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	/// </summary>
 	internal Func<RequirementAttributes?>? RequirementAttributes { get; set; }
 
-	/// <summary>The item requirements are those of the character wearing the slots, with the build shown.</summary>
+	/// <summary>
+	/// The worn pieces detached for the build shown (<see cref="EquipmentState.Detached"/>) when the panel shows another
+	/// build than the save's; null for the save's (<see cref="PlayerInfo.DetachedEquipment"/>).
+	/// </summary>
+	internal Func<IReadOnlyList<Item>>? DetachedItems { get; set; }
+
+	/// <summary>Whether the character wears the slots shown (a loadout's are not worn: its pieces are checked as if put in a slot).</summary>
+	protected virtual bool WornByOwner => true;
+
+	/// <summary>
+	/// The item requirements are those of the character wearing the slots, with the build shown: a piece worn meets them
+	/// unless the game detaches it (its own bonuses counted; never the weapon set not in hand); any other item (the one
+	/// dragged, a loadout's) when it could be put in its slot, the attached pieces counted.
+	/// </summary>
 	protected override bool PlayerMeetRequierements(Item item)
-		=> this.Services.PlayerService.MeetsRequirements(this.Owner, item, this.RequirementAttributes?.Invoke());
+	{
+		if (this.WornByOwner && this.Owner is { } owner && !ReferenceEquals(item, this.DragInfo.Item) && this.Sack?.Contains(item) == true)
+		{
+			var detached = this.DetachedItems?.Invoke() ?? owner.PlayerInfo?.DetachedEquipment ?? [];
+			return !detached.Contains(item, ReferenceEqualityComparer.Instance);
+		}
+
+		return this.Services.PlayerService.MeetsRequirements(this.Owner, item, this.RequirementAttributes?.Invoke());
+	}
+
+	/// <summary>The requirements reduced for the character wearing the slots, with the build shown.</summary>
+	internal override IReadOnlyDictionary<string, int>? ReducedRequirements(Item item)
+		=> this.Services.PlayerService.ReducedRequirements(this.Owner, item, this.RequirementAttributes?.Invoke());
 
 	/// <summary>An item suits the character wearing the slots (a Titan Quest original character takes base game items only).</summary>
 	protected override bool IsSuitableForCurrentPlayer(Item item)

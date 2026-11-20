@@ -78,11 +78,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 	public bool ItemBGColorOpacityChanged => this.editor.ItemBGColorOpacityChanged;
 
 	/// <summary>
-	/// Indicates that the <see cref="Config.UserSettings.EnableItemRequirementRestriction"/> setting has been changed
-	/// </summary>
-	public bool EnableItemRequirementRestrictionChanged => this.editor.EnableItemRequirementRestrictionChanged;
-
-	/// <summary>
 	/// Indicates that the allow character edit setting has been changed.
 	/// </summary>
 	public bool EnableCharacterEditChanged => this.editor.EnableCharacterEditChanged;
@@ -208,8 +203,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.toolTip.SetToolTip(this.ShowInGameValuesCheckBox, Resources.SettingShowInGameValuesTT);
 		this.ItemBGColorOpacityLabel.Text = Resources.SettingsItemBGColorOpacityLabel;
 		this.toolTip.SetToolTip(this.ItemBGColorOpacityLabel, Resources.SettingsItemBGColorOpacityLabelTT);
-		this.EnableItemRequirementRestrictionCheckBox.Text = Resources.SettingsEnableItemRequirementRestriction;
-		this.toolTip.SetToolTip(this.EnableItemRequirementRestrictionCheckBox, Resources.SettingsEnableItemRequirementRestrictionTT);
 		this.hotReloadCheckBox.Text = Resources.SettingsEnableHotReload;
 		this.toolTip.SetToolTip(this.hotReloadCheckBox, Resources.SettingsEnableHotReloadTT);
 
@@ -383,7 +376,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		this.scalingCheckBoxTooltipSetPieceCounts.Checked = values.TooltipShowSetPieceCounts;
 		this.ShowInGameValuesCheckBox.Checked = values.ShowInGameValues;
 		this.ItemBGColorOpacityTrackBar.Value = values.ItemBGColorOpacity;
-		this.EnableItemRequirementRestrictionCheckBox.Checked = values.EnableItemRequirementRestriction;
 		this.hotReloadCheckBox.Checked = values.EnableHotReload;
 		this.scalingCheckBoxEnableSounds.Checked = values.EnableTQVaultSounds;
 		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = values.EnableEpicLegendaryAffixes;
@@ -498,7 +490,6 @@ internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowV
 		Bind(this.scalingCheckBoxTooltipGrantedSkills, (s, on) => s.TooltipShowGrantedSkills = on);
 		Bind(this.scalingCheckBoxTooltipSetPieceCounts, (s, on) => s.TooltipShowSetPieceCounts = on);
 		Bind(this.ShowInGameValuesCheckBox, (s, on) => s.ShowInGameValues = on);
-		Bind(this.EnableItemRequirementRestrictionCheckBox, (s, on) => s.EnableItemRequirementRestriction = on);
 		Bind(this.hotReloadCheckBox, (s, on) => s.EnableHotReload = on); // Force restart
 		Bind(this.scalingCheckBoxEnableEpicLegendaryAffixes, (s, on) => s.EnableEpicLegendaryAffixes = on);
 		Bind(this.scalingCheckBoxEnableSounds, (s, on) => s.EnableTQVaultSounds = on);

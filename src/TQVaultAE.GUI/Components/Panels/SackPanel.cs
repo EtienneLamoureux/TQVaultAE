@@ -655,6 +655,13 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		=> this.Services.PlayerService.CurrentPlayerMeetsRequirements(item);
 
 	/// <summary>
+	/// The requirements of <paramref name="item"/> reduced for the character the panel checks them against, shown in its
+	/// tool tip after the base values; null without a character.
+	/// </summary>
+	internal virtual IReadOnlyDictionary<string, int>? ReducedRequirements(Item item)
+		=> this.Services.PlayerService.CurrentPlayerReducedRequirements(item);
+
+	/// <summary>
 	/// Indicates whether the items of the shown sack cannot change: a sack of a read-only character, or the equipment
 	/// with the <c>PlayerReadonly</c> setting on (<see cref="ItemActionRules.IsReadOnly"/>).
 	/// </summary>

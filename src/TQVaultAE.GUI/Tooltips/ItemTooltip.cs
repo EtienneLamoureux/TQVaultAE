@@ -22,8 +22,11 @@ public partial class ItemTooltip : BaseTooltip
 	/// <summary>Rendered item tooltips and their text, up to 48 MB.</summary>
 	private static readonly TooltipImageCache<TooltipKey, ToFriendlyNameResult> ToImage = new(48L << 20);
 
-	/// <summary>What a cached tooltip image depends on. <paramref name="SetCounts"/> lists the set piece counts shown, empty without them.</summary>
-	private readonly record struct TooltipKey(Item Item, float Scale, ItemTooltipView View, bool InGameValues, string SetCounts);
+	/// <summary>
+	/// What a cached tooltip image depends on. <paramref name="SetCounts"/> lists the set piece counts shown, empty without
+	/// them; <paramref name="Requirements"/> the reduced requirements shown, empty without a character.
+	/// </summary>
+	private readonly record struct TooltipKey(Item Item, float Scale, ItemTooltipView View, bool InGameValues, string SetCounts, string Requirements);
 
 	internal ItemTooltipView View { get; set; }
 	internal bool ShowInGameValues { get; set; }
@@ -37,6 +40,9 @@ public partial class ItemTooltip : BaseTooltip
 
 	/// <summary>Gives an item linked to a mod its mod's data while the tooltip is built.</summary>
 	internal IItemModService? ItemModService { get; init; }
+
+	/// <summary>Reduces the requirements for the current player, when the tool tip is not over a sack panel.</summary>
+	internal IPlayerService? PlayerService { get; init; }
 
 	/// <summary>Text of the item, set by <see cref="FillToolTip"/>.</summary>
 	internal ToFriendlyNameResult? Data { get; private set; }
@@ -124,6 +130,7 @@ public partial class ItemTooltip : BaseTooltip
 				ShowInGameValues = services.Settings.ShowInGameValues,
 				ItemDatabase = services.ItemDatabaseService,
 				ItemModService = services.ItemModService,
+				PlayerService = services.PlayerService,
 			};
 			setAnchor(tooltip);
 			_Current = tooltip;
@@ -161,8 +168,15 @@ public partial class ItemTooltip : BaseTooltip
 			&& this.ItemProvider.GetSetItems(this.FocusedItem) is { setMembers.Count: > 0 } set)
 			setCounts = this.ItemDatabase.CountItemsByRecord(set.setMembers.Keys.Select(RecordId.Create));
 
+		// The requirements reduced for the character the item is checked against (the panel's, else the current one),
+		// shown after the base values: part of the cache key, since they change with the character and its gear.
+		var reduced = this.SackPanel is { } sackPanel
+			? sackPanel.ReducedRequirements(this.FocusedItem)
+			: this.PlayerService?.CurrentPlayerReducedRequirements(this.FocusedItem);
+
 		var key = new TooltipKey(this.FocusedItem, UIService.Scale, this.View, this.ShowInGameValues
-			, setCounts is null ? string.Empty : string.Join(",", setCounts.Values));
+			, setCounts is null ? string.Empty : string.Join(",", setCounts.Values)
+			, reduced is null ? string.Empty : string.Join(",", reduced.OrderBy(r => r.Key, StringComparer.Ordinal).Select(r => $"{r.Key}={r.Value}")));
 
 		// Redraw
 		if (ToImage.TryGetCopy(key, out var cached, out var data))
@@ -177,7 +191,7 @@ public partial class ItemTooltip : BaseTooltip
 		this.rangeRows.Clear();
 
 		this.Data = this.ItemText.GetFriendlyNames(FocusedItem, ItemTooltipContentBuilder.ScopesFor(this.View));
-		var content = new ItemTooltipContentBuilder(this.TranslationService).Build(this.Data, this.View, setCounts);
+		var content = new ItemTooltipContentBuilder(this.TranslationService).Build(this.Data, this.View, setCounts, reduced);
 
 		// The relic lines may move to a column: note where their rows start and end.
 		int relicRowsStart = 0;

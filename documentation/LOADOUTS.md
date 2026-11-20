@@ -25,7 +25,7 @@ moves down meanwhile.
 
 - Drag and drop as on the equipment. A dropped piece **moves** into the loadout; to keep the original, drop a copy
   (**Copy Item**, **Duplicate Item**). A piece picked up goes to the hand.
-- The equipment rules apply: slot kinds, two-handed weapons, **Enable Item Requirement Restriction**.
+- The equipment rules apply: slot kinds, two-handed weapons; a piece out of reach shows red.
 - The item menu works, except **Move Item To**.
 - Buttons on the stone:
   - Upper right arrow: **Back to the statistics** (the loadout stays chosen).

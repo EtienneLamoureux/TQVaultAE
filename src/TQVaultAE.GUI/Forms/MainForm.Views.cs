@@ -309,7 +309,7 @@ public partial class MainForm
 			restart = this.Services.MessageBoxes.Confirm(message, title);
 		}
 
-		if (settings.ItemBGColorOpacityChanged || settings.EnableItemRequirementRestrictionChanged)
+		if (settings.ItemBGColorOpacityChanged)
 			this.Refresh();
 
 		if (settings.EnableCharacterEditChanged)

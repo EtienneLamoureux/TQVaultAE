@@ -219,12 +219,11 @@ public partial class SackPanel : Panel, IScalingControl
 	}
 
 	/// <summary>
-	/// Whether the player cannot use <paramref name="item"/>: requirements not met (when the setting checks them), or an
-	/// item for another kind of character.
+	/// Whether the player cannot use <paramref name="item"/>: requirements not met (a worn piece: detached), or an item for
+	/// another kind of character.
 	/// </summary>
 	protected bool CannotUse(Item item)
-		=> (this.USettings.EnableItemRequirementRestriction && !this.PlayerMeetRequierements(item))
-			|| !this.IsSuitableForCurrentPlayer(item);
+		=> !this.PlayerMeetRequierements(item) || !this.IsSuitableForCurrentPlayer(item);
 
 	/// <summary>
 	/// Draws an item on the screen at the specified coordinates without background shading.
