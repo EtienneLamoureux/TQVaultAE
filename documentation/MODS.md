@@ -12,7 +12,7 @@ Technical details: [MODLINK.md](MODLINK.md).
 ---
 
 ### <a id="LinkCharacter"></a>Link a character
-Character menu > **Mod link...** (only for a character of a custom map):
+Character menu > **Mod link...** (a custom map character, or a main campaign one played with a bounce mod):
 
 - **Suggest** picks the installed mod that has the character's unknown records.
 - **Link** (or double click a mod) saves the choice; **Unlink** removes it.
@@ -21,6 +21,11 @@ Character menu > **Mod link...** (only for a character of a custom map):
 
 The character list shows the mod and the link state: **Linked**, **Not linked** or **Not installed**. A linked
 character's class and masteries are named with its mod's data, as in the game.
+
+A main campaign character linked to a mod (a **bounce mod**, badge *Bounce mod*) is read with the mod's data, but its
+Transfer Stash and Relic Vault stay the main campaign's (`SaveData\Sys`). These are read with the shown character's
+mod: a bounce mod's item there shows incomplete while a base game character is shown. Details:
+[Bounce mods](MODLINK.md#bounce-mods).
 
 ![Character list](mods/character-list.png)
 
@@ -36,7 +41,8 @@ An item whose records the loaded data lacks says so in its tooltip; without its 
 
 ### <a id="ItemMod"></a>The mod of an item
 - An item is read with the data of its container: its vault's link, its character's, or its shared stash's map (the
-  mod's data, then the base game's), whatever character is shown.
+  mod's data, then the base game's), whatever character is shown. The main campaign's shared stashes take the shown
+  character's mod (bounce mods).
 - Its tooltip names its mod: the mod whose data gave at least one of its records.
 - An item has no link of its own, and none is saved. In a container of another mod, or of the base game, it is read
   with that data, and may lose its mod and show as incomplete.

@@ -12,7 +12,8 @@ public static class ModLinkText
 {
 	/// <summary>The link dialog's state line: base game, linked, linked to a mod not installed, or not linked.</summary>
 	/// <param name="mod">The character's mod link.</param>
-	public static string State(CharacterMod mod)
+	/// <param name="isCustomCharacter">False for a main campaign character: linked, it plays a bounce mod.</param>
+	public static string State(CharacterMod mod, bool isCustomCharacter)
 	{
 		// Without a link to an installed mod, a character is loaded with the base game data.
 		var loadedWith = Resources.ModLinkBaseGameData;
@@ -20,7 +21,8 @@ public static class ModLinkText
 		return mod.State switch
 		{
 			CharacterModState.BaseGame => Resources.ModLinkStateBaseGame,
-			CharacterModState.Linked => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkStateLinked, mod.Mod!.DisplayName),
+			CharacterModState.Linked => string.Format(CultureInfo.CurrentCulture
+				, isCustomCharacter ? Resources.ModLinkStateLinked : Resources.ModLinkStateLinkedMain, mod.Mod!.DisplayName),
 			CharacterModState.LinkedModMissing => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkStateMissing, mod.Link!.Mod, loadedWith),
 			_ => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkStateUnlinked, loadedWith),
 		};
@@ -45,8 +47,13 @@ public static class ModLinkText
 		return string.Format(culture, Resources.ModLinkSuggestionTie, string.Join(", ", suggestion.Tied.Select(m => m.Mod.DisplayName)));
 	}
 
+	/// <summary>The character list's badge of a modded character: a custom map one, or a main campaign one linked to a
+	/// mod (a bounce mod).</summary>
+	public static string ModdedBadge(PlayerSave save)
+		=> save.IsCustom ? Resources.CharacterModded : Resources.CharacterModBounce;
+
 	/// <summary>The character list's badge: linked, mod not installed, or not linked.</summary>
-	/// <param name="state">The state of a custom map character other than the base game.</param>
+	/// <param name="state">The state of a character other than the base game.</param>
 	public static string CharacterBadge(CharacterModState state) => state switch
 	{
 		CharacterModState.Linked => Resources.CharacterModLinked,
@@ -55,11 +62,11 @@ public static class ModLinkText
 	};
 
 	/// <summary>
-	/// The label of a custom map character's mod: its linked mod, that this mod is not installed, or that it has none;
-	/// null for a base game character.
+	/// The label of a character's mod: its linked mod, that this mod is not installed, or that it has none (a custom
+	/// map character); null for a main campaign character without a link.
 	/// </summary>
 	/// <param name="save">The character, refreshed by <c>IGameMapService.Refresh</c>.</param>
-	public static string? ModLabel(PlayerSave save) => !save.IsCustom ? null : save.ModState switch
+	public static string? ModLabel(PlayerSave save) => save.ModState switch
 	{
 		CharacterModState.Linked => save.ModName,
 		CharacterModState.LinkedModMissing => string.Format(CultureInfo.CurrentCulture, Resources.ModLinkMissingLabel, save.ModName),
@@ -69,7 +76,7 @@ public static class ModLinkText
 
 	/// <summary>
 	/// A character as the character list shows it: <see cref="PlayerSave.ToString"/>, then the label of its mod in
-	/// brackets for a custom map character.
+	/// brackets for a modded character.
 	/// </summary>
 	/// <param name="save">The character.</param>
 	public static string CharacterLabel(PlayerSave save)

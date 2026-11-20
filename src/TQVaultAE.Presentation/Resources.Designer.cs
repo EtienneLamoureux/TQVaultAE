@@ -5239,7 +5239,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Main campaign character: it always uses the base game data..
+        ///   Looks up a localized string similar to Main campaign character, not linked: it is loaded with the base game data. Link it to the mod it plays with the main campaign (a bounce mod)..
         /// </summary>
         public static string ModLinkStateBaseGame {
             get {
@@ -5253,6 +5253,15 @@ namespace TQVaultAE.Presentation {
         public static string ModLinkStateLinked {
             get {
                 return ResourceManager.GetString("ModLinkStateLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked to {0} (bounce mod): its Transfer Stash and Relic Vault stay the main campaign&apos;s..
+        /// </summary>
+        public static string ModLinkStateLinkedMain {
+            get {
+                return ResourceManager.GetString("ModLinkStateLinkedMain", resourceCulture);
             }
         }
         
@@ -5289,6 +5298,15 @@ namespace TQVaultAE.Presentation {
         public static string ModLinkSuggestionTie {
             get {
                 return ResourceManager.GetString("ModLinkSuggestionTie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bounce mod.
+        /// </summary>
+        public static string CharacterModBounce {
+            get {
+                return ResourceManager.GetString("CharacterModBounce", resourceCulture);
             }
         }
         

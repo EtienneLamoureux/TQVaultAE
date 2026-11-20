@@ -1,3 +1,4 @@
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.DTOs;
@@ -106,17 +107,17 @@ public sealed class ModLinkFile
 public enum CharacterModState
 {
 	/// <summary>
-	/// A main campaign character (<c>SaveData\Main</c>): base game data.
+	/// A main campaign character (<c>SaveData\Main</c>) without a link: base game data.
 	/// </summary>
 	BaseGame,
 
 	/// <summary>
-	/// A custom map character linked to an installed mod.
+	/// A character linked to an installed mod (a main campaign one: a bounce mod).
 	/// </summary>
 	Linked,
 
 	/// <summary>
-	/// A custom map character linked to a mod that is not installed (any more).
+	/// A character linked to a mod that is not installed (any more).
 	/// </summary>
 	LinkedModMissing,
 
@@ -139,13 +140,12 @@ public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, Mo
 	public static readonly CharacterMod Unlinked = new(CharacterModState.Unlinked, null, null);
 
 	/// <summary>
-	/// Whether a character can be linked to <paramref name="selected"/>: a custom map character, a mod chosen, not the
-	/// one it is linked to already.
+	/// Whether a character can be linked to <paramref name="selected"/>: a mod chosen, not the one it is linked to
+	/// already.
 	/// </summary>
-	/// <param name="isCustomCharacter">True for a custom map character; the main campaign is never linked.</param>
 	/// <param name="selected">The mod chosen, or <see langword="null"/>.</param>
-	public bool CanLinkTo(bool isCustomCharacter, InstalledMod? selected)
-		=> isCustomCharacter && selected is not null && !Equals(selected, this.Mod);
+	public bool CanLinkTo(InstalledMod? selected)
+		=> selected is not null && !Equals(selected, this.Mod);
 }
 
 /// <summary>
@@ -182,4 +182,16 @@ public sealed record ModSuggestion(int ModOnlyRecords, IReadOnlyList<ModMatch> M
 	/// </summary>
 	public IReadOnlyList<ModMatch> Tied
 		=> this.Matches.Count == 0 ? [] : [.. this.Matches.TakeWhile(m => m.Matched == this.Matches[0].Matched)];
+}
+
+/// <summary>
+/// The data a shared stash file (transfer stash, relic vault) is read with.
+/// </summary>
+/// <param name="Map">The custom map folder whose database reads it; empty for the base game.</param>
+/// <param name="Mod">The map its items inherit (<see cref="Item.ContainerMod"/>); null for the base game.</param>
+public sealed record SharedStashData(string Map, string? Mod)
+{
+	/// <summary>True when both read the file the same way.</summary>
+	public bool SameAs(SharedStashData other)
+		=> GameMaps.Same(this.Map, other.Map) && string.Equals(this.Mod, other.Mod, StringComparison.OrdinalIgnoreCase);
 }

@@ -197,13 +197,11 @@ internal sealed class ModLinkDialog : VaultForm
 		var save = this._save!;
 		var mod = this.GameMapService.ModOf(save);
 
-		this.labelState.Text = ModLinkText.State(mod);
+		this.labelState.Text = ModLinkText.State(mod, save.IsCustom);
 
 		if (selectLinked)
 			this.listBoxMods.SelectedItem = mod.Mod;
 
-		this.listBoxMods.Enabled = save.IsCustom;
-		this.buttonSuggest.Enabled = save.IsCustom;
 		this.buttonUnlink.Enabled = mod.Link is not null;
 		this.UpdateButtons();
 	}
@@ -213,7 +211,7 @@ internal sealed class ModLinkDialog : VaultForm
 		var mod = this.GameMapService.ModOf(this._save!);
 		var selected = this.SelectedMod;
 		this.labelFolder.Text = selected?.Folder ?? string.Empty;
-		this.buttonLink.Enabled = mod.CanLinkTo(this._save!.IsCustom, selected);
+		this.buttonLink.Enabled = mod.CanLinkTo(selected);
 	}
 
 	private void LinkSelected()

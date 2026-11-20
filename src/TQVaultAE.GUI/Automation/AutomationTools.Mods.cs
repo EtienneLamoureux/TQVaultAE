@@ -14,7 +14,7 @@ internal static partial class AutomationTools
 	#region Mod link
 
 	[McpServerTool(Name = "mod_state", ReadOnly = true)]
-	[Description("The custom map (mod) data of the session: the active map, the maps whose database is loaded, the active map's transfer stash and relic vault files, the installed mods, and for each listed character whether it is a custom map one, its link state, its mod and the map it is loaded with. Reads the link files, changes nothing.")]
+	[Description("The custom map (mod) data of the session: the active map, the maps whose database is loaded, the shown character's transfer stash and relic vault files and the data the base game's are read with, the installed mods, and for each listed character whether it is a custom map one, its link state, its mod, the map it is loaded with and its shared stash map. Reads the link files, changes nothing.")]
 	public static string ModState()
 		=> AutomationHost.OnUi(form =>
 		{
@@ -26,6 +26,8 @@ internal static partial class AutomationTools
 				loadedMaps = Service<IDatabaseMaps>().LoadedMapFolders,
 				transferStash = Services.GamePathService.TransferStashFileFullPath,
 				relicVault = Services.GamePathService.RelicVaultStashFileFullPath,
+				activeSharedStashMap = maps.ActiveSharedStashMap,
+				baseSharedStashData = maps.SharedStashDataOf(string.Empty),
 				installedMods = links.GetInstalledMods().Select(m => new { m.Name, m.Folder, source = m.Source.ToString() }),
 				characters = form.AutomationPlayerSaves.Select(save =>
 				{
@@ -38,6 +40,7 @@ internal static partial class AutomationTools
 						state = mod.State.ToString(),
 						mod = mod.Mod?.Name ?? mod.Link?.Mod,
 						map = maps.MapFor(save),
+						sharedStashMap = maps.SharedStashMapFor(save),
 						loadedWithOtherMap = maps.LoadedWithOtherMap(save),
 					};
 				}),
@@ -62,14 +65,14 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "open_mod_link", Destructive = true)]
-	[Description("Opens the mod link dialog of the selected character like the user: clicks 'Mod link...' in the menu of the tools button next to the character list (menu_click('characterTools', 'Mod link')), after this call returns (custom map characters only). It is modal: read it with control_values(form 'ModLinkDialog', labels true), pick a mod with set_control(listBoxMods, '<display name>'), then click_control buttonSuggest, buttonLink, buttonUnlink or buttonClose. Link and Unlink write the link file in the save folder: in Debug builds only on test characters (player-test*, player-mod*), so this tool refuses the others.")]
+	[Description("Opens the mod link dialog of the selected character like the user: clicks 'Mod link...' in the menu of the tools button next to the character list (menu_click('characterTools', 'Mod link')), after this call returns (custom map and Immortal Throne main campaign characters). It is modal: read it with control_values(form 'ModLinkDialog', labels true), pick a mod with set_control(listBoxMods, '<display name>'), then click_control buttonSuggest, buttonLink, buttonUnlink or buttonClose. Link and Unlink write the link file in the save folder: in Debug builds only on test characters (player-test*, player-mod*), so this tool refuses the others.")]
 	public static string OpenModLink()
 		=> AutomationHost.OnUi(form =>
 		{
 			var save = form.AutomationSelectedSave ?? throw new McpException("No character is selected. Use select_character first.");
 			RequireTestName(save.Name);
-			if (!save.IsCustom)
-				throw new McpException($"'{save.Name}' is a main campaign character: the menu has no mod link entry for it.");
+			if (!save.IsCustom && !save.IsImmortalThrone)
+				throw new McpException($"'{save.Name}' is a Titan Quest original character: the menu has no mod link entry for it.");
 			ClickCharacterTool(form, [form.AutomationCharacterCombo.AutomationModLinkEntry]);
 			return Serialize(new { opening = "ModLinkDialog", character = save.Name });
 		});

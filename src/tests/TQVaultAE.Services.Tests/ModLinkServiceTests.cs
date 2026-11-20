@@ -97,6 +97,20 @@ public sealed class ModLinkServiceTests : IDisposable
 	}
 
 	[Fact]
+	public void Resolve_MainCampaignCharacter_LinkedPlaysTheMod_ElseTheBaseGame()
+	{
+		// A main campaign character linked to a mod plays a bounce mod.
+		this._service.Resolve(this._save, isCustomCharacter: false).Should().Be(CharacterMod.BaseGame);
+
+		var mod = this.AddWorkshopMod("1949340853", "shadowchampions");
+		this._service.Link(this._save, mod);
+
+		var resolved = this._service.Resolve(this._save, isCustomCharacter: false);
+		resolved.State.Should().Be(CharacterModState.Linked);
+		resolved.Mod.Should().Be(mod);
+	}
+
+	[Fact]
 	public void Link_ReplacesThePreviousLink()
 	{
 		var first = this.AddWorkshopMod("1", "Masteries");
@@ -223,14 +237,6 @@ public sealed class ModLinkServiceTests : IDisposable
 		resolved.State.Should().Be(CharacterModState.LinkedModMissing);
 		resolved.Mod.Should().BeNull();
 		resolved.Link!.Mod.Should().Be("Lilith");
-	}
-
-	[Fact]
-	public void Resolve_MainCampaignCharacter_IsBaseGameEvenWithALinkFile()
-	{
-		this._service.Link(this._save, this.AddWorkshopMod("1", "Masteries"));
-
-		this._service.Resolve(this._save, isCustomCharacter: false).Should().Be(CharacterMod.BaseGame);
 	}
 
 	[Theory]

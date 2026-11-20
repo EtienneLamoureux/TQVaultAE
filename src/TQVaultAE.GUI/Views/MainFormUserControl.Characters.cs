@@ -299,9 +299,9 @@ public partial class MainFormUserControl
 		if (stashResult is null)
 			return;
 
-		// The panel shows the active map's shared stashes, unless the character shown has none (Titan Quest original).
+		// The panel shows the shown character's shared stashes, unless it has none (Titan Quest original).
 		var selected = this.comboBoxCharacter.SelectedItem as PlayerSave;
-		bool shown = GameMaps.Same(map, this.Services.GameMapService.ActiveMap) && (selected is null || selected.IsImmortalThrone);
+		bool shown = GameMaps.Same(map, this.Services.GameMapService.ActiveSharedStashMap) && (selected is null || selected.IsImmortalThrone);
 		if (type == StashType.TransferStash)
 		{
 			this.ShowTransferStash(stashResult, true);

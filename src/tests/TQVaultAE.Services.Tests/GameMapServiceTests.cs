@@ -51,8 +51,12 @@ public class GameMapServiceTests
 	}
 
 	private void LinkTo(PlayerSave save, string modFolder)
-		=> this._links.Setup(l => l.Resolve(save.Folder, true)).Returns(new CharacterMod(CharacterModState.Linked
-			, new InstalledMod(Path.GetFileName(modFolder), modFolder, ModSource.SteamWorkshop), new ModLinkFile { Mod = Path.GetFileName(modFolder) }));
+	{
+		var mod = new InstalledMod(Path.GetFileName(modFolder), modFolder, ModSource.SteamWorkshop);
+		this._links.Setup(l => l.Resolve(save.Folder, save.IsCustom)).Returns(new CharacterMod(CharacterModState.Linked
+			, mod, new ModLinkFile { Mod = mod.Name }));
+		this._links.Setup(l => l.ModIdOfMap(modFolder)).Returns(mod.Id);
+	}
 
 	/// <summary>The shared stash files of a map, as GamePathServiceWin names them.</summary>
 	private void SharedStashFiles()
@@ -193,6 +197,84 @@ public class GameMapServiceTests
 		this._gamePath.Object.MapName.Should().Be("main");
 		this._cache.Verify(c => c.ClearGameDataCache(), Times.Never);
 		raised.Should().Be(0);
+	}
+
+	[Fact]
+	public void BounceMod_MainCampaignCharacterLinkedToAMod_ReadsItsData_KeepsTheBaseGameSharedStashes()
+	{
+		var service = this.CreateService();
+		var heroC = Save("HeroC", isCustom: false);
+		this.LinkTo(heroC, Shadow);
+
+		service.ActivateFor(heroC).Should().BeTrue();
+
+		service.MapFor(heroC).Should().Be(Shadow);
+		service.ActiveMap.Should().Be(Shadow);
+		service.SharedStashMapFor(heroC).Should().BeEmpty();
+		service.ActiveSharedStashMap.Should().BeEmpty();
+		this._gamePath.Object.MapName.Should().Be("main");
+		// The base game's shared stashes take its data.
+		service.SharedStashDataOf(string.Empty).Should().Be(new SharedStashData(Shadow, service.ModNameFor(heroC)));
+	}
+
+	[Fact]
+	public void SharedStashDataOf_BaseGameFiles_KeepTheDataOfTheLastCharacterShownWithThem()
+	{
+		var service = this.CreateService();
+		var heroC = Save("HeroC", isCustom: false);
+		var heroB = Save("HeroB", isCustom: true);
+		this.LinkTo(heroC, Shadow);
+		this.LinkTo(heroB, Masteries);
+
+		service.ActivateFor(heroC);
+		service.ActivateFor(heroB);
+
+		// A custom map character shows its mod's files, read with that mod; the base game's keep the bounce mod.
+		service.ActiveSharedStashMap.Should().Be(Masteries);
+		service.SharedStashDataOf(Masteries).Map.Should().Be(Masteries);
+		service.SharedStashDataOf(string.Empty).Map.Should().Be(Shadow);
+
+		service.ActivateFor(Save("HeroD", isCustom: false));
+		service.SharedStashDataOf(string.Empty).Should().Be(new SharedStashData(string.Empty, null));
+	}
+
+	[Fact]
+	public void ActivateFor_SameDatabaseOtherSharedStashes_TellsTheChange()
+	{
+		// A bounce character and a custom map character of the same mod: one database, two pairs of shared stashes.
+		var service = this.CreateService();
+		var heroC = Save("HeroC", isCustom: false);
+		var heroB = Save("HeroB", isCustom: true);
+		this.LinkTo(heroC, Shadow);
+		this.LinkTo(heroB, Shadow);
+		service.ActivateFor(heroC);
+		int raised = 0;
+		service.ActiveMapChanged += (_, _) => raised++;
+
+		service.ActivateFor(heroB).Should().BeTrue();
+		this._gamePath.Object.MapName.Should().Be(Shadow);
+		service.ActivateFor(heroC).Should().BeTrue();
+		service.ActivateFor(heroC).Should().BeFalse();
+
+		raised.Should().Be(2);
+		this._cache.Verify(c => c.ClearGameDataCache(), Times.Once);
+	}
+
+	[Fact]
+	public void CharacterShowing_BaseGameSharedStash_PrefersACharacterOfTheDataItIsReadWith()
+	{
+		this.SharedStashFiles();
+		var heroA = Save("HeroA", isCustom: false);
+		var heroC = Save("HeroC", isCustom: false);
+		var heroB = Save("HeroB", isCustom: true);
+		this.LinkTo(heroC, Shadow);
+		this.LinkTo(heroB, Masteries);
+		var service = this.CreateService();
+		service.ActivateFor(heroC);
+		service.ActivateFor(heroB);
+		string transfer = Path.Combine(Path.GetTempPath(), "Sys", "winsys.dxb");
+
+		service.CharacterShowing(transfer, [heroA, heroB, heroC], heroB).Should().BeSameAs(heroC);
 	}
 
 	[Fact]

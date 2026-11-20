@@ -92,12 +92,10 @@ public class ModLinkService(
 	/// <inheritdoc/>
 	public CharacterMod Resolve(string saveFolder, bool isCustomCharacter)
 	{
-		if (!isCustomCharacter)
-			return CharacterMod.BaseGame;
-
+		// A main campaign character linked to a mod plays a bounce mod: the mod's data, the main campaign's saves.
 		var link = this.ReadLink(saveFolder);
 		if (link is null)
-			return CharacterMod.Unlinked;
+			return isCustomCharacter ? CharacterMod.Unlinked : CharacterMod.BaseGame;
 
 		// Its name and source make the mod, wherever it is installed (another Steam library, another computer).
 		return this.FindMod(ModIdentity.Compose(link.Mod, link.Source)) is { } mod

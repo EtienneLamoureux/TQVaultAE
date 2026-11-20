@@ -21,11 +21,13 @@ public class ModLinkTextTests
 	[Fact]
 	public void State_EachState_HasItsLine()
 	{
-		ModLinkText.State(CharacterMod.BaseGame).Should().Be(Resources.ModLinkStateBaseGame);
-		ModLinkText.State(new CharacterMod(CharacterModState.Linked, ModA, null)).Should().Be(F(Resources.ModLinkStateLinked, ModA.DisplayName));
-		ModLinkText.State(new CharacterMod(CharacterModState.LinkedModMissing, null, new ModLinkFile { Mod = "gone" }))
+		ModLinkText.State(CharacterMod.BaseGame, false).Should().Be(Resources.ModLinkStateBaseGame);
+		ModLinkText.State(new CharacterMod(CharacterModState.Linked, ModA, null), true).Should().Be(F(Resources.ModLinkStateLinked, ModA.DisplayName));
+		ModLinkText.State(new CharacterMod(CharacterModState.LinkedModMissing, null, new ModLinkFile { Mod = "gone" }), true)
 			.Should().Be(F(Resources.ModLinkStateMissing, "gone", Resources.ModLinkBaseGameData));
-		ModLinkText.State(CharacterMod.Unlinked).Should().Be(F(Resources.ModLinkStateUnlinked, Resources.ModLinkBaseGameData));
+		ModLinkText.State(CharacterMod.Unlinked, true).Should().Be(F(Resources.ModLinkStateUnlinked, Resources.ModLinkBaseGameData));
+		// A main campaign character linked to a mod: a bounce mod, whose shared stashes stay the main campaign's.
+		ModLinkText.State(new CharacterMod(CharacterModState.Linked, ModA, null), false).Should().Be(F(Resources.ModLinkStateLinkedMain, ModA.DisplayName));
 	}
 
 	[Fact]
@@ -72,10 +74,16 @@ public class ModLinkTextTests
 
 	[Fact]
 	public void CharacterLabel_BaseGameCharacter_HasNoModLabel()
+		=> ModLinkText.CharacterLabel(Save(false, CharacterModState.BaseGame, null)).Should().Be("Hero");
+
+	[Fact]
+	public void CharacterLabel_BounceCharacter_EndsWithItsMod_AndHasItsOwnBadge()
 	{
-		ModLinkText.CharacterLabel(Save(true, CharacterModState.BaseGame, null)).Should().Be("Hero");
-		// A main campaign character never shows a mod, whatever its state says.
-		ModLinkText.CharacterLabel(Save(false, CharacterModState.Linked, "shadowchampions")).Should().Be("Hero");
+		var bounce = Save(false, CharacterModState.Linked, "shadowchampions");
+
+		ModLinkText.CharacterLabel(bounce).Should().Be("Hero [shadowchampions]");
+		ModLinkText.ModdedBadge(bounce).Should().Be(Resources.CharacterModBounce);
+		ModLinkText.ModdedBadge(Save(true, CharacterModState.Linked, "shadowchampions")).Should().Be(Resources.CharacterModded);
 	}
 
 	[Theory]

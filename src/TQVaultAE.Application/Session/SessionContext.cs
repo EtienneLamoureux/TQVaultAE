@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Drawing;
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 
@@ -62,6 +63,12 @@ public class SessionContext
 	/// Dictionary of all loaded player stash files
 	/// </summary>
 	public readonly LazyConcurrentDictionary<string, Stash> Stashes = new();
+
+	/// <summary>
+	/// The data each shared stash file of <see cref="Stashes"/> was read with, by file path (case ignored): the base
+	/// game's take the shown character's.
+	/// </summary>
+	public readonly ConcurrentDictionary<string, SharedStashData> SharedStashReadWith = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// The loadouts read for each character, by loadouts file path (case ignored).

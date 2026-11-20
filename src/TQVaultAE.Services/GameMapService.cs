@@ -98,35 +98,83 @@ public class GameMapService(
 			if (!save.IsImmortalThrone)
 				return false;
 
-			string map = this.MapFor(save);
+			string map = this.SharedStashMapFor(save);
 			return SameFile(this.GamePathService.TransferStashFileFullPathFor(map), sharedStashFile)
 				|| SameFile(this.GamePathService.RelicVaultStashFileFullPathFor(map), sharedStashFile);
 		}
 
-		return selected is not null && Shows(selected)
-			? selected
-			: characters.FirstOrDefault(Shows);
+		// The base game's shared stashes are read with the shown character's data: one read with the data they have now
+		// shows them as the search found them.
+		bool SameData(PlayerSave save)
+			=> this.SharedStashMapFor(save).Length != 0 || GameMaps.Same(this.MapFor(save), this._baseStashData.Map);
+
+		if (selected is not null && Shows(selected))
+			return selected;
+
+		var showing = characters.Where(Shows).ToList();
+		return showing.FirstOrDefault(SameData) ?? showing.FirstOrDefault();
 	}
 
 	private static bool SameFile(string a, string b)
 		=> string.Equals(System.IO.Path.GetFullPath(a), System.IO.Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
 
 	/// <inheritdoc/>
+	public string SharedStashMapFor(PlayerSave save)
+		=> save.IsCustom ? this.MapFor(save) : string.Empty;
+
+	/// <inheritdoc/>
+	public string ActiveSharedStashMap { get; private set; } = string.Empty;
+
+	/// <summary>
+	/// The data the base game's shared stash files are read with: the last shown character using them.
+	/// </summary>
+	private SharedStashData _baseStashData = new(string.Empty, null);
+
+	/// <inheritdoc/>
+	public SharedStashData SharedStashDataOf(string? sharedStashMap)
+	{
+		string map = GameMaps.Normalize(sharedStashMap);
+		return map.Length == 0 ? this._baseStashData : new SharedStashData(map, this.ModNameOfMap(map));
+	}
+
+	/// <inheritdoc/>
 	public bool ActivateFor(PlayerSave save)
 	{
 		this.Refresh(save);
 		this.ActiveCharacterMod = this.ModNameFor(save);
-		return this.Activate(save.CustomMap);
+
+		string stashMap = this.SharedStashMapFor(save);
+		bool stashChanged = !GameMaps.Same(stashMap, this.ActiveSharedStashMap);
+		if (stashMap.Length == 0)
+		{
+			// The base game's shared stashes take the data of the character shown with them: a bounce mod's.
+			var data = new SharedStashData(save.CustomMap, this.ActiveCharacterMod);
+			stashChanged |= !this._baseStashData.SameAs(data);
+			this._baseStashData = data;
+		}
+
+		bool changed = this.Activate(save.CustomMap, stashMap);
+		if (stashChanged && !changed)
+			this.ActiveMapChanged?.Invoke(this, EventArgs.Empty);
+
+		return changed || stashChanged;
 	}
 
 	/// <inheritdoc/>
 	public bool Activate(string? mapFolder)
+		=> this.Activate(mapFolder, GameMaps.Normalize(mapFolder));
+
+	/// <summary>
+	/// Makes a map's database the active one, and a map's shared stash files the active ones.
+	/// </summary>
+	private bool Activate(string? mapFolder, string sharedStashMap)
 	{
 		string map = GameMaps.Normalize(mapFolder);
 		bool changed = this.DatabaseMaps.Activate(map);
 
-		// The stash files and the custom map paths follow the active map.
-		this.GamePathService.MapName = map.Length == 0 ? "main" : map;
+		// The shared stash files follow the shown character: a main campaign one keeps the base game's (SaveData\Sys).
+		this.ActiveSharedStashMap = sharedStashMap;
+		this.GamePathService.MapName = sharedStashMap.Length == 0 ? "main" : sharedStashMap;
 
 		if (!changed)
 			return false;

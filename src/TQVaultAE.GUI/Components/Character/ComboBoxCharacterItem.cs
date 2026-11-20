@@ -52,7 +52,6 @@ public partial class ComboBoxCharacterItem : UserControl
 
 		this.scalingLabelTags.Text = $"{Presentation.Resources.GlobalTags} : ";
 		this.scalingLabelArchived.Text = Presentation.Resources.GlobalArchived;
-		this.scalingLabelModded.Text = Presentation.Resources.CharacterModded;
 
 		// The status badges (Archived, Read-only, Modded and its link state) on the right; the tags line keeps the tags.
 		this.bufferedFlowLayoutPanelTags.Controls.Remove(this.scalingLabelArchived);
@@ -193,13 +192,13 @@ public partial class ComboBoxCharacterItem : UserControl
 	}
 
 	/// <summary>
-	/// Marks a custom map character as modded: its mod beside its name, and the Modded tag with the link state on the
-	/// tags line.
+	/// Marks a modded character (a custom map one, or a main campaign one linked to a mod): its mod beside its name, and
+	/// the Modded (or Bounce mod) tag with the link state on the tags line.
 	/// </summary>
 	/// <returns>true when the character is modded (its badges are to be shown).</returns>
 	private bool RefreshMod(PlayerSave ps)
 	{
-		var state = ps.IsCustom ? ps.ModState : CharacterModState.BaseGame;
+		var state = ps.ModState;
 		bool modded = state != CharacterModState.BaseGame;
 		this.scalingLabelModded.Visible =
 			this.scalingLabelModState.Visible = modded;
@@ -208,6 +207,7 @@ public partial class ComboBoxCharacterItem : UserControl
 			return false;
 
 		this.scalingLabelModName.Text = $"[{ps.ModName}]";
+		this.scalingLabelModded.Text = Presentation.ModLinkText.ModdedBadge(ps);
 
 		this.scalingLabelModState.Text = Presentation.ModLinkText.CharacterBadge(state);
 		this.scalingLabelModState.BackColor = state switch

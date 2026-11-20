@@ -1909,6 +1909,9 @@ You still have to close TQVaultAE to apply your changes.
 	<data name="CharacterModded" xml:space="preserve">
     <value>Modded</value>
   </data>
+	<data name="CharacterModBounce" xml:space="preserve">
+    <value>Bounce mod</value>
+  </data>
 	<data name="CharacterModLinked" xml:space="preserve">
     <value>Linked</value>
   </data>
@@ -1958,10 +1961,13 @@ You still have to close TQVaultAE to apply your changes.
     <value>the base game data</value>
   </data>
 	<data name="ModLinkStateBaseGame" xml:space="preserve">
-    <value>Main campaign character: it always uses the base game data.</value>
+    <value>Main campaign character, not linked: it is loaded with the base game data. Link it to the mod it plays with the main campaign (a bounce mod).</value>
   </data>
 	<data name="ModLinkStateLinked" xml:space="preserve">
     <value>Linked to {0}.</value>
+  </data>
+	<data name="ModLinkStateLinkedMain" xml:space="preserve">
+    <value>Linked to {0} (bounce mod): its Transfer Stash and Relic Vault stay the main campaign's.</value>
   </data>
 	<data name="ModLinkStateMissing" xml:space="preserve">
     <value>Linked to {0}, which is not installed: it is loaded with {1}.</value>

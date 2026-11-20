@@ -367,9 +367,10 @@ General rules:
   - Returns the check boxes, the lists (shown or not: `Mods` is hidden without any installed mod) with each entry's text
     and state, and the number of items highlighted.
   - To clear: untick and apply again, or use the panel's Reset.
-- **`mod_state`**: read only. The session's custom map (mod) data: active map, maps whose database is loaded, active
-  transfer stash and relic vault files, installed mods, and per listed character its link state, mod, map, and whether
-  it was read with another map's database.
+- **`mod_state`**: read only. The session's custom map (mod) data: active map, maps whose database is loaded, shown
+  transfer stash and relic vault files (`activeSharedStashMap`), the data the base game's are read with
+  (`baseSharedStashData`), installed mods, and per listed character its link state, mod, map, shared stash map, and
+  whether it was read with another map's database.
 - **`mod_suggest(character)`**: runs the mod link dialog's Suggest on any listed character (reads only its `Player.chr`
   and `winsys.dxb`): records the base game lacks, and the installed mods having them, best first. Links nothing.
 - **`game_text(tags)`**: translates text tags with the loaded text database (game, expansions, custom map strings); an
@@ -773,7 +774,8 @@ General rules:
 - **`tag_archive_all(tag, archived)`**: clicks *Archive all* or *Unarchive all* in a tag's menu, moving the save folders
   of the characters having that tag. Only a `test-` tag whose characters are all test characters; returns those
   characters with their state and folder.
-- **`open_mod_link`**: opens the mod link dialog of the selected custom map character, by a click on *Mod link...* in
+- **`open_mod_link`**: opens the mod link dialog of the selected character (custom map, or Immortal Throne main
+  campaign: bounce mod), by a click on *Mod link...* in
   the character tools menu (`menu_click`) after the call returns. Test characters only (see [Safety](#safety)): Link
   and Unlink write `TQVaultAE.ModLink.json` in the save folder.
   - Read it with `control_values(form 'ModLinkDialog', labels true)`; pick a mod with

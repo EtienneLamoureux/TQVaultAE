@@ -1755,6 +1755,9 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
 	<data name="CharacterModded" xml:space="preserve">
     <value>Moddé</value>
   </data>
+	<data name="CharacterModBounce" xml:space="preserve">
+    <value>Mod bounce</value>
+  </data>
 	<data name="CharacterModLinked" xml:space="preserve">
     <value>Lié</value>
   </data>
@@ -1804,10 +1807,13 @@ Vous devez toujours fermer TQVaultAE pour sauvegarder vos modifications dans les
     <value>les données du jeu de base</value>
   </data>
 	<data name="ModLinkStateBaseGame" xml:space="preserve">
-    <value>Personnage de la campagne principale : il utilise toujours les données du jeu de base.</value>
+    <value>Personnage de la campagne principale, non lié : il est chargé avec les données du jeu de base. Liez-le au mod avec lequel il joue la campagne principale (un mod « bounce »).</value>
   </data>
 	<data name="ModLinkStateLinked" xml:space="preserve">
     <value>Lié à {0}.</value>
+  </data>
+	<data name="ModLinkStateLinkedMain" xml:space="preserve">
+    <value>Lié à {0} (mod « bounce ») : sa Zone de transfert et sa Chambre des reliques restent celles de la campagne principale.</value>
   </data>
 	<data name="ModLinkStateMissing" xml:space="preserve">
     <value>Lié à {0}, qui n'est pas installé : il est chargé avec {1}.</value>

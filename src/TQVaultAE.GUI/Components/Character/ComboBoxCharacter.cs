@@ -374,8 +374,8 @@ public partial class ComboBoxCharacter : UserControl, IFontRebasing, IZoomFit
 				this.duplicateSeparatorToolStripMenuItem.Visible = false;
 			}
 
-			// Mod link, for custom map characters only
-			this.modLinkToolStripMenuItem.Visible = ps.IsCustom;
+			// Mod link: custom map characters, and Immortal Throne main campaign ones (a bounce mod)
+			this.modLinkToolStripMenuItem.Visible = ps.IsCustom || ps.IsImmortalThrone;
 
 			// Archiving toggle
 			this.archiveToolStripMenuItem.Checked = ps.IsArchived;

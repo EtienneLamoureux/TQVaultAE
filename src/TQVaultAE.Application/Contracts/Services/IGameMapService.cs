@@ -42,9 +42,27 @@ public interface IGameMapService
 	CharacterMod ModOf(PlayerSave save);
 
 	/// <summary>
+	/// The map whose shared stash files (transfer stash, relic vault) a character uses: its own for a custom map
+	/// character; the base game's (<c>SaveData\Sys</c>) for a main campaign one, even linked to a mod (a bounce mod).
+	/// </summary>
+	string SharedStashMapFor(PlayerSave save);
+
+	/// <summary>
+	/// The map of the shared stash files shown now (<see cref="SharedStashMapFor"/> of the last <see cref="ActivateFor"/>).
+	/// </summary>
+	string ActiveSharedStashMap { get; }
+
+	/// <summary>
+	/// The data a map's shared stash files are read with: a mod's with that mod; the base game's with the data of the
+	/// last shown character using them (its bounce mod, or the base game).
+	/// </summary>
+	/// <param name="sharedStashMap">The map of the files; empty for the base game's.</param>
+	SharedStashData SharedStashDataOf(string? sharedStashMap);
+
+	/// <summary>
 	/// Makes a character's map the active one: its database, archives and shared stash files.
 	/// </summary>
-	/// <returns>True when the active map changed.</returns>
+	/// <returns>True when the active map, the shared stash files or the data they are read with changed.</returns>
 	bool ActivateFor(PlayerSave save);
 
 	/// <summary>

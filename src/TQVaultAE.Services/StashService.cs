@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Config;
@@ -18,10 +19,12 @@ public class StashService(
 	UserSettings userSettings,
 	IPathIO pathIO,
 	IGameMapService gameMapService,
-	ICharacterReadOnlyService characterReadOnlyService) : IStashService
+	ICharacterReadOnlyService characterReadOnlyService,
+	IItemProvider itemProvider) : IStashService
 {
 	private readonly IGameMapService GameMapService = gameMapService;
 	private readonly ICharacterReadOnlyService CharacterReadOnly = characterReadOnlyService;
+	private readonly IItemProvider ItemProvider = itemProvider;
 
 	/// <summary>Reads with a custom map's database (empty for the base game) until disposed.</summary>
 	private IDisposable ReadWithMap(string? mapFolder)
@@ -37,10 +40,6 @@ public class StashService(
 	/// <summary>A shared stash's name in the search: a mod's names its mod, as each map has its own.</summary>
 	private string SharedStashName(string name, string map)
 		=> this.GameMapService.ModNameOfMap(map) is { } mod ? $"{name} [{ModIdentity.NameOf(mod)}]" : name;
-
-	/// <summary>The map whose shared stash files are read: the given one, else the active one.</summary>
-	private string MapOrActive(string? mapFolder)
-		=> mapFolder ?? this.GameMapService.ActiveMap ?? string.Empty;
 
 	private readonly ILogger Log = log;
 	private readonly SessionContext userContext = userContext;
@@ -124,13 +123,16 @@ public class StashService(
 		=> this.LoadSharedStash(this.KindOf(StashType.RelicVaultStash), fromFileWatcher, mapFolder);
 
 	/// <summary>
-	/// Loads a stash shared by the characters of a map: the active one's unless <paramref name="mapFolder"/> is given.
+	/// Loads a stash shared by the characters of a map: the shown character's unless <paramref name="mapFolder"/> is
+	/// given.
 	/// </summary>
 	private StashLoadResult LoadSharedStash(SharedStashKind kind, bool fromFileWatcher, string? mapFolder)
 	{
 		var result = new StashLoadResult();
 
-		string map = this.MapOrActive(mapFolder);
+		string map = GameMaps.Normalize(mapFolder ?? this.GameMapService.ActiveSharedStashMap);
+		var data = this.GameMapService.SharedStashDataOf(map);
+		// The shown character's files follow the active shared stash map (IGamePathService.MapName).
 		result.StashFile = mapFolder is null ? kind.ActiveMapFile() : kind.FileOfMap(map);
 
 		Stash addStash(string k)
@@ -138,11 +140,12 @@ public class StashService(
 			var stash = new Stash(kind.Name, k);
 			try
 			{
-				// Read with the map whose file it is; its items inherit that map.
-				using (this.ReadWithMap(map))
+				// Read with its map's data (the base game's files: the shown character's); its items inherit that map.
+				using (this.ReadWithMap(data.Map))
 					stash.StashFound = StashProvider.LoadFile(stash);
 
-				Inherit(stash, this.GameMapService.ModNameOfMap(map));
+				Inherit(stash, data.Mod);
+				this.userContext.SharedStashReadWith[k] = data;
 				if ((stash.StashFound ?? false) && stash.Sack is not null)
 					stash.Sack.StashType = kind.Type;
 
@@ -157,10 +160,36 @@ public class StashService(
 			return stash;
 		}
 
-		result.Stash = this.userContext.Stashes.LoadOrReload(result.StashFile, addStash, fromFileWatcher, this.ItemDatabaseService);
+		// Read with other data before (the base game's files, shown with a character of another mod): read again; with
+		// changes to save, its items only, where they lie.
+		bool otherData = this.userContext.SharedStashReadWith.TryGetValue(result.StashFile, out var readWith) && !readWith.SameAs(data);
+		if (otherData && !fromFileWatcher && this.userContext.Stashes.TryGetLoaded(result.StashFile, out var modified) && modified.IsModified)
+		{
+			this.ReadItemsWith(modified, data, this.SharedStashName(kind.Name, map), kind.Type);
+			result.Stash = modified;
+		}
+		else
+			result.Stash = this.userContext.Stashes.LoadOrReload(result.StashFile, addStash, fromFileWatcher || otherData, this.ItemDatabaseService);
+
 		result.Stash.IsImmortalThrone = true;
 
 		return result;
+	}
+
+	/// <summary>
+	/// Reads the items of a loaded shared stash again with other data, and puts them in the search again.
+	/// </summary>
+	private void ReadItemsWith(Stash stash, SharedStashData data, string name, StashType type)
+	{
+		foreach (var item in stash.Sack ?? [])
+		{
+			if (item.SetContainerMod(data.Mod))
+				this.ItemProvider.GetDBData(item);
+		}
+
+		this.userContext.SharedStashReadWith[stash.StashFile] = data;
+		this.ItemDatabaseService.RemoveContainerFromDatabase(stash.StashFile);
+		this.ItemDatabaseService.IndexStash(stash, stash.StashFile, name, type);
 	}
 
 	/// <summary>

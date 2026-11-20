@@ -41,8 +41,8 @@ public interface IModLinkService
 	ModLinkFile? ReadLink(string saveFolder);
 
 	/// <summary>
-	/// Resolves the mod of a character: none for a main campaign character, else its link and the installed mod it
-	/// names (by folder first, then by name and source).
+	/// Resolves the mod of a character: its link and the installed mod it names (by name and source). Without a link,
+	/// a main campaign character has none and a custom map one is not linked.
 	/// </summary>
 	/// <param name="saveFolder">The character's save folder.</param>
 	/// <param name="isCustomCharacter">True for a custom map character (<c>SaveData\User</c>).</param>

@@ -124,15 +124,15 @@ public partial class MainFormUserControl
 	}
 
 	/// <summary>
-	/// The maps whose shared stashes (transfer stash, relic vault) are read: the base game and the map of every listed
-	/// Immortal Throne character.
+	/// The maps whose shared stashes (transfer stash, relic vault) are read: the base game and the shared stash map of
+	/// every listed Immortal Throne character.
 	/// </summary>
 	internal List<string> SharedStashMaps()
-		=> SharedStashes.Maps(this.ListedCharacters().Where(c => c.IsImmortalThrone).Select(this.Services.GameMapService.MapFor));
+		=> SharedStashes.Maps(this.ListedCharacters().Where(c => c.IsImmortalThrone).Select(this.Services.GameMapService.SharedStashMapFor));
 
 	/// <summary>
 	/// Watches the shared stash files of every map in use when hot reload is on: the base game's, those of the maps of
-	/// the listed characters, and the active map's. Watchers already set are kept.
+	/// the listed characters, and the shown character's. Watchers already set are kept.
 	/// </summary>
 	internal void WatchSharedStashFiles()
 	{
@@ -141,8 +141,8 @@ public partial class MainFormUserControl
 
 		var mapService = this.Services.GameMapService;
 		var maps = this.SharedStashMaps();
-		if (!maps.Any(m => GameMaps.Same(m, mapService.ActiveMap)))
-			maps.Add(mapService.ActiveMap);
+		if (!maps.Any(m => GameMaps.Same(m, mapService.ActiveSharedStashMap)))
+			maps.Add(mapService.ActiveSharedStashMap);
 
 		foreach (var map in maps)
 		{

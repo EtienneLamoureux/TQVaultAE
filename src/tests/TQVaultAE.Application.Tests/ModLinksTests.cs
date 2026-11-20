@@ -26,15 +26,16 @@ public class ModLinksTests
 		=> new ModSuggestion(10, []).Tied.Should().BeEmpty();
 
 	[Fact]
-	public void CanLinkTo_ACustomCharacterAndAnotherMod_Only()
+	public void CanLinkTo_AnotherMod_Only()
 	{
 		var linkedToA = new CharacterMod(CharacterModState.Linked, ModA, new ModLinkFile { Mod = "moda" });
 
-		linkedToA.CanLinkTo(true, ModB).Should().BeTrue();
-		linkedToA.CanLinkTo(true, ModA).Should().BeFalse();
-		linkedToA.CanLinkTo(true, null).Should().BeFalse();
-		CharacterMod.BaseGame.CanLinkTo(false, ModB).Should().BeFalse();
-		CharacterMod.Unlinked.CanLinkTo(true, ModA).Should().BeTrue();
+		linkedToA.CanLinkTo(ModB).Should().BeTrue();
+		linkedToA.CanLinkTo(ModA).Should().BeFalse();
+		linkedToA.CanLinkTo(null).Should().BeFalse();
+		// A main campaign character can be linked too (a bounce mod).
+		CharacterMod.BaseGame.CanLinkTo(ModB).Should().BeTrue();
+		CharacterMod.Unlinked.CanLinkTo(ModA).Should().BeTrue();
 	}
 
 	[Fact]

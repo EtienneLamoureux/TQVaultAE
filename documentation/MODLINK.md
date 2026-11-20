@@ -5,15 +5,17 @@ _User guide with screenshots: [MODS.md](MODS.md). This page holds the technical 
 Titan Quest keeps custom map (mod) characters in `SaveData\User\_<name>`, apart from the main campaign ones in
 `SaveData\Main`, but their save files never name the mod they were played with. TQVault lists both kinds together and
 loads each with its own mod's data, in one session. A character's link to its mod is the only way to choose a mod: no
-mod setting, no `/mod:` command-line argument.
+mod setting, no `/mod:` command-line argument. A main campaign character can be linked too: it plays a **bounce mod**
+([Bounce mods](#bounce-mods)).
 
 ## The link file
 
-Character menu (tools button of the character list) > *Mod link...*, for custom map characters. The dialog lists the
+Character menu (tools button of the character list) > *Mod link...*, for custom map and Immortal Throne main campaign
+characters. The dialog lists the
 installed mods (legacy custom maps in `My Games\Titan Quest - Immortal Throne\CustomMaps`, Steam Workshop items) and
 links the character to one, or removes its link. The choice is kept in the character's save folder:
 
-`SaveData\User\_<name>\TQVaultAE.ModLink.json`
+`SaveData\User\_<name>\TQVaultAE.ModLink.json` (`SaveData\Main\_<name>\...` for a main campaign character)
 
 ```json
 {
@@ -34,7 +36,8 @@ links the character to one, or removes its link. The choice is kept in the chara
 
 In the character list, a custom map character shows its mod's name in brackets beside its name, and on the right, with
 its other badges, a *Modded* badge and the link state: *Linked* (green), *Not installed* (red: the linked mod is gone)
-or *Not linked* (yellow).
+or *Not linked* (yellow). A linked main campaign character shows its mod the same way, with a *Bounce mod* badge
+instead of *Modded*; unlinked, it has no mod badge.
 
 A character linked to an installed mod is described with that mod's data, over the base game's, whatever character is
 selected: its class name (a mod can rename classes) and its masteries (a mod can bring its own), in the character list,
@@ -55,11 +58,13 @@ mod not installed: base game data.
 | Character | Data |
 |---|---|
 | Main campaign (`SaveData\Main`) | the base game |
+| Main campaign, linked to an installed mod (bounce mod) | that mod |
 | Custom map, linked to an installed mod | that mod |
 | Custom map, not linked, or linked to a mod not installed | the base game |
 
 - Selecting a character makes its map active: its database and archives, and its shared stash files
-  (`SaveData\Sys\<mod>\winsys.dxb` and `miscsys.dxb`, or `SaveData\Sys\` for the base game).
+  (`SaveData\Sys\<mod>\winsys.dxb` and `miscsys.dxb` for a linked custom map character, else `SaveData\Sys\`, a
+  bounce mod's included).
 - Each map's database is read when first needed (about half a second for a large mod) and kept for the session:
   switching back is immediate.
 - After the startup loading, the databases of the mods linked to listed characters are read in the background (*Load
@@ -88,12 +93,15 @@ its data is read. The search, a tooltip and a vault show an item the same way wh
 |---|---|
 | Vault linked to a mod | that mod |
 | Vault without a link | the base game |
-| Main campaign character (`SaveData\Main`): equipment, bags, its stash | the base game |
+| Main campaign character (`SaveData\Main`): equipment, bags, its stash | the base game; its mod when linked (bounce mod) |
 | Custom map character linked to a mod (installed or not) | that mod |
 | Custom map character without a link | the base game |
-| Transfer stash and relic vault | the map whose files they are (`SaveData\Sys\<mod>`, or `SaveData\Sys\` for the base game) |
+| Transfer stash and relic vault of a mod (`SaveData\Sys\<mod>`) | that mod |
+| Transfer stash and relic vault of the base game (`SaveData\Sys\`) | the shown character's map (its bounce mod, or the base game) |
 
-Each character and each shared stash is read with its own map's database, whatever map is active.
+Each character and each mod's shared stash is read with its own map's database, whatever map is active. The base
+game's shared stashes belong to the main campaign characters, bounce mods included: see
+[Bounce mods](#bounce-mods).
 
 ### The mod of an item
 
@@ -211,7 +219,7 @@ On import, the vault's or tab's mod is checked against the installed mods:
 ### Search and preload
 
 - *Load all files* reads every listed character with its own map, and the transfer stash and relic vault of the base
-  game and of every mod a listed Immortal Throne character is linked to. Each map's database is read when first needed
+  game and of every mod a listed Immortal Throne custom map character is linked to. Each map's database is read when first needed
   (about half a second for a large mod).
 - The search covers them all from startup and names a mod's shared stashes after it: *Transfer Stash
   [shadowchampions]*.
@@ -222,6 +230,22 @@ On import, the vault's or tab's mod is checked against the installed mods:
   characters' maps, active one) are watched. When the game writes one, it is read again with its own map: the search
   finds its new items, and the stash panel shows them when it is the active map's.
 - Debug builds log a warning for an item indexed without a map (`Item without a map`): a path that forgot to give one.
+
+## Bounce mods
+
+A bounce mod is a regular mod played with main campaign characters: the game reads its database, but keeps the main
+campaign's saves and shared stashes. Nothing in its files tells it apart: link the character (Suggest works as for a
+custom map character).
+
+- The character (equipment, bags, its stash) is read with the mod's data.
+- Its transfer stash and relic vault stay `SaveData\Sys\` (never `Sys\<mod>`), shared with the other main campaign
+  characters.
+- `SaveData\Sys\` has one copy for every main campaign character: it is read with the shown character's map, read
+  again when a character of another map is shown (its items only, where they lie, when it has changes to save). While
+  a custom map character with its own `Sys\<mod>` is shown, it keeps the map of the last character shown with it.
+- So an item of a bounce mod in `SaveData\Sys\` shows incomplete while a base game character (or one of another mod)
+  is shown, and whole again with a character of its mod. The search shows it as last read.
+- Vaults keep their own *Modded vault* choice.
 
 ## Incomplete items
 

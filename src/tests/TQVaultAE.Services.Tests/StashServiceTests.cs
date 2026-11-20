@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Config;
@@ -23,6 +24,8 @@ public class StashServiceTests
 	private readonly Mock<IGamePathService> _mockGamePathService;
 	private readonly Mock<IGameFileService> _mockGameFileService;
 	private readonly UserSettings _userSettings;
+	private readonly Mock<IGameMapService> _maps = GameMapMocks.Create();
+	private readonly Mock<IItemProvider> _itemProvider = new();
 	private readonly StashService _stashService;
 
 	/// <summary>
@@ -41,7 +44,12 @@ public class StashServiceTests
 		// Create SessionContext - parameterless data holder
 		_sessionContext = new SessionContext();
 
-		_stashService = new StashService(
+		_stashService = this.CreateService();
+	}
+
+	/// <summary>A stash service of the session: the application makes one each time it asks for it (transient).</summary>
+	private StashService CreateService()
+		=> new(
 			_mockLogger.Object,
 			_sessionContext,
 			_mockItemDatabaseService.Object,
@@ -50,10 +58,10 @@ public class StashServiceTests
 			_mockGameFileService.Object,
 			_userSettings,
 			new PathIO(),
-			Mock.Of<IGameMapService>(),
-			Mock.Of<ICharacterReadOnlyService>()
+			_maps.Object,
+			Mock.Of<ICharacterReadOnlyService>(),
+			_itemProvider.Object
 		);
-	}
 
 	/// <summary>
 	/// Test LoadPlayerStash with null selectedSave returns empty result
@@ -514,6 +522,56 @@ public class StashServiceTests
 		reloaded.Stash.Should().NotBeSameAs(first.Stash);
 		_sessionContext.Stashes[file].Value.Should().BeSameAs(reloaded.Stash);
 		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase(file), Times.Once);
+	}
+
+	/// <summary>The base game's transfer stash, read first with the base game data.</summary>
+	private Stash LoadBaseTransferStash(params Item[] items)
+	{
+		_mockGamePathService.Setup(x => x.TransferStashFileFullPath).Returns("""C:\Test\Saves\Sys\winsys.dxb""");
+		_mockStashProvider.Setup(x => x.LoadFile(It.IsAny<Stash>())).Callback<Stash>(s =>
+		{
+			s.CreateEmptySack();
+			foreach (var item in items)
+				s.Sack!.AddItem(item);
+		}).Returns(true);
+		return _stashService.LoadTransferStash().Stash!;
+	}
+
+	/// <summary>A bounce mod character is shown: the base game's shared stashes take its mod's data.</summary>
+	private void ShowBounceCharacter()
+		=> _maps.Setup(m => m.SharedStashDataOf(It.IsAny<string?>())).Returns(new SharedStashData("""C:\Maps\ModA""", "ModA|custommaps"));
+
+	[Fact]
+	public void LoadTransferStash_BaseGameFilesShownWithABounceCharacter_AreReadAgainWithItsData()
+	{
+		var first = this.LoadBaseTransferStash();
+		this.ShowBounceCharacter();
+
+		var again = this.CreateService().LoadTransferStash();
+
+		again.Stash.Should().NotBeSameAs(first);
+		_maps.Verify(m => m.ReadWithMap("""C:\Maps\ModA"""), Times.Once);
+		_mockItemDatabaseService.Verify(x => x.RemoveContainerFromDatabase("""C:\Test\Saves\Sys\winsys.dxb"""), Times.Once);
+
+		// The same data again: the stash read is kept.
+		_stashService.LoadTransferStash().Stash.Should().BeSameAs(again.Stash);
+	}
+
+	[Fact]
+	public void LoadTransferStash_ChangesToSave_KeepsTheStash_ReadsItsItemsWithTheNewData()
+	{
+		var item = new Item { BaseItemId = RecordId.Create("records/ring.dbr") };
+		var first = this.LoadBaseTransferStash(item);
+		first.Sack!.IsModified = true;
+		this.ShowBounceCharacter();
+
+		var again = this.CreateService().LoadTransferStash();
+
+		again.Stash.Should().BeSameAs(first);
+		first.IsModified.Should().BeTrue();
+		item.ContainerMod.Should().Be("ModA|custommaps");
+		_itemProvider.Verify(p => p.GetDBData(item), Times.Once);
+		_mockItemDatabaseService.Verify(x => x.IndexStash(first, first.StashFile, It.IsAny<string>(), StashType.TransferStash), Times.Exactly(2));
 	}
 
 	[Fact]

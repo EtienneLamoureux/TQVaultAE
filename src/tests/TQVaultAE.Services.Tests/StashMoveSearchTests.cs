@@ -69,7 +69,7 @@ public sealed class StashMoveSearchTests : IDisposable
 		this._stashService = new StashService(
 			new Mock<ILogger<StashService>>().Object, session, this._database, stashProvider.Object
 			, gamePaths.Object, new Mock<IGameFileService>().Object, new UserSettings(), new PathIO()
-			, new Mock<IGameMapService>().Object, new Mock<ICharacterReadOnlyService>().Object);
+			, GameMapMocks.Create().Object, new Mock<ICharacterReadOnlyService>().Object, new Mock<IItemProvider>().Object);
 
 		this._playerService = new PlayerService(
 			new Mock<ILogger<PlayerService>>().Object, session, this._database, playerProvider.Object, this._stashService
