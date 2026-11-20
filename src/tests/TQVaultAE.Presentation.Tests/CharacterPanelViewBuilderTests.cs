@@ -111,6 +111,18 @@ public class CharacterPanelViewBuilderTests
 	}
 
 	[Fact]
+	public void Build_ModMasteriesWhoseClassASaveCleared_ShowsTheClassTheirTreesMake()
+	{
+		// A class set gave a mod's masteries (own records, unknown to the base game's) and cleared the save's class.
+		this._translation.Setup(t => t.TranslateXTag("tagCClass36", true, true)).Returns("Mod Class");
+		MasteryTree Tree(Masteries mastery) => new(mastery, """records\skills\modmasteries\mastery.dbr""".ToRecordId(), "", "", "", 40, []);
+		var input = Input(trees: [Tree(Masteries.Spirit), Tree(Masteries.Nature)]);
+		input.Info.Class = string.Empty;
+
+		this._builder.Build(input).ClassName.Should().Be("Mod Class");
+	}
+
+	[Fact]
 	public void FromSave_TakesTheSavedValues_InTheGameOrder()
 	{
 		// Arrange

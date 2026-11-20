@@ -1092,6 +1092,9 @@ Vous ne serez également pas en mesure d'équiper l'objet sur ce personnage.</va
 	<data name="SearchQueryNameMustBeSet" xml:space="preserve">
     <value>Le nom de la requête doit être saisi.</value>
   </data>
+	<data name="SearchQueryFileUnreadable" xml:space="preserve">
+    <value>Le fichier des requêtes enregistrées n'a pas pu être lu : la requête n'a pas été enregistrée. Réessayez plus tard.</value>
+  </data>
 	<data name="SearchQueryNameAlreadyExist" xml:space="preserve">
     <value>Le nom de la requête existe déjà. Voulez vous l'écraser ?</value>
   </data>

@@ -173,6 +173,27 @@ public class PlayerServiceTests
 	}
 
 	[Fact]
+	public void DescribeCharacter_ModMasteriesWithAClearedClass_TheClassTheirTreesMake()
+	{
+		// A class set gave the character a mod's masteries (own records) and cleared the save's class: its trees tell it.
+		var save = CreatePlayerSave("/Test/_HeroA", isIT: true, isCustom: true);
+		var info = new PlayerInfo(this._mockPathIO.Object) { Class = string.Empty };
+		save.Info = info;
+		this._mockGameMapService.Setup(x => x.ReadWith(save)).Returns(Mock.Of<IDisposable>());
+		this._mockCharacterEdit.Setup(x => x.GetMasteries(info)).Returns(
+		[
+			new MasteryTree(Masteries.Spirit, """records\skills\modmasteries\witchmastery.dbr""".ToRecordId(), "tagWitch", "", "", 40, []),
+			new MasteryTree(Masteries.Nature, """records\skills\modmasteries\healermastery.dbr""".ToRecordId(), "tagHealer", "", "", 40, []),
+		]);
+		this._mockTranslationService.Setup(x => x.TranslateXTag("tagCClass36", true, true, false)).Returns("Mod Class");
+
+		var labels = this._playerService.DescribeCharacter(save);
+
+		labels.ClassName.Should().Be("Mod Class");
+		save.ClassLabel.Should().Be(("tagCClass36", "Mod Class"));
+	}
+
+	[Fact]
 	public void DescribeCharacter_NotLoaded_IsEmptyAndReadsNothing()
 	{
 		var save = CreatePlayerSave("/Test/_HeroB", isIT: true);

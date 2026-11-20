@@ -64,7 +64,7 @@ public class CharacterEditServiceTests
 			, Mana: source.BaseMana);
 
 	[Fact]
-	public void CreateSkillEditor_ModMasteriesWithAClearedClass_TheClassTheirPanesMake()
+	public void GetMasteries_ModMasteriesWithAClearedClass_TheClassTheirPanesMake()
 	{
 		// A mod's masteries: own records, shown on the panes of Spirit and Nature; a class set changed them, which
 		// cleared the save's class.
@@ -78,9 +78,10 @@ public class CharacterEditServiceTests
 		info.SkillRecordList.Add(new SkillRecord { skillName = healer, skillLevel = 32 });
 		info.SkillRecordList.Add(new SkillRecord { skillName = witch, skillLevel = 32 });
 
-		service.CreateSkillEditor(info);
+		var masteries = service.GetMasteries(info).Select(t => t.Mastery);
 
-		info.ClassTag.Should().Be("tagCClass36");
+		info.ClassTagWith(masteries).Should().Be("tagCClass36");
+		info.ClassTag.Should().BeEmpty("the base game's records name no mastery: nothing is cached on the character");
 	}
 
 	[Theory]

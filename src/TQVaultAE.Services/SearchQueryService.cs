@@ -29,10 +29,11 @@ public class SearchQueryService(
 	private string FilePath => this._pathIO.Combine(this._gamePathService.TQVaultConfigFolder, FileName);
 
 	/// <inheritdoc/>
-	public IReadOnlyList<SearchQuery> Queries => this.Loaded;
+	public IReadOnlyList<SearchQuery> Queries => this.Loaded ?? [];
 
-	// Not kept when the file could not be read: the next access reads it again, and nothing is written meanwhile.
-	private List<SearchQuery> Loaded => this._queries ?? this.Read();
+	// Null while the file cannot be read: nothing is kept, the next operation reads it again (a lock may be over), and
+	// nothing is written meanwhile. Each operation reads it once.
+	private List<SearchQuery>? Loaded => this._queries ?? this.Read();
 
 	/// <inheritdoc/>
 	public SearchQuerySaveCheck CheckSave(string name, SearchQuery draft)
@@ -43,17 +44,21 @@ public class SearchQueryService(
 		if (!draft.HasFilters())
 			return SearchQuerySaveCheck.NoFilter;
 
-		return this.IndexOf(name.Trim()) == -1 ? SearchQuerySaveCheck.Valid : SearchQuerySaveCheck.NameExists;
+		return IndexOf(this.Loaded ?? [], name.Trim()) == -1 ? SearchQuerySaveCheck.Valid : SearchQuerySaveCheck.NameExists;
 	}
 
 	/// <inheritdoc/>
-	public SearchQuery Save(string name, SearchQuery draft)
+	public SearchQuery? Save(string name, SearchQuery draft)
 	{
+		if (this.Loaded is not { } queries)
+		{
+			this._log.LogError("The saved search queries file could not be read: not overwritten");
+			return null;
+		}
+
 		name = name.Trim();
 		draft.QueryName = name;
-
-		var queries = this.Loaded;
-		int index = this.IndexOf(name);
+		int index = IndexOf(queries, name);
 		if (index == -1)
 		{
 			queries.Add(draft);
@@ -67,15 +72,15 @@ public class SearchQueryService(
 			queries[index] = draft;
 		}
 
-		this.Write();
+		this.Write(queries);
 		return draft;
 	}
 
 	/// <inheritdoc/>
 	public void Delete(SearchQuery query)
 	{
-		if (this.Loaded.Remove(query))
-			this.Write();
+		if (this.Loaded is { } queries && queries.Remove(query))
+			this.Write(queries);
 	}
 
 	/// <inheritdoc/>
@@ -93,15 +98,15 @@ public class SearchQueryService(
 		return found;
 	}
 
-	private int IndexOf(string name)
-		=> this.Loaded.FindIndex(q => q.QueryName.Equals(name, StringComparison.OrdinalIgnoreCase));
+	private static int IndexOf(List<SearchQuery> queries, string name)
+		=> queries.FindIndex(q => q.QueryName.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-	private List<SearchQuery> Read()
+	private List<SearchQuery>? Read()
 	{
 		// A file that cannot be read is left as it is: saving now would replace every query it holds.
 		var (queries, failed) = JsonFile.Read<List<SearchQuery>>(this._fileIO, this.FilePath, JsonOptions, this._log, "saved search queries");
 		if (failed)
-			return [];
+			return null;
 
 		queries ??= [];
 
@@ -117,14 +122,6 @@ public class SearchQueryService(
 		return this._queries = queries;
 	}
 
-	private void Write()
-	{
-		if (this._queries is null)
-		{
-			this._log.LogError("The saved search queries file could not be read: not overwritten");
-			return;
-		}
-
-		JsonFile.Write(this._fileIO, this.FilePath, this._queries, JsonOptions);
-	}
+	private void Write(List<SearchQuery> queries)
+		=> JsonFile.Write(this._fileIO, this.FilePath, queries, JsonOptions);
 }

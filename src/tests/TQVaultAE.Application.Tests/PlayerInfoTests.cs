@@ -38,7 +38,7 @@ public class PlayerInfoTests
 	}
 
 	[Fact]
-	public void ClassTag_ClearedOnAModdedCharacter_TheOneThePaneMasteriesMake()
+	public void ClassTagWith_ClearedOnAModdedCharacter_TheOneThePaneMasteriesMake()
 	{
 		// A mod's masteries have their own records: only the map's skill panes tell which masteries they are.
 		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\ModMasteries\HealerMastery.dbr""", skillLevel = 32 });
@@ -46,8 +46,15 @@ public class PlayerInfoTests
 		_playerInfo.Class = string.Empty;
 		_playerInfo.ClassTag.Should().BeEmpty("the base game's records name no mastery");
 
-		_playerInfo.PaneMasteries = Masteries.Spirit | Masteries.Nature;
-		_playerInfo.ClassTag.Should().Be("tagCClass36");
+		_playerInfo.ClassTagWith([Masteries.Spirit, Masteries.Nature]).Should().Be("tagCClass36");
+		_playerInfo.ClassTagWith([]).Should().BeEmpty("no pane: the masteries of the records, none here");
+	}
+
+	[Fact]
+	public void ClassTagWith_ClassInTheSave_TheSaves()
+	{
+		_playerInfo.Class = "tagCClass01";
+		_playerInfo.ClassTagWith([Masteries.Spirit, Masteries.Nature]).Should().Be("tagCClass01");
 	}
 
 	#endregion

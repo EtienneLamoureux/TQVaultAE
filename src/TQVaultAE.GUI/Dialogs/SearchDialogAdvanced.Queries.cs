@@ -149,10 +149,15 @@ public partial class SearchDialogAdvanced
 
 		// Replaces the query of the same name, or adds it
 		var replaced = this.SearchQueryService.Queries.FirstOrDefault(q => q.QueryName.Equals(input, StringComparison.OrdinalIgnoreCase));
+		if (this.SearchQueryService.Save(input, draft) is not { } saved)
+		{
+			this.Services.MessageBoxes.Inform(Resources.SearchQueryFileUnreadable, Resources.GlobalInputWarning, MessageBoxIcon.Error);
+			return;
+		}
+
 		if (replaced is not null)
 			this.QueryFilters.Remove(replaced);
 
-		var saved = this.SearchQueryService.Save(input, draft);
 		this.QueryFilters[saved] = this.SelectedFilters.ToArray();// i need a clone here so ToArray() do the job
 
 		SearchQueriesInit();

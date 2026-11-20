@@ -3612,6 +3612,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The saved queries file could not be read: the query was not saved. Try again later..
+        /// </summary>
+        public static string SearchQueryFileUnreadable {
+            get {
+                return ResourceManager.GetString("SearchQueryFileUnreadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Query name must be set.
         /// </summary>
         public static string SearchQueryNameMustBeSet {

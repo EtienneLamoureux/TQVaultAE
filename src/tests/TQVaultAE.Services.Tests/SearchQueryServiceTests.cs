@@ -169,7 +169,7 @@ public class SearchQueryServiceTests
 		this._fileIO.Setup(f => f.ReadAllText(FilePath)).Throws(new IOException("locked"));
 
 		this._service.Queries.Should().BeEmpty();
-		this._service.Save("new", WithFilter());
+		this._service.Save("new", WithFilter()).Should().BeNull("the caller must tell the user the query was not saved");
 
 		this._files[FilePath].Should().Be(FileOfEarlierVersions);
 
@@ -229,7 +229,7 @@ public class SearchQueryServiceTests
 
 		var saved = this._service.Save("  Belts ", WithFilter());
 
-		saved.QueryName.Should().Be("Belts");
+		saved!.QueryName.Should().Be("Belts");
 		this._service.Queries.Select(q => q.QueryName).Should().Equal("Belts", "charms", "Fire swords");
 		this._files[FilePath].Should().Contain("\"QueryName\": \"Belts\"");
 	}

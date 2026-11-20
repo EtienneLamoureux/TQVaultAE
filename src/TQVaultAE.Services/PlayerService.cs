@@ -139,10 +139,11 @@ public class PlayerService(
 		// The character's own map, the one rule for any of its data: its linked mod when installed, else the base game.
 		using (this.GameMapService.ReadWith(save))
 		{
-			// The masteries first: they give the class of a save whose class tag was cleared.
+			// The masteries of its trees give the class of a save whose class tag was cleared (a mod's own masteries too).
 			var masteries = this.CharacterEditService.GetMasteries(info);
-			string className = info.ClassTag is { Length: > 0 } tag ? this.TranslationService.TranslateXTag(tag, true, true) : string.Empty;
-			save.ClassLabel = info.ClassTag is { Length: > 0 } classTag ? (classTag, className) : null;
+			var classTag = info.ClassTagWith(masteries.Select(t => t.Mastery));
+			string className = classTag is { Length: > 0 } ? this.TranslationService.TranslateXTag(classTag, true, true) : string.Empty;
+			save.ClassLabel = classTag is { Length: > 0 } ? (classTag, className) : null;
 			return new CharacterLabels(className, CharacterLabels.JoinMasteryNames(masteries, this.TranslationService));
 		}
 	}

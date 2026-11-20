@@ -35,8 +35,9 @@ public interface ISearchQueryService
 	/// Saves <paramref name="draft"/> under <paramref name="name"/> and writes the file. A query of the same name
 	/// (ignoring case) is replaced at its place; a new one is added and the list sorted by name.
 	/// </summary>
-	/// <returns><paramref name="draft"/>, now in <see cref="Queries"/>.</returns>
-	SearchQuery Save(string name, SearchQuery draft);
+	/// <returns><paramref name="draft"/>, now in <see cref="Queries"/>; null when the file could not be read, left as it
+	/// is (saving would replace every query it holds).</returns>
+	SearchQuery? Save(string name, SearchQuery draft);
 
 	/// <summary>Removes <paramref name="query"/> and writes the file.</summary>
 	void Delete(SearchQuery query);

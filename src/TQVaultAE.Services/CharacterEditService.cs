@@ -31,13 +31,7 @@ public class CharacterEditService(IPathIO pathIO, IPlayerCollectionProvider play
 
 	/// <inheritdoc/>
 	public CharacterSkillEditor CreateSkillEditor(PlayerInfo info)
-	{
-		var editor = new CharacterSkillEditor(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, this._skillTreeProvider.GetMasteryTree);
-		// The masteries as the map tells them, for the class of a save whose class tag was cleared.
-		var masteries = editor.Slots.OfType<MasteryTree>().Aggregate((Masteries)0, (all, t) => all | t.Mastery);
-		info.PaneMasteries = masteries == 0 ? null : masteries;
-		return editor;
-	}
+		=> new(info.SkillRecordList, info.MasteriesAllowed, info.SkillPoints, this._skillTreeProvider.GetMasteryTree);
 
 	/// <inheritdoc/>
 	public GrantedSkill? DescribeSkill(RecordId skillId, int level, SkillWindowContext? context = null)

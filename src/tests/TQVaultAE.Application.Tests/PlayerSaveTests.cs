@@ -81,6 +81,22 @@ public class PlayerSaveTests
 	}
 
 	[Fact]
+	public void ToString_ModMasteriesWithAClearedClass_TheClassItsDescriptionFound()
+	{
+		// A mod's masteries: the base game's records name none, the character's own map gave the class (ClassLabel).
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
+		_translationServiceMock.Setup(t => t.TranslateXTag("tagMenuImport05", false, false, false)).Returns("Level");
+		var info = new PlayerInfo(_pathIOMock.Object) { Class = string.Empty, CurrentLevel = 84 };
+		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Skills\ModMasteries\HealerMastery.dbr""", skillLevel = 32 });
+
+		var playerSave = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object) { Info = info };
+		playerSave.ToString().Should().StartWith("Hero Level", "no class known yet");
+
+		playerSave.ClassLabel = ("tagCClass36", "Mod Class");
+		playerSave.ToString().Should().StartWith("Hero, Mod Class - Level");
+	}
+
+	[Fact]
 	public void ToString_IsImmortalThroneOmitsTQMarker()
 	{
 		// Arrange

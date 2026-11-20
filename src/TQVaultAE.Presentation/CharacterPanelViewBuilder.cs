@@ -355,9 +355,9 @@ public sealed partial class CharacterPanelViewBuilder(ICharacterStatsService ser
 		return new CharacterPanelView
 		{
 			Name = input.Player.PlayerName,
-			// The class goes with the masteries: after a change, the one the new masteries make.
+			// The class goes with the masteries: after a change, the one the new masteries make; the trees also know a mod's.
 			ClassName = this._translation.TranslateXTag(
-				(input.ClassCleared ? CharacterClasses.TagOf(input.Trees.Select(t => t.Mastery)) : info.ClassTag) ?? string.Empty, true, true) ?? string.Empty,
+				(input.ClassCleared ? CharacterClasses.TagOf(input.Trees.Select(t => t.Mastery)) : info.ClassTagWith(input.Trees.Select(t => t.Mastery))) ?? string.Empty, true, true) ?? string.Empty,
 			LevelText = GameText.Format(Game("tagCLevel", "Level : {%d0}"), input.Level),
 			XpText = GameText.Format(Game("xtagCXP", "XP : {%t0}"), input.Xp),
 			AttributesTitle = Game("tagCAttributes", Resources.CEAttributes),

@@ -1176,6 +1176,9 @@ The character will also not be able to equip items where the requirements are no
 	<data name="SearchQueryNameMustBeSet" xml:space="preserve">
     <value>Query name must be set</value>
   </data>
+	<data name="SearchQueryFileUnreadable" xml:space="preserve">
+    <value>The saved queries file could not be read: the query was not saved. Try again later.</value>
+  </data>
 	<data name="SearchQueryNameAlreadyExist" xml:space="preserve">
     <value>Query name already exists. Do you want to override it ?</value>
   </data>
