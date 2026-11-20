@@ -101,6 +101,8 @@ public partial class VaultForm : Form, IScalingControl
 			return;
 		}
 
+		// The tool tips rendered in the old font are made again (each window asks it: the caches clear once per change seen).
+		TooltipImageCache.InvalidateAll();
 		this.OnBaseFontChanged();
 	}
 

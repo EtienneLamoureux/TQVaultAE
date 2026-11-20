@@ -25,6 +25,26 @@ public class TooltipImageCacheTests
 	}
 
 	[Fact]
+	public void InvalidateAll_EveryCacheDropsItsImages_AndKeepsTheNewOnes()
+	{
+		// The base font changed: the images were drawn in the old one, which no key holds.
+		using var first = new TooltipImageCache<string, object?>(maxBytes: 4 * ImageBytes);
+		using var second = new TooltipImageCache<int, object?>(maxBytes: 4 * ImageBytes);
+		var a = Image();
+		first.Add("a", a, null);
+		second.Add(1, Image(), null);
+
+		TooltipImageCache.InvalidateAll();
+
+		first.TryGetCopy("a", out _, out _).Should().BeFalse();
+		IsDisposed(a).Should().BeTrue();
+		second.TryGetCopy(1, out _, out _).Should().BeFalse();
+		first.Add("b", Image(), null);
+		first.TryGetCopy("b", out var copy, out _).Should().BeTrue();
+		copy.Dispose();
+	}
+
+	[Fact]
 	public void Add_OverBudget_DisposesLeastRecentlyUsedFirst()
 	{
 		using var cache = new TooltipImageCache<string, object?>(maxBytes: 2 * ImageBytes);

@@ -60,11 +60,9 @@ public partial class MainFormUserControl
 		// Clear the list before creating since this function can be called multiple times.
 		this.vaultListComboBox.Items.Clear();
 
-		// Maintenance entry first, then Main Vault, without the vault open in the secondary panel.
-		string? secondaryVault = this.showSecondaryVault && this.secondaryVaultListComboBox.SelectedItem is not null
-			? this.secondaryVaultListComboBox.SelectedItemText()
-			: null;
-		var choices = vaultService.BuildVaultChoices(vaults, Resources.MainFormMaintainVault, secondaryVault);
+		// Maintenance entry first, then Main Vault, then every vault: the secondary list is built from this one, so the vault
+		// open in the secondary panel stays in it (picking it here moves it to the main panel, GetSecondaryVaultList).
+		var choices = vaultService.BuildVaultChoices(vaults, Resources.MainFormMaintainVault);
 		this.vaultListComboBox.Items.AddRange(choices.ToArray<object>());
 
 		// The last loaded vault when it is set to load, else the one already selected.
@@ -103,6 +101,12 @@ public partial class MainFormUserControl
 		this.secondaryVaultListComboBox.Items.AddRange(choices.ToArray<object>());
 
 		this.secondaryVaultListComboBox.SelectedItem = currentVault;
+		if (this.secondaryVaultListComboBox.SelectedIndex == -1 && this.secondaryVaultListComboBox.Items.Count > 0)
+		{
+			// A vault no longer listed (gone from the vault folder): never a blank list, nor a vault loaded that isn't in it.
+			this.secondaryVaultListComboBox.SelectedIndex = 0;
+			currentVault = Resources.MainFormSelectVault;
+		}
 
 		// Finally load Vault
 		this.LoadVault(currentVault, true);

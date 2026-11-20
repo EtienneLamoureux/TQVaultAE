@@ -134,8 +134,8 @@ public partial class SearchDialogAdvanced
 		scalingLabelMaxVisibleElement = new ScalingLabel();
 		numericUpDownMaxElement = new NumericUpDown();
 		scalingCheckBoxReduceDuringSelection = new ScalingCheckBox();
-		buttonCollapseAll = new Button();
-		buttonExpandAll = new Button();
+		buttonCollapseAll = new ScalingTextButton();
+		buttonExpandAll = new ScalingTextButton();
 		scalingLabelOperator = new ScalingLabel();
 		scalingComboBoxOperator = new ScalingComboBox();
 		scalingLabelFiltersSelected = new ScalingLabel();
@@ -2390,8 +2390,8 @@ public partial class SearchDialogAdvanced
 	private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelStyle;
 	private ScalingLabel scalingLabelStyle;
 	private VirtualCheckedListBox scalingCheckedListBoxStyle;
-	private System.Windows.Forms.Button buttonCollapseAll;
-	private System.Windows.Forms.Button buttonExpandAll;
+	private ScalingTextButton buttonCollapseAll;
+	private ScalingTextButton buttonExpandAll;
 	private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelLeftColumn;
 	private ScalingButton scalingButtonMenuCharacters;
 	private ScalingButton scalingButtonMenuVaults;

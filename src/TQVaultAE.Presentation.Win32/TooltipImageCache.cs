@@ -2,6 +2,21 @@ using System.Drawing;
 
 namespace TQVaultAE.Presentation.Win32;
 
+/// <summary>What every <see cref="TooltipImageCache{TKey, TPayload}"/> shares, whatever its key.</summary>
+public static class TooltipImageCache
+{
+	private static int s_generation;
+
+	/// <summary>Raised by <see cref="InvalidateAll"/>: a cache drops its images on its next use.</summary>
+	internal static int Generation => Volatile.Read(ref s_generation);
+
+	/// <summary>
+	/// Drops the images of every cache, on their next use: what they were rendered with changed for all of them (the base
+	/// font), which their keys do not hold.
+	/// </summary>
+	public static void InvalidateAll() => Interlocked.Increment(ref s_generation);
+}
+
 /// <summary>
 /// Rendered tooltip images, kept within a memory budget: the least recently used images are disposed first.
 /// </summary>
@@ -20,6 +35,9 @@ public sealed class TooltipImageCache<TKey, TPayload> : IDisposable where TKey :
 	private readonly Dictionary<TKey, LinkedListNode<Entry>> _byKey = [];
 	/// <summary>Most recently used first.</summary>
 	private readonly LinkedList<Entry> _usage = new();
+
+	/// <summary>The <see cref="TooltipImageCache.Generation"/> the images held were rendered in.</summary>
+	private int _generation = TooltipImageCache.Generation;
 
 	/// <param name="maxBytes">Memory budget for the cached pixels (32 bits per pixel).</param>
 	public TooltipImageCache(long maxBytes)
@@ -51,6 +69,7 @@ public sealed class TooltipImageCache<TKey, TPayload> : IDisposable where TKey :
 		long bytes = SizeOf(image);
 		lock (this._lock)
 		{
+			this.ClearIfStaleLocked();
 			this.RemoveLocked(key);
 			if (bytes > this.MaxBytes)
 			{
@@ -73,6 +92,7 @@ public sealed class TooltipImageCache<TKey, TPayload> : IDisposable where TKey :
 	{
 		lock (this._lock)
 		{
+			this.ClearIfStaleLocked();
 			if (this._byKey.TryGetValue(key, out var node))
 			{
 				this._usage.Remove(node);
@@ -104,13 +124,26 @@ public sealed class TooltipImageCache<TKey, TPayload> : IDisposable where TKey :
 	public void Clear()
 	{
 		lock (this._lock)
-		{
-			foreach (var entry in this._usage)
-				entry.Image.Dispose();
-			this._usage.Clear();
-			this._byKey.Clear();
-			this.Bytes = 0;
-		}
+			this.ClearLocked();
+	}
+
+	private void ClearLocked()
+	{
+		foreach (var entry in this._usage)
+			entry.Image.Dispose();
+		this._usage.Clear();
+		this._byKey.Clear();
+		this.Bytes = 0;
+	}
+
+	private void ClearIfStaleLocked()
+	{
+		int generation = TooltipImageCache.Generation;
+		if (generation == this._generation)
+			return;
+
+		this.ClearLocked();
+		this._generation = generation;
 	}
 
 	public void Dispose() => this.Clear();
