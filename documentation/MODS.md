@@ -7,6 +7,7 @@ Technical details: [MODLINK.md](MODLINK.md).
 * [Incomplete items](#Incomplete)
 * [The mod of an item](#ItemMod)
 * [Link a vault](#VaultLink)
+* [Larger inventories and caravans](#Inventory)
 * [Rules](#Rules)
 
 ---
@@ -58,6 +59,19 @@ Vault tools button > **Modded vault**. The vault list shows the mod; the vault's
 
 ![Vault tools menu](mods/vault-tools-menu.png)
 ![A vault linked to a mod, with a regular character shown](mods/modded-vault.png)
+
+---
+
+### <a id="Inventory"></a>Larger inventories and caravans
+For mods that change the space (e.g. [More Space](https://www.nexusmods.com/titanquestanniversaryedition/mods/92)):
+
+- Inventory and bags: the sizes of the character's map (`UICharWindowInventorySack0Dims*` and `Sack1Dims*` of
+  `records\xpack\game\gameengine.dbr`, 32 pixels a cell): 20 x 9 bags with More Space XL, 12 x 20 with XXL.
+- A grid always holds the items its save keeps: items left beyond the mod's size stay reachable.
+- No main inventory (both More Space variants): the bags take its room; items sent to the character go to the bag
+  shown.
+- Transfer area, storage area, relic vault: the size saved in the stash file (20 x 20 with More Space).
+- A grid larger than its usual room scrolls (wheel, <kbd>SHIFT</kbd>+wheel across); the window keeps its size.
 
 ---
 

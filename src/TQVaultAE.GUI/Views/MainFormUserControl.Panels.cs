@@ -438,7 +438,8 @@ public partial class MainFormUserControl
 		return this.DragInfo.AutoMoveDestination switch
 		{
 			AutoMoveLocation.Vault => (this.vaultPanel, this.vaultPanel.SackPanel, this.vaultPanel.CurrentBag),
-			AutoMoveLocation.Player => (this.playerPanel, ((PlayerPanel)this.playerPanel).SackPanel, 0),
+			// The main inventory, or the bag shown when the character has none (an inventory mod).
+			AutoMoveLocation.Player => (this.playerPanel, this.playerPanel.InventoryTarget, this.playerPanel.InventoryTarget.CurrentSack),
 			AutoMoveLocation.SecondaryVault => (this.secondaryVaultPanel, this.secondaryVaultPanel.SackPanel, this.secondaryVaultPanel.CurrentBag),
 			_ => (null, null, 0)
 		};

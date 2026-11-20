@@ -274,6 +274,20 @@ public partial class SackPanel
 	}
 
 	/// <summary>
+	/// The panel moved under a still cursor (scrolled in its <see cref="SackViewport"/>): as after a mouse move, the item
+	/// now under the cursor is highlighted, or the dragged item follows.
+	/// </summary>
+	internal void FollowCursor()
+	{
+		var at = Automation.VirtualCursor.GetClientPosition(this);
+		this.MouseMoveCallback(this, new MouseEventArgs(MouseButtons.None, 0, at.X, at.Y, 0));
+	}
+
+	/// <summary>Scrolls the cells of <paramref name="item"/> into view when the panel scrolls (<see cref="SackViewport"/>).</summary>
+	internal void ShowItem(Item item)
+		=> (this.Parent as SackViewport)?.ShowArea(this.GetItemScreenRectangle(item));
+
+	/// <summary>
 	/// Whether a drag over this panel repaints only the area of the dragged item (<see cref="GetRepaintDragRect"/>);
 	/// otherwise the whole panel.
 	/// </summary>

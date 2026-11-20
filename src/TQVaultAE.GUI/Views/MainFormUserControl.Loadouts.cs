@@ -255,10 +255,11 @@ public partial class MainFormUserControl
 					return null;
 				}
 
-				// The main bag, as the auto-move to the player panel.
-				return player.GetSack(0) is { } inventory
-					? new LoadoutBag(this.playerPanel, inventory, this.playerPanel.SackPanel.SackSize
-						, this.Services.ItemMovementService.PlaceIn(player, SackType.Player, 0)
+				// The main bag (or the bag shown without one), as the auto-move to the player panel.
+				var inventoryPanel = this.playerPanel.InventoryTarget;
+				return player.GetSack(inventoryPanel.CurrentSack) is { } inventory
+					? new LoadoutBag(this.playerPanel, inventory, inventoryPanel.SackSize
+						, this.Services.ItemMovementService.PlaceIn(player, SackType.Player, inventoryPanel.CurrentSack)
 						, string.Format(CultureInfo.CurrentCulture, Resources.LoadoutInventoryOf, player.PlayerName))
 					: null;
 

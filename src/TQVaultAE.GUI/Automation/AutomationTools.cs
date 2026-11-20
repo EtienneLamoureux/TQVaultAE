@@ -203,6 +203,10 @@ internal static partial class AutomationTools
 					currentBag = p.Container?.ShownBag(),
 					bagCount = p.Container?.BagButtons?.Count,
 					gridSize = p.Panel.SackSize,
+					// A grid larger than its room (stash bag): the part shown, in pixels of the grid.
+					viewport = p.Panel.Parent is SackViewport { Scrolls: true } viewport
+						? new { viewport.ScrollOffset.X, viewport.ScrollOffset.Y, viewport.ClientSize.Width, viewport.ClientSize.Height }
+						: null,
 					itemCount = p.Panel.Sack?.Count(i => !RecordId.IsNullOrEmpty(i.BaseItemId)),
 					isModified = AutomationPanels.IsModified(p.Panel),
 					// The sack belongs to a read-only character.

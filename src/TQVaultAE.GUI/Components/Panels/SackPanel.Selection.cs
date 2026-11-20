@@ -36,6 +36,7 @@ public partial class SackPanel
 		if (item is not null)
 		{
 			this.SelectItem(item);
+			this.ShowItem(item);
 			this.Invalidate();
 		}
 	}

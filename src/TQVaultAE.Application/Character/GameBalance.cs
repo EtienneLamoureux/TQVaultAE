@@ -98,6 +98,24 @@ public sealed record GameBalance
 			? values[Math.Clamp(difficulty, 0, values.Count - 1)]
 			: fallback;
 
+	/// <summary>The pixels of an item cell in the inventory sizes of gameengine (<c>UICharWindowInventorySack*Dims*</c>).</summary>
+	public const int InventoryCellPixels = 32;
+
+	/// <summary>
+	/// The character's main inventory in cells, from gameengine's <c>UICharWindowInventorySack0DimsX/Y</c>: 12 x 5 in the
+	/// game; a mod can change it (0 x 0 when it moves that room into the bags). Fallback: the game's.
+	/// </summary>
+	public System.Drawing.Size InventoryMainCells => this.InventoryCells("UICharWindowInventorySack0", new(12, 5));
+
+	/// <summary>The size in cells of each bag of the character, from <c>UICharWindowInventorySack1DimsX/Y</c>: 8 x 5 in the game.</summary>
+	public System.Drawing.Size InventoryBagCells => this.InventoryCells("UICharWindowInventorySack1", new(8, 5));
+
+	private System.Drawing.Size InventoryCells(string prefix, System.Drawing.Size fallback)
+		=> this.Engine.TryGetValue(prefix + "DimsX", out var x) && x.Count > 0
+			&& this.Engine.TryGetValue(prefix + "DimsY", out var y) && y.Count > 0
+				? new(Math.Max(0, (int)x[0]) / InventoryCellPixels, Math.Max(0, (int)y[0]) / InventoryCellPixels)
+				: fallback;
+
 	/// <summary>
 	/// The difficulty penalty of a defensive field (<c>defensiveFire</c>: 0, -40, -100). The pak is indexed by the game
 	/// balance level, assumed to be the first level of the difficulty's block of

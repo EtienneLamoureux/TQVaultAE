@@ -309,8 +309,10 @@ General rules:
     `PlayerReadonly`;
   - `notification`: the last message shown to the user in the main window (e.g. an import's end message);
   - `view`: the view under the toolbar, `main`, `settings` or `characterEditor`;
-  - the drag state; every panel (shown, sack type, bag, item count, modified, `isReadOnly` when its sack belongs to a
-    read-only character).
+  - the drag state; every panel (shown, sack type, bag, grid size, item count, modified, `isReadOnly` when its sack
+    belongs to a read-only character, `viewport` when the grid is larger than its room and scrolls: the part shown, in
+    pixels of the grid). The viewports are the controls `stashBagViewport`, `playerMainViewport` and `playerBagViewport`
+    (`mouse_wheel`).
   - With `panel`, the items of its current sack: name, base name, record id, cell location, seed, and:
     - `missingRecords`: role and id of each record the loaded game data lacks (incomplete item), else null;
     - `mod`: the item's mod, computed from the databases its records came from (null when all come from the game);

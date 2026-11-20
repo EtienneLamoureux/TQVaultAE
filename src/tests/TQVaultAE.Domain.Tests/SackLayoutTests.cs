@@ -29,6 +29,22 @@ public class SackLayoutTests
 		return sack;
 	}
 
+	[Fact]
+	public void Covering_ItemsInsideTheGameSize_IsTheGameSize()
+		=> SackLayout.Covering(Grid, [Sack(Item(3, 2, 1, 1)), null]).Should().Be(Grid);
+
+	[Fact]
+	public void Covering_ItemsBeyondTheGameSize_GrowsToHoldThemInEverySack()
+		=> SackLayout.Covering(Grid, [Sack(Item(5, 0, 2, 1)), Sack(Item(0, 6, 1, 3))]).Should().Be(new Size(7, 9));
+
+	[Fact]
+	public void Covering_NoGameRoom_HoldsTheItemsLeftThere()
+		=> SackLayout.Covering(Size.Empty, [Sack(Item(1, 1, 2, 3))]).Should().Be(new Size(3, 4));
+
+	[Fact]
+	public void Covering_NoGameRoomAndNoItem_StaysEmpty()
+		=> SackLayout.Covering(Size.Empty, [Sack()]).Should().Be(Size.Empty);
+
 	[Theory]
 	[InlineData(0, 0, 1, 1, true)]
 	[InlineData(3, 2, 1, 1, true)]

@@ -75,6 +75,25 @@ public static class SackLayout
 	}
 
 	/// <summary>
+	/// The size of a grid holding every item of <paramref name="sacks"/> where it lies, at least <paramref name="gameSize"/>:
+	/// a save may keep items beyond the size the game data gives (a character played once with an inventory mod).
+	/// </summary>
+	public static Size Covering(Size gameSize, IEnumerable<SackCollection?> sacks)
+	{
+		int width = gameSize.Width, height = gameSize.Height;
+		foreach (var item in sacks.OfType<SackCollection>().SelectMany(sack => sack))
+		{
+			if (item.PositionX < 0 || item.PositionY < 0 || RecordId.IsNullOrEmpty(item.BaseItemId))
+				continue;
+
+			width = Math.Max(width, item.PositionX + item.Width);
+			height = Math.Max(height, item.PositionY + item.Height);
+		}
+
+		return new Size(width, height);
+	}
+
+	/// <summary>
 	/// The size of a vault bag, in cells.
 	/// </summary>
 	public static readonly Size VaultBagSize = new(18, 20);

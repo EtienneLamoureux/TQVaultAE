@@ -75,6 +75,11 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	private EquipmentPanel equipmentPanel;
 
 	/// <summary>
+	/// Holds the bag shown on the transfer, storage and relic tabs: a stash file larger than the room scrolls in it.
+	/// </summary>
+	private readonly SackViewport sackViewport;
+
+	/// <summary>
 	/// Gets the equipment panel instance
 	/// </summary>
 	internal EquipmentPanel EquipmentPanel => equipmentPanel;
@@ -154,8 +159,12 @@ public partial class StashPanel : VaultPanel, IScalingControl
 	{
 		InitializeComponent();
 
-
 		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+
+		// The bag goes into its viewport, which the panel places (PlaceStashSack).
+		this.Controls.Remove(this.BagSackPanel);
+		this.sackViewport = new SackViewport(this.BagSackPanel) { Name = "stashBagViewport" };
+		this.Controls.Add(this.sackViewport);
 
 		this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash, services);
 		this.Controls.Add(this.equipmentPanel);
@@ -167,7 +176,6 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.Paint += new PaintEventHandler(this.PaintCallback);
 
 		this.BagSackPanel.MaxSacks = 1;
-		this.BagSackPanel.Anchor = AnchorStyles.None;
 
 		this.background = this.equipmentBackground = Images.equipment_bg_and_char;
 		this.stashBackground = Images.caravan_bg;
@@ -177,8 +185,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 		this.AutoSortButtons.Add(sortButton);
 		this.Controls.Add(sortButton);
 
-		this.BagSackPanel.Visible = false;
-		this.BagSackPanel.Enabled = false;
+		this.ShowBagSack(false);
 
 		#region Init Player Panel
 
@@ -245,11 +252,28 @@ public partial class StashPanel : VaultPanel, IScalingControl
 			this.LayoutStatsPanel(stats);
 	}
 
-	/// <summary>Places the shown stash bag under the tabs, at <see cref="sackMargin"/>.</summary>
-	private void PlaceStashSack()
-		=> this.BagSackPanel.Location = new Point(
+	/// <summary>
+	/// Places the shown stash bag under the tabs, at <see cref="sackMargin"/>, in its viewport: a bag larger than the
+	/// largest the panel was built for (<see cref="VaultPanel.PanelCells"/>) scrolls in that room.
+	/// </summary>
+	/// <param name="toTopLeft">Another bag is shown: scrolled to its top-left corner; otherwise the scroll position stays.</param>
+	private void PlaceStashSack(bool toTopLeft = false)
+	{
+		int tabsBottom = this.BagButtons[0].Bottom;
+		var room = new Rectangle(new Point(BorderPad, tabsBottom), this.BagSackPanel.SizeFor(this.PanelCells));
+		var centered = new Point(
 			BorderPad + (this.sackMargin.X * UIService.HalfUnitSize),
-			this.BagButtons[0].Bottom + (this.sackMargin.Y * UIService.HalfUnitSize));
+			tabsBottom + (this.sackMargin.Y * UIService.HalfUnitSize));
+		this.sackViewport.Place(room, centered, toTopLeft);
+	}
+
+	/// <summary>Shows the bag of the stash tabs, with its viewport, or hides both for the equipment.</summary>
+	private void ShowBagSack(bool shown)
+	{
+		this.sackViewport.Visible = shown;
+		this.BagSackPanel.Visible = shown;
+		this.BagSackPanel.Enabled = shown;
+	}
 
 	/// <summary>
 	/// Gets or sets the player instance
@@ -429,8 +453,7 @@ public partial class StashPanel : VaultPanel, IScalingControl
 					this.ReplaceBackground(this.ScaledBackground(this.equipmentBackground));
 					this.equipmentPanel.Visible = true;
 					this.equipmentPanel.Enabled = true;
-					this.BagSackPanel.Visible = false;
-					this.BagSackPanel.Enabled = false;
+					this.ShowBagSack(false);
 				}
 				else if (bag is not null)
 				{
@@ -442,11 +465,10 @@ public partial class StashPanel : VaultPanel, IScalingControl
 					// Center the sack in the panel; kept, so a zoom keeps the centering (LayOut).
 					var (marginX, marginY) = bag.CenteringMargin(this.PanelCells.Width, this.PanelCells.Height);
 					this.sackMargin = new Point(marginX, marginY);
-					this.PlaceStashSack();
 					this.equipmentPanel.Visible = false;
 					this.equipmentPanel.Enabled = false;
-					this.BagSackPanel.Visible = true;
-					this.BagSackPanel.Enabled = true;
+					this.ShowBagSack(true);
+					this.PlaceStashSack(toTopLeft: true);
 				}
 
 				this.UpdateSortButton();

@@ -124,6 +124,21 @@ public class ItemMovementServiceTests
 	}
 
 	/// <summary>
+	/// A stash file larger than the game's 16 x 15 (a caravan mod's 20 x 20): with the game's area full, an item goes
+	/// into the columns beyond it.
+	/// </summary>
+	[Fact]
+	public void FindOpenCells_OversizedStash_UsesTheCellsBeyondTheGameSize()
+	{
+		var sack = new SackCollection();
+		sack.AddItem(CreateItem("Full", 0, 0, 16, 15));
+
+		var result = _service.FindOpenCells(sack, 2, 4, 20, 20);
+
+		result.Should().Be(new Point(0, 15));
+	}
+
+	/// <summary>
 	/// Test IsItemValidForStashType with null item returns false
 	/// </summary>
 	[Fact]

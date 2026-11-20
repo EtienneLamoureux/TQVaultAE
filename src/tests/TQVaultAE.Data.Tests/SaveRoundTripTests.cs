@@ -413,6 +413,28 @@ public sealed class SaveRoundTripTests : IDisposable
 	}
 
 	[Fact]
+	public void Save_OversizedStash_KeepsItsSizeAndTheItemsBeyondTheGameSize()
+	{
+		// A caravan mod's 20 x 20 stash: an item in the corner beyond the game's 16 x 15.
+		var stash = this._fixtures.LoadStash();
+		(stash.Width, stash.Height) = (20, 20);
+		var potions = Find(stash.Sack!, "PotionMana_05.dbr");
+		potions.PositionX = 19;
+		potions.PositionY = 19;
+		var expected = StatesOf(stash.Sack!);
+		var path = this._fixtures.TempFile("winsys.dxb");
+
+		this._fixtures.StashProvider.Save(stash, path);
+
+		var reloaded = this._fixtures.LoadStash(path);
+		(reloaded.Width, reloaded.Height).Should().Be((20, 20));
+		StatesOf(reloaded.Sack!).Should().BeEquivalentTo(expected, o => o.WithStrictOrdering());
+		var again = this._fixtures.TempFile("again.dxb");
+		this._fixtures.StashProvider.Save(reloaded, again);
+		File.ReadAllBytes(again).Should().Equal(File.ReadAllBytes(path));
+	}
+
+	[Fact]
 	public void Save_Stash_WritesAValidChecksumInBothFiles()
 	{
 		var stash = this._fixtures.LoadStash();

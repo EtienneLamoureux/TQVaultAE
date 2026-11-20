@@ -38,6 +38,7 @@ Works with all expansions!
     - [Highlight items](documentation/HIGHLIGHT.md)
     - [Compare two items](documentation/ITEMCOMPARE.md)
     - Combine stacks (potions, relics and charms) by dropping them onto each other
+    - Larger inventories and caravans ([More Space](https://www.nexusmods.com/titanquestanniversaryedition/mods/92) and other mods): the grids take the sizes of the character's mod (inventory and bags) or of the stash file, scrolled in their usual room (wheel, <kbd>SHIFT</kbd>+wheel across); see [Mods](documentation/MODS.md#Inventory)
     - Split potion stacks apart
     - [Many keyboard shortcuts](documentation/SHORTCUTS.md)
     - Window zoom (<kbd>CTRL</kbd>+<kbd>+</kbd>, <kbd>CTRL</kbd>+<kbd>-</kbd>, <kbd>CTRL</kbd>+<kbd>Home</kbd>), sharp on high DPI screens
