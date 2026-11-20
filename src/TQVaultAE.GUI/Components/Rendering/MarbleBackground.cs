@@ -52,10 +52,14 @@ internal static class MarbleBackground
 	private static Bitmap MainWindowMarbleImage => mainWindowMarble ??= BuildMainWindowMarble();
 
 	/// <summary>
-	/// The main window's marble stretched to the size of each window having it, made again when that size changes: Windows
-	/// Forms stretches the whole picture at each background paint, which a transparent control asks of its window too.
+	/// The stretched background of each window having one (the main window's marble, or the main window's own picture)
+	/// at its size, made again when the picture or the size changes: Windows Forms stretches the whole picture at each
+	/// background paint, which a transparent control asks of its window too (the settings view took 0.4 s to draw).
 	/// </summary>
-	private static readonly ConditionalWeakTable<Control, Bitmap> stretched = [];
+	private static readonly ConditionalWeakTable<Control, Stretched> stretched = [];
+
+	/// <summary>A background picture stretched to the size of its window.</summary>
+	private sealed record Stretched(Image Source, Bitmap Picture);
 
 	/// <summary>Gives <paramref name="form"/> (a window, or a view laid in one) the marble as its background.</summary>
 	public static void ApplyTo(Control form, Marble marble = Marble.CharacterEditor)
@@ -94,21 +98,30 @@ internal static class MarbleBackground
 			return true;
 		}
 
-		if (ReferenceEquals(form.BackgroundImage, mainWindowMarble) && form.BackgroundImageLayout == ImageLayout.Stretch)
+		if (form.BackgroundImageLayout == ImageLayout.Stretch && form.BackgroundImage is Bitmap source)
 		{
 			var size = form.ClientSize;
 			if (size.Width <= 0 || size.Height <= 0)
 				return true;
 
-			if (!stretched.TryGetValue(form, out var picture) || picture.Size != size)
+			if (!stretched.TryGetValue(form, out var cached) || cached.Picture.Size != size || !ReferenceEquals(cached.Source, source))
 			{
-				var previous = picture;
-				picture = Stretch(mainWindowMarble, size);
-				stretched.AddOrUpdate(form, picture);
+				if (cached is null)
+				{
+					form.Disposed -= DropStretched;
+					form.Disposed += DropStretched;
+				}
+
+				var previous = cached?.Picture;
+				// The marble as it was made for (smooth); another picture as Windows Forms draws it, over the window's color.
+				cached = new Stretched(source, ReferenceEquals(source, mainWindowMarble)
+					? Stretch(source, size)
+					: Stretch(source, size, form.BackColor));
+				stretched.AddOrUpdate(form, cached);
 				previous?.Dispose();
 			}
 
-			e.Graphics.DrawImage(picture, e.ClipRectangle, e.ClipRectangle, GraphicsUnit.Pixel);
+			e.Graphics.DrawImage(cached.Picture, e.ClipRectangle, e.ClipRectangle, GraphicsUnit.Pixel);
 			return true;
 		}
 
@@ -119,11 +132,27 @@ internal static class MarbleBackground
 
 	private static void DropStretched(object? sender, EventArgs e)
 	{
-		if (sender is Control form && stretched.TryGetValue(form, out var picture))
+		if (sender is Control form && stretched.TryGetValue(form, out var cached))
 		{
 			stretched.Remove(form);
-			picture.Dispose();
+			cached.Picture.Dispose();
 		}
+	}
+
+	/// <summary>
+	/// <paramref name="source"/> stretched as Windows Forms stretches a background picture (default quality, edges mirrored)
+	/// over <paramref name="backColor"/>, so that the picture painted from it is the same.
+	/// </summary>
+	private static Bitmap Stretch(Bitmap source, Size size, Color backColor)
+	{
+		var result = new Bitmap(size.Width, size.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+		using var g = Graphics.FromImage(result);
+		if (backColor.A == 255)
+			g.Clear(backColor);
+		using var attributes = new System.Drawing.Imaging.ImageAttributes();
+		attributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+		g.DrawImage(source, new Rectangle(Point.Empty, size), 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
+		return result;
 	}
 
 	private static Bitmap Stretch(Bitmap source, Size size)

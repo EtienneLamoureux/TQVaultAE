@@ -244,7 +244,8 @@ public partial class VaultForm : Form, IScalingControl
 	}
 
 	/// <summary>
-	/// A marble window paints its background from a brush made once (<see cref="MarbleBackground.TryPaint"/>).
+	/// A window with a marble or a stretched picture paints its background from a brush or a picture made once
+	/// (<see cref="MarbleBackground.TryPaint"/>).
 	/// </summary>
 	protected override void OnPaintBackground(PaintEventArgs e)
 	{
