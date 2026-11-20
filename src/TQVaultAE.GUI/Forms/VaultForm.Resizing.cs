@@ -387,9 +387,18 @@ public partial class VaultForm
 	/// </summary>
 	private void FitToContent()
 	{
+		// Not while Windows Forms scales the window for a new DPI (OnDpiChanged fits it after): resized then, a window not
+		// yet on the monitor of that DPI got a DPI change back inside the first one, half applied. A modal dialog given
+		// its owner on a 96 dpi monitor (120 dpi system) came out scaled twice, at 0.64.
+		if (this.scalingForDpi)
+			return;
+
 		if (this.fitContent is { } content)
 			this.ClientSize = new Size(content.Right + this.Padding.Right, content.Bottom + this.Padding.Bottom);
 	}
+
+	/// <summary>Set while Windows Forms scales the window for a DPI change (<see cref="OnDpiChanged"/>).</summary>
+	private bool scalingForDpi;
 
 	/// <summary>
 	/// The window moved to a monitor of another DPI and Windows Forms scaled it: the sizes kept for the user's resizing
@@ -398,7 +407,16 @@ public partial class VaultForm
 	protected override void OnDpiChanged(DpiChangedEventArgs e)
 	{
 		float factor = (float)e.DeviceDpiNew / e.DeviceDpiOld;
-		base.OnDpiChanged(e);
+		this.scalingForDpi = true;
+		try
+		{
+			base.OnDpiChanged(e);
+		}
+		finally
+		{
+			this.scalingForDpi = false;
+		}
+
 		this.RescalePhase("Windows Forms scale");
 		if (e.Cancel || factor == 1.0F)
 			return;
