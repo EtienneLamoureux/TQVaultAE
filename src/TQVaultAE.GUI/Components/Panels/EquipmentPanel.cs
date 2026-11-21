@@ -146,7 +146,7 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	}
 
 	/// <summary>The requirements reduced for the character wearing the slots, with the build shown.</summary>
-	internal override IReadOnlyDictionary<string, int>? ReducedRequirements(Item item)
+	internal override IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(Item item)
 		=> this.Services.PlayerService.ReducedRequirements(this.Owner, item, this.RequirementAttributes?.Invoke());
 
 	/// <summary>An item suits the character wearing the slots (a Titan Quest original character takes base game items only).</summary>

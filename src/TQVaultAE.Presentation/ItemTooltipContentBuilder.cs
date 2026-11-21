@@ -153,10 +153,10 @@ public class ItemTooltipContentBuilder
 	/// <param name="data">Texts of the item, from <c>IItemTextFormatter.GetFriendlyNames</c> with <see cref="ScopesFor"/>.</param>
 	/// <param name="view">The display.</param>
 	/// <param name="setCounts">How many of each set piece are loaded, shown on the right of the set pieces; null without them.</param>
-	/// <param name="reducedRequirements">The requirements reduced for the character shown (by requirement variable name),
-	/// each shown after its base value when it differs: "430 (387)"; null without a character.</param>
+	/// <param name="requirements">The requirement lines for the character shown (<c>IItemTextFormatter.FormatRequirements</c>
+	/// with its reduced requirements), in place of the item's own; null without a character.</param>
 	public ItemTooltipContent Build(ToFriendlyNameResult data, ItemTooltipView view, IReadOnlyDictionary<RecordId, int>? setCounts = null,
-		IReadOnlyDictionary<string, int>? reducedRequirements = null)
+		IReadOnlyList<string>? requirements = null)
 	{
 		var item = data.Item;
 		var lines = new List<TooltipLine>();
@@ -294,30 +294,14 @@ public class ItemTooltipContentBuilder
 		}
 
 		// Requirements
-		if (data.Requirements.Length != 0)
+		IReadOnlyList<string> requirementLines = requirements ?? data.Requirements;
+		if (requirementLines.Count != 0)
 		{
 			lines.Add(TooltipLine.Delimiter);
-			lines.AddRange(data.Requirements.Select((s, i) => TooltipLine.Of(WithReduced(s, i, data.RequirementVariables, reducedRequirements), broken)));
+			lines.AddRange(requirementLines.Select(s => TooltipLine.Of(s, broken)));
 		}
 
 		return new ItemTooltipContent(lines, relicStart, relicEnd);
-	}
-
-	/// <summary>
-	/// A requirement line with its reduced value after the base one ("Required Strength: 430 (387)") when a reduction
-	/// changes it. The lines follow the order of the requirement variables (<c>IItemTextFormatter.GetRequirements</c>).
-	/// </summary>
-	internal static string WithReduced(string line, int index, SortedList<string, Variable> variables, IReadOnlyDictionary<string, int>? reduced)
-	{
-		if (reduced is null || index >= variables.Count)
-			return line;
-
-		var key = variables.Keys[index];
-		var variable = variables.Values[index];
-		return reduced.TryGetValue(key, out var value) && variable.NumberOfValues == 1 && variable.DataType != VariableDataType.StringVar
-			&& value != variable.GetInt32()
-			? string.Concat(line, " (", value.ToString(CultureInfo.CurrentCulture), ")")
-			: line;
 	}
 
 	/// <summary>The lines of a granted skill: name and level by the icon, then activation, description and effects.</summary>

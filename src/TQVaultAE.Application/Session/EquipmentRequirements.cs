@@ -57,32 +57,48 @@ public static class EquipmentRequirements
 	/// <summary>Whether <paramref name="have"/> meets the requirements of an item of <paramref name="itemClass"/>, once reduced.</summary>
 	/// <param name="requirements">The item's requirement variables (level, strength, dexterity, intelligence).</param>
 	public static bool Meets(IReadOnlyDictionary<string, Variable> requirements, string? itemClass, RequirementAttributes have)
-	{
-		var reduced = ReducedValues(requirements, itemClass, have);
-		int Need(string key) => reduced.TryGetValue(key, out var value) ? value : 0;
-
-		return Need(Variable.KEY_LEVELREQ) <= have.Level
-			&& Need(Variable.KEY_STRENGTH) <= have.Strength
-			&& Need(Variable.KEY_DEXTERITY) <= have.Dexterity
-			&& Need(Variable.KEY_INTELLIGENCE) <= have.Intelligence;
-	}
+		=> ReducedValues(requirements, itemClass, have).Values.All(r => r.Met);
 
 	/// <summary>
 	/// The level and attribute requirements of an item of <paramref name="itemClass"/> once lowered by the reductions of
 	/// <paramref name="have"/>, by requirement variable name; the requirements the item does not have are left out.
 	/// </summary>
-	public static IReadOnlyDictionary<string, int> ReducedValues(IReadOnlyDictionary<string, Variable> requirements, string? itemClass, RequirementAttributes have)
+	public static IReadOnlyDictionary<string, ReducedRequirement> ReducedValues(IReadOnlyDictionary<string, Variable> requirements, string? itemClass, RequirementAttributes have)
 	{
-		var reduced = new Dictionary<string, int>(StringComparer.Ordinal);
+		var reduced = new Dictionary<string, ReducedRequirement>(StringComparer.Ordinal);
 		if (requirements.TryGetValue(Variable.KEY_LEVELREQ, out var level))
-			reduced[Variable.KEY_LEVELREQ] = Reduced(level.GetInt32(), Math.Max(0, have.Bonus(LevelReduction)));
+			reduced[Variable.KEY_LEVELREQ] = Of(level.GetInt32(), Math.Max(0, have.Bonus(LevelReduction)), have.Level);
 
 		foreach (var attribute in Attributes)
 		{
 			if (requirements.TryGetValue(attribute, out var need))
-				reduced[attribute] = Reduced(need.GetInt32(), Reduction(itemClass, attribute, have.Bonus));
+				reduced[attribute] = Of(need.GetInt32(), Reduction(itemClass, attribute, have.Bonus), Have(have, attribute));
 		}
 
 		return reduced;
 	}
+
+	private static ReducedRequirement Of(int requirement, double reductionPercent, double have)
+		=> new(requirement, Reduced(requirement, reductionPercent), reductionPercent, have);
+
+	private static double Have(RequirementAttributes have, string attribute) => attribute switch
+	{
+		Variable.KEY_STRENGTH => have.Strength,
+		Variable.KEY_DEXTERITY => have.Dexterity,
+		_ => have.Intelligence,
+	};
+}
+
+/// <summary>A requirement of an item for a character: its base value, once reduced by <paramref name="Percent"/>, and what
+/// the character has.</summary>
+public readonly record struct ReducedRequirement(int Base, int Value, double Percent, double Have)
+{
+	/// <summary>The character meets the requirement once reduced.</summary>
+	public bool Met => this.Value <= this.Have;
+
+	/// <summary>
+	/// The game's tool tip shows the reduction ("[ base - x% Reduction]") only when the base is not met and a reduction
+	/// applies; a base met is shown alone.
+	/// </summary>
+	public bool ShowsReduction => this.Have < this.Base && this.Percent > 0;
 }

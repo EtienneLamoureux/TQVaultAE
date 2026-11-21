@@ -111,10 +111,10 @@ public interface IPlayerService
 	/// (<see cref="EquipmentRequirements"/>), by requirement variable name. Null without a player or for a vault.
 	/// </summary>
 	/// <param name="attributes">The attributes and bonuses to reduce with (another build shown); null for the save's.</param>
-	IReadOnlyDictionary<string, int>? ReducedRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null);
+	IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null);
 
 	/// <summary><see cref="ReducedRequirements"/> for the current player.</summary>
-	IReadOnlyDictionary<string, int>? CurrentPlayerReducedRequirements(Item item);
+	IReadOnlyDictionary<string, ReducedRequirement>? CurrentPlayerReducedRequirements(Item item);
 
 	/// <summary>
 	/// Indicates whether <paramref name="item"/> suits <paramref name="player"/>, as <see cref="IsSuitableForCurrentPlayer"/>

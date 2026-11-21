@@ -7,10 +7,11 @@ public partial class ItemProvider
 {
 	/// <summary>
 	/// The base values of an item, not counted as attributes: base attack speed, base physical damage, armor, block,
-	/// pierce ratio and the global chances.
+	/// pierce ratio and the global chances; the base elemental damage of a weapon (<c>offensiveBase*</c>) neither.
 	/// </summary>
 	private static readonly FrozenSet<string> uncountedAttributes = new[]
 	{
+		"characterBaseAttackSpeed",
 		"characterBaseAttackSpeedTag",
 		"offensivePhysicalMin",
 		"offensivePhysicalMax",
@@ -57,6 +58,7 @@ public partial class ItemProvider
 			}
 
 			if (uncountedAttributes.Contains(name)
+				|| name.StartsWith("offensiveBase", StringComparison.OrdinalIgnoreCase)
 				|| name.Contains("Chance", StringComparison.OrdinalIgnoreCase)
 				|| name.Contains("Duration", StringComparison.OrdinalIgnoreCase))
 				continue;

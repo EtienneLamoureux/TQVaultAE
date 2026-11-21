@@ -658,7 +658,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	/// The requirements of <paramref name="item"/> reduced for the character the panel checks them against, shown in its
 	/// tool tip after the base values; null without a character.
 	/// </summary>
-	internal virtual IReadOnlyDictionary<string, int>? ReducedRequirements(Item item)
+	internal virtual IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(Item item)
 		=> this.Services.PlayerService.CurrentPlayerReducedRequirements(item);
 
 	/// <summary>

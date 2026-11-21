@@ -383,7 +383,7 @@ public class PlayerService(
 	}
 
 	/// <inheritdoc/>
-	public IReadOnlyDictionary<string, int>? ReducedRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null)
+	public IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(PlayerCollection? player, Item item, RequirementAttributes? attributes = null)
 	{
 		if (player is null)
 			return null;
@@ -393,7 +393,7 @@ public class PlayerService(
 	}
 
 	/// <inheritdoc/>
-	public IReadOnlyDictionary<string, int>? CurrentPlayerReducedRequirements(Item item)
+	public IReadOnlyDictionary<string, ReducedRequirement>? CurrentPlayerReducedRequirements(Item item)
 		=> this.ReducedRequirements(this.userContext.CurrentPlayer, item);
 
 	/// <summary>Passes before a loop of pieces detached and attached again (negative bonuses) stops where it is.</summary>

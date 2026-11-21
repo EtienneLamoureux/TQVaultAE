@@ -1,4 +1,5 @@
 using TQVaultAE.Application.Character;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Results;
 
@@ -37,6 +38,11 @@ public interface IItemTextFormatter
 	/// </summary>
 	/// <returns>A string containing the items requirements</returns>
 	(string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm);
+	/// <summary>
+	/// The requirement lines as the game's tool tip writes them: level, strength, dexterity, intelligence; with
+	/// <paramref name="reduced"/> (a character's), the reduced value, "[ base - x% Reduction]" and red when not met.
+	/// </summary>
+	string[] FormatRequirements(SortedList<string, Variable> variables, IReadOnlyDictionary<string, ReducedRequirement>? reduced = null);
 	/// <summary>
 	/// Tells whether the item grants a skill, by its base record, its affixes, its relics or their completion bonuses.
 	/// Only skills with a name count, as in the tooltip: the game's hidden helper skills do not.

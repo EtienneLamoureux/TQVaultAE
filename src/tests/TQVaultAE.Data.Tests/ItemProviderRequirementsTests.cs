@@ -84,6 +84,7 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 		var sword = this.SwordWithAttributeCountCost(
 			Float("offensivePhysicalMin", 12f), Float("offensivePhysicalMax", 20f), Float("defensiveProtection", 50f),
 			Float("offensiveGlobalChance", 30f), Str("characterBaseAttackSpeedTag", "CharacterAttackSpeedFast"),
+			Float("characterBaseAttackSpeed", 0.1f), Float("offensiveBaseFireMin", 75.9f), Float("offensiveBaseFireMax", 80f),
 			Float("offensiveStunMin", 1f), Float("offensiveStunMax", 2f), Float("offensiveStunChance", 10f),
 			Float("offensiveSlowBleedingMin", 5f), Float("offensiveSlowBleedingDurationMin", 3f),
 			Int("characterStrength", 5), Int("strengthRequirement", 0), Int("characterDexterity", 0));

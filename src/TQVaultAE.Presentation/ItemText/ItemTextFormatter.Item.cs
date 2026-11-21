@@ -4,7 +4,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Globalization;
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Presentation.ItemText;
@@ -45,41 +47,69 @@ public partial class ItemTextFormatter
 	{
 		using var modScope = this.ModScope(itm);
 		SortedList<string, Variable> requirementVariables = this.ItemProvider.GetRequirementVariables(itm);
+		return (this.FormatRequirements(requirementVariables), requirementVariables);
+	}
 
-		// Get the format string to use to list a requirement
-		string requirementFormat = this.GameFormat("MeetsRequirement", "?Required? {0}: {1:f0}");
+	/// <summary>The order of the requirement lines in the game's tool tip; other requirements follow, by name.</summary>
+	private static readonly string[] RequirementOrder = [Variable.KEY_LEVELREQ, Variable.KEY_STRENGTH, Variable.KEY_DEXTERITY, Variable.KEY_INTELLIGENCE];
 
-		// Now combine it all with spaces between
-		List<string> requirements = [];
-		foreach (KeyValuePair<string, Variable> kvp in requirementVariables)
+	/// <inheritdoc/>
+	public string[] FormatRequirements(SortedList<string, Variable> variables, IReadOnlyDictionary<string, ReducedRequirement>? reduced = null)
+	{
+		// The game's formats: met or failed, with the reduction "[ base - x% Reduction]" when there is one.
+		string meets = this.GameFormat("MeetsRequirement", "?Required? {0}: {1:f0}");
+		string? meetsReduced = null, fails = null, failsReduced = null;
+
+		List<string> lines = [];
+		foreach (var (key, variable) in variables.OrderBy(kvp => Array.IndexOf(RequirementOrder, kvp.Key) is var i and >= 0 ? i : RequirementOrder.Length))
 		{
-			if (USettings.ItemDebugLevel > 1)
-				Log.LogDebug("Retrieving requirement {Key}={Value} (type={Type})", kvp.Key, kvp.Value, kvp.Value.GetType().ToString());
-
-			Variable variable = kvp.Value;
-
-			// Format the requirement
-			string requirementsText;
+			// A requirement should have one number; anything else is shown raw.
 			if (variable.NumberOfValues > 1 || variable.DataType == VariableDataType.StringVar)
 			{
-				// reqs should only have 1 entry and should be a number type.  We must punt on itm one
-				requirementsText = string.Concat(kvp.Key, ": ", variable.ToStringValue());
+				lines.Add(string.Concat(key, ": ", variable.ToStringValue()));
+				continue;
 			}
-			else
+
+			if (!this.TranslationService.TryTranslateXTag(key, out var name))
+				name = string.Concat("?", key, "?");
+
+			if (reduced is null || !reduced.TryGetValue(key, out var need))
 			{
-				// get the name of itm requirement
-				if (!TranslationService.TryTranslateXTag(kvp.Key, out var reqName))
-					reqName = string.Concat("?", kvp.Key, "?");
-
-
-				// Now apply the format string
-				requirementsText = Format(requirementFormat, reqName, variable[0]);
+				lines.Add(Format(meets, name, variable[0]));
+				continue;
 			}
 
-			// Changed by VillageIdiot - Change requirement text to Grey
-			requirements.Add(requirementsText);
+			// As the game: a base met is shown alone; else the reduced value, met or not, with the reduction if any.
+			if (need.Have >= need.Base)
+			{
+				lines.Add(Format(meets, name, need.Base));
+				continue;
+			}
+
+			string format = (need.Met, need.ShowsReduction) switch
+			{
+				(true, false) => meets,
+				(true, true) => meetsReduced ??= this.GameFormat("MeetsRequirementWithReduction", "Required {0}: {1:#0} [ {{^r}}{2:#0} {{^y}}- {3:#0}% Reduction]"),
+				(false, false) => fails ??= this.GameFormat("FailsRequirement", "{{^r}}Required {0}: {1:#0}"),
+				(false, true) => failsReduced ??= this.GameFormat("FailsRequirementWithReduction", "{{^r}}Required {0}: {1:#0} [ {2:#0} {{^y}}- {3:#0}% Reduction]"),
+			};
+			lines.Add(FormatReduced(format, name, need) ?? Format(meets, name, need.Value));
 		}
 
-		return (requirements.ToArray(), requirementVariables);
+		return [.. lines];
+	}
+
+	/// <summary>A requirement line: name, reduced value, base value, reduction %; null for a malformed format (logged).</summary>
+	private string? FormatReduced(string format, string name, ReducedRequirement need)
+	{
+		try
+		{
+			return string.Format(CultureInfo.CurrentCulture, format, name, need.Value, need.Base, need.Percent);
+		}
+		catch (FormatException ex)
+		{
+			this.Log.LogWarning(ex, "Failed to format the requirement line {Format}", format);
+			return null;
+		}
 	}
 }

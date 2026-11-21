@@ -25,10 +25,10 @@ ItemQuest: Quest Item
 ItemWith: with
 FlavorText (0)
 Requirements (4)
-  | Required Dexterity: 30
-  | Required Intelligence: 30
   | Required Player Level: 20
   | Required Strength: 58
+  | Required Dexterity: 30
+  | Required Intelligence: 30
 RequirementVariables (4)
   | Dexterity = 30
   | Intelligence = 30
@@ -128,10 +128,10 @@ ItemQuest: Quest Item
 ItemWith: with
 FlavorText (0)
 Requirements (4)
-  | Required Dexterity: 30
-  | Required Intelligence: 30
   | Required Player Level: 20
   | Required Strength: 58
+  | Required Dexterity: 30
+  | Required Intelligence: 30
 RequirementVariables (4)
   | Dexterity = 30
   | Intelligence = 30
@@ -276,10 +276,10 @@ FullText (20)
   | +10% Fire Damage
   | +8 Strength
   | +12 Dexterity
-  | Required Dexterity: 30
-  | Required Intelligence: 30
   | Required Player Level: 20
   | Required Strength: 58
+  | Required Dexterity: 30
+  | Required Intelligence: 30
 AttributesAll (11)
   | 12 ~ 20 Physical Damage
   | Fast Attack Speed

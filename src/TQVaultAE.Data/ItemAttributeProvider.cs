@@ -565,6 +565,9 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 
 	[GeneratedRegex(@"%(?<precis>(?<sign>[+-])?\.(?<numDecimal>\d)?)?(?<alpha>[sdft])(?<formatNumber>\d)")]
 	private static partial Regex ConvertFormatRegEx();
+
+	/// <summary>Stand-ins of the text's own square brackets while <see cref="ConvertFormat"/> marks with them.</summary>
+	private const char OpenBracket = '\u0001', CloseBracket = '\u0002';
 	/// <summary>
 	/// Converts format string from TQ format to string.format
 	/// </summary>
@@ -622,6 +625,9 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 				return $"[{formatNumber}]";
 		}
 
+		// The text's own square brackets ("[ 96 - 8% Reduction]") are set aside: the conversion marks with them.
+		formatValue = formatValue.Replace('[', OpenBracket).Replace(']', CloseBracket);
+
 		// Escape TQMarking changing "{^.}" to "[^.]"
 		formatValue = TQColorHelper.RegExTQTagInstance().Replace(formatValue
 			, @"[^${ColorId}]"
@@ -641,7 +647,7 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 			, @"{${ColorTag}}"
 		);
 
-		return newformat;
+		return newformat.Replace(OpenBracket, '[').Replace(CloseBracket, ']');
 	}
 
 	/// <summary>

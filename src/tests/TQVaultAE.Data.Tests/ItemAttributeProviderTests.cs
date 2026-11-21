@@ -324,5 +324,17 @@ public class ItemAttributeProviderTests
 		string.Format(System.Globalization.CultureInfo.InvariantCulture, format, value).Should().Be(expected);
 	}
 
+	[Theory]
+	[InlineData("Required {%s0}: {%.0f1}", "Required Strength: 57")]
+	[InlineData("Required {%s0}: {%.0f1} [ {^r%.0f2 ^y- %.0f3}% Reduction]", "Required Strength: 57 [ {^r}62 {^y}- 8% Reduction]")]
+	[InlineData("{^r}Required {%s0: %.0f1}", "{^r}Required Strength: 57")]
+	[InlineData("{^r}Required {%s0: %.0f1} [ {%.0f2 ^y- %.0f3}% Reduction]", "{^r}Required Strength: 57 [ 62 {^y}- 8% Reduction]")]
+	public void ConvertFormat_RequirementFormats_KeepTheirColorTags(string tqFormat, string expected)
+	{
+		var format = _provider.ConvertFormat(tqFormat);
+
+		string.Format(System.Globalization.CultureInfo.InvariantCulture, format, "Strength", 57.0, 62.0, 8.0).Should().Be(expected);
+	}
+
 	#endregion
 }

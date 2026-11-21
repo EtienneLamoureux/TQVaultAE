@@ -111,10 +111,10 @@ public class EquipmentRequirementsTests
 		var armor = Requirements(level: 30, strength: 430);
 		var have = Have(bonuses: [("characterArmorStrengthReqReduction", 10), (EquipmentRequirements.LevelReduction, 5)]);
 
-		EquipmentRequirements.ReducedValues(armor, Item.ICLASS_UPPERBODY, have).Should().BeEquivalentTo(new Dictionary<string, int>
+		EquipmentRequirements.ReducedValues(armor, Item.ICLASS_UPPERBODY, have).Should().BeEquivalentTo(new Dictionary<string, ReducedRequirement>
 		{
-			[Variable.KEY_LEVELREQ] = 29, // 28.5, rounded to the nearest
-			[Variable.KEY_STRENGTH] = 387,
+			[Variable.KEY_LEVELREQ] = new(30, 29, 5, 50), // 28.5, rounded to the nearest
+			[Variable.KEY_STRENGTH] = new(430, 387, 10, 100),
 		});
 	}
 }

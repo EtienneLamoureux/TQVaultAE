@@ -326,7 +326,7 @@ public class PlayerCollection : IEnumerable<SackCollection>
 	/// </summary>
 	/// <param name="attributes">The attributes and bonuses to reduce with (another build shown); null for the save's.</param>
 	/// <param name="itemClass">The item's class, for its type's requirement reductions.</param>
-	public IReadOnlyDictionary<string, int>? ReducedRequirements(SortedList<string, Variable> requirementVariables, RequirementAttributes? attributes = null, string? itemClass = null)
+	public IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(SortedList<string, Variable> requirementVariables, RequirementAttributes? attributes = null, string? itemClass = null)
 		=> this.IsVault || this.PlayerInfo is null
 			? null
 			: EquipmentRequirements.ReducedValues(requirementVariables, itemClass, attributes ?? RequirementAttributes.Of(this.PlayerInfo));
