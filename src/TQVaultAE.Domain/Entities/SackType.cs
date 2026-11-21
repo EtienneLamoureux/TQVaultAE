@@ -28,5 +28,10 @@ public enum SackType
 	/// <summary>
 	/// Trash panel
 	/// </summary>
-	Trash
+	Trash,
+
+	/// <summary>
+	/// A loadout of a character (saved equipment set): in the search only, no panel shows it.
+	/// </summary>
+	Loadout
 }

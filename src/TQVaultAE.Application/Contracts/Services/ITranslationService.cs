@@ -83,10 +83,10 @@ public interface ITranslationService
 	/// Try translate <paramref name="xTagName"/> using resource file and database
 	/// </summary>
 	/// <param name="xTagName"></param>
-	/// <param name="translation"></param>
+	/// <param name="translation">The translation, or <paramref name="xTagName"/> itself when none is found.</param>
 	/// <param name="removeAllTQTags"></param>
 	/// <param name="doCleanup"></param>
 	/// <param name="doCleanupKeepLeadingColorTag"></param>
-	/// <returns></returns>
+	/// <returns><c>false</c> when the tag has no translation.</returns>
 	bool TryTranslateXTag(string xTagName, out string translation, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false);
 }

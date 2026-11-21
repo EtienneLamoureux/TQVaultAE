@@ -1,0 +1,444 @@
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using TQVaultAE.Domain.Entities;
+
+namespace TQVaultAE.Domain.Helpers;
+
+public static partial class StringHelper
+{
+	const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+
+	public const string TQNewLineTag = @"{^N}";
+
+	/// <summary>
+	/// Checks if a string contains a substring using ordinal ignore case comparison.
+	/// Optimized overload for high-frequency search operations.
+	/// </summary>
+	public static bool ContainsIgnoreCase(this string input, string search)
+		=> input.AsSpan().Contains(search.AsSpan(), noCase);
+
+	/// <summary>
+	/// Checks if a ReadOnlySpan contains a substring using ordinal ignore case comparison.
+	/// Uses MemoryExtensions for efficient span-based searching.
+	/// </summary>
+	public static bool ContainsIgnoreCase(this ReadOnlySpan<char> input, ReadOnlySpan<char> search)
+		=> input.Contains(search, noCase);
+
+	/// <summary>
+	/// Checks if a Span contains a substring using ordinal ignore case comparison.
+	/// </summary>
+	public static bool ContainsIgnoreCase(this Span<char> input, ReadOnlySpan<char> search)
+		=> ((ReadOnlySpan<char>)input).Contains(search, noCase);
+
+
+	/// <summary>
+	/// Tells if <paramref name="search"/> is a regex input search
+	/// </summary>
+	/// <param name="search"></param>
+	/// <returns></returns>
+	public static (bool IsRegex, string Pattern, Regex? Regex, bool RegexIsValid) IsTQVaultSearchRegEx(string? search)
+	{
+		if (string.IsNullOrWhiteSpace(search)) return (false, string.Empty, null, false);
+
+		var isregex = search.First() == '/';
+
+		if (isregex)
+		{
+			var pattern = search.Substring(1);
+			try
+			{
+				var rex = new Regex(pattern, RegexOptions.IgnoreCase);
+				return (isregex, pattern, rex, true);
+			}
+			catch (ArgumentException)
+			{
+				return (true, pattern, null, false);
+			}
+		}
+
+		return (false, search, null, false);
+	}
+
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5351", Justification = "MD5 makes a stable identifier, not a security hash.")]
+	public static string MakeMD5(this string input)
+		=> Convert.ToHexStringLower(MD5.HashData(Encoding.UTF8.GetBytes(input)));
+
+	[return: NotNullIfNotNull(nameof(text))]
+	public static string? ToFirstCharUpperCase(this string? text)
+	{
+		if (string.IsNullOrEmpty(text)) return text;
+		return string.Concat(char.ToUpperInvariant(text[0]), text.Substring(1));
+	}
+
+	/// <summary>
+	/// Converts the first character of a string to uppercase using ReadOnlySpan for efficiency.
+	/// </summary>
+	public static string ToFirstCharUpperCase(this ReadOnlySpan<char> text)
+	{
+		if (text.IsEmpty) return string.Empty;
+		if (text.Length == 1) return char.ToUpperInvariant(text[0]).ToString();
+
+		// Use stack allocation for small strings, heap for larger ones
+		if (text.Length <= 64)
+		{
+			Span<char> buffer = stackalloc char[text.Length];
+			text.CopyTo(buffer);
+			buffer[0] = char.ToUpperInvariant(buffer[0]);
+			return new string(buffer);
+		}
+
+		// For larger strings, allocate
+		var result = new char[text.Length];
+		text.CopyTo(result);
+		result[0] = char.ToUpperInvariant(result[0]);
+		return new string(result);
+	}
+
+	/// <summary>
+	/// Removes a suffix from the end of a string span and returns the result.
+	/// </summary>
+	public static string RemoveSuffix(this ReadOnlySpan<char> text, int suffixLength)
+	{
+		int resultLength = text.Length - suffixLength;
+		if (resultLength <= 0) return string.Empty;
+
+		var result = new char[resultLength];
+		text.Slice(0, resultLength).CopyTo(result);
+		return new string(result);
+	}
+
+	/// <summary>
+	/// Removes a suffix from the end of a string and returns the result.
+	/// </summary>
+	public static string RemoveSuffix(this string text, int suffixLength)
+		=> text.AsSpan().RemoveSuffix(suffixLength);
+
+	/// <summary>
+	/// Indicate if <paramref name="TQText"/> contain a ColorTag only
+	/// </summary>
+	/// <param name="TQText"></param>
+	/// <returns></returns>
+	public static bool IsColorTagOnly(this string? TQText)
+		=> !string.IsNullOrWhiteSpace(TQText) && IsColorTagOnlyRegEx().IsMatch(TQText);
+
+	[GeneratedRegex(@"^" + TQColorHelper.RegExTQTag + @"$")]
+	private static partial Regex IsColorTagOnlyRegEx();
+
+
+	[return: NotNullIfNotNull(nameof(TQText))]
+	public static string? RemoveAllTQTags(this string? TQText)
+	{
+		if (string.IsNullOrWhiteSpace(TQText)) return TQText;
+		return TQVaultAE.GameFiles.TextTags.RemoveColorTags(TQText);
+	}
+
+	[GeneratedRegex(@"(?<Legit>[^/]*)(?<Comment>//.*)")]
+	private static partial Regex TQCleanupRegEx();
+
+	const string TQCleanupReplaceResultPattern = @"${Legit}";
+	/// <summary>
+	/// Remove Leading ColorTag + Trailing comment
+	/// </summary>
+	/// <param name="TQText"></param>
+	/// <returns></returns>
+	public static string TQCleanup(this string TQText, bool keepLeadingColorTag = false)
+	{
+		if (TQText is null) return string.Empty;
+		var txt = TQColorHelper.RemoveLeadingColorTag(TQText);
+		string replaceTxt = TQCleanupReplaceResultPattern;
+		if (keepLeadingColorTag)
+		{
+			var col = TQColorHelper.GetColorFromTaggedString(TQText);
+			if (col.HasValue)
+				replaceTxt = col.Value.ColorTag() + TQCleanupReplaceResultPattern;
+		}
+		return TQCleanupRegEx().Replace(txt, replaceTxt).Trim();
+	}
+
+	/// <summary>
+	/// Indicate if <paramref name="TQText"/> has a color tag prefix.
+	/// </summary>
+	/// <param name="TQText"></param>
+	/// <returns></returns>
+	public static bool HasColorPrefix(this string? TQText)
+	{
+		if (TQText is null) return false;
+		var t = TQColorHelper.GetColorFromTaggedString(TQText);
+		return t.HasValue;
+	}
+
+	static char[] _Delim = [' '];
+	[GeneratedRegex(@"(?<number>\d+)")]
+	private static partial Regex PrettyFileNameRegExNumber();
+	[GeneratedRegex(@"(?<TitleCaseStart>BOW|DA|OA|XP|Mastery[A-Ha-h]|[A-Z][a-z]*)")]
+	private static partial Regex PrettyFileNameRegExTitleCaseStart();
+	// Orderered by word length
+	// language=regex, IgnorePatternWhitespace
+	const string PrettyFileNameRegExLowerCaseStartPattern = @"
+(?<Start>
+	intelligence|protection|impairment|offensive|defensive|dexterity|elemental|
+	mobility|cooldown|mastery|current|protect|defense|offense|reflect|
+	damage|energy|pierce|guards|neidan|resist|health|poison|weapon|plants|hermes|sandal|
+	armor|chance|[rR]unes|[dD]ream|bleed|total|bonus|woods|multi|relic|light|attac|speed|reduc|block|equip|
+	clubs|sleep|metal|leech|regen|dodge|retal|
+	cold|burn|life|fire|mana|stun|(?<!ext)rare|slow|wood|
+	req|int|(?<!h)all(?!owed)|dmg|(?<!con)str(?!uction)|atk|att|spd|run|dex|(?<=pierce)ret|
+	xp|(?<=chance)of|(?<!insec)to(?!rm)|(?<=(%|att))da|(?<=att)oa|
+	[\-\+]?%|(?<=(offense|resists|%da))x(?!(tra|alted))|&|[\-\+]
+)";
+	[GeneratedRegex(PrettyFileNameRegExLowerCaseStartPattern, RegexOptions.IgnorePatternWhitespace)]
+	private static partial Regex PrettyFileNameRegExLowerCaseStart();
+	/// <summary>
+	/// Preprare <paramref name="TQPath"/> for display
+	/// </summary>
+	/// <param name="TQPath"></param>
+	/// <returns></returns>
+	[return: NotNullIfNotNull(nameof(TQPath))]
+	public static string? PrettyFileName(this string? TQPath)
+	{
+		if (TQPath is null) return null;
+		var filename = TQPath.RecordFileNameWithoutExtension().Replace('_', ' ');
+		filename = PrettyFileNameRegExNumber().Replace(filename, "(${number})");// Enclose Numbers
+
+		var filenameSplit1 = PrettyFileNameRegExTitleCaseStart()
+			.Replace(filename, ' ' + "${TitleCaseStart}")// Add space on Title Case
+				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries);// Split on spaces
+
+		var filenameSplit2 = filenameSplit1.SelectMany(w => PrettyFileNameRegExLowerCaseStart()
+			.Replace(w, ' ' + "${Start}") // Add space on word begining for non TitleCase words
+				.Split(_Delim, StringSplitOptions.RemoveEmptyEntries)// Split on spaces
+			);
+
+		filename = filenameSplit2.Select(w =>
+			{
+				var title = w.ToFirstCharUpperCase();// TitleCase words
+				return title switch // Substitute acronym
+				{
+					"Dmg" => "Damage",
+					"Int" => "Intelligence",
+					"Str" => "Strength",
+					"Att" => "Attribute",
+					"Neg" => "Negative",
+					"Req" => "Requirement",
+					"Protect" => "Protection",
+					"Equip" => "Equipement",
+					"Atk" => "Attack",
+					"Xp" => "XP",
+					"Spd" => "Speed",
+					"BOW" => "Bow",
+					"Dex" => "Dexterity",
+					var x when x == "Retal" || x == "Ret" => "Retaliation",
+					var x when x == "DA" || x == "Da" => "Defensive Ability",
+					var x when x == "OA" || x == "Oa" => "Offensive Ability",
+					var x when x.Equals("MasteryA", noCase) => "Mastery Warfare",
+					var x when x.Equals("MasteryB", noCase) => "Mastery Defense",
+					var x when x.Equals("MasteryC", noCase) => "Mastery Hunting",
+					var x when x.Equals("MasteryD", noCase) => "Mastery Rogue",
+					var x when x.Equals("MasteryE", noCase) => "Mastery Earth",
+					var x when x.Equals("MasteryF", noCase) => "Mastery Nature",
+					var x when x.Equals("MasteryG", noCase) => "Mastery Spirit",
+					var x when x.Equals("MasteryH", noCase) => "Mastery Storm",
+					_ => title
+				};
+			})
+			.JoinString(" ");// Put it back together
+
+		return filename;
+	}
+
+	static readonly char[] RecordPathSeparators = ['\\', '/'];
+
+	/// <summary>
+	/// The last segment of a record path, split on <c>\</c> and <c>/</c> on every platform
+	/// (<see cref="Path.GetFileName(string)"/> splits on <c>\</c> only on Windows, and record ids use <c>\</c>).
+	/// </summary>
+	public static string RecordFileName(this string recordPath)
+		=> recordPath[(recordPath.LastIndexOfAny(RecordPathSeparators) + 1)..];
+
+	/// <summary>
+	/// <see cref="RecordFileName"/> without its extension.
+	/// </summary>
+	public static string RecordFileNameWithoutExtension(this string recordPath)
+	{
+		var name = recordPath.RecordFileName();
+		int dot = name.LastIndexOf('.');
+		return dot < 0 ? name : name[..dot];
+	}
+
+	/// <summary>
+	/// Normalizes the record path to Upper Case Invariant Culture and replace slashes with backslashes.
+	/// </summary>
+	/// <param name="recordId">record path to be normalized</param>
+	/// <returns>normalized record path</returns>
+	public static string NormalizeRecordPath(this string recordId)
+	{
+		// uppercase it
+		string normalizedRecordId = recordId.ToUpperInvariant();
+
+		// replace any '/' with '\\'
+		return normalizedRecordId.Replace('/', '\\');
+	}
+
+	/// <summary>
+	/// Make a <see cref="RecordId"/> from <paramref name="recordId"/>.
+	/// </summary>
+	/// <param name="recordId"></param>
+	/// <returns></returns>
+	public static RecordId ToRecordId(this string? recordId)
+		=> RecordId.Create(recordId);
+
+	/// <summary>
+	/// Explode <see cref="PrettyFileName"/> result 
+	/// </summary>
+	/// <param name="TQPath"></param>
+	/// <returns></returns>
+	public static (string PrettyFileName, string Effect, string Number, bool IsMatch) PrettyFileNameExploded(this string TQPath)
+	{
+		var pretty = TQPath.PrettyFileName();
+		return pretty.ExplodePrettyFileName();
+	}
+
+	// language=regex, IgnorePatternWhitespace
+	[GeneratedRegex(@"
+[^\(]+\((?<Num1>\d+)\)(?<Effect>[^\(]+)\((?<Num>\d+)\) # match 'trash (0) effect (0)'
+|
+\((?<Num>\d+)\)(?<Effect>.+)  # match '(0) effect'
+|
+(?<Effect>[^\(]+)\((?<Num>\d+)\) # match 'effect (0)'
+", RegexOptions.IgnorePatternWhitespace)]
+	private static partial Regex _ExplodePrettyFileName();
+
+	/// <summary>
+	/// Explode an already prettyfied file name
+	/// </summary>
+	/// <param name="prettyFileName"></param>
+	/// <returns></returns>
+	public static (string PrettyFileName, string Effect, string Number, bool IsMatch) ExplodePrettyFileName(this string prettyFileName)
+	{
+		var m = _ExplodePrettyFileName().Match(prettyFileName);
+
+		if (!m.Success)
+			return (prettyFileName, prettyFileName, string.Empty, false);
+
+		return (prettyFileName, m.Groups["Effect"].Value.Trim(), m.Groups["Num"].Value, true);
+	}
+
+	[GeneratedRegex(@"\s+")]
+	private static partial Regex AllContiguousSpaceRegEx();
+
+	/// <summary>Each run of white space (spaces, line breaks) becomes one space: "720  Health" reads "720 Health".</summary>
+	public static string CollapseWhiteSpace(this string text) => AllContiguousSpaceRegEx().Replace(text, " ");
+
+	[GeneratedRegex(TQColorHelper.RegExStartingColorTagOrEmpty + @"(?<Content>.+)")]
+	private static partial Regex InsertAfterColorPrefixRegEx();
+	/// <summary>
+	/// Insert <paramref name="insertedText"/> between the color tag prefix and the text.
+	/// </summary>
+	/// <param name="TQText"></param>
+	/// <param name="insertedText"></param>
+	/// <returns></returns>
+	public static string InsertAfterColorPrefix(this string TQText, string insertedText)
+	{
+		if (TQText is null) return insertedText;
+		if (string.IsNullOrEmpty(insertedText)) return TQText;
+		return InsertAfterColorPrefixRegEx().Replace(TQText
+				, string.Concat(@"${ColorTag}", insertedText, @"${Content}")
+			).Trim();
+	}
+
+	public static IEnumerable<string> RemoveEmptyAndSanitize(this IEnumerable<string?> TQText)
+		=> TQText.OfType<string>().Where(t => !string.IsNullOrWhiteSpace(t)).Select(t =>
+		{
+			// Split ColorTag & Content
+			var tag = t.GetColorFromTaggedString();
+			var text = t.RemoveLeadingColorTag()
+				.Replace("//", string.Empty).Trim()// Cleanup "//"
+				.ToFirstCharUpperCase();
+			return $"{(tag?.ColorTag())}{text}";
+		});
+	public static string JoinString(this IEnumerable<string> Text, string delim) => string.Join(delim, Text);
+
+	public static string JoinWithoutStartingSpaces(this IEnumerable<string> TQText, string delim)
+	{
+		var tmp = TQText.ToArray();
+	repass:
+		List<string> res = [];
+		for (int i = 0; i < tmp.Length; i++)
+		{
+			// Color Prefix alone
+			var IsColorTagOnly = tmp[i].IsColorTagOnly();
+			if (IsColorTagOnly && (i + 1) < tmp.Length - 1)
+			{
+				// Merge it with next element
+				res.Add(string.Concat(tmp[i], tmp[i + 1]));
+				i++;// Move forward
+			}
+			else if (IsColorTagOnly && (i + 1) == tmp.Length)// ColorTag is last element
+				continue;
+			else res.Add(tmp[i]);
+		}
+
+		if (tmp.Length != res.Count)
+		{
+			tmp = res.ToArray();
+			goto repass;// Recheck for multiple occurences
+		}
+
+		return string.Join(delim, res.ToArray());
+	}
+
+	[GeneratedRegex(@"(?i)\{\^N}")]
+	private static partial Regex SplitOnTQNewLineRegEx();
+	internal static IEnumerable<string> SplitOnTQNewLine(this string TQText) => SplitOnTQNewLineRegEx().Split(TQText);
+
+	/// <summary>
+	/// Wraps the words in a text description.
+	/// </summary>
+	/// <param name="TQText">Text to be word wrapped</param>
+	/// <param name="Columns">maximum number of columns before wrapping</param>
+	/// <returns>List of wrapped text</returns>
+	public static Collection<string> WrapWords(string TQText, int Columns)
+	{
+		if (TQText is null) return [];
+		List<string> choppedLines = [];
+		// First split on NL tag
+		choppedLines.AddRange(SplitOnTQNewLine(TQText));
+		// split on columns args length
+		choppedLines = choppedLines.SelectMany(t => SplitOnColumns(t)).ToList();
+
+		IEnumerable<string> SplitOnColumns(string t)
+		{
+			if (t.Length > Columns)
+			{
+				// split on spaces
+				var batch = AllContiguousSpaceRegEx().Split(t);
+				string line = string.Empty;
+				string currentColor = string.Empty;
+				List<string> res = [];
+				foreach (var word in batch)
+				{
+					var foundColor = TQColorHelper.GetColorFromTaggedString(word);
+					if (line != string.Empty
+						// Not a ColorTag alone
+						&& !line.IsColorTagOnly()
+					) line += ' ';
+					if (foundColor.HasValue) currentColor = foundColor.Value.ColorTag();
+					if (line.Length + word.Length > Columns)
+					{
+						res.Add(line);
+						line = currentColor + string.Empty;
+					}
+					line += word;
+				}
+				res.Add(line);// remnant
+				return res;
+			}
+			else return new string[] { t };
+		}
+
+		return new Collection<string>(choppedLines);
+	}
+}

@@ -20,7 +20,7 @@ public class SackCollection : IEnumerable<Item>
 	/// Indicates the upper left cell of the slot.
 	/// </summary>
 	private static Point[] equipmentLocationOffsets =
-	{
+	[
 		new Point(4, 0),  // Head
 		new Point(4, 3),  // Neck
 		new Point(4, 5),  // Body
@@ -36,13 +36,13 @@ public class SackCollection : IEnumerable<Item>
 		new Point(Item.WeaponSlotIndicator, 2), // Weapon2
 		new Point(Item.WeaponSlotIndicator, 3), // Shield2
 		new Point(1, 6), // Artifact
-	};
+	];
 
 	/// <summary>
 	/// Sizes of the slots in the equipment panel
 	/// </summary>
 	private static Size[] equipmentLocationSizes =
-	{
+	[
 		new Size(2, 2), // Head
 		new Size(2, 1), // Neck
 		new Size(2, 3), // Body
@@ -55,19 +55,19 @@ public class SackCollection : IEnumerable<Item>
 		new Size(2, 5), // Weapon2
 		new Size(2, 5), // Shield2
 		new Size(2, 2), // Artifact
-	};
+	];
 
 	/// <summary>
 	/// Used to properly draw the weapon the weapon box on the equipment panel
 	/// These values are the upper left corner of the weapon box
 	/// </summary>
 	private static Point[] weaponLocationOffsets =
-	{
+	[
 		new Point(1, 0), // Weapon1
 		new Point(7, 0), // Shield1
 		new Point(1, 9), // Weapon2
 		new Point(7, 9), // Shield2
-	};
+	];
 
 	/// <summary>
 	/// Size of the weapon slots in the equipment panel
@@ -109,7 +109,7 @@ public class SackCollection : IEnumerable<Item>
 	/// </summary>
 	public SackCollection()
 	{
-		this.items = new List<Item>();
+		this.items = [];
 		this.SackType = SackType.Player;
 	}
 
@@ -130,6 +130,13 @@ public class SackCollection : IEnumerable<Item>
 	/// Flag to indicate this sack has been modified.
 	/// </remarks>
 	public bool IsModified { get; set; }
+
+	/// <summary>
+	/// Indicates whether the sack belongs to a read-only character (its save files carry the read-only attribute):
+	/// nothing may be taken out of it, put in it, moved, sorted or edited. Set when the character is read and when the
+	/// user toggles the state; see <c>ItemActionRules.IsReadOnly</c>.
+	/// </summary>
+	public bool IsReadOnly { get; set; }
 
 	/// <summary>
 	/// Gets or sets the sack type
@@ -170,7 +177,22 @@ public class SackCollection : IEnumerable<Item>
 	/// <summary>
 	/// Loaded icon details
 	/// </summary>
-	public BagButtonIconInfo BagButtonIconInfo { get; set; }
+	public BagButtonIconInfo? BagButtonIconInfo { get; set; }
+
+	/// <summary>
+	/// Sets the bag button icon (<see langword="null"/> or the default mode for the default icon) and marks the sack
+	/// modified, only when it shows a different button than the current one.
+	/// </summary>
+	/// <returns><see langword="true"/> when the icon changed.</returns>
+	public bool ChangeBagButtonIconInfo(BagButtonIconInfo? info)
+	{
+		if (BagButtonIconInfo.AreSame(this.BagButtonIconInfo, info))
+			return false;
+
+		this.BagButtonIconInfo = BagButtonIconInfo.IsDefault(info) ? null : info;
+		this.IsModified = true;
+		return true;
+	}
 
 	/// <summary>
 	/// Gets offset of the weapon slot

@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using TQVaultAE.Application.Session;
+
 namespace TQVaultAE.Application.Results;
 
 public class VaultLoadResult
@@ -5,12 +8,12 @@ public class VaultLoadResult
 	/// <summary>
 	/// The loaded vault collection.
 	/// </summary>
-	public PlayerCollection Vault { get; set; }
+	public PlayerCollection? Vault { get; set; }
 
 	/// <summary>
 	/// Path to the vault file.
 	/// </summary>
-	public string Filename { get; set; }
+	public string Filename { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Indicates whether the vault was loaded successfully.
@@ -20,17 +23,18 @@ public class VaultLoadResult
 	/// <summary>
 	/// Indicates whether the vault load was successful.
 	/// </summary>
-	public bool IsSuccess => Vault != null;
+	[MemberNotNullWhen(true, nameof(Vault))]
+	public bool IsSuccess => Vault is not null;
 
 	/// <summary>
 	/// Any exception that occurred during loading.
 	/// </summary>
-	public Exception Error { get; set; }
+	public Exception? Error { get; set; }
 
 	/// <summary>
 	/// Argument exception if the file format was invalid.
 	/// </summary>
-	public ArgumentException ArgumentException { get; set; }
+	public ArgumentException? ArgumentException { get; set; }
 
 	/// <summary>
 	/// Creates a successful result.

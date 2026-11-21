@@ -3,19 +3,18 @@ using TQVaultAE.Domain.Entities;
 
 namespace ArzExplorer.Models;
 
-internal class NodeTag
+/// <summary>
+/// Tag of a tree node: the file and the record or entry it shows, and what its view read, kept for the next selection.
+/// </summary>
+internal sealed class NodeTag
 {
-	internal RecordId Thread;
-	internal string Text;
-	internal string TextU => Text.ToUpper();
+	internal string Text = string.Empty;
+	internal string TextU => this.Text.ToUpperInvariant();
 
-	internal int TokIdx;
-	internal RecordId Key;
-	internal string DictionaryKey;
-	internal TreeNode thisNode;
-	internal TQFileInfo File;
-	internal byte[] RawData;
-	internal List<string> RecordText = new();
-	internal Bitmap Bitmap;
-	internal SoundPlayer SoundPlayer;
+	internal RecordId Key = RecordId.Empty;
+	internal required TreeNode Node; // The node that holds the tag.
+	internal required TQFileInfo File;
+	internal List<string> RecordText = [];
+	internal Bitmap? Bitmap;
+	internal SoundPlayer? SoundPlayer;
 }

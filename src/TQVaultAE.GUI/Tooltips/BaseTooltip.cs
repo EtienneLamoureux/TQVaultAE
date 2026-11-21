@@ -1,0 +1,300 @@
+﻿using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32.Contracts;
+
+namespace TQVaultAE.GUI.Tooltips;
+
+/// <summary>
+/// A tool tip window. Its sizes and fonts come from the current scale (<see cref="IUIService.Scale"/>,
+/// <see cref="IUIService.FontZoom"/>) each time it is shown, from design values: never from the size or font of a
+/// previous show, since the zoom and the DPI may have changed since then and the changes would add up.
+/// </summary>
+public class BaseTooltip : Form
+{
+	protected IItemProvider ItemProvider;
+	protected IItemTextFormatter ItemText;
+	protected IFontService FontService;
+	protected IUIService UIService;
+	protected ITranslationService TranslationService;
+	internal const string TOOLTIPDELIM = @"TOOLTIPDELIM";
+	internal const string TOOLTIPSPACER = @"TOOLTIPSPACER";
+
+#if DEBUG
+	// For Design Mode
+#pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
+	public BaseTooltip() { }
+#pragma warning restore CS8618
+#endif
+
+	public BaseTooltip(GuiServices services)
+	{
+		this.ItemProvider = services.ItemProvider;
+		this.ItemText = services.ItemText;
+		this.FontService = services.FontService;
+		this.UIService = services.UIService;
+		this.TranslationService = services.TranslationService;
+	}
+
+	/// <summary>Shown without taking the focus, so the window under it keeps it (TopMost stays false).</summary>
+	protected override bool ShowWithoutActivation => true;
+
+	/// <summary>
+	/// Closes and disposes <paramref name="tooltip"/>, shown or hidden, for a tool tip class that makes a new window at each
+	/// show; returns null to clear the field that held it.
+	/// </summary>
+	protected static T? CloseAndDispose<T>(T? tooltip) where T : BaseTooltip
+	{
+		if (tooltip is not null)
+		{
+			tooltip.Close();
+			tooltip.Dispose();
+		}
+
+		return null;
+	}
+
+	/// <summary>The control the tool tip was put beside by <see cref="PlaceUnder(Control)"/>, whose mouse moves switch its side.</summary>
+	private Control? besideAnchor;
+
+	/// <summary>The screen X of the tool tip on the left and on the right of <see cref="besideAnchor"/>.</summary>
+	private int besideLeft, besideRight;
+
+	/// <summary>Where <see cref="PlaceUnder(Rectangle, Size, Rectangle)"/> puts a tool tip.</summary>
+	/// <param name="Location">Its screen location.</param>
+	/// <param name="BesideLeft">Set when it is put beside the anchor, on its right: the screen X on its left.</param>
+	internal readonly record struct Placement(Point Location, int? BesideLeft);
+
+	/// <summary>
+	/// Where a tool tip of <paramref name="tooltip"/> size goes under <paramref name="anchor"/> (screen coordinates), in the
+	/// <paramref name="workingArea"/> of the anchor's monitor. When it does not fit below, it is pushed up, at most to the
+	/// top of the working area; it then covers the anchor, so it goes on the anchor's right, with the left side as the
+	/// other choice.
+	/// </summary>
+	internal static Placement PlaceUnder(Rectangle anchor, Size tooltip, Rectangle workingArea)
+	{
+		var below = new Point(anchor.Left, anchor.Bottom);
+		if (below.Y + tooltip.Height <= workingArea.Bottom)
+			return new(below, null);
+
+		int top = Math.Max(workingArea.Top, workingArea.Bottom - tooltip.Height);
+		return new(new Point(anchor.Right, top), anchor.Left - tooltip.Width);
+	}
+
+	/// <summary>
+	/// The top of a tool tip of <paramref name="height"/> wanted at <paramref name="top"/>, pushed up to end inside
+	/// <paramref name="workingArea"/>, at most to its top. The area of the panel's monitor, not the primary monitor's:
+	/// a monitor whose top is not 0 had the tool tip moved off its screen.
+	/// </summary>
+	internal static int TopWithin(int top, int height, Rectangle workingArea)
+		=> Math.Max(workingArea.Top, Math.Min(top, workingArea.Bottom - height));
+
+	/// <summary>The working area of the monitor <paramref name="anchor"/> is on.</summary>
+	protected static Rectangle WorkingAreaOf(Control anchor) => Screen.FromControl(anchor).WorkingArea;
+
+	/// <summary>
+	/// Places the tool tip under <paramref name="anchor"/> (<see cref="PlaceUnder(Rectangle, Size, Rectangle)"/>). Put beside
+	/// it, the tool tip follows the mouse over the anchor: on the right while the mouse is in the anchor's right half, on
+	/// the left otherwise, so it never hides the pointer.
+	/// </summary>
+	protected void PlaceUnder(Control anchor)
+	{
+		var bounds = new Rectangle(anchor.PointToScreen(Point.Empty), anchor.Size);
+		var placement = PlaceUnder(bounds, this.Size, WorkingAreaOf(anchor));
+		this.Location = placement.Location;
+
+		if (placement.BesideLeft is int left && this.besideAnchor is null)
+		{
+			this.besideLeft = left;
+			this.besideRight = placement.Location.X;
+			this.besideAnchor = anchor;
+			anchor.MouseMove += this.BesideAnchor_MouseMove;
+		}
+	}
+
+	private void BesideAnchor_MouseMove(object? sender, MouseEventArgs e)
+	{
+		if (this.besideAnchor is not { } anchor)
+			return;
+
+		this.Location = new Point(e.Location.X > anchor.Width / 2 ? this.besideRight : this.besideLeft, this.Location.Y);
+	}
+
+	protected override void OnFormClosing(FormClosingEventArgs e)
+	{
+		base.OnFormClosing(e);
+		if (this.besideAnchor is not null)
+		{
+			this.besideAnchor.MouseMove -= this.BesideAnchor_MouseMove;
+			this.besideAnchor = null;
+		}
+	}
+
+	/// <summary>Copy of a cached image shown by this tooltip; owned by the tooltip.</summary>
+	private Bitmap? _shownImage;
+
+	/// <summary>The controls a cached image took the place of.</summary>
+	private readonly List<Control> _replaced = [];
+
+	/// <summary>
+	/// Replaces the tooltip content with <paramref name="image"/>, a copy taken from a <c>TooltipImageCache</c>.
+	/// The tooltip owns the copy and disposes it with itself.
+	/// </summary>
+	protected void ShowCachedImage(Bitmap image)
+	{
+		// The controls the image replaces leave the form, so the form no longer disposes them: kept to be disposed
+		// with it (they may still be read until then).
+		this._replaced.AddRange(this.Controls.Cast<Control>());
+		this.Controls.Clear();
+		this.Padding = new Padding(0);
+		this._shownImage?.Dispose();
+		this._shownImage = image;
+		this.Controls.Add(new PictureBox()
+		{
+			Image = image,
+			SizeMode = PictureBoxSizeMode.AutoSize,
+			Dock = DockStyle.Fill,
+		});
+	}
+
+	/// <summary>
+	/// A copy of <paramref name="image"/> inside the tooltip border: the game's golden rollover border, as the
+	/// character editor's tool tips have, or a 1 pixel gray line when the game files lack it.
+	/// </summary>
+	protected Bitmap Framed(Bitmap image, Color background)
+	{
+		var gameFrame = TQVaultAE.GUI.Tooltips.GameTooltipFrame.Load(this.UIService);
+		var frame = gameFrame?.Thickness(this.UIService.Scale) ?? new Padding(1);
+		var bounds = new Rectangle(0, 0, image.Width + frame.Horizontal, image.Height + frame.Vertical);
+		var framed = new Bitmap(bounds.Width, bounds.Height);
+		using var g = Graphics.FromImage(framed);
+		using (var back = new SolidBrush(gameFrame is null ? TQColor.DarkGray.Color() : background))
+			g.FillRectangle(back, bounds);
+		g.DrawImageUnscaled(image, frame.Left, frame.Top);
+		gameFrame?.Draw(g, bounds, this.UIService.Scale);
+		return framed;
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		base.Dispose(disposing);
+		if (disposing)
+		{
+			this._shownImage?.Dispose();
+			this._shownImage = null;
+			foreach (var control in this._replaced)
+				control.Dispose();
+			this._replaced.Clear();
+		}
+	}
+
+	/// <param name="fontZoom">The zoom of the fonts; by default <see cref="IUIService.FontZoom"/>, for a tool tip window. A
+	/// dialog that Windows Forms scales to its monitor's DPI gives the user zoom only (<see cref="IUIService.Zoom"/>).</param>
+	internal static Control? MakeRow(IUIService uiService, IFontService fontService, string? friendlyName, Color? FGColor = null, float fontSize = 10F, FontStyle style = FontStyle.Regular, Color? BGColor = null, float? fontZoom = null)
+	{
+		friendlyName ??= string.Empty;
+		Control? row = null;
+		if (friendlyName == TOOLTIPSPACER)
+		{
+			row = new Label()
+			{
+				Text = " ",
+				Font = fontService.GetFontLight(fontSize, style, fontZoom ?? uiService.FontZoom),
+				AutoSize = true,
+			};
+		}
+		else if (friendlyName == TOOLTIPDELIM)
+		{
+			row = new Label()
+			{
+				Text = string.Empty,
+				BackColor = TQColor.DarkGray.Color(),
+				BorderStyle = BorderStyle.FixedSingle,
+				Height = 3,
+				Anchor = AnchorStyles.Left | AnchorStyles.Right,
+				Margin = new Padding(2, 3, 2, 3),
+			};
+		}
+		else
+		{
+			// Replace all TQNewLine to regular '\n'
+			friendlyName = friendlyName.Replace(StringHelper.TQNewLineTag, "\n");
+			// If there is a color tag in the middle
+			if (friendlyName.LastIndexOf('{') > 0)
+			{
+				var multiColors = friendlyName.SplitColorSegments();
+				if (multiColors.Length > 1)
+				{
+					row = new FlowLayoutPanel()
+					{
+						AutoSize = true,
+						AutoSizeMode = AutoSizeMode.GrowOnly,
+						FlowDirection = FlowDirection.LeftToRight,
+						Padding = new Padding(0),
+						Anchor = AnchorStyles.Left,
+
+						BorderStyle = BorderStyle.None,
+						Margin = new Padding(0),
+					};
+
+					if (BGColor.HasValue) row.BackColor = BGColor.Value;
+
+					row.SuspendLayout();
+					foreach (var coloredSegment in multiColors)
+						row.Controls.Add(MakeSingleColorLabel(uiService, fontService, coloredSegment, FGColor, fontSize, style, BGColor, fontZoom));
+					row.ResumeLayout();
+				}
+			}
+			else
+				row = MakeSingleColorLabel(uiService, fontService, friendlyName, FGColor, fontSize, style, BGColor, fontZoom);
+		}
+
+		return row;
+	}
+
+	/// <summary>
+	/// The row of a tooltip line built in Presentation: text, spacer or delimiter. A range line is drawn as its text followed
+	/// by its range; the item tooltip aligns ranges itself. A detail line is drawn smaller. The fonts' zoom is
+	/// <paramref name="fontZoom"/>, see <see cref="MakeRow"/>.
+	/// </summary>
+	internal static Control? MakeLineRow(IUIService uiService, IFontService fontService, TooltipLine line, Color? BGColor = null, float? fontZoom = null)
+		=> line.Kind switch
+		{
+			TooltipLineKind.Spacer => MakeRow(uiService, fontService, TOOLTIPSPACER, BGColor: BGColor, fontZoom: fontZoom),
+			TooltipLineKind.Delimiter => MakeRow(uiService, fontService, TOOLTIPDELIM, BGColor: BGColor, fontZoom: fontZoom),
+			TooltipLineKind.Range => MakeRow(uiService, fontService, $"{line.Text}  {line.Range}", line.Color?.Color(), line.Detail ? DetailFontSize : LineFontSize, line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor, fontZoom),
+			_ => MakeRow(uiService, fontService, line.Text, line.Color?.Color(), line.Detail ? DetailFontSize : LineFontSize, line.Bold ? FontStyle.Bold : FontStyle.Regular, BGColor, fontZoom),
+		};
+
+	/// <summary>The font size of a tooltip line.</summary>
+	private const float LineFontSize = 10F;
+
+	/// <summary>The font size of a detail line (<see cref="TooltipLine.Detail"/>).</summary>
+	private const float DetailFontSize = 9F;
+
+	internal static Label MakeSingleColorLabel(IUIService uiService, IFontService fontService, string friendlyName, Color? FGColor, float fontSize, FontStyle style, Color? BGColor = null, float? fontZoom = null)
+	{
+		// Single Color
+		var (tagColor, txt) = friendlyName.SplitLeadingColorTag();
+		FGColor = tagColor?.Color() ?? FGColor ?? TQColor.White.Color();// Color Tag take précédence
+		var row = new Label()
+		{
+			Text = txt,
+			ForeColor = FGColor.Value,
+			Font = fontService.GetFontLight(fontSize, style, fontZoom ?? uiService.FontZoom),
+			AutoSize = true,
+			Anchor = AnchorStyles.Left,
+			BackColor = BGColor ?? Color.Transparent,
+
+			//BackColor = Color.Red,
+			BorderStyle = BorderStyle.None,// BorderStyle.FixedSingle
+			Margin = new Padding(0),
+		};
+
+		if (BGColor.HasValue) row.BackColor = BGColor.Value;
+
+		return row;
+	}
+}

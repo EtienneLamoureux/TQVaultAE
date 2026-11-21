@@ -19,7 +19,9 @@ It is very useful for TQVaultAE contributors to be able to dig into these files 
 ---
 
 ## <a id="Exec"></a>Executable
-The executable is located in the same directory as TQVault.
+Save File Explorer has its own archive on the [release page](https://github.com/EtienneLamoureux/TQVaultAE/releases): `TQSaveFilesExplorer-<version>.zip`. Extract it.
+
+It reads character files (`.chr`) and stash files (`.dxb`, and their `.dxg` backups).
 
 Just run `TQ.SaveFilesExplorer.exe`.
 
@@ -37,7 +39,7 @@ Here's a brief overview of the UI.
 ### <a id="Menu"></a>Menu
 
 - File/Open player directory : Select character directory and open all player save file inside (player, caravane)
-- File/Open file : Select character directory and open a specified player save file
+- File/Open file : Choose one save file to open. A file of another type is ignored.
 - Detected Players : Easy access to all character files
 
 ![Detected Players](savefileexplorer/menuplayers.png)
@@ -63,8 +65,9 @@ This panel display all detected keys in a tree.
 ![File Infos](savefileexplorer/keys.png)
 
 - A known key is displayed in black.
-- An unknow key is orange. 
-- Unknown segment : Unknow value of the unknow key. 
+- A key whose data type is unknown is orange and bold.
+- An unknown segment (data the tool does not recognize) is red and bold.
+- A parent key takes the colour of its worst child.
 
 You can copy keys into clipboard using the dedicated button.
 The combobox let you choose what type of data you want.
@@ -80,7 +83,7 @@ This panel gives you details about the key.
 - `IsStructureClosing` : true when the key end a substructure. The only known closing key is `end_block`
 - `IsUnknownSegment` : true when the tool doesn't recognize a segment of data. _**The tool need update to recognize the data.**_
 - `IsDataTypeError` : true when the tool doesn't recognize the type of a key. _**The tool need update to recognize the data.**_
-- `IsKeyValue` : true when the key is a known value without key. The only known keyvalue is the `CRC` in transfer stash and character inventory.
+- `IsKeyValue` : true when the key is a known value without key. It is the `CRC` at the start of the stash files, and every unknown segment.
 
 ---
 
@@ -96,7 +99,8 @@ Nothing special here, it try to display the value in all data types supported by
 ### <a id="HiddenFeatures"></a>Hidden features
 Some behaviors are not obvious. So it's describe here.
 
-- Click on any labels inside 'key infos' or 'key data' panels changes data display to hexadecimal.
+- With a key selected, a click on one of these labels changes its value to hexadecimal, and back: the two "Offset" labels, "As a Int", "As a Float" and "As a byte array".
+- A right click on a tab offers "Close Tab".
 
 ![File Infos](savefileexplorer/hexa.png)
  

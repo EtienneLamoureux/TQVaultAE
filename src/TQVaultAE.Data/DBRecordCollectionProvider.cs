@@ -4,18 +4,11 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data;
 
-public class DBRecordCollectionProvider : IDBRecordCollectionProvider
+public class DBRecordCollectionProvider(IDirectoryIO directoryIO, IPathIO pathIO, IFileIO fileIO) : IDBRecordCollectionProvider
 {
-	private readonly IDirectoryIO DirectoryIO;
-	private readonly IPathIO PathIO;
-	private readonly IFileIO FileIO;
-
-	public DBRecordCollectionProvider(IDirectoryIO directoryIO, IPathIO pathIO, IFileIO fileIO)
-	{
-		this.DirectoryIO = directoryIO;
-		PathIO = pathIO;
-		FileIO = fileIO;
-	}
+	private readonly IDirectoryIO DirectoryIO = directoryIO;
+	private readonly IPathIO PathIO = pathIO;
+	private readonly IFileIO FileIO = fileIO;
 
 	/// <summary>
 	/// Writes all variables into a file.
@@ -29,7 +22,7 @@ public class DBRecordCollectionProvider : IDBRecordCollectionProvider
 		string fullPath = PathIO.Combine(baseFolder, drc.Id.Normalized);
 		string destinationFolder = PathIO.GetDirectoryName(fullPath);
 
-		if (fileName != null)
+		if (fileName is not null)
 		{
 			fullPath = PathIO.Combine(baseFolder, fileName);
 			destinationFolder = baseFolder;
@@ -40,7 +33,7 @@ public class DBRecordCollectionProvider : IDBRecordCollectionProvider
 			DirectoryIO.CreateDirectory(destinationFolder);
 
 		// Write's all variables
-		List<string> content = new();
+		List<string> content = [];
 		foreach (Variable variable in drc)
 		{
 			content.Add(variable.ToString());

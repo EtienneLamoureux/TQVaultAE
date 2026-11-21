@@ -1,4 +1,5 @@
 ﻿using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Jitter;
 using TQVaultAE.Domain.Results;
 
 namespace TQVaultAE.Application.Contracts.Providers;
@@ -17,7 +18,7 @@ public interface IItemProvider
 	/// </summary>
 	/// <param name="itemId"></param>
 	/// <returns><c>null</c> if <paramref name="type"/> is not wearable (can't have an affix)</returns>
-	ItemAffixes GetAllAvailableAffixes(GearType type);
+	ItemAffixes? GetAllAvailableAffixes(GearType type);
 	/// <summary>
 	/// Gets the socketed charm/relic bonus loot table
 	/// </summary>
@@ -25,24 +26,28 @@ public interface IItemProvider
 	/// <param name="RelicTable1"></param>
 	/// <param name="RelicTable2"></param>
 	/// <returns>Returns <c>false</c> if the item does not contain a charm/relic</returns>
-	bool BonusTableSocketedRelic(Item Item, out LootTableCollection RelicTable1, out LootTableCollection RelicTable2);
+	bool BonusTableSocketedRelic(Item Item, out LootTableCollection? RelicTable1, out LootTableCollection? RelicTable2);
 	/// <summary>
 	/// Return all affixes for <paramref name="itemId"/>
 	/// </summary>
 	/// <param name="itemId"></param>
+	/// <param name="includeUnreachable">
+	/// Also gives the affix tables the item's loot item tables name but the game never rolls for it
+	/// (<see cref="ItemAffixes.Unreachable"/>).
+	/// </param>
 	/// <returns></returns>
-	ItemAffixes GetItemAffixes(RecordId itemId);
+	ItemAffixes? GetItemAffixes(RecordId itemId, bool includeUnreachable = false);
 	/// <summary>
 	/// Gets the artifact/charm/relic bonus loot table
 	/// </summary>
 	/// <param name="itm"></param>
 	/// <returns>returns null if the item is not an artifact/charm/relic</returns>
-	LootTableCollection BonusTableRelicOrArtifact(Item itm);
+	LootTableCollection? BonusTableRelicOrArtifact(Item itm);
 	/// <summary>
 	/// Create an artifact from its formulae
 	/// </summary>
 	/// <returns>A new artifact</returns>
-	Item CraftArtifact(Item itm);
+	Item? CraftArtifact(Item itm);
 	/// <summary>
 	/// Encodes an item into the save file format
 	/// </summary>
@@ -68,31 +73,9 @@ public interface IItemProvider
 	/// <returns>true if the variable contains a value which is filtered.</returns>
 	bool FilterValue(Variable variable, bool allowStrings);
 	/// <summary>
-	/// Formats a string based on the formatspec
-	/// </summary>
-	/// <param name="formatSpec">format specification</param>
-	/// <param name="parameter1">first parameter</param>
-	/// <param name="parameter2">second parameter</param>
-	/// <param name="parameter3">third parameter</param>
-	/// <returns>formatted string.</returns>
-	string Format(string formatSpec, object parameter1, object parameter2 = null, object parameter3 = null);
-	/// <summary>
 	/// Pulls data out of the TQ item database for this item.
 	/// </summary>
 	void GetDBData(Item itm);
-	/// <summary>
-	/// Gets the item name and attributes.
-	/// </summary>
-	/// <param name="itm"></param>
-	/// <param name="scopes">Extra data scopes as a bitmask</param>
-	/// <param name="filterExtra">filter extra properties</param>
-	/// <returns>An object containing the item name and attributes</returns>
-	ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true);
-	/// <summary>
-	/// Shows the items in a set for the set items
-	/// </summary>
-	/// <returns>string containing the set items</returns>
-	SetItemInfo GetItemSetTranslations(Item itm);
 	/// <summary>
 	/// Pet skills can also have multiple values so we attempt to decode it here
 	/// unfortunately the level is not in the skill record so we need to look up
@@ -103,11 +86,6 @@ public interface IItemProvider
 	/// <param name="varNum">Which variable we are using since there can be multiple values.</param>
 	/// <returns>int containing the pet skill level</returns>
 	int GetPetSkillLevel(Item itm, DBRecordCollection record, RecordId recordId, int varNum);
-	/// <summary>
-	/// Gets the item's requirements
-	/// </summary>
-	/// <returns>A string containing the items requirements</returns>
-	(string[] Requirements, SortedList<string, Variable> RequirementVariables) GetRequirements(Item itm);
 	SortedList<string, Variable> GetRequirementVariables(Item itm);
 
 	/// <summary>
@@ -125,13 +103,54 @@ public interface IItemProvider
 	/// <returns></returns>
 	RequirementInfo GetRequirementInfo(Item item, SortedList<string, Variable> requirementVariables);
 
-	SortedList<string, int> GetStatBonuses(Item item);
-	void GetStatBonusesFromRecord(SortedList<string, int> statBonuses, DBRecordCollection record, int statLevel = 0);
+	/// <summary>
+	/// Gets the skill levels an item adds (to a skill, to the skills of a mastery, to all skills): from its base
+	/// record, its affixes, its relics at their number of pieces and their completion bonuses.
+	/// </summary>
+	IReadOnlyList<SkillAugment> GetSkillAugments(Item item);
+	/// <summary>
+	/// Sums every numeric variable of an item, as the game collects it for the character window: its base record, its
+	/// affixes (with the values the game rolls from the item seed), its relics or charms at their number of pieces and
+	/// their completion bonuses.
+	/// </summary>
+	AttributeSum GetAttributeSums(Item item);
+	/// <summary>
+	/// Replays the game's stat jitter for equipment (armor, jewellery, weapons, shields): the values the game rolled from
+	/// the item seed for its base record and its affixes, and their possible ranges.
+	/// </summary>
+	/// <param name="baseRecord">The item's base record, already read.</param>
+	/// <returns><see langword="null"/> when the item is not equipment or has no seed.</returns>
+	ItemRollResult? RollInGameValues(Item itm, DBRecordCollection? baseRecord);
+
+	/// <summary>
+	/// Sums the bonuses of the item sets worn: each set record read at the number of its pieces among the items.
+	/// </summary>
+	AttributeSum GetSetBonuses(IEnumerable<Item> equipped);
+
+	/// <summary>
+	/// The item sets worn, one by one: each set record, its name tag (<c>setName</c>), the pieces worn and its bonuses at
+	/// that number of pieces. <see cref="GetSetBonuses"/> is their sum.
+	/// </summary>
+	IReadOnlyList<SetBonus> GetSetBonusSources(IEnumerable<Item> equipped);
+
+	/// <summary>Sums the numeric variables of one record at a level (arrays read at level - 1, the last value past their end).</summary>
+	AttributeSum GetRecordAttributes(RecordId? recordId, int level);
 	/// <summary>
 	/// Gets the itemID's of all the items in the set.
 	/// </summary>
 	/// <returns>Returns <see cref="SetItemInfo"/> containing the remaining set items or null if the item is not part of a set.</returns>
-	SetItemInfo GetSetItems(Item itm);
+	SetItemInfo? GetSetItems(Item itm);
+	/// <summary>
+	/// The skills the item grants with their level (<c>itemSkillName</c> at <c>itemSkillLevel</c>, at least 1), from its
+	/// base record, its affixes, its relics and their completion bonuses, hidden helper skills included: what the game
+	/// gives the character who wears it.
+	/// </summary>
+	IReadOnlyList<(RecordId SkillId, int Level)> GetGrantedSkillLevels(Item itm);
+	/// <summary>
+	/// The records of an item that grant a skill (<c>itemSkillName</c>): its base, its affixes, its relics and their
+	/// completion bonuses, each once, with the skill and the level they grant it at (<c>itemSkillLevel</c>, at least 1).
+	/// </summary>
+	IEnumerable<(DBRecordCollection Source, RecordId SkillId, int Level)> GetGrantedSkillSources(Item itm);
 	/// <summary>
 	/// Gets the level of a triggered skill
 	/// </summary>
@@ -150,17 +169,11 @@ public interface IItemProvider
 	/// Removes the first relic from this item
 	/// </summary>
 	/// <returns>Returns the removed relic as a new Item</returns>
-	Item RemoveRelic1(Item itm);
+	Item? RemoveRelic1(Item itm);
 
 	/// <summary>
 	/// Removes the second relic from this item
 	/// </summary>
 	/// <returns>Returns the removed relic as a new Item</returns>
-	Item RemoveRelic2(Item itm);
-
-	/// <summary>
-	/// Invalidate item data cache
-	/// </summary>
-	/// <returns>true if cache have been changed</returns>
-	bool InvalidateFriendlyNamesCache(params IEnumerable<Item> items);
+	Item? RemoveRelic2(Item itm);
 }

@@ -3,7 +3,7 @@ namespace TQVaultAE.Services;
 
 public class DirectoryIO : IDirectoryIO
 {
-	public virtual bool Exists(string path)
+	public virtual bool Exists(string? path)
 	{
 		return System.IO.Directory.Exists(path);
 	}

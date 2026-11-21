@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TQData.cs" company="None">
+// <copyright file="TQDataService.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -9,14 +9,14 @@ using Microsoft.Extensions.Logging;
 using System.Buffers.Binary;
 using System.Globalization;
 using System.Text;
-using TQVaultAE.Logs;
+using TQVaultAE.GameFiles;
 
 namespace TQVaultAE.Data;
 
 /// <summary>
 /// TQData is used to store information about reading and writing the data files in TQ.
 /// </summary>
-public class TQDataService : ITQDataService
+public class TQDataService(ILogger<TQDataService> log) : ITQDataService
 {
 	public const int BEGIN_BLOCK_VALUE = -1340212530;
 	public const int END_BLOCK_VALUE = -559038242;
@@ -24,32 +24,17 @@ public class TQDataService : ITQDataService
 	public int BeginBlockValue => BEGIN_BLOCK_VALUE;
 	public int EndBlockValue => END_BLOCK_VALUE;
 
-	private readonly ILogger Log;
-
-	/// <summary>
-	/// Lazy-initialized CP1252 encoding for Titan Quest file parsing.
-	/// Encoding.RegisterProvider is idempotent - safe to call multiple times.
-	/// </summary>
-	private static readonly Lazy<Encoding> _encoding1252 = new(static () =>
-	{
-		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-		return Encoding.GetEncoding(1252);
-	});
+	private readonly ILogger Log = log;
 
 	/// <summary>
 	/// Gets the CP1252 (Windows-1252) encoding used for TQ file parsing.
 	/// </summary>
-	public static Encoding Encoding1252 => _encoding1252.Value;
+	public static Encoding Encoding1252 => TextEncodings.Cp1252;
 
 	/// <summary>
 	/// Gets the Unicode UTF-16 encoding.
 	/// </summary>
 	public static Encoding EncodingUnicode => Encoding.Unicode;
-
-	public TQDataService(ILogger<TQDataService> log)
-	{
-		this.Log = log;
-	}
 
 	/// <summary>
 	/// Validates that the next string is a certain value and throws an exception if it is not.
@@ -59,15 +44,16 @@ public class TQDataService : ITQDataService
 	public void ValidateNextString(string value, BinaryReader reader)
 	{
 		string label = ReadCString(reader);
-		if (!label.ToUpperInvariant().Equals(value.ToUpperInvariant()))
+		if (!string.Equals(label, value, StringComparison.OrdinalIgnoreCase))
 		{
+			long position = reader.BaseStream.Position - label.Length - 4;
 			var ex = new ArgumentException(string.Format(
 				CultureInfo.InvariantCulture,
 				"Error reading file at position {2}.  Expecting '{0}'.  Got '{1}'",
 				value,
 				label,
-				reader.BaseStream.Position - label.Length - 4));
-			Log.ErrorException(ex);
+				position));
+			this.Log.LogError(ex, "Unexpected string at position {Position}: expected '{Expected}', got '{Actual}'", position, value, label);
 			throw ex;
 		}
 	}
@@ -79,32 +65,10 @@ public class TQDataService : ITQDataService
 		string label = ReadCString(reader);
 		reader.BaseStream.Position = readerPosition;
 
-		if (!label.ToUpperInvariant().Equals(value.ToUpperInvariant()))
+		if (!string.Equals(label, value, StringComparison.OrdinalIgnoreCase))
 			return false;
 
 		return true;
-	}
-
-	/// <summary>
-	/// Validates that the next string matches the expected value using span-based parsing.
-	/// Does not throw - returns true if match, false otherwise.
-	/// Advances offset by the string length on match.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="expectedValue">The expected string value</param>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced on match</param>
-	/// <returns>True if the next string matches expectedValue</returns>
-	public bool ValidateNextString(string expectedValue, ReadOnlySpan<byte> data, ref int offset)
-	{
-		var savedOffset = offset;
-		string label = ReadCString(data, ref offset);
-		if (label.Equals(expectedValue, StringComparison.OrdinalIgnoreCase))
-			return true;
-
-		// Restore offset if no match
-		offset = savedOffset;
-		return false;
 	}
 
 	/// <summary>
@@ -148,57 +112,7 @@ public class TQDataService : ITQDataService
 		return ans;
 	}
 
-	/// <summary>
-	/// Reads a string from the binary stream.
-	/// Expects an integer length value followed by the actual string of the stated length.
-	/// </summary>
-	/// <param name="reader">BinaryReader instance</param>
-	/// <returns>string of data that was read</returns>
-	public string ReadUTF16String(BinaryReader reader)
-	{
-		// first 4 bytes is the string length, followed by the string.
-		int len = reader.ReadInt32();
-		len *= 2;// 2 byte chars
-		var rawData = reader.ReadBytes(len);
-
-		//convert bytes string
-		return EncodingUnicode.GetString(rawData);
-	}
-
-	/// <summary>
-	/// Reads a length-prefixed string from a span using CP1252 encoding.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>The decoded string</returns>
-	public string ReadCString(ReadOnlySpan<byte> data, ref int offset)
-	{
-		int len = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-		offset += sizeof(int);
-		var stringData = data.Slice(offset, len);
-		offset += len;
-		return Encoding1252.GetString(stringData);
-	}
-
-	/// <summary>
-	/// Reads a length-prefixed UTF-16 string from a span.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>The decoded string</returns>
-	public string ReadUTF16String(ReadOnlySpan<byte> data, ref int offset)
-	{
-		int charCount = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-		offset += sizeof(int);
-		int byteCount = charCount * 2;
-		var stringData = data.Slice(offset, byteCount);
-		offset += byteCount;
-		return Encoding.Unicode.GetString(stringData);
-	}
-
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueAsInt) WriteIntAfter(byte[] playerFileContent, string keyToLookFor, int newValue, int offset = 0)
 	{
 		var found = ReadIntAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf != -1)
@@ -209,7 +123,7 @@ public class TQDataService : ITQDataService
 		return found;
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, float valueAsFloat) WriteFloatAfter(byte[] playerFileContent, string keyToLookFor, float newValue, int offset = 0)
 	{
 		var found = ReadFloatAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf != -1)
@@ -220,74 +134,64 @@ public class TQDataService : ITQDataService
 		return found;
 	}
 
-	static byte[] Empty = [];
-
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, float valueAsFloat) ReadFloatAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, value, 0);
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0);
 
-		var span = playerFileContent.AsSpan(idx.nextOffset, sizeof(float));
-		value = span.ToArray();
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(float), value, BitConverter.ToSingle(value, 0));
+		float value = BinaryPrimitives.ReadSingleLittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(float)));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(float), value);
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueAsInt) ReadIntAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, value, 0);
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0);
 
-		var span = playerFileContent.AsSpan(idx.nextOffset, sizeof(int));
-		value = span.ToArray();
-		int intValue = BinaryPrimitives.ReadInt32LittleEndian(span);
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int), value, intValue);
+		int intValue = BinaryPrimitives.ReadInt32LittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(int)));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int), intValue);
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueLen, string valueAsString) ReadCStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, Empty, "");
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, "");
 
 		// Read the string length (4 bytes)
-		var lenSpan = playerFileContent.AsSpan(idx.nextOffset, sizeof(int));
-		int len = BinaryPrimitives.ReadInt32LittleEndian(lenSpan);
+		int len = BinaryPrimitives.ReadInt32LittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(int)));
 		// Read the string data
-		var stringSpan = playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len);
-		value = stringSpan.ToArray();
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len, len, value, Encoding1252.GetString(value));
+		var text = Encoding1252.GetString(playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len, len, text);
 	}
 
-	public (int indexOf, int valueOffset, int nextOffset, int valueLen, byte[] valueAsByteArray, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueLen, string valueAsString) ReadUnicodeStringAfter(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		var idx = BinaryFindKey(playerFileContent, keyToLookFor, offset);
-		byte[] value = Empty;
 
 		if (idx.indexOf == -1)// Not found
-			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, Empty, "");
+			return (idx.indexOf, idx.nextOffset, idx.nextOffset, 0, "");
 
 		// Read the string length (4 bytes) - multiply by 2 for 2-byte chars
-		var lenSpan = playerFileContent.AsSpan(idx.nextOffset, sizeof(int));
-		int len = BinaryPrimitives.ReadInt32LittleEndian(lenSpan);
+		int len = BinaryPrimitives.ReadInt32LittleEndian(playerFileContent.AsSpan(idx.nextOffset, sizeof(int)));
 		// Read the unicode string data (2 bytes per character)
-		var stringSpan = playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len * 2);
-		value = stringSpan.ToArray();
-		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len * 2, len, value, EncodingUnicode.GetString(value));
+		var text = EncodingUnicode.GetString(playerFileContent.AsSpan(idx.nextOffset + sizeof(int), len * 2));
+		return (idx.indexOf, idx.nextOffset, idx.nextOffset + sizeof(int) + len * 2, len, text);
 	}
 
 	public (int indexOf, int nextOffset) BinaryFindKey(byte[] dataSource, string key, int offset = 0)
 	{
 		// Add the length of the key to help filter out unwanted hits.
-		byte[] keyWithLen = BitConverter.GetBytes(key.Length).Concat(Encoding1252.GetBytes(key)).ToArray();
-		var result = BinaryFindKey(dataSource.AsSpan(), keyWithLen.AsSpan(), offset);
+		int byteCount = sizeof(int) + Encoding1252.GetByteCount(key);
+		Span<byte> keyWithLen = byteCount <= 256 ? stackalloc byte[byteCount] : new byte[byteCount];
+		BinaryPrimitives.WriteInt32LittleEndian(keyWithLen, key.Length);
+		Encoding1252.GetBytes(key, keyWithLen[sizeof(int)..]);
+		var result = BinaryFindKey(dataSource.AsSpan(), keyWithLen, offset);
 		// compensate the added length before returning the value
 		return result.indexOf == -1 // not found
 			? (result.indexOf, offset)
@@ -301,23 +205,8 @@ public class TQDataService : ITQDataService
 
 	private static (int indexOf, int nextOffset) BinaryFindKey(ReadOnlySpan<byte> dataSource, ReadOnlySpan<byte> key, int offset = 0)
 	{
-		// Use SIMD-optimized SequenceEqual for comparison when first byte matches
-		// adapted From https://www.codeproject.com/Questions/479424/C-23plusbinaryplusfilesplusfindingplusstrings
-		int i = offset;
-		var keyLength = key.Length;
-		var firstByte = key[0];
-
-		for (; i <= (dataSource.Length - keyLength); i++)
-		{
-			if (dataSource[i] == firstByte)
-			{
-				// Use Span.SequenceEqual which is SIMD-optimized in .NET
-				if (dataSource.Slice(i, keyLength).SequenceEqual(key))
-					return (i, i + keyLength);
-			}
-		}
-		// Not found
-		return (-1, 0);
+		int found = offset < 0 || offset > dataSource.Length ? -1 : dataSource[offset..].IndexOf(key);
+		return found == -1 ? (-1, 0) : (offset + found, offset + found + key.Length);
 	}
 
 	/// <summary>
@@ -327,12 +216,12 @@ public class TQDataService : ITQDataService
 	/// <param name="keyToLookFor"></param>
 	/// <param name="offset"></param>
 	/// <returns></returns>
-	public (int indexOf, int valueOffset, int nextOffset, byte[] valueAsByteArray, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0)
+	public (int indexOf, int valueOffset, int nextOffset, int valueAsInt) BinaryFindEndBlockOf(byte[] playerFileContent, string keyToLookFor, int offset = 0)
 	{
 		int level = 0;
 		var keybegin_block = "begin_block";
 		var keyend_block = "end_block";
-		var noMatch = (-1, 0, 0, new byte[] { }, 0);
+		var noMatch = (-1, 0, 0, 0);
 
 		var startPoint = BinaryFindKey(playerFileContent, keyToLookFor, offset);
 		if (startPoint.indexOf == -1)
@@ -375,30 +264,13 @@ public class TQDataService : ITQDataService
 		var found = ReadCStringAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf == -1) return false;
 
-		// Remove CString value using Span-based slicing
-		var keyBytes = Encoding1252.GetBytes(keyToLookFor);
-		int startLen = found.indexOf - sizeof(int);
-		int endLen = playerFileContent.Length - found.nextOffset;
-		int totalLen = startLen + sizeof(int) + keyBytes.Length + sizeof(int) + endLen;
-		var result = new byte[totalLen];
-		var resultSpan = result.AsSpan();
-
-		// start content
-		playerFileContent.AsSpan(0, startLen).CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(startLen);
-		// KeyLen
-		BitConverter.GetBytes(keyToLookFor.Length).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// Key
-		keyBytes.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(keyBytes.Length);
-		// ValueLen (set to 0 to remove)
-		BitConverter.GetBytes(0).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// end content
-		playerFileContent.AsSpan(found.nextOffset).CopyTo(resultSpan);
-
-		playerFileContent = result;
+		// The key, then an empty value (length 0)
+		var keyAndValue = SaveBytes.Encode(writer =>
+		{
+			WriteKey(writer, keyToLookFor);
+			writer.Write(0);
+		}, 64);
+		playerFileContent = SaveBytes.Splice(playerFileContent, found.indexOf - sizeof(int), found.nextOffset, keyAndValue);
 		return true;
 	}
 
@@ -407,34 +279,23 @@ public class TQDataService : ITQDataService
 		var found = ReadUnicodeStringAfter(playerFileContent, keyToLookFor, offset);
 		if (found.indexOf == -1) return false;
 
-		// Replace Unicode String value using Span-based slicing
-		var keyBytes = Encoding1252.GetBytes(keyToLookFor);
-		var valueBytes = EncodingUnicode.GetBytes(replacement);
-		int startLen = found.indexOf - sizeof(int);
-		int endLen = playerFileContent.Length - found.nextOffset;
-		int totalLen = startLen + sizeof(int) + keyBytes.Length + sizeof(int) + valueBytes.Length + endLen;
-		var result = new byte[totalLen];
-		var resultSpan = result.AsSpan();
-
-		// start content
-		playerFileContent.AsSpan(0, startLen).CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(startLen);
-		// KeyLen
-		BitConverter.GetBytes(keyToLookFor.Length).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// Key
-		keyBytes.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(keyBytes.Length);
-		// ValueLen
-		BitConverter.GetBytes(replacement.Length).AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(sizeof(int));
-		// Value
-		valueBytes.AsSpan().CopyTo(resultSpan);
-		resultSpan = resultSpan.Slice(valueBytes.Length);
-		// end content
-		playerFileContent.AsSpan(found.nextOffset).CopyTo(resultSpan);
-
-		playerFileContent = result;
+		// The key, then the value: its length in characters and its UTF-16 bytes
+		var keyAndValue = SaveBytes.Encode(writer =>
+		{
+			WriteKey(writer, keyToLookFor);
+			writer.Write(replacement.Length);
+			writer.Write(EncodingUnicode.GetBytes(replacement));
+		}, 64);
+		playerFileContent = SaveBytes.Splice(playerFileContent, found.indexOf - sizeof(int), found.nextOffset, keyAndValue);
 		return true;
+	}
+
+	/// <summary>
+	/// A key as the value splices write it: its length in characters, then its CP1252 bytes.
+	/// </summary>
+	private static void WriteKey(BinaryWriter writer, string key)
+	{
+		writer.Write(key.Length);
+		writer.Write(Encoding1252.GetBytes(key));
 	}
 }

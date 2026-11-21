@@ -1,0 +1,383 @@
+//-----------------------------------------------------------------------
+// <copyright file="VaultPanel.BagButtons.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
+using TQVaultAE.Config;
+using TQVaultAE.Domain.Actions;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Buttons;
+using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Tooltips;
+using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32;
+
+namespace TQVaultAE.GUI.Components.Panels;
+
+public partial class VaultPanel
+{
+	private void ApplyCustomButtonIcons()
+	{
+		if (this.Vault is not null)
+		{
+			foreach (var button in this.BagButtons)
+			{
+				var sack = this.Vault.GetSack(button.ButtonNumber);
+				button.ApplyIconInfo(sack);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Creates all of the bag buttons and adds them to the control.
+	/// </summary>
+	/// <param name="numberOfBags">total number of buttons to create</param>
+	private void CreateBagButtons(int numberOfBags)
+	{
+		for (int i = 0; i < numberOfBags; ++i)
+		{
+			this.BagButtons.Insert(i, this.CreateBagButton(i));
+			this.Controls.Add(this.BagButtons[i]);
+		}
+	}
+
+	/// <summary>
+	/// Handler for clicking a bag button
+	/// </summary>
+	/// <remarks>
+	/// Changed by VillageIdiot to support right and left mouse clicking.
+	/// </remarks>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">MouseEventArgs data</param>
+	protected virtual void BagButtonClick(object? sender, MouseEventArgs e)
+	{
+		BagButtonBase? b = (BagButtonBase)sender!;
+
+		int bagID = b.ButtonNumber;
+		if (bagID != this.CurrentBag)
+		{
+			// The setter turns the buttons off and on and shows the bag.
+			this.CurrentBag = bagID;
+			this.BagSackPanel.ClearSelectedItems();
+		}
+
+		if (e.Button == MouseButtons.Right)
+		{
+			// Only process vault bags with something in them.
+			if (this.BagSackPanel.SackType == SackType.Vault && this.BagButtons[this.CurrentBag].ButtonText is not null)
+			{
+				this.contextMenu.Items.Clear();
+				this.contextMenu.ShowCheckMargin = false;
+
+				// Add the move submenu
+				this.AddSubMenu(Resources.PlayerPanelMenuMove, this.MoveBagClicked);
+
+				// Only show Copy, Merge and Empty if something is in the bag.
+				if (!this.BagSackPanel.ShownSack.IsEmpty)
+				{
+					if (this.USettings.AllowItemCopy)
+					{
+						// Add the copy submenu
+						this.AddSubMenu(Resources.PlayerPanelMenuCopy, this.CopyBagClicked);
+					}
+
+					// Add the merge submenu
+					this.AddSubMenu(Resources.PlayerPanelMenuMerge, this.MergeBagClicked);
+
+					this.contextMenu.Items.Add("-");
+					this.contextMenu.Items.Add(Resources.PlayerPanelMenuEmpty).Tag = BagMenuAction.Empty;
+
+					if (this.Vault is not null)
+					{
+						// Add the Disable Tooltip submenu
+						this.contextMenu.Items.Add("-");
+
+						if (this.Vault.DisabledTooltipBagId.Contains(bagID))
+						{
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuEnableTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.Enable);
+						}
+						else
+						{
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuDisableTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.Disable);
+						}
+
+						if (this.Vault.DisabledTooltipBagId.Count < this.BagButtons.Count)
+						{
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuDisableAllTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.DisableAll);
+						}
+
+						if (this.Vault.DisabledTooltipBagId.Count != 0)
+						{
+							this.AddTooltipMenuItem(Resources.PlayerPanelMenuEnableAllTooltip, TQVaultAE.Application.DTOs.BagTooltipChange.EnableAll);
+						}
+						// Export to CSV
+						this.contextMenu.Items.Add("-");
+						var csvBagItem = new ToolStripMenuItem(Resources.ExportBagCSVToClipboard, null, this.ExportBagCSVToClipboard).StyledLike(this.contextMenu);
+						var csvVaultItem = new ToolStripMenuItem(Resources.ExportVaultCSVToClipboard, null, this.ExportVaultCSVToClipboard).StyledLike(this.contextMenu);
+						var csvMenu = new ToolStripMenuItem(Resources.ExportToCSV, null, csvBagItem, csvVaultItem)
+						{
+							DisplayStyle = ToolStripItemDisplayStyle.Text,
+						}.StyledLike(this.contextMenu);
+						this.contextMenu.Items.Add(csvMenu);
+
+						// Export Tab (JSON)
+						this.contextMenu.Items.Add("-");
+						this.AddExportTabSubMenu();
+					}
+
+				}
+
+				if (this.Vault is not null)
+				{
+					this.contextMenu.Items.Add("-");
+					this.contextMenu.Items.Add(Resources.PlayerPanelChangeIcon).Tag = BagMenuAction.ChangeIcon;
+					this.contextMenu.Items.Add(Resources.PlayerPanelCopyIcon).Tag = BagMenuAction.CopyIcon;
+
+					if (this.userContext.IconInfoCopied)
+						this.contextMenu.Items.Add(Resources.PlayerPanelPasteIcon).Tag = BagMenuAction.PasteIcon;
+
+					// Import from file
+					this.contextMenu.Items.Add("-");
+					var importFileItem = new ToolStripMenuItem(
+						Resources.PlayerPanelMenuImportTabFile, null,
+						this.ImportFromFileClicked).StyledLike(this.contextMenu);
+					this.contextMenu.Items.Add(importFileItem);
+				}
+
+				this.contextMenu.Show(this.BagButtons[this.CurrentBag], new Point(e.X, e.Y));
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for clicking the autosort button: a left click sorts with the order picked in its menu, a right click
+	/// opens that menu.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">MouseEventArgs data</param>
+	protected void AutoSortButtonClick(object? sender, MouseEventArgs e)
+	{
+		if (sender is not AutoSortButton button)
+			return;
+
+		if (e.Button == MouseButtons.Left)
+			this.SortTarget(button).Autosort(this.SortAlgorithmOf(button));
+		else if (e.Button == MouseButtons.Right)
+			this.ShowSortMenu(button, e.Location);
+	}
+
+	/// <summary>
+	/// The sack a sort button sorts: the bag panel here (for the stash panel, the shown tab), the main inventory or the
+	/// bags for the player panel.
+	/// </summary>
+	protected virtual SackPanel SortTarget(AutoSortButton button) => this.BagSackPanel;
+
+	/// <summary>
+	/// The key under which a sort button keeps its own order: the vault or the secondary vault here, the main inventory
+	/// or the bags for the player panel, one key for the stash panel's button whatever tab it shows.
+	/// </summary>
+	protected virtual SortButtonKey SortKey(AutoSortButton button)
+		=> this.AutoMoveLocation == AutoMoveLocation.SecondaryVault ? SortButtonKey.SecondaryVault : SortButtonKey.Vault;
+
+	/// <summary>The order a left click on <paramref name="button"/> sorts with, the one its menu checks.</summary>
+	protected SackSortAlgorithm SortAlgorithmOf(AutoSortButton button)
+		=> (this.USettings.Sort ?? new SortSettings()).AlgorithmFor(this.SortKey(button));
+
+	/// <summary>The sack the open sort menu sorts.</summary>
+	private SackPanel? sortMenuTarget;
+
+	/// <summary>The key of the sort button whose menu is open.</summary>
+	private SortButtonKey sortMenuKey;
+
+	/// <summary>
+	/// Opens the sort menu of a sort button: one entry per order, the one a left click on this button uses checked.
+	/// Picking an entry keeps it for this button's next clicks and sorts at once (<see cref="ContextMenuItemClicked"/>).
+	/// </summary>
+	private void ShowSortMenu(AutoSortButton button, Point location)
+	{
+		this.sortMenuTarget = this.SortTarget(button);
+		this.sortMenuKey = this.SortKey(button);
+		var current = this.SortAlgorithmOf(button);
+
+		this.contextMenu.Items.Clear();
+		this.contextMenu.ShowCheckMargin = true;
+		foreach (var (algorithm, text) in SortMenuEntries)
+		{
+			var entry = new ToolStripMenuItem(text) { Tag = algorithm, Checked = algorithm == current };
+			this.contextMenu.Items.Add(entry);
+		}
+
+		this.contextMenu.Show(button, location);
+	}
+
+	/// <summary>The entries of the sort menu, in their order.</summary>
+	private static IEnumerable<(SackSortAlgorithm Algorithm, string Text)> SortMenuEntries =>
+	[
+		(SackSortAlgorithm.Normal, Resources.SortMenuNormal),
+		(SackSortAlgorithm.Level, Resources.SortMenuLevel),
+		(SackSortAlgorithm.Type, Resources.SortMenuType),
+		(SackSortAlgorithm.Rarity, Resources.SortMenuRarity),
+	];
+
+	/// <summary>
+	/// A sort menu entry was picked: it becomes the order of that button's left click (saved in the settings, the other
+	/// sort buttons keep theirs), and the sack is sorted with it.
+	/// </summary>
+	private void SortMenuPicked(SackSortAlgorithm algorithm)
+	{
+		var target = this.sortMenuTarget;
+		this.sortMenuTarget = null;
+
+		this.USettings.Sort ??= new SortSettings();
+		if (this.USettings.Sort.SetAlgorithm(this.sortMenuKey, algorithm))
+			this.USettings.Save();
+
+		target?.Autosort(algorithm);
+	}
+
+	/// <summary>
+	/// Sets all of the autosort buttons to invisible.
+	/// </summary>
+	protected void HideAutoSortButtons()
+	{
+		if (this.autoSortButtons is not null && this.autoSortButtons.Count > 0)
+		{
+			foreach (AutoSortButton autoSortButton in this.autoSortButtons)
+			{
+				autoSortButton.Visible = false;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Sets all of the autosort buttons to visible.
+	/// </summary>
+	protected void UnhideAutoSortButtons()
+	{
+		if (this.autoSortButtons is not null && this.autoSortButtons.Count > 0)
+		{
+			this.autoSortButtons[0].Visible = true;
+
+			if (this.autoSortButtons.Count == 2)
+			{
+				this.autoSortButtons[1].Visible = this.ShownPlayer.NumberOfSacks - this.BagPanelOffset > 0;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Creates a new Autosort button
+	/// </summary>
+	/// <param name="buttonNumber">Number of the autosort button we are creating</param>
+	/// <returns>A new AutoSortButton instance</returns>
+	protected virtual AutoSortButton CreateAutoSortButton(int buttonNumber)
+	{
+		return this.NewSortButton(buttonNumber, true);
+	}
+
+	/// <summary>
+	/// Makes a sort button, hidden until its panel shows a bag, that sorts and opens the order menu through
+	/// <see cref="AutoSortButtonClick"/>. Every sort button of every panel is made here; the panel places it.
+	/// </summary>
+	/// <param name="buttonNumber">Number of the button in its panel (see <see cref="SortTarget"/>).</param>
+	/// <param name="rotated">True for the upright picture beside a vault's bag, false for the flat one above a bag.</param>
+	/// <param name="mirrored">True for the upright picture with its edge on its left side, against a frame on its left.</param>
+	protected AutoSortButton NewSortButton(int buttonNumber, bool rotated, bool mirrored = false)
+	{
+		AutoSortButton button = new AutoSortButton(buttonNumber, rotated, this.Services, mirrored) { Visible = false };
+		button.MouseDown += new MouseEventHandler(this.AutoSortButtonClick);
+		return button;
+	}
+
+	/// <summary>The size of the picture of the panel's bag buttons, at design size.</summary>
+	protected virtual Size BagButtonPicture => BagPictureSize;
+
+	/// <summary>The size of the bag picture, read once: the resources make a new bitmap at each read.</summary>
+	private static readonly Size BagPictureSize = PictureSize(Images.inventorybagup01);
+
+	/// <summary>The size of <paramref name="picture"/>, a bitmap read from the resources for it, then disposed.</summary>
+	protected static Size PictureSize(Bitmap picture)
+	{
+		using (picture)
+			return picture.Size;
+	}
+
+	/// <summary>
+	/// The size of a bag button whose picture is drawn at <paramref name="scale"/> times its size: bag pictures keep
+	/// their shape.
+	/// </summary>
+	protected virtual Size BagButtonSize(float scale, Size picture)
+		=> new((int)Math.Round(scale * (float)picture.Width), (int)Math.Round(scale * (float)picture.Height));
+
+	/// <summary>
+	/// Sizes the bag buttons and places them in a row above a sack at <paramref name="sackLocation"/>: the sack's width
+	/// is shared in <paramref name="slots"/> equal slots, a button centered in each.
+	/// </summary>
+	protected void PlaceBagButtons(Point sackLocation, int sackWidth, int slots)
+	{
+		Size picture = this.BagButtonPicture;
+		float pad = 2.0F;
+		float slotWidth = (float)picture.Width + (2.0F * pad);
+
+		// The pictures are drawn smaller as there are more bags.
+		float scale = ((float)sackWidth / slotWidth) / (float)slots;
+		float bagSlotWidth = scale * slotWidth;
+
+		int index = 0;
+		foreach (BagButtonBase button in this.BagButtons)
+		{
+			button.Size = this.BagButtonSize(scale, picture);
+			float offset = (bagSlotWidth * index) + ((bagSlotWidth - button.Width) / 2.0F);
+			button.Location = new Point(sackLocation.X + (int)Math.Round(offset), sackLocation.Y - button.Height);
+			index++;
+		}
+	}
+
+	/// <summary>
+	/// Creates a new bag button, placed by <see cref="LayOut"/>.
+	/// </summary>
+	/// <param name="bagNumber">Bag number that we are creating</param>
+	/// <returns>Instance of the new BagButton</returns>
+	protected virtual BagButtonBase CreateBagButton(int bagNumber)
+	{
+		BagButton button = new BagButton(bagNumber, new GetToolTip(this.GetSackToolTip), this.Services);
+
+		int bagLabelNumber = bagNumber - this.BagPanelOffset + 1;
+		button.ButtonText = bagLabelNumber.ToString(CultureInfo.CurrentCulture);
+		button.Visible = false;
+
+		// Changed by VillageIdiot to support right and left mouse clicking.
+		button.MouseDown += new MouseEventHandler(this.BagButtonClick);
+
+		return button;
+	}
+
+	/// <summary>
+	/// Gives the button the sack it summarizes.
+	/// </summary>
+	/// <param name="button">Button number of the sack</param>
+	/// <returns>Whether the summary of this bag is shown (<see cref="ShowsBagSummary"/>).</returns>
+	private bool GetSackToolTip(BagButtonBase button)
+	{
+		SackCollection? sack = this.ShownPlayer.GetSack(button.ButtonNumber + this.BagPanelOffset);
+		if (sack is not null)
+			button.Sack = sack;// Init prop for Tooltip
+
+		return this.ShowsBagSummary(button.ButtonNumber);
+	}
+
+	/// <summary>
+	/// Whether the summary tool tip of a bag is shown: for a vault, unless the user turned it off for that bag.
+	/// </summary>
+	protected virtual bool ShowsBagSummary(int bag)
+		=> this.Vault is { } vault && !vault.DisabledTooltipBagId.Contains(bag);
+}

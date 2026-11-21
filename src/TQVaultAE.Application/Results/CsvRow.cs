@@ -72,10 +72,10 @@ public class CsvRow
 			, fnr.Item.GameDlcCode // @"ItemOrigin"
 			, fnr.Item.Seed // @"ItemSeed"
 
-			, fnr.RequirementInfo.Lvl // @"RequireLvl"
-			, fnr.RequirementInfo.Str // @"RequireStr"
-			, fnr.RequirementInfo.Dex // @"RequireDex"
-			, fnr.RequirementInfo.Int // @"RequireInt"
+			, fnr.RequirementInfo?.Lvl // @"RequireLvl"
+			, fnr.RequirementInfo?.Str // @"RequireStr"
+			, fnr.RequirementInfo?.Dex // @"RequireDex"
+			, fnr.RequirementInfo?.Int // @"RequireInt"
 
 			, fnr.BaseItemRarity
 			, fnr.BaseItemInfoStyle

@@ -1,0 +1,15 @@
+namespace TQVaultAE.GUI.Components.Character.Editor;
+
+/// <summary>Access to the side panel of the character editor for the automation endpoint.</summary>
+internal sealed partial class CharacterSidePanel
+{
+	/// <summary>What the panel draws, and its editors (leveling, statistics options).</summary>
+	internal object AutomationState() => new
+	{
+		panel = this.Name,
+		scale = this.PanelScale,
+		bounds = this.Bounds,
+		view = this.View?.Invoke(),
+		editors = this.Editors.Select(c => new { c.Name, c.Visible, c.Enabled, c.Text }).ToList(),
+	};
+}

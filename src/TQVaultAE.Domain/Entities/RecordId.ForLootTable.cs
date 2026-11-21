@@ -1,4 +1,6 @@
-﻿namespace TQVaultAE.Domain.Entities;
+﻿using TQVaultAE.Domain.Helpers;
+
+namespace TQVaultAE.Domain.Entities;
 
 public partial class RecordId
 {
@@ -86,7 +88,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsTablesWeapon is null)
-				_IsTablesWeapon = this.Normalized.Contains(@"\TABLESWEAPON") || Path.GetFileName(this.Normalized).StartsWith(@"TABLE_WEAPON");
+				_IsTablesWeapon = this.Normalized.Contains(@"\TABLESWEAPON") || this.Normalized.RecordFileName().StartsWith(@"TABLE_WEAPON", StringComparison.Ordinal);
 			return _IsTablesWeapon.Value;
 		}
 	}
@@ -122,7 +124,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsTablesShields is null)
-				_IsTablesShields = this.Normalized.Contains(@"\TABLESSHIELD") || Path.GetFileName(this.Normalized).StartsWith(@"TABLE_SHIELD");
+				_IsTablesShields = this.Normalized.Contains(@"\TABLESSHIELD") || this.Normalized.RecordFileName().StartsWith(@"TABLE_SHIELD", StringComparison.Ordinal);
 			return _IsTablesShields.Value;
 		}
 	}
@@ -158,7 +160,7 @@ public partial class RecordId
 		get
 		{
 			if (_IsTablesArmor is null)
-				_IsTablesArmor = this.Normalized.Contains(@"\TABLESARMOR") || Path.GetFileName(this.Normalized).StartsWith(@"TABLE_ARMOR");
+				_IsTablesArmor = this.Normalized.Contains(@"\TABLESARMOR") || this.Normalized.RecordFileName().StartsWith(@"TABLE_ARMOR", StringComparison.Ordinal);
 			return _IsTablesArmor.Value;
 		}
 	}
@@ -179,32 +181,32 @@ public partial class RecordId
 			if (!IsLootMagicalAffixes) return GearType.Undefined;
 
 			if (_LootTableGearType is null)
-				_LootTableGearType = Path.GetFileName(this.Normalized) switch
+				_LootTableGearType = this.Normalized.RecordFileName() switch
 				{
-					var x when x.StartsWith(@"ARMSMAGE") || x.StartsWith(@"ARMMAGE") => GearType.Arm | GearType.ForMage,
-					var x when x.StartsWith(@"ARMSMELEE") || x.StartsWith(@"ARMMELEE") => GearType.Arm | GearType.ForMelee,
-					var x when x.StartsWith(@"HEADMAGE") => GearType.Head | GearType.ForMage,
-					var x when x.StartsWith(@"HEADMELEE") => GearType.Head | GearType.ForMelee,
-					var x when x.StartsWith(@"LEGSMAGE") || x.StartsWith(@"LEGMAGE") => GearType.Leg | GearType.ForMage,
-					var x when x.StartsWith(@"LEGSMELEE") || x.StartsWith(@"LEGMELEE") => GearType.Leg | GearType.ForMelee,
-					var x when x.StartsWith(@"TORSOMAGE") => GearType.Torso | GearType.ForMage,
-					var x when x.StartsWith(@"TORSOMELEE") => GearType.Torso | GearType.ForMelee,
-					var x when x.StartsWith(@"RING") => GearType.Ring,
-					var x when x.StartsWith(@"AMULET") => GearType.Amulet,
-					var x when x.StartsWith(@"SHIELD") => GearType.Shield,
-					var x when x.StartsWith(@"AXE") => GearType.Axe,
-					var x when x.StartsWith(@"BOW") => GearType.Bow,
-					var x when x.StartsWith(@"CLUB") => GearType.Mace,
-					var x when x.StartsWith(@"ROH") => GearType.Thrown,
-					var x when x.StartsWith(@"SPEAR") => GearType.Spear,
-					var x when x.StartsWith(@"STAFF") => GearType.Staff,
-					var x when x.StartsWith(@"SWORD") => GearType.Sword,
+					var x when x.StartsWith(@"ARMSMAGE", StringComparison.Ordinal) || x.StartsWith(@"ARMMAGE", StringComparison.Ordinal) => GearType.Arm | GearType.ForMage,
+					var x when x.StartsWith(@"ARMSMELEE", StringComparison.Ordinal) || x.StartsWith(@"ARMMELEE", StringComparison.Ordinal) => GearType.Arm | GearType.ForMelee,
+					var x when x.StartsWith(@"HEADMAGE", StringComparison.Ordinal) => GearType.Head | GearType.ForMage,
+					var x when x.StartsWith(@"HEADMELEE", StringComparison.Ordinal) => GearType.Head | GearType.ForMelee,
+					var x when x.StartsWith(@"LEGSMAGE", StringComparison.Ordinal) || x.StartsWith(@"LEGMAGE", StringComparison.Ordinal) => GearType.Leg | GearType.ForMage,
+					var x when x.StartsWith(@"LEGSMELEE", StringComparison.Ordinal) || x.StartsWith(@"LEGMELEE", StringComparison.Ordinal) => GearType.Leg | GearType.ForMelee,
+					var x when x.StartsWith(@"TORSOMAGE", StringComparison.Ordinal) => GearType.Torso | GearType.ForMage,
+					var x when x.StartsWith(@"TORSOMELEE", StringComparison.Ordinal) => GearType.Torso | GearType.ForMelee,
+					var x when x.StartsWith(@"RING", StringComparison.Ordinal) => GearType.Ring,
+					var x when x.StartsWith(@"AMULET", StringComparison.Ordinal) => GearType.Amulet,
+					var x when x.StartsWith(@"SHIELD", StringComparison.Ordinal) => GearType.Shield,
+					var x when x.StartsWith(@"AXE", StringComparison.Ordinal) => GearType.Axe,
+					var x when x.StartsWith(@"BOW", StringComparison.Ordinal) => GearType.Bow,
+					var x when x.StartsWith(@"CLUB", StringComparison.Ordinal) => GearType.Mace,
+					var x when x.StartsWith(@"ROH", StringComparison.Ordinal) => GearType.Thrown,
+					var x when x.StartsWith(@"SPEAR", StringComparison.Ordinal) => GearType.Spear,
+					var x when x.StartsWith(@"STAFF", StringComparison.Ordinal) => GearType.Staff,
+					var x when x.StartsWith(@"SWORD", StringComparison.Ordinal) => GearType.Sword,
 					// For Broken Affixes
-					var x when x.StartsWith(@"TABLE_ARMOR") => GearType.AllArmor,
-					var x when x.StartsWith(@"TABLE_SHIELD") => GearType.Shield,
-					var x when x.StartsWith(@"TABLE_WEAPONSCLUB") => GearType.Mace,
-					var x when x.StartsWith(@"TABLE_WEAPONSMETAL") => GearType.Sword | GearType.Axe | GearType.Thrown,
-					var x when x.StartsWith(@"TABLE_WEAPONSWOOD") => GearType.Spear | GearType.Staff | GearType.Bow,
+					var x when x.StartsWith(@"TABLE_ARMOR", StringComparison.Ordinal) => GearType.AllArmor,
+					var x when x.StartsWith(@"TABLE_SHIELD", StringComparison.Ordinal) => GearType.Shield,
+					var x when x.StartsWith(@"TABLE_WEAPONSCLUB", StringComparison.Ordinal) => GearType.Mace,
+					var x when x.StartsWith(@"TABLE_WEAPONSMETAL", StringComparison.Ordinal) => GearType.Sword | GearType.Axe | GearType.Thrown,
+					var x when x.StartsWith(@"TABLE_WEAPONSWOOD", StringComparison.Ordinal) => GearType.Spear | GearType.Staff | GearType.Bow,
 					//RECORDS\XPACK4\ITEM\LOOTMAGICALAFFIXES\SUFFIX\TABLESARMOR\CHINAMONSTERSUFFIX_L05.DBR
 					//RECORDS\XPACK4\ITEM\LOOTMAGICALAFFIXES\SUFFIX\TABLESARMOR\EGYPTMONSTERSUFFIX_L05.DBR
 					var x when x.Contains(@"MONSTER") => GearType.MonsterInfrequent,

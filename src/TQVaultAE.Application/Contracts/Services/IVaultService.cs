@@ -1,9 +1,15 @@
+using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
+using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Services;
 
 public interface IVaultService
 {
+	/// <summary>The name of the vault TQVault creates and opens first.</summary>
+	const string MainVault = "Main Vault";
+
 	/// <summary>
 	/// Creates a new empty vault file.
 	/// </summary>
@@ -27,33 +33,161 @@ public interface IVaultService
 	VaultLoadResult LoadVault(string vaultName);
 
 	/// <summary>
-	/// Gets the list of available vault names.
+	/// Orders the vault names for a vault drop down list: the leading entry, then the Main Vault, then the others in
+	/// their given order.
 	/// </summary>
-	/// <returns>List of vault names.</returns>
-	IReadOnlyList<string> GetVaultList();
+	/// <param name="vaultNames">The vault names, for example from <see cref="IGamePathService.GetVaultList"/>.</param>
+	/// <param name="leadingEntry">An entry put first, such as the maintenance or "select a vault" entry; none when null.</param>
+	/// <param name="excludedVault">A vault left out, such as the one open in the other vault panel; none when null.</param>
+	/// <param name="alwaysIncludeMainVault">True to list the Main Vault even when <paramref name="vaultNames"/> lacks it
+	/// (its file is created on first load).</param>
+	/// <returns>The ordered names.</returns>
+	IReadOnlyList<string> BuildVaultChoices(IEnumerable<string> vaultNames, string? leadingEntry = null, string? excludedVault = null, bool alwaysIncludeMainVault = true);
 
 	/// <summary>
-	/// Deletes a vault file.
+	/// Checks a bag copy or merge from <paramref name="source"/> onto <paramref name="destination"/> within a vault.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="source">Index of the source bag.</param>
+	/// <param name="destination">Index of the destination bag.</param>
+	/// <returns>Whether the transfer can run and whether it would overwrite items.</returns>
+	BagTransferCheck CheckBagTransfer(PlayerCollection vault, int source, int destination);
+
+	/// <summary>
+	/// Empties a bag ("Empty Bag", or a bag about to be overwritten by "Copy Bag"): its items are removed and
+	/// dropped from the search database, so searches no longer find them.
+	/// </summary>
+	/// <param name="sack">The bag to empty.</param>
+	void EmptyBag(SackCollection sack);
+
+	/// <summary>
+	/// "Move Bag": moves a bag to another place, the bags in between shift by one. The search follows the new bag
+	/// numbers.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="source">Index of the bag to move.</param>
+	/// <param name="destination">Its new index.</param>
+	/// <returns>Whether the bag moved.</returns>
+	bool MoveBag(PlayerCollection vault, int source, int destination);
+
+	/// <summary>
+	/// "Copy Bag": replaces a bag by a copy of another. The overwritten items leave the search, the copies join it.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="source">Index of the bag to copy.</param>
+	/// <param name="destination">Index of the bag replaced.</param>
+	/// <returns>Whether the bag was copied.</returns>
+	bool CopyBag(PlayerCollection vault, int source, int destination);
+
+	/// <summary>
+	/// Shows or hides the tooltip of a vault bag, or of every bag. The list is saved in the vault file, so the vault is
+	/// marked modified when it changes.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="change">What the menu entry does.</param>
+	/// <param name="bag">The bag of <see cref="BagTooltipChange.Enable"/> and <see cref="BagTooltipChange.Disable"/>.</param>
+	/// <param name="bagCount">The number of bag buttons, for <see cref="BagTooltipChange.DisableAll"/>.</param>
+	void ChangeBagTooltip(PlayerCollection vault, BagTooltipChange change, int bag, int bagCount);
+
+	/// <summary>
+	/// "Copy Icon": keeps a copy of a bag's icon in the session (<see cref="SessionContext.IconInfoCopy"/>), not the
+	/// bag's own instance, so later edits of the bag do not change it. A bag with the default icon copies "no icon".
+	/// </summary>
+	/// <param name="sack">The bag; <see langword="null"/> copies "no icon".</param>
+	void CopyBagIcon(SackCollection? sack);
+
+	/// <summary>
+	/// "Paste Icon": gives a bag a copy of the icon copied in the session, so pasting on several bags does not share one
+	/// instance. The bag is marked modified only when its icon changes.
+	/// </summary>
+	/// <param name="sack">The bag.</param>
+	/// <returns>False when an icon was copied but there is no bag to paste it on.</returns>
+	bool PasteBagIcon(SackCollection? sack);
+
+	/// <summary>
+	/// Remembers the bag selected in a vault panel, so the panel shows it again when the vault is reopened. Each vault
+	/// keeps one bag for the main vault panel and one for the secondary vault panel; they are saved in the vault file,
+	/// so the vault is marked modified when the bag changes.
+	/// </summary>
+	/// <param name="vault">The vault shown in the panel.</param>
+	/// <param name="secondary">True for the secondary vault panel, false for the main vault panel.</param>
+	/// <param name="bag">The selected bag index.</param>
+	/// <returns>True when the remembered bag changed.</returns>
+	bool RememberSelectedBag(PlayerCollection vault, bool secondary, int bag);
+
+	/// <summary>
+	/// Picks the bag a vault panel shows once it gets a vault: the bag remembered for that panel (see
+	/// <see cref="RememberSelectedBag"/>) when there is one, else the bag the panel already showed, kept within the bags.
+	/// </summary>
+	/// <param name="vault">The vault shown in the panel; null for a panel that remembers nothing (a character panel).</param>
+	/// <param name="secondary">True for the secondary vault panel, false for the main vault panel.</param>
+	/// <param name="currentBag">The bag the panel showed before.</param>
+	/// <param name="count">The number of bags the panel shows.</param>
+	/// <returns>A bag index from 0 to <paramref name="count"/> - 1; 0 or more when there are no bags.</returns>
+	int ResolveInitialBag(PlayerCollection? vault, bool secondary, int currentBag, int count);
+
+	/// <summary>
+	/// Builds the CSV export of a vault, or of one of its bags: a header line, then one line per item, separated by the
+	/// CSV delimiter of the settings.
+	/// </summary>
+	/// <param name="vault">The vault.</param>
+	/// <param name="bagIndex">Index of the bag to export; the whole vault when null.</param>
+	/// <returns>The CSV text, lines separated by <see cref="Environment.NewLine"/>.</returns>
+	string BuildCsvExport(PlayerCollection vault, int? bagIndex);
+
+	/// <summary>
+	/// Checks a vault maintenance request before it runs.
+	/// </summary>
+	/// <param name="action">The maintenance function.</param>
+	/// <param name="source">The vault to copy, delete or rename; ignored for <see cref="VaultMaintenance.New"/>.</param>
+	/// <param name="target">The new vault name, already trimmed; ignored for <see cref="VaultMaintenance.Delete"/>.</param>
+	/// <param name="existingVaults">The names of the existing vaults.</param>
+	/// <returns><see cref="VaultMaintenanceError.None"/> when the request is valid, else the first problem found.</returns>
+	VaultMaintenanceError ValidateMaintenance(VaultMaintenance action, string? source, string? target, IEnumerable<string> existingVaults);
+
+	/// <summary>
+	/// Copies a vault file when the source exists and the target does not.
+	/// </summary>
+	/// <param name="sourceName">Name of the vault to copy.</param>
+	/// <param name="targetName">Name of the new vault.</param>
+	/// <returns>True if the file was copied.</returns>
+	bool CopyVault(string sourceName, string targetName);
+
+	/// <summary>
+	/// What deleting a vault would remove, for the confirmation: its items, the bags holding them, and whether the file
+	/// can go to the Recycle Bin.
+	/// </summary>
+	/// <param name="vaultName">Name of the vault.</param>
+	VaultDeleteInfo GetDeleteInfo(string vaultName);
+
+	/// <summary>
+	/// Deletes a vault file when it exists, to the Recycle Bin when it can (see <see cref="GetDeleteInfo"/>), and drops it
+	/// from the session cache and the search.
 	/// </summary>
 	/// <param name="vaultName">Name of the vault to delete.</param>
-	/// <returns>True if deletion succeeded, false otherwise.</returns>
+	/// <returns>True if a file was deleted.</returns>
 	bool DeleteVault(string vaultName);
 
 	/// <summary>
-	/// Renames a vault file.
+	/// Renames a vault file when the old one exists and the new one does not,
+	/// and drops both names from the session cache.
 	/// </summary>
 	/// <param name="oldName">Current name of the vault.</param>
 	/// <param name="newName">New name for the vault.</param>
-	/// <returns>True if rename succeeded, false otherwise.</returns>
+	/// <returns>True if the file was renamed.</returns>
 	bool RenameVault(string oldName, string newName);
 
 	/// <summary>
-	/// Attempts to save all modified vault files.
+	/// Gets the loaded vaults that have unsaved changes, with their file.
 	/// </summary>
-	/// <param name="vaultOnError">If save fails, this will contain the vault that failed.</param>
-	/// <returns>Number of vaults saved.</returns>
-	/// <exception cref="IOException">can happen during file save</exception>
-	int SaveAllModifiedVaults(ref PlayerCollection vaultOnError);
+	IReadOnlyList<(string File, PlayerCollection Vault)> GetModifiedVaults();
+
+	/// <summary>
+	/// Backs up (unless legacy backups are disabled) and saves one vault file, then marks the vault saved.
+	/// </summary>
+	/// <exception cref="IOException">The file could not be written.</exception>
+	/// <exception cref="UnauthorizedAccessException">The file or folder cannot be written to.</exception>
+	void SaveModifiedVault(string file, PlayerCollection vault);
 
 	/// <summary>
 	/// Updates VaultPath key from the configuration UI.
@@ -63,6 +197,25 @@ public interface IVaultService
 	void UpdateVaultPath(string vaultPath);
 
 	/// <summary>
+	/// Gets the names of the vault files. When the vault folder fell back to its default while being read,
+	/// the VaultPath setting is updated to it.
+	/// </summary>
+	string[] GetVaultList();
+
+	/// <summary>
+	/// Tells whether the file of a vault exists.
+	/// </summary>
+	/// <param name="vaultName">Name of the vault.</param>
+	bool VaultExists(string vaultName);
+
+	/// <summary>
+	/// Chooses the vault to load in the main panel: the last vault when "load last vault" is on (the Main Vault when
+	/// it is not set or its file is missing), else <paramref name="currentVault"/>.
+	/// </summary>
+	/// <param name="currentVault">The vault to keep when the last vault is not loaded.</param>
+	string ResolveVaultToLoad(string currentVault);
+
+	/// <summary>
 	/// Saves a vault to disk.
 	/// </summary>
 	/// <param name="vault">The vault to save.</param>
@@ -70,7 +223,9 @@ public interface IVaultService
 	void SaveVault(PlayerCollection vault, string vaultName);
 
 	/// <summary>
-	/// Shows the vault maintenance dialog.
+	/// Lists the items of a vault in the search again, after its content was replaced as a whole (import): the items
+	/// it had leave the search, those it has now enter it.
 	/// </summary>
-	void ShowVaultMaintenance();
+	/// <param name="vault">The vault.</param>
+	void ReindexVault(PlayerCollection vault);
 }

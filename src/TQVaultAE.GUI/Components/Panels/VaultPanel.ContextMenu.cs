@@ -1,0 +1,391 @@
+//-----------------------------------------------------------------------
+// <copyright file="VaultPanel.ContextMenu.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+using TQVaultAE.Domain.Actions;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
+using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Tooltips;
+using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.Services;
+
+namespace TQVaultAE.GUI.Components.Panels;
+
+public partial class VaultPanel
+{
+	/// <summary>
+	/// Builds the CSV export of the shown vault, or of one of its bags, with the delimiter of the settings.
+	/// </summary>
+	/// <param name="bagIndex">Index of the bag to export; the whole vault when null.</param>
+	internal string BuildCsvExport(int? bagIndex)
+		=> this.Services.VaultService.BuildCsvExport(this.ShownVault, bagIndex);
+
+	private void ExportVaultCSVToClipboard(object? sender, EventArgs e)
+		=> this.ExportCSVToClipboard(null);
+
+	private void ExportBagCSVToClipboard(object? sender, EventArgs e)
+		=> this.ExportCSVToClipboard(this.BagSackPanel.CurrentSack);
+
+	/// <summary>
+	/// Copies the CSV export of the shown vault, or of one of its bags, to the clipboard.
+	/// </summary>
+	/// <param name="bagIndex">Index of the bag to export; the whole vault when null.</param>
+	private void ExportCSVToClipboard(int? bagIndex)
+	{
+		Clipboard.SetText(this.BuildCsvExport(bagIndex), TextDataFormat.UnicodeText);
+
+		this.UIService.NotifyUser(string.Format(Resources.CSVExportedToClipboardNotification, DateTime.Now));
+	}
+
+	private void DisableTooltipClicked(object? sender, EventArgs e)
+	{
+		// The entry carries its action (AddTooltipMenuItem), not compared by its translated text.
+		if ((sender as ToolStripItem)?.Tag is TQVaultAE.Application.DTOs.BagTooltipChange change)
+			this.Services.VaultService.ChangeBagTooltip(this.ShownVault, change, this.CurrentBag, this.BagButtons.Count);
+	}
+
+	/// <summary>Adds a bag tooltip entry that does <paramref name="change"/>.</summary>
+	private void AddTooltipMenuItem(string menuText, TQVaultAE.Application.DTOs.BagTooltipChange change)
+	{
+		this.AddMenuItem(menuText, this.DisableTooltipClicked);
+		this.contextMenu.Items[^1].Tag = change;
+	}
+
+	private void AddExportTabSubMenu()
+		=> this.contextMenu.Items.Add(MenuStyle.ExportSubMenu(
+			this.contextMenu,
+			Resources.PlayerPanelMenuExportTab,
+			(Resources.PlayerPanelMenuExportTabClipboard, this.ExportTabToClipboardClicked),
+			(Resources.PlayerPanelMenuExportTabFile, this.ExportTabToFileClicked),
+			(Resources.PlayerPanelMenuExportTabPasteBin, this.ExportTabToPasteBinClicked),
+			this.ExchangeService?.HasPasteBinApiKey == true));
+
+	private void ExportTabToClipboardClicked(object? sender, EventArgs e)
+		=> ExportActions.ToClipboard(
+			() => this.BagSackPanel?.Sack is { } sack
+				? this.ExchangeService?.SerializeSackCollection(sack, this.CurrentBag, this.BagSackPanel.ContainerMap)
+				: null,
+			this.Services.Logger<VaultPanel>(),
+			"tab");
+
+	private void ExportTabToFileClicked(object? sender, EventArgs e)
+	{
+		if (this.ExchangeService is not null && this.BagSackPanel?.Sack is not null)
+			ExportActions.ToFile(IItemExchangeService.TabExportFileName, path => this.ExportTabToFile(path), this.Services.Logger<VaultPanel>(), "tab");
+	}
+
+	/// <summary>Writes the shown tab to a JSON file, as "Export tab > File" does once its file is chosen.</summary>
+	/// <returns><see langword="false"/> when there is no tab to export.</returns>
+	private bool ExportTabToFile(string path)
+	{
+		var exchangeService = this.ExchangeService;
+		if (exchangeService is null || this.BagSackPanel?.Sack is null)
+			return false;
+
+		var json = exchangeService.SerializeSackCollection(this.BagSackPanel.Sack, this.CurrentBag, this.BagSackPanel.ContainerMap);
+		exchangeService.ExportToFile(json, path);
+		return true;
+	}
+
+	private async void ExportTabToPasteBinClicked(object? sender, EventArgs e)
+	{
+		if (this.ExchangeService is { } exchangeService && this.BagSackPanel?.Sack is { } sack)
+			await ExportActions.ToPasteBinAsync(
+				() => exchangeService.ExportTabToPasteBinAsync(this.ShownVault.PlayerName, sack, this.CurrentBag, this.BagSackPanel.ContainerMap),
+				this.UIService,
+				Resources.ExportTabSuccessPasteBin,
+				this.Services.Logger<VaultPanel>(),
+				"tab");
+	}
+
+	/// <summary>
+	/// Gets the destination bag index carried by a bag submenu entry.
+	/// </summary>
+	/// <param name="sender">The clicked menu entry.</param>
+	/// <returns>The bag index, -1 when the entry carries none.</returns>
+	private static int GetDestinationSackIndex(object? sender)
+		=> (sender as ToolStripItem)?.Tag is MenuItemTagBagIndex tag ? tag.Index : -1;
+
+	/// <summary>
+	/// Creates a context menu submenu with choices for each bag in the panel
+	/// except for the currently selected bag.
+	/// </summary>
+	/// <param name="menuText">Text label for the sub menu</param>
+	/// <param name="menuCallback">handler for the submenu</param>
+	private void AddSubMenu(string menuText, EventHandler menuCallback)
+	{
+		var menuChoices = new ToolStripItem[this.BagButtons.Count - 1];
+		int menuIndex = 0;
+		for (int i = 0; i < this.BagButtons.Count; i++)
+		{
+			if (i != this.CurrentBag)
+			{
+				int val = i + 1;
+				menuChoices[menuIndex] = new ToolStripMenuItem(string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val)
+					, null, menuCallback, string.Format(CultureInfo.CurrentCulture, Resources.GlobalMenuBag, val))
+				{
+					Tag = new MenuItemTagBagIndex(i),
+				}.StyledLike(this.contextMenu);
+				menuIndex++;
+			}
+		}
+
+		var subMenu = new ToolStripMenuItem(menuText, null, menuChoices)
+		{
+			DisplayStyle = ToolStripItemDisplayStyle.Text
+		}.StyledLike(this.contextMenu);
+
+		this.contextMenu.Items.Add(subMenu);
+	}
+
+	private void AddMenuItem(string menuText, EventHandler menuCallback)
+	{
+		var subMenu = new ToolStripMenuItem(menuText, null, menuCallback)
+		{
+			DisplayStyle = ToolStripItemDisplayStyle.Text,
+		}.StyledLike(this.contextMenu);
+
+		this.contextMenu.Items.Add(subMenu);
+	}
+
+	/// <summary>
+	/// Links the vault to a mod, or to none: its items are read again with that mod's data.
+	/// </summary>
+	internal void ChangeVaultMod(string? mod)
+	{
+		var size = this.BagSackPanel.SackSize;
+		var change = this.Services.ItemEditService.ChangeVaultMod(this.ShownVault, mod
+			, (sack, item) => SackLayout.FitsOrMoves(sack, size, item) || this.MoveToAnotherBag(sack, item));
+
+		Item[] items = [.. change.Changed, .. change.NoRoom];
+		if (items.Length == 0)
+			return;
+
+		this.ItemsReadAgain(items);
+		ItemTooltip.HideTooltip();
+		BagButtonTooltip.InvalidateCache([.. this.ShownVault.Where(sack => sack is not null)]);
+		this.BagSackPanel.Refresh();
+		this.BagSackPanel.NotifyNoRoom(change.NoRoom);
+	}
+
+	/// <summary>
+	/// Moves an item that has no room in its bag to the first free spot of another bag of the vault, in order.
+	/// </summary>
+	/// <returns>False when no bag has room, or when the panel shows no vault.</returns>
+	private bool MoveToAnotherBag(SackCollection from, Item item)
+	{
+		if (this.Vault is null || this.Player is null)
+			return false;
+
+		var size = this.BagSackPanel.SackSize;
+		for (int i = 0; i < this.Player.NumberOfSacks; i++)
+		{
+			var other = this.Player.GetSack(i);
+			if (other is null || ReferenceEquals(other, from) || !SackLayout.MoveToFreeSpot(other, size, item))
+				continue;
+
+			from.RemoveItem(item);
+			other.AddItem(item);
+			item.Place.SackNumber = i;
+			from.IsModified = true;
+			other.IsModified = true;
+			return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// After items were read with another map: their tool tips, names and search entries are made again.
+	/// </summary>
+	private void ItemsReadAgain(Item[] items)
+	{
+		ItemCaches.Invalidate(items, this.Services.ItemText);
+		this.Services.ItemDatabaseService.RefreshItems(items);
+	}
+
+	/// <summary>
+	/// Items put in the panel without a drop (Move To, import, paste) take the data of their new place
+	/// (<see cref="IItemEditService.SettleAll"/>); the tool tips of those read again are made again.
+	/// </summary>
+	/// <param name="sack">The bag holding the items.</param>
+	/// <param name="items">The items just put there.</param>
+	/// <param name="sackSize">The size of that bag in cells; the bag panel's by default.</param>
+	internal void AdoptVaultMod(SackCollection sack, IEnumerable<Item> items, Size? sackSize = null)
+	{
+		var size = sackSize ?? this.BagSackPanel.SackSize;
+		var result = this.Services.ItemEditService.SettleAll(sack, size, items, this.BagSackPanel.ContainerMap
+			, this.MoveToAnotherBag);
+
+		Item[] changed = [.. result.ReadAgain, .. result.NoRoom];
+		if (changed.Length == 0)
+			return;
+
+		this.ItemsReadAgain(changed);
+		this.BagSackPanel.NotifyNoRoom(result.NoRoom);
+	}
+
+	/// <summary>The bag menu entries handled by <see cref="ContextMenuItemClicked"/>, carried by their tag.</summary>
+	private enum BagMenuAction
+	{
+		Empty,
+		ChangeIcon,
+		CopyIcon,
+		PasteIcon,
+	}
+
+	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
+	{
+		// The sort button's menu: its entries carry their order.
+		if (e.ClickedItem?.Tag is SackSortAlgorithm algorithm)
+		{
+			this.SortMenuPicked(algorithm);
+			return;
+		}
+
+		// The entry carries its action, not compared by its translated text.
+		var action = e.ClickedItem?.Tag as BagMenuAction?;
+		if (action == BagMenuAction.Empty)
+		{
+			if (this.USettings.SuppressWarnings || this.Services.MessageBoxes.Confirm(Resources.PlayerPanelEmptyMsg, Resources.PlayerPanelEmpty))
+			{
+				this.Services.VaultService.EmptyBag(this.BagSackPanel.ShownSack);
+				this.BagSackPanel.Refresh();
+				BagButtonTooltip.InvalidateCache(this.BagSackPanel.Sack);
+			}
+		}
+
+		if (action == BagMenuAction.ChangeIcon)
+		{
+			var button = this.BagButtons[this.CurrentBag];
+
+			// Kept for the next opening at the same zoom (its icon grids are filled once): never dispose it.
+			var bbs = this.Services.Forms.BagButtonSettings();
+			bbs.CurrentBagButton = button;
+
+			if (bbs.ShowDialog() == DialogResult.OK)
+			{
+				button.Refresh();
+			}
+		}
+
+		if (action == BagMenuAction.CopyIcon)
+		{
+			this.Services.VaultService.CopyBagIcon(this.BagButtons[this.CurrentBag].Sack);
+
+			if (this.FindForm() is MainForm frm)
+				frm.NotificationText.Text = Resources.GlobalCopied;
+		}
+
+		if (action == BagMenuAction.PasteIcon)
+		{
+			var button = this.BagButtons[this.CurrentBag];
+			if (!this.Services.VaultService.PasteBagIcon(button.Sack))
+				return;
+
+			if (this.FindForm() is MainForm frm)
+				frm.NotificationText.Text = Resources.GlobalPasted;
+			button.ApplyIconInfo(button.Sack);
+			button.Refresh();
+		}
+
+	}
+
+	/// <summary>
+	/// Handler for clicking on Copy Bag from the context menu
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void CopyBagClicked(object? sender, EventArgs e)
+	{
+		ToolStripMenuItem? item = (ToolStripMenuItem)sender!;
+		if (item is not null)
+		{
+			int destinationIndex = GetDestinationSackIndex(item);
+
+			var check = this.Services.VaultService.CheckBagTransfer(this.ShownPlayer, this.CurrentBag, destinationIndex);
+			if (check == BagTransferCheck.Invalid)
+			{
+				return;
+			}
+
+			if (check == BagTransferCheck.DestinationNotEmpty)
+			{
+				// Suppressed warnings mean overwrite without asking, as for the other confirmations.
+				if (!this.USettings.SuppressWarnings && !this.Services.MessageBoxes.Confirm(Resources.PlayerOverwriteSackMsg, Resources.PlayerOverwriteSack))
+				{
+					return;
+				}
+
+			}
+
+			if (this.Services.VaultService.CopyBag(this.ShownPlayer, this.CurrentBag, destinationIndex))
+			{
+				// The setter turns the buttons off and on and shows the bag.
+				this.CurrentBag = destinationIndex;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for clicking move bag from the context menu
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MoveBagClicked(object? sender, EventArgs e)
+	{
+		ToolStripMenuItem? item = (ToolStripMenuItem)sender!;
+		if (item is not null)
+		{
+			int destinationIndex = GetDestinationSackIndex(item);
+			if (this.Services.VaultService.MoveBag(this.ShownPlayer, this.CurrentBag, destinationIndex))
+			{
+				// The setter turns the buttons off and on and shows the bag.
+				this.CurrentBag = destinationIndex;
+
+				ApplyCustomButtonIcons();
+				Refresh();
+			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for clicking Merge Bag on the context menu
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MergeBagClicked(object? sender, EventArgs e)
+	{
+		ToolStripMenuItem? item = (ToolStripMenuItem)sender!;
+		if (item is not null)
+		{
+			int destinationIndex = GetDestinationSackIndex(item);
+
+			if (this.Services.VaultService.CheckBagTransfer(this.ShownPlayer, this.CurrentBag, destinationIndex) == BagTransferCheck.Invalid)
+			{
+				return;
+			}
+
+			SackPanel dstSackPanel = this.BagSackPanel;
+			if (dstSackPanel.MergeSack(destinationIndex))
+			{
+				// The setter turns the buttons off and on and shows the bag.
+				this.CurrentBag = destinationIndex;
+			}
+		}
+	}
+}

@@ -1,12 +1,11 @@
-﻿namespace TQ.SaveFilesExplorer.Components
+﻿namespace TQ.SaveFilesExplorer.Components;
+
+internal enum CopyKeysType
 {
-	internal enum CopyKeysType
-	{
-		KeysOnly,
-		KeysType,
-		KeysTypeData,
-		DistinctKeys,
-		DistinctKeysType,
-		DistinctKeysTypeData,
-	}
+	KeysOnly,
+	KeysType,
+	KeysTypeData,
+	DistinctKeys,
+	DistinctKeysType,
+	DistinctKeysTypeData,
 }

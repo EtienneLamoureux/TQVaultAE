@@ -79,7 +79,7 @@ Version management is handled by **two separate workflows**:
 3. **auto-version.yml triggers**: Detects `version-info.json` changed
 4. **Sync version**: Script reads `version-info.json` and syncs to `Directory.Build.props`
 5. **Commit sync**: GitHub Actions commits synced files (including `Directory.Build.props`) with `[skip ci]` to prevent infinite loops
-6. **Build**: Compiles release artifacts
+6. **Build and publish**: Compiles the solution, then `.github/scripts/Publish-Release.ps1` publishes each output as a self-contained single-file executable, with its native libraries next to it and no `.pdb` files (Windows applications for win-x64; `tqdb` for win-x64 and linux-x64)
 7. **Create tag**: Creates git tag (e.g., `4.4.1`)
 8. **Create ZIP archives**: Packages each application as `NAME-VERSION.zip`
 9. **Create release**: Publishes GitHub Release with ZIP archives
@@ -124,7 +124,7 @@ grep "<Version" Directory.Build.props
 Expected output (single source of truth for all projects):
 ```
 # Directory.Build.props (all projects inherit this version)
-    <Version Condition="'$(IsPackable)' != 'false'">4.4.1.0</Version>
+    <Version Condition="'$(IsPackable)' != 'false'">5.0.0.0</Version>
 ```
 
 ### After Build
@@ -133,9 +133,10 @@ Expected output (single source of truth for all projects):
 # Check compiled executables (.NET 10.0 Windows)
 (Get-Item "src\TQVaultAE.GUI\bin\Release\net10.0-windows\TQVaultAE.exe").VersionInfo.FileVersion
 (Get-Item "src\ARZExplorer\bin\Release\net10.0-windows\ARZExplorer.exe").VersionInfo.FileVersion
+(Get-Item "src\TQSaveFilesExplorer\bin\Release\net10.0-windows\TQ.SaveFilesExplorer.exe").VersionInfo.FileVersion
 
-# Check compiled executables (.NET Framework 4.8)
-(Get-Item "src\TQSaveFilesExplorer\bin\Release\net48\TQ.SaveFilesExplorer.exe").VersionInfo.FileVersion
+# Check compiled executables (.NET 10.0, command line)
+(Get-Item "src\TQVaultAE.DbCli\bin\Release\net10.0\tqdb.exe").VersionInfo.FileVersion
 
 # Check compiled DLLs (.NET 10.0)
 (Get-Item "src\TQVaultAE.Domain\bin\Release\net10.0\TQVaultAE.Domain.dll").VersionInfo.FileVersion
@@ -144,11 +145,14 @@ Expected output (single source of truth for all projects):
 (Get-Item "src\TQVaultAE.Presentation\bin\Release\net10.0\TQVaultAE.Presentation.dll").VersionInfo.FileVersion
 (Get-Item "src\TQVaultAE.Data\bin\Release\net10.0\TQVaultAE.Data.dll").VersionInfo.FileVersion
 (Get-Item "src\TQVaultAE.Config\bin\Release\net10.0\TQVaultAE.Config.dll").VersionInfo.FileVersion
-(Get-Item "src\TQVaultAE.Logs\bin\Release\net10.0\TQVaultAE.Logs.dll").VersionInfo.FileVersion
+(Get-Item "src\TQVaultAE.GameFiles\bin\Release\net10.0\TQVaultAE.GameFiles.dll").VersionInfo.FileVersion
+
+# Check compiled DLLs (.NET 10.0 Windows)
+(Get-Item "src\TQVaultAE.Presentation.Win32\bin\Release\net10.0-windows\TQVaultAE.Presentation.Win32.dll").VersionInfo.FileVersion
 (Get-Item "src\TQVaultAE.Services.Win32\bin\Release\net10.0-windows\TQVaultAE.Services.Win32.dll").VersionInfo.FileVersion
 ```
 
-All should return: `4.4.1.0` (or current synchronized version)
+All should return: `5.0.0.0` (or current synchronized version)
 
 ### From Executable Properties
 
@@ -193,7 +197,7 @@ TQ.SaveFilesExplorer.exe: 4.4.0.0
 The sync script replaces wildcards with exact version. After running Update-Version.ps1 with `-VersionType "Sync"`, `Directory.Build.props` should have:
 
 ```xml
-<Version Condition="'$(IsPackable)' != 'false'">4.4.1.0</Version>
+<Version Condition="'$(IsPackable)' != 'false'">5.0.0.0</Version>
 ```
 
 ### Issue: Workflow Not Triggering on Version Bump
@@ -229,7 +233,7 @@ Release creation fails with 404 error on individual files.
 **Solution:**
 The workflow now creates ZIP archives before release. Verify:
 1. `Compress-Archive` step runs successfully
-2. ZIP files are created: `TQVaultAE.GUI-*.zip`, `TQSaveFilesExplorer-*.zip`, `ARZExplorer-*.zip`
+2. ZIP files are created: `TQVaultAE.GUI-*.zip`, `TQSaveFilesExplorer-*.zip`, `ARZExplorer-*.zip`, `tqdb-win-x64-*.zip`, `tqdb-linux-x64-*.zip`
 3. Release step uses ZIP files, not individual DLLs
 
 ## Best Practices
@@ -245,34 +249,34 @@ The workflow now creates ZIP archives before release. Verify:
 
 ## Next Release Preparation
 
-When ready to release version 4.5.0.0:
+When ready to release version 5.1.0.0:
 
 ```bash
 # Step 1: Edit version-info.json with new version
 # Edit version-info.json:
 # {
-#   "Major": 4,
-#   "Minor": 5,
+#   "Major": 5,
+#   "Minor": 1,
 #   "Build": 0,
 #   "Revision": 0
 # }
 
 # Step 2: Commit and push to master
 git add version-info.json
-git commit -m "chore: bump version to 4.5.0.0"
+git commit -m "chore: bump version to 5.1.0.0"
 git push origin master
 
 # Step 3: auto-version.yml workflow will automatically:
 # - Sync version to Directory.Build.props
 # - Build release artifacts
-# - Create git tag "4.5.0"
+# - Create git tag "5.1.0"
 # - Create ZIP archives
 # - Publish GitHub Release
 
 # Verify the release:
-# 1. Check GitHub → Releases → v4.5.0
+# 1. Check GitHub → Releases → 5.1.0
 # 2. Download ZIP archives
-# 3. Verify executables show version 4.5.0.0
+# 3. Verify executables show version 5.1.0.0
 ```
 
 ## Related Documentation

@@ -1,0 +1,541 @@
+//-----------------------------------------------------------------------
+// <copyright file="VaultPanel.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
+using TQVaultAE.Config;
+using TQVaultAE.Domain.Actions;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Buttons;
+using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.Presentation;
+
+namespace TQVaultAE.GUI.Components.Panels;
+
+/// <summary>
+/// Represents a TQ Vault control that displays a frame around a group of TQ Vault panels with an optional caption.
+/// </summary>
+public partial class VaultPanel : Panel, INotifyPropertyChanged, IScalingControl, IZoomedFont, ILaysOutChildren, IFontRebasing
+{
+	protected readonly IFontService FontService;
+	protected readonly IUIService UIService;
+	protected readonly SessionContext userContext;
+	protected readonly GuiServices Services;
+	protected readonly UserSettings USettings;
+	protected readonly IHighlightService HighlightService;
+	protected readonly IItemExchangeService ExchangeService;
+
+	/// <summary>
+	/// Gets the SackPanel instance
+	/// </summary>
+	public SackPanel SackPanel => this.BagSackPanel;
+
+	/// <summary>
+	/// player instance
+	/// </summary>
+	private PlayerCollection? player;
+
+	/// <summary>
+	/// Array of Bag buttons for the panel
+	/// </summary>
+	private Collection<BagButtonBase> bagButtons;
+
+	/// <summary>
+	/// Array of autosort buttons
+	/// </summary>
+	private Collection<AutoSortButton> autoSortButtons = [];
+
+	/// <summary>
+	/// Holds the currently selected bag.
+	/// </summary>
+	private int currentBag;
+
+	private IContainer components;
+
+	/// <summary>
+	/// Context menu instance
+	/// </summary>
+	private ContextMenuStrip contextMenu;
+
+#pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
+	public VaultPanel()
+	{
+		InitializeComponent();
+	}
+#pragma warning restore CS8618
+
+	[MemberNotNull(nameof(components), nameof(contextMenu))]
+	private void InitializeComponent()
+	{
+		this.components = new System.ComponentModel.Container();
+		this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+		this.SuspendLayout();
+		// 
+		// contextMenu
+		// 
+		this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+		this.contextMenu.Name = "contextMenu";
+		this.contextMenu.Opacity = 0.8D;
+		this.contextMenu.ShowImageMargin = false;
+		this.contextMenu.Size = new System.Drawing.Size(36, 4);
+		this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ContextMenuItemClicked);
+		// 
+		// VaultPanel
+		// 
+		this.BackColor = System.Drawing.Color.Transparent;
+		this.ResumeLayout(false);
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the VaultPanel class.
+	/// </summary>
+	/// <param name="dragInfo">Instance of the ItemDragInfo</param>
+	/// <param name="numberOfBags">Number of bags in this panel</param>
+	/// <param name="panelSize">Main panel size</param>
+	/// <param name="numberOfAutosortButtons">The number of AutoSort buttons associated with this panel.,</param>
+	/// <param name="autoMoveLocation">The automovelocation for this panel.</param>
+	public VaultPanel(ItemDragInfo dragInfo, int numberOfBags, Size panelSize, int numberOfAutosortButtons, AutoMoveLocation autoMoveLocation, GuiServices services)
+	{
+		InitializeComponent();
+
+		this.Services = services;
+		this.FontService = this.Services.FontService;
+		this.UIService = this.Services.UIService;
+		this.userContext = this.Services.Session;
+		this.USettings = this.Services.Settings;
+		this.HighlightService = this.Services.HighlightService;
+		this.ExchangeService = this.Services.ItemExchangeService;
+
+		this.DragInfo = dragInfo;
+		this.AutoMoveLocation = autoMoveLocation;
+		this.Text = Resources.PlayerPanelNoVault;
+
+		this.PanelCells = panelSize;
+		this.hasSortRoom = numberOfAutosortButtons > 0;
+
+		this.Font = new Font(this.Font.FontFamily, this.Font.SizeInPoints * UIService.FontZoom, this.Font.Style);
+
+		this.BagPanelOffset = 0; // bag panel starts with bag #0
+		this.BagSackPanel = new SackPanel(panelSize.Width, panelSize.Height, this.DragInfo, autoMoveLocation, this.Services);
+		this.BagSackPanel.ContainerMod = () => this.Vault?.Mod;
+		this.BagSackPanel.HoldsVault = () => this.Vault is not null;
+		this.ForwardEvents(this.BagSackPanel);
+		this.Controls.Add(this.BagSackPanel);
+		this.BagSackPanel.IsPlayerBagPanel = false;
+		this.BagSackPanel.MaxSacks = numberOfBags;
+		// Create the buttons
+		this.bagButtons = [];
+		this.CreateBagButtons(numberOfBags);
+
+		// Assume it's the trash panel if we are not autosorting it.
+		if (numberOfAutosortButtons == 0)
+		{
+			this.BagSackPanel.SackType = SackType.Trash;
+		}
+		else
+		{
+			this.autoSortButtons = [];
+
+			for (int i = 0; i < numberOfAutosortButtons; ++i)
+			{
+				this.autoSortButtons.Insert(i, this.CreateAutoSortButton(i));
+				this.Controls.Add(this.autoSortButtons[i]);
+			}
+
+			this.BagSackPanel.SackType = SackType.Vault;
+		}
+
+		MenuStyle.Apply(this.contextMenu, this.FontService, UIService.FontZoom);
+
+		this.PropertyChanged += new PropertyChangedEventHandler(this.PropertyChangedCallback);
+
+		// to avoid flickering use double buffer and to force control to use OnPaint
+		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+		this.LayOut();
+	}
+
+	/// <summary>The size in cells of the panel's bag, as built.</summary>
+	protected Size PanelCells { get; }
+
+	/// <summary>Whether the panel keeps room on the left of its bag for its sort button.</summary>
+	private readonly bool hasSortRoom;
+
+	/// <summary>
+	/// Sizes the panel and places the controls it built itself (sacks, bag and sort buttons) from the current scale and
+	/// item cell size, never from their sizes before: the panel is the same after any zoom and DPI history as built at
+	/// that scale. Called when built and each time the panel is scaled (<see cref="ScaleControl"/>).
+	/// </summary>
+	protected internal virtual void LayOut()
+	{
+		int sortRoom = this.hasSortRoom ? Convert.ToInt32(27.0F * UIService.Scale) : 0;
+
+		this.BagSackPanel.FollowScale();
+		int frame = this.BagSackPanel.FrameGrowth;
+		this.Size = new Size(
+			(this.PanelCells.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + sortRoom + BorderPad + frame,
+			(this.PanelCells.Height * UIService.ItemUnitSize) + Convert.ToInt32(56.0F * UIService.Scale) + BorderPad + frame);
+		this.BagSackPanel.Location = new Point(sortRoom + BorderPad, this.Height - (this.BagSackPanel.Height + BorderPad));
+
+		this.PlaceBagButtons(this.BagSackPanel.Location, this.BagSackPanel.Width, this.BagButtons.Count);
+
+		foreach (var button in this.AutoSortButtons)
+		{
+			button.FollowScale();
+			button.Location = new Point(this.BagSackPanel.Left - button.Width, this.BagSackPanel.Top);
+		}
+	}
+
+	/// <summary>
+	/// Draws the panel's item grids in the caravan frame instead of their gold border, the bag and sort buttons outside
+	/// it, and lays the panel out again for the frame's thickness.
+	/// </summary>
+	internal void UseCaravanFrame()
+	{
+		foreach (var sack in this.FramedSacks)
+			sack.CaravanFramed = true;
+		this.LayOut();
+	}
+
+	/// <summary>The item grids <see cref="UseCaravanFrame"/> draws in the frame: the bag's.</summary>
+	protected virtual IEnumerable<SackPanel> FramedSacks => [this.BagSackPanel];
+
+	/// <summary>
+	/// Event for signaling that a property has changed.
+	/// </summary>
+	public event PropertyChangedEventHandler? PropertyChanged;
+
+	#region VaultPanel Properties
+
+	/// <summary>
+	/// Gets the scaled border pad.
+	/// </summary>
+	public int BorderPad => Convert.ToInt32(2.0F * UIService.Scale);
+
+	/// <summary>
+	/// Gets the bagbuttons array
+	/// </summary>
+	public Collection<BagButtonBase> BagButtons => this.bagButtons;
+
+	/// <summary>
+	/// Gets the autosort buttons array
+	/// </summary>
+	public Collection<AutoSortButton> AutoSortButtons => this.autoSortButtons;
+
+	/// <summary>
+	/// Gets or sets the Clear All Items Selected Event Handler
+	/// </summary>
+	public EventHandler<SackPanelEventArgs>? OnClearAllItemsSelected { get; set; }
+
+	/// <summary>
+	/// Gets or sets the item selected Event Handler
+	/// </summary>
+	public EventHandler<SackPanelEventArgs>? OnItemSelected { get; set; }
+
+	/// <summary>
+	/// Gets or sets the Automove Item Event Handler
+	/// </summary>
+	public EventHandler<SackPanelEventArgs>? OnAutoMoveItem { get; set; }
+
+	/// <summary>
+	/// Gets or sets the New Item Highlighted Event Handler
+	/// </summary>
+	public EventHandler<SackPanelEventArgs>? OnNewItemHighlighted { get; set; }
+
+	/// <summary>
+	/// Gets or sets the AutoMoveLocation for this panel.
+	/// </summary>
+	public AutoMoveLocation AutoMoveLocation { get; protected set; }
+
+	/// <summary>
+	/// Gets this panel's ItemDragInfo instance
+	/// </summary>
+	public ItemDragInfo DragInfo { get; private set; }
+
+	/// <summary>
+	/// Gets or sets the bag sack panel SackPanel instance
+	/// </summary>
+	public SackPanel BagSackPanel { get; set; }
+
+	/// <summary>
+	/// Gets or sets the bag offset.  Vaults are 1 based, player is 0 based.
+	/// </summary>
+	public int BagPanelOffset { get; set; }
+
+	/// <summary>
+	/// return the vault instance if it's a vault
+	/// </summary>
+	public PlayerCollection? Vault
+		=> (this.player?.IsVault ?? false) ? this.player : null;
+
+	/// <summary>
+	/// Gets or sets the player instance
+	/// </summary>
+	/// <summary>
+	/// Player or vault shown by the panel, for the actions that need one.
+	/// </summary>
+	internal PlayerCollection ShownPlayer => this.Player
+		?? throw new InvalidOperationException("The panel shows no player or vault.");
+
+	/// <summary>
+	/// Vault shown by the panel, for the vault actions (export, tooltips).
+	/// </summary>
+	protected PlayerCollection ShownVault => this.Vault
+		?? throw new InvalidOperationException("The panel shows no vault.");
+
+	public PlayerCollection? Player
+	{
+		get => this.player;
+
+		set
+		{
+			if ((!this.player?.IsVault ?? false) || (!value?.IsVault ?? false))
+			{
+				// Not Vault
+				this.userContext.CurrentPlayer = value;
+			}
+
+			this.player = value;
+
+			// Set container reference for the sack panel to track item locations
+			this.BagSackPanel.PlayerCollection = value;
+
+			this.UpdateText();
+
+			this.ApplyCustomButtonIcons();
+
+			this.OnPropertyChanged(nameof(Player));
+			this.Refresh();
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the currently selected bag
+	/// </summary>
+	public int CurrentBag
+	{
+		get => this.currentBag;
+
+		set
+		{
+			if (value != this.currentBag)
+			{
+				// turn off the current bag and turn on the new bag
+				this.BagButtons[this.currentBag].IsOn = false;
+				this.BagButtons[value].IsOn = true;
+				this.currentBag = value;
+				this.BagSackPanel.Sack = this.ShownPlayer.GetSack(this.currentBag + this.BagPanelOffset);
+				this.BagSackPanel.CurrentSack = this.currentBag + this.BagPanelOffset;
+
+				if (this.Vault is not null && this.IsSecondaryVaultPanel is bool secondary)
+					this.Services.VaultService.RememberSelectedBag(this.Vault, secondary, this.currentBag);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Gets which vault panel this is, for the bag each vault remembers per panel:
+	/// false for the main vault panel, true for the secondary one, null for the other panels.
+	/// </summary>
+	private bool? IsSecondaryVaultPanel
+		=> this.AutoMoveLocation switch
+		{
+			AutoMoveLocation.Vault => false,
+			AutoMoveLocation.SecondaryVault => true,
+			_ => null,
+		};
+
+	#endregion VaultPanel Properties
+
+	#region VaultPanel Public Methods
+
+	/// <summary>
+	/// Callback for the property changed event
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">PropertyChangedEventArgs data</param>
+	public void PropertyChangedCallback(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName == nameof(Player))
+		{
+			this.AssignSacks();
+			this.HighlightService.FindHighlight();
+		}
+	}
+
+	#endregion VaultPanel Public Methods
+
+	#region VaultPanel Protected Methods
+
+	/// <summary>
+	/// Assigns sacks to buttons.
+	/// </summary>
+	protected virtual void AssignSacks()
+	{
+		if ((this.Player is null) || (this.Player.NumberOfSacks < 1))
+		{
+			foreach (BagButtonBase button in this.BagButtons)
+			{
+				button.Visible = false;
+			}
+
+			this.BagSackPanel.Sack = null;
+
+			this.HideAutoSortButtons();
+		}
+		else
+		{
+			this.UnhideAutoSortButtons();
+
+			int numberOfBags = this.Player.NumberOfSacks - this.BagPanelOffset;
+
+			// The bag saved in the vault for this panel, else the current one.
+			var secondary = this.IsSecondaryVaultPanel;
+			this.CurrentBag = this.Services.VaultService.ResolveInitialBag(
+				secondary is null ? null : this.Vault, secondary ?? false, this.CurrentBag, numberOfBags);
+
+			// hide/show bag buttons and assign initial bitmaps
+			int index = 0;
+			foreach (BagButtonBase button in this.BagButtons)
+			{
+				button.Visible = index < numberOfBags;
+				button.IsOn = index == this.CurrentBag;
+
+				button.Sack = this.Player.GetSack(index + this.BagPanelOffset);
+
+				++index;
+			}
+
+			if (numberOfBags > 0)
+			{
+				this.BagSackPanel.Sack = this.Player.GetSack(this.CurrentBag + this.BagPanelOffset);
+				this.BagSackPanel.CurrentSack = this.CurrentBag + this.BagPanelOffset;
+			}
+			else
+			{
+				this.BagSackPanel.Sack = null;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Updates the panel when the player is changed: the panel shows no caption.
+	/// </summary>
+	protected virtual void UpdateText()
+		=> this.Text = string.Empty;
+
+	private void ImportFromFileClicked(object? sender, EventArgs e)
+	{
+		var mainForm = this.FindForm() as MainForm;
+		mainForm?.ImportFromFile();
+	}
+
+	/// <summary>
+	/// The base font changed: the menu it shows itself, outside the controls, takes it.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(IFontService fontService)
+	{
+		FontRebaser.RebaseMenu(this.contextMenu, fontService);
+		this.OnFontsRebased();
+	}
+
+	/// <summary>The base font changed: fonts a derived panel made itself are made again.</summary>
+	protected virtual void OnFontsRebased()
+	{
+	}
+
+	/// <summary>
+	/// Override of ScaleControl which supports font scaling. The panel's size and the controls it built itself come from
+	/// the scale (<see cref="LayOut"/>), not from their sizes before: Windows Forms does not scale them.
+	/// </summary>
+	/// <param name="factor">SizeF for the scale factor</param>
+	/// <param name="specified">BoundsSpecified value.</param>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+	{
+		this.contextMenu.Font = MenuStyle.MenuFont(this.FontService, UIService.FontZoom);
+		ZoomScope.Grow(this, factor.Height);
+
+		base.ScaleControl(factor, specified);
+		this.LayOut();
+	}
+
+	/// <summary>
+	/// The panel lays out its children itself (<see cref="LayOut"/>): scaled by Windows Forms from their sizes before,
+	/// each zoom rounded them again and they drifted (sort buttons, bag buttons, statistics panel).
+	/// </summary>
+	protected override bool ScaleChildren => false;
+
+	/// <summary>
+	/// Passes on the highlight, auto move and selection events of a sack panel this panel holds.
+	/// </summary>
+	protected void ForwardEvents(SackPanel sackPanel)
+	{
+		sackPanel.OnNewItemHighlighted += new EventHandler<SackPanelEventArgs>(this.NewItemHighlightedCallback);
+		sackPanel.OnAutoMoveItem += new EventHandler<SackPanelEventArgs>(this.AutoMoveItemCallback);
+		sackPanel.OnItemSelected += new EventHandler<SackPanelEventArgs>(this.ItemSelectedCallback);
+		sackPanel.OnClearAllItemsSelected += new EventHandler<SackPanelEventArgs>(this.ClearAllItemsSelectedCallback);
+	}
+
+	/// <summary>
+	/// New Item Highlighted Callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	protected void NewItemHighlightedCallback(object? sender, SackPanelEventArgs e)
+		=> this.OnNewItemHighlighted?.Invoke(sender, e);
+
+	/// <summary>
+	/// Automove Item Callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	protected void AutoMoveItemCallback(object? sender, SackPanelEventArgs e)
+		=> this.OnAutoMoveItem?.Invoke(sender, e);
+
+	/// <summary>
+	/// Item Selected Callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	protected void ItemSelectedCallback(object? sender, SackPanelEventArgs e)
+		=> this.OnItemSelected?.Invoke(sender, e);
+
+	/// <summary>
+	/// Clear all selected items Callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs data</param>
+	protected void ClearAllItemsSelectedCallback(object? sender, SackPanelEventArgs e)
+		=> this.OnClearAllItemsSelected?.Invoke(sender, e);
+
+	#endregion VaultPanel Protected Methods
+
+	#region VaultPanel Private Methods
+
+	/// <summary>
+	/// Property Changed event trigger
+	/// </summary>
+	/// <param name="name">Name of the property that has changed</param>
+	private void OnPropertyChanged(string name)
+	{
+		PropertyChangedEventHandler? handler = this.PropertyChanged;
+
+		if (handler is not null)
+		{
+			handler(this, new PropertyChangedEventArgs(name));
+		}
+	}
+
+	#endregion VaultPanel Private Methods
+}

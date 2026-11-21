@@ -1,0 +1,485 @@
+//-----------------------------------------------------------------------
+// <copyright file="BagButtonBase.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+using TQVaultAE.Application.Session;
+using TQVaultAE.GUI.Components.Panels;
+using TQVaultAE.GUI.Tooltips;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Services;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Config;
+using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.GUI.Components.Scaling;
+
+namespace TQVaultAE.GUI.Components.Buttons;
+
+/// <summary>
+/// Delegate for displaying a tooltip with the bag's contents: gives the button its sack.
+/// </summary>
+/// <param name="button">instance of this BagButton</param>
+/// <returns>Whether the panel shows the summary tool tip of this bag (the user can turn it off per bag).</returns>
+public delegate bool GetToolTip(BagButtonBase button);
+
+/// <summary>
+/// Provides base class for creating and managing sack bag buttons.
+/// </summary>
+public class BagButtonBase : Panel
+{
+	protected readonly GuiServices Services;
+	protected readonly IFontService FontService;
+	protected readonly IUIService UIService;
+	protected readonly IBitmapService BitmapService;
+	protected readonly IHighlightService HighlightService;
+	internal SackCollection? Sack;
+
+	private BagButtonIconInfo _DefaultIconInfo = new BagButtonIconInfo()
+	{
+		DisplayMode = BagButtonDisplayMode.Default,
+	};
+
+	internal BagButtonIconInfo CurrentIconInfo
+	{
+		get
+		{
+			var info = this.Sack?.BagButtonIconInfo;
+			if (info is null) return _DefaultIconInfo;
+			return info;
+		}
+	}
+
+	/// <summary>
+	/// Apply custom bitmap from config file
+	/// </summary>
+	internal void ApplyIconInfo(SackCollection? sack)
+	{
+		this.Sack = sack;
+		var info = this.CurrentIconInfo;
+
+		ApplyDefaultIcon();
+
+		// custom config detected
+		if (info.DisplayMode != BagButtonDisplayMode.Default)
+		{
+			// Load custom
+			this.OnBitmap = RecordId.IsNullOrEmpty(info.On) ? null : UIService.LoadBitmap(info.On);
+			this.OffBitmap = RecordId.IsNullOrEmpty(info.Off) ? null : UIService.LoadBitmap(info.Off);
+			this.OverBitmap = RecordId.IsNullOrEmpty(info.Over) ? null : UIService.LoadBitmap(info.Over);
+
+			if (this.OnBitmap is not null && this.OffBitmap is not null) return;// Done
+
+			// Bitmap not found ?? Should not happen except missing DLC and Vault file sharing
+			ApplyDefaultIcon();
+		}
+
+		this.Refresh();
+	}
+
+	internal void ApplyDefaultIcon()
+	{
+		// Apply default config
+		this.OnBitmap = this.OffBitmap = this.OverBitmap = null;// Reset
+		this.CreateBackgroundGraphics();
+	}
+
+	/// <summary>
+	/// Flag to signal when the mouse is clicked on the button.
+	/// Used to display alternate graphic.
+	/// </summary>
+	private bool isOn;
+
+	/// <summary>
+	/// Tooltip delegate used to display summary of bag contents.
+	/// </summary>
+	private GetToolTip? getToolTip;
+
+
+	/// <summary>
+	/// Gets or sets the border for item highlight.
+	/// </summary>
+	public Pen HighlightSearchItemBorder { get; protected set; }
+
+
+#pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
+	public BagButtonBase()
+	{
+		InitializeComponent();
+	}
+#pragma warning restore CS8618
+
+	private void InitializeComponent()
+	{
+		this.SuspendLayout();
+		// 
+		// BagButtonBase
+		// 
+		this.BackColor = System.Drawing.Color.Transparent;
+		this.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCallback);
+		this.MouseEnter += new System.EventHandler(this.MouseEnterCallback);
+		this.MouseLeave += new System.EventHandler(this.MouseLeaveCallback);
+		this.ResumeLayout(false);
+
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the BagButtonBase class.
+	/// </summary>
+	/// <param name="bagNumber">number of the bag for display</param>
+	/// <param name="getToolTip">Tooltip delegate</param>
+	public BagButtonBase(int bagNumber, GetToolTip? getToolTip, GuiServices services)
+	{
+		InitializeComponent();
+
+		this.Services = services;
+		this.FontService = this.Services.FontService;
+		this.UIService = this.Services.UIService;
+		this.BitmapService = this.Services.BitmapService;
+		this.HighlightService = this.Services.HighlightService;
+
+		this.getToolTip = getToolTip;
+		this.ButtonNumber = bagNumber;
+
+		this.HighlightSearchItemBorder = new Pen(this.HighlightService.HighlightSearchItemBorderColor)
+		{
+			Width = 4,
+		};
+
+		// Da_FileServer: Some small paint optimizations.
+		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+	}
+
+	#region BagButton Properties
+
+	/// <summary>
+	/// Gets the number assigned to this bag.
+	/// </summary>
+	public int ButtonNumber { get; private set; }
+
+	/// <summary>
+	/// Gets or sets the text displayed on the BagButton.
+	/// </summary>
+	public string ButtonText { get; set; } = string.Empty;
+
+	/// <summary>
+	/// Gets or sets the background bitmap when this is the active bag button.
+	/// </summary>
+	public Bitmap? OnBitmap { get; set; }
+
+	/// <summary>
+	/// Gets or sets the background bitmap when this is not the active bag button.
+	/// </summary>
+	public Bitmap? OffBitmap { get; set; }
+
+	/// <summary>
+	/// Gets or sets the background bitmap when this is the bag button under the mouse.
+	/// </summary>
+	public Bitmap? OverBitmap { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the mouse is hovering over this button.
+	/// </summary>
+	public bool IsOver { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the bag is being clicked.
+	/// </summary>
+	public bool IsOn
+	{
+		get => this.isOn;
+
+		set
+		{
+			if (this.isOn ^ value)
+			{
+				this.isOn = value;
+				Refresh();
+			}
+		}
+	}
+
+	#endregion BagButton Properties
+
+	/// <summary>
+	/// Sets the background bitmaps for the BagButton
+	/// </summary>
+	public virtual void CreateBackgroundGraphics()
+		=> throw new NotImplementedException();
+
+	#region BagButton Private Methods
+
+	/// <summary>
+	/// Callback for when the mouse enters the BagButton
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MouseEnterCallback(object? sender, EventArgs e)
+	{
+		BagButtonLabelTooltip.ShowTooltip(this.Services, this);
+
+		if (this.getToolTip is not null && this.getToolTip(this))
+			BagButtonTooltip.ShowTooltip(this.Services, this);
+
+		this.IsOver = true;
+		Refresh();
+	}
+
+	/// <summary>
+	/// Handler for when the mouse leaves the BagButton
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MouseLeaveCallback(object? sender, EventArgs e)
+	{
+		this.IsOver = false;
+		Refresh();
+
+		// Clear out the tooltip if it is being displayed.
+		BagButtonTooltip.HideTooltip();
+		BagButtonLabelTooltip.HideTooltip();
+	}
+
+	/// <summary>
+	/// Draws the background of the items in the panel during a Paint call.
+	/// </summary>
+	/// <param name="e">PaintEventArgs data</param>
+	protected virtual void PaintHighlightAreaUnderButton(PaintEventArgs e)
+	{
+		// Highlight search
+		using (SolidBrush brush = new SolidBrush(Color.FromArgb(127, this.HighlightService.HighlightSearchItemColor)))
+		{
+			e.Graphics.FillRectangle(brush, 0, 0, this.Width, this.Height);
+		}
+	}
+
+	/// <summary>
+	/// Paint callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">PaintEventArgs data</param>
+	private void PaintCallback(object? sender, PaintEventArgs e)
+	{
+		if (this.OffBitmap is null)
+			this.CreateBackgroundGraphics();
+
+		Bitmap? bitmap = this.OffBitmap;
+
+		if (this.IsOn)
+		{
+			bitmap = this.OnBitmap;
+		}
+		else if (this.IsOver)
+		{
+			if (this.OverBitmap is null)
+				bitmap = this.OffBitmap;// use off state
+			else
+				bitmap = this.OverBitmap;
+		}
+
+		bool highlight = false;
+		if (this is not AutoSortButton && this.Sack is not null)
+		{
+			highlight = this.HighlightService.HighlightedItems.Count > 0
+			            && this.HighlightService.HighlightedItems.Intersect(this.Sack.ToList()).Any();
+		}
+
+		if (highlight) PaintHighlightAreaUnderButton(e);
+
+		if (bitmap is null)
+			return;
+
+		// Draw the icon
+		Image bmp = this.Parent is VaultPanel vp && vp.Vault is not null ? this.FittedIcon(bitmap) : bitmap;
+		e.Graphics.DrawImage(bmp, 0, 0, this.Width, this.Height);
+
+		if (// If it's not a vault with a number restriction
+		    !(this.CurrentIconInfo.DisplayMode != BagButtonDisplayMode.Default // Vault Only
+		      && !this.CurrentIconInfo.DisplayMode.HasFlag(BagButtonDisplayMode.Number)// No Number
+		    )
+		   )
+		{
+			// Display the text overlay if we have one.
+			if (!string.IsNullOrEmpty(this.ButtonText))// ButtonText is a number for Vault
+			{
+				Font? font = this.GetScaledButtonTextFont(e.Graphics, FontService.GetFont(20.0F * UIService.Scale, GraphicsUnit.Pixel));
+
+				if (font is not null)
+				{
+					// If we are mousing over then display the bolded font.
+					if (this.IsOver)
+					{
+						font = FontService.WithStyle(font, FontStyle.Bold);
+					}
+
+					e.Graphics.DrawString(this.ButtonText, font, Brushes.White, new RectangleF(0.0F, 0.0F, (float)this.Width, (float)this.Height), CenteredText);
+				}
+			}
+		}
+
+		if (highlight) PaintHighlightAreaOnTopOfButton(e);
+	}
+
+	/// <summary>A vault bag's icon at the button size, keeping its shape: made again only when the icon or the size changes.</summary>
+	private Image FittedIcon(Bitmap icon)
+	{
+		if (this.fittedIcon is null || !ReferenceEquals(this.fittedIconSource, icon) || this.fittedIcon.Size != this.Size)
+		{
+			this.fittedIcon?.Dispose();
+			this.fittedIcon = this.BitmapService.ResizeImage(icon, this.Width, this.Height, maintainAspectRatio: true);
+			this.fittedIconSource = icon;
+		}
+
+		return this.fittedIcon;
+	}
+
+	private Image? fittedIcon;
+
+	private Bitmap? fittedIconSource;
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			this.fittedIcon?.Dispose();
+			this.fittedIcon = null;
+			this.HighlightSearchItemBorder?.Dispose();
+		}
+
+		base.Dispose(disposing);
+	}
+
+	/// <summary>Centers the button text; shared by every button, only the UI thread draws with it.</summary>
+	private static readonly StringFormat CenteredText = new(StringFormatFlags.NoClip)
+	{
+		LineAlignment = StringAlignment.Center,
+		Alignment = StringAlignment.Center,
+	};
+
+	private void PaintHighlightAreaOnTopOfButton(PaintEventArgs e)
+	{
+		// Add highlight borders
+		e.Graphics.DrawRectangle(this.HighlightSearchItemBorder, 0, 0, this.Width, this.Height);
+	}
+
+	/// <summary>
+	/// Gets the scaled font size for the button text taking into account the size of the button.
+	/// </summary>
+	/// <param name="graphics">Current graphics instance</param>
+	/// <param name="font">Font that we attempting to scale</param>
+	/// <returns>Scaled font</returns>
+	private Font? GetScaledButtonTextFont(Graphics graphics, Font font)
+	{
+		// Make sure we have something to test.
+		if (graphics is null || font is null)
+		{
+			return null;
+		}
+
+		// Measured in bold, the text under the mouse: it must not change size when the mouse comes over.
+		Font Bold(float size) => FontService.GetFont(size, FontStyle.Bold, GraphicsUnit.Pixel, font.GdiCharSet);
+		bool WholeFits(float size) => TextRenderer.MeasureText(this.ButtonText, Bold(size)).Width < this.Width;
+
+		if (WholeFits(font.Size))
+			return font;
+
+		// Split at the space nearest the middle: the longer part must fit the width, and both lines the height.
+		string part = this.GetTestString(this.ButtonText);
+		float size = TextFit.LargestSize(font.Size, 1F, MinTextSize, s => TextRenderer.MeasureText(part, Bold(s)).Width < this.Width);
+		if (part != this.ButtonText)
+			size = TextFit.LargestSize(size, 1F, MinTextSize, s => TextRenderer.MeasureText(part, Bold(s)).Height * 2 < this.Height || WholeFits(s));
+
+		return FontService.GetFont(size, font.Style, GraphicsUnit.Pixel, font.GdiCharSet);
+	}
+
+	/// <summary>The smallest text size, in pixels: a long label on a tiny button stops there (a size of 0 throws).</summary>
+	private const float MinTextSize = 1F;
+
+	/// <summary>
+	/// Gets a substring of the button text which can be used for font sizing.
+	/// Attempts to find the space closest to the middle of the string.
+	/// </summary>
+	/// <param name="teststring">string that we are testing</param>
+	/// <returns>Substring that was split at a space.  Returns the whole string if there was no space.</returns>
+	private string GetTestString(string teststring)
+	{
+		// Make sure we have something to test.
+		if (string.IsNullOrEmpty(teststring))
+		{
+			return string.Empty;
+		}
+
+		// Make sure the string has a space before attempting to split it.
+		if (!this.ButtonText.Contains(' '))
+		{
+			return teststring;
+		}
+
+		string[] text = this.ButtonText.Split(' ');
+
+		// See if we only had 1 space which means 2 lines
+		// and just pick the longer string.
+		if (text.Length == 2)
+		{
+			if (text[0].Length > text[1].Length)
+			{
+				teststring = text[0];
+			}
+			else
+			{
+				teststring = text[1];
+			}
+		}
+		else
+		{
+			// Otherwise we need to figure out where the break will occur and find the longer string of the two.
+			int middle = (this.ButtonText.Length / 2) + (this.ButtonText.Length - ((this.ButtonText.Length / 2) * 2)) - 1;
+			int left = this.ButtonText.LastIndexOf(' ', middle);
+			int right = this.ButtonText.IndexOf(' ', middle);
+
+			// Use the whole string just in case we don't find a space.
+			string testLeft = this.ButtonText;
+
+			// Find the longer string when split at the space to the left of the middle.
+			if (left != -1)
+			{
+				// Skip over the space
+				testLeft = this.ButtonText.Substring(left + 1);
+
+				// Make sure we have the longer of the two strings.
+				if (left > this.ButtonText.Length - left)
+				{
+					testLeft = this.ButtonText.Substring(0, left);
+				}
+			}
+
+			// Use the whole string just in case we don't find a space.
+			string testRight = this.ButtonText;
+
+			// Find the longer string when split at the space to the right of the middle.
+			if (right != -1)
+			{
+				// Skip over the space
+				testRight = this.ButtonText.Substring(right + 1);
+
+				// Make sure we have the longer of the two strings.
+				if (right > this.ButtonText.Length - right)
+				{
+					testRight = this.ButtonText.Substring(0, right);
+				}
+			}
+
+			teststring = testLeft;
+
+			// Make sure we take the one closest to the middle.
+			// Both values should not be set to whole string.
+			if (testRight.Length < testLeft.Length)
+			{
+				teststring = testRight;
+			}
+		}
+
+		return teststring;
+	}
+
+	#endregion BagButton Private Methods
+}

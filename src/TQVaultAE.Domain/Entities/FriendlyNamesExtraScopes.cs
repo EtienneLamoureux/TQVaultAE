@@ -13,6 +13,11 @@ public enum FriendlyNamesExtraScopes
 	Relic2Attributes = 1 << 5,
 	Requirements = 1 << 6,
 	ItemSet = 1 << 7,
+	/// <summary>
+	/// The skills granted by the item, its affixes and its relics, with their details, for a display that shows them apart:
+	/// the attributes then name a granted skill without repeating its description and effects.
+	/// </summary>
+	GrantedSkills = 1 << 8,
 	ItemExtraAttributes = PrefixAttributes | SuffixAttributes | RelicAttributes | Relic2Attributes,
 	ItemFullDisplay = BaseAttributes | ItemExtraAttributes | ItemSet | Requirements,
 }

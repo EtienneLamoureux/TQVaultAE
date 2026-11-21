@@ -1,0 +1,52 @@
+﻿using Microsoft.Extensions.Logging;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.GUI.Models.Search;
+using TQVaultAE.Presentation;
+
+namespace TQVaultAE.GUI.Forms;
+
+public partial class MainForm
+{
+	/// <summary>
+	/// Handler for clicking the search button on the form.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void SearchButtonClick(object? sender, EventArgs e)
+	{
+		this.OpenSearchDialog();
+	}
+
+	/// <summary>
+	/// Search dialog kept between openings: building its thousands of category entries is the slow part,
+	/// so it is created once and only rebuilt when the items change. Disposed with the main form.
+	/// </summary>
+	private readonly KeptDialog<SearchDialogAdvanced> keptSearchDialog = new();
+
+	/// <summary>
+	/// Opens the search dialog and shows its results.
+	/// </summary>
+	private void OpenSearchDialog()
+	{
+		// A dialog made at another zoom is made again at this one, scaled once from its design like the other dialogs;
+		// the new one restores what the user had set in the old one.
+		SearchDialogState? keptState = null;
+		var watch = System.Diagnostics.Stopwatch.StartNew();
+		var zoom = UIService.Zoom;
+		var searchDialog = this.keptSearchDialog.Get(this, zoom, () =>
+		{
+			var dialog = this.Services.Forms.Create<SearchDialogAdvanced>();
+			dialog.RestoreWhenBuilt(keptState);
+			return dialog;
+		}, out bool built, stale => keptState = stale.ClosedState);
+
+		if (built)
+			this.Log.LogInformation("Search dialog created in {Elapsed} ms", watch.ElapsedMilliseconds);
+
+		var result = searchDialog.ShowDialog();
+
+		if (result == DialogResult.OK && searchDialog.QueryResults.Length != 0)
+			this.mainView.ShowResults(null, searchDialog.QueryResults);
+	}
+}

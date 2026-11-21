@@ -137,68 +137,6 @@ Hiszpańskie tłumaczenie od Kurrus.
   <data name="AboutVersion" xml:space="preserve">
     <value>Wersja {0}</value>
   </data>
-  <data name="ARZExtractBtnExtract" xml:space="preserve">
-    <value>Rozpakuj</value>
-  </data>
-  <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} nie istnieje.  Utworzyć teraz?</value>
-  </data>
-  <data name="ARZExtractCreateFolder2" xml:space="preserve">
-    <value>Utworzyć folder?</value>
-  </data>
-  <data name="ARZExtractCreateFolderIT" xml:space="preserve">
-    <value>{0} nie istnieje w bazie danych IT.  Utworzyć teraz?</value>
-  </data>
-  <data name="ARZExtractDestination" xml:space="preserve">
-    <value>Wybierz folder docelowy dla rozpakowanego archiwum bazy danych</value>
-  </data>
-  <data name="ARZExtractFileDest" xml:space="preserve">
-    <value>Musisz określić folder, a nie plik!</value>
-  </data>
-  <data name="ARZExtractLabel1" xml:space="preserve">
-    <value>Obecnie niemożliwe jest rozpakowanie wszystkich archiwów bazy danych gry jednocześnie.  Ponadto obecnie istnieje błąd w Narzędziach który niszczy zbiory wartości kiedy rozpakowujesz archiwa po kolei.  Używając tego narzędzia, możesz teraz rozpakować wszystkie archiwa jednocześnie i wszystkie one będą poprawnie rozpakowane.</value>
-  </data>
-  <data name="ARZExtractLabel2" xml:space="preserve">
-    <value>Po rozpakowaniu archiwów, skopiuj te, które chcesz używać w twoim modzie do twojego folderu.</value>
-  </data>
-  <data name="ARZExtractLabel3" xml:space="preserve">
-    <value>Wybierz folder docelowy:</value>
-  </data>
-  <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>Wybierz folder docelowy dla plików bazy danych IT:</value>
-  </data>
-  <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>Jeśli foldery docelowe bazy danych TQ i IT nie będą zapełnione, będą domyślne dla tego samego folderu.
-Pliki IT zastąpią pliki TQ, lecz jeśli wystąpią jakieś komplikacje, można wybrać inne foldery by uniknąć zastąpienia plików.</value>
-  </data>
-  <data name="ARZExtractText" xml:space="preserve">
-    <value>Rozpakuj database.arz</value>
-  </data>
-  <data name="ARZExtractValidDest" xml:space="preserve">
-    <value>Musisz wprowadzić prawidłowy folder docelowy.</value>
-  </data>
-  <data name="ARZProgressCancelledText" xml:space="preserve">
-    <value>Rozpakowywanie anulowane.</value>
-  </data>
-  <data name="ARZProgressCompleteText" xml:space="preserve">
-    <value>Rozpakowywanie zakończone.</value>
-  </data>
-  <data name="ARZProgressFailedText" xml:space="preserve">
-    <value>Rozpakowywanie nie powiodło się.</value>
-  </data>
-  <data name="ARZProgressLabel" xml:space="preserve">
-    <value>Rozpakowywanie {0} ...</value>
-  </data>
-  <data name="ARZProgressLabel1" xml:space="preserve">
-    <value>Rozpakowuję</value>
-  </data>
-  <data name="ARZProgressText" xml:space="preserve">
-    <value>Rozpakowuję database.arz...</value>
-  </data>
-  <data name="CmdlineUsage" xml:space="preserve">
-    <value>Błąd parsowania argumentów wiersza poleceń: {0}
-Użycie: TQVault [nazwagracza] [/mod:&lt;nazwa modu&gt;]</value>
-  </data>
   <data name="DataDefaultPath" xml:space="preserve">
     <value>Domyślny Adres Skarbca</value>
   </data>
@@ -220,9 +158,6 @@ Może to być spowodowane złym językiem lub
 ustawieniem adresu gry.
 Chcesz zrestartować TQVault?</value>
   </data>
-  <data name="Form1bNext" xml:space="preserve">
-    <value>Wejdź do Skarbca</value>
-  </data>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Błąd Przy Ładowaniu Zasobów</value>
   </data>
@@ -234,12 +169,6 @@ Chcesz zrestartować TQVault?</value>
   </data>
   <data name="Form1Text" xml:space="preserve">
     <value>Skarbiec Przedmiotów gry Titan Quest</value>
-  </data>
-  <data name="GlobalAbout" xml:space="preserve">
-    <value>O programie</value>
-  </data>
-  <data name="GlobalBrowse" xml:space="preserve">
-    <value>Przeglądaj...</value>
   </data>
   <data name="GlobalCancel" xml:space="preserve">
     <value>Anuluj</value>
@@ -254,18 +183,11 @@ Chcesz zrestartować TQVault?</value>
     <value>Worek #{0}</value>
     <comment>This entry must have the GlobalMenuBagDelimiter or it will break the item and bag move code.</comment>
   </data>
-  <data name="GlobalMenuBagDelimiter" xml:space="preserve">
-    <value>#</value>
-    <comment>Used with GlobalMenuBag to signify bag number in menus.</comment>
-  </data>
   <data name="GlobalOK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="GlobalTransferStash" xml:space="preserve">
     <value>Transfer Towaru</value>
-  </data>
-  <data name="GlobalTrash" xml:space="preserve">
-    <value>Kosz</value>
   </data>
   <data name="ItemIT" xml:space="preserve">
     <value>Przedmiot z Immortal Throne</value>
@@ -306,20 +228,11 @@ Chcesz zrestartować TQVault?</value>
   <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>Konfiguracja</value>
   </data>
-  <data name="MainFormBtnExtract" xml:space="preserve">
-    <value>Rozpakowuje database.arz …</value>
-  </data>
   <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>Pokaż Skarbiec</value>
   </data>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Pokaż Gracza</value>
-  </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Własna Mapa</value>
-  </data>
-  <data name="MainFormDatabaseError" xml:space="preserve">
-    <value>Błąd przy rozpakowywaniu bazy danych</value>
   </data>
   <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Aktualnie trzymasz przedmiot.
@@ -345,32 +258,17 @@ Zrestartować teraz TQVault?</value>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Otrzymywanie Plików Skarbca…</value>
   </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Ustawienia Własnych Map Zmienione</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>Ustawienia Własnej Mapy zostały zmienione.
-Efekty pojawią się po ponownym uruchomieniu TQVault.
-Zrestartować teraz TQVault?</value>
-  </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Nie wykryto żadnych postaci TQ</value>
   </data>
   <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>Nie wykryto żadnych postaci z Własnej Mapy</value>
   </data>
-  <data name="MainFormNoItemQualityFound" xml:space="preserve">
-    <value>Nie znaleziono przedmiotów typu '{0}'
-i jakości '{1}'.</value>
-  </data>
   <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>Nie znaleziono przedmiotów z '{0}'.</value>
   </data>
   <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>Nie Znaleziono Przedmiotów</value>
-  </data>
-  <data name="MainFormNoItemTypesFound" xml:space="preserve">
-    <value>Nie znaleziono przedmiotów typu '{0}'.</value>
   </data>
   <data name="MainFormPathsChanged" xml:space="preserve">
     <value>Adres Gry Zmieniony</value>
@@ -382,9 +280,6 @@ Zrestartować teraz TQVault?</value>
   </data>
   <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>Błąd w czytaniu plików gracza</value>
-  </data>
-  <data name="MainFormQuit" xml:space="preserve">
-    <value>Na pewno chcesz wyjść?</value>
   </data>
   <data name="MainFormReadError" xml:space="preserve">
     <value>Błąd w czytaniu {0}
@@ -408,45 +303,8 @@ Jetseś pewien, że to poprawny plik?
 Efekty pojawią się po ponownym uruchomieniu TQVault.
 Zrestartować teraz TQVault?</value>
   </data>
-  <data name="MainFormStartVaultMon" xml:space="preserve">
-    <value>Rozpocząć TQVaultMon?</value>
-  </data>
-  <data name="MainFormStartVaultMonMsg" xml:space="preserve">
-    <value>Właśnie zmieniłeś ekwipunek w niektórych postaciach.
-Titan Quest wykryje je i odczyta jako zepsute postacie
-i nie pozwoli ci ich załadować.
-TQVaultMon jest programem, który sprawi, że Titan Quest pomyśli,
-że twoja postać jest poprawna i pozwoli ją prawidłowo załadować.
-Kiedy poprawnie załadujesz postać, nie będziesz musiał ponownie
-używać TQVaultMon póki nie będziesz robić dalszych edycji.
-Sugerowane jest, żebyś włączył TQVaultMon teraz i potem włączył Titan
-Quest, żeby na szybko załadować wszystkie postacie, które zedytowałeś.
-Chcesz teraz włączyć TQVaultMon?</value>
-  </data>
   <data name="MainFormStashReadError" xml:space="preserve">
     <value>Błąd w odczytywaniu pliku worka</value>
-  </data>
-  <data name="MainFormTrashItems" xml:space="preserve">
-    <value>Obecnie jest {0} przedmiotów w koszu.
-Jeśli wyjdziesz, te przedmioty ZNIKNĄ NA ZAWSZE.
-Jesteś pewien, że chcesz wyrzucić te przedmioty?</value>
-  </data>
-  <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
-    <value>Nie można włączyć TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonError" xml:space="preserve">
-    <value>Błąd przy próbie startowania TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonMsg" xml:space="preserve">
-    <value>Nie mogłem zobaczyć czy TQVaultMon był włączony.
-Zapewne TQVaultMon także nie pracował.
-Ponieważ zedytowałeś niektóre postacie, TQ pomyśli, że są one zepsute.
-By poprawnie załadować i grać w grę, będziesz potrzebować program TQ Defiler
-i użyć w nim funkcji 'Patch' lub 'Fix Me' by gra "zaakceptowała" twoją postać.
-Jeśli nie masz nic przeciwko, skontaktuj się ze mną i daj mi znać o problemie
-bo możliwe, że mam rozwiązanie dla tego błędu, które zaoszczędzi ci problemów.
-Wiadomość o błędzie brzmi
-</value>
   </data>
   <data name="MaintenanceBadChars" xml:space="preserve">
     <value>Użyłeś nieprawidłowych postaci.</value>
@@ -559,7 +417,7 @@ Na pewno chcesz go zastąpić?</value>
     <value>Worek</value>
   </data>
   <data name="ResultsContainerType" xml:space="preserve">
-    <value>RodzajEkwipunku</value>
+    <value>Rodzaj ekwipunku</value>
   </data>
   <data name="ResultsContainerVault" xml:space="preserve">
     <value>Skarbiec</value>
@@ -584,10 +442,6 @@ Na pewno chcesz go zastąpić?</value>
   </data>
   <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>Błąd Autosortowania.</value>
-  </data>
-  <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
-    <value>Wystąpił błąd podczas sortowania.
-Nie wszystkie przedmioty zostały umieszczone.</value>
   </data>
   <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>Trzymasz w tej chwili przedmiot.
@@ -692,19 +546,6 @@ Wybierz liczbę pomiędzy 1 a 32767</value>
   <data name="SettingsAllowEdit" xml:space="preserve">
     <value>Pozwól na Edycję Właściwości Przedmiotu</value>
   </data>
-  <data name="SettingsAllowEditTT" xml:space="preserve">
-    <value>Włącza edycję właściwości w menu kontekstowym.
-Włącznie z tworzeniem i modyfikacją przedmiotu.</value>
-  </data>
-  <data name="SettingsAutoUpdate" xml:space="preserve">
-    <value>Automatyczna Aktualizacja</value>
-  </data>
-  <data name="SettingsAutoUpdateTT" xml:space="preserve">
-    <value>Wybranie tego przedmiotu przy starcie programu,
-automatycznie sprawdzi sieć w poszukiwaniu
-nowej wersji TQVault.  Przy niskim połączeniu
-może nastąpić dłuższy start programu.</value>
-  </data>
   <data name="SettingsBrowseIT" xml:space="preserve">
     <value>Proszę wybrać adres plików gry Immortal Throne.</value>
   </data>
@@ -720,21 +561,6 @@ może nastąpić dłuższy start programu.</value>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Autowykrywanie Języka</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Włącz Własne Mapy</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>Wybranie tego przedmiotu 
-włączy upuszczanie w
-wybranych własnych mapach.</value>
-  </data>
-  <data name="SettingsForceCheck" xml:space="preserve">
-    <value>Sprawdź Teraz</value>
-  </data>
-  <data name="SettingsForceCheckTT" xml:space="preserve">
-    <value>Ręcznie sprawdza czy są jakieś dostępne
-aktualizacje.</value>
-  </data>
   <data name="SettingsLabel1" xml:space="preserve">
     <value>Adres Skarbca</value>
   </data>
@@ -746,9 +572,6 @@ aktualizacje.</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>Adres Gry IT</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Własna Mapa</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Automatycznie Ładuje ostatnio otwieraną Postać</value>
@@ -791,13 +614,6 @@ wydłuża start programu.</value>
     <value>Powoduje resetowanie konfiguracji
 do ostatnio zapisanej konfiguracji.</value>
   </data>
-  <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Automatyczne Pomijanie Ekranu Tytułowego</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Kliknięcie tego okna spowoduje automatyczne wciśnięcie
-klawisza Enter na ekranie tytułowym.</value>
-  </data>
   <data name="StashNotFound" xml:space="preserve">
     <value>Nie można znaleźć pliku Worka.</value>
   </data>
@@ -817,73 +633,6 @@ Pole Okna Karawany będzie niedostępne dla tej postaci.</value>
   </data>
   <data name="StashPanelText" xml:space="preserve">
     <value>Karawana</value>
-  </data>
-  <data name="UpdateCompletion" xml:space="preserve">
-    <value>{0}    {1} % skompletowanych.</value>
-  </data>
-  <data name="UpdateCompletion2" xml:space="preserve">
-    <value>{0}    0 % skompletowanych.</value>
-  </data>
-  <data name="UpdateCurrentVer" xml:space="preserve">
-    <value>Aktualna Wersja: {0}</value>
-  </data>
-  <data name="UpdateError" xml:space="preserve">
-    <value>Nie Można Włączyć Ustawień</value>
-  </data>
-  <data name="UpdateErrorMsg" xml:space="preserve">
-    <value>Wystąpił problem z pobieraniem lub rozpakowywaniem.
-Proszę pobrać najnowszą paczkę instalacyjną i włączyć ją manualnie.
-Kliknij OK by wyjść.</value>
-  </data>
-  <data name="UpdateFullInstall" xml:space="preserve">
-    <value>Została wykryta nowa wersja TQVault, która wymaga pełnej instalacji.</value>
-  </data>
-  <data name="UpdateLatestVer" xml:space="preserve">
-    <value>Najnowsza Wersja: {0}</value>
-  </data>
-  <data name="UpdateMinVer" xml:space="preserve">
-    <value>Najniższa Wersja: {0}</value>
-  </data>
-  <data name="UpdateNewTQVault" xml:space="preserve">
-    <value>Została wykryta nowsza wersja TQVault.</value>
-  </data>
-  <data name="UpdateNewUpdater" xml:space="preserve">
-    <value>Został wykryta nowsza wersja programu aktualizacji TQVault.</value>
-  </data>
-  <data name="UpdateNoUpdate" xml:space="preserve">
-    <value>Twoja wersja jest aktualna.</value>
-  </data>
-  <data name="UpdatePerform" xml:space="preserve">
-    <value>Kliknij OK by wykonać aktualizację.</value>
-  </data>
-  <data name="UpdatePerformBoth" xml:space="preserve">
-    <value>Kliknij OK by wykonać obydwie aktualizacje.</value>
-  </data>
-  <data name="UpdateRunInstall" xml:space="preserve">
-    <value>Kliknij OK by pobrać i włączyć instalację.</value>
-  </data>
-  <data name="UpdateStreamError" xml:space="preserve">
-    <value>Wystąpił błąd przy próbie połączenia z serwerem.
-Aktualizacja nie może zostać wykonana.</value>
-  </data>
-  <data name="UpdateText" xml:space="preserve">
-    <value>Aktualizacje TQVault</value>
-  </data>
-  <data name="UpdateUpdaterNotFound" xml:space="preserve">
-    <value>Program aktualizacji TQVault został albo nie znaleziony albo zmieniono jego nazwę.</value>
-  </data>
-  <data name="VaultProgressText" xml:space="preserve">
-    <value>Ładowanie Plików Gracza i Skarbca…</value>
-  </data>
-  <data name="AUEnglishName" xml:space="preserve">
-    <value>Polish</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to determine which language file to update.</comment>
-  </data>
-  <data name="AUFileVersion" xml:space="preserve">
-    <value>1</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to track changes in the translation file.</comment>
   </data>
   <data name="MaintenanceNewVault" xml:space="preserve">
     <value>Nowy Skarbiec</value>
@@ -906,18 +655,6 @@ Would you like to disable loading all files?</value>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Search for an Item</value>
-  </data>
-  <data name="SearchDialogText" xml:space="preserve">
-    <value>Wyszukiwanie elementów w wczytywanych plikach: skarbcach, stajniach, zapasach.
-
-Możesz połączyć następujące opcje wyszukiwania (wszystkie są opcjonalne):
-* Nazwa: musi to być pierwszy wyszukiwany termin. Oto przykład: 'arktyczny &amp; mróz'
-* Rodzaj: używając @ na początku wyszukiwanego hasła '@miecz'
-* Atrybuty: używając # na początku wyszukiwanego hasła '#odporność'
-* Rzadkość: używając $ na początku wyszukiwanego hasła '$epicki'
-Możesz użyć | w określeniu jako warunek LUB. '$pospolity | epicki' zwraca wszystkie wspólne i epickie elementy.
-
-Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Wyjście</value>
@@ -948,9 +685,6 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   </data>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Zezwalaj na funkcje edycji znaków</value>
-  </data>
-  <data name="CEAttributePoints" xml:space="preserve">
-    <value>Punkty atrybutów</value>
   </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Atrybuty podstawowe</value>
@@ -1006,26 +740,14 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="Money" xml:space="preserve">
     <value>pieniądze</value>
   </data>
+  <data name="Electrum" xml:space="preserve">
+    <value>Elektrum</value>
+  </data>
   <data name="SkillPoints" xml:space="preserve">
     <value>umiejętności</value>
   </data>
   <data name="AttributesPoints" xml:space="preserve">
     <value>Punkty atrybutów</value>
-  </data>
-  <data name="BaseStrength" xml:space="preserve">
-    <value>Ul</value>
-  </data>
-  <data name="BaseDexterity" xml:space="preserve">
-    <value>Baza Dex</value>
-  </data>
-  <data name="BaseIntelligence" xml:space="preserve">
-    <value>Baza Int</value>
-  </data>
-  <data name="BaseHealth" xml:space="preserve">
-    <value>Zdrowie</value>
-  </data>
-  <data name="BaseMana" xml:space="preserve">
-    <value>Baza Mana</value>
   </data>
   <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Czas grany</value>
@@ -1053,12 +775,6 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   </data>
   <data name="NumHitsInflicted" xml:space="preserve">
     <value>Zadane trafienia</value>
-  </data>
-  <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>Największy Dmg</value>
-  </data>
-  <data name="GreatestMonster" xml:space="preserve">
-    <value>Największy tłum</value>
   </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>krytyczne</value>
@@ -1106,9 +822,6 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   </data>
 	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
     <value>Importuj z pliku...</value>
-  </data>
-	<data name="ExportVaultPasteBin" xml:space="preserve">
-    <value>Udostępnij sejf na PasteBin</value>
   </data>
   <data name="GlobalNoVaultLoaded" xml:space="preserve">
     <value>Nie załadowano skarbca.</value>
@@ -1167,7 +880,16 @@ Oto złożony przykład: 'arktyczny &amp;mróz @miecz $pospolity | epicki'</valu
   <data name="ImportVaultSuccess" xml:space="preserve">
     <value>Zaimportowano {0} przedmiotów do skarbca.</value>
   </data>
-  <data name="ShareVaultTooltip" xml:space="preserve">
-    <value>🔗 Udostępnij skarbiec</value>
+	<data name="TextTag_DefenseManaBurnRatio" xml:space="preserve">
+    <value>{%.0f0}% odporności na obrażenia od drenażu energii</value>
+    <comment>Substitute for the missing tag of defensiveManaBurnRatio: resistance to the damage of Energy Drain (DamageManaBurnRatio)</comment>
+  </data>
+	<data name="TextTag_DefensePercentCurrentLife" xml:space="preserve">
+    <value>@DefensePercentLife</value>
+    <comment>Substitute for the missing tag of defensivePercentCurrentLife: the game text of the same resistance (DefensePercentLife)</comment>
+  </data>
+	<data name="TextTag_tqvSkillCastOnTargetLocation" xml:space="preserve">
+    <value>Rzucane w miejscu zabitego wroga</value>
+    <comment>TQVault text: a skill cast on a kill (skillCastName) appears at the slain enemy (skillCastOnTargetLocation)</comment>
   </data>
 </root>

@@ -53,7 +53,7 @@ public enum GearType
 
 public static class GearTypeExtension
 {
-	private static Dictionary<GearType, GearTypeDescriptionAttribute> _GearTypeMap;
+	private static Dictionary<GearType, GearTypeDescriptionAttribute>? _GearTypeMap;
 	public static Dictionary<GearType, GearTypeDescriptionAttribute> GearTypeMap
 	{
 		get
@@ -62,11 +62,15 @@ public static class GearTypeExtension
 			{
 				_GearTypeMap = Enums.GetMembers<GearType>().Select(m => (m.Value, Attrib: m.Attributes.Get<GearTypeDescriptionAttribute>()))
 					.Where(m => m.Attrib is not null)
-					.ToDictionary(m => m.Value, m => m.Attrib);
+					.ToDictionary(m => m.Value, m => m.Attrib!);
 			}
 			return _GearTypeMap;
 		}
 	}
+
+	/// <summary>The gear type of an item class (ignoring case), <see cref="GearType.Undefined"/> when not a piece of gear.</summary>
+	public static GearType FromItemClass(string? itemClass)
+		=> GearTypeMap.FirstOrDefault(m => m.Value.ICLASS.Equals(itemClass, StringComparison.OrdinalIgnoreCase)).Key;
 
 	/// <summary>
 	/// Return ItemClass constant for <paramref name="type"/> like <see cref="Item.ICLASS_AMULET"/> or <see cref="string.Empty"/> if none
@@ -98,20 +102,6 @@ public static class GearTypeExtension
 #endregion
 
 #region Related Attributes
-
-/// <summary>
-/// Allowed <see cref="GearType"/> for this element
-/// </summary>
-[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
-public class GearTypeAttribute : Attribute
-{
-	public GearType Type { get; }
-
-	public GearTypeAttribute(GearType type)
-	{
-		Type = type;
-	}
-}
 
 /// <summary>
 /// Allowed <see cref="GearType"/> for this element

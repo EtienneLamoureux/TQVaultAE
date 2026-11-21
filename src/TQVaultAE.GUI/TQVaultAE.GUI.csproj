@@ -14,13 +14,16 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<AssemblyTitle>TQVaultAE</AssemblyTitle>
-		<AssemblyDescription>Extra bank space for Titan Quest Anniversary Edition</AssemblyDescription>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>TQVaultAE</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2006-2012 by Brandon Wallace</AssemblyCopyright>
+		<Description>Extra bank space for Titan Quest Anniversary Edition</Description>
+		<Company>titanquest.net community</Company>
+		<Product>TQVaultAE</Product>
+		<Copyright>Copyright © 2006-2012 by Brandon Wallace</Copyright>
 		<ComVisible>false</ComVisible>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+		<!-- Server GC: the saves load on every core, and a single workstation heap suspended them all on each collection
+		     (load 1.15 s -> 0.45 s on 64 cores, about 270 MB more). DATAS keeps the number of heaps small. -->
+		<ServerGarbageCollection>true</ServerGarbageCollection>
 	</PropertyGroup>
 
 
@@ -29,18 +32,43 @@
 		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
-		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Presentation.Win32\TQVaultAE.Presentation.Win32.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CheckGroupBox" />
 		<PackageReference Include="Enums.NET" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
 	</ItemGroup>
+
+	<!-- In-app MCP automation endpoint. Release builds serve the user tools when the setting turns the endpoint on;
+	     Debug builds add the developer tools (Automation/Dev) and the headless mode. See documentation/mcp.md and
+	     documentation/AUTOMATION.md -->
+	<PropertyGroup>
+		<!-- The ASP.NET Core shared framework already carries Microsoft.Extensions.*; keep the explicit references. -->
+		<NoWarn>$(NoWarn);NU1510</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="ModelContextProtocol.AspNetCore" />
+		<ProjectReference Include="..\TQVaultAE.Automation\TQVaultAE.Automation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
+		<Compile Remove="Automation\Dev\**" />
+	</ItemGroup>
+
+	<!-- The ASP.NET Core shared framework brings the IIS in-process module, a native DLL a self-contained single file
+	     leaves beside the executable. The endpoint runs on Kestrel and never loads it: keep it out of the publish. -->
+	<Target Name="DropIisModuleFromPublish" AfterTargets="ComputeResolvedFilesToPublishList">
+		<ItemGroup>
+			<ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(Filename)%(Extension)' == 'aspnetcorev2_inprocess.dll'" />
+		</ItemGroup>
+	</Target>
 
 	<ItemGroup>
 		<Content Include="..\TQVaultAE.Config\UserConfig.xml" Link="UserConfig.xml">

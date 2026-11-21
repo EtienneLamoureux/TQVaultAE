@@ -13,29 +13,52 @@
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 		<AssemblyTitle>ARZExplorer</AssemblyTitle>
-		<AssemblyDescription>Tool for extracting Titan Quest's ARZ and ARC files.</AssemblyDescription>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>ARZExplorer</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2009-2010 by VillageIdiot, v2.0 - 2022 by hguy</AssemblyCopyright>
+		<Description>Tool for extracting Titan Quest's ARZ and ARC files.</Description>
+		<Company>titanquest.net community</Company>
+		<Product>ARZExplorer</Product>
+		<Copyright>Copyright © 2009-2010 by VillageIdiot, v2.0 - 2022 by hguy</Copyright>
 		<ComVisible>false</ComVisible>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+		<!-- Searching reads every database record in parallel blocks: allocation bound, 3.7x faster with the server GC
+		     (about 35% more memory with every archive loaded). -->
+		<ServerGarbageCollection>true</ServerGarbageCollection>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
-		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Presentation.Win32\TQVaultAE.Presentation.Win32.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="TQVaultAE.Tests.Win32" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
+	</ItemGroup>
+
+	<!-- Debug-only MCP automation endpoint (Automation\), see documentation/AUTOMATION.md -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<!-- The ASP.NET Core shared framework already carries Microsoft.Extensions.*; keep the explicit references for Release. -->
+		<NoWarn>$(NoWarn);NU1510</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="ModelContextProtocol.AspNetCore" />
+		<ProjectReference Include="..\TQVaultAE.Automation\TQVaultAE.Automation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
+		<Compile Remove="Automation\**" />
 	</ItemGroup>
 
 	<ItemGroup>

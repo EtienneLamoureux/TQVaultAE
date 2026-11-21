@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- The git backup tests: they run real git processes against temp repositories (5 to 15 s each), apart from the
+	     fast TQVaultAE.Services.Tests. -->
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+	</ItemGroup>
+
+</Project>

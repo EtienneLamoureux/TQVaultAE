@@ -27,7 +27,7 @@ public class SetItemInfo
 	/// <summary>
 	/// Translations
 	/// </summary>
-	public readonly Dictionary<string, string> Translations = new();
+	public readonly Dictionary<string, string> Translations = [];
 
 	public SetItemInfo(string itemSetName, string setName, Dictionary<string, Info> setMembers, DBRecordCollection setRecords)
 	{

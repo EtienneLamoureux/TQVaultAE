@@ -44,6 +44,33 @@ public class FileIO : IFileIO
 		File.Delete(path);
 	}
 
+	public virtual bool IsReadOnly(string path)
+		=> File.GetAttributes(path).HasFlag(FileAttributes.ReadOnly);
+
+	public virtual void SetReadOnly(string path, bool makeReadOnly)
+	{
+		var attributes = File.GetAttributes(path);
+		var wanted = makeReadOnly ? attributes | FileAttributes.ReadOnly : attributes & ~FileAttributes.ReadOnly;
+		if (wanted != attributes)
+			File.SetAttributes(path, wanted);
+	}
+
+	public virtual bool CanMoveToRecycleBin(string path)
+	{
+		if (!OperatingSystem.IsWindows())
+			return false;
+
+		var root = Path.GetPathRoot(Path.GetFullPath(path));
+		return !string.IsNullOrEmpty(root) && !root.StartsWith(@"\\", StringComparison.Ordinal)
+			&& new DriveInfo(root).DriveType == DriveType.Fixed;
+	}
+
+	public virtual void MoveToRecycleBin(string path)
+		=> Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(
+			path,
+			Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+			Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+
 	public virtual void Copy(string sourceFileName, string destFileName)
 	{
 		File.Copy(sourceFileName, destFileName);

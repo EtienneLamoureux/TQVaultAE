@@ -61,37 +61,37 @@ Here's the locations.
 ![Git Backup Settings](gitbackup/settings.png)
 
 - ***Disable legacy backup*** : stops the existing local backup system in `$(TQVaultData)\Backups`.
-    - This discret directory can contain a lot of files. So if you decide to check this box, you certainly can empty it first.
+    - That folder is not sent to the git repository: git already keeps every version of your files.
+    - It can contain a lot of files. So if you decide to check this box, you certainly can empty it first.
 - ***Backup player saves*** : this backup is optional, the main concern is vault files.
+    - Always backed up: the vault files of your vault folder (`*.vault.json` and the old `*.vault`) and its `Config` folder.
+    - With this box: also the whole `SaveData` folder of `Titan Quest` and of `Titan Quest - Immortal Throne`.
 - ***Git Repository Url*** : if you arrived here, you know what it is. If you don't google it.
+    - You can change it later: the next start uses the new repository and sends it all your files.
 
 ---
 
 ### <a id="Workflow"></a>Workflow
 
-1. Once configured, the first time, TQVault clone your repository and put a junction (Hard link) to your save files in it (it do not copy file and waste disk space).
-    1. The clone is in a sub directory of TQVault named `LocalGitRepository`
+1. Once configured, the first time, TQVault clones your repository into a sub directory of TQVault named `LocalGitRepository`.
+    1. The clone holds **copies** of your files. git only works inside it: TQVault alone reads and writes your real folders, file by file.
+    1. Your files and the repository's are put together: a file found on one side only is kept, and a file found on both sides keeps the most recent save.
 
 1. You update your files from TQVault or the game.
 
-1. Every changes you made are pushed to the remote directory on closing.
+1. On closing, TQVault copies your changes into the clone (new, changed and deleted files), commits them, brings in what another computer pushed meanwhile, and pushes.
     1. For those who have a lot of saves, it may be long to push all the files in the remote location. The first time may be annoying.
     1. ***Taking a long time uploading 2GO via a DSL line is not a TQVault issue***.
     1. Beside that "first time" it should be fast.
 
-1. Reopening the tool will check if there is any change on the remote directory.
-    1. if none, TQVault is up to date.
-    1. if any, TQVault will ask you how do you want to handle conflicts if any. Most of the time you says `Cancel`, but if you switch from computer to computer often, it's a real question to ask.
+1. On opening, TQVault copies and commits your changes and brings in what the other computers pushed (it does not tag or push then), then writes the changes of the other computers to your folders. No question is asked:
+    1. A file changed on one computer only takes that version. A file deleted on another computer is deleted here too.
+    1. A file changed on both computers keeps the **most recent save**. git does not keep file dates, so every commit carries a small `.tqvault-savetimes` file with the real save time of each file, and a file written from the backup gets its original date back.
+    1. A file modified on one computer and deleted on the other is kept.
+    1. Files are always taken whole, never mixed.
+    1. If your vault folder (or a save folder) is empty while the backup holds files, for example after a reinstall or a new vault path, it is filled from the backup instead of emptying the backup.
 
-**For the vaults**
-
-![Git Backup Settings](gitbackup/vaultoverride.png)
-
-**For the player saves**
-
-![Git Backup Settings](gitbackup/tqsaveoverride.png)
-
-That's your new life for now, until a contributor make it smarter.
+1. If git is not installed, or the repository cannot be reached, TQVault shows the error and keeps working without the backup.
 
 ---
 
@@ -99,7 +99,8 @@ That's your new life for now, until a contributor make it smarter.
 
 ***Stupidity is not a TQVault issue.***
 
-Doing stuff like `git reset --hard` on your repo for fun will make you cry!
+Your real folders are the reference: on opening and closing, TQVault copies them into `LocalGitRepository`.
+So editing files inside `LocalGitRepository` does nothing, the next sync puts your real files back.
 
 if you think you misbehave, remember TQVault sync your changes on opening and closing.
 So if you did a mess, manually backup your local files before running the tool again.
@@ -114,10 +115,12 @@ TQVault use a strict taging based on date time `yy.MM.dd.HHmmss` and the last co
 
 These tags are also pushed on the remote repository.
 
-This make it easy to reset a file (or several) to a previous state.
+This make it easy to get a file (or several) back in a previous state.
 
-Here's an example of reverting a vault to a previous state in Git Extensions.
+TQVault closed, copy the old version of the file into your vault folder (or save folder), for example with
+`git show 26.11.08.161633:"TQVaultData/MyVault.vault.json" > "%USERPROFILE%\Documents\my games\Titan Quest\TQVaultData\MyVault.vault.json"`
+from `LocalGitRepository`, or with the "save as" of your git UI. The next start shows it and backs it up as a new change.
 
-*Do this before opening TQVault, so it can display the version you just recover when you open it.*
+Here's where to find the old version of a vault in Git Extensions. Use "Save selected as...", not the "Reset file(s) to" entry the picture highlights: a file reset inside `LocalGitRepository` is put back by the next sync.
 
 ![Recover an old version](gitbackup/resetfile.png)

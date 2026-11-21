@@ -23,7 +23,7 @@ public partial class RecordId
 
 	#region IsRelic
 
-	private readonly string[] HCDungeonRelic = new[] { "03_X4_ESSENCEOFORDER_CHARM", "03_X4_ESSENCEOFCHAOS" };
+	private static readonly string[] HCDungeonRelic = ["03_X4_ESSENCEOFORDER_CHARM", "03_X4_ESSENCEOFCHAOS"];
 
 	bool? _IsRelic;
 	/// <summary>

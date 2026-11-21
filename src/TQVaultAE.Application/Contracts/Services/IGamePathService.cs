@@ -55,13 +55,6 @@ public interface IGamePathService
 	bool LocalGitRepositoryGitDirExist { get; }
 
 	/// <summary>
-	/// Parses filename to try to determine the base character name.
-	/// </summary>
-	/// <param name="filename">filename of the character file</param>
-	/// <returns>string containing the character name</returns>
-	string GetNameFromFile(string filename);
-
-	/// <summary>
 	/// Gets or sets the Immortal Throne game path.
 	/// </summary>
 	string GamePathTQIT { get; set; }
@@ -134,6 +127,16 @@ public interface IGamePathService
 	/// Stash files for Mods all have their own subdirectory which is the same as the mod's custom map folder
 	/// </summary>
 	string TransferStashFileFullPath { get; }
+
+	/// <summary>
+	/// The transfer stash file of a custom map (empty for the base game), whatever the active map is.
+	/// </summary>
+	string TransferStashFileFullPathFor(string mapFolder);
+
+	/// <summary>
+	/// The relic vault file of a custom map (empty for the base game), whatever the active map is.
+	/// </summary>
+	string RelicVaultStashFileFullPathFor(string mapFolder);
 	/// <summary>
 	/// Gets a value indicating whether the vault save folder has been changed.
 	/// Usually done via settings and triggers a reload of the vaults.
@@ -173,25 +176,16 @@ public interface IGamePathService
 	/// <returns>List of character files in a string array</returns>
 	string[] GetCharacterList();
 	/// <summary>
+	/// True for a custom map character's save folder (<c>SaveData\User\_name</c>, archived or not), false for a main
+	/// campaign one (<c>SaveData\Main\_name</c>).
+	/// </summary>
+	/// <param name="characterFolder">The character's save folder.</param>
+	bool IsCustomCharacterFolder(string characterFolder);
+	/// <summary>
 	/// Return all known custom map directories
 	/// </summary>
 	/// <returns>List of custom maps in a string array</returns>
 	GamePathEntry[] GetCustomMapList();
-	/// <summary>
-	/// Gets the full path to the player character file.
-	/// </summary>
-	/// <param name="characterName">name of the character</param>
-	/// <param name="IsTQIT"><c>true</c> for Immortal Throne file, <c>false</c> otherwise</param>
-	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
-	/// <returns>full path to the character file.</returns>
-	string GetPlayerFile(string characterName, bool IsTQIT, bool isArchive);
-	/// <summary>
-	/// Gets the full path to the player's stash file.
-	/// </summary>
-	/// <param name="characterName">name of the character</param>
-	/// <param name="isArchive">if <c>true</c> return an Archive path.</param>
-	/// <returns>full path to the player stash file</returns>
-	string GetPlayerStashFile(string characterName, bool isArchive);
 	/// <summary>
 	/// Gets the file name and path for a vault.
 	/// </summary>
@@ -209,20 +203,11 @@ public interface IGamePathService
 	/// <returns></returns>
 	string ResolveGamePath();
 
-	string TransferStashFileName { get; }
-	string RelicVaultStashFileName { get; }
 	string PlayerSaveFileName { get; }
 	string PlayerStashFileNameB { get; }
 	string PlayerStashFileNameG { get; }
 	string PlayerSettingsFileName { get; }
 	GameType GameType { get; set; }
-
-	/// <summary>
-	/// Return the vault name from <paramref name="vaultFilePath"/>
-	/// </summary>
-	/// <param name="vaultFilePath"></param>
-	/// <returns>name stripted from path and extension</returns>
-	string GetVaultNameFromPath(string vaultFilePath);
 
 	/// <summary>
 	/// Return ARC filename from <paramref name="resourceIdOrPrefix"/>

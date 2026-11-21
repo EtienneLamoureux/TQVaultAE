@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Code shared by the automation endpoints of TQVaultAE and ARZExplorer (server start, control pictures, UI thread
+	     access, control walks, headless mode). TQVaultAE references it in every build, since its Release builds serve the user tools (documentation/mcp.md);
+	     ARZExplorer in Debug builds only (so its headless mode is Debug-only; TQVaultAE has it in every build).
+	     See documentation/AUTOMATION.md -->
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<OutputType>Library</OutputType>
+		<RootNamespace>TQVaultAE.Automation</RootNamespace>
+		<AssemblyName>TQVaultAE.Automation</AssemblyName>
+		<Platforms>AnyCPU;x64;x86</Platforms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UseWindowsForms>true</UseWindowsForms>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<NoWarn>$(NoWarn);WFO1000</NoWarn>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- The MCP server (McpEndpoint). -->
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="ModelContextProtocol.AspNetCore" />
+	</ItemGroup>
+
+</Project>

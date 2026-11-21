@@ -1,9 +1,10 @@
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Config.Tags;
 using System.Text.Json;
 using System.Drawing;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.DTOs;
 
 namespace TQVaultAE.Services;
 
@@ -17,7 +18,8 @@ public class TagService : ITagService
 	protected readonly IFileIO FileIO;
 	protected readonly IPathIO PathIO;
 	protected readonly JsonSerializerOptions JsonOptions;
-	protected TagConfig TagConfig;
+	protected TagConfig TagConfig = new();
+	private bool _readFailed;
 	public Dictionary<string, Color> Tags => this.TagConfig.tags.OrderBy(t => t.name).ToDictionary(
 		t => t.name,
 		t => Color.FromArgb(t.color.R, t.color.G, t.color.B)
@@ -31,6 +33,22 @@ public class TagService : ITagService
 		this.PathIO = pathIO;
 		this.JsonOptions = jsonOptions;
 		this.ReadConfig();
+	}
+
+	/// <inheritdoc/>
+	public TagNameError ValidateTagName(string? newName, string? currentName = null)
+	{
+		if (string.IsNullOrWhiteSpace(newName))
+			return TagNameError.Empty;
+
+		// Before the existing names, which hold the current one too.
+		if (currentName is not null && currentName.Equals(newName, StringComparison.OrdinalIgnoreCase))
+			return TagNameError.SameAsCurrent;
+
+		if (this.TagConfig.tags.Any(t => t.name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+			return TagNameError.AlreadyExists;
+
+		return TagNameError.None;
 	}
 
 	public bool AddTag(string tagName)
@@ -146,29 +164,23 @@ public class TagService : ITagService
 
 	public void ReadConfig()
 	{
-		string configFilePath = this.ResolveConfigFilePath();
-
-		if (this.FileIO.Exists(configFilePath))
-		{
-			var content = this.FileIO.ReadAllText(configFilePath);
-			this.TagConfig = JsonSerializer.Deserialize<TagConfig>(content, JsonOptions);
-			return;
-		}
-
-		this.TagConfig = new TagConfig();
+		var (config, failed) = JsonFile.Read<TagConfig>(this.FileIO, this.ResolveConfigFilePath(), JsonOptions, this.Log, "tags");
+		this.TagConfig = config ?? new TagConfig();
+		// A file that cannot be read is kept for the user to repair: tags changed meanwhile are not saved over it.
+		this._readFailed = failed;
 	}
 
 	private string ResolveConfigFilePath() => this.PathIO.Combine(this.GamePathService.TQVaultConfigFolder, @"TagConfig.json");
 
 	public void SaveConfig()
 	{
-		if (this.TagConfig is null)
+		if (this.TagConfig is null || this._readFailed)
 			return;
 
-		string configFilePath = this.ResolveConfigFilePath();
+		// A character left without tags (last tag unassigned or deleted) keeps no entry.
+		this.TagConfig.mapping.RemoveAll(m => m.tags is null || m.tags.Count == 0);
 
-		var content = JsonSerializer.Serialize(this.TagConfig, JsonOptions);
-		this.FileIO.WriteAllText(configFilePath, content);
+		JsonFile.Write(this.FileIO, this.ResolveConfigFilePath(), this.TagConfig, JsonOptions);
 	}
 
 
@@ -188,9 +200,8 @@ public class TagService : ITagService
 			// update references inside mapping
 			foreach (var map in this.TagConfig.mapping)
 			{
-				if (map.tags.Contains(tagNameOld))
+				if (map.tags.Remove(tagNameOld))
 				{
-					map.tags.Remove(tagNameOld);
 					map.tags.Add(tagNameNew);
 				}
 			}

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using TQVaultAE.Domain.Entities;
+﻿using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Contracts.Providers;
 
@@ -11,27 +10,21 @@ public interface IItemAttributeProvider
 	/// <param name="attributeList">array of attributes</param>
 	/// <param name="variableName">name of variable</param>
 	/// <returns>true if variable is present in the list</returns>
-	bool AttributeGroupHas(Collection<Variable> attributeList, string variableName);
+	bool AttributeGroupHas(IReadOnlyList<Variable?> attributeList, string variableName);
 	/// <summary>
 	/// Indicates whether an effect type is part of a particular attribute group
 	/// </summary>
 	/// <param name="attributeList">Array of attributes</param>
 	/// <param name="type">Effect type enumeration</param>
 	/// <returns>true if attribute effect in group == type</returns>
-	bool AttributeGroupIs(Collection<Variable> attributeList, ItemAttributesEffectType type);
+	bool AttributeGroupIs(IReadOnlyList<Variable?> attributeList, ItemAttributesEffectType type);
 	/// <summary>
 	/// Indicates whether an effect is part of a particular attribute group
 	/// </summary>
 	/// <param name="attributeList">Array of attributes</param>
 	/// <param name="effect">effect string to be tested</param>
 	/// <returns>true if attribute effect in group == effect</returns>
-	bool AttributeGroupIs(Collection<Variable> attributeList, string effect);
-	/// <summary>
-	/// Gets the attribute group type.
-	/// </summary>
-	/// <param name="attributeList">array of attributes</param>
-	/// <returns>Effect type of the attribute list</returns>
-	ItemAttributesEffectType AttributeGroupType(Collection<Variable> attributeList);
+	bool AttributeGroupIs(IReadOnlyList<Variable?> attributeList, string effect);
 	/// <summary>
 	/// Indicates whether an attibute has a particular variable name
 	/// </summary>
@@ -50,7 +43,7 @@ public interface IItemAttributeProvider
 	/// </summary>
 	/// <param name="attribute">attribute string.  Internally normalized to UpperInvariant.</param>
 	/// <returns>ItemAttributesData for the attribute</returns>
-	ItemAttributesData GetAttributeData(string attribute);
+	ItemAttributesData? GetAttributeData(string attribute);
 	/// <summary>
 	/// Gets the effect tag string
 	/// </summary>

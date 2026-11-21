@@ -1,0 +1,390 @@
+using TQVaultAE.Application.Layout;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+
+namespace TQVaultAE.Application.Character;
+
+/// <summary>
+/// Edits the masteries and the skill points of a character for the character edit dialog, with the rules of the
+/// game's skill window: each point costs one skill point, a skill needs the mastery level of its tier and a modifier
+/// needs a point in its skill. Lowering a mastery or a skill resets the skills it locks and gives their points back.
+/// </summary>
+public sealed class CharacterSkillEditor
+{
+	private readonly IReadOnlyList<SkillRecord> _original;
+	private readonly Func<Masteries, MasteryTree?> _getTree;
+	private readonly MasteryTree?[] _slots;
+	private readonly HashSet<RecordId> _originalMasteries;
+
+	/// <summary>The level of every skill of the masteries chosen now or at the start; 0 when absent.</summary>
+	private readonly Dictionary<RecordId, int> _levels = [];
+
+	/// <summary>The skill levels at the start, to tell what changed.</summary>
+	private readonly Dictionary<RecordId, int> _originalLevels = [];
+
+	/// <summary>The trees whose skills are tracked: those chosen now or at the start.</summary>
+	private readonly List<MasteryTree> _tracked = [];
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CharacterSkillEditor"/> class.
+	/// </summary>
+	/// <param name="skillRecords">The skills of the save, left untouched.</param>
+	/// <param name="masteriesAllowed">The number of masteries the character may have.</param>
+	/// <param name="availablePoints">The skill points left to spend.</param>
+	/// <param name="getTree">Gives the skills of a mastery, or <see langword="null"/> when the game has none.</param>
+	public CharacterSkillEditor(IEnumerable<SkillRecord> skillRecords, int masteriesAllowed, int availablePoints, Func<Masteries, MasteryTree?> getTree)
+	{
+		this._original = skillRecords.ToList();
+		this._getTree = getTree;
+		this.AvailablePoints = availablePoints;
+
+		var savedLevels = new Dictionary<RecordId, int>();
+		var savedOrder = new Dictionary<RecordId, int>();
+		foreach (var record in this._original)
+		{
+			var id = record.skillName.ToRecordId();
+			if (savedLevels.TryAdd(id, record.skillLevel))
+				savedOrder[id] = savedOrder.Count;
+		}
+
+		// The masteries in the order of the save, which is the order they were chosen.
+		var chosen = Enum.GetValues<Masteries>()
+			.Select(m => getTree(m))
+			.OfType<MasteryTree>()
+			.Where(t => savedLevels.ContainsKey(t.Id))
+			.OrderBy(t => savedOrder[t.Id])
+			.ToList();
+
+		this._slots = new MasteryTree?[Math.Max(masteriesAllowed, chosen.Count)];
+		for (int i = 0; i < chosen.Count; i++)
+		{
+			this._slots[i] = chosen[i];
+			this.Track(chosen[i]);
+		}
+
+		foreach (var tree in this._tracked)
+			foreach (var id in Ids(tree))
+				if (savedLevels.TryGetValue(id, out var level))
+					this._levels[id] = this._originalLevels[id] = level;
+
+		this._originalMasteries = chosen.Select(t => t.Id).ToHashSet();
+	}
+
+	/// <summary>The skill points left to spend.</summary>
+	public int AvailablePoints { get; set; }
+
+	/// <summary>The mastery of each slot, <see langword="null"/> for an empty slot.</summary>
+	public IReadOnlyList<MasteryTree?> Slots => this._slots;
+
+	/// <summary>The masteries the game database describes, to choose from.</summary>
+	public IReadOnlyList<MasteryTree> KnownMasteries
+		=> Enum.GetValues<Masteries>().Select(this._getTree).OfType<MasteryTree>().ToList();
+
+	/// <summary>True when the set of masteries changed, which changes the class of the character.</summary>
+	public bool MasteriesChanged
+		=> !this._originalMasteries.SetEquals(this._slots.OfType<MasteryTree>().Select(t => t.Id));
+
+	/// <summary>True when a mastery or a skill level changed.</summary>
+	public bool Changed
+		=> this.MasteriesChanged
+			|| this._levels.Keys.Union(this._originalLevels.Keys).Any(id => this.GetLevel(id) != this._originalLevels.GetValueOrDefault(id));
+
+	/// <summary>The level of a mastery or a skill, 0 when it has no point.</summary>
+	public int GetLevel(RecordId skillId) => this._levels.GetValueOrDefault(skillId);
+
+	/// <summary>The level of the mastery of a slot, 0 for an empty slot.</summary>
+	public int GetMasteryLevel(int slot) => this._slots[slot] is { } tree ? this.GetLevel(tree.Id) : 0;
+
+	/// <summary>The points spent in the mastery of a slot and its skills.</summary>
+	public int GetPointsSpent(int slot) => this._slots[slot] is { } tree ? Ids(tree).Sum(this.GetLevel) : 0;
+
+	/// <summary>
+	/// The summary of the mastery of a slot: the mastery, its number of skills with points (the mastery counts as one)
+	/// and the points spent in them.
+	/// </summary>
+	/// <returns><see langword="null"/> for an empty slot.</returns>
+	public MasterySummary? GetMasterySummary(int slot)
+		=> this._slots[slot] is { } tree
+			? new MasterySummary(tree, tree.Skills.Count(s => this.GetLevel(s.Id) > 0) + 1, this.GetPointsSpent(slot))
+			: null;
+
+	/// <summary>True when a skill can take points: its tier is open and its parent skill has a point.</summary>
+	public bool IsUnlocked(int slot, MasterySkill skill)
+		=> this.GetMasteryLevel(slot) >= skill.RequiredMasteryLevel
+			&& (skill.ParentId is null || this.GetLevel(skill.ParentId) > 0);
+
+	/// <summary>
+	/// Chooses the mastery of a slot, or empties it: the points of the mastery it replaces are given back, the new one
+	/// starts at level 1.
+	/// </summary>
+	/// <returns>false, with nothing changed, when the mastery is already in another slot, unknown, or there is no
+	/// point to spend on it.</returns>
+	public bool SetMastery(int slot, Masteries? mastery)
+	{
+		var current = this._slots[slot];
+		if (current?.Mastery == mastery)
+			return true;
+
+		MasteryTree? tree = null;
+		if (mastery is { } m)
+		{
+			tree = this._getTree(m);
+			if (tree is null || this._slots.Any(s => s?.Mastery == m))
+				return false;
+
+			if (this.AvailablePoints + this.GetPointsSpent(slot) < 1)
+				return false;
+		}
+
+		if (current is not null)
+			foreach (var id in Ids(current))
+				this.ChangeLevel(id, 0);
+
+		this._slots[slot] = tree;
+		if (tree is not null)
+		{
+			this.Track(tree);
+			this.ChangeLevel(tree.Id, 1);
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Empties every mastery slot: the points of the masteries and of their skills are given back. The class of the
+	/// character goes with them (<see cref="MasteriesChanged"/>).
+	/// </summary>
+	public void ResetMasteries()
+	{
+		for (int slot = 0; slot < this._slots.Length; slot++)
+			this.SetMastery(slot, null);
+	}
+
+	/// <summary>
+	/// Sets the level of the mastery of a slot, between 1 and its highest level and within the points left. Lowering it
+	/// resets the skills of the tiers it closes.
+	/// </summary>
+	/// <returns>The level set.</returns>
+	public int SetMasteryLevel(int slot, int level)
+	{
+		if (this._slots[slot] is not { } tree)
+			return 0;
+
+		var current = this.GetLevel(tree.Id);
+		level = this.Affordable(current, Math.Clamp(level, 1, Math.Max(tree.MaxLevel, current)));
+		this.ChangeLevel(tree.Id, level);
+
+		if (level < current)
+			this.ResetLockedSkills(slot);
+
+		return level;
+	}
+
+	/// <summary>
+	/// Sets the level of a skill of a slot, between 0 and its highest level and within the points left. A locked skill
+	/// can only be lowered. Taking its last point resets its modifiers.
+	/// </summary>
+	/// <returns>The level set.</returns>
+	public int SetSkillLevel(int slot, RecordId skillId, int level)
+	{
+		if (this._slots[slot]?.Skills.FirstOrDefault(s => s.Id == skillId) is not { } skill)
+			return 0;
+
+		var current = this.GetLevel(skillId);
+		level = Math.Clamp(level, 0, Math.Max(skill.MaxLevel, current));
+		if (level > current && !this.IsUnlocked(slot, skill))
+			level = current;
+
+		level = this.Affordable(current, level);
+		this.ChangeLevel(skillId, level);
+
+		if (level == 0 && current > 0)
+			this.ResetLockedSkills(slot);
+
+		return level;
+	}
+
+	/// <summary>
+	/// A click on the mastery of a slot: <paramref name="step"/> levels up or down; with <paramref name="toEnd"/> up to
+	/// its highest level or down to level 1. <see cref="SetMasteryLevel"/> applies the points left.
+	/// </summary>
+	/// <returns>The level set; 0 for an empty slot.</returns>
+	public int StepMastery(int slot, int step, bool toEnd)
+	{
+		if (this._slots[slot] is not { } tree)
+			return 0;
+
+		var level = toEnd ? (step > 0 ? tree.MaxLevel : 1) : this.GetMasteryLevel(slot) + step;
+		return this.SetMasteryLevel(slot, level);
+	}
+
+	/// <summary>
+	/// A click on a skill of a slot: <paramref name="step"/> levels up or down; with <paramref name="toEnd"/> up to its
+	/// highest level or down to 0. <see cref="SetSkillLevel"/> applies the tier, parent and points rules.
+	/// </summary>
+	/// <returns>The level set; 0 when the skill is not in the slot's mastery.</returns>
+	public int StepSkill(int slot, MasterySkill skill, int step, bool toEnd)
+	{
+		var level = toEnd ? (step > 0 ? skill.MaxLevel : 0) : this.GetLevel(skill.Id) + step;
+		return this.SetSkillLevel(slot, skill.Id, level);
+	}
+
+	/// <summary>
+	/// What the skill pane shows of a skill of a slot: its points, the levels the equipped items add once it has a
+	/// point (up to the ultimate level: 15 points + 6 read "20 / 16", an unlearned skill "0 / 10" whatever the items
+	/// add), its button border and whether its tier is open.
+	/// </summary>
+	/// <param name="slot">The mastery slot.</param>
+	/// <param name="skill">A skill of the slot's mastery.</param>
+	/// <param name="gearAugments">The skill levels the equipped items give.</param>
+	public SkillPaneSkillView GetSkillView(int slot, MasterySkill skill, IReadOnlyList<SkillAugment> gearAugments)
+	{
+		var tree = this._slots[slot];
+		var level = this.GetLevel(skill.Id);
+		var masteryLevel = this.GetMasteryLevel(slot);
+		var bonus = tree is null ? 0 : skill.ShownItemBonus(level, SkillBonus.For(gearAugments, tree, skill.Id).Total);
+
+		var parentHasPoints = skill.ParentId is null || this.GetLevel(skill.ParentId) > 0;
+		var state = SkillPaneLayout.State(level, skill.MaxLevel, masteryLevel, skill.RequiredMasteryLevel, parentHasPoints, this.AvailablePoints);
+		return new SkillPaneSkillView(level, bonus, state, masteryLevel >= skill.RequiredMasteryLevel);
+	}
+
+	/// <summary>
+	/// Builds the skill list to save: the other skills (default attacks, quest rewards) and the unchanged ones stay as
+	/// they are, at their place; a changed level is updated, a skill with no point left is removed and a new one is
+	/// added at the end, after its mastery.
+	/// </summary>
+	public List<SkillRecord> BuildSkillRecords()
+	{
+		var tracked = this._tracked.SelectMany(Ids).ToHashSet();
+		var result = new List<SkillRecord>();
+		var kept = new HashSet<RecordId>();
+
+		foreach (var record in this._original)
+		{
+			var id = record.skillName.ToRecordId();
+			if (!tracked.Contains(id))
+			{
+				result.Add(record);
+				continue;
+			}
+
+			var level = this.GetLevel(id);
+			if (level == 0 || !kept.Add(id))
+				continue;
+
+			result.Add(level == record.skillLevel ? record : Copy(record, level));
+		}
+
+		foreach (var tree in this._slots.OfType<MasteryTree>())
+			foreach (var id in Ids(tree))
+				if (this.GetLevel(id) is var level and > 0 && kept.Add(id))
+					result.Add(new SkillRecord { skillName = id.Raw, skillLevel = level, skillEnabled = 1 });
+
+		return result;
+	}
+
+	/// <summary>The masteries of the slots now, with their levels and the levels of their skills: a class set's masteries.</summary>
+	public IReadOnlyList<ClassSetMastery> CaptureClassSet()
+		=> [.. this._slots.OfType<MasteryTree>().Select(tree => new ClassSetMastery(
+			tree.Mastery,
+			this.GetLevel(tree.Id),
+			[.. tree.Skills.Where(s => this.GetLevel(s.Id) > 0).Select(s => new ClassSetSkill(s.Id.Raw, this.GetLevel(s.Id)))]))];
+
+	/// <summary>
+	/// Applies the masteries of a class set: every mastery slot is emptied (its points back to the points left), then
+	/// each mastery of the set takes its slot, its level and its skill levels with the rules of the skill window, while
+	/// the points last. No point is lost: a set without masteries leaves them all in the points left.
+	/// </summary>
+	/// <param name="masteries">The class set's masteries, in slot order.</param>
+	/// <returns>False when the set could not be applied whole (too few points or mastery slots, a mastery or skill the game does not know).</returns>
+	public bool ApplyClassSet(IReadOnlyList<ClassSetMastery> masteries)
+	{
+		this.ResetMasteries();
+		for (int slot = 0; slot < Math.Min(masteries.Count, this._slots.Length); slot++)
+		{
+			var wanted = masteries[slot];
+			if (!this.SetMastery(slot, wanted.Mastery) || this._slots[slot] is not { } tree)
+				continue;
+
+			this.SetMasteryLevel(slot, wanted.Level);
+
+			// A skill takes its points once its parent has some: as many passes as the deepest chain needs.
+			var skills = wanted.Skills
+				.Select(s => (Skill: tree.Skills.FirstOrDefault(t => string.Equals(t.Id.Raw, s.Skill, StringComparison.OrdinalIgnoreCase)), s.Level))
+				.Where(s => s.Skill is not null)
+				.ToList();
+			for (int pass = 0; pass <= skills.Count; pass++)
+			{
+				bool changed = false;
+				foreach (var (skill, level) in skills)
+				{
+					var before = this.GetLevel(skill!.Id);
+					if (before != level && this.SetSkillLevel(slot, skill.Id, level) != before)
+						changed = true;
+				}
+				if (!changed)
+					break;
+			}
+		}
+
+		var applied = this.CaptureClassSet();
+		return applied.Count == masteries.Count && applied.Zip(masteries).All(pair => pair.First.SameAs(pair.Second));
+	}
+
+	private static SkillRecord Copy(SkillRecord record, int level) => new()
+	{
+		skillName = record.skillName,
+		skillLevel = level,
+		skillEnabled = record.skillEnabled,
+		skillSubLevel = record.skillSubLevel,
+		skillActive = record.skillActive,
+		skillTransition = record.skillTransition,
+	};
+
+	/// <summary>The mastery record then its skills.</summary>
+	private static IEnumerable<RecordId> Ids(MasteryTree tree)
+		=> tree.Skills.Select(s => s.Id).Prepend(tree.Id);
+
+	private void Track(MasteryTree tree)
+	{
+		if (!this._tracked.Any(t => t.Mastery == tree.Mastery))
+			this._tracked.Add(tree);
+	}
+
+	/// <summary>Lowers a raise to what the points left pay for.</summary>
+	private int Affordable(int current, int level)
+		=> level > current ? Math.Min(level, current + this.AvailablePoints) : level;
+
+	/// <summary>Sets a level and moves the difference of points to or from the points left.</summary>
+	private void ChangeLevel(RecordId id, int level)
+	{
+		this.AvailablePoints -= level - this.GetLevel(id);
+		if (level == 0)
+			this._levels.Remove(id);
+		else
+			this._levels[id] = level;
+	}
+
+	/// <summary>Resets the skills of a slot that are locked, until none is: a reset skill can lock its modifiers.</summary>
+	private void ResetLockedSkills(int slot)
+	{
+		if (this._slots[slot] is not { } tree)
+			return;
+
+		bool reset;
+		do
+		{
+			reset = false;
+			foreach (var skill in tree.Skills)
+			{
+				if (this.GetLevel(skill.Id) > 0 && !this.IsUnlocked(slot, skill))
+				{
+					this.ChangeLevel(skill.Id, 0);
+					reset = true;
+				}
+			}
+		}
+		while (reset);
+	}
+}

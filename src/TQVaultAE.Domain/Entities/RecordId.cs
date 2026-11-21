@@ -1,16 +1,19 @@
 using TQVaultAE.Domain.Helpers;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TQVaultAE.Domain.Entities;
 
 public partial class RecordId : IEquatable<RecordId>, IComparable, IComparable<RecordId>
 {
+	private static readonly char[] PathSeparators = ['\\', '/'];
+
 	public readonly string Raw;
 	public readonly string Normalized;
 
 	#region Ctor
 
-	private RecordId(string rawRecordId)
+	private RecordId(string? rawRecordId)
 	{
 		rawRecordId ??= string.Empty;
 		rawRecordId = rawRecordId.Trim();
@@ -27,7 +30,7 @@ public partial class RecordId : IEquatable<RecordId>, IComparable, IComparable<R
 	/// </summary>
 	/// <param name="rawRecordId"></param>
 	/// <returns></returns>
-	public static RecordId Create(string rawRecordId) => new RecordId(rawRecordId);
+	public static RecordId Create(string? rawRecordId) => new RecordId(rawRecordId);
 
 	#endregion
 
@@ -82,13 +85,13 @@ public partial class RecordId : IEquatable<RecordId>, IComparable, IComparable<R
 	public static readonly RecordId Empty = Create(string.Empty);
 
 	public bool IsEmpty => this.Raw == string.Empty;
-	public static bool IsNullOrEmpty(RecordId Id) => Id is null || Id.IsEmpty;
+	public static bool IsNullOrEmpty([NotNullWhen(false)] RecordId? Id) => Id is null || Id.IsEmpty;
 
 	#endregion
 
 	#region PrettyFileName
 
-	string _PrettyFileName;
+	string? _PrettyFileName;
 	public string PrettyFileName
 	{
 		get
@@ -116,25 +119,25 @@ public partial class RecordId : IEquatable<RecordId>, IComparable, IComparable<R
 
 	#region Tokens
 
-	ReadOnlyCollection<string> _Tokens;
+	ReadOnlyCollection<string>? _Tokens;
 	public ReadOnlyCollection<string> TokensRaw
 	{
 		get
 		{
 			if (_Tokens is null)
-				_Tokens = this.Raw.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries).ToList().AsReadOnly();
+				_Tokens = this.Raw.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries).ToList().AsReadOnly();
 
 			return _Tokens;
 		}
 	}
 	
-	ReadOnlyCollection<string> _TokensNormalized;
+	ReadOnlyCollection<string>? _TokensNormalized;
 	public ReadOnlyCollection<string> TokensNormalized
 	{
 		get
 		{
 			if (_TokensNormalized is null)
-				_TokensNormalized = this.TokensRaw.Select(t => t.ToUpper()).ToList().AsReadOnly();
+				_TokensNormalized = this.TokensRaw.Select(t => t.ToUpperInvariant()).ToList().AsReadOnly();
 
 			return _TokensNormalized;
 		}

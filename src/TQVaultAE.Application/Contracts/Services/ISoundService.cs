@@ -26,7 +26,7 @@ public interface ISoundService
 	/// </summary>
 	/// <param name="resourceId"></param>
 	/// <returns>Wav file content</returns>
-	byte[] GetSoundResource(RecordId resourceId);
+	byte[]? GetSoundResource(RecordId resourceId);
 	/// <summary>
 	/// Play a random predefined "Item Drop" sound
 	/// </summary>

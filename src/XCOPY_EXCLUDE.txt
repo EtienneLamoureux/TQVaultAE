@@ -1,4 +1,0 @@
-.pdb
-\Logging
-\LocalGitRepository
-SearchQueries.json

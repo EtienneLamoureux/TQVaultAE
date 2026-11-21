@@ -1,4 +1,8 @@
-﻿//-----------------------------------------------------------------------
+﻿using System.Diagnostics.CodeAnalysis;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.Presentation.Win32;
+
+//-----------------------------------------------------------------------
 // <copyright file="VaultProgressBar.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
@@ -51,16 +55,17 @@ public class VaultProgressBar : UserControl
 		this.Maximum = 0;
 		this.Title = string.Empty;
 		this.Value = 0;
-		this.backgroundImage = Resources.ProgressBar;
+		this.backgroundImage = Images.ProgressBar;
 		this.Size = this.backgroundImage.Size;
-		this.fillImage = Resources.ProgressBarFill;
+		this.fillImage = Images.ProgressBarFill;
 
 		this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 	}
 
+	[MemberNotNull(nameof(scalingLabelTitle))]
 	private void InitializeComponent()
 	{
-		this.scalingLabelTitle = new TQVaultAE.GUI.Components.ScalingLabel();
+		this.scalingLabelTitle = new TQVaultAE.GUI.Components.Scaling.ScalingLabel();
 		this.SuspendLayout();
 		// 
 		// scalingLabelTitle
@@ -127,13 +132,13 @@ public class VaultProgressBar : UserControl
 	/// <param name="e">PaintEventArgs data</param>
 	protected override void OnPaint(PaintEventArgs e)
 	{
-		if (this.backgroundImage != null)
+		if (this.backgroundImage is not null)
 		{
 			Rectangle destRect = new Rectangle(0, 0, this.Width, this.Height);
 			e.Graphics.DrawImage(this.backgroundImage, destRect, 0, 0, this.backgroundImage.Width, this.backgroundImage.Height, GraphicsUnit.Pixel);
 		}
 
-		if (this.Value > 0 && this.fillImage != null)
+		if (this.Value > 0 && this.fillImage is not null)
 		{
 			float factor = (float)this.Value / Math.Max(1.0F, (float)this.Maximum);
 			Rectangle destRect = new Rectangle(0, 0, Convert.ToInt32((float)this.Width * factor), this.Height);

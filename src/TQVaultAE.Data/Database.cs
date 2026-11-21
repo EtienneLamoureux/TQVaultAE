@@ -7,14 +7,13 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Config;
+using TQVaultAE.GameFiles;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
-using TQVaultAE.Logs;
 
 namespace TQVaultAE.Data;
 
@@ -46,12 +45,12 @@ public partial class Database : IDatabase
 	/// <summary>
 	/// Dictionary of all database info records
 	/// </summary>
-	protected readonly LazyConcurrentDictionary<RecordId, Info> infoDB = new();
+	protected readonly LazyConcurrentDictionary<RecordId, Info?> infoDB = new();
 
 	/// <summary>
 	/// Dictionary of all text database entries
 	/// </summary>
-	protected readonly ConcurrentDictionary<string, string> textDB = new();
+	protected readonly ConcurrentDictionary<string, string> textDB = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
 	/// Dictionary of all associated arc files in the database.
@@ -62,16 +61,17 @@ public partial class Database : IDatabase
 	/// Dictionary of all records dataset loaded from the database.
 	/// </summary>
 	protected readonly LazyConcurrentDictionary<RecordId, byte[]?> resourcesData = new();
+	private readonly LazyConcurrentDictionary<RecordId, (int Width, int Height)?> textureSizes = new();
 
 	/// <summary>
 	/// Dictionary of all record collections loaded from the database.
 	/// </summary>
-	protected readonly LazyConcurrentDictionary<RecordId, DBRecordCollection> dbRecordCollections = new();
+	protected readonly LazyConcurrentDictionary<RecordId, DBRecordCollection?> dbRecordCollections = new();
 
 	/// <summary>
 	/// Game language to support setting language in UI
 	/// </summary>
-	protected string gameLanguage;
+	protected string? gameLanguage;
 
 	protected readonly IArcFileProvider arcProv;
 	protected readonly IArzFileProvider arzProv;
@@ -113,7 +113,7 @@ public partial class Database : IDatabase
 
 	#region Database Properties
 
-	ReadOnlyDictionary<RecordId, DBRecordCollection> _LootRandomizerTableList;
+	ReadOnlyDictionary<RecordId, DBRecordCollection>? _LootRandomizerTableList;
 	public ReadOnlyDictionary<RecordId, DBRecordCollection> AllLootRandomizerTable
 	{
 		get
@@ -125,7 +125,7 @@ public partial class Database : IDatabase
 		}
 	}
 
-	ReadOnlyDictionary<RecordId, LootRandomizerItem> _LootRandomizerList;
+	ReadOnlyDictionary<RecordId, LootRandomizerItem>? _LootRandomizerList;
 	public ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizer
 	{
 		get
@@ -141,7 +141,7 @@ public partial class Database : IDatabase
 	/// <summary>
 	/// Mapping between ItemId and Affixes LootTable
 	/// </summary>
-	private static ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>> ItemAffixTableMap;
+	private ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>? ItemAffixTableMap;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the game language is being auto detected.
@@ -157,17 +157,44 @@ public partial class Database : IDatabase
 	/// <summary>
 	/// Gets the instance of the Titan Quest Database ArzFile.
 	/// </summary>
-	public ArzFile ArzFile { get; private set; }
+	public ArzFile? ArzFile { get; private set; }
 
 	/// <summary>
 	/// Gets the instance of the Immortal Throne Database ArzFile.
 	/// </summary>
-	public ArzFile ArzFileIT { get; private set; }
+	public ArzFile? ArzFileIT { get; private set; }
 
 	/// <summary>
 	/// Gets the instance of a custom map Database ArzFile.
 	/// </summary>
-	public ArzFile ArzFileMod { get; private set; }
+	public ArzFile? ArzFileMod { get; private set; }
+
+	/// <summary>
+	/// The custom map (mod) folder whose data this database adds over the game's; empty for the base game.
+	/// Set before <see cref="LoadDBFile"/>, else taken from <see cref="IGamePathService.MapName"/> when it loads: each
+	/// instance then keeps its own map, so databases of several maps can live side by side.
+	/// </summary>
+	public string? CustomMapFolder { get; set; }
+
+	/// <summary>
+	/// Gives the mod identity of a custom map folder (<c>IModLinkService.ModIdOfMap</c>), which the records of the mod's
+	/// database carry (<see cref="RecordSource.Mod"/>); without it, the folder's name. Set before <see cref="LoadDBFile"/>.
+	/// </summary>
+	public Func<string, string?>? ModIdOfMap { get; set; }
+
+	/// <inheritdoc/>
+	public string DataScope => this.CustomMapFolder ?? string.Empty;
+
+	/// <summary>
+	/// True when this database reads a custom map's data.
+	/// </summary>
+	private bool IsCustomMap => !string.IsNullOrEmpty(this.MapFolder);
+
+	/// <summary>
+	/// <see cref="CustomMapFolder"/>, or the map set at startup while it is not set yet.
+	/// </summary>
+	private string MapFolder => this.CustomMapFolder
+		?? (this.GamePathResolver.IsCustom ? this.GamePathResolver.MapName : string.Empty);
 
 	[GeneratedRegex(@"(?i)language\s*=\s*(""(?<Language>[^""]+)""|(?<Language>[^\r\n]*))[\r\n]")]
 	private static partial Regex GameLanguageRegEx();
@@ -176,13 +203,13 @@ public partial class Database : IDatabase
 	/// Gets the game language setting as a an English DisplayName.
 	/// </summary>
 	/// <remarks>Changed to property by VillageIdiot to support changing of Language in UI</remarks>
-	public string GameLanguage
+	public string? GameLanguage
 	{
 		get
 		{
 			// Added by VillageIdiot
 			// Check if the user configured the language
-			if (this.gameLanguage == null)
+			if (this.gameLanguage is null)
 			{
 				if (!this.AutoDetectLanguage)
 					this.gameLanguage = this.TQLanguage;
@@ -193,12 +220,13 @@ public partial class Database : IDatabase
 			{
 				try
 				{
-					string optionsFile = GamePathResolver.SettingsFileTQ;
+					// Immortal Throne and the Anniversary Edition write their settings in the Immortal Throne folder:
+					// a Titan Quest one is left by the original game and may give another language.
+					var (optionsFile, otherOptionsFile) = GamePathResolver.GameType == GameType.TQ
+						? (GamePathResolver.SettingsFileTQ, GamePathResolver.SettingsFileTQIT)
+						: (GamePathResolver.SettingsFileTQIT, GamePathResolver.SettingsFileTQ);
 					if (!this.FileIO.Exists(optionsFile))
-					{
-						// Try IT Folder if there is no settings file in TQ Folder
-						optionsFile = GamePathResolver.SettingsFileTQIT;
-					}
+						optionsFile = otherOptionsFile;
 					if (this.FileIO.Exists(optionsFile))
 					{
 						var fileContent = this.FileIO.ReadAllText(optionsFile);
@@ -216,7 +244,8 @@ public partial class Database : IDatabase
 				}
 				catch (IOException exception)
 				{
-					Log.ErrorException(exception);
+					this.Log.LogError(exception, "Failed to read the game language from {SettingsFile} or {SettingsFileIT}"
+						, GamePathResolver.SettingsFileTQ, GamePathResolver.SettingsFileTQIT);
 					return null;
 				}
 			}
@@ -232,62 +261,21 @@ public partial class Database : IDatabase
 
 	#region Database Public Methods
 
-	#region Database Public Static Methods
-
-	/// <summary>
-	/// Used to Extract an ARC file into the destination directory.
-	/// The ARC file will not be added to the cache.
-	/// </summary>
-	/// <remarks>Added by VillageIdiot</remarks>
-	/// <param name="arcFileName">Name of the arc file</param>
-	/// <param name="destination">Destination path for extracted data</param>
-	/// <returns>Returns true on success otherwise false</returns>
-	public bool ExtractArcFile(string arcFileName, string destination)
-	{
-		bool result = false;
-
-		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Database.ExtractARCFile('{0}', '{1}')", arcFileName, destination);
-
-		try
-		{
-			ArcFile arcFile = new ArcFile(arcFileName);
-
-			// Extract the files
-			result = arcProv.ExtractArcFile(arcFile, destination);
-		}
-		catch (IOException exception)
-		{
-			Log.LogError(exception, "Exception occurred");
-			result = false;
-		}
-
-		if (USettings.DatabaseDebugLevel > 1)
-			Log.LogDebug("Extraction Result = {0}", result);
-
-		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Exiting Database.ReadARCFile()");
-
-		return result;
-	}
-
-	#endregion Database Public Static Methods
-
 	/// <summary>
 	/// Gets the Infor for a specific item id.
 	/// </summary>
 	/// <param name="itemId">Item ID which we are looking up.  Will be normalized privately.</param>
 	/// <returns>Returns Infor for item ID and NULL if not found.</returns>
-	public Info GetInfo(RecordId itemId)
+	public Info? GetInfo(RecordId itemId)
 	{
 		if (itemId is null)
 			return null;
 
 		return this.infoDB.GetOrAddAtomic(itemId, k =>
 		{
-			DBRecordCollection record = GetRecordFromFile(k);
+			DBRecordCollection? record = GetRecordFromFile(k);
 
-			if (record == null)
+			if (record is null)
 				return null;
 
 			return new Info(record);
@@ -301,7 +289,7 @@ public partial class Database : IDatabase
 	/// <param name="tagId">Tag to be looked up in the text database normalized to upper case.</param>
 	/// <returns>Returns localized string, empty string if it cannot find a string or "?ErrorName?" in case of uncaught exception.</returns>
 	public string GetFriendlyName(string tagId)
-		=> this.textDB.TryGetValue(tagId.ToUpperInvariant(), out var text) ? text : string.Empty;
+		=> this.textDB.TryGetValue(tagId, out var text) ? text : string.Empty;
 
 	/// <summary>
 	/// Gets the formatted string for the variable attribute.
@@ -319,17 +307,17 @@ public partial class Database : IDatabase
 	/// <returns>Returns localized item attribute</returns>
 	public string GetItemAttributeFriendlyText(string itemAttribute, bool addVariable = true)
 	{
-		ItemAttributesData data = ItemAttributeProvider.GetAttributeData(itemAttribute);
-		if (data == null)
+		ItemAttributesData? data = ItemAttributeProvider.GetAttributeData(itemAttribute);
+		if (data is null)
 		{
-			this.Log.LogDebug($"Attribute unknown : {itemAttribute}");
+			this.Log.LogDebug("Attribute unknown : {ItemAttribute}", itemAttribute);
 			return string.Concat("?", itemAttribute, "?");
 		}
 
 		string attributeTextTag = ItemAttributeProvider.GetAttributeTextTag(data);
 		if (string.IsNullOrEmpty(attributeTextTag))
 		{
-			this.Log.LogDebug($"Attribute unknown : {itemAttribute}");
+			this.Log.LogDebug("Attribute unknown : {ItemAttribute}", itemAttribute);
 			return string.Concat("?", itemAttribute, "?");
 		}
 
@@ -351,6 +339,7 @@ public partial class Database : IDatabase
 	/// </summary>
 	public void LoadDBFile()
 	{
+		this.CustomMapFolder ??= this.MapFolder;
 		this.LoadTextDB();
 		this.LoadARZFile();
 		this.BuildItemAffixTableMap();
@@ -363,23 +352,13 @@ public partial class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, DBRecordCollection> ReadAllLootRandomizerTable()
 	{
 		// Load all available loot randomizer table
-		var lootRandomizerTableList = new[] {
-			(Priority: 0, ArzFile: this.ArzFileMod),
-			(Priority: 1, ArzFile: this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null),
-			(Priority: 2, ArzFile: this.ArzFile)
-		}
-		.Where(db => db.ArzFile is not null)
-		.SelectMany(db =>
-			db.ArzFile.RecordInfo.Where(r =>
-				r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZERTABLE, noCase)
-				&& !r.Key.IsOld // Remove old loot table
-			).Select(ri => (RecordInfo: ri, db.Priority))
-		)
+		var lootRandomizerTableList = this.RecordsOfClass(RCLASS_LOOTRANDOMIZERTABLE)
+		.Where(r => !r.Id.IsOld) // Remove old loot table
 		.Select(r =>
 		{
-			var DBRecords = GetRecordFromFile(r.RecordInfo.Key);
+			var DBRecords = GetRecordFromFile(r.Id);
 
-			return (RecordInfoKey: r.RecordInfo.Key, DBRecords, r.Priority);
+			return (RecordInfoKey: r.Id, DBRecords, r.Priority);
 		})
 		.GroupBy(r => r.RecordInfoKey)
 		.Select(grp =>
@@ -388,7 +367,8 @@ public partial class Database : IDatabase
 				grp.OrderBy(v => v.Priority).First().DBRecords // Promote Mod records over base game
 			)
 		)
-		.ToDictionary(r => r.RecordInfoKey, r => r.DBRecords);
+		.Where(r => r.DBRecords is not null)
+		.ToDictionary(r => r.RecordInfoKey, r => r.DBRecords!);
 
 		return new ReadOnlyDictionary<RecordId, DBRecordCollection>(lootRandomizerTableList);
 	}
@@ -401,19 +381,11 @@ public partial class Database : IDatabase
 	private ReadOnlyDictionary<RecordId, LootRandomizerItem> ReadAllLootRandomizer()
 	{
 		// Load all available loot randomizer
-		var lootRandomizerList = new[] {
-			(Priority: 0, ArzFile: this.ArzFileMod),
-			(Priority: 1, ArzFile: this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null),
-			(Priority: 2, ArzFile: this.ArzFile)
-		}
-		.Where(db => db.ArzFile is not null)
-		.SelectMany(db =>
-			db.ArzFile.RecordInfo.Where(r => r.Value.RecordType.Equals(RCLASS_LOOTRANDOMIZER, noCase))
-			.Select(ri => (RecordInfo: ri, db.Priority))
-		)
+		var lootRandomizerList = this.RecordsOfClass(RCLASS_LOOTRANDOMIZER)
 		.Select(r =>
 			{
-				var rec = GetRecordFromFile(r.RecordInfo.Key);
+				// Listed in the record table, so it can be read.
+				var rec = GetRecordFromFile(r.Id)!;
 
 				string Tag = rec.GetString(Variable.KEY_LOOTRANDNAME, 0);
 				int Cost = rec.GetInt32(Variable.KEY_LOOTRANDCOST, 0);
@@ -422,16 +394,19 @@ public partial class Database : IDatabase
 				string FileDescription = rec.GetString(Variable.KEY_FILEDESC, 0);
 
 				var val = new LootRandomizerItem(
-					r.RecordInfo.Key
+					r.Id
 					, Tag
 					, Cost
 					, LevelRequirement
 					, ItemClass
 					, FileDescription
-					, r.RecordInfo.Key.PrettyFileName
-				);
+					, r.Id.PrettyFileName
+				)
+				{
+					FromMod = r.Priority == 0, // the custom map's database
+				};
 
-				return (RecordInfoKey: r.RecordInfo.Key, LootRandomizerItem: val, r.Priority);
+				return (RecordInfoKey: r.Id, LootRandomizerItem: val, r.Priority);
 			}
 		)
 		.GroupBy(r => r.RecordInfoKey)
@@ -449,159 +424,173 @@ public partial class Database : IDatabase
 	#region ItemAffixTableMap
 
 
+	/// <summary>The slot limits of a loot item table, as the game reads it: item slots and affix table slots.</summary>
+	private const int MaxLootItemSlots = 30, MaxAffixTableSlots = 15;
+
 	/// <summary>
 	/// Create a map between Items and affix loot tables
 	/// </summary>
+	/// <remarks>
+	/// Tells apart what the game can roll from each loot item table (item slots with a weight, affix tables with a weight,
+	/// and the affix kinds the table can roll at all: chance above zero and a kind weight, see <see cref="RollableKinds"/>)
+	/// from the tables it names but never rolls (<see cref="AffixTableMapItem.Unreachable"/>).
+	/// </remarks>
 	private void BuildItemAffixTableMap()
 	{
-		// Load all available loot table
-		var data = new[]
-			{
-				this.ArzFileMod,
-				this.ArzFileIT != null && this.ArzFileIT != this.ArzFile ? this.ArzFileIT : null,
-				this.ArzFile
-			}
-			.Where(db => db is not null)
-			.SelectMany(db => db.RecordInfo
-				.Where(r =>
-					r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase)
-					|| r.Value.RecordType.Equals(RCLASS_LOOTITEMTABLE_DYNWEIGHT, noCase)
-				)
-			)
-			.Select(r =>
-			{
-				var rec = GetRecordFromFile(r.Key);
-				var lootNames = new List<RecordId>();
-				var records = new List<(RecordId brokenTable, RecordId prefixTable, RecordId suffixTable, List<RecordId> lootNames)>();
-
-				// Read loot names
-				switch (r.Value.RecordType)
-				{
-					case RCLASS_LOOTITEMTABLE_FIXEDWEIGHT:
-						foreach (var variable in rec)
-						{
-							if (variable.Name.StartsWith("lootName", noCase))
-							{
-								var lootName = variable.GetString(0);
-
-								if (!string.IsNullOrWhiteSpace(lootName))
-									lootNames.Add(lootName);
-							}
-						}
-						break;
-					default: // LootItemTable_DynWeight
-						var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
-						if (itemNames?.Any() ?? false)
-							lootNames.AddRange(itemNames.Select(ina => ina.ToRecordId()));
-						break;
-				}
-
-				// Read loot tables
-				Dictionary<string, (RecordId brokenRandomizerName, RecordId prefixRandomizerName, RecordId suffixRandomizerName)> dico = new();
-				foreach (var variable in rec)
-				{
-					var varname = "brokenRandomizerName";
-					if (variable.Name.StartsWith(varname, noCase))
-					{
-						var brokenTable = variable.GetString(0);
-						if (!string.IsNullOrWhiteSpace(brokenTable))
-						{
-							var num = variable.Name.Substring(varname.Length);
-
-							if (dico.Keys.Contains(num))
-							{// ValueTuple are not ref
-								var val = dico[num];
-								val.brokenRandomizerName = brokenTable;
-								dico[num] = val;
-							}
-							else
-								dico.Add(num, (brokenTable, RecordId.Empty, RecordId.Empty));
-						}
-						continue;
-					}
-
-					varname = "prefixRandomizerName";
-					if (variable.Name.StartsWith(varname, noCase))
-					{
-						var prefixTable = variable.GetString(0);
-						if (!string.IsNullOrWhiteSpace(prefixTable))
-						{
-							var num = variable.Name.Substring(varname.Length);
-
-							if (dico.Keys.Contains(num))
-							{// ValueTuple are not ref
-								var val = dico[num];
-								val.prefixRandomizerName = prefixTable;
-								dico[num] = val;
-							}
-							else
-								dico.Add(num, (RecordId.Empty, prefixTable, RecordId.Empty));
-						}
-						continue;
-					}
-
-					varname = "suffixRandomizerName";
-					if (variable.Name.StartsWith(varname, noCase))
-					{
-						var suffixTable = variable.GetString(0);
-						if (!string.IsNullOrWhiteSpace(suffixTable))
-						{
-							var num = variable.Name.Substring(varname.Length);
-
-							if (dico.Keys.Contains(num))
-							{// ValueTuple are not ref
-								var val = dico[num];
-								val.suffixRandomizerName = suffixTable;
-								dico[num] = val;
-							}
-							else
-								dico.Add(num, (RecordId.Empty, RecordId.Empty, suffixTable));
-						}
-					}
-				}
-
-				// Avoid useless records
-				if (lootNames.Count > 0 && dico.Count > 0)
-				{
-					records.AddRange(dico.Select(kv =>
-						(
-							kv.Value.brokenRandomizerName,
-							kv.Value.prefixRandomizerName,
-							kv.Value.suffixRandomizerName,
-							lootNames
-						)
-					));
-				}
-
-				return records;
-			})
-			.SelectMany(i => i)
-			.SelectMany(itemAffix => itemAffix.lootNames
-				.Select(itemId => new
-				{
-					itemId = itemId,
-					itemAffix.suffixTable,
-					itemAffix.prefixTable,
-					itemAffix.brokenTable
-				})
-			) // Flatten
-			.GroupBy(i => i.itemId)
+		var data = this.RecordsOfClass(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, RCLASS_LOOTITEMTABLE_DYNWEIGHT)
+			.DistinctBy(r => r.Id) // An overridden table is read once, in the version that wins.
+			// Listed in the record table, so it can be read.
+			.SelectMany(r => ReadLootItemTable(r.Id, this.GetRecordFromFile(r.Id)!, r.Class))
+			.GroupBy(i => i.Item)
 			.ToDictionary(i =>
 				i.Key
-				, j => j
-					.Select(k => new AffixTableMapItem(k.brokenTable, k.prefixTable, k.suffixTable)).Distinct()
-					.ToList().AsReadOnly()
+				, j => j.Select(k => k.Tables).ToList().AsReadOnly()
 			);
 
 		ItemAffixTableMap = new ReadOnlyDictionary<RecordId, ReadOnlyCollection<AffixTableMapItem>>(data);
 	}
 
-	public ReadOnlyCollection<AffixTableMapItem> GetItemAffixTableMap(RecordId itemId)
+	/// <summary>
+	/// The items a loot item table names, each with the weighted affix tables the table can roll for it, per kind, and the
+	/// tables the loot item table names but never rolls for it (<see cref="AffixTableMapItem.Unreachable"/>): all of them
+	/// for an item the table never drops.
+	/// </summary>
+	private static IEnumerable<(RecordId Item, AffixTableMapItem Tables)> ReadLootItemTable(RecordId tableId, DBRecordCollection rec, string recordClass)
 	{
-		var affixmap = ItemAffixTableMap.SingleOrDefault(i => i.Key == itemId);
-		if (affixmap.Key is null) return null;
+		var items = new List<RecordId>();
+		var dropped = new HashSet<RecordId>();
+		if (recordClass.Equals(RCLASS_LOOTITEMTABLE_FIXEDWEIGHT, noCase))
+		{
+			// lootName<N>, picked only when lootWeight<N> is above zero.
+			foreach (var slot in rec.GroupNumberedVariables(_ => true, "lootName", "lootWeight"))
+			{
+				var name = slot.Value[0]?.GetString(0);
+				if (string.IsNullOrWhiteSpace(name))
+					continue;
 
-		return affixmap.Value;
+				items.Add(name);
+				if (IsSlot(slot.Key, MaxLootItemSlots) && NumberOf(slot.Value[1]) > 0)
+					dropped.Add(name);
+			}
+		}
+		else // LootItemTable_DynWeight
+		{
+			var itemNames = rec.GetAllStrings("itemNames")?.Where(ina => !string.IsNullOrWhiteSpace(ina));
+			if (itemNames is not null)
+				items.AddRange(itemNames.Select(ina => ina.ToRecordId()));
+			dropped.UnionWith(items);
+		}
+
+		if (items.Count == 0)
+			yield break;
+
+		var (broken, prefix, suffix) = RollableKinds(rec);
+		var rolled = new AffixTableMapItem(tableId
+			, broken ? WeightedTables(rec, "broken") : []
+			, prefix ? WeightedTables(rec, "prefix") : []
+			, suffix ? WeightedTables(rec, "suffix") : []);
+		var named = new AffixTableMapItem(tableId
+			, NamedTables(rec, "broken"), NamedTables(rec, "prefix"), NamedTables(rec, "suffix"), Unreachable: true);
+		var neverRolled = named with
+		{
+			Broken = Except(named.Broken, rolled.Broken),
+			Prefix = Except(named.Prefix, rolled.Prefix),
+			Suffix = Except(named.Suffix, rolled.Suffix),
+		};
+
+		foreach (var item in items.Distinct())
+		{
+			if (!dropped.Contains(item))
+			{
+				if (!named.IsEmpty)
+					yield return (item, named);
+				continue;
+			}
+
+			if (!rolled.IsEmpty)
+				yield return (item, rolled);
+			if (!neverRolled.IsEmpty)
+				yield return (item, neverRolled);
+		}
+	}
+
+	/// <summary>Every affix table of a kind a loot item table names, whatever its slot and weight.</summary>
+	private static List<WeightedAffixTable> NamedTables(DBRecordCollection rec, string kind)
+		=> rec.GroupNumberedVariables(_ => true, kind + "RandomizerName")
+			.Select(slot => slot.Value[0]?.GetString(0))
+			.Where(name => !string.IsNullOrWhiteSpace(name))
+			.Select(name => (RecordId)name!)
+			.Distinct()
+			.Select(table => new WeightedAffixTable(table, 0))
+			.ToList();
+
+	/// <summary>The tables of <paramref name="all"/> missing from <paramref name="rolled"/>.</summary>
+	private static List<WeightedAffixTable> Except(IReadOnlyList<WeightedAffixTable> all, IReadOnlyList<WeightedAffixTable> rolled)
+		=> all.Where(t => !rolled.Any(r => r.Table == t.Table)).ToList();
+
+	/// <summary>
+	/// The affix tables of a kind a loot item table picks from: the slots <c>&lt;kind&gt;RandomizerName&lt;N&gt;</c> with a
+	/// name and a weight above zero (<c>&lt;kind&gt;RandomizerWeight&lt;N&gt;</c>). A table named in several slots adds its
+	/// weights, as the game's cumulative pick does.
+	/// </summary>
+	private static List<WeightedAffixTable> WeightedTables(DBRecordCollection rec, string kind)
+	{
+		var tables = new List<WeightedAffixTable>();
+		foreach (var slot in rec.GroupNumberedVariables(_ => true, kind + "RandomizerName", kind + "RandomizerWeight"))
+		{
+			var name = slot.Value[0]?.GetString(0);
+			float weight = NumberOf(slot.Value[1]);
+			if (!IsSlot(slot.Key, MaxAffixTableSlots) || string.IsNullOrWhiteSpace(name) || weight <= 0)
+				continue;
+
+			RecordId table = name;
+			int known = tables.FindIndex(t => t.Table == table);
+			if (known < 0)
+				tables.Add(new WeightedAffixTable(table, weight));
+			else
+				tables[known] = tables[known] with { Weight = tables[known].Weight + weight };
+		}
+
+		return tables;
+	}
+
+	/// <summary>
+	/// The affix kinds a loot item table can roll, as the game picks them: the kind's chance must be above zero, and its
+	/// weight among the kind weights too (prefix: <c>bothPrefixSuffix</c> + <c>prefixOnly</c>, suffix:
+	/// <c>bothPrefixSuffix</c> + <c>suffixOnly</c>, broken: <c>brokenOnly</c>). When every kind weight is zero, the game
+	/// rolls a prefix and a suffix, never a broken affix.
+	/// </summary>
+	private static (bool Broken, bool Prefix, bool Suffix) RollableKinds(DBRecordCollection rec)
+	{
+		float both = rec.GetSingle("bothPrefixSuffix", 0)
+			, none = rec.GetSingle("noPrefixNoSuffix", 0)
+			, prefixOnly = rec.GetSingle("prefixOnly", 0)
+			, suffixOnly = rec.GetSingle("suffixOnly", 0)
+			, brokenOnly = rec.GetSingle("brokenOnly", 0);
+
+		bool allZero = both + none + prefixOnly + suffixOnly + brokenOnly <= 0;
+
+		return (
+			!allZero && brokenOnly > 0 && rec.GetSingle("brokenRandomizerChance", 0) > 0
+			, (allZero || both + prefixOnly > 0) && rec.GetSingle("prefixRandomizerChance", 0) > 0
+			, (allZero || both + suffixOnly > 0) && rec.GetSingle("suffixRandomizerChance", 0) > 0
+		);
+	}
+
+	/// <summary>True when a numbered variable's number is a slot the game reads: 1 to <paramref name="max"/>.</summary>
+	private static bool IsSlot(string number, int max)
+		=> int.TryParse(number, NumberStyles.None, CultureInfo.InvariantCulture, out int slot) && slot >= 1 && slot <= max;
+
+	/// <summary>The value of a weight variable, integer or float; 0 when it is absent or of another type.</summary>
+	private static float NumberOf(Variable? variable) => variable?.DataType switch
+	{
+		VariableDataType.Integer or VariableDataType.Float => variable.GetSingle(0),
+		_ => 0.0F,
+	};
+
+	public ReadOnlyCollection<AffixTableMapItem>? GetItemAffixTableMap(RecordId itemId)
+	{
+		return ItemAffixTableMap is not null && ItemAffixTableMap.TryGetValue(itemId, out var affixmap) ? affixmap : null;
 	}
 
 	#endregion
@@ -616,39 +605,33 @@ public partial class Database : IDatabase
 	/// </remarks>
 	/// <param name="itemId">Item Id which we are looking up</param>
 	/// <returns>Returns the DBRecord for the item Id</returns>
-	public DBRecordCollection GetRecordFromFile(RecordId itemId)
+	public DBRecordCollection? GetRecordFromFile(RecordId itemId)
 	{
 		var cachedDBRecordCollection = this.dbRecordCollections.GetOrAddAtomic(itemId, key =>
 		{
-
-			if (this.ArzFileMod != null)
+			// Custom Map records have highest precedence, then IT records over TQ ones.
+			foreach (var (_, arzFile) in this.ArzFilesByPriority())
 			{
-				DBRecordCollection recordMod = arzProv.GetItem(this.ArzFileMod, key);
-				if (recordMod != null)
-				{
-					// Custom Map records have highest precedence.
-					return recordMod;
-				}
+				DBRecordCollection? record = arzProv.GetItem(arzFile, key);
+				if (record is not null)
+					return record;
 			}
 
-			if (this.ArzFileIT != null)
-			{
-				// see if it's in IT ARZ file
-				DBRecordCollection recordIT = arzProv.GetItem(this.ArzFileIT, key);
-				if (recordIT != null)
-				{
-					// IT file takes precedence over TQ.
-					return recordIT;
-				}
-			}
-
-			return arzProv.GetItem(ArzFile, key);
+			return null;
 		});
 
 		return cachedDBRecordCollection;
 	}
 
 
+#if DEBUG
+	/// <summary>
+	/// Debug-only test hook of the automation endpoint: resources read from here instead of the game files, uncached
+	/// (null: missing), to check how an item is shown when its picture is missing or cannot be decoded.
+	/// </summary>
+	public static System.Collections.Concurrent.ConcurrentDictionary<RecordId, byte[]?> ResourceFaults { get; } = new();
+
+#endif
 	/// <summary>
 	/// Gets a resource from the database using the resource Id.
 	/// Modified by VillageIdiot to support loading resources from a custom map folder.
@@ -661,154 +644,128 @@ public partial class Database : IDatabase
 			return null;
 
 		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Database.LoadResource({0})", resourceId);
+			Log.LogDebug("Database.LoadResource({ResourceId})", resourceId);
 
 		if (USettings.DatabaseDebugLevel > 1)
-			Log.LogDebug(" Normalized({0})", resourceId);
+			Log.LogDebug(" Normalized({ResourceId})", resourceId);
 
-		byte[]? cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, key =>
-		{
-			var resourceIdSplited = key.Normalized.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);// hguy : easier to understand than substring everywhere
+#if DEBUG
+		if (ResourceFaults.TryGetValue(resourceId, out byte[]? fault))
+			return fault;
+#endif
 
-			// not a proper resourceID.
-			if (resourceIdSplited.Length == 1)
-				return null;
-
-			// First we need to figure out the correct file to
-			// open, by grabbing it off the front of the resourceID
-
-			string arcFile; bool isDLC = false;
-			string rootFolder;
-			byte[]? arcFileData = null;
-			string arcFileBase = resourceIdSplited.First();
-
-			if (USettings.DatabaseDebugLevel > 1)
-				Log.LogDebug("arcFileBase = {0}", arcFileBase);
-
-			// Added by VillageIdiot
-			// Check's mod folder for's image resource.
-			if (GamePathResolver.IsCustom)
-			{
-				if (USettings.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking Custom Resources.");
-
-				rootFolder = this.PathIO.Combine(GamePathResolver.MapName, "resources");
-
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-				arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogDebug(@"Custom resource found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
-			if (arcFileData == null)
-			{
-				// See if this guy is from Immortal Throne expansion pack.
-				if (USettings.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking IT Resources.");
-
-				(arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
-				if (isDLC)
-				{
-					// not a proper resourceID.
-					if (resourceIdSplited.Length == 2)
-						return null;
-
-					arcFileBase = resourceIdSplited[1];
-					key = resourceIdSplited.Skip(1).JoinString("\\");
-				}
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
-					Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			#region Fallback
-
-			// Added by VillageIdiot
-			// Maybe the arc file is in the XPack folder even though the record does not state it.
-			// Also could be that it says xpack in the record but the file is in the root.
-			if (arcFileData == null)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			// Now, let's check if the item is in Ragnarok DLC
-			if (arcFileData == null && GamePathResolver.IsRagnarokInstalled)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack2");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			if (arcFileData == null && GamePathResolver.IsAtlantisInstalled)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack3");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			if (arcFileData == null && GamePathResolver.IsEmbersInstalled)
-			{
-				rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Resources", "XPack4");
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
-					Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", key, arcFile);
-			}
-
-			if (arcFileData == null)
-			{
-				// We are either vanilla TQ or have not found our resource yet.
-				// from the original TQ folder
-				if (USettings.DatabaseDebugLevel > 1)
-					Log.LogDebug("Checking TQ Resources.");
-
-				rootFolder = GamePathResolver.GamePathTQ;
-				rootFolder = this.PathIO.Combine(rootFolder, "Resources");
-
-				arcFile = this.PathIO.Combine(rootFolder, this.PathIO.ChangeExtension(arcFileBase, ".arc"));
-
-				if (this.FileIO.Exists(arcFile))
-					arcFileData = this.ReadARCFile(arcFile, key);
-
-				if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
-					Log.LogError(@"Resource unknown ""{resourceId}""", key);
-			}
-
-			#endregion
-
-			return arcFileData;
-		});
+		byte[]? cachedArcFileData = this.resourcesData.GetOrAddAtomic(resourceId, this.ReadResource);
 
 		if (USettings.DatabaseDebugLevel > 0)
 			Log.LogDebug("Exiting Database.LoadResource()");
 
 		return cachedArcFileData;
 	}
+
+	/// <inheritdoc/>
+	public (int Width, int Height)? GetTextureSize(RecordId resourceId)
+	{
+		if (RecordId.IsNullOrEmpty(resourceId))
+			return null;
+
+#if DEBUG
+		if (ResourceFaults.TryGetValue(resourceId, out byte[]? fault))
+			return fault is not null && TexHeader.TryReadSize(fault, out int faultWidth, out int faultHeight) ? (faultWidth, faultHeight) : null;
+#endif
+
+		// Only the size is kept: the texture data is cached when the picture is drawn (LoadResource).
+		return this.textureSizes.GetOrAddAtomic(resourceId, key =>
+		{
+			var data = this.resourcesData.TryGetValue(key, out var cached) ? cached.Value : this.ReadResource(key);
+			return data is not null && TexHeader.TryReadSize(data, out int width, out int height)
+				? (width, height)
+				: null;
+		});
+	}
+
+	/// <summary>
+	/// Reads a resource from the game files or the custom map folder, without caching it.
+	/// </summary>
+	private byte[]? ReadResource(RecordId key)
+	{
+		// not a proper resourceID.
+		if (key.TokensRaw.Count == 1)
+			return null;
+
+		byte[]? arcFileData = null;
+
+		// Added by VillageIdiot
+		// Check's mod folder for's image resource.
+		if (this.IsCustomMap)
+		{
+			if (USettings.DatabaseDebugLevel > 1)
+				Log.LogDebug("Checking Custom Resources.");
+
+			arcFileData = this.ReadCustomMapResource(key);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null)
+				Log.LogDebug(@"Custom resource found ""{resourceId}""", key);
+		}
+
+		// We either didn't load the resource or didn't find what we were looking for so check the normal game resources.
+		if (arcFileData is not null)
+			return arcFileData;
+
+		var (arcFile, isDLC) = this.GamePathResolver.ResolveArcFileName(key);
+		RecordId entry = key;
+		if (isDLC)
+		{
+			// not a proper resourceID.
+			if (key.TokensRaw.Count == 2)
+				return null;
+
+			entry = GameArchives.WithoutExpansionFolder(key);
+		}
+
+		arcFileData = this.ReadARCFileIfExists(arcFile, entry);
+
+		if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
+			Log.LogError(@"Resource not found ""{resourceId}"" into ""{arcFile}""", entry, arcFile);
+
+		// Added by VillageIdiot
+		// Maybe the arc file is in an expansion folder even though the record does not state it.
+		// Also could be that it says xpack in the record but the file is in the base game folder.
+		foreach (var segments in GameArchives.ArcFileFallbackSegments(key))
+		{
+			if (arcFileData is not null)
+				break;
+
+			bool baseGame = segments.Length == 2;
+			if (!baseGame && !this.IsExpansionFolderInstalled(segments[1]))
+				continue;
+
+			arcFile = this.PathIO.Combine([baseGame ? GamePathResolver.GamePathTQ : GamePathResolver.GamePathTQIT, .. segments]);
+			arcFileData = this.ReadARCFileIfExists(arcFile, entry);
+
+			if (USettings.DatabaseDebugLevel > 1 && arcFileData is not null && !baseGame)
+				Log.LogError(@"Resource misplaced ""{resourceId}"" into ""{arcFile}""", entry, arcFile);
+		}
+
+		if (USettings.DatabaseDebugLevel > 0 && arcFileData is null)
+			Log.LogError(@"Resource unknown ""{resourceId}""", entry);
+
+		return arcFileData;
+	}
+
+	/// <summary>
+	/// Whether the expansion of a <c>Resources\XPackN</c> folder is installed (Immortal Throne always is).
+	/// </summary>
+	private bool IsExpansionFolderInstalled(string folder) => folder switch
+	{
+		"XPack" => true,
+		"XPack2" => GamePathResolver.IsRagnarokInstalled,
+		"XPack3" => GamePathResolver.IsAtlantisInstalled,
+		"XPack4" => GamePathResolver.IsEmbersInstalled,
+		_ => false,
+	};
+
+	private byte[]? ReadARCFileIfExists(string arcFile, RecordId dataId)
+		=> this.FileIO.Exists(arcFile) ? this.ReadARCFile(arcFile, dataId) : null;
 
 
 	#endregion Database Public Methods
@@ -822,21 +779,21 @@ public partial class Database : IDatabase
 	/// <param name="arcFileName">Name of the arc file.</param>
 	/// <param name="dataId">Id of data which we are getting from the arc file</param>
 	/// <returns>Byte array of the data from the arc file.</returns>
-	private byte[] ReadARCFile(string arcFileName, RecordId dataId)
+	private byte[]? ReadARCFile(string arcFileName, RecordId dataId)
 	{
 		// See if we have this arcfile already and if not create it.
 		try
 		{
 			if (USettings.DatabaseDebugLevel > 0)
-				Log.LogDebug("Database.ReadARCFile('{0}', '{1}')", arcFileName, dataId);
+				Log.LogDebug("Database.ReadARCFile('{ArcFileName}', '{DataId}')", arcFileName, dataId);
 
-			ArcFile arcFile = ReadARCFile(arcFileName);
+			ArcFile? arcFile = ReadARCFile(arcFileName);
 
 			if (arcFile is null)
 				return null;
 
 			// Now retrieve the data
-			byte[] ans = arcProv.GetData(arcFile, dataId);
+			byte[]? ans = arcProv.GetData(arcFile, dataId);
 
 			if (USettings.DatabaseDebugLevel > 0)
 				Log.LogDebug("Exiting Database.ReadARCFile()");
@@ -878,76 +835,41 @@ public partial class Database : IDatabase
 	/// </summary>
 	/// <param name="isImmortalThrone">Signals whether we are looking for Immortal Throne files or vanilla Titan Quest files.</param>
 	/// <returns>Path to the text db file</returns>
-	private string FigureDBFileToUse(string rootFolder)
+	private string? FigureDBFileToUse(string rootFolder)
 	{
 		string baseFile = this.PathIO.Combine(rootFolder, "Text_");
 		string suffix = ".arc";
 
 		// Added explicit set to null though may not be needed
-		string cultureID = null;
+		string? cultureID = null;
 
 		// Moved this declaration since the first use is inside of the loop.
-		string filename = null;
+		string? filename = null;
 
 		// First see if we can use the game setting
-		string gameLanguage = this.GameLanguage;
+		string? gameLanguage = this.GameLanguage;
 		if (USettings.DatabaseDebugLevel > 1)
 		{
-			Log.LogDebug("gameLanguage = {0}", gameLanguage == null ? "NULL" : gameLanguage);
-			Log.LogDebug("baseFile = {0}", baseFile);
+			Log.LogDebug("gameLanguage = {GameLanguage}", gameLanguage ?? "NULL");
+			Log.LogDebug("baseFile = {BaseFile}", baseFile);
 		}
 
-		if (gameLanguage != null)
+		if (gameLanguage is not null)
 		{
-			// Try this method of getting the culture
-			if (USettings.DatabaseDebugLevel > 2)
-				Log.LogDebug("Try looking up cultureID");
-
-			foreach (CultureInfo cultureInfo in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-			{
-				if (USettings.DatabaseDebugLevel > 2)
-					Log.LogDebug("Trying {0}", cultureInfo.EnglishName.ToUpperInvariant());
-
-				if (cultureInfo.EnglishName.ToUpperInvariant().Equals(gameLanguage.ToUpperInvariant()) || cultureInfo.DisplayName.ToUpperInvariant().Equals(gameLanguage.ToUpperInvariant()))
-				{
-					cultureID = cultureInfo.TwoLetterISOLanguageName;
-					break;
-				}
-			}
-
-			// Titan Quest doesn't use the ISO language code for some languages
-			// Added null check to fix exception when there is no culture found.
-			if (cultureID != null)
-			{
-				if (cultureID.ToUpperInvariant() == "CS")
-				{
-					// Force Czech to use CZ instead of CS for the 2 letter code.
-					cultureID = "CZ";
-				}
-				else if (cultureID.ToUpperInvariant() == "PT")
-				{
-					// Force brazilian portuguese to use BR instead of PT
-					cultureID = "BR";
-				}
-				else if (cultureID.ToUpperInvariant() == "ZH")
-				{
-					// Force chinese to use CH instead of ZH
-					cultureID = "CH";
-				}
-			}
+			cultureID = GameLanguageFileCode(gameLanguage);
 
 			if (USettings.DatabaseDebugLevel > 1)
-				Log.LogDebug("cultureID = {0}", cultureID);
+				Log.LogDebug("cultureID = {CultureID}", cultureID);
 
 			// Moved this inital check for the file into the loop
 			// and added a check to verify that we actually have a cultureID
-			if (cultureID != null)
+			if (cultureID is not null)
 			{
 				filename = string.Concat(baseFile, cultureID, suffix);
 				if (USettings.DatabaseDebugLevel > 1)
 				{
 					Log.LogDebug("Detected cultureID from gameLanguage");
-					Log.LogDebug("filename = {0}", filename);
+					Log.LogDebug("filename = {Filename}", filename);
 				}
 
 				if (this.FileIO.Exists(filename))
@@ -965,16 +887,16 @@ public partial class Database : IDatabase
 		if (USettings.DatabaseDebugLevel > 1)
 		{
 			Log.LogDebug("Using cultureID from OS");
-			Log.LogDebug("cultureID = {0}", cultureID);
+			Log.LogDebug("cultureID = {CultureID}", cultureID);
 		}
 
 		// Added a check to verify that we actually have a cultureID
 		// though it may not be needed
-		if (cultureID != null)
+		if (cultureID is not null)
 		{
 			filename = string.Concat(baseFile, cultureID, suffix);
 			if (USettings.DatabaseDebugLevel > 1)
-				Log.LogDebug("filename = {0}", filename);
+				Log.LogDebug("filename = {Filename}", filename);
 
 			if (this.FileIO.Exists(filename))
 			{
@@ -991,8 +913,8 @@ public partial class Database : IDatabase
 		if (USettings.DatabaseDebugLevel > 1)
 		{
 			Log.LogDebug("Forcing English Language");
-			Log.LogDebug("cultureID = {0}", cultureID);
-			Log.LogDebug("filename = {0}", filename);
+			Log.LogDebug("cultureID = {CultureID}", cultureID);
+			Log.LogDebug("filename = {Filename}", filename);
 		}
 
 		if (this.FileIO.Exists(filename))
@@ -1010,12 +932,12 @@ public partial class Database : IDatabase
 		string[] files = DirectoryIO.GetFiles(rootFolder, "Text_??.arc");
 
 		// Added check that files is not null.
-		if (files != null && files.Length > 0)
+		if (files is not null && files.Length > 0)
 		{
 			if (USettings.DatabaseDebugLevel > 1)
 			{
 				Log.LogDebug("Found some files");
-				Log.LogDebug("filename = {0}", files[0]);
+				Log.LogDebug("filename = {File}", files[0]);
 			}
 
 			if (USettings.DatabaseDebugLevel > 0)
@@ -1034,6 +956,90 @@ public partial class Database : IDatabase
 	}
 
 	/// <summary>
+	/// Code of a game language in the text file names (<c>Text_FR.arc</c>): the ISO code, except CZ for Czech, BR for
+	/// Portuguese and CH for Chinese.
+	/// </summary>
+	/// <param name="gameLanguage">English or native name of the language, as in the game settings.</param>
+	/// <returns>The upper case code, or null for an unknown language.</returns>
+	internal static string? GameLanguageFileCode(string gameLanguage)
+	{
+		foreach (CultureInfo cultureInfo in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+		{
+			if (string.Equals(cultureInfo.EnglishName, gameLanguage, StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(cultureInfo.DisplayName, gameLanguage, StringComparison.OrdinalIgnoreCase))
+			{
+				return cultureInfo.TwoLetterISOLanguageName.ToUpperInvariant() switch
+				{
+					"CS" => "CZ",
+					"PT" => "BR",
+					"ZH" => "CH",
+					var code => code,
+				};
+			}
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Loads the strings of a custom map: <c>resources\text_xx.arc</c> in the game language, else
+	/// <c>resources\text.arc</c>, else the loose <c>resources\text\modstrings.txt</c> of a mod shipped unpacked.
+	/// </summary>
+	private void LoadCustomMapText()
+	{
+		string resources = this.PathIO.Combine(this.MapFolder, "resources");
+		string? code = this.GameLanguage is { } language ? GameLanguageFileCode(language) : null;
+		string[] archives = code is null ? ["text.arc"] : [$"text_{code}.arc", "text.arc"];
+
+		foreach (var archive in archives)
+		{
+			string databaseFile = this.PathIO.Combine(resources, archive);
+			if (!this.FileIO.Exists(databaseFile))
+				continue;
+
+			if (USettings.DatabaseDebugLevel > 1)
+				Log.LogDebug("Custom map text file {DatabaseFile}", databaseFile);
+
+			this.ParseTextDB(databaseFile, "text\\modstrings.txt");
+			return;
+		}
+
+		string looseFile = this.PathIO.Combine(resources, "text", "modstrings.txt");
+		if (this.FileIO.Exists(looseFile))
+			this.ParseTextData(this.FileIO.ReadAllBytes(looseFile));
+	}
+
+	/// <summary>
+	/// Reads a resource of the custom map, in one of the layouts mods use, in this order:
+	/// <list type="bullet">
+	/// <item>the archive named after the first segment: <c>resources\Items.arc</c> for <c>Items\x.tex</c>,
+	/// <c>resources\XPack2.arc</c> for <c>XPack2\Quests\x.qst</c> (entry <c>Quests\x.qst</c>);</item>
+	/// <item>the game's expansion layout: <c>resources\xpack\Item.arc</c> for <c>XPack\Item\x.tex</c> (entry <c>x.tex</c>);</item>
+	/// <item>a loose file, for a mod shipped unpacked: <c>resources\Items\x.tex</c>.</item>
+	/// </list>
+	/// </summary>
+	/// <returns>The data, or null when the custom map does not have the resource.</returns>
+	private byte[]? ReadCustomMapResource(RecordId resourceId)
+	{
+		var tokens = resourceId.TokensRaw;
+		string resources = this.PathIO.Combine(this.MapFolder, "resources");
+
+		byte[]? data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0] + ".arc"), resourceId);
+
+		if (data is null && GameArchives.IsExpansionResource(resourceId) && tokens.Count > 2)
+			data = this.ReadARCFile(this.PathIO.Combine(resources, tokens[0], tokens[1] + ".arc"), GameArchives.WithoutExpansionFolder(resourceId));
+
+		if (data is null)
+		{
+			string looseFile = this.PathIO.Combine([resources, .. tokens]);
+			if (this.FileIO.Exists(looseFile))
+				data = this.FileIO.ReadAllBytes(looseFile);
+		}
+
+		return data;
+	}
+
+	/// <summary>
 	/// Loads the Text database
 	/// </summary>
 	private void LoadTextDB()
@@ -1041,7 +1047,8 @@ public partial class Database : IDatabase
 		if (USettings.DatabaseDebugLevel > 0)
 			Log.LogDebug("Database.LoadTextDB()");
 
-		string rootFolder, databaseFile;
+		string rootFolder;
+		string? databaseFile;
 		if (GamePathResolver.GameType == GameType.TQAE)
 		{
 			rootFolder = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Text");
@@ -1121,8 +1128,10 @@ public partial class Database : IDatabase
 			this.ParseTextDB(databaseFile, "text\\x2commonequipment.txt");
 			this.ParseTextDB(databaseFile, "text\\x2uniqueequipment.txt");
 			this.ParseTextDB(databaseFile, "text\\x2quest.txt");
-			this.ParseTextDB(databaseFile, "text\\x2ui.txt");
+			// skills before ui, as in the archive: x2ui.txt redefines 22 Runemaster tags with the reworked texts, over the
+			// old ones of x2skills.txt (one still carries a developer note, "PBAoE - should self-target automatically").
 			this.ParseTextDB(databaseFile, "text\\x2skills.txt");
+			this.ParseTextDB(databaseFile, "text\\x2ui.txt");
 			this.ParseTextDB(databaseFile, "text\\x2monsters.txt"); // Added by VillageIdiot
 			this.ParseTextDB(databaseFile, "text\\x2menu.txt"); // Added by VillageIdiot
 			this.ParseTextDB(databaseFile, "text\\x2npc.txt"); // Added by VillageIdiot
@@ -1148,22 +1157,11 @@ public partial class Database : IDatabase
 		}
 
 		// For loading custom map text database.
-		if (GamePathResolver.IsCustom)
-		{
-			databaseFile = this.PathIO.Combine(GamePathResolver.MapName, "resources", "text.arc");
-
-			if (USettings.DatabaseDebugLevel > 1)
-			{
-				Log.LogDebug("Find Custom Map text file");
-				Log.LogDebug("dbFile = {0}", databaseFile);
-			}
-
-			if (databaseFile != null)
-				this.ParseTextDB(databaseFile, "text\\modstrings.txt");
-		}
+		if (this.IsCustomMap)
+			this.LoadCustomMapText();
 
 		// Added this check to see if anything was loaded.
-		if (this.textDB.Count == 0)
+		if (textDB.IsEmpty)
 		{
 			if (USettings.DatabaseDebugLevel > 0)
 				Log.LogDebug("Exception - Could not load Text DB.");
@@ -1202,8 +1200,6 @@ public partial class Database : IDatabase
 		this.ParseTextDB(databaseFile, "text\\tutorial.txt");
 	}
 
-	[GeneratedRegex(@"^(?<Tag>\[\w+\])(?<Label>[^\\[]+)|^\[(?<Label>[^\]]+)\]$")]
-	private static partial Regex ParseTextDBRegEx();
 	/// <summary>
 	/// Parses the text database to put the entries into a hash table.
 	/// </summary>
@@ -1212,59 +1208,40 @@ public partial class Database : IDatabase
 	private void ParseTextDB(string databaseFile, string filename)
 	{
 		if (USettings.DatabaseDebugLevel > 0)
-			Log.LogDebug("Database.ParseTextDB({0}, {1})", databaseFile, filename);
+			Log.LogDebug("Database.ParseTextDB({DatabaseFile}, {Filename})", databaseFile, filename);
 
-		byte[] data = this.ReadARCFile(databaseFile, filename);
+		byte[]? data = this.ReadARCFile(databaseFile, filename);
 
-		if (data == null)
+		if (data is null)
 		{
 			// Changed for mod support.  Sometimes the text file has more entries than just the x or non-x prefix files.
 			if (USettings.DatabaseDebugLevel > 0)
-				Log.LogDebug("Error in ARC File: {0} does not contain an entry for '{1}'", databaseFile, filename);
+				Log.LogDebug("Error in ARC File: {DatabaseFile} does not contain an entry for '{Filename}'", databaseFile, filename);
 
 			return;
 		}
 
-		// now read it like a text file
-		// Changed to system default encoding since there might be extended ascii (or something else) in the text db.
-		using (StreamReader reader = new StreamReader(new MemoryStream(data), Encoding.Default))
+		this.ParseTextData(data);
+	}
+
+	/// <summary>
+	/// Puts the entries of a text file into the text database.
+	/// </summary>
+	private void ParseTextData(byte[] data)
+	{
+		// The game files are UTF-16 with a BOM, but some (x2 quests, mod strings) are cp1252 without one.
+		foreach (var (tag, text) in TextDatabaseFactory.ReadEntries(data))
 		{
-			char delimiter = '=';
-			string line;
-			while ((line = reader.ReadLine()) != null)
-			{
-				line = line.Trim();
+			string label = text;
 
-				// delete short lines
-				if (line.Length < 2)
-					continue;
+			// Now for the foreign languages there is a bunch of crap in here so the proper version of the adjective can be used with the proper
+			// noun form.  I don' want to code all that so this next code will just take the first version of the adjective and then
+			// throw away all the metadata.
 
-				// comment line
-				if (line.StartsWith("//", StringComparison.Ordinal))
-					continue;
+			label = TextTags.FirstVariant(label);
 
-				// split on the equal sign
-				string[] fields = line.Split(delimiter);
-
-				// bad line
-				if (fields.Length < 2)
-					continue;
-
-				string label = fields[1].Trim();
-
-				// Now for the foreign languages there is a bunch of crap in here so the proper version of the adjective can be used with the proper
-				// noun form.  I don' want to code all that so this next code will just take the first version of the adjective and then
-				// throw away all the metadata.
-
-				// hguy : one expression to rule them all 
-				if (ParseTextDBRegEx().Match(label) is { Success: true } match)
-					label = match.Groups["Label"].Value.Trim();
-
-				// If this field is already in the db, then replace it
-				string key = fields[0].Trim().ToUpperInvariant();
-
-				this.textDB.AddOrUpdate(key, label, (k, v) => label);// Override with the new "label"
-			}
+			// A tag already in the db is replaced: the last file loaded wins.
+			this.textDB[tag] = label;
 		}
 
 		if (USettings.DatabaseDebugLevel > 0)
@@ -1280,15 +1257,15 @@ public partial class Database : IDatabase
 			Log.LogDebug("Database.LoadARZFile()");
 
 		// from the original TQ folder
-		string file = this.PathIO.Combine(GamePathResolver.GamePathTQ, "Database", "database.arz");
+		string file = GameLocator.DatabasePath(GamePathResolver.GamePathTQ);
 
-		this.ArzFile = new ArzFile(file);
+		this.ArzFile = new ArzFile(file) { Source = RecordSource.BaseGame };
 		arzProv.Read(this.ArzFile);
 
 		if (USettings.DatabaseDebugLevel > 1)
 		{
 			Log.LogDebug("Load Titan Quest database arz file");
-			Log.LogDebug("file = {0}", file);
+			Log.LogDebug("file = {File}", file);
 		}
 
 		this.ArzFileIT = this.ArzFile;
@@ -1296,32 +1273,34 @@ public partial class Database : IDatabase
 		// now Immortal Throne expansion pack
 		if (!string.IsNullOrWhiteSpace(GamePathResolver.GamePathTQIT) && GamePathResolver.GamePathAreDifferent)
 		{
-			file = this.PathIO.Combine(GamePathResolver.GamePathTQIT, "Database", "database.arz");
+			file = GameLocator.DatabasePath(GamePathResolver.GamePathTQIT);
 
-			this.ArzFileIT = new ArzFile(file);
+			this.ArzFileIT = new ArzFile(file) { Source = RecordSource.ImmortalThrone };
 			arzProv.Read(this.ArzFileIT);
 
 			if (USettings.DatabaseDebugLevel > 1)
 			{
 				Log.LogDebug("Load Titan Quest database arz file");
-				Log.LogDebug("file = {0}", file);
+				Log.LogDebug("file = {File}", file);
 			}
 		}
 
 		// Added to load a custom map database file.
-		if (GamePathResolver.IsCustom)
+		if (this.IsCustomMap)
 		{
-			file = this.PathIO.Combine(GamePathResolver.MapName, "database", $"{this.PathIO.GetFileName(GamePathResolver.MapName)}.arz");
+			file = this.PathIO.Combine(this.MapFolder, "database", $"{this.PathIO.GetFileName(this.MapFolder)}.arz");
 
 			if (USettings.DatabaseDebugLevel > 1)
 			{
 				Log.LogDebug("Load Custom Map database arz file");
-				Log.LogDebug("file = {0}", file);
+				Log.LogDebug("file = {File}", file);
 			}
 
 			if (this.FileIO.Exists(file))
 			{
-				this.ArzFileMod = new ArzFile(file);
+				// Its records are the mod's, those it overrides in the game's database too.
+				string modId = this.ModIdOfMap?.Invoke(this.MapFolder) ?? this.PathIO.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(this.MapFolder));
+				this.ArzFileMod = new ArzFile(file) { Source = RecordSource.FromMod(modId) };
 				arzProv.Read(this.ArzFileMod);
 			}
 			else

@@ -31,47 +31,42 @@ public class Info
 	/// <summary>
 	/// description variable
 	/// </summary>
-	private string descriptionVar;
+	private string descriptionVar = string.Empty;
 
 	/// <summary>
 	/// item classification variable
 	/// </summary>
-	private string itemClassificationVar;
+	private string itemClassificationVar = string.Empty;
 
 	/// <summary>
 	/// bitmap variable
 	/// </summary>
-	private string bitmapVar;
+	private string bitmapVar = string.Empty;
 
 	/// <summary>
 	/// shard bitmap variable
 	/// </summary>
-	private string shardBitmapVar;
+	private string shardBitmapVar = string.Empty;
 
 	/// <summary>
 	/// item class variable
 	/// </summary>
-	private string itemClassVar;
+	private string itemClassVar = string.Empty;
 
 	/// <summary>
 	/// completed relic level variable
 	/// </summary>
-	private string completedRelicLevelVar;
+	private string completedRelicLevelVar = string.Empty;
 
 	/// <summary>
 	/// item quality variable
 	/// </summary>
-	private string qualityVar;
+	private string qualityVar = string.Empty;
 
 	/// <summary>
 	/// item style variable
 	/// </summary>
-	private string styleVar;
-
-	/// <summary>
-	/// itemscalepercent attribute
-	/// </summary>
-	private string itemScalePercent;
+	private string styleVar = string.Empty;
 
 	/// <summary>
 	/// Initializes a new instance of the Info class.
@@ -90,6 +85,11 @@ public class Info
 	/// Gets the item ID
 	/// </summary>
 	public RecordId ItemId => this.record.Id;
+
+	/// <summary>
+	/// The database the record was read from (<see cref="DBRecordCollection.Source"/>).
+	/// </summary>
+	public RecordSource Source => this.record.Source;
 
 	/// <summary>
 	/// Gets the item description tag
@@ -130,11 +130,6 @@ public class Info
 	/// Gets the relic level
 	/// </summary>
 	public int CompletedRelicLevel => this.GetInt32(this.completedRelicLevelVar);
-
-	/// <summary>
-	/// Gets the item scale percentage
-	/// </summary>
-	public float ItemScalePercent => 1.0F + (this.GetSingle(this.itemScalePercent) / 100);
 
 	#endregion Info Properties
 
@@ -285,8 +280,6 @@ public class Info
 			this.qualityVar = "itemQualityTag";
 			this.styleVar = "itemStyleTag";
 		}
-
-		this.itemScalePercent = "itemScalePercent";
 	}
 
 	#endregion Info Private Methods

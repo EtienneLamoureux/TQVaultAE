@@ -1,0 +1,766 @@
+//-----------------------------------------------------------------------
+// <copyright file="StashPanel.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
+using TQVaultAE.Config;
+using TQVaultAE.GUI.Components.Buttons;
+using TQVaultAE.GUI.Components.Layout;
+using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.Presentation.Win32;
+
+namespace TQVaultAE.GUI.Components.Panels;
+
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.Domain.Actions;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Presentation;
+
+/// <summary>
+/// Class for handling the stash panel ui functions
+/// </summary>
+public partial class StashPanel : VaultPanel, IScalingControl
+{
+	#region StashPanel Fields
+
+	/// <summary>
+	/// Localized tab names
+	/// </summary>
+	private static string[] buttonNames =
+	[
+		Resources.StashPanelBtnEquipment,
+		Resources.StashPanelBtnTransferArea,
+		Resources.StashPanelBtnStorageArea,
+		Resources.GlobalRelicVaultStash
+	];
+
+	/// <summary>
+	/// Stash file instance
+	/// </summary>
+	private Stash? stash;
+
+	/// <summary>
+	/// Transfer stash file instance
+	/// </summary>
+	private Stash? transferStash;
+
+	/// <summary>
+	/// Relic Vault stash file instance
+	/// </summary>
+	private Stash? relicVaultStash;
+
+	/// <summary>
+	/// background bitmap
+	/// </summary>
+	private Bitmap? background;
+
+	/// <summary>
+	/// Currently selected bag
+	/// </summary>
+	private int currentBag;
+
+	/// <summary>
+	/// Equipment Panel instance
+	/// </summary>
+	private EquipmentPanel equipmentPanel;
+
+	/// <summary>
+	/// Holds the bag shown on the transfer, storage and relic tabs: a stash file larger than the room scrolls in it.
+	/// </summary>
+	private readonly SackViewport sackViewport;
+
+	/// <summary>
+	/// Gets the equipment panel instance
+	/// </summary>
+	internal EquipmentPanel EquipmentPanel => equipmentPanel;
+
+	/// <summary>
+	/// Background image for the equipment panel
+	/// </summary>
+	private Bitmap? equipmentBackground;
+
+	/// <summary>
+	/// Background image for the stash vault panels
+	/// </summary>
+	private Bitmap? stashBackground;
+
+	/// <summary>
+	/// Design pixels the panel is wider than its bags: the character statistics panel, at the game's size, is wider than
+	/// the box the equipment background had for the player values, so the equipment field goes further right.
+	/// </summary>
+	private const int NORMAL_PLAYERSTATS_OVERHANG = 118;
+
+	/// <summary>
+	/// Columns of the equipment background picture (567 pixels wide): the slots end before <see cref="EquipmentSlotsEnd"/>,
+	/// where the black field between them and the old box of the player values starts; the right border of the field is
+	/// the last <see cref="EquipmentRightBorder"/> columns.
+	/// </summary>
+	private const int EquipmentSlotsEnd = 354;
+	private const int EquipmentRightBorder = 11;
+
+	/// <summary>
+	/// The stone of the slots in the equipment background picture, its thin gold edge included, without the caravan frame
+	/// (the double gold line and the black gap) around it: the loadout panel draws only this part.
+	/// </summary>
+	private static readonly Rectangle EquipmentSlotsStone = Rectangle.FromLTRB(14, 18, 350, 521);
+
+	/// <summary>The gold frame around the black field of the equipment background picture: 6 pixels from each edge.</summary>
+	private const int EquipmentFieldFrame = 6;
+
+	/// <summary>The equipment background drawn wider, without the old box, at the size it was last asked for.</summary>
+	private Bitmap? wideEquipmentBackground;
+
+	/// <summary>The width of the bags and of the background, without the room of the statistics panel on the right.</summary>
+	private int ContentWidth => this.Width - Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * this.UIService.Scale);
+
+	string? DisplayPlayerInfoLastName;
+	private const int NORMAL_PLAYERINFO_WIDTH = 186;//BGImage = 186
+	private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH = 17;
+	private const int NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT = 25;
+
+	int PLAYERINFO_TOPRIGHT => this.ContentWidth - Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_WIDTH * this.UIService.Scale);
+	int PLAYERINFO_TOPHEIGHT =>
+		this.BagSackPanel.ClientRectangle.Top + this.BagButtons[0].Size.Height + UIService.HalfUnitSize
+		+ Convert.ToInt32(NORMAL_PLAYERINFO_TOPRIGHT_ORIGIN_HEIGHT * this.UIService.Scale);
+	int PLAYERINFO_WIDTH => Convert.ToInt32(NORMAL_PLAYERINFO_WIDTH * this.UIService.Scale);
+
+	private System.ComponentModel.IContainer components;
+	private ContextMenuStrip buttonContextMenuStrip;
+	private ToolStripMenuItem toolStripMenuItemEnableTooltip;
+	private ToolStripMenuItem toolStripMenuItemDisableTooltip;
+
+	#endregion StashPanel Fields
+
+#if DEBUG
+#pragma warning disable CS8618 // Designer only: the runtime constructor sets the services and state.
+	public StashPanel() => InitializeComponent();
+#pragma warning restore CS8618
+#endif
+
+	/// <summary>
+	/// Initializes a new instance of the StashPanel class.  Hard coded to 4 stash buttons and one sort button, shown on
+	/// the transfer, storage and relic tabs.
+	/// </summary>
+	/// <param name="dragInfo">ItemDragInfo instance</param>
+	/// <param name="panelSize">Size of the panel in cells</param>
+	/// <param name="tooltip">ToolTip instance</param>
+	public StashPanel(ItemDragInfo dragInfo, Size panelSize, GuiServices services)
+		: base(dragInfo, 4, panelSize, 0, AutoMoveLocation.Stash, services)
+	{
+		InitializeComponent();
+
+		SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+
+		// The bag goes into its viewport, which the panel places (PlaceStashSack).
+		this.Controls.Remove(this.BagSackPanel);
+		this.sackViewport = new SackViewport(this.BagSackPanel) { Name = "stashBagViewport" };
+		this.Controls.Add(this.sackViewport);
+
+		this.equipmentPanel = new EquipmentPanel(16, 14, dragInfo, AutoMoveLocation.Stash, services);
+		this.Controls.Add(this.equipmentPanel);
+		this.ForwardEvents(this.equipmentPanel);
+		this.equipmentPanel.OnEquipmentChanged += new EventHandler<SackPanelEventArgs>(this.EquipmentChangedCallback);
+		this.BagSackPanel.ShownStash = () => this.ShownStash;
+
+		this.Text = Resources.StashPanelText;
+		this.Paint += new PaintEventHandler(this.PaintCallback);
+
+		this.BagSackPanel.MaxSacks = 1;
+
+		this.background = this.equipmentBackground = Images.equipment_bg_and_char;
+		this.stashBackground = Images.caravan_bg;
+
+		// The sort button of the stash tabs, placed by LayOut. The base panel makes none (it keeps the trash panel's settings).
+		var sortButton = this.NewSortButton(0, true, mirrored: true);
+		this.AutoSortButtons.Add(sortButton);
+		this.Controls.Add(sortButton);
+
+		this.ShowBagSack(false);
+
+		#region Init Player Panel
+
+		// The statistics panel is created with the first character shown (DisplayPlayerInfo).
+
+		this.equipmentPanel.VisibleChanged += EquipmentPanel_VisibleChanged;
+
+		#endregion
+
+		MenuStyle.Apply(this.buttonContextMenuStrip, this.FontService, UIService.FontZoom);
+
+		this.toolStripMenuItemEnableTooltip.Text = Resources.PlayerPanelMenuEnableTooltip;
+		this.toolStripMenuItemDisableTooltip.Text = Resources.PlayerPanelMenuDisableTooltip;
+
+		foreach (var bag in this.BagButtons)
+			bag.ContextMenuStrip = this.buttonContextMenuStrip;
+
+		this.LayOut();
+	}
+
+	/// <summary>
+	/// Where the shown stash bag stands in the panel, in half cells from the left and from the bottom of the tabs: its
+	/// centering in the largest bag (<see cref="StashBag.CenteringMargin"/>).
+	/// </summary>
+	private Point sackMargin = new(0, 1);
+
+	/// <summary>
+	/// Sizes the panel and places, from the current scale: the tabs in a row at the top, the bag shown centered under
+	/// them (<see cref="sackMargin"/>), the equipment, the sort button against the right edge of the golden frame, level
+	/// with its top, and the statistics panel once made.
+	/// </summary>
+	protected internal override void LayOut()
+	{
+		// Called by the base constructor, before the equipment exists: the constructor lays it out once it does.
+		if (this.equipmentPanel is null)
+			return;
+
+		var cells = this.PanelCells;
+		this.BagSackPanel.FollowScale();
+		this.equipmentPanel.FollowScale();
+		this.Size = new Size(
+			(cells.Width * UIService.ItemUnitSize) + Convert.ToInt32(10.0F * UIService.Scale) + BorderPad
+				+ Convert.ToInt32(NORMAL_PLAYERSTATS_OVERHANG * UIService.Scale),
+			(cells.Height * UIService.ItemUnitSize) + Convert.ToInt32(60.0F * UIService.Scale) + BorderPad);
+
+		// The tabs above the largest bag where a vault panel 56 high above its bag puts its bag buttons.
+		var largest = this.BagSackPanel.SizeFor(cells);
+		int borders = largest.Height - (cells.Height * UIService.ItemUnitSize);
+		this.PlaceBagButtons(new Point(BorderPad, Convert.ToInt32(56.0F * UIService.Scale) - borders), largest.Width, this.BagButtons.Count);
+		int tabsBottom = this.BagButtons[0].Bottom;
+
+		this.PlaceStashSack();
+
+		int offsetX = Math.Max(0, (cells.Width - this.equipmentPanel.SackSize.Width) * UIService.HalfUnitSize);
+		int offsetY = Math.Max(0, (cells.Height - this.equipmentPanel.SackSize.Height) * UIService.HalfUnitSize);
+		this.equipmentPanel.Location = new Point(offsetX, tabsBottom + offsetY);
+
+		var sortButton = this.AutoSortButtons[0];
+		sortButton.FollowScale();
+		var frame = this.GetBackgroundRect();
+		sortButton.Location = new Point(frame.Right, frame.Top);
+
+		if (this._statsPanel is { } stats)
+			this.LayoutStatsPanel(stats);
+	}
+
+	/// <summary>
+	/// Places the shown stash bag under the tabs, at <see cref="sackMargin"/>, in its viewport: a bag larger than the
+	/// largest the panel was built for (<see cref="VaultPanel.PanelCells"/>) scrolls in that room.
+	/// </summary>
+	/// <param name="toTopLeft">Another bag is shown: scrolled to its top-left corner; otherwise the scroll position stays.</param>
+	private void PlaceStashSack(bool toTopLeft = false)
+	{
+		int tabsBottom = this.BagButtons[0].Bottom;
+		var room = new Rectangle(new Point(BorderPad, tabsBottom), this.BagSackPanel.SizeFor(this.PanelCells));
+		var centered = new Point(
+			BorderPad + (this.sackMargin.X * UIService.HalfUnitSize),
+			tabsBottom + (this.sackMargin.Y * UIService.HalfUnitSize));
+		this.sackViewport.Place(room, centered, toTopLeft);
+	}
+
+	/// <summary>Shows the bag of the stash tabs, with its viewport, or hides both for the equipment.</summary>
+	private void ShowBagSack(bool shown)
+	{
+		this.sackViewport.Visible = shown;
+		this.BagSackPanel.Visible = shown;
+		this.BagSackPanel.Enabled = shown;
+	}
+
+	/// <summary>
+	/// Gets or sets the player instance
+	/// </summary>
+	public new PlayerCollection? Player
+	{
+		get => base.Player;
+		set
+		{
+			// Another character shows its statistics first.
+			if (!ReferenceEquals(value, base.Player))
+				this._loadoutPanelOpen = false;
+
+			base.Player = value;
+			this.equipmentPanel.PlayerCollection = value;
+		}
+	}
+
+	/// <summary>
+	/// Forces an update to the player panel.
+	/// </summary>
+	public void UpdatePlayerInfo()
+	{
+		// Force an update of the Player Info Panel.
+		DisplayPlayerInfoLastName = null;
+		this.Invalidate();
+	}
+
+	private void EquipmentPanel_VisibleChanged(object? sender, EventArgs e)
+		=> DisplayPlayerInfo();
+
+	/// <summary>
+	/// Used to signal that the gear stats bonuses have been re-calculated.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">SackPanelEventArgs object</param>
+	private void EquipmentChangedCallback(object? sender, SackPanelEventArgs e)
+	{
+		// Force an update of the Player Info Panel.
+		DisplayPlayerInfoLastName = null;
+		DisplayPlayerInfo();
+		this.ShownEquipmentChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>
+	/// The Edit button under the gold asks for the character editor of <see cref="VaultPanel.ShownPlayer"/>, which the
+	/// main window shows in place of its main content; it calls <see cref="CharacterEdited"/> once the editor is left.
+	/// </summary>
+	internal event EventHandler? EditCharacterClicked;
+
+	private void EditButton_Click(object? sender, EventArgs e)
+		=> this.EditCharacterClicked?.Invoke(this, EventArgs.Empty);
+
+	/// <summary>The button beside Edit asks for a floating window of <see cref="VaultPanel.ShownPlayer"/>.</summary>
+	internal event EventHandler? FloatCharacterClicked;
+
+	/// <summary>
+	/// The equipment of the shown character changed from this panel (an item put in or taken out): a floating window of the
+	/// same character follows.
+	/// </summary>
+	internal event EventHandler? ShownEquipmentChanged;
+
+	/// <summary>
+	/// The loadouts of the shown character were shown again (one added, renamed, deleted or given other pieces): a floating
+	/// window listing them follows.
+	/// </summary>
+	internal event EventHandler? ShownLoadoutsChanged;
+
+	/// <summary>The character editor was left: the statistics are computed and shown again.</summary>
+	internal void CharacterEdited()
+	{
+		this.GetSkillStatBonus();
+		this.DisplayPlayerInfoLastName = null;
+		this.DisplayPlayerInfo();
+	}
+
+	#region StashPanel Properties
+
+	/// <summary>
+	/// Gets or sets the stash instance
+	/// </summary>
+	public Stash? Stash
+	{
+		get => this.stash;
+
+		set
+		{
+			this.stash = value;
+			this.Text = Resources.StashPanelText;
+			this.AssignSacks();
+		}
+	}
+
+	/// <summary>
+	/// Gets the stash of the selected bag, null for the equipment.
+	/// </summary>
+	internal Stash? ShownStash => this.StashOf(this.currentBag);
+
+	/// <summary>The stash of a bag (a <c>BAGID_*</c> constant), shown or not; null for the equipment or a stash not loaded.</summary>
+	internal Stash? StashOf(int bagId) => bagId switch
+	{
+		BagIdConstants.BAGID_PLAYERSTASH => this.stash,
+		BagIdConstants.BAGID_TRANSFERSTASH => this.transferStash,
+		BagIdConstants.BAGID_RELICVAULTSTASH => this.relicVaultStash,
+		_ => null,
+	};
+
+	/// <summary>The tab name of a bag (a <c>BAGID_*</c> constant).</summary>
+	internal static string BagName(int bagId) => buttonNames[bagId];
+
+	/// <summary>
+	/// Gets or sets the transfer stash instance
+	/// </summary>
+	public Stash? TransferStash
+	{
+		get => this.transferStash;
+
+		set
+		{
+			this.transferStash = value;
+			this.Text = Resources.StashPanelText;
+			this.AssignSacks();
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the relic vault stash instance
+	/// </summary>
+	public Stash? RelicVaultStash
+	{
+		get => this.relicVaultStash;
+
+		set
+		{
+			this.relicVaultStash = value;
+			this.Text = Resources.StashPanelText;
+			this.AssignSacks();
+		}
+	}
+
+	/// <summary>
+	/// Gets the SackPanel instance
+	/// </summary>
+	public new SackPanel SackPanel
+	{
+		get
+		{
+			if (this.CurrentBag == 0 && this.equipmentPanel is not null)
+				return this.equipmentPanel;
+
+			return this.BagSackPanel;
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the currently selected bag id
+	/// </summary>
+	public new int CurrentBag
+	{
+		get => this.currentBag;
+
+		set
+		{
+			// figure out the current bag to use
+			int bagID = this.Services.StashService.ClampBagId(value);
+
+			if (bagID != this.currentBag)
+			{
+				// turn off the current bag and turn on the new bag
+				this.BagButtons[this.currentBag].IsOn = false;
+				this.BagButtons[bagID].IsOn = true;
+				this.currentBag = bagID;
+				// The mod's caravan sizes apply to the shared stashes too, read with the shown character's data.
+				var stashes = this.Services.StashService;
+				StashBag? bag = stashes.GetBag(this.currentBag, this.Player, this.transferStash, this.stash, this.relicVaultStash,
+					stashes.ModCaravanSizes());
+				if (bag is { IsEquipment: true })
+				{
+					this.equipmentPanel.Sack = bag.Sack;
+					this.ReplaceBackground(this.ScaledBackground(this.equipmentBackground));
+					this.equipmentPanel.Visible = true;
+					this.equipmentPanel.Enabled = true;
+					this.ShowBagSack(false);
+				}
+				else if (bag is not null)
+				{
+					this.ReplaceBackground(this.ScaledBackground(this.stashBackground));
+					this.BagSackPanel.Sack = bag.Sack;
+					this.BagSackPanel.SackType = SackType.Stash;
+					this.BagSackPanel.ResizeSackPanel(bag.Width, bag.Height);
+
+					// Center the sack in the panel; kept, so a zoom keeps the centering (LayOut).
+					var (marginX, marginY) = bag.CenteringMargin(this.PanelCells.Width, this.PanelCells.Height);
+					this.sackMargin = new Point(marginX, marginY);
+					this.equipmentPanel.Visible = false;
+					this.equipmentPanel.Enabled = false;
+					this.ShowBagSack(true);
+					this.PlaceStashSack(toTopLeft: true);
+				}
+
+				this.UpdateSortButton();
+				this.Refresh();
+			}
+		}
+	}
+
+	#endregion StashPanel Properties
+
+	#region StashPanel Protected Methods
+
+	/// <summary>
+	/// Updates the text for the group box.  Override the base method since we do not need to change it based on the player name.
+	/// </summary>
+	protected override void UpdateText()
+	{
+		this.Text = string.Empty;
+
+		// Player was changed, force an update to the player info panel.
+		this.DisplayPlayerInfoLastName = null;
+	}
+
+	/// <summary>
+	/// Assigns sacks to bag buttons
+	/// </summary>
+	protected override void AssignSacks()
+	{
+		// figure out the current bag to use
+		this.currentBag = this.Services.StashService.ClampBagId(this.currentBag);
+
+		#region hide/show bag buttons and assign initial bitmaps
+
+		int buttonOffset = 0;
+		foreach (StashButton button in this.BagButtons)
+		{
+			button.Visible = buttonOffset < 4;
+			button.IsOn = buttonOffset == this.currentBag;
+
+			++buttonOffset;
+		}
+
+		if ((this.relicVaultStash is null) || (this.relicVaultStash.NumberOfSacks < 1))
+			this.BagButtons[3].Visible = false;
+
+		if ((this.stash is null) || (this.stash.NumberOfSacks < 1))
+			this.BagButtons[2].Visible = false;
+
+		if ((this.transferStash is null) || (this.transferStash.NumberOfSacks < 1))
+			this.BagButtons[1].Visible = false;
+
+		#endregion
+
+		this.SackPanel.Sack = this.GetBagSack(this.currentBag);
+		if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL && this.Player is not null)
+		{
+			this.equipmentPanel.GetGearStatBonus();
+		}
+
+		// Assign sacks to button
+		foreach (var button in this.BagButtons.Take(4))
+			button.Sack = this.GetBagSack(button.ButtonNumber);
+
+		this.UpdateSortButton();
+	}
+
+	/// <summary>
+	/// Shows the sort button while a tab with a bag is shown (transfer area, storage area, relic vault), hides it on the
+	/// equipment.
+	/// </summary>
+	private void UpdateSortButton()
+	{
+		if (this.AutoSortButtons.Count > 0)
+			this.AutoSortButtons[0].Visible = this.currentBag != BagIdConstants.BAGID_EQUIPMENTPANEL
+				&& this.GetBagSack(this.currentBag) is not null;
+	}
+
+	/// <summary>
+	/// The one sort button of the stash keeps one order for the transfer area, the storage area and the relic vault: the
+	/// user sees one button, and its menu would otherwise check another order at each tab change.
+	/// </summary>
+	protected override SortButtonKey SortKey(AutoSortButton button) => SortButtonKey.Stash;
+
+	/// <summary>
+	/// Gets the sack shown by a bag of this panel.
+	/// </summary>
+	/// <param name="bagId">The bag id (see <see cref="BagIdConstants"/>).</param>
+	/// <returns>The sack, null when the bag has nothing to show.</returns>
+	private SackCollection? GetBagSack(int bagId)
+		=> this.Services.StashService.GetBagSack(bagId, this.Player, this.transferStash, this.stash, this.relicVaultStash);
+
+	/// <summary>
+	/// Paint callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">PaintEventArgs data</param>
+	private void PaintCallback(object? sender, PaintEventArgs e)
+	{
+		var rect = this.GetBackgroundRect();
+		if (this.currentBag == BagIdConstants.BAGID_EQUIPMENTPANEL && this.equipmentBackground is not null && rect.Width > 0 && rect.Height > 0)
+		{
+			// The equipment field goes to the right edge of the panel, around the statistics panel.
+			var wide = new Rectangle(rect.X, rect.Y, this.Width - (BorderPad * 2), rect.Height);
+			e.Graphics.DrawImage(this.WideEquipmentBackground(wide.Size, rect.Width), wide.Location);
+		}
+		else if (this.background is not null)
+			e.Graphics.DrawImage(this.background, rect);
+
+		// Update the player info panel
+		DisplayPlayerInfo();
+	}
+
+	#endregion StashPanel Protected Methods
+
+	#region StashPanel Private Methods
+
+	/// <summary>
+	/// A new copy of <paramref name="source"/> at the size of the panel's bag at the current scale, which redraws the
+	/// background; the source itself at scale 1.
+	/// </summary>
+	private Bitmap? ScaledBackground(Bitmap? source)
+		=> UIService.Scale != 1.0F && source is not null
+			? new Bitmap(
+				source,
+				(this.PanelCells.Width * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2),
+				(this.PanelCells.Height * UIService.ItemUnitSize) + (Convert.ToInt32(SackPanel.BorderWidth) * 2))
+			: source;
+
+	/// <summary>
+	/// Shows another background. At a zoom other than 1 it is a scaled copy made at each tab switch
+	/// (<see cref="ScaledBackground"/>): the copy replaced is disposed, the source pictures are kept.
+	/// </summary>
+	private void ReplaceBackground(Bitmap? value)
+	{
+		var old = this.background;
+		this.background = value;
+		if (old is not null && old != value && old != this.equipmentBackground && old != this.stashBackground)
+			old.Dispose();
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		// After the controls it holds, whose going may still repaint the panel.
+		base.Dispose(disposing);
+
+		if (disposing)
+		{
+			// The scaled copy, if one is shown, then the two source pictures the panel read.
+			this.ReplaceBackground(null);
+			this.wideEquipmentBackground?.Dispose();
+			this.wideEquipmentBackground = null;
+			this.equipmentBackground?.Dispose();
+			this.equipmentBackground = null;
+			this.stashBackground?.Dispose();
+			this.stashBackground = null;
+		}
+	}
+
+	/// <summary>
+	/// The equipment background as wide as the panel: the slots as they are, then the black field with its gold border
+	/// stretched to the right edge, in place of the box the picture has for the old list of player values.
+	/// </summary>
+	/// <param name="size">The size to draw.</param>
+	/// <param name="pictureWidth">The width the whole picture takes when it is not widened.</param>
+	private Bitmap WideEquipmentBackground(Size size, int pictureWidth)
+	{
+		if (this.wideEquipmentBackground is { } made && made.Size == size)
+			return made;
+
+		this.wideEquipmentBackground?.Dispose();
+		var source = this.equipmentBackground!;
+		var wide = new Bitmap(size.Width, size.Height);
+		using (var g = Graphics.FromImage(wide))
+		using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+		{
+			// No blending with what lies outside a part: the field column is stretched alone.
+			attributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+
+			float scale = pictureWidth / (float)source.Width;
+			int left = (int)Math.Round(EquipmentSlotsEnd * scale);
+			int right = (int)Math.Round(EquipmentRightBorder * scale);
+			void Part(Rectangle to, int fromX, int fromWidth)
+				=> g.DrawImage(source, to, fromX, 0, fromWidth, source.Height, GraphicsUnit.Pixel, attributes);
+
+			Part(new Rectangle(0, 0, left, size.Height), 0, EquipmentSlotsEnd);
+			Part(new Rectangle(left, 0, size.Width - left - right, size.Height), EquipmentSlotsEnd, 1);
+			Part(new Rectangle(size.Width - right, 0, right, size.Height), source.Width - EquipmentRightBorder, EquipmentRightBorder);
+		}
+
+		this.wideEquipmentBackground = wide;
+		return wide;
+	}
+
+	/// <summary>
+	/// The black field of the equipment background as <see cref="WideEquipmentBackground"/> draws it, inside the gold
+	/// frame around it (its inner line is <see cref="EquipmentFieldFrame"/> pixels of the picture from each edge).
+	/// </summary>
+	private Rectangle EquipmentField()
+	{
+		var rect = this.GetBackgroundRect();
+		if (this.equipmentBackground is not { } source || rect.Width <= 0 || rect.Height <= 0)
+			return Rectangle.Empty;
+
+		int frameX = (int)Math.Round(EquipmentFieldFrame * rect.Width / (float)source.Width);
+		int frameY = (int)Math.Round(EquipmentFieldFrame * rect.Height / (float)source.Height);
+		return Rectangle.FromLTRB(rect.X, rect.Y + frameY, rect.X + this.Width - (BorderPad * 2) - frameX, rect.Bottom - frameY);
+	}
+
+	/// <summary>
+	/// The part of the equipment background with the slots, and where the equipment draws it, relative to the equipment
+	/// panel's corner: the loadout panel draws the same part under the same slots, at its own factor.
+	/// </summary>
+	/// <returns>The picture, its slots part and where it lands; null before the panel is laid out.</returns>
+	private (Bitmap Picture, Rectangle Source, Rectangle Target)? EquipmentSlotsPicture()
+	{
+		var rect = this.GetBackgroundRect();
+		if (this.equipmentBackground is not { } source || rect.Width <= 0 || rect.Height <= 0)
+			return null;
+
+		// As WideEquipmentBackground draws it: the slot columns at the width of the whole picture, the full height.
+		float scaleX = rect.Width / (float)source.Width;
+		float scaleY = rect.Height / (float)source.Height;
+		var stone = EquipmentSlotsStone;
+		var target = Rectangle.FromLTRB(
+			rect.X - this.equipmentPanel.Left + (int)Math.Round(stone.Left * scaleX),
+			rect.Y - this.equipmentPanel.Top + (int)Math.Round(stone.Top * scaleY),
+			rect.X - this.equipmentPanel.Left + (int)Math.Round(stone.Right * scaleX),
+			rect.Y - this.equipmentPanel.Top + (int)Math.Round(stone.Bottom * scaleY));
+		return (source, stone, target);
+	}
+
+	/// <summary>
+	/// Gets a rectangle scaled by the size of the child vault panels.
+	/// </summary>
+	/// <returns>Rectangle containg the size and position of the child vault panel.</returns>
+	private Rectangle GetBackgroundRect()
+	{
+		if (this.BagButtons is null || this.BagButtons.Count == 0)
+			return Rectangle.Empty;
+
+		return new Rectangle(
+			BorderPad
+			, this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height
+			, this.ContentWidth - (BorderPad * 2)
+			, this.Height - (this.BagButtons[0].Location.Y + this.BagButtons[0].Size.Height + BorderPad)
+		);
+	}
+
+	#endregion StashPanel Private Methods
+
+	[MemberNotNull(nameof(components), nameof(buttonContextMenuStrip), nameof(toolStripMenuItemEnableTooltip), nameof(toolStripMenuItemDisableTooltip))]
+	private void InitializeComponent()
+	{
+		this.components = new System.ComponentModel.Container();
+		this.buttonContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+		this.toolStripMenuItemEnableTooltip = new System.Windows.Forms.ToolStripMenuItem();
+		this.toolStripMenuItemDisableTooltip = new System.Windows.Forms.ToolStripMenuItem();
+		this.buttonContextMenuStrip.SuspendLayout();
+		this.SuspendLayout();
+		// 
+		// buttonContextMenuStrip
+		// 
+		this.buttonContextMenuStrip.Items.AddRange([
+			this.toolStripMenuItemEnableTooltip,
+			this.toolStripMenuItemDisableTooltip]);
+		this.buttonContextMenuStrip.Name = "contextMenuStrip";
+		this.buttonContextMenuStrip.Size = new System.Drawing.Size(151, 48);
+		this.buttonContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.buttonContextMenuStrip_Opening);
+		this.buttonContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip_ItemClicked);
+		this.buttonContextMenuStrip.Opacity = 0.8D;
+		this.buttonContextMenuStrip.ShowImageMargin = false;
+		// 
+		// toolStripMenuItemEnableTooltip
+		// 
+		this.toolStripMenuItemEnableTooltip.Name = "toolStripMenuItemEnableTooltip";
+		this.toolStripMenuItemEnableTooltip.Size = new System.Drawing.Size(150, 22);
+		this.toolStripMenuItemEnableTooltip.Text = "Enable tooltip";
+		this.toolStripMenuItemEnableTooltip.Visible = true;
+		// 
+		// toolStripMenuItemDisableTooltip
+		// 
+		this.toolStripMenuItemDisableTooltip.Name = "toolStripMenuItemDisableTooltip";
+		this.toolStripMenuItemDisableTooltip.Size = new System.Drawing.Size(150, 22);
+		this.toolStripMenuItemDisableTooltip.Text = "Disable tooltip";
+		this.toolStripMenuItemDisableTooltip.Visible = true;
+		this.buttonContextMenuStrip.ResumeLayout(false);
+		this.ResumeLayout(false);
+	}
+
+}

@@ -146,68 +146,6 @@ VillageIdiot (villij-idjit@sbcglobal.net)
   <data name="AboutVersion" xml:space="preserve">
     <value>Versão {0}</value>
   </data>
-  <data name="ARZExtractBtnExtract" xml:space="preserve">
-    <value>Extrair</value>
-  </data>
-  <data name="ARZExtractCreateFolder" xml:space="preserve">
-    <value>{0} Não existe. Deseja criá-lo agora?</value>
-  </data>
-  <data name="ARZExtractCreateFolder2" xml:space="preserve">
-    <value>Criar pasta?</value>
-  </data>
-  <data name="ARZExtractCreateFolderIT" xml:space="preserve">
-    <value>{0} Não existe para o banco de dados de TI. Deseja criá-lo agora?</value>
-  </data>
-  <data name="ARZExtractDestination" xml:space="preserve">
-    <value>Selecione a pasta de destino para os registros do banco de dados extraídos</value>
-  </data>
-  <data name="ARZExtractFileDest" xml:space="preserve">
-    <value>Você deve especificar uma pasta, não um arquivo!</value>
-  </data>
-  <data name="ARZExtractLabel1" xml:space="preserve">
-    <value>Atualmente, não há como extrair todos os registros do banco de dados do jogo de uma só vez. Também existe atualmente um bug no conjunto de ferramentas que destrói os valores da matriz quando você extrai os registros um por um. Usando esta ferramenta, agora você pode extrair todos os registros de uma só vez e todos os registros serão extraídos corretamente.</value>
-  </data>
-  <data name="ARZExtractLabel2" xml:space="preserve">
-    <value>Depois de extrair os registros, basta copiar os que você deseja usar no seu mod e enviá-los para a sua pasta mod.</value>
-  </data>
-  <data name="ARZExtractLabel3" xml:space="preserve">
-    <value>Escolha uma pasta de destino:</value>
-  </data>
-  <data name="ARZExtractLabel4" xml:space="preserve">
-    <value>Escolha uma pasta de destino para os arquivos de banco de dados do TI:</value>
-  </data>
-  <data name="ARZExtractLabel5" xml:space="preserve">
-    <value>Se não escolher as pastas de destino do banco de dados do TQ e o banco de dados do TI serão padronizados para a mesma pasta. Os arquivos do TI substituirão os arquivos do TQ quando houver conflitos, embora você possa selecionar pastas diferentes para evitar a substituição de arquivos.</value>
-  </data>
-  <data name="ARZExtractText" xml:space="preserve">
-    <value>Extrair database.arz</value>
-  </data>
-  <data name="ARZExtractValidDest" xml:space="preserve">
-    <value>Você deve inserir uma pasta de destino válida.</value>
-  </data>
-  <data name="ARZProgressCancelledText" xml:space="preserve">
-    <value>Extração cancelada.</value>
-  </data>
-  <data name="ARZProgressCompleteText" xml:space="preserve">
-    <value>Extração concluída.</value>
-  </data>
-  <data name="ARZProgressFailedText" xml:space="preserve">
-    <value>Falha na extração.</value>
-  </data>
-  <data name="ARZProgressLabel" xml:space="preserve">
-    <value>Extraindo {0} ...</value>
-  </data>
-  <data name="ARZProgressLabel1" xml:space="preserve">
-    <value>Extraindo</value>
-  </data>
-  <data name="ARZProgressText" xml:space="preserve">
-    <value>Extraindo database.arz ...</value>
-  </data>
-  <data name="CmdlineUsage" xml:space="preserve">
-    <value>Erro ao analisar argumentos da linha de comandos: {0}
-
-Uso: TQVault [nome do jogador] [/mod: &lt;nome do mod&gt;]</value>
-  </data>
   <data name="DataDefaultPath" xml:space="preserve">
     <value>Caminho padrão do Cofre</value>
   </data>
@@ -230,9 +168,6 @@ configuração para refletir o link.</value>
 	Isso pode ser causado por um idioma incorreto ou erro de configuração do caminho do jogo.
 Deseja reiniciar o TQVault?</value>
   </data>
-  <data name="Form1bNext" xml:space="preserve">
-    <value>Entre no cofre</value>
-  </data>
   <data name="Form1ErrorLoadingResources" xml:space="preserve">
     <value>Erro ao carregar recursos</value>
   </data>
@@ -244,12 +179,6 @@ Deseja reiniciar o TQVault?</value>
   </data>
   <data name="Form1Text" xml:space="preserve">
     <value>Cofre de itens do Titan Quest</value>
-  </data>
-  <data name="GlobalAbout" xml:space="preserve">
-    <value>Sobre</value>
-  </data>
-  <data name="GlobalBrowse" xml:space="preserve">
-    <value>Examinar...</value>
   </data>
   <data name="GlobalCancel" xml:space="preserve">
     <value>Cancelar</value>
@@ -264,18 +193,11 @@ Deseja reiniciar o TQVault?</value>
     <value>Bolsa # {0}</value>
     <comment>Esta entrada deve ter o GlobalMenuBagDelimiter ou ele quebrará o código de movimentação do item e da bolsa.</comment>
   </data>
-  <data name="GlobalMenuBagDelimiter" xml:space="preserve">
-    <value>#</value>
-    <comment>Usado com GlobalMenuBag para indicar o número da bolsa nos menus.</comment>
-  </data>
   <data name="GlobalOK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="GlobalTransferStash" xml:space="preserve">
     <value>Área de Transferência)</value>
-  </data>
-  <data name="GlobalTrash" xml:space="preserve">
-    <value>Lixo</value>
   </data>
   <data name="ItemIT" xml:space="preserve">
     <value>Item de Immortal Throne</value>
@@ -305,7 +227,7 @@ Deseja reiniciar o TQVault?</value>
     <value>(Completo/a)</value>
   </data>
   <data name="ItemSeed" xml:space="preserve">
-    <value>Semente: {0} (0x {0: X8}) ({1: p3})</value>
+    <value>Semente: {0} (0x{0:X8}) ({1:p3})</value>
   </data>
   <data name="ItemWith" xml:space="preserve">
     <value>Com</value>
@@ -316,20 +238,11 @@ Deseja reiniciar o TQVault?</value>
   <data name="MainFormBtnConfigure" xml:space="preserve">
     <value>Configurar</value>
   </data>
-  <data name="MainFormBtnExtract" xml:space="preserve">
-    <value>Extrair database.arz ...</value>
-  </data>
   <data name="MainFormBtnPanelSelect" xml:space="preserve">
     <value>Mostrar cofre</value>
   </data>
   <data name="MainFormBtnShowPlayer" xml:space="preserve">
     <value>Mostrar Jogador</value>
-  </data>
-  <data name="MainFormCustomMapLabel" xml:space="preserve">
-    <value>{0} Mapa Personalizado</value>
-  </data>
-  <data name="MainFormDatabaseError" xml:space="preserve">
-    <value>Erro ao extrair o banco de dados</value>
   </data>
   <data name="MainFormHoldingItem" xml:space="preserve">
     <value>Você está segurando um item no momento.
@@ -356,33 +269,17 @@ Deseja reiniciar o TQVault agora?</value>
   <data name="MainFormMaintainVault" xml:space="preserve">
     <value>Gerenciar arquivos do cofre ...</value>
   </data>
-  <data name="MainFormMapsChanged" xml:space="preserve">
-    <value>Configuração de mapas personalizados alterada</value>
-  </data>
-  <data name="MainFormMapsChangedMsg" xml:space="preserve">
-    <value>A configuração de mapas personalizados foi alterada.
-
-Por favor, reinicie o TQVault para que ela entre em vigor.
-Deseja reiniciar o TQVault agora?</value>
-  </data>
   <data name="MainFormNoCharacters" xml:space="preserve">
     <value>Nenhum personagem de TQ encontrado</value>
   </data>
   <data name="MainFormNoCustomChars" xml:space="preserve">
     <value>Nenhum personagem do mapa personalizado encontrado</value>
   </data>
-  <data name="MainFormNoItemQualityFound" xml:space="preserve">
-    <value>Nenhum item do tipo '{0}'
-e qualidade '{1}' encontrado.</value>
-  </data>
   <data name="MainFormNoItemsFound" xml:space="preserve">
     <value>Nenhum item com '{0}' encontrado.</value>
   </data>
   <data name="MainFormNoItemsFound2" xml:space="preserve">
     <value>Nenhum item encontrado</value>
-  </data>
-  <data name="MainFormNoItemTypesFound" xml:space="preserve">
-    <value>Nenhum item do tipo '{0}' encontrado.</value>
   </data>
   <data name="MainFormPathsChanged" xml:space="preserve">
     <value>Caminhos do jogo alterados</value>
@@ -395,9 +292,6 @@ Deseja reiniciar o TQVault agora?</value>
   </data>
   <data name="MainFormPlayerReadError" xml:space="preserve">
     <value>Erro ao ler o arquivo do personagem</value>
-  </data>
-  <data name="MainFormQuit" xml:space="preserve">
-    <value>Tem certeza de que deseja sair?</value>
   </data>
   <data name="MainFormReadError" xml:space="preserve">
     <value>Erro ao ler {0}
@@ -423,50 +317,8 @@ Tem certeza de que é um arquivo válido?
 Por favor, reinicie o TQVault para que elas entre em vigor.
 Deseja reiniciar o TQVault agora?</value>
   </data>
-  <data name="MainFormStartVaultMon" xml:space="preserve">
-    <value>Deseja iniciar o TQVaultMon?</value>
-  </data>
-  <data name="MainFormStartVaultMonMsg" xml:space="preserve">
-    <value>Você acabou de modificar o inventário de alguns de seus personagens.
-Titan Quest irá detectar isso e pensar que seu personagem está corrompido
-e não permitirá que você carregue seu personagem.
-
-O TQVaultMon é um programa que, ao ser executado, fará o Titan Quest
-pensar que o seu personagem está bem, e permitirá que você carregue-o com sucesso.
-Depois de carregar seu personagem com sucesso, você não precisará
-usar o TQVaultMon novamente, a menos que faça outras modificações.
-
-Recomenda-se que você inicie o TQVaultMon agora e, logo após, execute o Titan
-Quest e carregue brevemente todos os personagens que você acabou de modificar.
-
-Deseja iniciar o TQVaultMon agora?</value>
-  </data>
   <data name="MainFormStashReadError" xml:space="preserve">
     <value>Erro ao ler o arquivo da Área de Armazenamento</value>
-  </data>
-  <data name="MainFormTrashItems" xml:space="preserve">
-    <value>No momento, existem {0} itens na lixeira.
-Se você sair agora, esses itens serão EXCLUÍDOS PARA SEMPRE.
-
-Tem certeza de que deseja excluir esses itens?</value>
-  </data>
-  <data name="MainFormUnableToStartVaultMon" xml:space="preserve">
-    <value>Não foi possível iniciar o TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonError" xml:space="preserve">
-    <value>Erro ao tentar iniciar o TQVaultMon</value>
-  </data>
-  <data name="MainFormVaultMonMsg" xml:space="preserve">
-    <value>Não foi possível ver se o TQVaultMon estava em execução.
-Provavelmente, o TQVaultMon também não funcionará.
-Como você modificou alguns de seus personagens, o TQ pensará que os aquivos estão corrompidos.
-Para carregar o jogo e jogar com sucesso, você precisará baixar o TQ Defiler (em inglês)
-e usar as opções 'Patch' ou 'Fix Me' para permitir que o jogo valide seus personagens.
-Se você não se importa, por favor entre em contato comigo e me informe sobre este problema
-porque eu posso ter uma solução para o erro que lhe poupará alguns aborrecimentos.
-
-Segue a mensagem de erro
-</value>
   </data>
   <data name="MaintenanceBadChars" xml:space="preserve">
     <value>Você usou caracteres inválidos.</value>
@@ -609,10 +461,6 @@ Tem certeza de que deseja substituir?</value>
   <data name="SackPanelAutoSortError" xml:space="preserve">
     <value>Erro de organização automática.</value>
   </data>
-  <data name="SackPanelAutoSortErrorMsg" xml:space="preserve">
-    <value>Ocorreu um erro durante a organização.
-Nem todos os itens foram realocados.</value>
-  </data>
   <data name="SackPanelAutoSortMsg" xml:space="preserve">
     <value>Você está segurando um item no momento.
 Coloque o item em algum lugar antes de usar a organização automática.</value>
@@ -717,19 +565,6 @@ Escolha um número entre 1 e 32767</value>
   <data name="SettingsAllowEdit" xml:space="preserve">
     <value>Permitir recursos de edição de itens</value>
   </data>
-  <data name="SettingsAllowEditTT" xml:space="preserve">
-    <value>Ativa os recursos de edição no menu de contexto.
-Isso inclui a criação e modificação de itens.</value>
-  </data>
-  <data name="SettingsAutoUpdate" xml:space="preserve">
-    <value>Verificar atualizações automaticamente</value>
-  </data>
-  <data name="SettingsAutoUpdateTT" xml:space="preserve">
-    <value>Selecionar este item faz com que o programa pesquise 
-automaticamente atualizações do TQVault na Web sempre que iniciar.
-Se sua conexão com a Internet estiver lenta, essa opção pode retardar
-a inicialização do TQVault.</value>
-  </data>
   <data name="SettingsBrowseIT" xml:space="preserve">
     <value>Por favor, selecione o caminho para os arquivos do jogo Immortal Throne.</value>
   </data>
@@ -745,21 +580,6 @@ a inicialização do TQVault.</value>
   <data name="SettingsDetectLanguage" xml:space="preserve">
     <value>Detectar automaticamente o idioma</value>
   </data>
-  <data name="SettingsEnableMod" xml:space="preserve">
-    <value>Habilitar mapas personalizados</value>
-  </data>
-  <data name="SettingsEnableModTT" xml:space="preserve">
-    <value>A seleção deste item permitirá
-que o menu suspenso Habilte a seleção de
-mapas personalizados.</value>
-  </data>
-  <data name="SettingsForceCheck" xml:space="preserve">
-    <value>Verifique agora</value>
-  </data>
-  <data name="SettingsForceCheckTT" xml:space="preserve">
-    <value>Verifica manualmente se há alguma atualização
-disponível.</value>
-  </data>
   <data name="SettingsLabel1" xml:space="preserve">
     <value>Caminho do cofre (TQVault)</value>
   </data>
@@ -771,9 +591,6 @@ disponível.</value>
   </data>
   <data name="SettingsLabel4" xml:space="preserve">
     <value>Caminho do jogo de TI</value>
-  </data>
-  <data name="SettingsLabel5" xml:space="preserve">
-    <value>Mapa personalizado</value>
   </data>
   <data name="SettingsLoadChar" xml:space="preserve">
     <value>Carregar automaticamente o último personagem aberto</value>
@@ -816,13 +633,6 @@ aumenta o tempo de inicialização.</value>
     <value>Faz com que a configuração seja redefinida para o
 última configuração salva.</value>
   </data>
-  <data name="SettingsSkipTitle" xml:space="preserve">
-    <value>Ignorar automaticamente a tela de título</value>
-  </data>
-  <data name="SettingsSkipTitleTT" xml:space="preserve">
-    <value>Isso fará com que a tela de título
-avançe para o programa por si só.</value>
-  </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Definir configurações</value>
   </data>
@@ -846,78 +656,6 @@ A guia área de armazenamento ficará indisponível para esse personagem.</value
   <data name="StashPanelText" xml:space="preserve">
     <value>Caravana</value>
   </data>
-  <data name="UpdateCompletion" xml:space="preserve">
-    <value>{0} {1}% concluída.</value>
-  </data>
-  <data name="UpdateCompletion2" xml:space="preserve">
-    <value>{0} 0% concluído.</value>
-  </data>
-  <data name="UpdateCurrentVer" xml:space="preserve">
-    <value>Versão atual: {0}</value>
-  </data>
-  <data name="UpdateError" xml:space="preserve">
-    <value>Não é possível iniciar a instalação</value>
-  </data>
-  <data name="UpdateErrorMsg" xml:space="preserve">
-    <value>Houve um problema com o download ou a extração.
-Faça o download do último pacote completo de instalação e execute-o manualmente.
-Clique em OK para sair.</value>
-  </data>
-  <data name="UpdateFullInstall" xml:space="preserve">
-    <value>Foi encontrada uma versão mais recente do TQVault, que requer uma instalação completa.</value>
-  </data>
-  <data name="UpdateLatestVer" xml:space="preserve">
-    <value>Versão mais recente: {0}</value>
-  </data>
-  <data name="UpdateMinVer" xml:space="preserve">
-    <value>Versão mínima: {0}</value>
-  </data>
-  <data name="UpdateNewTQVault" xml:space="preserve">
-    <value>Uma versão mais recente do TQVault foi encontrada.</value>
-  </data>
-  <data name="UpdateNewUpdater" xml:space="preserve">
-    <value>Foi encontrada uma versão mais recente do programa de atualização do TQVault.</value>
-  </data>
-  <data name="UpdateNoUpdate" xml:space="preserve">
-    <value>Sua versão está atualizada.</value>
-  </data>
-  <data name="UpdatePerform" xml:space="preserve">
-    <value>Clique em OK para executar uma atualização.</value>
-  </data>
-  <data name="UpdatePerformBoth" xml:space="preserve">
-    <value>Clique em OK para executar as duas atualizações.</value>
-  </data>
-  <data name="UpdateRunInstall" xml:space="preserve">
-    <value>Clique em OK para baixar e executar o instalador.</value>
-  </data>
-  <data name="UpdateStreamError" xml:space="preserve">
-    <value>Ocorreu um erro ao conectar-se ao servidor de atualização.
-Uma atualização não pode ser realizada.</value>
-  </data>
-  <data name="UpdateText" xml:space="preserve">
-    <value>Atualizações do TQVault</value>
-  </data>
-  <data name="UpdateUpdaterNotFound" xml:space="preserve">
-    <value>O programa de atualização do TQVault não foi encontrado ou o nome foi alterado.</value>
-  </data>
-  <data name="VaultProgressText" xml:space="preserve">
-    <value>Carregando arquivos do cofre e do personagem...</value>
-  </data>
-  <data name="AUEnglishName" xml:space="preserve">
-    <value>Inglês</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to determine which language file to update.</comment>
-  </data>
-  <data name="AUFileVersion" xml:space="preserve">
-    <value>2</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Used to track changes in the translation file.</comment>
-  </data>
-  <data name="AUMinTQVaultVersion" xml:space="preserve">
-    <value>2.3.1.0</value>
-    <comment>Do not Translate.  Used for AutoUpdate.
-Change this value to match program version when new keys are added.  Will trigger an update on next restart.</comment>
-  </data>
   <data name="VaultGroupBoxEmpty" xml:space="preserve">
     <value>&lt;VAZIA&gt;</value>
   </data>
@@ -933,18 +671,6 @@ Deseja desativar o carregamento de todos os arquivos?</value>
   </data>
   <data name="SearchDialogCaption" xml:space="preserve">
     <value>Pesquisar um item</value>
-  </data>
-  <data name="SearchDialogText" xml:space="preserve">
-    <value>Pesquise itens nos arquivos carregados: cofres, esconderijos, inventários.
-
-Você pode combinar as seguintes opções de pesquisa (todas são opcionais):
-* Nome: deve ser o primeiro termo de pesquisa. Aqui está um exemplo:'glacial e &amp; gelo'
-* Digite: usando @ no início do termo de pesquisa, por exemplo '@espada'
-* Atributos: use # no início do termo de pesquisa, por exemplo, '#Resistência elemental'
-* Raridade: use $ no início do termo de pesquisa, por exemplo, '$ epico'
-
-Você pode usar | em um termo como condição ou por exemplo '$epico | raro'
-Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
   </data>
   <data name="GlobalClose" xml:space="preserve">
     <value>Fechar</value>
@@ -968,21 +694,6 @@ Aqui está um exemplo complexo: 'glacial &amp; gelo @anel $raro'</value>
     <value>Tamanho</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="NewAboutGraphic" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\newaboutgraphic.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NewSplashScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\newsplashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SplashScreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\splashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ProgressBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\progressbar.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ProgressBarFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\progressbarfill.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="SettingsPlayerReadonly" xml:space="preserve">
     <value>Equipamento do jogador somente leitura</value>
   </data>
@@ -993,26 +704,14 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="ItemRagnarok" xml:space="preserve">
     <value>Item de Ragnarök </value>
   </data>
-  <data name="AlbertusMTLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Fonts\albertus mt light.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AlbertusMT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Fonts\albertus mt.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ItemAtlantis" xml:space="preserve">
     <value> Item de Atlantis</value>
   </data>
   <data name="GlobalRelicVaultStash" xml:space="preserve">
     <value>Câmara das Relíquias</value>
   </data>
-  <data name="equipment_bg_and_char" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\equipment_bg_and_char.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="SettingsAllowEditCE" xml:space="preserve">
     <value>Permitir recursos de edição de personagens</value>
-  </data>
-  <data name="CEAttributePoints" xml:space="preserve">
-    <value>Pontos de atributos</value>
   </data>
   <data name="CEAttributes" xml:space="preserve">
     <value>Atributos básicos</value>
@@ -1053,171 +752,6 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="CharacterEditBtn" xml:space="preserve">
     <value>Editar</value>
   </data>
-  <data name="MasteriestagCClass01" xml:space="preserve">
-    <value>tagMasteryBrief07</value>
-  </data>
-  <data name="MasteriestagCClass02" xml:space="preserve">
-    <value>tagMasteryBrief08</value>
-  </data>
-  <data name="MasteriestagCClass03" xml:space="preserve">
-    <value>tagMasteryBrief05</value>
-  </data>
-  <data name="MasteriestagCClass04" xml:space="preserve">
-    <value>tagMasteryBrief06</value>
-  </data>
-  <data name="MasteriestagCClass05" xml:space="preserve">
-    <value>tagMasteryBrief04</value>
-  </data>
-  <data name="MasteriestagCClass06" xml:space="preserve">
-    <value>tagMasteryBrief03</value>
-  </data>
-  <data name="MasteriestagCClass07" xml:space="preserve">
-    <value>tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass08" xml:space="preserve">
-    <value>tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass09" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass10" xml:space="preserve">
-    <value>tagMasteryBrief08-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass11" xml:space="preserve">
-    <value>tagMasteryBrief05-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass12" xml:space="preserve">
-    <value>tagMasteryBrief06-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass13" xml:space="preserve">
-    <value>tagMasteryBrief04-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass14" xml:space="preserve">
-    <value>tagMasteryBrief03-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass15" xml:space="preserve">
-    <value>tagMasteryBrief02-tagMasteryBrief01</value>
-  </data>
-  <data name="MasteriestagCClass16" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass17" xml:space="preserve">
-    <value>tagMasteryBrief08-tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass18" xml:space="preserve">
-    <value>tagMasteryBrief05-tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass19" xml:space="preserve">
-    <value>tagMasteryBrief06-tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass20" xml:space="preserve">
-    <value>tagMasteryBrief04-tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass21" xml:space="preserve">
-    <value>tagMasteryBrief03-tagMasteryBrief02</value>
-  </data>
-  <data name="MasteriestagCClass22" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief03</value>
-  </data>
-  <data name="MasteriestagCClass23" xml:space="preserve">
-    <value>tagMasteryBrief08-tagMasteryBrief03</value>
-  </data>
-  <data name="MasteriestagCClass24" xml:space="preserve">
-    <value>tagMasteryBrief05-tagMasteryBrief03</value>
-  </data>
-  <data name="MasteriestagCClass25" xml:space="preserve">
-    <value>tagMasteryBrief06-tagMasteryBrief03</value>
-  </data>
-  <data name="MasteriestagCClass26" xml:space="preserve">
-    <value>tagMasteryBrief04-tagMasteryBrief03</value>
-  </data>
-  <data name="MasteriestagCClass27" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief04</value>
-  </data>
-  <data name="MasteriestagCClass28" xml:space="preserve">
-    <value>tagMasteryBrief08-tagMasteryBrief04</value>
-  </data>
-  <data name="MasteriestagCClass29" xml:space="preserve">
-    <value>tagMasteryBrief05-tagMasteryBrief04</value>
-  </data>
-  <data name="MasteriestagCClass30" xml:space="preserve">
-    <value>tagMasteryBrief06-tagMasteryBrief04</value>
-  </data>
-  <data name="MasteriestagCClass31" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief06</value>
-  </data>
-  <data name="MasteriestagCClass32" xml:space="preserve">
-    <value>tagMasteryBrief08-tagMasteryBrief06</value>
-  </data>
-  <data name="MasteriestagCClass33" xml:space="preserve">
-    <value>tagMasteryBrief05-tagMasteryBrief06</value>
-  </data>
-  <data name="MasteriestagCClass34" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief05</value>
-  </data>
-  <data name="MasteriestagCClass35" xml:space="preserve">
-    <value>tagMasteryBrief08-tagMasteryBrief05</value>
-  </data>
-  <data name="MasteriestagCClass36" xml:space="preserve">
-    <value>tagMasteryBrief07-tagMasteryBrief08</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass01" xml:space="preserve">
-    <value>xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass02" xml:space="preserve">
-    <value>tagMasteryBrief01-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass03" xml:space="preserve">
-    <value>tagMasteryBrief02-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass04" xml:space="preserve">
-    <value>tagMasteryBrief03-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass05" xml:space="preserve">
-    <value>tagMasteryBrief04-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass06" xml:space="preserve">
-    <value>tagMasteryBrief06-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass07" xml:space="preserve">
-    <value>tagMasteryBrief05-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass08" xml:space="preserve">
-    <value>tagMasteryBrief08-xtagMasteryBrief09</value>
-  </data>
-  <data name="MasteriesxtagCharacterClass09" xml:space="preserve">
-    <value>tagMasteryBrief07-xtagMasteryBrief09</value>
-  </data>
-  <data name="Masteriesx2tag_class_rm_rm" xml:space="preserve">
-    <value>x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_warfare_rm" xml:space="preserve">
-    <value>tagMasteryBrief01-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_defense_rm" xml:space="preserve">
-    <value>tagMasteryBrief02-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_earth_rm" xml:space="preserve">
-    <value>tagMasteryBrief03-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_storm_rm" xml:space="preserve">
-    <value>tagMasteryBrief04-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_hunting_rm" xml:space="preserve">
-    <value>tagMasteryBrief06-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_stealth_rm" xml:space="preserve">
-    <value>tagMasteryBrief05-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_nature_rm" xml:space="preserve">
-    <value>tagMasteryBrief08-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_spirit_rm" xml:space="preserve">
-    <value>tagMasteryBrief07-x2tagRuneMasteryBrief</value>
-  </data>
-  <data name="Masteriesx2tag_class_dream_rm" xml:space="preserve">
-    <value>xtagMasteryBrief09-x2tagRuneMasteryBrief</value>
-  </data>
   <data name="Masteries" xml:space="preserve">
     <value>Maestria</value>
   </data>
@@ -1236,26 +770,14 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="Money" xml:space="preserve">
     <value>Dinheiro</value>
   </data>
+  <data name="Electrum" xml:space="preserve">
+    <value>Electrum</value>
+  </data>
   <data name="SkillPoints" xml:space="preserve">
     <value>Pontos de habilidade</value>
   </data>
   <data name="AttributesPoints" xml:space="preserve">
     <value>Pontos de Atributo</value>
-  </data>
-  <data name="BaseStrength" xml:space="preserve">
-    <value>Base de força</value>
-  </data>
-  <data name="BaseDexterity" xml:space="preserve">
-    <value>Base de destreza</value>
-  </data>
-  <data name="BaseIntelligence" xml:space="preserve">
-    <value>Base de inteligência</value>
-  </data>
-  <data name="BaseHealth" xml:space="preserve">
-    <value>Base de Vida</value>
-  </data>
-  <data name="BaseMana" xml:space="preserve">
-    <value>Base de Energia</value>
   </data>
   <data name="PlayTimeInSeconds" xml:space="preserve">
     <value>Tempo de jogo</value>
@@ -1284,12 +806,6 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="NumHitsInflicted" xml:space="preserve">
     <value>Golpes infligidos</value>
   </data>
-  <data name="GreatestDamageInflicted" xml:space="preserve">
-    <value>Maior dano</value>
-  </data>
-  <data name="GreatestMonster" xml:space="preserve">
-    <value>Maior monstro</value>
-  </data>
   <data name="CriticalHitsInflicted" xml:space="preserve">
     <value>Golpes críticos</value>
   </data>
@@ -1308,24 +824,11 @@ Quando ativado, o equipamento do personagem será somente leitura, você não po
   <data name="PlayerPanelMenuEnableAllTooltip" xml:space="preserve">
     <value>Ativar todas as dicas de ferramentas</value>
   </data>
-  <data name="SettingEnableDetailedTooltipView" xml:space="preserve">
-    <value>Ativar exibição de dica de ferramenta detalhada</value>
-  </data>
-  <data name="SettingEnableDetailedTooltipViewTT" xml:space="preserve">
-    <value>Dividir atributos da dica de ferramenta em categorias Prefixo/Base/Sufixo</value>
-  </data>
   <data name="SettingsItemBGColorOpacityLabel" xml:space="preserve">
     <value> Cor do item BG Alpha :</value>
   </data>
   <data name="SettingsItemBGColorOpacityLabelTT" xml:space="preserve">
     <value>Nível de opacidade da cor de fundo do item</value>
-  </data>
-  <data name="SettingsEnableItemRequirementRestriction" xml:space="preserve">
-    <value>Ativar restrição de requisitos de item</value>
-  </data>
-  <data name="SettingsEnableItemRequirementRestrictionTT" xml:space="preserve">
-    <value>Quando ativada, uma cor de fundo vermelha é exibida nos itens em que o personagem selecionado não atende aos requisitos do item.
-O personagem também não poderá equipar itens onde os requisitos não forem atendidos..</value>
   </data>
   <data name="ResetMasteriesButton" xml:space="preserve">
     <value>Redefinir Maestria</value>
@@ -1538,9 +1041,6 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
     <value>@tagRace08P</value>
     <comment>Redirecionar o bônus para raça "Titan"</comment>
   </data>
-  <data name="ItemAccent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Img\ItemAccent.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ItemEmbers" xml:space="preserve">
     <value>Item de Eternal Embers</value>
   </data>
@@ -1573,9 +1073,6 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
   </data>
 	<data name="PlayerPanelMenuImportTabFile" xml:space="preserve">
     <value>Importar de arquivo...</value>
-  </data>
-	<data name="ExportVaultPasteBin" xml:space="preserve">
-    <value>Compartilhar baú no PasteBin</value>
   </data>
   <data name="GlobalNoVaultLoaded" xml:space="preserve">
     <value>Nenhum baú carregado.</value>
@@ -1634,7 +1131,16 @@ O personagem também não poderá equipar itens onde os requisitos não forem at
   <data name="ImportVaultSuccess" xml:space="preserve">
     <value>{0} itens importados para o baú.</value>
   </data>
-  <data name="ShareVaultTooltip" xml:space="preserve">
-    <value>🔗 Compartilhar baú</value>
+	<data name="TextTag_DefenseManaBurnRatio" xml:space="preserve">
+    <value>{%.0f0}% de resistência ao dano de dreno de energia</value>
+    <comment>Substitute for the missing tag of defensiveManaBurnRatio: resistance to the damage of Energy Drain (DamageManaBurnRatio)</comment>
+  </data>
+	<data name="TextTag_DefensePercentCurrentLife" xml:space="preserve">
+    <value>@DefensePercentLife</value>
+    <comment>Substitute for the missing tag of defensivePercentCurrentLife: the game text of the same resistance (DefensePercentLife)</comment>
+  </data>
+	<data name="TextTag_tqvSkillCastOnTargetLocation" xml:space="preserve">
+    <value>Lançado onde o inimigo foi morto</value>
+    <comment>TQVault text: a skill cast on a kill (skillCastName) appears at the slain enemy (skillCastOnTargetLocation)</comment>
   </data>
 </root>

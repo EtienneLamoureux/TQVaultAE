@@ -4,6 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace TQVaultAE.Domain.Entities;
 
 /// <summary>
@@ -14,7 +16,7 @@ public class Stash
 	/// <summary>
 	/// Raised exception at loading time.
 	/// </summary>
-	public ArgumentException ArgumentException;
+	public ArgumentException? ArgumentException;
 	/// <summary>
 	/// return result of <see cref="StashProvider.LoadFile"/> from loading time.
 	/// </summary>
@@ -22,12 +24,12 @@ public class Stash
 	/// <summary>
 	/// Player name associated with this stash file.
 	/// </summary>
-	private string playerName;
+	private string playerName = string.Empty;
 
 	/// <summary>
 	/// Raw file data
 	/// </summary>
-	public byte[] rawData;
+	public byte[] rawData = [];
 
 	/// <summary>
 	/// Binary marker for begin block
@@ -48,12 +50,12 @@ public class Stash
 	/// Raw data holding the name.
 	/// Changed to raw data to support extended characters
 	/// </summary>
-	public byte[] name;
+	public byte[] name = [];
 
 	/// <summary>
 	/// Gets the current sack instance
 	/// </summary>
-	public SackCollection Sack;
+	public SackCollection? Sack;
 
 	/// <summary>
 	/// Initializes a new instance of the Stash class.
@@ -71,6 +73,7 @@ public class Stash
 	/// <summary>
 	/// Creates an empty sack
 	/// </summary>
+	[MemberNotNull(nameof(Sack))]
 	public void CreateEmptySack()
 	{
 		this.Sack = new SackCollection();
@@ -90,6 +93,23 @@ public class Stash
 	/// </summary>
 	public bool IsModified
 		=> this.Sack?.IsModified ?? false;
+
+	/// <summary>
+	/// Indicates whether the stash belongs to a read-only character: its sack cannot change and the save skips it.
+	/// Setting it marks the sack (<see cref="SackCollection.IsReadOnly"/>).
+	/// </summary>
+	public bool IsReadOnly
+	{
+		get => this.isReadOnly;
+		set
+		{
+			this.isReadOnly = value;
+			if (this.Sack is not null)
+				this.Sack.IsReadOnly = value;
+		}
+	}
+
+	private bool isReadOnly;
 
 	/// <summary>
 	/// Adjust internal status when the collection is saved
@@ -120,6 +140,12 @@ public class Stash
 	}
 
 	/// <summary>
+	/// Gets the name the stash was loaded with, without the Immortal Throne suffix of <see cref="PlayerName"/>:
+	/// the character for its own stash, else the transfer or relic vault stash name. The search shows it.
+	/// </summary>
+	public string Name => this.playerName;
+
+	/// <summary>
 	/// Gets the stash file name
 	/// </summary>
 	public string StashFile { get; private set; }
@@ -128,6 +154,6 @@ public class Stash
 	/// Gets the number of sack contained in this stash
 	/// </summary>
 	public int NumberOfSacks
-		=> this.Sack == null ? 0 : this.numberOfSacks;
+		=> this.Sack is null ? 0 : this.numberOfSacks;
 
 }

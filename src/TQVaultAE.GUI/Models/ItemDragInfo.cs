@@ -5,15 +5,19 @@
 //-----------------------------------------------------------------------
 
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.GUI.Components.Panels;
+using TQVaultAE.Presentation.Win32.Contracts;
 
 namespace TQVaultAE.GUI.Models;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using TQVaultAE.GUI.Components;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
-using TQVaultAE.GUI.Tooltip;
+using TQVaultAE.GUI.Tooltips;
 
 /// <summary>
 /// Stores information about the item being dragged around by the user
@@ -23,17 +27,17 @@ public class ItemDragInfo
 	/// <summary>
 	/// The sack where the item came from.
 	/// </summary>
-	private SackCollection srcSack;
+	private SackCollection? srcSack;
 
 	/// <summary>
 	/// The item being dragged around.
 	/// </summary>
-	private Item srcItem;
+	private Item? srcItem;
 
 	/// <summary>
 	/// The sackPanel that is displaying the sack.
 	/// </summary>
-	private SackPanel srcSackPanel;
+	private SackPanel? srcSackPanel;
 
 	/// <summary>
 	/// The offset of the pointer withing the item bitmap
@@ -43,7 +47,7 @@ public class ItemDragInfo
 	/// <summary>
 	/// if we have performed an action on this drag, we can use this to access the original item information.
 	/// </summary>
-	private ItemDragInfo original;
+	private ItemDragInfo? original;
 
 
 	/// <summary>
@@ -59,29 +63,36 @@ public class ItemDragInfo
 	{
 		this.AutoMoveDestination = AutoMoveLocation.NotSet;
 		this.DestIndex = -1;
-		this.autoMoveLocationsList = new List<AutoMoveLocation>();
+		this.autoMoveLocationsList = [];
 		this.UIService = uiService;
 	}
 
 	/// <summary>
+	/// The pair selection shared by every panel (Compare, Insert into item): while it is on, a left click on an item
+	/// picks the second item instead of taking the item.
+	/// </summary>
+	public ItemPairSelection PairSelection { get; } = new();
+
+	/// <summary>
 	/// Gets a value indicating whether an item is currently being dragged around.
 	/// </summary>
-	public bool IsActive => this.srcItem != null;
+	[MemberNotNullWhen(true, nameof(Item), nameof(srcItem))]
+	public bool IsActive => this.srcItem is not null;
 
 	/// <summary>
 	/// Gets the item being dragged around
 	/// </summary>
-	public Item Item => this.srcItem;
+	public Item? Item => this.srcItem;
 
 	/// <summary>
 	/// Gets the sack which the item was taken
 	/// </summary>
-	public SackCollection SrcSack => this.srcSack;
+	public SackCollection? SrcSack => this.srcSack;
 
 	/// <summary>
 	/// Gets the sack panel which the item was taken
 	/// </summary>
-	public SackPanel SrcSackPanel => this.srcSackPanel;
+	public SackPanel? SrcSackPanel => this.srcSackPanel;
 
 	/// <summary>
 	/// Gets the offset from the top-left corner of the bitmap to where the mouse pointer is located
@@ -91,12 +102,13 @@ public class ItemDragInfo
 	/// <summary>
 	/// Gets a value indicating whether the item has been modified
 	/// </summary>
-	public bool IsModifiedItem => this.original != null;
+	[MemberNotNullWhen(true, nameof(Original), nameof(original))]
+	public bool IsModifiedItem => this.original is not null;
 
 	/// <summary>
 	/// Gets the original draginfo data
 	/// </summary>
-	public ItemDragInfo Original => this.original;
+	public ItemDragInfo? Original => this.original;
 
 	/// <summary>
 	/// Gets a value indicating whether a drag can be canceled
@@ -104,14 +116,14 @@ public class ItemDragInfo
 	/// Items that have been modified cannot be cancelled
 	/// </summary>
 	public bool CanBeCanceled
-		=> !this.IsModifiedItem && (this.srcItem.PositionX >= 0 || this.srcItem.PositionX == -3) && this.srcItem.PositionY >= 0;
+		=> !this.IsModifiedItem && this.srcItem is { } item && (item.PositionX >= 0 || item.PositionX == -3) && item.PositionY >= 0;
 
 	/// <summary>
 	/// Gets a value indicating whether an item can be modified
 	/// Items that have no valid location cannot be modified
 	/// </summary>
 	public bool CanBeModified
-		=> this.IsModifiedItem || (this.srcItem.PositionX >= 0 && this.srcItem.PositionY >= 0);
+		=> this.IsModifiedItem || (this.srcItem is { } item && item.PositionX >= 0 && item.PositionY >= 0);
 
 	/// <summary>
 	/// Gets or sets the auto move destination
@@ -142,11 +154,14 @@ public class ItemDragInfo
 		=> new ReadOnlyCollection<AutoMoveLocation>(this.autoMoveLocationsList);
 
 	/// <summary>
-	/// Adds an automovelocation to the list
+	/// Adds an automovelocation to the list; a panel without one (the loadout panel) is no "Move to" destination.
 	/// </summary>
 	/// <param name="autoMoveLocation">AutoMoveLocation to add to the list.</param>
-	public void AddAutoMoveLocationToList(AutoMoveLocation autoMoveLocation) 
-		=> this.autoMoveLocationsList.Add(autoMoveLocation);
+	public void AddAutoMoveLocationToList(AutoMoveLocation autoMoveLocation)
+	{
+		if (autoMoveLocation != AutoMoveLocation.NotSet)
+			this.autoMoveLocationsList.Add(autoMoveLocation);
+	}
 
 	/// <summary>
 	/// Marks the item as placed removing it from the original container.
@@ -154,32 +169,18 @@ public class ItemDragInfo
 	/// <param name="slot">slot if an equipment placement.</param>
 	public void MarkPlaced()
 	{
-		int slot = -1;
+		// An item taken off the equipment changes the character's attributes and statistics.
+		EquipmentPanel? unequippedFrom = null;
 
 		// modified items do not have a source sack.
 		// so no one needs to be notified of the placement.
-		if (!this.IsModifiedItem)
-		{       
-			// Check to see if the dragged item is from one of the equipped slots.
-			if (this.srcSack.SackType == SackType.Equipment)
-				slot = EquipmentPanel.FindEquipmentSlot(this.srcSack, this.srcItem);
-
-			if (slot != -1)
-			{
-				// Remove the item out of the equipment slot
-				this.srcSack.RemoveAtItem(slot);
-
-				// Put a dummy item in it's place
-				Item newItem = this.srcItem.MakeEmptyItem();
-				newItem.PositionX = SackCollection.GetEquipmentLocationOffset(slot).X;
-				newItem.PositionY = SackCollection.GetEquipmentLocationOffset(slot).Y;
-				this.srcSack.InsertItem(slot, newItem);
-			}
-			else
-				// Remove the item from the old sack
-				this.srcSack.RemoveItem(this.srcItem);
+		if (!this.IsModifiedItem && this.srcSack is not null && this.srcItem is not null)
+		{
+			// Remove the item from the old sack; an equipped item leaves an empty item in its slot.
+			EquipmentRules.TakeOut(this.srcSack, this.srcItem);
 
 			BagButtonTooltip.InvalidateCache(this.SrcSack, this.Original?.SrcSack);
+			unequippedFrom = this.srcSackPanel as EquipmentPanel;
 		}
 
 		// finally clear things out
@@ -190,6 +191,10 @@ public class ItemDragInfo
 		this.AutoMoveDestination = AutoMoveLocation.NotSet;
 		this.DestIndex = -1;
 		this.IsBeingCancelled = false;
+
+		// Wherever the item was put (inventory, vault, stash, another slot), the bonuses are summed again without it (a
+		// loadout loses the piece).
+		unequippedFrom?.SlotsChanged();
 	}
 
 	/// <summary>
@@ -200,7 +205,7 @@ public class ItemDragInfo
 		this.IsBeingCancelled = true;
 
 		// let the owner know.
-		this.srcSackPanel.CancelDrag(this);
+		this.srcSackPanel?.CancelDrag(this);
 
 		// now clear things out
 		this.srcItem = null;
@@ -208,8 +213,8 @@ public class ItemDragInfo
 		// If the item came from the equipment panel,
 		// recalcuate the gear stats before clearing out the sackPanel.
 		// The item needs to be cleared at this point to get the correct calculation.
-		EquipmentPanel equipmentPanel = srcSackPanel as EquipmentPanel;
-		equipmentPanel?.GetGearStatBonus();
+		EquipmentPanel? equipmentPanel = srcSackPanel as EquipmentPanel;
+		equipmentPanel?.SlotsChanged();
 
 		this.srcSack = null;
 		this.srcSackPanel = null;
@@ -238,27 +243,30 @@ public class ItemDragInfo
 	}
 
 	/// <summary>
-	/// Marks an item as modified.  Used for splitting stacks and removing charms and relics.
+	/// Drags <paramref name="newItem"/> instead of the source item, which stays in its sack: a split stack, a removed
+	/// relic, a copy, a new set piece or a crafted artifact.
 	/// </summary>
-	/// <param name="newItem">New item to be created after the split.</param>
+	/// <remarks>
+	/// The source sack is not marked as modified here: the action that changed the source item (split, relic removal)
+	/// marks it, so a copy alone leaves its vault or character unchanged and unsaved (upstream #267).
+	/// </remarks>
+	/// <param name="newItem">The item dragged from now on.</param>
 	public void MarkModified(Item newItem)
 	{
 		if (this.IsModifiedItem)
 		{
 			// The item is already modified.  If it has been modified again, then we should tell the sackPanel to redraw it again
-			this.original.srcSackPanel.CancelDrag(this.original);
+			this.original.srcSackPanel?.CancelDrag(this.original);
 			this.srcItem = newItem;
 		}
 		else
 		{
 			// Tell the sackPanel the drag was cancelled so that it will redraw its now modified item
-			this.srcSackPanel.CancelDrag(this);
-
-			// Tell the sack that it has been modified
-			this.srcSack.IsModified = true;
+			this.srcSackPanel?.CancelDrag(this);
 
 			// Now store our info inside original
-			this.original = (ItemDragInfo)this.MemberwiseClone();
+			var original = (ItemDragInfo)this.MemberwiseClone();
+			this.original = original;
 
 			// Now set us up to the new item
 			this.srcItem = newItem;
@@ -266,13 +274,15 @@ public class ItemDragInfo
 			this.srcSackPanel = null; // nor a sack panel
 
 			// reposition the mouse at the center of the new item if it is a different size than the old item
-			if (newItem.Width != this.original.srcItem.Width 
-			    || newItem.Height != this.original.srcItem.Height
-			   )
+			if (original.srcItem is { } oldItem
+				&& (newItem.Width != oldItem.Width || newItem.Height != oldItem.Height))
 			{
-				var ibmp = this.UIService.GetBitmap(newItem);
-				this.mouseOffset.X = ibmp.Width / 2;
-				this.mouseOffset.Y = ibmp.Height / 2;
+				// An item without picture keeps the current offset.
+				if (this.UIService.GetBitmap(newItem) is { } ibmp)
+				{
+					this.mouseOffset.X = ibmp.Width / 2;
+					this.mouseOffset.Y = ibmp.Height / 2;
+				}
 			}
 		}
 	}

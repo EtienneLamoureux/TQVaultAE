@@ -87,16 +87,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap AboutGraphic {
-            get {
-                object obj = ResourceManager.GetObject("AboutGraphic", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to About {0}.
         /// </summary>
         public static string AboutText {
@@ -111,6 +101,24 @@ namespace TQVaultAE.Presentation {
         public static string AboutVersion {
             get {
                 return ResourceManager.GetString("AboutVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to % = Loot chance.
+        /// </summary>
+        public static string AffixChanceHeader {
+            get {
+                return ResourceManager.GetString("AffixChanceHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Best chance among the item's drop sources, once the item gets an affix of this kind. Not the chance for the item itself to drop..
+        /// </summary>
+        public static string AffixChanceTooltip {
+            get {
+                return ResourceManager.GetString("AffixChanceTooltip", resourceCulture);
             }
         }
         
@@ -133,193 +141,29 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to % = share in its affix table (all affixes of this gear type).
         /// </summary>
-        public static byte[] AlbertusMT {
+        public static string AffixShareHeader {
             get {
-                object obj = ResourceManager.GetObject("AlbertusMT", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("AffixShareHeader", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to Never rolled by the game (—).
         /// </summary>
-        public static byte[] AlbertusMTLight {
+        public static string AffixUnreachableHeader {
             get {
-                object obj = ResourceManager.GetObject("AlbertusMTLight", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("AffixUnreachableHeader", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extract.
+        ///   Looks up a localized string similar to The game never rolls these affixes on this item: their slot or table has no weight or no chance. Listed because the setting &quot;Enable Epic and Legendary affixes&quot; is on..
         /// </summary>
-        public static string ARZExtractBtnExtract {
+        public static string AffixUnreachableTooltip {
             get {
-                return ResourceManager.GetString("ARZExtractBtnExtract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not exist.  Would you like to create it now?.
-        /// </summary>
-        public static string ARZExtractCreateFolder {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Create folder?.
-        /// </summary>
-        public static string ARZExtractCreateFolder2 {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolder2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not exist for IT database.  Would you like to create it now?.
-        /// </summary>
-        public static string ARZExtractCreateFolderIT {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolderIT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select the destination folder for the extracted database records.
-        /// </summary>
-        public static string ARZExtractDestination {
-            get {
-                return ResourceManager.GetString("ARZExtractDestination", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must specify a folder, not a file!.
-        /// </summary>
-        public static string ARZExtractFileDest {
-            get {
-                return ResourceManager.GetString("ARZExtractFileDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Currently there is no way to extract all of the game database records at once.  Also there currently exists a bug in the Toolset that destroys array values when you extract records one by one.  Using this tool, you can now extract all records at once and all the records will be extracted correctly..
-        /// </summary>
-        public static string ARZExtractLabel1 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to After you have extracted the records, just copy the ones you want to use in your mod over to your mod folder..
-        /// </summary>
-        public static string ARZExtractLabel2 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a destination folder:.
-        /// </summary>
-        public static string ARZExtractLabel3 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a destination folder for IT Database Files:.
-        /// </summary>
-        public static string ARZExtractLabel4 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to If not populated the destination folders for the TQ database and the IT database will default to the same folder.  The IT files will overwrite the TQ files when there are conflicts though you can select different folders to avoid overwriting files..
-        /// </summary>
-        public static string ARZExtractLabel5 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extract database.arz.
-        /// </summary>
-        public static string ARZExtractText {
-            get {
-                return ResourceManager.GetString("ARZExtractText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a valid destination folder..
-        /// </summary>
-        public static string ARZExtractValidDest {
-            get {
-                return ResourceManager.GetString("ARZExtractValidDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extraction cancelled..
-        /// </summary>
-        public static string ARZProgressCancelledText {
-            get {
-                return ResourceManager.GetString("ARZProgressCancelledText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extraction complete..
-        /// </summary>
-        public static string ARZProgressCompleteText {
-            get {
-                return ResourceManager.GetString("ARZProgressCompleteText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extraction Failed..
-        /// </summary>
-        public static string ARZProgressFailedText {
-            get {
-                return ResourceManager.GetString("ARZProgressFailedText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting {0} ....
-        /// </summary>
-        public static string ARZProgressLabel {
-            get {
-                return ResourceManager.GetString("ARZProgressLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting.
-        /// </summary>
-        public static string ARZProgressLabel1 {
-            get {
-                return ResourceManager.GetString("ARZProgressLabel1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting database.arz....
-        /// </summary>
-        public static string ARZProgressText {
-            get {
-                return ResourceManager.GetString("ARZProgressText", resourceCulture);
+                return ResourceManager.GetString("AffixUnreachableTooltip", resourceCulture);
             }
         }
         
@@ -329,63 +173,6 @@ namespace TQVaultAE.Presentation {
         public static string AttributesPoints {
             get {
                 return ResourceManager.GetString("AttributesPoints", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to English.
-        /// </summary>
-        public static string AUEnglishName {
-            get {
-                return ResourceManager.GetString("AUEnglishName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2.
-        /// </summary>
-        public static string AUFileVersion {
-            get {
-                return ResourceManager.GetString("AUFileVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2.3.1.0.
-        /// </summary>
-        public static string AUMinTQVaultVersion {
-            get {
-                return ResourceManager.GetString("AUMinTQVaultVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap autosortdown01 {
-            get {
-                object obj = ResourceManager.GetObject("autosortdown01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap autosortover01 {
-            get {
-                object obj = ResourceManager.GetObject("autosortover01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap autosortup01 {
-            get {
-                object obj = ResourceManager.GetObject("autosortup01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -553,210 +340,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Base Dex.
-        /// </summary>
-        public static string BaseDexterity {
-            get {
-                return ResourceManager.GetString("BaseDexterity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Health.
-        /// </summary>
-        public static string BaseHealth {
-            get {
-                return ResourceManager.GetString("BaseHealth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Int.
-        /// </summary>
-        public static string BaseIntelligence {
-            get {
-                return ResourceManager.GetString("BaseIntelligence", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Mana.
-        /// </summary>
-        public static string BaseMana {
-            get {
-                return ResourceManager.GetString("BaseMana", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Base Str.
-        /// </summary>
-        public static string BaseStrength {
-            get {
-                return ResourceManager.GetString("BaseStrength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap BorderBottom {
-            get {
-                object obj = ResourceManager.GetObject("BorderBottom", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap BorderBottomLeftCorner {
-            get {
-                object obj = ResourceManager.GetObject("BorderBottomLeftCorner", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap BorderBottomRightCorner {
-            get {
-                object obj = ResourceManager.GetObject("BorderBottomRightCorner", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap BorderSide {
-            get {
-                object obj = ResourceManager.GetObject("BorderSide", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap BorderTop {
-            get {
-                object obj = ResourceManager.GetObject("BorderTop", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonCloseDown {
-            get {
-                object obj = ResourceManager.GetObject("ButtonCloseDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonCloseOver {
-            get {
-                object obj = ResourceManager.GetObject("ButtonCloseOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonCloseUp {
-            get {
-                object obj = ResourceManager.GetObject("ButtonCloseUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMaximizeDown {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMaximizeDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMaximizeOver {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMaximizeOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMaximizeUp {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMaximizeUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMinimizeDown {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMinimizeDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMinimizeOver {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMinimizeOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ButtonMinimizeUp {
-            get {
-                object obj = ResourceManager.GetObject("ButtonMinimizeUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap caravan_bg {
-            get {
-                object obj = ResourceManager.GetObject("caravan_bg", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Attribute Points.
-        /// </summary>
-        public static string CEAttributePoints {
-            get {
-                return ResourceManager.GetString("CEAttributePoints", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Base Attributes.
         /// </summary>
         public static string CEAttributes {
@@ -847,6 +430,159 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (None).
+        /// </summary>
+        public static string CEMasteryNone {
+            get {
+                return ResourceManager.GetString("CEMasteryNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mastery level.
+        /// </summary>
+        public static string CEMasteryLevel {
+            get {
+                return ResourceManager.GetString("CEMasteryLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mastery {0}.
+        /// </summary>
+        public static string CEMasterySlot {
+            get {
+                return ResourceManager.GetString("CEMasterySlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left click: +1 point, right click: -1. With Shift: to the highest or lowest level.
+        /// </summary>
+        public static string CESkillPaneHint {
+            get {
+                return ResourceManager.GetString("CESkillPaneHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base {0}, {1:+0;-0;+0} from equipment and skills..
+        /// </summary>
+        public static string CEAttributeBaseToolTip {
+            get {
+                return ResourceManager.GetString("CEAttributeBaseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base {0}, {1:+0;-0;+0} from equipment and skills. Left click.
+        /// </summary>
+        public static string CEAttributeToolTip {
+            get {
+                return ResourceManager.GetString("CEAttributeToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} point.
+        /// </summary>
+        public static string CEMasteryPoint {
+            get {
+                return ResourceManager.GetString("CEMasteryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} points.
+        /// </summary>
+        public static string CEMasteryPoints {
+            get {
+                return ResourceManager.GetString("CEMasteryPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skill.
+        /// </summary>
+        public static string CEMasterySkill {
+            get {
+                return ResourceManager.GetString("CEMasterySkill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skills.
+        /// </summary>
+        public static string CEMasterySkills {
+            get {
+                return ResourceManager.GetString("CEMasterySkills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, {1}.
+        /// </summary>
+        public static string CEMasterySummary {
+            get {
+                return ResourceManager.GetString("CEMasterySummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Statistics.
+        /// </summary>
+        public static string CEStatistics {
+            get {
+                return ResourceManager.GetString("CEStatistics", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The difficulty played: Epic and Legendary lower the resistan.
+        /// </summary>
+        public static string CEStatisticsDifficultyToolTip {
+            get {
+                return ResourceManager.GetString("CEStatisticsDifficultyToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Weapon {0}, added by the gear and the skills {1}..
+        /// </summary>
+        public static string CEOffenseDamageToolTip {
+            get {
+                return ResourceManager.GetString("CEOffenseDamageToolTip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to {1} (equipment).
+        /// </summary>
+        public static string CEGearBonusSkill {
+            get {
+                return ResourceManager.GetString("CEGearBonusSkill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to all skills of {1} (equipment).
+        /// </summary>
+        public static string CEGearBonusMastery {
+            get {
+                return ResourceManager.GetString("CEGearBonusMastery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to all skills (equipment).
+        /// </summary>
+        public static string CEGearBonusAll {
+            get {
+                return ResourceManager.GetString("CEGearBonusAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Strength.
         /// </summary>
         public static string CEStrength {
@@ -872,6 +608,42 @@ namespace TQVaultAE.Presentation {
                 return ResourceManager.GetString("CharacterEditBtn", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pop out.
+        /// </summary>
+        public static string CharacterWindowBtn {
+            get {
+                return ResourceManager.GetString("CharacterWindowBtn", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} - Character.
+        /// </summary>
+        public static string CharacterWindowTitle {
+            get {
+                return ResourceManager.GetString("CharacterWindowTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Current build.
+        /// </summary>
+        public static string CharacterWindowCurrentBuild {
+            get {
+                return ResourceManager.GetString("CharacterWindowCurrentBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current gear.
+        /// </summary>
+        public static string CharacterWindowCurrentGear {
+            get {
+                return ResourceManager.GetString("CharacterWindowCurrentGear", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Class.
@@ -879,17 +651,6 @@ namespace TQVaultAE.Presentation {
         public static string Class {
             get {
                 return ResourceManager.GetString("Class", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error parsing command-line arguments: {0}
-        ///
-        ///Usage: TQVault [player name] [/mod:&lt;mod name&gt;].
-        /// </summary>
-        public static string CmdlineUsage {
-            get {
-                return ResourceManager.GetString("CmdlineUsage", resourceCulture);
             }
         }
         
@@ -1051,36 +812,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap equipment_bg_and_char {
-            get {
-                object obj = ResourceManager.GetObject("equipment_bg_and_char", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Equipment_bg_new {
-            get {
-                object obj = ResourceManager.GetObject("Equipment_bg_new", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap EquipmentPanel {
-            get {
-                object obj = ResourceManager.GetObject("EquipmentPanel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to XP From Kills.
         /// </summary>
         public static string ExperienceFromKills {
@@ -1176,6 +907,195 @@ namespace TQVaultAE.Presentation {
         public static string ForgeGodMode {
             get {
                 return ResourceManager.GetString("ForgeGodMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base item.
+        /// </summary>
+        public static string ForgeCapSectionBase {
+            get {
+                return ResourceManager.GetString("ForgeCapSectionBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix &amp; suffix.
+        /// </summary>
+        public static string ForgeCapSectionAffixes {
+            get {
+                return ResourceManager.GetString("ForgeCapSectionAffixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relics.
+        /// </summary>
+        public static string ForgeCapSectionRelics {
+            get {
+                return ResourceManager.GetString("ForgeCapSectionRelics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weapon, shield, armor or jewellery only.
+        /// </summary>
+        public static string ForgeCapBaseGear {
+            get {
+                return ResourceManager.GetString("ForgeCapBaseGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Any item, including relics, charms and artifacts.
+        /// </summary>
+        public static string ForgeCapAnyItem {
+            get {
+                return ResourceManager.GetString("ForgeCapAnyItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Epic or Legendary item.
+        /// </summary>
+        public static string ForgeCapNoEpicLegendary {
+            get {
+                return ResourceManager.GetString("ForgeCapNoEpicLegendary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Epic and Legendary items allowed.
+        /// </summary>
+        public static string ForgeCapEpicLegendary {
+            get {
+                return ResourceManager.GetString("ForgeCapEpicLegendary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Taken from the same base item only.
+        /// </summary>
+        public static string ForgeCapSameBaseItem {
+            get {
+                return ResourceManager.GetString("ForgeCapSameBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Level requirement not above the base item.
+        /// </summary>
+        public static string ForgeCapLevelRequirement {
+            get {
+                return ResourceManager.GetString("ForgeCapLevelRequirement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Taken from the same gear type only.
+        /// </summary>
+        public static string ForgeCapSameGearType {
+            get {
+                return ResourceManager.GetString("ForgeCapSameGearType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Taken from any gear type.
+        /// </summary>
+        public static string ForgeCapAnyGearType {
+            get {
+                return ResourceManager.GetString("ForgeCapAnyGearType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not rarer than the base item.
+        /// </summary>
+        public static string ForgeCapNotRarerThanBase {
+            get {
+                return ResourceManager.GetString("ForgeCapNotRarerThanBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The material item must have that prefix or suffix.
+        /// </summary>
+        public static string ForgeCapNeedsAffix {
+            get {
+                return ResourceManager.GetString("ForgeCapNeedsAffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use any part of a material item: base, prefix, suffix or relics.
+        /// </summary>
+        public static string ForgeCapAnyPart {
+            get {
+                return ResourceManager.GetString("ForgeCapAnyPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relics and charms only.
+        /// </summary>
+        public static string ForgeCapRelicOnly {
+            get {
+                return ResourceManager.GetString("ForgeCapRelicOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relics, charms, or a weapon, shield, armor or jewellery with a socketed relic.
+        /// </summary>
+        public static string ForgeCapRelicOrSocketed {
+            get {
+                return ResourceManager.GetString("ForgeCapRelicOrSocketed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be allowed on the base item gear.
+        /// </summary>
+        public static string ForgeCapRelicGear {
+            get {
+                return ResourceManager.GetString("ForgeCapRelicGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Any item or part in any relic slot.
+        /// </summary>
+        public static string ForgeCapAnyRelicSlot {
+            get {
+                return ResourceManager.GetString("ForgeCapAnyRelicSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Second relic only with the "{0}" suffix.
+        /// </summary>
+        public static string ForgeCapSecondRelicTinkerer {
+            get {
+                return ResourceManager.GetString("ForgeCapSecondRelicTinkerer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Second relic on any item.
+        /// </summary>
+        public static string ForgeCapSecondRelicFree {
+            get {
+                return ResourceManager.GetString("ForgeCapSecondRelicFree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switching to a stricter mode empties the slots.
+        /// </summary>
+        public static string ForgeCapResetOnStricter {
+            get {
+                return ResourceManager.GetString("ForgeCapResetOnStricter", resourceCulture);
             }
         }
         
@@ -1284,6 +1204,15 @@ namespace TQVaultAE.Presentation {
         public static string ForgeMustSelectItemToMerge {
             get {
                 return ResourceManager.GetString("ForgeMustSelectItemToMerge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A part comes from another mod than the base item: the forged item could not read it..
+        /// </summary>
+        public static string ForgePartOfAnotherMod {
+            get {
+                return ResourceManager.GetString("ForgePartOfAnotherMod", resourceCulture);
             }
         }
         
@@ -1408,15 +1337,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter The Vault.
-        /// </summary>
-        public static string Form1bNext {
-            get {
-                return ResourceManager.GetString("Form1bNext", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error Loading Resources.
         /// </summary>
         public static string Form1ErrorLoadingResources {
@@ -1449,33 +1369,6 @@ namespace TQVaultAE.Presentation {
         public static string Form1Text {
             get {
                 return ResourceManager.GetString("Form1Text", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to replace your local Titan Quest character save with git repository version?.
-        /// </summary>
-        public static string GitCloneDoYouWantToReplaceLocalCharacterSave {
-            get {
-                return ResourceManager.GetString("GitCloneDoYouWantToReplaceLocalCharacterSave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to replace your local vaults with git repository version?.
-        /// </summary>
-        public static string GitCloneDoYouWantToReplaceLocalVault {
-            get {
-                return ResourceManager.GetString("GitCloneDoYouWantToReplaceLocalVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Git Error.
-        /// </summary>
-        public static string GitError {
-            get {
-                return ResourceManager.GetString("GitError", resourceCulture);
             }
         }
         
@@ -1516,24 +1409,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to About.
-        /// </summary>
-        public static string GlobalAbout {
-            get {
-                return ResourceManager.GetString("GlobalAbout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Archive.
-        /// </summary>
-        public static string GlobalArchive {
-            get {
-                return ResourceManager.GetString("GlobalArchive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Archive all.
         /// </summary>
         public static string GlobalArchiveAll {
@@ -1557,15 +1432,6 @@ namespace TQVaultAE.Presentation {
         public static string GlobalBaseAttribute {
             get {
                 return ResourceManager.GetString("GlobalBaseAttribute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse....
-        /// </summary>
-        public static string GlobalBrowse {
-            get {
-                return ResourceManager.GetString("GlobalBrowse", resourceCulture);
             }
         }
         
@@ -1719,15 +1585,6 @@ namespace TQVaultAE.Presentation {
         public static string GlobalMenuBag {
             get {
                 return ResourceManager.GetString("GlobalMenuBag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #.
-        /// </summary>
-        public static string GlobalMenuBagDelimiter {
-            get {
-                return ResourceManager.GetString("GlobalMenuBagDelimiter", resourceCulture);
             }
         }
         
@@ -1930,29 +1787,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trash.
-        /// </summary>
-        public static string GlobalTrash {
-            get {
-                return ResourceManager.GetString("GlobalTrash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Type.
         /// </summary>
         public static string GlobalType {
             get {
                 return ResourceManager.GetString("GlobalType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unarchive.
-        /// </summary>
-        public static string GlobalUnArchive {
-            get {
-                return ResourceManager.GetString("GlobalUnArchive", resourceCulture);
             }
         }
         
@@ -1984,24 +1823,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Greatest Dmg.
-        /// </summary>
-        public static string GreatestDamageInflicted {
-            get {
-                return ResourceManager.GetString("GreatestDamageInflicted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Greatest Mob.
-        /// </summary>
-        public static string GreatestMonster {
-            get {
-                return ResourceManager.GetString("GreatestMonster", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Health Pots Used.
         /// </summary>
         public static string HealthPotionsUsed {
@@ -2016,79 +1837,6 @@ namespace TQVaultAE.Presentation {
         public static string HighlightFiltersZeroToIgnore {
             get {
                 return ResourceManager.GetString("HighlightFiltersZeroToIgnore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///	&quot;list&quot;: [
-        ///		{
-        ///			&quot;file&quot;: &quot;ITEMS&quot;,
-        ///			&quot;img&quot;: [
-        ///				{
-        ///					&quot;ca&quot;: &quot;Relics&quot;,
-        ///					&quot;pa&quot;: &quot;ANIMALRELICS\\\\ANIMALPART[^_\\.]+\\.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;.TEX|_E.TEX&quot;,
-        ///					&quot;ov&quot;: &quot;.TEX|_L.TEX&quot;
-        ///				},
-        ///				{
-        ///					&quot;ca&quot;: &quot;Jewellery&quot;,
-        ///					&quot;pa&quot;: &quot;(EQUIPMENT AMULET|EQUIPMENTRING)\\\\UIBITMAPS\\\\\\w+\\.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;|&quot;,
-        ///					&quot;ov&quot;: &quot;|&quot;
-        ///				},
-        ///				{
-        ///					&quot;ca&quot;: &quot;Helmets&quot;,
-        ///					&quot;pa&quot;: &quot;EQUIPMENTHELM\\\\UIBITMAPS\\\\\\w+.TEX&quot;,
-        ///					&quot;on&quot;: &quot;|&quot;,
-        ///					&quot;of&quot;: &quot;|&quot;,
-        ///					&quot;ov&quot;: &quot; [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string IconServiceList {
-            get {
-                return ResourceManager.GetString("IconServiceList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap inventorybagdown01 {
-            get {
-                object obj = ResourceManager.GetObject("inventorybagdown01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap inventorybagover01 {
-            get {
-                object obj = ResourceManager.GetObject("inventorybagover01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap inventorybagup01 {
-            get {
-                object obj = ResourceManager.GetObject("inventorybagup01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ItemAccent {
-            get {
-                object obj = ResourceManager.GetObject("ItemAccent", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -2156,6 +1904,78 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Align rows.
+        /// </summary>
+        public static string ItemComparisonAlignRows {
+            get {
+                return ResourceManager.GetString("ItemComparisonAlignRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide unchanged.
+        /// </summary>
+        public static string ItemComparisonHideUnchanged {
+            get {
+                return ResourceManager.GetString("ItemComparisonHideUnchanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No difference.
+        /// </summary>
+        public static string ItemComparisonNoDifference {
+            get {
+                return ResourceManager.GetString("ItemComparisonNoDifference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show sources.
+        /// </summary>
+        public static string ItemComparisonShowSources {
+            get {
+                return ResourceManager.GetString("ItemComparisonShowSources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Completion bonus {0}.
+        /// </summary>
+        public static string ItemComparisonSourceBonus {
+            get {
+                return ResourceManager.GetString("ItemComparisonSourceBonus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        public static string ItemComparisonSourceLine {
+            get {
+                return ResourceManager.GetString("ItemComparisonSourceLine", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Relic or charm {0}.
+        /// </summary>
+        public static string ItemComparisonSourceRelic {
+            get {
+                return ResourceManager.GetString("ItemComparisonSourceRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Comparison.
+        /// </summary>
+        public static string ItemComparisonText {
+            get {
+                return ResourceManager.GetString("ItemComparisonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item Properties.
         /// </summary>
         public static string ItemPropertiesText {
@@ -2219,56 +2039,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MainButtonDown {
-            get {
-                object obj = ResourceManager.GetObject("MainButtonDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MainButtonOver {
-            get {
-                object obj = ResourceManager.GetObject("MainButtonOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MainButtonUp {
-            get {
-                object obj = ResourceManager.GetObject("MainButtonUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MainForm_Background {
-            get {
-                object obj = ResourceManager.GetObject("MainForm_Background", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MainForm_NewBackground {
-            get {
-                object obj = ResourceManager.GetObject("MainForm_NewBackground", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 2nd Vault:.
         /// </summary>
         public static string MainForm2ndVault {
@@ -2287,15 +2057,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extract database.arz ....
-        /// </summary>
-        public static string MainFormBtnExtract {
-            get {
-                return ResourceManager.GetString("MainFormBtnExtract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Show Vault.
         /// </summary>
         public static string MainFormBtnPanelSelect {
@@ -2310,24 +2071,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormBtnShowPlayer {
             get {
                 return ResourceManager.GetString("MainFormBtnShowPlayer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Custom Map.
-        /// </summary>
-        public static string MainFormCustomMapLabel {
-            get {
-                return ResourceManager.GetString("MainFormCustomMapLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error extracting database.
-        /// </summary>
-        public static string MainFormDatabaseError {
-            get {
-                return ResourceManager.GetString("MainFormDatabaseError", resourceCulture);
             }
         }
         
@@ -2427,27 +2170,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom Maps Setting Changed.
-        /// </summary>
-        public static string MainFormMapsChanged {
-            get {
-                return ResourceManager.GetString("MainFormMapsChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Custom Maps setting has been changed.
-        ///
-        ///You will need to restart TQVault for it take effect.
-        ///Would you like to restart TQVault now?.
-        /// </summary>
-        public static string MainFormMapsChangedMsg {
-            get {
-                return ResourceManager.GetString("MainFormMapsChangedMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No TQ characters detected.
         /// </summary>
         public static string MainFormNoCharacters {
@@ -2466,16 +2188,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No items found of type &apos;{0}&apos;
-        ///and quality &apos;{1}&apos;..
-        /// </summary>
-        public static string MainFormNoItemQualityFound {
-            get {
-                return ResourceManager.GetString("MainFormNoItemQualityFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No items found with &apos;{0}&apos;..
         /// </summary>
         public static string MainFormNoItemsFound {
@@ -2490,15 +2202,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormNoItemsFound2 {
             get {
                 return ResourceManager.GetString("MainFormNoItemsFound2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No items found of type &apos;{0}&apos;..
-        /// </summary>
-        public static string MainFormNoItemTypesFound {
-            get {
-                return ResourceManager.GetString("MainFormNoItemTypesFound", resourceCulture);
             }
         }
         
@@ -2529,15 +2232,6 @@ namespace TQVaultAE.Presentation {
         public static string MainFormPlayerReadError {
             get {
                 return ResourceManager.GetString("MainFormPlayerReadError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you wish to quit?.
-        /// </summary>
-        public static string MainFormQuit {
-            get {
-                return ResourceManager.GetString("MainFormQuit", resourceCulture);
             }
         }
         
@@ -2611,85 +2305,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Would you like to start TQVaultMon?.
-        /// </summary>
-        public static string MainFormStartVaultMon {
-            get {
-                return ResourceManager.GetString("MainFormStartVaultMon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You have just modified the inventory of some of your characters.
-        ///Titan Quest will detect this and think that your character is corrupt
-        ///and will not let you load your character.
-        ///
-        ///TQVaultMon is a program that, when running, will make Titan Quest
-        ///think that your character is okay and will let you load it successfully.
-        ///Once you have successfully loaded your character you will not need to
-        ///use TQVaultMon again unless you make further edits.
-        ///
-        ///It is suggested that you start TQVaultMon now and then run Tita [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string MainFormStartVaultMonMsg {
-            get {
-                return ResourceManager.GetString("MainFormStartVaultMonMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error reading stash file.
         /// </summary>
         public static string MainFormStashReadError {
             get {
                 return ResourceManager.GetString("MainFormStashReadError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are currently {0} items in the trash.
-        ///If you quit these items will be LOST FOREVER.
-        ///
-        ///Are you sure you wish to throw away these items?.
-        /// </summary>
-        public static string MainFormTrashItems {
-            get {
-                return ResourceManager.GetString("MainFormTrashItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to start TQVaultMon.
-        /// </summary>
-        public static string MainFormUnableToStartVaultMon {
-            get {
-                return ResourceManager.GetString("MainFormUnableToStartVaultMon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error trying to start TQVaultMon.
-        /// </summary>
-        public static string MainFormVaultMonError {
-            get {
-                return ResourceManager.GetString("MainFormVaultMonError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to I was unable to see if TQVaultMon was running.
-        ///Most likely TQVaultMon will not work either.
-        ///Because you have modified some of your characters, TQ will think your characters are corrupt.
-        ///In order to successfully load the game and play, you will need to download TQ Defiler
-        ///and use its &apos;Patch&apos; or &apos;Fix Me&apos; options to let the game validate your character.
-        ///If you do not mind, please contact me and let me know about this problem
-        ///because I may have a solution to the error that will save you some hassles.
-        ///
-        ///E [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string MainFormVaultMonMsg {
-            get {
-                return ResourceManager.GetString("MainFormVaultMonMsg", resourceCulture);
             }
         }
         
@@ -2897,26 +2517,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Majestic_Chest {
-            get {
-                object obj = ResourceManager.GetObject("Majestic_Chest", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Majestic_Chest_small {
-            get {
-                object obj = ResourceManager.GetObject("Majestic_Chest_small", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Mana Pots Used.
         /// </summary>
         public static string ManaPotionsUsed {
@@ -2931,600 +2531,6 @@ namespace TQVaultAE.Presentation {
         public static string Masteries {
             get {
                 return ResourceManager.GetString("Masteries", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07.
-        /// </summary>
-        public static string MasteriestagCClass01 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass01", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08.
-        /// </summary>
-        public static string MasteriestagCClass02 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass02", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05.
-        /// </summary>
-        public static string MasteriestagCClass03 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass03", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06.
-        /// </summary>
-        public static string MasteriestagCClass04 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass04", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04.
-        /// </summary>
-        public static string MasteriestagCClass05 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass05", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief03.
-        /// </summary>
-        public static string MasteriestagCClass06 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass06", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass07 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass07", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass08 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass08", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass09 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass09", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass10 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass10", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass11 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass11", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass12 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass12", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass13 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass13", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief03-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass14 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass14", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief02-tagMasteryBrief01.
-        /// </summary>
-        public static string MasteriestagCClass15 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass15", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass16 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass16", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass17 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass17", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass18 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass18", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass19 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass19", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04-tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass20 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass20", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief03-tagMasteryBrief02.
-        /// </summary>
-        public static string MasteriestagCClass21 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass21", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief03.
-        /// </summary>
-        public static string MasteriestagCClass22 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass22", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-tagMasteryBrief03.
-        /// </summary>
-        public static string MasteriestagCClass23 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass23", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-tagMasteryBrief03.
-        /// </summary>
-        public static string MasteriestagCClass24 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass24", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-tagMasteryBrief03.
-        /// </summary>
-        public static string MasteriestagCClass25 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass25", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04-tagMasteryBrief03.
-        /// </summary>
-        public static string MasteriestagCClass26 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass26", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief04.
-        /// </summary>
-        public static string MasteriestagCClass27 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass27", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-tagMasteryBrief04.
-        /// </summary>
-        public static string MasteriestagCClass28 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass28", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-tagMasteryBrief04.
-        /// </summary>
-        public static string MasteriestagCClass29 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass29", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-tagMasteryBrief04.
-        /// </summary>
-        public static string MasteriestagCClass30 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass30", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief06.
-        /// </summary>
-        public static string MasteriestagCClass31 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass31", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-tagMasteryBrief06.
-        /// </summary>
-        public static string MasteriestagCClass32 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass32", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-tagMasteryBrief06.
-        /// </summary>
-        public static string MasteriestagCClass33 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass33", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief05.
-        /// </summary>
-        public static string MasteriestagCClass34 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass34", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-tagMasteryBrief05.
-        /// </summary>
-        public static string MasteriestagCClass35 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass35", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-tagMasteryBrief08.
-        /// </summary>
-        public static string MasteriestagCClass36 {
-            get {
-                return ResourceManager.GetString("MasteriestagCClass36", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief02-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_defense_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_defense_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to xtagMasteryBrief09-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_dream_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_dream_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief03-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_earth_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_earth_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_hunting_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_hunting_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_nature_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_nature_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_rm_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_rm_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_spirit_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_spirit_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_stealth_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_stealth_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_storm_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_storm_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief01-x2tagRuneMasteryBrief.
-        /// </summary>
-        public static string Masteriesx2tag_class_warfare_rm {
-            get {
-                return ResourceManager.GetString("Masteriesx2tag_class_warfare_rm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidan {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidan", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief02-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanDefense {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanDefense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to xtagMasteryBrief09-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanDream {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanDream", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief03-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanEarth {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanEarth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanHunting {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanHunting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanNature {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanNature", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanRogue {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanRogue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to x2tagRuneMasteryBrief-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanRune {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanRune", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanSpirit {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanSpirit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanStorm {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanStorm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief01-x4tagNeidan.
-        /// </summary>
-        public static string Masteriesx4tagNeidanWarfare {
-            get {
-                return ResourceManager.GetString("Masteriesx4tagNeidanWarfare", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass01 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass01", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief01-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass02 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass02", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief02-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass03 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass03", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief03-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass04 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass04", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief04-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass05 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass05", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief06-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass06 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass06", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief05-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass07 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass07", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief08-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass08 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass08", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to tagMasteryBrief07-xtagMasteryBrief09.
-        /// </summary>
-        public static string MasteriesxtagCharacterClass09 {
-            get {
-                return ResourceManager.GetString("MasteriesxtagCharacterClass09", resourceCulture);
             }
         }
         
@@ -3547,22 +2553,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Electrum.
         /// </summary>
-        public static System.Drawing.Bitmap NewAboutGraphic {
+        public static string Electrum {
             get {
-                object obj = ResourceManager.GetObject("NewAboutGraphic", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap NewSplashScreen {
-            get {
-                object obj = ResourceManager.GetObject("NewSplashScreen", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("Electrum", resourceCulture);
             }
         }
         
@@ -3796,26 +2791,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ProgressBar {
-            get {
-                object obj = ResourceManager.GetObject("ProgressBar", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ProgressBarFill {
-            get {
-                object obj = ResourceManager.GetObject("ProgressBarFill", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reset Attributes.
         /// </summary>
         public static string ResetAttributesButton {
@@ -3870,7 +2845,7 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ContainerType.
+        ///   Looks up a localized string similar to Container Type.
         /// </summary>
         public static string ResultsContainerType {
             get {
@@ -3915,11 +2890,20 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sack.
+        ///   Looks up a localized string similar to Bag.
         /// </summary>
         public static string ResultsSack {
             get {
                 return ResourceManager.GetString("ResultsSack", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Bag {0}.
+        /// </summary>
+        public static string ResultsBag {
+            get {
+                return ResourceManager.GetString("ResultsBag", resourceCulture);
             }
         }
         
@@ -3929,36 +2913,6 @@ namespace TQVaultAE.Presentation {
         public static string ResultsText {
             get {
                 return ResourceManager.GetString("ResultsText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap rotatedautosortdown01 {
-            get {
-                object obj = ResourceManager.GetObject("rotatedautosortdown01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap rotatedautosortover01 {
-            get {
-                object obj = ResourceManager.GetObject("rotatedautosortover01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap rotatedautosortup01 {
-            get {
-                object obj = ResourceManager.GetObject("rotatedautosortup01", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -3977,16 +2931,6 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelAutoSortError {
             get {
                 return ResourceManager.GetString("SackPanelAutoSortError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There was an error during sorting.
-        ///Not all items have been placed..
-        /// </summary>
-        public static string SackPanelAutoSortErrorMsg {
-            get {
-                return ResourceManager.GetString("SackPanelAutoSortErrorMsg", resourceCulture);
             }
         }
         
@@ -4061,6 +3005,222 @@ namespace TQVaultAE.Presentation {
         public static string SackPanelMenuClear {
             get {
                 return ResourceManager.GetString("SackPanelMenuClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compare: left-click the second item, in any panel. Escape or right-click cancels.
+        /// </summary>
+        public static string SackPanelCompareSelectionStarted {
+            get {
+                return ResourceManager.GetString("SackPanelCompareSelectionStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert into item.
+        /// </summary>
+        public static string SackPanelMenuSocket {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSocket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game rules.
+        /// </summary>
+        public static string SackPanelMenuSocketGameRules {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSocketGameRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No rules.
+        /// </summary>
+        public static string SackPanelMenuSocketNoRules {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSocketNoRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert into item: left-click the item that receives it, in any panel. Escape or right-click cancels..
+        /// </summary>
+        public static string SackPanelSocketSelectionStarted {
+            get {
+                return ResourceManager.GetString("SackPanelSocketSelectionStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slot {0}.
+        /// </summary>
+        public static string SackPanelSocketSlot {
+            get {
+                return ResourceManager.GetString("SackPanelSocketSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slot {0}: replace {1}.
+        /// </summary>
+        public static string SackPanelSocketSlotReplace {
+            get {
+                return ResourceManager.GetString("SackPanelSocketSlotReplace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} inserted into slot {1}..
+        /// </summary>
+        public static string SackPanelSocketDone {
+            get {
+                return ResourceManager.GetString("SackPanelSocketDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item cannot change here: its place is read-only..
+        /// </summary>
+        public static string SackPanelSocketReadOnly {
+            get {
+                return ResourceManager.GetString("SackPanelSocketReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The relic or the item is no longer where it was: nothing inserted..
+        /// </summary>
+        public static string SackPanelSocketItemMoved {
+            get {
+                return ResourceManager.GetString("SackPanelSocketItemMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compare.
+        /// </summary>
+        public static string SackPanelMenuCompare {
+            get {
+                return ResourceManager.GetString("SackPanelMenuCompare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string SackPanelMenuSearch {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copies with same seed.
+        /// </summary>
+        public static string SackPanelMenuSearchSameSeed {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSameSeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All copies.
+        /// </summary>
+        public static string SackPanelMenuSearchAllCopies {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchAllCopies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same base.
+        /// </summary>
+        public static string SackPanelMenuSearchSameBase {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSameBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same prefix.
+        /// </summary>
+        public static string SackPanelMenuSearchSamePrefix {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSamePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same suffix.
+        /// </summary>
+        public static string SackPanelMenuSearchSameSuffix {
+            get {
+                return ResourceManager.GetString("SackPanelMenuSearchSameSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copies with same seed of {0}.
+        /// </summary>
+        public static string SearchCopiesSameSeed {
+            get {
+                return ResourceManager.GetString("SearchCopiesSameSeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All copies of {0}.
+        /// </summary>
+        public static string SearchCopiesAllCopies {
+            get {
+                return ResourceManager.GetString("SearchCopiesAllCopies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same base as {0}.
+        /// </summary>
+        public static string SearchCopiesSameBase {
+            get {
+                return ResourceManager.GetString("SearchCopiesSameBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same prefix as {0}.
+        /// </summary>
+        public static string SearchCopiesSamePrefix {
+            get {
+                return ResourceManager.GetString("SearchCopiesSamePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same suffix as {0}.
+        /// </summary>
+        public static string SearchCopiesSameSuffix {
+            get {
+                return ResourceManager.GetString("SearchCopiesSameSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1} found).
+        /// </summary>
+        public static string SearchCopiesCount {
+            get {
+                return ResourceManager.GetString("SearchCopiesCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (source).
+        /// </summary>
+        public static string ResultsSourceMark {
+            get {
+                return ResourceManager.GetString("ResultsSourceMark", resourceCulture);
             }
         }
         
@@ -4254,11 +3414,29 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to What was socketed is not a relic or a charm: it was removed..
+        /// </summary>
+        public static string SackPanelSocketedNotAnItem {
+            get {
+                return ResourceManager.GetString("SackPanelSocketedNotAnItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to remove the relic from this item?.
         /// </summary>
         public static string SackPanelRemoveRelicMsg {
             get {
                 return ResourceManager.GetString("SackPanelRemoveRelicMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The items do not fit in the bag in this order.[rest of string was truncated]&quot;;
+        /// </summary>
+        public static string SackPanelSortNoRoom {
+            get {
+                return ResourceManager.GetString("SackPanelSortNoRoom", resourceCulture);
             }
         }
         
@@ -4286,22 +3464,6 @@ namespace TQVaultAE.Presentation {
         public static string SearchDialogCaption {
             get {
                 return ResourceManager.GetString("SearchDialogCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search for items within the loaded files: vaults, stashes, inventories.
-        ///
-        ///You can combine the following search options(all are optional):
-        ///* Name: It must be the first search term. Here is an example: &apos;arctic &amp; of frost&apos;
-        ///* Type: by using @ at the beginning of the search term for example &apos;@sword&apos;
-        ///* Attributes: by using # at the beginning of the search term for example &apos;#elemental resistance&apos;
-        ///* Rarity: by using $ at the beginning of the search term for example &apos;$rare&apos;
-        ///You can use | in a term as an OR con [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string SearchDialogText {
-            get {
-                return ResourceManager.GetString("SearchDialogText", resourceCulture);
             }
         }
         
@@ -4450,6 +3612,15 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The saved queries file could not be read: the query was not saved. Try again later..
+        /// </summary>
+        public static string SearchQueryFileUnreadable {
+            get {
+                return ResourceManager.GetString("SearchQueryFileUnreadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Query name must be set.
         /// </summary>
         public static string SearchQueryNameMustBeSet {
@@ -4546,24 +3717,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Detailed Tooltip View.
-        /// </summary>
-        public static string SettingEnableDetailedTooltipView {
-            get {
-                return ResourceManager.GetString("SettingEnableDetailedTooltipView", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Split tooltip attributes into Prefix/Base/Suffix categories.
-        /// </summary>
-        public static string SettingEnableDetailedTooltipViewTT {
-            get {
-                return ResourceManager.GetString("SettingEnableDetailedTooltipViewTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Allow Cheats.
         /// </summary>
         public static string SettingsAllowCheats {
@@ -4609,37 +3762,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turns on the editing features in the context menu.
-        ///These include item creation and modification..
-        /// </summary>
-        public static string SettingsAllowEditTT {
-            get {
-                return ResourceManager.GetString("SettingsAllowEditTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically Check For Updates.
-        /// </summary>
-        public static string SettingsAutoUpdate {
-            get {
-                return ResourceManager.GetString("SettingsAutoUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Selecting this item will automatically check
-        ///for new versions of TQVault on the web when
-        ///the program starts up.  May cause startup to
-        ///take longer if the network connection is slow..
-        /// </summary>
-        public static string SettingsAutoUpdateTT {
-            get {
-                return ResourceManager.GetString("SettingsAutoUpdateTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Backup player saves.
         /// </summary>
         public static string SettingsBackupPlayerSaves {
@@ -4654,15 +3776,6 @@ namespace TQVaultAE.Presentation {
         public static string SettingsBackupPlayerSavesTT {
             get {
                 return ResourceManager.GetString("SettingsBackupPlayerSavesTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please select the path for git.exe..
-        /// </summary>
-        public static string SettingsBrowseGitExe {
-            get {
-                return ResourceManager.GetString("SettingsBrowseGitExe", resourceCulture);
             }
         }
         
@@ -4796,69 +3909,38 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Item Requirement Restriction.
+        ///   Looks up a localized string similar to MCP endpoint for AI agents.
         /// </summary>
-        public static string SettingsEnableItemRequirementRestriction {
+        public static string SettingsMcpServer {
             get {
-                return ResourceManager.GetString("SettingsEnableItemRequirementRestriction", resourceCulture);
+                return ResourceManager.GetString("SettingsMcpServer", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When enabled, a red background color is displayed on items where the selected character does not meet the item requirements.
-        ///The character will also not be able to equip items where the requirements are not met..
+        ///   Looks up a localized string similar to Lets an AI agent on this computer read and drive TQVault through MCP, at http://127.0.0.1:&lt;port&gt;/mcp (this computer only)..
         /// </summary>
-        public static string SettingsEnableItemRequirementRestrictionTT {
+        public static string SettingsMcpServerTT {
             get {
-                return ResourceManager.GetString("SettingsEnableItemRequirementRestrictionTT", resourceCulture);
+                return ResourceManager.GetString("SettingsMcpServerTT", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Custom Maps.
+        ///   Looks up a localized string similar to Port : .
         /// </summary>
-        public static string SettingsEnableMod {
+        public static string SettingsMcpServerPort {
             get {
-                return ResourceManager.GetString("SettingsEnableMod", resourceCulture);
+                return ResourceManager.GetString("SettingsMcpServerPort", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Selecting this item will 
-        ///enable the drop down
-        ///to select custom maps..
+        ///   Looks up a localized string similar to Port of the MCP endpoint, on this computer only (127.0.0.1): never open it to the network. Default: 47017..
         /// </summary>
-        public static string SettingsEnableModTT {
+        public static string SettingsMcpServerPortTT {
             get {
-                return ResourceManager.GetString("SettingsEnableModTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Check Now.
-        /// </summary>
-        public static string SettingsForceCheck {
-            get {
-                return ResourceManager.GetString("SettingsForceCheck", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Manually checks if there are any updates
-        ///available..
-        /// </summary>
-        public static string SettingsForceCheckTT {
-            get {
-                return ResourceManager.GetString("SettingsForceCheckTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Git Backup.
-        /// </summary>
-        public static string SettingsGitBackup {
-            get {
-                return ResourceManager.GetString("SettingsGitBackup", resourceCulture);
+                return ResourceManager.GetString("SettingsMcpServerPortTT", resourceCulture);
             }
         }
         
@@ -4871,6 +3953,15 @@ namespace TQVaultAE.Presentation {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a valid Git Url..
+        /// </summary>
+        public static string SettingsGitRepositoryUrlInvalid {
+            get {
+                return ResourceManager.GetString("SettingsGitRepositoryUrlInvalid", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to How to play....
         /// </summary>
@@ -4935,15 +4026,6 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom Map.
-        /// </summary>
-        public static string SettingsLabel5 {
-            get {
-                return ResourceManager.GetString("SettingsLabel5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Automatically Load the last opened Character.
         /// </summary>
         public static string SettingsLoadChar {
@@ -4980,6 +4062,24 @@ namespace TQVaultAE.Presentation {
         public static string SettingsLoadVaultTT {
             get {
                 return ResourceManager.GetString("SettingsLoadVaultTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge relic shards when sorting.
+        /// </summary>
+        public static string SettingsMergeRelicsOnSort {
+            get {
+                return ResourceManager.GetString("SettingsMergeRelicsOnSort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting a bag also stacks the shards of the same relic or charm up to completion.[rest of string was truncated]&quot;;
+        /// </summary>
+        public static string SettingsMergeRelicsOnSortTT {
+            get {
+                return ResourceManager.GetString("SettingsMergeRelicsOnSortTT", resourceCulture);
             }
         }
         
@@ -5081,30 +4181,22 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Automatically Bypass Title Screen.
-        /// </summary>
-        public static string SettingsSkipTitle {
-            get {
-                return ResourceManager.GetString("SettingsSkipTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ticking this box will automatically hit
-        ///the Enter key on the title screen..
-        /// </summary>
-        public static string SettingsSkipTitleTT {
-            get {
-                return ResourceManager.GetString("SettingsSkipTitleTT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Configure Settings.
         /// </summary>
         public static string SettingsTitle {
             get {
                 return ResourceManager.GetString("SettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings have been changed.
+        ///
+        ///Leave them without saving the changes?.
+        /// </summary>
+        public static string SettingsDiscardChanges {
+            get {
+                return ResourceManager.GetString("SettingsDiscardChanges", resourceCulture);
             }
         }
         
@@ -5118,12 +4210,38 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Sort by required level.
         /// </summary>
-        public static System.Drawing.Bitmap SplashScreen {
+        public static string SortMenuLevel {
             get {
-                object obj = ResourceManager.GetObject("SplashScreen", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("SortMenuLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by size (normal).
+        /// </summary>
+        public static string SortMenuNormal {
+            get {
+                return ResourceManager.GetString("SortMenuNormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by rarity.
+        /// </summary>
+        public static string SortMenuRarity {
+            get {
+                return ResourceManager.GetString("SortMenuRarity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by type.
+        /// </summary>
+        public static string SortMenuType {
+            get {
+                return ResourceManager.GetString("SortMenuType", resourceCulture);
             }
         }
         
@@ -5144,16 +4262,6 @@ namespace TQVaultAE.Presentation {
         public static string StashNotFoundMsg {
             get {
                 return ResourceManager.GetString("StashNotFoundMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap StashPanel {
-            get {
-                object obj = ResourceManager.GetObject("StashPanel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -5190,36 +4298,6 @@ namespace TQVaultAE.Presentation {
         public static string StashPanelText {
             get {
                 return ResourceManager.GetString("StashPanelText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap StashTabDown {
-            get {
-                object obj = ResourceManager.GetObject("StashTabDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap StashTabOver {
-            get {
-                object obj = ResourceManager.GetObject("StashTabOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap StashTabUp {
-            get {
-                object obj = ResourceManager.GetObject("StashTabUp", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -5296,6 +4374,24 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {%.0f0}% Resistance to Energy Drain Damage.
+        /// </summary>
+        public static string TextTag_DefenseManaBurnRatio {
+            get {
+                return ResourceManager.GetString("TextTag_DefenseManaBurnRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @DefensePercentLife.
+        /// </summary>
+        public static string TextTag_DefensePercentCurrentLife {
+            get {
+                return ResourceManager.GetString("TextTag_DefensePercentCurrentLife", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {%.0f0}% Defensive Total Speed Chance.
         /// </summary>
         public static string TextTag_defensiveTotalSpeedChance {
@@ -5319,6 +4415,15 @@ namespace TQVaultAE.Presentation {
         public static string TextTag_dropMeshDontOverrideTextures {
             get {
                 return ResourceManager.GetString("TextTag_dropMeshDontOverrideTextures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @xtagExclusiveSkill.
+        /// </summary>
+        public static string TextTag_exclusiveSkill {
+            get {
+                return ResourceManager.GetString("TextTag_exclusiveSkill", resourceCulture);
             }
         }
         
@@ -5512,197 +4617,11 @@ namespace TQVaultAE.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Cast where the enemy was slain.
         /// </summary>
-        public static System.Drawing.Bitmap tqmedallion {
+        public static string TextTag_tqvSkillCastOnTargetLocation {
             get {
-                object obj = ResourceManager.GetObject("tqmedallion", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap tqmedalliondoor {
-            get {
-                object obj = ResourceManager.GetObject("tqmedalliondoor", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        public static System.Drawing.Icon TQVIcon {
-            get {
-                object obj = ResourceManager.GetObject("TQVIcon", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OS unable to execute &quot;{0}&quot;.
-        /// </summary>
-        public static string UnableToExecute {
-            get {
-                return ResourceManager.GetString("UnableToExecute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}    {1} % complete..
-        /// </summary>
-        public static string UpdateCompletion {
-            get {
-                return ResourceManager.GetString("UpdateCompletion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}    0 % complete..
-        /// </summary>
-        public static string UpdateCompletion2 {
-            get {
-                return ResourceManager.GetString("UpdateCompletion2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Current Version: {0}.
-        /// </summary>
-        public static string UpdateCurrentVer {
-            get {
-                return ResourceManager.GetString("UpdateCurrentVer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot Start Setup.
-        /// </summary>
-        public static string UpdateError {
-            get {
-                return ResourceManager.GetString("UpdateError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There was a problem with the download or the extraction.
-        ///Please download the latest full setup install package and run it manually.
-        ///Click OK to exit..
-        /// </summary>
-        public static string UpdateErrorMsg {
-            get {
-                return ResourceManager.GetString("UpdateErrorMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A newer version of TQVault has been found which requires a full installation..
-        /// </summary>
-        public static string UpdateFullInstall {
-            get {
-                return ResourceManager.GetString("UpdateFullInstall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Latest Version: {0}.
-        /// </summary>
-        public static string UpdateLatestVer {
-            get {
-                return ResourceManager.GetString("UpdateLatestVer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Minimum Version: {0}.
-        /// </summary>
-        public static string UpdateMinVer {
-            get {
-                return ResourceManager.GetString("UpdateMinVer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A newer version of TQVault has been found..
-        /// </summary>
-        public static string UpdateNewTQVault {
-            get {
-                return ResourceManager.GetString("UpdateNewTQVault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A newer version of the TQVault update program has been found..
-        /// </summary>
-        public static string UpdateNewUpdater {
-            get {
-                return ResourceManager.GetString("UpdateNewUpdater", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your version is up to date..
-        /// </summary>
-        public static string UpdateNoUpdate {
-            get {
-                return ResourceManager.GetString("UpdateNoUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK to perform an update..
-        /// </summary>
-        public static string UpdatePerform {
-            get {
-                return ResourceManager.GetString("UpdatePerform", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK to perform both updates..
-        /// </summary>
-        public static string UpdatePerformBoth {
-            get {
-                return ResourceManager.GetString("UpdatePerformBoth", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK to download and run the installer..
-        /// </summary>
-        public static string UpdateRunInstall {
-            get {
-                return ResourceManager.GetString("UpdateRunInstall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There was an error connecting to the update server.
-        ///An update cannot be performed..
-        /// </summary>
-        public static string UpdateStreamError {
-            get {
-                return ResourceManager.GetString("UpdateStreamError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TQVault Updates.
-        /// </summary>
-        public static string UpdateText {
-            get {
-                return ResourceManager.GetString("UpdateText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The TQVault update program was either not found or the name has changed..
-        /// </summary>
-        public static string UpdateUpdaterNotFound {
-            get {
-                return ResourceManager.GetString("UpdateUpdaterNotFound", resourceCulture);
+                return ResourceManager.GetString("TextTag_tqvSkillCastOnTargetLocation", resourceCulture);
             }
         }
         
@@ -5715,15 +4634,6 @@ namespace TQVaultAE.Presentation {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Loading Player and Vault Files....
-        /// </summary>
-        public static string VaultProgressText {
-            get {
-                return ResourceManager.GetString("VaultProgressText", resourceCulture);
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized string similar to No vault is loaded..
         /// </summary>
@@ -5878,6 +4788,42 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Read with their container's map, these items have no room for their size where they lie. {0}.
+        /// </summary>
+        public static string ModNoRoomShown {
+            get {
+                return ResourceManager.GetString("ModNoRoomShown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is shown with the characters played with its map, and no listed character is..
+        /// </summary>
+        public static string SearchSharedStashNoCharacter {
+            get {
+                return ResourceManager.GetString("SearchSharedStashNoCharacter", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Read with the data of its map here, {0} has no room in this tab..
+        /// </summary>
+        public static string ModDropNoRoomInTab {
+            get {
+                return ResourceManager.GetString("ModDropNoRoomInTab", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to These mods are not installed: their links were dropped and the items take their vault's map. Install the mod, then link the vault. {0}.
+        /// </summary>
+        public static string ImportDroppedMods {
+            get {
+                return ResourceManager.GetString("ImportDroppedMods", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Imported {0} of {1} items..
         /// </summary>
         public static string ImportSuccessCount {
@@ -5896,13 +4842,2551 @@ namespace TQVaultAE.Presentation {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to 🔗 Share Vault.
+        ///   Looks up a localized string similar to Item exported to PasteBin: {0}.
         /// </summary>
-        public static string ShareVaultTooltip {
+        public static string ExportItemSuccessPasteBin {
             get {
-                return ResourceManager.GetString("ShareVaultTooltip", resourceCulture);
+                return ResourceManager.GetString("ExportItemSuccessPasteBin", resourceCulture);
             }
         }
 
+        /// <summary>
+        ///   Looks up a localized string similar to Items exported to PasteBin: {0}.
+        /// </summary>
+        public static string ExportItemsSuccessPasteBin {
+            get {
+                return ResourceManager.GetString("ExportItemsSuccessPasteBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Tab exported to PasteBin: {0}.
+        /// </summary>
+        public static string ExportTabSuccessPasteBin {
+            get {
+                return ResourceManager.GetString("ExportTabSuccessPasteBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to export to PasteBin: {0}.
+        /// </summary>
+        public static string ExportFailPasteBin {
+            get {
+                return ResourceManager.GetString("ExportFailPasteBin", resourceCulture);
+            }
+        }
+
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In-Game Rolls (database -&gt; in-game).
+        /// </summary>
+        public static string ItemPropertiesLabelInGameRolls {
+            get {
+                return ResourceManager.GetString("ItemPropertiesLabelInGameRolls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show In-Game Values.
+        /// </summary>
+        public static string SettingShowInGameValues {
+            get {
+                return ResourceManager.GetString("SettingShowInGameValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply the game's stat jitter (item seed) to equipment tooltips. With the detailed view, also lists each rolled value..
+        /// </summary>
+        public static string SettingShowInGameValuesTT {
+            get {
+                return ResourceManager.GetString("SettingShowInGameValuesTT", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Enable detailed view.
+        /// </summary>
+        public static string SettingTooltipDetailedView {
+            get {
+                return ResourceManager.GetString("SettingTooltipDetailedView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Split item tooltip attributes into Prefix/Base/Suffix categories. The options below apply to both views..
+        /// </summary>
+        public static string SettingTooltipDetailedViewTT {
+            get {
+                return ResourceManager.GetString("SettingTooltipDetailedViewTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tooltip Enhanced.
+        /// </summary>
+        public static string SettingTooltipEnhanced {
+            get {
+                return ResourceManager.GetString("SettingTooltipEnhanced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stackable.
+        /// </summary>
+        public static string SettingsStackable {
+            get {
+                return ResourceManager.GetString("SettingsStackable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display in game rolls.
+        /// </summary>
+        public static string SettingTooltipShowInGameRolls {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowInGameRolls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List each value rolled by the game (database -&gt; in-game). Needs Show In-Game Values..
+        /// </summary>
+        public static string SettingTooltipShowInGameRollsTT {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowInGameRollsTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display min/max values.
+        /// </summary>
+        public static string SettingTooltipShowValueRanges {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowValueRanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show the possible min/max of each rolled attribute on its right. Needs Show In-Game Values..
+        /// </summary>
+        public static string SettingTooltipShowValueRangesTT {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowValueRangesTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display item skills.
+        /// </summary>
+        public static string SettingTooltipShowGrantedSkills {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowGrantedSkills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show the skills granted by the item, its affixes and its relics in a panel next to the tooltip.
+        /// </summary>
+        public static string SettingTooltipShowGrantedSkillsTT {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowGrantedSkillsTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display items set pieces count.
+        /// </summary>
+        public static string SettingTooltipShowSetPieceCounts {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowSetPieceCounts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show, next to each piece of the set, how many of it are in the vaults, characters and stashes loaded now.
+        /// </summary>
+        public static string SettingTooltipShowSetPieceCountsTT {
+            get {
+                return ResourceManager.GetString("SettingTooltipShowSetPieceCountsTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Having Skill.
+        /// </summary>
+        public static string SearchHavingSkill {
+            get {
+                return ResourceManager.GetString("SearchHavingSkill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Skills.
+        /// </summary>
+        public static string SearchItemSkills {
+            get {
+                return ResourceManager.GetString("SearchItemSkills", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Vault.
+        /// </summary>
+        public static string VaultDelete {
+            get {
+                return ResourceManager.GetString("VaultDelete", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the vault "{0}"?.
+        /// </summary>
+        public static string VaultDeleteMsg {
+            get {
+                return ResourceManager.GetString("VaultDeleteMsg", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to It contains {0} in {1}..
+        /// </summary>
+        public static string VaultDeleteContents {
+            get {
+                return ResourceManager.GetString("VaultDeleteContents", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} item.
+        /// </summary>
+        public static string VaultDeleteItem {
+            get {
+                return ResourceManager.GetString("VaultDeleteItem", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} items.
+        /// </summary>
+        public static string VaultDeleteItems {
+            get {
+                return ResourceManager.GetString("VaultDeleteItems", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} bag.
+        /// </summary>
+        public static string VaultDeleteBag {
+            get {
+                return ResourceManager.GetString("VaultDeleteBag", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} bags.
+        /// </summary>
+        public static string VaultDeleteBags {
+            get {
+                return ResourceManager.GetString("VaultDeleteBags", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to It is empty..
+        /// </summary>
+        public static string VaultDeleteEmpty {
+            get {
+                return ResourceManager.GetString("VaultDeleteEmpty", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The file will be moved to the Recycle Bin, where you can restore it..
+        /// </summary>
+        public static string VaultDeleteRecycleBin {
+            get {
+                return ResourceManager.GetString("VaultDeleteRecycleBin", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to This cannot be undone..
+        /// </summary>
+        public static string VaultDeletePermanent {
+            get {
+                return ResourceManager.GetString("VaultDeletePermanent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod link....
+        /// </summary>
+        public static string ModLinkMenu {
+            get {
+                return ResourceManager.GetString("ModLinkMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod link.
+        /// </summary>
+        public static string ModLinkDialogTitle {
+            get {
+                return ResourceManager.GetString("ModLinkDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character: {0}.
+        /// </summary>
+        public static string ModLinkCharacter {
+            get {
+                return ResourceManager.GetString("ModLinkCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed mods:.
+        /// </summary>
+        public static string ModLinkInstalledMods {
+            get {
+                return ResourceManager.GetString("ModLinkInstalledMods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No mod is installed..
+        /// </summary>
+        public static string ModLinkNoMods {
+            get {
+                return ResourceManager.GetString("ModLinkNoMods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Link.
+        /// </summary>
+        public static string ModLinkLink {
+            get {
+                return ResourceManager.GetString("ModLinkLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unlink.
+        /// </summary>
+        public static string ModLinkUnlink {
+            get {
+                return ResourceManager.GetString("ModLinkUnlink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suggest.
+        /// </summary>
+        public static string ModLinkSuggest {
+            get {
+                return ResourceManager.GetString("ModLinkSuggest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to no mod.
+        /// </summary>
+        public static string ModLinkUnlinkedLabel {
+            get {
+                return ResourceManager.GetString("ModLinkUnlinkedLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, not installed.
+        /// </summary>
+        public static string ModLinkMissingLabel {
+            get {
+                return ResourceManager.GetString("ModLinkMissingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the base game data.
+        /// </summary>
+        public static string ModLinkBaseGameData {
+            get {
+                return ResourceManager.GetString("ModLinkBaseGameData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main campaign character, not linked: it is loaded with the base game data. Link it to the mod it plays with the main campaign (a bounce mod)..
+        /// </summary>
+        public static string ModLinkStateBaseGame {
+            get {
+                return ResourceManager.GetString("ModLinkStateBaseGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked to {0}..
+        /// </summary>
+        public static string ModLinkStateLinked {
+            get {
+                return ResourceManager.GetString("ModLinkStateLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked to {0} (bounce mod): its Transfer Stash and Relic Vault stay the main campaign&apos;s..
+        /// </summary>
+        public static string ModLinkStateLinkedMain {
+            get {
+                return ResourceManager.GetString("ModLinkStateLinkedMain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked to {0}, which is not installed: it is loaded with {1}..
+        /// </summary>
+        public static string ModLinkStateMissing {
+            get {
+                return ResourceManager.GetString("ModLinkStateMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not linked: it is loaded with {0}..
+        /// </summary>
+        public static string ModLinkStateUnlinked {
+            get {
+                return ResourceManager.GetString("ModLinkStateUnlinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suggested: {0} ({1} of the {2} records this character uses that the base game lacks)..
+        /// </summary>
+        public static string ModLinkSuggestion {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Several mods match as well: {0}..
+        /// </summary>
+        public static string ModLinkSuggestionTie {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestionTie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bounce mod.
+        /// </summary>
+        public static string CharacterModBounce {
+            get {
+                return ResourceManager.GetString("CharacterModBounce", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modded.
+        /// </summary>
+        public static string CharacterModded {
+            get {
+                return ResourceManager.GetString("CharacterModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked.
+        /// </summary>
+        public static string CharacterModLinked {
+            get {
+                return ResourceManager.GetString("CharacterModLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not linked.
+        /// </summary>
+        public static string CharacterModNotLinked {
+            get {
+                return ResourceManager.GetString("CharacterModNotLinked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not installed.
+        /// </summary>
+        public static string CharacterModNotInstalled {
+            get {
+                return ResourceManager.GetString("CharacterModNotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read-only.
+        /// </summary>
+        public static string CharacterReadOnly {
+            get {
+                return ResourceManager.GetString("CharacterReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is read-only: its bags, equipment and storage area cannot change..
+        /// </summary>
+        public static string CharacterReadOnlyRefused {
+            get {
+                return ResourceManager.GetString("CharacterReadOnlyRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} has unsaved changes: save them before making it read-only..
+        /// </summary>
+        public static string CharacterReadOnlyUnsaved {
+            get {
+                return ResourceManager.GetString("CharacterReadOnlyUnsaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The read-only state of {0} could not be changed: {1}.
+        /// </summary>
+        public static string CharacterReadOnlyFailed {
+            get {
+                return ResourceManager.GetString("CharacterReadOnlyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod : {0}.
+        /// </summary>
+        public static string ItemModLine {
+            get {
+                return ResourceManager.GetString("ItemModLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None (base game).
+        /// </summary>
+        public static string ItemModNone {
+            get {
+                return ResourceManager.GetString("ItemModNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modded.
+        /// </summary>
+        public static string SearchModded {
+            get {
+                return ResourceManager.GetString("SearchModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod.
+        /// </summary>
+        public static string SearchMod {
+            get {
+                return ResourceManager.GetString("SearchMod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modded vault.
+        /// </summary>
+        public static string VaultModded {
+            get {
+                return ResourceManager.GetString("VaultModded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (suggested).
+        /// </summary>
+        public static string ModSuggestedHint {
+            get {
+                return ResourceManager.GetString("ModSuggestedHint", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to (suggested {0}/{1}).
+        /// </summary>
+        public static string ModSuggestedPartialHint {
+            get {
+                return ResourceManager.GetString("ModSuggestedPartialHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Has {0} of the {1} records the base game lacks..
+        /// </summary>
+        public static string ModSuggestedDetail {
+            get {
+                return ResourceManager.GetString("ModSuggestedDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incomplete item: mod not linked or not installed..
+        /// </summary>
+        public static string ItemIncomplete {
+            get {
+                return ResourceManager.GetString("ItemIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No room here for this item's size, read with its container's map..
+        /// </summary>
+        public static string ItemNoRoom {
+            get {
+                return ResourceManager.GetString("ItemNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base item.
+        /// </summary>
+        public static string ItemIncompleteBaseItem {
+            get {
+                return ResourceManager.GetString("ItemIncompleteBaseItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix.
+        /// </summary>
+        public static string ItemIncompletePrefix {
+            get {
+                return ResourceManager.GetString("ItemIncompletePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suffix.
+        /// </summary>
+        public static string ItemIncompleteSuffix {
+            get {
+                return ResourceManager.GetString("ItemIncompleteSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relic or charm.
+        /// </summary>
+        public static string ItemIncompleteRelic {
+            get {
+                return ResourceManager.GetString("ItemIncompleteRelic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relic bonus.
+        /// </summary>
+        public static string ItemIncompleteRelicBonus {
+            get {
+                return ResourceManager.GetString("ItemIncompleteRelicBonus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No installed mod has the {0} records this character uses that the base game lacks..
+        /// </summary>
+        public static string ModLinkSuggestionNone {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestionNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This character only uses base game records: its mod cannot be told from its data..
+        /// </summary>
+        public static string ModLinkSuggestionBaseOnly {
+            get {
+                return ResourceManager.GetString("ModLinkSuggestionBaseOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mod link could not be saved..
+        /// </summary>
+        public static string ModLinkSaveError {
+            get {
+                return ResourceManager.GetString("ModLinkSaveError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key binds....
+        /// </summary>
+        public static string SettingsKeyBinds {
+            get {
+                return ResourceManager.GetString("SettingsKeyBinds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists the keys and clicks of TQVault and lets you change them..
+        /// </summary>
+        public static string SettingsKeyBindsTT {
+            get {
+                return ResourceManager.GetString("SettingsKeyBindsTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key binds.
+        /// </summary>
+        public static string KeyBindsTitle {
+            get {
+                return ResourceManager.GetString("KeyBindsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Action.
+        /// </summary>
+        public static string KeyBindsColumnAction {
+            get {
+                return ResourceManager.GetString("KeyBindsColumnAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shortcut.
+        /// </summary>
+        public static string KeyBindsColumnShortcut {
+            get {
+                return ResourceManager.GetString("KeyBindsColumnShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alternate.
+        /// </summary>
+        public static string KeyBindsColumnAlternate {
+            get {
+                return ResourceManager.GetString("KeyBindsColumnAlternate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click a shortcut, then press the new key. For a click action, click the shortcut again while holding the modifiers. Right click or Clear to stop..
+        /// </summary>
+        public static string KeyBindsHint {
+            get {
+                return ResourceManager.GetString("KeyBindsHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press a key....
+        /// </summary>
+        public static string KeyBindsPressKey {
+            get {
+                return ResourceManager.GetString("KeyBindsPressKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click with modifiers....
+        /// </summary>
+        public static string KeyBindsClickWithModifiers {
+            get {
+                return ResourceManager.GetString("KeyBindsClickWithModifiers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string KeyBindsClear {
+            get {
+                return ResourceManager.GetString("KeyBindsClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defaults.
+        /// </summary>
+        public static string KeyBindsDefaults {
+            get {
+                return ResourceManager.GetString("KeyBindsDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is used by: {1}.
+        /// </summary>
+        public static string KeyBindsConflict {
+            get {
+                return ResourceManager.GetString("KeyBindsConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixed: cannot be changed..
+        /// </summary>
+        public static string KeyBindsFixed {
+            get {
+                return ResourceManager.GetString("KeyBindsFixed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off: tick &quot;{0}&quot; in the settings to use it..
+        /// </summary>
+        public static string KeyBindsTurnedOff {
+            get {
+                return ResourceManager.GetString("KeyBindsTurnedOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Greyed actions do nothing until these settings are ticked: {0}..
+        /// </summary>
+        public static string KeyBindsTurnedOffNote {
+            get {
+                return ResourceManager.GetString("KeyBindsTurnedOffNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        public static string KeyBindsNone {
+            get {
+                return ResourceManager.GetString("KeyBindsNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Items.
+        /// </summary>
+        public static string KeyBindCategoryItems {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selection.
+        /// </summary>
+        public static string KeyBindCategorySelection {
+            get {
+                return ResourceManager.GetString("KeyBindCategorySelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moving between panels.
+        /// </summary>
+        public static string KeyBindCategoryMoving {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryMoving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window.
+        /// </summary>
+        public static string KeyBindCategoryWindow {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forge.
+        /// </summary>
+        public static string KeyBindCategoryForge {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryForge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character editor.
+        /// </summary>
+        public static string KeyBindCategoryCharacterEditor {
+            get {
+                return ResourceManager.GetString("KeyBindCategoryCharacterEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pick up or put down an item.
+        /// </summary>
+        public static string KeyBindActionPickUpItem {
+            get {
+                return ResourceManager.GetString("KeyBindActionPickUpItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item menu, cancel a drag.
+        /// </summary>
+        public static string KeyBindActionItemMenu {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy the item under the cursor.
+        /// </summary>
+        public static string KeyBindActionItemCopy {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate the item under the cursor.
+        /// </summary>
+        public static string KeyBindActionItemDuplicate {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy the clicked item.
+        /// </summary>
+        public static string KeyBindActionItemCopyClick {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemCopyClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate the clicked item.
+        /// </summary>
+        public static string KeyBindActionItemDuplicateClick {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemDuplicateClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the item under the cursor.
+        /// </summary>
+        public static string KeyBindActionItemDelete {
+            get {
+                return ResourceManager.GetString("KeyBindActionItemDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel a drag or a comparison.
+        /// </summary>
+        public static string KeyBindActionCancelDrag {
+            get {
+                return ResourceManager.GetString("KeyBindActionCancelDrag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add or remove an item from the selection.
+        /// </summary>
+        public static string KeyBindActionSelectItemClick {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectItemClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a rectangle (drag).
+        /// </summary>
+        public static string KeyBindActionSelectRectangle {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectRectangle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select every item.
+        /// </summary>
+        public static string KeyBindActionSelectAll {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the highlighted items.
+        /// </summary>
+        public static string KeyBindActionSelectHighlighted {
+            get {
+                return ResourceManager.GetString("KeyBindActionSelectHighlighted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear the selection.
+        /// </summary>
+        public static string KeyBindActionClearSelection {
+            get {
+                return ResourceManager.GetString("KeyBindActionClearSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection up.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionUp {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection left.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionLeft {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection down.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionDown {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move the selection right.
+        /// </summary>
+        public static string KeyBindActionMoveSelectionRight {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveSelectionRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to the character.
+        /// </summary>
+        public static string KeyBindActionMoveToPlayer {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveToPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to the vault.
+        /// </summary>
+        public static string KeyBindActionMoveToVault {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveToVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to the stash.
+        /// </summary>
+        public static string KeyBindActionMoveToStash {
+            get {
+                return ResourceManager.GetString("KeyBindActionMoveToStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string KeyBindActionSearch {
+            get {
+                return ResourceManager.GetString("KeyBindActionSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy the selection to the clipboard.
+        /// </summary>
+        public static string KeyBindActionCopyToClipboard {
+            get {
+                return ResourceManager.GetString("KeyBindActionCopyToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste items from the clipboard.
+        /// </summary>
+        public static string KeyBindActionPasteFromClipboard {
+            get {
+                return ResourceManager.GetString("KeyBindActionPasteFromClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom in.
+        /// </summary>
+        public static string KeyBindActionZoomIn {
+            get {
+                return ResourceManager.GetString("KeyBindActionZoomIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom out.
+        /// </summary>
+        public static string KeyBindActionZoomOut {
+            get {
+                return ResourceManager.GetString("KeyBindActionZoomOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset the zoom.
+        /// </summary>
+        public static string KeyBindActionZoomReset {
+            get {
+                return ResourceManager.GetString("KeyBindActionZoomReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redraw the panel.
+        /// </summary>
+        public static string KeyBindActionRefreshPanel {
+            get {
+                return ResourceManager.GetString("KeyBindActionRefreshPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next or previous vault.
+        /// </summary>
+        public static string KeyBindActionScrollVaultList {
+            get {
+                return ResourceManager.GetString("KeyBindActionScrollVaultList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Held while restoring the window: reset the zoom.
+        /// </summary>
+        public static string KeyBindActionResetZoomOnRestore {
+            get {
+                return ResourceManager.GetString("KeyBindActionResetZoomOnRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close TQVault.
+        /// </summary>
+        public static string KeyBindActionCloseWindow {
+            get {
+                return ResourceManager.GetString("KeyBindActionCloseWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forge (the Forge button).
+        /// </summary>
+        public static string KeyBindActionForge {
+            get {
+                return ResourceManager.GetString("KeyBindActionForge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a point.
+        /// </summary>
+        public static string KeyBindActionCharacterAddPoint {
+            get {
+                return ResourceManager.GetString("KeyBindActionCharacterAddPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove a point.
+        /// </summary>
+        public static string KeyBindActionCharacterRemovePoint {
+            get {
+                return ResourceManager.GetString("KeyBindActionCharacterRemovePoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add or remove every point at once.
+        /// </summary>
+        public static string KeyBindActionCharacterSpendAll {
+            get {
+                return ResourceManager.GetString("KeyBindActionCharacterSpendAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click.
+        /// </summary>
+        public static string KeyNameClick {
+            get {
+                return ResourceManager.GetString("KeyNameClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right click.
+        /// </summary>
+        public static string KeyNameRightClick {
+            get {
+                return ResourceManager.GetString("KeyNameRightClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse wheel.
+        /// </summary>
+        public static string KeyNameWheel {
+            get {
+                return ResourceManager.GetString("KeyNameWheel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift.
+        /// </summary>
+        public static string KeyNameShift {
+            get {
+                return ResourceManager.GetString("KeyNameShift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backspace.
+        /// </summary>
+        public static string KeyNameBack {
+            get {
+                return ResourceManager.GetString("KeyNameBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esc.
+        /// </summary>
+        public static string KeyNameEscape {
+            get {
+                return ResourceManager.GetString("KeyNameEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter.
+        /// </summary>
+        public static string KeyNameEnter {
+            get {
+                return ResourceManager.GetString("KeyNameEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space.
+        /// </summary>
+        public static string KeyNameSpace {
+            get {
+                return ResourceManager.GetString("KeyNameSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string KeyNameDelete {
+            get {
+                return ResourceManager.GetString("KeyNameDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert.
+        /// </summary>
+        public static string KeyNameInsert {
+            get {
+                return ResourceManager.GetString("KeyNameInsert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string KeyNameHome {
+            get {
+                return ResourceManager.GetString("KeyNameHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        public static string KeyNameEnd {
+            get {
+                return ResourceManager.GetString("KeyNameEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Up.
+        /// </summary>
+        public static string KeyNamePageUp {
+            get {
+                return ResourceManager.GetString("KeyNamePageUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Down.
+        /// </summary>
+        public static string KeyNamePageDown {
+            get {
+                return ResourceManager.GetString("KeyNamePageDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left arrow.
+        /// </summary>
+        public static string KeyNameLeft {
+            get {
+                return ResourceManager.GetString("KeyNameLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right arrow.
+        /// </summary>
+        public static string KeyNameRight {
+            get {
+                return ResourceManager.GetString("KeyNameRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up arrow.
+        /// </summary>
+        public static string KeyNameUp {
+            get {
+                return ResourceManager.GetString("KeyNameUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down arrow.
+        /// </summary>
+        public static string KeyNameDown {
+            get {
+                return ResourceManager.GetString("KeyNameDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Num {0}.
+        /// </summary>
+        public static string KeyNameNumPad {
+            get {
+                return ResourceManager.GetString("KeyNameNumPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort button: sort the bag.
+        /// </summary>
+        public static string KeyBindActionSortBag {
+            get {
+                return ResourceManager.GetString("KeyBindActionSortBag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort button: choose the order.
+        /// </summary>
+        public static string KeyBindActionSortMenu {
+            get {
+                return ResourceManager.GetString("KeyBindActionSortMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character Editor.
+        /// </summary>
+        public static string CharacterViewTitle {
+            get {
+                return ResourceManager.GetString("CharacterViewTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The character has been changed in the editor.
+        ///
+        ///Leave the editor without applying the changes?.
+        /// </summary>
+        public static string CharacterViewDiscardChanges {
+            get {
+                return ResourceManager.GetString("CharacterViewDiscardChanges", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized string similar to No loadout.
+        /// </summary>
+        public static string LoadoutNone {
+            get {
+                return ResourceManager.GetString("LoadoutNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add an empty loadout.
+        /// </summary>
+        public static string LoadoutAdd {
+            get {
+                return ResourceManager.GetString("LoadoutAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add....
+        /// </summary>
+        public static string LoadoutAddMenu {
+            get {
+                return ResourceManager.GetString("LoadoutAddMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update with the gear worn now.
+        /// </summary>
+        public static string LoadoutUpdate {
+            get {
+                return ResourceManager.GetString("LoadoutUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename....
+        /// </summary>
+        public static string LoadoutRename {
+            get {
+                return ResourceManager.GetString("LoadoutRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy....
+        /// </summary>
+        public static string LoadoutCopy {
+            get {
+                return ResourceManager.GetString("LoadoutCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string LoadoutDelete {
+            get {
+                return ResourceManager.GetString("LoadoutDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back to the statistics.
+        /// </summary>
+        public static string LoadoutBack {
+            get {
+                return ResourceManager.GetString("LoadoutBack", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Previous loadout.
+        /// </summary>
+        public static string LoadoutPrevious {
+            get {
+                return ResourceManager.GetString("LoadoutPrevious", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Next loadout.
+        /// </summary>
+        public static string LoadoutNext {
+            get {
+                return ResourceManager.GetString("LoadoutNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gear swap.
+        /// </summary>
+        public static string LoadoutSwap {
+            get {
+                return ResourceManager.GetString("LoadoutSwap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadout "{0}" and the equipment are both empty: nothing to swap.
+        /// </summary>
+        public static string LoadoutSwapNothing {
+            get {
+                return ResourceManager.GetString("LoadoutSwapNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gear swap with "{0}": {1} piece(s) put on, {2} piece(s) now in the loadout. Swap again to swap back.
+        /// </summary>
+        public static string LoadoutSwapped {
+            get {
+                return ResourceManager.GetString("LoadoutSwapped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read-only character: its loadouts can only be shown and composed.
+        /// </summary>
+        public static string LoadoutReadOnly {
+            get {
+                return ResourceManager.GetString("LoadoutReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadouts.
+        /// </summary>
+        public static string LoadoutTitle {
+            get {
+                return ResourceManager.GetString("LoadoutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name of the loadout:.
+        /// </summary>
+        public static string LoadoutNamePrompt {
+            get {
+                return ResourceManager.GetString("LoadoutNamePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a name for the loadout..
+        /// </summary>
+        public static string LoadoutNameEmpty {
+            get {
+                return ResourceManager.GetString("LoadoutNameEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} already has a loadout named "{1}"..
+        /// </summary>
+        public static string LoadoutNameUsed {
+            get {
+                return ResourceManager.GetString("LoadoutNameUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put the gear worn now into the loadout "{0}"?
+        ///The slots empty on the character keep the loadout's pieces..
+        /// </summary>
+        public static string LoadoutUpdateConfirm {
+            get {
+                return ResourceManager.GetString("LoadoutUpdateConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the loadout "{0}"?.
+        /// </summary>
+        public static string LoadoutDeleteConfirm {
+            get {
+                return ResourceManager.GetString("LoadoutDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadouts of {0} could not be saved: {1}.
+        /// </summary>
+        public static string LoadoutWriteFailed {
+            get {
+                return ResourceManager.GetString("LoadoutWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadouts file of {0} could not be read: it is left as it is..
+        /// </summary>
+        public static string LoadoutReadFailed {
+            get {
+                return ResourceManager.GetString("LoadoutReadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game is running. If it plays this character, it keeps it in memory and it[rest of string was truncated].
+        /// </summary>
+        public static string LoadoutGameRunning {
+            get {
+                return ResourceManager.GetString("LoadoutGameRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout.
+        /// </summary>
+        public static string LoadoutResultsContainer {
+            get {
+                return ResourceManager.GetString("LoadoutResultsContainer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The setting "{0}" is on: the equipment cannot change..
+        /// </summary>
+        public static string LoadoutEquipmentLocked {
+            get {
+                return ResourceManager.GetString("LoadoutEquipmentLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The setting "{0}" is off: the pieces cannot be copied..
+        /// </summary>
+        public static string LoadoutCopyLocked {
+            get {
+                return ResourceManager.GetString("LoadoutCopyLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty loadout.
+        /// </summary>
+        public static string LoadoutEmpty {
+            get {
+                return ResourceManager.GetString("LoadoutEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To inventory.
+        /// </summary>
+        public static string LoadoutEmptyToInventory {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyToInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To stash.
+        /// </summary>
+        public static string LoadoutEmptyToStash {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyToStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To vault.
+        /// </summary>
+        public static string LoadoutEmptyToVault {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyToVault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bag {0} of {1}.
+        /// </summary>
+        public static string LoadoutBagOf {
+            get {
+                return ResourceManager.GetString("LoadoutBagOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the inventory of {0}.
+        /// </summary>
+        public static string LoadoutInventoryOf {
+            get {
+                return ResourceManager.GetString("LoadoutInventoryOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The setting "{0}" is on: the inventory cannot change..
+        /// </summary>
+        public static string LoadoutInventoryLocked {
+            get {
+                return ResourceManager.GetString("LoadoutInventoryLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No stash to receive the loadout's pieces..
+        /// </summary>
+        public static string LoadoutNoStash {
+            get {
+                return ResourceManager.GetString("LoadoutNoStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show a vault to receive the loadout's pieces..
+        /// </summary>
+        public static string LoadoutNoVaultForPieces {
+            get {
+                return ResourceManager.GetString("LoadoutNoVaultForPieces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The loadout "{0}" is already empty..
+        /// </summary>
+        public static string LoadoutEmptyNothing {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not enough room in {0}: the {1} piece(s) stay in the loadout..
+        /// </summary>
+        public static string LoadoutEmptyNoRoom {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing was moved: {0} is read-only..
+        /// </summary>
+        public static string LoadoutEmptyRefused {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyRefused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout "{0}": {1} piece(s) moved to {2}; {3} piece(s) stay in the loadout for want of room..
+        /// </summary>
+        public static string LoadoutEmptyPartly {
+            get {
+                return ResourceManager.GetString("LoadoutEmptyPartly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loadout "{0}" emptied: {1} piece(s) moved to {2}..
+        /// </summary>
+        public static string LoadoutEmptied {
+            get {
+                return ResourceManager.GetString("LoadoutEmptied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same as in loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkSame {
+            get {
+                return ResourceManager.GetString("LoadoutMarkSame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Different from loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkDifferent {
+            get {
+                return ResourceManager.GetString("LoadoutMarkDifferent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty in loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkEmptyInLoadout {
+            get {
+                return ResourceManager.GetString("LoadoutMarkEmptyInLoadout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not worn; in loadout "{0}".
+        /// </summary>
+        public static string LoadoutMarkNotWorn {
+            get {
+                return ResourceManager.GetString("LoadoutMarkNotWorn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to compare.
+        /// </summary>
+        public static string LoadoutMarkClickToCompare {
+            get {
+                return ResourceManager.GetString("LoadoutMarkClickToCompare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select All.
+        /// </summary>
+        public static string ResultsMenuSelectAll {
+            get {
+                return ResourceManager.GetString("ResultsMenuSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move To.
+        /// </summary>
+        public static string ResultsMenuMoveTo {
+            get {
+                return ResourceManager.GetString("ResultsMenuMoveTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player Stash.
+        /// </summary>
+        public static string ResultsMenuPlayerStash {
+            get {
+                return ResourceManager.GetString("ResultsMenuPlayerStash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vaults.
+        /// </summary>
+        public static string ResultsMenuVaults {
+            get {
+                return ResourceManager.GetString("ResultsMenuVaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string ResultsMenuUndo {
+            get {
+                return ResourceManager.GetString("ResultsMenuUndo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, bag {1}.
+        /// </summary>
+        public static string ResultsMoveVaultBag {
+            get {
+                return ResourceManager.GetString("ResultsMoveVaultBag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} item(s) moved to {1}..
+        /// </summary>
+        public static string ResultsMoved {
+            get {
+                return ResourceManager.GetString("ResultsMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} item(s) put back..
+        /// </summary>
+        public static string ResultsUndone {
+            get {
+                return ResourceManager.GetString("ResultsUndone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not moved ({0}): {1}..
+        /// </summary>
+        public static string ResultsNotMoved {
+            get {
+                return ResourceManager.GetString("ResultsNotMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not put back ({0}): {1}..
+        /// </summary>
+        public static string ResultsNotPutBack {
+            get {
+                return ResourceManager.GetString("ResultsNotPutBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        public static string ResultsSkipReason {
+            get {
+                return ResourceManager.GetString("ResultsSkipReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to no room.
+        /// </summary>
+        public static string ResultsSkipNoRoom {
+            get {
+                return ResourceManager.GetString("ResultsSkipNoRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to read-only character.
+        /// </summary>
+        public static string ResultsSkipReadOnly {
+            get {
+                return ResourceManager.GetString("ResultsSkipReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to equipment locked by “{0}”.
+        /// </summary>
+        public static string ResultsSkipEquipmentLocked {
+            get {
+                return ResourceManager.GetString("ResultsSkipEquipmentLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to not taken by the relic vault.
+        /// </summary>
+        public static string ResultsSkipNotAccepted {
+            get {
+                return ResourceManager.GetString("ResultsSkipNotAccepted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to no longer there.
+        /// </summary>
+        public static string ResultsSkipNotFound {
+            get {
+                return ResourceManager.GetString("ResultsSkipNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to already there.
+        /// </summary>
+        public static string ResultsSkipAlreadyThere {
+            get {
+                return ResourceManager.GetString("ResultsSkipAlreadyThere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the stash of a read-only character.
+        /// </summary>
+        public static string ResultsSkipTargetReadOnly {
+            get {
+                return ResourceManager.GetString("ResultsSkipTargetReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to loadouts file not written.
+        /// </summary>
+        public static string ResultsSkipLoadoutNotWritten {
+            get {
+                return ResourceManager.GetString("ResultsSkipLoadoutNotWritten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put down the held item first..
+        /// </summary>
+        public static string ResultsMoveHeldItem {
+            get {
+                return ResourceManager.GetString("ResultsMoveHeldItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equipment.
+        /// </summary>
+        public static string BuffsGear {
+            get {
+                return ResourceManager.GetString("BuffsGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passive.
+        /// </summary>
+        public static string BuffsPassive {
+            get {
+                return ResourceManager.GetString("BuffsPassive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active.
+        /// </summary>
+        public static string BuffsActive {
+            get {
+                return ResourceManager.GetString("BuffsActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pets.
+        /// </summary>
+        public static string BuffsPets {
+            get {
+                return ResourceManager.GetString("BuffsPets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Curses.
+        /// </summary>
+        public static string BuffsCurses {
+            get {
+                return ResourceManager.GetString("BuffsCurses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shrines.
+        /// </summary>
+        public static string BuffsShrines {
+            get {
+                return ResourceManager.GetString("BuffsShrines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tartarus.
+        /// </summary>
+        public static string BuffsTartarus {
+            get {
+                return ResourceManager.GetString("BuffsTartarus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scroll.
+        /// </summary>
+        public static string BuffsScroll {
+            get {
+                return ResourceManager.GetString("BuffsScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        public static string BuffsNoScroll {
+            get {
+                return ResourceManager.GetString("BuffsNoScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On: click to turn it off..
+        /// </summary>
+        public static string BuffsOn {
+            get {
+                return ResourceManager.GetString("BuffsOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off: click to turn it on..
+        /// </summary>
+        public static string BuffsOff {
+            get {
+                return ResourceManager.GetString("BuffsOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Level {0}.
+        /// </summary>
+        public static string BuffsLevel {
+            get {
+                return ResourceManager.GetString("BuffsLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Granted by {0}.
+        /// </summary>
+        public static string BuffsGrantedBy {
+            get {
+                return ResourceManager.GetString("BuffsGrantedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pieces worn: {0}.
+        /// </summary>
+        public static string BuffsSetPieces {
+            get {
+                return ResourceManager.GetString("BuffsSetPieces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sources.
+        /// </summary>
+        public static string BuffsSourcesTitle {
+            get {
+                return ResourceManager.GetString("BuffsSourcesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} ({2}).
+        /// </summary>
+        public static string BuffsSourceLine {
+            get {
+                return ResourceManager.GetString("BuffsSourceLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Difficulty: {0}.
+        /// </summary>
+        public static string BuffsDifficultyLine {
+            get {
+                return ResourceManager.GetString("BuffsDifficultyLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        public static string BuffsSourceRawLine {
+            get {
+                return ResourceManager.GetString("BuffsSourceRawLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sources: {0}.
+        /// </summary>
+        public static string BuffsSourcesOf {
+            get {
+                return ResourceManager.GetString("BuffsSourcesOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to duration.
+        /// </summary>
+        public static string BuffsDuration {
+            get {
+                return ResourceManager.GetString("BuffsDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set {0}: the statistics count its weapons..
+        /// </summary>
+        public static string WeaponSetCounted {
+            get {
+                return ResourceManager.GetString("WeaponSetCounted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set {0}: click to count its weapons instead (the save does not change)..
+        /// </summary>
+        public static string WeaponSetPick {
+            get {
+                return ResourceManager.GetString("WeaponSetPick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set {0} is in hand in the save..
+        /// </summary>
+        public static string WeaponSetInSave {
+            get {
+                return ResourceManager.GetString("WeaponSetInSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cast by the item when worn: always on..
+        /// </summary>
+        public static string BuffsOnEquip {
+            get {
+                return ResourceManager.GetString("BuffsOnEquip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reserves {0}% of the energy.
+        /// </summary>
+        public static string BuffsEnergyReserve {
+            get {
+                return ResourceManager.GetString("BuffsEnergyReserve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Energy reserved.
+        /// </summary>
+        public static string BuffsEnergyReservedTitle {
+            get {
+                return ResourceManager.GetString("BuffsEnergyReservedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}% reserved: {1} energy, {2} usable.
+        /// </summary>
+        public static string BuffsEnergyReservedTotal {
+            get {
+                return ResourceManager.GetString("BuffsEnergyReservedTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} s Potion Recharge.
+        /// </summary>
+        public static string BuffsPotionRecharge {
+            get {
+                return ResourceManager.GetString("BuffsPotionRecharge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +{0} to {1} s Potion Recharge.
+        /// </summary>
+        public static string BuffsPotionRechargeRange {
+            get {
+                return ResourceManager.GetString("BuffsPotionRechargeRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}% Skill Duration.
+        /// </summary>
+        public static string BuffsSkillDuration {
+            get {
+                return ResourceManager.GetString("BuffsSkillDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On a health or energy potion, for {0} s.
+        /// </summary>
+        public static string BuffsPotionTrigger {
+            get {
+                return ResourceManager.GetString("BuffsPotionTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On a health or energy potion: {0}% chance, for {1} s.
+        /// </summary>
+        public static string BuffsPotionTriggerChance {
+            get {
+                return ResourceManager.GetString("BuffsPotionTriggerChance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class Sets.
+        /// </summary>
+        public static string ClassSetTitle {
+            get {
+                return ResourceManager.GetString("ClassSetTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No class set.
+        /// </summary>
+        public static string ClassSetNone {
+            get {
+                return ResourceManager.GetString("ClassSetNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class set.
+        /// </summary>
+        public static string ClassSetPlaceholder {
+            get {
+                return ResourceManager.GetString("ClassSetPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename....
+        /// </summary>
+        public static string ClassSetRename {
+            get {
+                return ResourceManager.GetString("ClassSetRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string ClassSetDelete {
+            get {
+                return ResourceManager.GetString("ClassSetDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read-only character: its class sets can only be shown and tried.
+        /// </summary>
+        public static string ClassSetReadOnly {
+            get {
+                return ResourceManager.GetString("ClassSetReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name of the class set:.
+        /// </summary>
+        public static string ClassSetNamePrompt {
+            get {
+                return ResourceManager.GetString("ClassSetNamePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a name for the class set..
+        /// </summary>
+        public static string ClassSetNameEmpty {
+            get {
+                return ResourceManager.GetString("ClassSetNameEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} already has a class set named "{1}"..
+        /// </summary>
+        public static string ClassSetNameUsed {
+            get {
+                return ResourceManager.GetString("ClassSetNameUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the class set "{0}"?.
+        /// </summary>
+        public static string ClassSetDeleteConfirm {
+            get {
+                return ResourceManager.GetString("ClassSetDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not enough points or mastery slots for the whole class set "{0}": it is applied in part, the points not spent are left to spend..
+        /// </summary>
+        public static string ClassSetPartlyApplied {
+            get {
+                return ResourceManager.GetString("ClassSetPartlyApplied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The class sets of {0} could not be saved: {1}.
+        /// </summary>
+        public static string ClassSetWriteFailed {
+            get {
+                return ResourceManager.GetString("ClassSetWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save the build shown as a new class set.
+        /// </summary>
+        public static string ClassSetAdd {
+            get {
+                return ResourceManager.GetString("ClassSetAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string ClassSetSave {
+            get {
+                return ResourceManager.GetString("ClassSetSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save as....
+        /// </summary>
+        public static string ClassSetSaveAs {
+            get {
+                return ResourceManager.GetString("ClassSetSaveAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put the masteries, skill points and attribute points shown now into the class set "{0}"?.
+        /// </summary>
+        public static string ClassSetSaveConfirm {
+            get {
+                return ResourceManager.GetString("ClassSetSaveConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No class set selected: pick one, or use Save as.
+        /// </summary>
+        public static string ClassSetSaveNone {
+            get {
+                return ResourceManager.GetString("ClassSetSaveNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed in the game since this class set was saved.
+        /// </summary>
+        public static string ClassSetChangedInGame {
+            get {
+                return ResourceManager.GetString("ClassSetChangedInGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Applied in part: not enough points or mastery slots for this class set.
+        /// </summary>
+        public static string ClassSetAppliedInPart {
+            get {
+                return ResourceManager.GetString("ClassSetAppliedInPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed in the editor since this class set was applied.
+        /// </summary>
+        public static string ClassSetChangedInEditor {
+            get {
+                return ResourceManager.GetString("ClassSetChangedInEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} skill points.
+        /// </summary>
+        public static string ClassSetSkillPointsDelta {
+            get {
+                return ResourceManager.GetString("ClassSetSkillPointsDelta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} attribute points.
+        /// </summary>
+        public static string ClassSetAttributePointsDelta {
+            get {
+                return ResourceManager.GetString("ClassSetAttributePointsDelta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save to keep it in the class set, pick the class set to go back to it..
+        /// </summary>
+        public static string ClassSetStatusHint {
+            get {
+                return ResourceManager.GetString("ClassSetStatusHint", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid or unsupported export format..
+        /// </summary>
+        public static string ImportErrorFormat {
+            get {
+                return ResourceManager.GetString("ImportErrorFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing scope in export format..
+        /// </summary>
+        public static string ImportErrorMissingScope {
+            get {
+                return ResourceManager.GetString("ImportErrorMissingScope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported scope: {0}.
+        /// </summary>
+        public static string ImportErrorScope {
+            get {
+                return ResourceManager.GetString("ImportErrorScope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing data in export format..
+        /// </summary>
+        public static string ImportErrorMissingData {
+            get {
+                return ResourceManager.GetString("ImportErrorMissingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid JSON format: {0}.
+        /// </summary>
+        public static string ImportErrorJson {
+            get {
+                return ResourceManager.GetString("ImportErrorJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The data of the export could not be read..
+        /// </summary>
+        public static string ImportErrorData {
+            get {
+                return ResourceManager.GetString("ImportErrorData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing to import..
+        /// </summary>
+        public static string ImportErrorNothing {
+            get {
+                return ResourceManager.GetString("ImportErrorNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to import from PasteBin: {0}.
+        /// </summary>
+        public static string ImportErrorPasteBin {
+            get {
+                return ResourceManager.GetString("ImportErrorPasteBin", resourceCulture);
+            }
+        }
     }
 }

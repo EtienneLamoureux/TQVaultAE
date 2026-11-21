@@ -33,7 +33,7 @@ public static class RarityExtension
 			_ => null
 		};
 
-	public static string GetTranslationTag(this Rarity level)
+	public static string? GetTranslationTag(this Rarity level)
 	{
 		var style = GetItemStyle(level);
 

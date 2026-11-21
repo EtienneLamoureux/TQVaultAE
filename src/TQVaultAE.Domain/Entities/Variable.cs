@@ -76,7 +76,11 @@ public class Variable
 	public object this[int index]
 	{
 		get => this.values[index];
-		set => this.values[index] = value;
+		set
+		{
+			this.values[index] = value;
+			this._toString = null;
+		}
 	}
 
 	/// <summary>
@@ -101,7 +105,7 @@ public class Variable
 	/// <returns>
 	/// string of value.
 	/// </returns>
-	public string GetString(int index = 0) => Convert.ToString(this.values[index], CultureInfo.InvariantCulture);
+	public string GetString(int index = 0) => Convert.ToString(this.values[index], CultureInfo.InvariantCulture) ?? string.Empty;
 
 	/// <summary>
 	/// Indicates whether any of the values in the variable are not zero.
@@ -137,28 +141,68 @@ public class Variable
 		if (_toString is not null)
 			return _toString;
 
-		// First set our val format string based on the data type
-		string formatSpec = "{0}";
-		if (this.DataType == VariableDataType.Float)
-			formatSpec = "{0:f6}";
-
 		StringBuilder ans = new(64);
 		ans.Append(this.Name);
-		ans.Append(",");
-
-		for (int i = 0; i < this.NumberOfValues; ++i)
-		{
-			if (i > 0)
-				ans.Append(";");
-
-			ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
-		}
-
-		ans.Append(",");
+		ans.Append(',');
+		this.AppendValues(ans, ";");
+		ans.Append(',');
 
 		_toString = ans.ToString();
 
 		return _toString;
+	}
+
+	/// <summary>How a value is written: floats with 6 decimals, invariant culture.</summary>
+	private string FormatSpec => this.DataType == VariableDataType.Float ? "{0:f6}" : "{0}";
+
+	/// <summary>Appends the values, formatted by <see cref="FormatSpec"/>, between <paramref name="separator"/>s.</summary>
+	private void AppendValues(StringBuilder text, string separator)
+	{
+		string formatSpec = this.FormatSpec;
+		for (int i = 0; i < this.NumberOfValues; ++i)
+		{
+			if (i > 0)
+				text.Append(separator);
+
+			text.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
+		}
+	}
+
+	/// <summary>Characters a value formatted by <see cref="ToString"/> can hold, NaN and infinity aside.</summary>
+	private static readonly System.Buffers.SearchValues<char> NumberChars = System.Buffers.SearchValues.Create("0123456789.-");
+
+	/// <summary>
+	/// Whether <see cref="ToString"/> contains <paramref name="text"/>, ignoring case, without building that string:
+	/// the name and each value are checked on their own, and numbers are formatted only when the text could appear in
+	/// one. A text holding a separator (',' or ';') may span two parts: it is looked up in <see cref="ToString"/>.
+	/// </summary>
+	/// <remarks>Searching every record of the database built the text of every variable: half the search time.</remarks>
+	public bool TextContains(string text)
+	{
+		if (_toString is not null || text.AsSpan().IndexOfAny(',', ';') >= 0)
+			return this.ToString().Contains(text, StringComparison.OrdinalIgnoreCase);
+
+		if (this.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
+			return true;
+
+		bool numberLike = text.AsSpan().IndexOfAnyExcept(NumberChars) < 0;
+		string formatSpec = this.FormatSpec;
+		for (int i = 0; i < this.NumberOfValues; ++i)
+		{
+			var value = this.values[i];
+			if (value is string s)
+			{
+				if (s.Contains(text, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			else if (numberLike || value is float f && !float.IsFinite(f))
+			{
+				if (string.Format(CultureInfo.InvariantCulture, formatSpec, value).Contains(text, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+		}
+
+		return false;
 	}
 
 	/// <summary>
@@ -204,20 +248,8 @@ public class Variable
 	/// <returns>Returns converted string for the values.</returns>
 	public string ToStringValue()
 	{
-		// First set our val format string based on the data type
-		string formatSpec = "{0}";
-		if (this.DataType == VariableDataType.Float)
-			formatSpec = "{0:f6}";
-
 		StringBuilder ans = new StringBuilder(64);
-		for (int i = 0; i < this.NumberOfValues; ++i)
-		{
-			if (i > 0)
-				ans.Append(", ");
-
-			ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
-		}
-
+		this.AppendValues(ans, ", ");
 		return ans.ToString();
 	}
 }

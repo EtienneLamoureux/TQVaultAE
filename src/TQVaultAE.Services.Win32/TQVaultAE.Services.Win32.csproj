@@ -11,23 +11,20 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<AssemblyTitle>TQVaultAE.Services.Win32</AssemblyTitle>
-		<AssemblyCompany>titanquest.net community</AssemblyCompany>
-		<AssemblyProduct>TQVaultAE.Services.Win32</AssemblyProduct>
-		<AssemblyCopyright>Copyright © 2019</AssemblyCopyright>
+		<Company>titanquest.net community</Company>
+		<Product>TQVaultAE.Services.Win32</Product>
+		<Copyright>Copyright © 2019</Copyright>
 		<ComVisible>false</ComVisible>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
-		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
-		<ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
-		<PackageReference Include="MedallionShell" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 		<PackageReference Include="NAudio" />
 	</ItemGroup>

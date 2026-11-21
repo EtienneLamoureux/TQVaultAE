@@ -1,5 +1,7 @@
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Application.Character;
 
 namespace TQVaultAE.Application.Contracts.Services;
 
@@ -11,41 +13,114 @@ public interface IStashService
 	/// <param name="selectedSave">Player save information.</param>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	StashLoadResult LoadPlayerStash(PlayerSave selectedSave, bool fromFileWatcher = false);
+	StashLoadResult LoadPlayerStash(PlayerSave? selectedSave, bool fromFileWatcher = false);
 
 	/// <summary>
 	/// Loads the relic vault stash.
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false);
+	/// <param name="mapFolder">The custom map whose relic vault to read (empty for the base game); null for the active
+	/// map's.</param>
+	StashLoadResult LoadRelicVaultStash(bool fromFileWatcher = false, string? mapFolder = null);
 
 	/// <summary>
 	/// Loads the transfer stash for immortal throne.
 	/// </summary>
 	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
 	/// <returns>Stash load result.</returns>
-	StashLoadResult LoadTransferStash(bool fromFileWatcher = false);
+	/// <param name="mapFolder">The custom map whose transfer stash to read (empty for the base game); null for the active
+	/// map's.</param>
+	StashLoadResult LoadTransferStash(bool fromFileWatcher = false, string? mapFolder = null);
 
 	/// <summary>
-	/// Attempts to save all modified stash files.
+	/// Loads the stash of a character, which only an Immortal Throne character has.
 	/// </summary>
-	/// <param name="stashOnError">If save fails, this will contain the stash that failed.</param>
-	/// <returns>Number of stash saved.</returns>
-	/// <exception cref="IOException">can happen during file save</exception>
-	int SaveAllModifiedStashes(ref Stash stashOnError);
+	/// <param name="selectedSave">The character.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result; null for a Titan Quest original character.</returns>
+	StashLoadResult? LoadCharacterStash(PlayerSave selectedSave, bool fromFileWatcher = false);
 
 	/// <summary>
-	/// Creates a file watcher for the relic vault stash file.
+	/// Loads the transfer stash for the selected character, unless it is a Titan Quest original character.
 	/// </summary>
-	/// <param name="onChanged">Action to call when the file changes.</param>
-	/// <returns>A FileSystemWatcher instance or null if the file path is invalid.</returns>
-	FileSystemWatcher CreateRelicStashFileWatcher(Action onChanged);
+	/// <param name="selectedSave">The selected character; null when none is selected.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result; null for a Titan Quest original character.</returns>
+	StashLoadResult? LoadTransferStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false);
 
 	/// <summary>
-	/// Creates a file watcher for the transfer stash file.
+	/// Loads the relic vault stash for the selected character, unless it is a Titan Quest original character.
 	/// </summary>
-	/// <param name="onChanged">Action to call when the file changes.</param>
-	/// <returns>A FileSystemWatcher instance or null if the file path is invalid.</returns>
-	FileSystemWatcher CreateTransferStashFileWatcher(Action onChanged);
+	/// <param name="selectedSave">The selected character; null when none is selected.</param>
+	/// <param name="fromFileWatcher">When <c>true</c> called from <see cref="FileSystemWatcher.Changed"/></param>
+	/// <returns>Stash load result; null for a Titan Quest original character.</returns>
+	StashLoadResult? LoadRelicVaultStashFor(PlayerSave? selectedSave, bool fromFileWatcher = false);
+
+	/// <summary>
+	/// The file of a map's shared stash: <c>SaveData\Sys\&lt;mod&gt;</c>, or <c>SaveData\Sys</c> for the base game.
+	/// </summary>
+	/// <param name="type"><see cref="StashType.TransferStash"/>, or <see cref="StashType.RelicVaultStash"/>.</param>
+	/// <param name="mapFolder">The custom map folder; empty for the base game.</param>
+	string SharedStashFile(StashType type, string mapFolder);
+
+	/// <summary>
+	/// Reads a map's shared stash again after its file changed on disk (hot reload), whatever map is active, when the
+	/// session holds it: its items replace the old ones in the search.
+	/// </summary>
+	/// <param name="type"><see cref="StashType.TransferStash"/>, or <see cref="StashType.RelicVaultStash"/>.</param>
+	/// <param name="mapFolder">The custom map folder; empty for the base game.</param>
+	/// <returns>The new load; null when the session never read that file (it is read when first needed).</returns>
+	StashLoadResult? ReloadSharedStash(StashType type, string mapFolder);
+
+	/// <summary>
+	/// Gets the loaded stashes that have unsaved changes, with their file.
+	/// </summary>
+	IReadOnlyList<(string File, Stash Stash)> GetModifiedStashes();
+
+	/// <summary>
+	/// Backs up (unless legacy backups are disabled) and saves one stash file and its .dxg twin, then marks the stash saved.
+	/// </summary>
+	/// <exception cref="IOException">The file could not be written.</exception>
+	/// <exception cref="UnauthorizedAccessException">The file or folder cannot be written to.</exception>
+	void SaveModifiedStash(string file, Stash stash);
+
+	/// <summary>
+	/// Brings a stash panel bag id within the bags it has: below the equipment panel gives the equipment panel,
+	/// beyond the relic vault stash gives the relic vault stash.
+	/// </summary>
+	/// <param name="bagId">The requested bag id (see <see cref="BagIdConstants"/>).</param>
+	/// <returns>A bag id from <see cref="BagIdConstants.BAGID_EQUIPMENTPANEL"/> to <see cref="BagIdConstants.BAGID_RELICVAULTSTASH"/>.</returns>
+	int ClampBagId(int bagId);
+
+	/// <summary>
+	/// Gets the sack a stash panel bag shows.
+	/// </summary>
+	/// <param name="bagId">The bag id (see <see cref="BagIdConstants"/>).</param>
+	/// <param name="player">The character, for the equipment panel.</param>
+	/// <param name="transferStash">The transfer stash (caravan).</param>
+	/// <param name="playerStash">The character's stash.</param>
+	/// <param name="relicVaultStash">The relic vault stash.</param>
+	/// <returns>The sack; null when the bag has nothing to show (no character, or a stash without sacks).</returns>
+	SackCollection? GetBagSack(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash);
+
+	/// <summary>
+	/// The caravan sizes the active map's mod sets: those differing from the base game's (<see cref="CaravanSizes.Overrides"/>).
+	/// Read each time, with the active map's data then the base game's.
+	/// </summary>
+	CaravanSizes ModCaravanSizes();
+
+	/// <summary>
+	/// Describes what a stash panel bag shows when it is selected: its sack and the size used to lay it out.
+	/// </summary>
+	/// <param name="bagId">The bag id (see <see cref="BagIdConstants"/>), clamped like <see cref="ClampBagId"/>.</param>
+	/// <param name="player">The character, for the equipment panel.</param>
+	/// <param name="transferStash">The transfer stash (caravan).</param>
+	/// <param name="playerStash">The character's stash.</param>
+	/// <param name="relicVaultStash">The relic vault stash.</param>
+	/// <param name="modSizes">The caravan sizes a mod sets (<see cref="ModCaravanSizes"/>); null for none. A stash
+	/// bag is laid out at the largest of that size, the file's and what its items cover.</param>
+	/// <returns>The bag; null for a stash bag whose stash is not loaded. The equipment panel is always described,
+	/// with a null sack when there is no character.</returns>
+	StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash, CaravanSizes? modSizes = null);
 }

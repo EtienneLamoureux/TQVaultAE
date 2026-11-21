@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+		<!-- The real file wrappers (PathIO, FileIO, DirectoryIO) of the tests that read files. -->
+		<ProjectReference Include="..\..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+		<!-- The item provider under the item text formatter, with the database mocked. -->
+		<ProjectReference Include="..\..\TQVaultAE.Data\TQVaultAE.Data.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The records and translations of the item text tests, shared with the Data tests. -->
+		<Compile Include="..\TQVaultAE.Data.Tests\ItemProviderTextTestBase.cs" Link="Fixtures\ItemProviderTextTestBase.cs" />
+		<!-- The pinned item texts of ItemTextSnapshotTests. -->
+		<None Include="ItemTextSnapshots\*.txt" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Records read from a mod's database or the base game's, shared by the test projects. -->
+		<Compile Include="..\Shared\TestRecords.cs" Link="Fixtures\TestRecords.cs" />
+	</ItemGroup>
+
+</Project>

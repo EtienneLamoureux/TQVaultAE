@@ -9,7 +9,7 @@ public interface IArzFileProvider
 	/// </summary>
 	/// <param name="recordId">string ID of the record will be normalized internally</param>
 	/// <returns>DBRecord corresponding to the string ID.</returns>
-	DBRecordCollection GetItem(ArzFile file, RecordId recordId);
+	DBRecordCollection? GetItem(ArzFile file, RecordId recordId);
 
 	/// <summary>
 	/// Gets a database record without adding it to the cache.

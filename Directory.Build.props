@@ -4,6 +4,8 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- .NET analyzers: the "Recommended" rule set, tuned in .editorconfig. -->
+    <AnalysisMode>Recommended</AnalysisMode>
     <Version Condition="'$(IsPackable)' != 'false'">5.0.0.0</Version>
   </PropertyGroup>
 

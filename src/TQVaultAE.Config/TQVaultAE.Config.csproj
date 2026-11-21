@@ -6,7 +6,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" />
 	</ItemGroup>
 
 	<ItemGroup>

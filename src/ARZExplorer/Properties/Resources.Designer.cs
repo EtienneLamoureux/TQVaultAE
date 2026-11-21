@@ -61,123 +61,6 @@ namespace ArzExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extract.
-        /// </summary>
-        internal static string ARZExtractBtnExtract {
-            get {
-                return ResourceManager.GetString("ARZExtractBtnExtract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not exist.  Would you like to create it now?.
-        /// </summary>
-        internal static string ARZExtractCreateFolder {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Create folder?.
-        /// </summary>
-        internal static string ARZExtractCreateFolder2 {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolder2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not exist for IT database.  Would you like to create it now?.
-        /// </summary>
-        internal static string ARZExtractCreateFolderIT {
-            get {
-                return ResourceManager.GetString("ARZExtractCreateFolderIT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select the destination folder for the extracted database records.
-        /// </summary>
-        internal static string ARZExtractDestination {
-            get {
-                return ResourceManager.GetString("ARZExtractDestination", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must specify a folder, not a file!.
-        /// </summary>
-        internal static string ARZExtractFileDest {
-            get {
-                return ResourceManager.GetString("ARZExtractFileDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Currently there is no way to extract all of the game database records at once.  Also there currently exists a bug in the Toolset that destroys array values when you extract records one by one.  Using this tool, you can now extract all records at once and all the records will be extracted correctly..
-        /// </summary>
-        internal static string ARZExtractLabel1 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to After you have extracted the records, just copy the ones you want to use in your mod over to your mod folder..
-        /// </summary>
-        internal static string ARZExtractLabel2 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a destination folder:.
-        /// </summary>
-        internal static string ARZExtractLabel3 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a destination folder for IT Database Files:.
-        /// </summary>
-        internal static string ARZExtractLabel4 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to If not populated the destination folders for the TQ database and the IT database will default to the same folder.  The IT files will overwrite the TQ files when there are conflicts though you can select different folders to avoid overwriting files..
-        /// </summary>
-        internal static string ARZExtractLabel5 {
-            get {
-                return ResourceManager.GetString("ARZExtractLabel5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extract database.arz.
-        /// </summary>
-        internal static string ARZExtractText {
-            get {
-                return ResourceManager.GetString("ARZExtractText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a valid destination folder..
-        /// </summary>
-        internal static string ARZExtractValidDest {
-            get {
-                return ResourceManager.GetString("ARZExtractValidDest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Extraction cancelled..
         /// </summary>
         internal static string ARZProgressCancelledText {
@@ -252,26 +135,6 @@ namespace ArzExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon ClearHistory {
-            get {
-                object obj = ResourceManager.GetObject("ClearHistory", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Database {
-            get {
-                object obj = ResourceManager.GetObject("Database", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string GlobalCancel {
@@ -291,72 +154,12 @@ namespace ArzExplorer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Next {
-            get {
-                object obj = ResourceManager.GetObject("Next", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Pause {
-            get {
-                object obj = ResourceManager.GetObject("Pause", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Play {
             get {
                 object obj = ResourceManager.GetObject("Play", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Prev {
-            get {
-                object obj = ResourceManager.GetObject("Prev", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon SearchAlt {
-            get {
-                object obj = ResourceManager.GetObject("SearchAlt", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon SearchNext {
-            get {
-                object obj = ResourceManager.GetObject("SearchNext", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon SearchPrev {
-            get {
-                object obj = ResourceManager.GetObject("SearchPrev", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
         
