@@ -79,13 +79,52 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
-	public void DynamicRequirements_UseTheTotalAttributeCount()
+	public void TotalAttributeCount_CountsEachGroupOnce_WithoutBaseValuesChancesOrDurations()
+	{
+		var sword = this.SwordWithAttributeCountCost(
+			Float("offensivePhysicalMin", 12f), Float("offensivePhysicalMax", 20f), Float("defensiveProtection", 50f),
+			Float("offensiveGlobalChance", 30f), Str("characterBaseAttackSpeedTag", "CharacterAttackSpeedFast"),
+			Float("offensiveStunMin", 1f), Float("offensiveStunMax", 2f), Float("offensiveStunChance", 10f),
+			Float("offensiveSlowBleedingMin", 5f), Float("offensiveSlowBleedingDurationMin", 3f),
+			Int("characterStrength", 5), Int("strengthRequirement", 0), Int("characterDexterity", 0));
+
+		this.Provider.GetRequirementInfo(sword).Str.Should().Be(3 * 10, "stun, bleeding and strength");
+	}
+
+	[Fact]
+	public void TotalAttributeCount_SumsTheBasePrefixAndSuffix_WithoutTheRelics()
+	{
+		var sword = this.SwordWithAttributeCountCost(Float("offensiveColdMin", 3f));
+		this.AddPrefix(sword, Float("offensiveFireMin", 5f), Float("offensiveFireModifier", 15f));
+		this.CreateRecord("""records\test\suffix.dbr""", "LootRandomizer", Float("characterLife", 40f), Float("defensivePoison", 12f));
+		sword.suffixID = RecordId.Create("""records\test\suffix.dbr""");
+		sword.suffixInfo = this.MockDatabase.Object.GetInfo(sword.suffixID);
+		this.CreateRecord("""records\item\relics\test_relic.dbr""", "ItemRelic", Int("characterStrength", 8));
+		sword.relicID = RecordId.Create("""records\item\relics\test_relic.dbr""");
+		sword.RelicInfo = this.MockDatabase.Object.GetInfo(sword.relicID);
+		this.CreateRecord("""records\test\bonus.dbr""", "LootRandomizer", Float("characterDexterity", 12f));
+		sword.RelicBonusId = RecordId.Create("""records\test\bonus.dbr""");
+		sword.RelicBonusInfo = this.MockDatabase.Object.GetInfo(sword.RelicBonusId);
+
+		this.Provider.GetRequirementInfo(sword).Str.Should().Be((1 + 2 + 2) * 10);
+	}
+
+	[Fact]
+	public void TotalAttributeCount_CountsEachSkillBonusOnce_WhateverItsLevel()
+	{
+		var sword = this.SwordWithAttributeCountCost(
+			Int("augmentSkillLevel1", 3), Str("augmentSkillName1", """records\test\skill.dbr"""),
+			Int("augmentMasteryLevel1", 2), Str("augmentMasteryName1", """records\test\mastery.dbr"""),
+			Int("augmentAllLevel", 1), Int("augmentSkillLevel2", 0));
+
+		this.Provider.GetRequirementInfo(sword).Str.Should().Be(3 * 10);
+	}
+
+	/// <summary>A sword whose strength requirement is ten times its attribute count.</summary>
+	private Item SwordWithAttributeCountCost(params Variable[] attributes)
 	{
 		this.CreateRecord(CostId, "", Str("swordStrengthEquation", "totalAttCount*10"));
-		var sword = this.CreateItem("WeaponMelee_Sword", Int("itemLevel", 10), Str("itemCostName", CostId));
-		sword.attributeCount = 3;
-
-		this.Provider.GetRequirementInfo(sword).Str.Should().Be(30);
+		return this.CreateItem("WeaponMelee_Sword", [Int("itemLevel", 10), Str("itemCostName", CostId), .. attributes]);
 	}
 
 	[Fact]

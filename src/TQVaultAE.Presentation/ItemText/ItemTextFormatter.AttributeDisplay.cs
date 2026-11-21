@@ -56,10 +56,6 @@ public partial class ItemTextFormatter
 		if (USettings.ItemDebugLevel > 1)
 			Log.LogDebug("{RecordId}", record.Id);
 
-		// Added by Village Idiot
-		// To keep track of groups so they are not counted twice
-		List<string> countedGroups = [];
-
 		foreach (Variable variable in record)
 		{
 			if (USettings.ItemDebugLevel > 2)
@@ -88,13 +84,7 @@ public partial class ItemTextFormatter
 				data = new ItemAttributesData(ItemAttributesEffectType.Other, variable.Name, variable.Name, string.Empty, 0);
 			}
 
-			string effectGroup;
-
-			// Changed by VillageIdiot to group DamageQualifiers together.
-			if (data.EffectType == ItemAttributesEffectType.DamageQualifierEffect)
-				effectGroup = string.Concat(data.EffectType.ToString(), ":", "DamageQualifier");
-			else
-				effectGroup = string.Concat(data.EffectType.ToString(), ":", data.Effect);
+			string effectGroup = ItemAttributesData.EffectGroupOf(data, variable.Name);
 
 			// Find or create the attrList for itm effect
 			List<Variable?>? attrList;
@@ -106,52 +96,7 @@ public partial class ItemTextFormatter
 
 			// Add itm guy to the attrList
 			attrList.Add(variable);
-
-			// Added by VillageIdiot
-			// Set number of attributes parameter for level calculation
-			// Filter relics and relic bonuses
-			if (recordId != itm.relic2ID && recordId != itm.RelicBonus2Id && recordId != itm.relicID && recordId != itm.RelicBonusId && !itm.isAttributeCounted)
-			{
-				// Added test to see if itm has already been done
-				if (!countedGroups.Contains(effectGroup))
-				{
-					string normalizedVariableName = variable.Name.ToUpperInvariant();
-					if (!normalizedVariableName.Contains("CHANCE") && !normalizedVariableName.Contains("DURATION"))
-					{
-						// Filter Attribute chance and duration tags
-						// Filter base attributes
-						if (normalizedVariableName != "CHARACTERBASEATTACKSPEEDTAG" &&
-							normalizedVariableName != "OFFENSIVEPHYSICALMIN" &&
-							normalizedVariableName != "OFFENSIVEPHYSICALMAX" &&
-							normalizedVariableName != "DEFENSIVEPROTECTION" &&
-							normalizedVariableName != "DEFENSIVEBLOCK" &&
-							normalizedVariableName != "BLOCKRECOVERYTIME" &&
-							normalizedVariableName != "OFFENSIVEGLOBALCHANCE" &&
-							normalizedVariableName != "RETALIATIONGLOBALCHANCE" &&
-							normalizedVariableName != "OFFENSIVEPIERCERATIOMIN")
-						{
-							// Chance of effects are still messed up.
-							if (normalizedVariableName.StartsWith("AUGMENTSKILLLEVEL", noCase))
-							{
-								// Add value of augment skill level to count instead of incrementing
-								itm.attributeCount += variable.GetInt32(0);
-								countedGroups.Add(effectGroup);
-							}
-							else
-							{
-								++itm.attributeCount;
-								countedGroups.Add(effectGroup);
-							}
-						}
-					}
-				}
-			}
 		}
-
-		// Added by VillageIdiot
-		// Some attributes have been counted so set the flag so we do not count them again
-		if (itm.attributeCount != 0)
-			itm.isAttributeCounted = true;
 
 		// Now we have all our attributes grouped by effect: list them in the game's order for the item's class (a stable
 		// sort keeps the record's order for groups the game ranks alike). A skill's effects (a granted or triggered skill)

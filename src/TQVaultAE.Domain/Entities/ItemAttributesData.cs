@@ -51,4 +51,15 @@ public class ItemAttributesData
 	/// Gets or sets the suborder
 	/// </summary>
 	public int Suborder { get; set; }
+
+	/// <summary>
+	/// The group of an attribute: one per effect (its min, max, chance, duration...), the damage qualifiers together, an
+	/// unknown variable alone. The item text lists one group per line, and the item cost equations count one per group.
+	/// </summary>
+	/// <param name="data">The attribute data, or <c>null</c> for an unknown variable.</param>
+	/// <param name="variableName">The variable name.</param>
+	public static string EffectGroupOf(ItemAttributesData? data, string variableName)
+		=> data is null ? string.Concat(nameof(ItemAttributesEffectType.Other), ":", variableName)
+			: data.EffectType == ItemAttributesEffectType.DamageQualifierEffect ? string.Concat(data.EffectType.ToString(), ":DamageQualifier")
+			: string.Concat(data.EffectType.ToString(), ":", data.Effect);
 }

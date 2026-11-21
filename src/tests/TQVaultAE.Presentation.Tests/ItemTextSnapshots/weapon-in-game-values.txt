@@ -28,13 +28,13 @@ Requirements (4)
   | Required Dexterity: 30
   | Required Intelligence: 30
   | Required Player Level: 20
-  | Required Strength: 46
+  | Required Strength: 58
 RequirementVariables (4)
   | Dexterity = 30
   | Intelligence = 30
   | LevelRequirement = 20
-  | Strength = 46
-RequirementInfo: Lvl=20 Str=46 Dex=30 Int=30
+  | Strength = 58
+RequirementInfo: Lvl=20 Str=58 Dex=30 Int=30
 BaseAttributes (3)
   | {^W}12 ~ 20 Physical Damage
   | {^W}Fast Attack Speed
@@ -149,13 +149,13 @@ Requirements (4)
   | Required Dexterity: 30
   | Required Intelligence: 30
   | Required Player Level: 20
-  | Required Strength: 46
+  | Required Strength: 58
 RequirementVariables (4)
   | Dexterity = 30
   | Intelligence = 30
   | LevelRequirement = 20
-  | Strength = 46
-RequirementInfo: Lvl=20 Str=46 Dex=30 Int=30
+  | Strength = 58
+RequirementInfo: Lvl=20 Str=58 Dex=30 Int=30
 BaseAttributes (11)
   | {^W}12 ~ 20 Physical Damage
   | {^W}Fast Attack Speed
@@ -343,7 +343,7 @@ FullText (20)
   | Required Dexterity: 30
   | Required Intelligence: 30
   | Required Player Level: 20
-  | Required Strength: 46
+  | Required Strength: 58
 AttributesAll (11)
   | 12 ~ 20 Physical Damage
   | Fast Attack Speed

@@ -152,29 +152,29 @@ public class ItemTextFormatterSkillAttributesTests : ItemProviderTextTestBase
 		this.BaseAttributes(item).Should().Equal($"{Legendary}?+2 to skill Onslaught?");
 	}
 
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TotalAttributeCount_DoesNotDependOnTheItemText(bool filterExtra)
+	{
+		this.CreateRecord("""records\game\itemcost.dbr""", "", Str("ringStrengthEquation", "totalAttCount*10"));
+		this.CreateRecord(SkillId, "Skill_AttackWeapon", Str("skillDisplayName", "tagOnslaught"));
+		var item = this.CreateItem("ArmorJewelry_Ring", Int("itemLevel", 10),
+			Int("augmentSkillLevel1", 2), Str("augmentSkillName1", SkillId), Int("characterStrength", 5));
+		var before = this.Provider.GetRequirementInfo(item).Str;
+
+		this.BaseAttributes(item, filterExtra);
+
+		before.Should().Be(2 * 10, "one skill bonus and strength");
+		this.Provider.GetRequirementInfo(item).Str.Should().Be(before);
+	}
+
 	[Fact]
 	public void AugmentSkillLevel_WithoutSkillName_IsShownRaw()
 	{
 		var item = this.CreateItem("ArmorJewelry_Ring", Int("augmentSkillLevel1", 2));
 
 		this.BaseAttributes(item).Should().Equal($"{Legendary}?augmentSkillLevel1?: 2");
-	}
-
-	[Fact]
-	public void AttributeCount_CountsEachGroupOnce_AndSkillLevelsByTheirValue()
-	{
-		// The count feeds the "totalAttCount" of the requirement equations.
-		this.CreateRecord(SkillId, "Skill_AttackWeapon", Str("skillDisplayName", "tagOnslaught"));
-		var item = this.CreateItem("ArmorJewelry_Ring",
-			Int("augmentSkillLevel1", 2), Str("augmentSkillName1", SkillId),
-			Int("characterStrength", 5),
-			Float("offensiveStunMin", 1f), Float("offensiveStunMax", 2f), Float("offensiveStunChance", 10f),
-			Float("offensivePhysicalMin", 3f));
-
-		this.BaseAttributes(item);
-
-		item.attributeCount.Should().Be(2 + 1 + 1, "skill level 2, strength, stun; base physical damage is not counted");
-		item.isAttributeCounted.Should().BeTrue();
 	}
 
 	#endregion

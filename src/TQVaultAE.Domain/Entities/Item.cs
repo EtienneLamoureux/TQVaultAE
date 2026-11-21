@@ -83,16 +83,6 @@ public class Item
 	public Info? suffixInfo;
 
 	/// <summary>
-	/// Used for level calculation
-	/// </summary>
-	public int attributeCount;
-
-	/// <summary>
-	/// Used so that attributes are not counted multiple times
-	/// </summary>
-	public bool isAttributeCounted;
-
-	/// <summary>
 	/// Used for itemScalePercent calculation
 	/// </summary>
 	public float itemScalePercent;

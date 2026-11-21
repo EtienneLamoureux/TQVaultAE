@@ -340,7 +340,7 @@ public partial class ItemProvider
 		var equationVariables = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
 		{
 			[itemLevelTag] = Convert.ToDouble(lvl[0], CultureInfo.InvariantCulture),
-			["totalAttCount"] = itm.attributeCount,
+			["totalAttCount"] = GetTotalAttributeCount(itm),
 		};
 		string itemCostName = itemInfo.GetString("itemCostName");
 
