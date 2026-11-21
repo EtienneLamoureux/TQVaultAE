@@ -1,6 +1,7 @@
 using TQVaultAE.Application.Results;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Application.Character;
 
 namespace TQVaultAE.Application.Contracts.Services;
 
@@ -104,6 +105,12 @@ public interface IStashService
 	SackCollection? GetBagSack(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash);
 
 	/// <summary>
+	/// The caravan sizes the active map's mod sets: those differing from the base game's (<see cref="CaravanSizes.Overrides"/>).
+	/// Read each time, with the active map's data then the base game's.
+	/// </summary>
+	CaravanSizes ModCaravanSizes();
+
+	/// <summary>
 	/// Describes what a stash panel bag shows when it is selected: its sack and the size used to lay it out.
 	/// </summary>
 	/// <param name="bagId">The bag id (see <see cref="BagIdConstants"/>), clamped like <see cref="ClampBagId"/>.</param>
@@ -111,7 +118,9 @@ public interface IStashService
 	/// <param name="transferStash">The transfer stash (caravan).</param>
 	/// <param name="playerStash">The character's stash.</param>
 	/// <param name="relicVaultStash">The relic vault stash.</param>
+	/// <param name="modSizes">The caravan sizes a mod sets (<see cref="ModCaravanSizes"/>); null for none. A stash
+	/// bag is laid out at the largest of that size, the file's and what its items cover.</param>
 	/// <returns>The bag; null for a stash bag whose stash is not loaded. The equipment panel is always described,
 	/// with a null sack when there is no character.</returns>
-	StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash);
+	StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash, CaravanSizes? modSizes = null);
 }

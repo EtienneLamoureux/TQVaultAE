@@ -12,6 +12,13 @@ namespace TQVaultAE.Domain.Actions;
 /// </remarks>
 public static class SackLayout
 {
+	/// <summary>The pixels of a cell in the game's grid sizes (UI records) and item pictures.</summary>
+	public const int CellPixels = 32;
+
+	/// <summary>A grid size the game gives in pixels, in whole cells (a negative side counts as 0).</summary>
+	public static Size CellsOf(double widthPixels, double heightPixels)
+		=> new(Math.Max(0, (int)widthPixels) / CellPixels, Math.Max(0, (int)heightPixels) / CellPixels);
+
 	/// <summary>
 	/// True when an item of a sack lies inside its grid without overlapping another item of the sack.
 	/// </summary>

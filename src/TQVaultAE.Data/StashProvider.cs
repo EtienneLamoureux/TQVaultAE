@@ -8,6 +8,8 @@ using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
 using System.Buffers.Binary;
+using System.Drawing;
+using TQVaultAE.Domain.Actions;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
 
@@ -121,12 +123,16 @@ public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider s
 		writer.Write(sta.name.Length);
 		writer.Write(sta.name);
 
-		TQData.WriteKeyInt(writer, "sackWidth", sta.Width);
-
-		TQData.WriteKeyInt(writer, "sackHeight", sta.Height);
-
 		// SackType should already be set at sta point
 		ArgumentNullException.ThrowIfNull(sta.Sack);
+
+		// The file's own size, grown only to hold an item put beyond it (a grid shown larger with a mod's caravan size):
+		// looking at a shared stash with a mod does not change the size the base game reads.
+		var size = SackLayout.Covering(new Size(sta.Width, sta.Height), [sta.Sack]);
+		TQData.WriteKeyInt(writer, "sackWidth", size.Width);
+
+		TQData.WriteKeyInt(writer, "sackHeight", size.Height);
+
 		SackCollectionProvider.Encode(sta.Sack, writer);
 	});
 

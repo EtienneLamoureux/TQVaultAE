@@ -300,7 +300,8 @@ public sealed class CharacterReadOnlyTests : IDisposable
 		stash.IsReadOnly = true;
 		var service = new StashService(new Mock<ILogger<StashService>>().Object, this._session, Mock.Of<IItemDatabaseService>()
 			, Mock.Of<IStashProvider>(), this._gamePath.Object, Mock.Of<IGameFileService>(), new UserSettings(), new PathIO()
-			, Mock.Of<IGameMapService>(), Mock.Of<ICharacterReadOnlyService>(), Mock.Of<IItemProvider>());
+			, Mock.Of<IGameMapService>(), Mock.Of<ICharacterReadOnlyService>(), Mock.Of<IItemProvider>()
+			, Mock.Of<ICharacterStatsService>());
 
 		service.GetModifiedStashes().Should().BeEmpty();
 

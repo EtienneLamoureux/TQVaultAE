@@ -285,6 +285,36 @@ public partial class CharacterStatsService(IDatabase database, IItemProvider ite
 	private DBRecordCollection? Record(string? id)
 		=> string.IsNullOrEmpty(id) ? null : this._database.GetRecordFromFile(id.ToRecordId());
 
+	/// <summary>The caravan window of the Anniversary Edition's UI records (<c>records_p</c>), which a mod may bring.</summary>
+	private const string PatchCaravanWindow = """records_p\ui\caravan\caravanwindow.dbr""";
+	private const string CaravanWindow = """records\xpack\ui\caravan\caravanwindow.dbr""";
+
+	/// <inheritdoc/>
+	public CaravanSizes ReadCaravanSizes()
+	{
+		var window = this.Record(PatchCaravanWindow) ?? this.Record(CaravanWindow);
+		if (window is null)
+			return CaravanSizes.None;
+
+		static System.Drawing.Size? Positive(System.Drawing.Size? size) => size is { Width: > 0, Height: > 0 } ? size : null;
+
+		// A storage or relic vault window: its width by the largest of its heights (the game's grow with the rows bought).
+		System.Drawing.Size? Grid(string field)
+		{
+			var numbers = Numbers(this.Record(window.GetString(field, 0)));
+			return numbers.First("InventoryWidth") is { } width
+				&& numbers.TryGetValue("InventoryHeightArray", out var heights) && heights.Count > 0
+					? Positive(new((int)width, (int)heights.Max()))
+					: null;
+		}
+
+		// The transfer window: its inventory grid's size in pixels.
+		var transfer = Numbers(this.Record(this.Record(window.GetString("TransferWindow", 0))?.GetString("InventoryDBR", 0)))
+			.PixelGrid("inventoryXSize", "inventoryYSize");
+
+		return new CaravanSizes(Grid("StashWindow"), Grid("RelicVaultWindow"), Positive(transfer));
+	}
+
 	/// <summary>The numeric variables of a record with all their values.</summary>
 	private static Dictionary<string, IReadOnlyList<double>> Numbers(DBRecordCollection? record)
 	{

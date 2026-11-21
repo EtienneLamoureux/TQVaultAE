@@ -435,6 +435,27 @@ public sealed class SaveRoundTripTests : IDisposable
 	}
 
 	[Fact]
+	public void Save_ItemBeyondTheFileSize_GrowsTheSizeWrittenToHoldIt()
+	{
+		// A grid shown larger than its file (a mod's caravan size): the file keeps its size unless an item lies beyond it.
+		var stash = this._fixtures.LoadStash();
+		(int width, int height) = (stash.Width, stash.Height);
+		var path = this._fixtures.TempFile("winsys.dxb");
+		this._fixtures.StashProvider.Save(stash, path);
+		var unchanged = this._fixtures.LoadStash(path);
+		(unchanged.Width, unchanged.Height).Should().Be((width, height));
+
+		var potions = Find(stash.Sack!, "PotionMana_05.dbr");
+		potions.PositionX = width + 3;
+		potions.PositionY = height + 1;
+		var grown = this._fixtures.TempFile("grown.dxb");
+		this._fixtures.StashProvider.Save(stash, grown);
+
+		var reloaded = this._fixtures.LoadStash(grown);
+		(reloaded.Width, reloaded.Height).Should().Be((width + 3 + potions.Width, height + 1 + potions.Height));
+	}
+
+	[Fact]
 	public void Save_Stash_WritesAValidChecksumInBothFiles()
 	{
 		var stash = this._fixtures.LoadStash();

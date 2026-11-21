@@ -70,7 +70,10 @@ For mods that change the space (e.g. [More Space](https://www.nexusmods.com/tita
 - A grid always holds the items its save keeps: items left beyond the mod's size stay reachable.
 - No main inventory (both More Space variants): the bags take its room; items sent to the character go to the bag
   shown.
-- Transfer area, storage area, relic vault: the size saved in the stash file (20 x 20 with More Space).
+- Transfer area, storage area, relic vault: the size the shown character's mod sets (its `caravanwindow.dbr`, when it
+  differs from the base game's: 20 x 20 with More Space XL), else the size saved in the stash file; never less than the
+  file's size nor than its items cover. A shared stash (transfer, relic vault) follows the shown character's data.
+- A stash file keeps its size when saved, grown only to hold an item put beyond it.
 - A grid larger than its usual room scrolls (wheel, <kbd>SHIFT</kbd>+wheel across); the window keeps its size.
 
 ---

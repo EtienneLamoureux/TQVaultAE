@@ -446,7 +446,10 @@ public partial class StashPanel : VaultPanel, IScalingControl
 				this.BagButtons[this.currentBag].IsOn = false;
 				this.BagButtons[bagID].IsOn = true;
 				this.currentBag = bagID;
-				StashBag? bag = this.Services.StashService.GetBag(this.currentBag, this.Player, this.transferStash, this.stash, this.relicVaultStash);
+				// The mod's caravan sizes apply to the shared stashes too, read with the shown character's data.
+				var stashes = this.Services.StashService;
+				StashBag? bag = stashes.GetBag(this.currentBag, this.Player, this.transferStash, this.stash, this.relicVaultStash,
+					stashes.ModCaravanSizes());
 				if (bag is { IsEquipment: true })
 				{
 					this.equipmentPanel.Sack = bag.Sack;

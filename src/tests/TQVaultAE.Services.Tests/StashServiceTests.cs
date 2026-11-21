@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using TQVaultAE.Application.Character;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
@@ -26,6 +27,7 @@ public class StashServiceTests
 	private readonly UserSettings _userSettings;
 	private readonly Mock<IGameMapService> _maps = GameMapMocks.Create();
 	private readonly Mock<IItemProvider> _itemProvider = new();
+	private readonly Mock<ICharacterStatsService> _stats = new();
 	private readonly StashService _stashService;
 
 	/// <summary>
@@ -60,7 +62,8 @@ public class StashServiceTests
 			new PathIO(),
 			_maps.Object,
 			Mock.Of<ICharacterReadOnlyService>(),
-			_itemProvider.Object
+			_itemProvider.Object,
+			_stats.Object
 		);
 
 	/// <summary>
@@ -710,6 +713,30 @@ public class StashServiceTests
 			.Should().Be(new StashBag(BagIdConstants.BAGID_PLAYERSTASH, stash.Sack, 10, 18, 18));
 		this._stashService.GetBag(BagIdConstants.BAGID_RELICVAULTSTASH, null, transfer, stash, relic)
 			.Should().Be(new StashBag(BagIdConstants.BAGID_RELICVAULTSTASH, relic.Sack, 12, 14, 14));
+	}
+
+	[Fact]
+	public void ModCaravanSizes_KeepsTheActiveMapSizesThatDifferFromTheBaseGame()
+	{
+		var baseGame = new CaravanSizes(new System.Drawing.Size(10, 15), new System.Drawing.Size(10, 15), new System.Drawing.Size(10, 15));
+		var active = baseGame with { Transfer = new System.Drawing.Size(20, 20) };
+		_stats.SetupSequence(s => s.ReadCaravanSizes()).Returns(active).Returns(baseGame);
+
+		_stashService.ModCaravanSizes().Should().Be(new CaravanSizes(null, null, new System.Drawing.Size(20, 20)));
+		_maps.Verify(m => m.ReadWithMap(null), Times.Once);
+	}
+
+	[Fact]
+	public void GetBag_ModCaravanSizes_GrowTheBagButNeverShrinkIt()
+	{
+		var transfer = CreateStashWithSack("transfer", 16, 5);
+		var stash = CreateStashWithSack("stash", 10, 18);
+		var mod = new CaravanSizes(Storage: new System.Drawing.Size(20, 12), RelicVault: null, Transfer: new System.Drawing.Size(20, 20));
+
+		this._stashService.GetBag(BagIdConstants.BAGID_TRANSFERSTASH, null, transfer, stash, null, mod)!
+			.Should().Match<StashBag>(b => b.Width == 20 && b.Height == 20);
+		this._stashService.GetBag(BagIdConstants.BAGID_PLAYERSTASH, null, transfer, stash, null, mod)!
+			.Should().Match<StashBag>(b => b.Width == 20 && b.Height == 18 && b.CenteringHeight == 18);
 	}
 
 	[Fact]

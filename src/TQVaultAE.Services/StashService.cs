@@ -6,6 +6,9 @@ using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Config;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Domain.Actions;
+using TQVaultAE.Application.Character;
+using System.Drawing;
 
 namespace TQVaultAE.Services;
 
@@ -20,11 +23,13 @@ public class StashService(
 	IPathIO pathIO,
 	IGameMapService gameMapService,
 	ICharacterReadOnlyService characterReadOnlyService,
-	IItemProvider itemProvider) : IStashService
+	IItemProvider itemProvider,
+	ICharacterStatsService characterStats) : IStashService
 {
 	private readonly IGameMapService GameMapService = gameMapService;
 	private readonly ICharacterReadOnlyService CharacterReadOnly = characterReadOnlyService;
 	private readonly IItemProvider ItemProvider = itemProvider;
+	private readonly ICharacterStatsService CharacterStats = characterStats;
 
 	/// <summary>Reads with a custom map's database (empty for the base game) until disposed.</summary>
 	private IDisposable ReadWithMap(string? mapFolder)
@@ -279,12 +284,30 @@ public class StashService(
 	private const int PlayerStashMinCenteringHeight = 15;
 
 	/// <inheritdoc />
-	public StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash)
+	public CaravanSizes ModCaravanSizes()
 	{
-		static StashBag? BagOf(int id, Stash? stash, int minCenteringHeight = 0)
-			=> stash is null
-				? null
-				: new StashBag(id, stash.Sack, stash.Width, stash.Height, Math.Max(minCenteringHeight, stash.Height));
+		var active = this.CharacterStats.ReadCaravanSizes();
+		CaravanSizes baseGame;
+		using (this.ReadWithMap(null))
+			baseGame = this.CharacterStats.ReadCaravanSizes();
+		return CaravanSizes.Overrides(active, baseGame);
+	}
+
+	/// <inheritdoc />
+	public StashBag? GetBag(int bagId, PlayerCollection? player, Stash? transferStash, Stash? playerStash, Stash? relicVaultStash, CaravanSizes? modSizes = null)
+	{
+		StashBag? BagOf(int id, Stash? stash, int minCenteringHeight = 0)
+		{
+			if (stash is null)
+				return null;
+
+			// The mod's size when larger than the file's, and never less than the items cover.
+			var size = new Size(stash.Width, stash.Height);
+			if (modSizes?.Of(id) is { } mod)
+				size = new(Math.Max(size.Width, mod.Width), Math.Max(size.Height, mod.Height));
+			size = SackLayout.Covering(size, [stash.Sack]);
+			return new StashBag(id, stash.Sack, size.Width, size.Height, Math.Max(minCenteringHeight, size.Height));
+		}
 
 		int id = this.ClampBagId(bagId);
 		return id switch

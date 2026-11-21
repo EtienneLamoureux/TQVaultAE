@@ -50,6 +50,12 @@ public interface ICharacterStatsService
 	GameBalance GetGameBalance();
 
 	/// <summary>
+	/// Reads the caravan grid sizes of the database answering now (<see cref="CaravanSizes"/>): the active map's, or a map
+	/// made to answer with <c>IGameMapService.ReadWithMap</c>. Not kept: read each time.
+	/// </summary>
+	CaravanSizes ReadCaravanSizes();
+
+	/// <summary>
 	/// The gear as the attack damage reads it: each weapon in hand (not shields) on its own, and the other items with the
 	/// item sets, whose flat damage adds to every attack. A shield's flat damage is in neither, as in the game.
 	/// </summary>

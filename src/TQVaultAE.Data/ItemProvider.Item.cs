@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
+using TQVaultAE.Domain.Actions;
 using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Data;
@@ -146,16 +147,12 @@ public partial class ItemProvider
 			Log.LogDebug("Exiting Item.GetDBData ()");
 	}
 	/// <summary>
-	/// Pixels of one inventory cell in the item pictures.
-	/// </summary>
-	private const int CellPixels = 32;
-
-	/// <summary>
-	/// Converts the size of an item picture into cells, rounded like the drawn bitmap; 1 x 1 when the picture is unknown.
+	/// Converts the size of an item picture into cells (<see cref="SackLayout.CellPixels"/>), rounded like the drawn
+	/// bitmap; 1 x 1 when the picture is unknown.
 	/// </summary>
 	internal static (int Width, int Height) CellSize((int Width, int Height)? pixels)
 		=> pixels is { } px
-			? (Math.Max(1, (int)Math.Round(px.Width / (double)CellPixels)), Math.Max(1, (int)Math.Round(px.Height / (double)CellPixels)))
+			? (Math.Max(1, (int)Math.Round(px.Width / (double)SackLayout.CellPixels)), Math.Max(1, (int)Math.Round(px.Height / (double)SackLayout.CellPixels)))
 			: (1, 1);
 
 	/// <summary>
