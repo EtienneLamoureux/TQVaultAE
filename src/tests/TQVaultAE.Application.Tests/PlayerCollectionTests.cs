@@ -274,7 +274,7 @@ public class PlayerCollectionTests
 	{
 		// Arrange
 		var playerCollection = new PlayerCollection("TestPlayer", "test_player.chr");
-		playerCollection.PlayerInfo = new PlayerInfo(new PathIO()) { Modified = true };
+		playerCollection.PlayerInfo = new PlayerInfo() { Modified = true };
 
 		// Act
 		var result = playerCollection.IsModified;

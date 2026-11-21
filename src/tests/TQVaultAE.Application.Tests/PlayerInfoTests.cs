@@ -1,26 +1,16 @@
 using AwesomeAssertions;
-using Moq;
-using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Application;
 
 public class PlayerInfoTests
 {
-	private readonly Mock<IPathIO> _mockPathIO;
-	private readonly PlayerInfo _playerInfo;
+	private const string Healer = """Records\Skills\ModMasteries\HealerMastery.dbr""";
+	private const string Witch = """Records\Skills\ModMasteries\WitchMastery.dbr""";
 
-	public PlayerInfoTests()
-	{
-		_mockPathIO = new Mock<IPathIO>();
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns<string>(s => s.Contains(Path.DirectorySeparatorChar.ToString()) 
-				? s[..s.LastIndexOf(Path.DirectorySeparatorChar)] 
-				: string.Empty);
-
-		_playerInfo = new PlayerInfo(_mockPathIO.Object);
-	}
+	private readonly PlayerInfo _playerInfo = new() { MasteryTrees = TestMasteries.BaseGame };
 
 	#region Class
 
@@ -38,23 +28,28 @@ public class PlayerInfoTests
 	}
 
 	[Fact]
-	public void ClassTagWith_ClearedOnAModdedCharacter_TheOneThePaneMasteriesMake()
+	public void ClassTag_ClearedOnAModdedCharacter_TheOneItsMasteryTreesMake()
 	{
-		// A mod's masteries have their own records: only the map's skill panes tell which masteries they are.
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\ModMasteries\HealerMastery.dbr""", skillLevel = 32 });
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\ModMasteries\WitchMastery.dbr""", skillLevel = 32 });
+		// A mod's masteries have their own records: the character's trees, read with its map, tell them.
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = Healer, skillLevel = 32 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = Witch, skillLevel = 32 });
 		_playerInfo.Class = string.Empty;
-		_playerInfo.ClassTag.Should().BeEmpty("the base game's records name no mastery");
+		_playerInfo.ClassTag.Should().BeEmpty("the base game's trees know no such mastery");
 
-		_playerInfo.ClassTagWith([Masteries.Spirit, Masteries.Nature]).Should().Be("tagCClass36");
-		_playerInfo.ClassTagWith([]).Should().BeEmpty("no pane: the masteries of the records, none here");
+		_playerInfo.MasteryTrees = [TestMasteries.ModTree(Masteries.Spirit, Witch), TestMasteries.ModTree(Masteries.Nature, Healer)];
+
+		_playerInfo.ActiveMasteries.Should().Be(Masteries.Spirit | Masteries.Nature);
+		_playerInfo.ClassTag.Should().Be("tagCClass36");
 	}
 
 	[Fact]
-	public void ClassTagWith_ClassInTheSave_TheSaves()
+	public void ClassTag_NoMasteryTrees_TheSaves()
 	{
-		_playerInfo.Class = "tagCClass01";
-		_playerInfo.ClassTagWith([Masteries.Spirit, Masteries.Nature]).Should().Be("tagCClass01");
+		var info = new PlayerInfo { Class = "tagCClass01" };
+		info.SkillRecordList.Add(new SkillRecord { skillName = TestMasteries.BaseGameRecords[Masteries.Warfare], skillLevel = 40 });
+
+		info.ActiveMasteries.Should().BeNull("no game data read: no mastery known");
+		info.ClassTag.Should().Be("tagCClass01");
 	}
 
 	#endregion
@@ -351,87 +346,48 @@ public class PlayerInfoTests
 	}
 
 	[Fact]
-	public void ResetMasteries_WithActiveMasteries_ReturnsTrue()
+	public void ResetMasteries_WithActiveMasteries_ReturnsTrueAndMarksPlayerAsModified()
 	{
-		// Arrange - Use actual mastery skill names
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 5 });
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns("""RECORDS\SKILLS\DEFENSIVE""");
-
-		// Act
-		var result = _playerInfo.ResetMasteries();
-
-		// Assert
-		result.Should().BeTrue();
-	}
-
-	[Fact]
-	public void ResetMasteries_WithActiveMasteries_MarksPlayerAsModified()
-	{
-		// Arrange
 		_playerInfo.Modified = false;
 		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 5 });
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns("""RECORDS\SKILLS\DEFENSIVE""");
 
-		// Act
-		_playerInfo.ResetMasteries();
+		_playerInfo.ResetMasteries().Should().BeTrue();
 
-		// Assert
 		_playerInfo.Modified.Should().BeTrue();
+		_playerInfo.SkillRecordList.Should().BeEmpty();
 	}
 
 	[Fact]
-	public void ResetMasteries_RemovesSkillsFromSameBaseRecord()
+	public void ResetMasteries_RemovesTheMasteriesAndTheSkillsOfTheirPanes_WhereverTheirRecordsAre()
 	{
-		// Arrange - This test verifies that ResetMasteries removes skills that start with the same base directory
-		// We need to ensure Masteries.Storm is detected, which requires the skill name to match the enum description
-		// The enum description for Storm is: "Records\Skills\Storm\StormMastery.dbr"
-		var masterySkill = """Records\Skills\Storm\StormMastery.dbr""";
-		var skill1 = new SkillRecord { skillName = masterySkill, skillLevel = 3 };
-		var skill2 = new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 5 };
-		var skill3 = new SkillRecord { skillName = """Records\Skills\Earth\EarthMastery.dbr""", skillLevel = 2 };
+		// Atlantis put skills of the first masteries in its own folder: the pane tells they belong to the mastery.
+		const string iceShard = """Records\Skills\Storm\IceShard.dbr""";
+		const string atlantisSkill = """records\xpack3\skills\allmasteries\storm_flash.dbr""";
+		const string questSkill = """Records\Quests\Rewards\QuestSkill.dbr""";
+		_playerInfo.MasteryTrees = [TestMasteries.Tree(Masteries.Storm, iceShard, atlantisSkill), TestMasteries.Tree(Masteries.Earth)];
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = TestMasteries.BaseGameRecords[Masteries.Storm], skillLevel = 3 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = iceShard, skillLevel = 5 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = atlantisSkill, skillLevel = 2 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = questSkill, skillLevel = 1 });
 
-		_playerInfo.SkillRecordList.Add(skill1);
-		_playerInfo.SkillRecordList.Add(skill2);
-		_playerInfo.SkillRecordList.Add(skill3);
-
-		// Mock returns base directory for any path
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.Is<string>(s => s.Contains("STORM"))))
-			.Returns("""RECORDS\SKILLS\STORM""");
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.Is<string>(s => s.Contains("EARTH"))))
-			.Returns("""RECORDS\SKILLS\EARTH""");
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.Is<string>(s => !s.Contains("STORM") && !s.Contains("EARTH"))))
-			.Returns(string.Empty);
-
-		// Act
 		_playerInfo.ResetMasteries();
 
-		// Assert - The behavior depends on whether Storm mastery was detected
-		// If Storm mastery was detected, Storm skills should be removed
-		// If not, all skills should remain
-		// We verify the method executes without throwing
-		_playerInfo.SkillRecordList.Should().HaveCountGreaterThanOrEqualTo(0);
+		_playerInfo.SkillRecordList.Should().ContainSingle().Which.skillName.Should().Be(questSkill);
+		_playerInfo.ReleasedSkillPoints.Should().Be(3 + 5 + 2);
 	}
 
 	[Fact]
-	public void ResetMasteries_TracksRemovedSkills()
+	public void ResetMasteries_ModMasteryWithItsOwnRecords_RemovesItsSkills()
 	{
-		// Arrange
-		var skill1 = new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 3 };
-		var skill2 = new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 5 };
+		const string heal = """Records\Skills\ModMasteries\Heal.dbr""";
+		_playerInfo.MasteryTrees = [TestMasteries.ModTree(Masteries.Nature, Healer, heal), TestMasteries.ModTree(Masteries.Spirit, Witch)];
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = Healer, skillLevel = 4 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = heal, skillLevel = 6 });
 
-		_playerInfo.SkillRecordList.Add(skill1);
-		_playerInfo.SkillRecordList.Add(skill2);
+		_playerInfo.ResetMasteries().Should().BeTrue();
 
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns("""RECORDS\SKILLS\STORM""");
-
-		// Act
-		_playerInfo.ResetMasteries();
-
-		// Assert - 2 skills removed with levels 3 and 5
-		_playerInfo.ReleasedSkillPoints.Should().Be(8);
+		_playerInfo.SkillRecordList.Should().BeEmpty();
+		_playerInfo.ReleasedSkillPoints.Should().Be(10);
 	}
 
 	#endregion
@@ -451,91 +407,33 @@ public class PlayerInfoTests
 		result.Should().Be(0);
 	}
 
-	[Fact]
-	public void ReleasedSkillPoints_WithRemovedSkills_ReturnsSumOfLevels()
-	{
-		// Arrange - Add some removed skills first (need to go through ResetMasteries)
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 5 });
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Storm\StormSkill1.dbr""", skillLevel = 3 });
-
-		_mockPathIO.Setup(p => p.GetDirectoryName(It.IsAny<string>()))
-			.Returns("""RECORDS\SKILLS\STORM""");
-
-		// Act
-		_playerInfo.ResetMasteries();
-
-		// Assert
-		_playerInfo.ReleasedSkillPoints.Should().Be(8);
-	}
-
 	#endregion
 
 	#region Mastery Detection Tests
 
 	[Fact]
-	public void MasteryDefensiveEnabled_WhenDefensiveSkillExists_ReturnsTrue()
-	{
-		// Arrange - Use actual defensive mastery path from Masteries enum description
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 1 });
-
-		// Act
-		var result = _playerInfo.MasteryDefensiveEnabled;
-
-		// Assert
-		result.Should().BeTrue();
-	}
-
-	[Fact]
-	public void MasteryDefensiveEnabled_WhenNoDefensiveSkill_ReturnsFalse()
-	{
-		// Arrange
-		_playerInfo.SkillRecordList.Clear();
-
-		// Act
-		var result = _playerInfo.MasteryDefensiveEnabled;
-
-		// Assert
-		result.Should().BeFalse();
-	}
-
-	[Fact]
 	public void ActiveMasteries_WhenMultipleMasteriesEnabled_ReturnsCombinedValue()
 	{
-		// Arrange - Use actual mastery paths
 		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 1 });
 		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Storm\StormMastery.dbr""", skillLevel = 1 });
 
-		// Act
-		var result = _playerInfo.ActiveMasteries;
-
-		// Assert
-		result.Should().Be(Masteries.Defensive | Masteries.Storm);
+		_playerInfo.ActiveMasteries.Should().Be(Masteries.Defensive | Masteries.Storm);
 	}
 
 	[Fact]
 	public void ActiveMasteries_WhenNoMasteriesEnabled_ReturnsNull()
 	{
-		// Arrange
 		_playerInfo.SkillRecordList.Clear();
 
-		// Act
-		var result = _playerInfo.ActiveMasteries;
-
-		// Assert
-		result.Should().BeNull();
+		_playerInfo.ActiveMasteries.Should().BeNull();
 	}
 
 	[Fact]
-	public void ActiveMasteriesRecordNames_ReturnsArrayOfMasteryNames()
+	public void ActiveMasteryTrees_TheTreesWhoseMasteryIsInTheSkills_AnyCasing()
 	{
-		// Arrange - Use actual defensive mastery path
-		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """Records\Skills\Defensive\DefensiveMastery.dbr""", skillLevel = 1 });
+		_playerInfo.SkillRecordList.Add(new SkillRecord { skillName = """RECORDS\SKILLS\DEFENSIVE\DEFENSIVEMASTERY.DBR""", skillLevel = 1 });
 
-		// Act
-		var result = _playerInfo.ActiveMasteriesRecordNames;
-
-		// Assert
-		result.Should().ContainSingle().Which.Should().Be("""Records\Skills\Defensive\DefensiveMastery.dbr""");
+		_playerInfo.ActiveMasteryTrees.Should().ContainSingle().Which.Mastery.Should().Be(Masteries.Defensive);
 	}
 
 	#endregion
@@ -546,7 +444,7 @@ public class PlayerInfoTests
 	public void MasteriesAllowed_InitialValue_SetsOldValueToNull()
 	{
 		// Arrange & Act - Create fresh PlayerInfo
-		var freshPlayer = new PlayerInfo(_mockPathIO.Object);
+		var freshPlayer = new PlayerInfo();
 
 		// Assert - OldValue should be null initially (has private set)
 		// We can't directly access OldValue, but we can test behavior via MustResetMasteries
@@ -561,7 +459,7 @@ public class PlayerInfoTests
 	public void MasteriesAllowed_OldValueNotOverwritten_AfterFirstSet()
 	{
 		// Arrange - Create fresh PlayerInfo
-		var freshPlayer = new PlayerInfo(_mockPathIO.Object);
+		var freshPlayer = new PlayerInfo();
 
 		// Act - Set to 5, then 3, then 4
 		freshPlayer.MasteriesAllowed = 5;

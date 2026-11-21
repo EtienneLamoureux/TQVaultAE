@@ -150,7 +150,7 @@ public class PlayerServiceTests
 		// The mod renames the class and puts its own mastery in a pane: both read while the character's map answers,
 		// whatever map is active.
 		var save = CreatePlayerSave("/Test/_HeroA", isIT: true, isCustom: true);
-		var info = new PlayerInfo(this._mockPathIO.Object) { Class = "tagClassA" };
+		var info = new PlayerInfo() { Class = "tagClassA" };
 		save.Info = info;
 		bool inScope = false;
 		var scope = new Mock<IDisposable>();
@@ -177,14 +177,16 @@ public class PlayerServiceTests
 	{
 		// A class set gave the character a mod's masteries (own records) and cleared the save's class: its trees tell it.
 		var save = CreatePlayerSave("/Test/_HeroA", isIT: true, isCustom: true);
-		var info = new PlayerInfo(this._mockPathIO.Object) { Class = string.Empty };
-		save.Info = info;
-		this._mockGameMapService.Setup(x => x.ReadWith(save)).Returns(Mock.Of<IDisposable>());
-		this._mockCharacterEdit.Setup(x => x.GetMasteries(info)).Returns(
+		MasteryTree[] trees =
 		[
 			new MasteryTree(Masteries.Spirit, """records\skills\modmasteries\witchmastery.dbr""".ToRecordId(), "tagWitch", "", "", 40, []),
 			new MasteryTree(Masteries.Nature, """records\skills\modmasteries\healermastery.dbr""".ToRecordId(), "tagHealer", "", "", 40, []),
-		]);
+		];
+		var info = new PlayerInfo { Class = string.Empty, MasteryTrees = trees };
+		info.SkillRecordList.AddRange(trees.Select(t => new SkillRecord { skillName = t.Id.Raw, skillLevel = 32 }));
+		save.Info = info;
+		this._mockGameMapService.Setup(x => x.ReadWith(save)).Returns(Mock.Of<IDisposable>());
+		this._mockCharacterEdit.Setup(x => x.GetMasteries(info)).Returns(trees);
 		this._mockTranslationService.Setup(x => x.TranslateXTag("tagCClass36", true, true, false)).Returns("Mod Class");
 
 		var labels = this._playerService.DescribeCharacter(save);
@@ -290,7 +292,7 @@ public class PlayerServiceTests
 		var playerSave = CreatePlayerSave("/Test/Players/_TestPlayer", isIT: true);
 		_mockTranslationService.Setup(x => x.TranslateXTag("tagCClass01", true, true)).Returns("Woundmender");
 		_mockPlayerCollectionProvider.Setup(x => x.LoadFile(It.IsAny<PlayerCollection>(), null))
-			.Callback<PlayerCollection, string>((pc, path) => pc.PlayerInfo = new PlayerInfo(_mockPathIO.Object) { Class = "tagCClass01", CurrentLevel = 56 });
+			.Callback<PlayerCollection, string>((pc, path) => pc.PlayerInfo = new PlayerInfo() { Class = "tagCClass01", CurrentLevel = 56 });
 
 		// Act - then another map's text is active
 		_playerService.LoadPlayer(playerSave);
@@ -938,7 +940,7 @@ public class PlayerServiceTests
 		=> new("test", "test.chr")
 		{
 			IsImmortalThrone = immortalThrone,
-			PlayerInfo = new PlayerInfo(new Mock<IPathIO>().Object) { CurrentLevel = level, BaseStrength = strength },
+			PlayerInfo = new PlayerInfo() { CurrentLevel = level, BaseStrength = strength },
 		};
 
 	private void SetupRequirements(Item item, int level)

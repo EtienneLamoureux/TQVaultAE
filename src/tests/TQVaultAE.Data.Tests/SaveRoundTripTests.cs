@@ -234,7 +234,7 @@ public sealed class SaveRoundTripTests : IDisposable
 	{
 		var pc = this._fixtures.LoadPlayer();
 		var info = pc.PlayerInfo!;
-		var changed = new PlayerInfo(new TQVaultAE.Services.PathIO())
+		var changed = new PlayerInfo()
 		{
 			CurrentLevel = info.CurrentLevel + 1,
 			MasteriesAllowed = info.MasteriesAllowed,
@@ -271,7 +271,7 @@ public sealed class SaveRoundTripTests : IDisposable
 		var pc = this._fixtures.LoadPlayer();
 		var info = pc.PlayerInfo!;
 		var kept = info.SkillRecordList.Take(5).ToList();
-		var changed = new PlayerInfo(new TQVaultAE.Services.PathIO())
+		var changed = new PlayerInfo()
 		{
 			CurrentLevel = info.CurrentLevel,
 			MasteriesAllowed = info.MasteriesAllowed,
@@ -341,7 +341,7 @@ public sealed class SaveRoundTripTests : IDisposable
 	{
 		var pc = this._fixtures.LoadPlayer();
 		var info = pc.PlayerInfo!;
-		var changed = new PlayerInfo(new TQVaultAE.Services.PathIO())
+		var changed = new PlayerInfo()
 		{
 			CurrentLevel = info.CurrentLevel,
 			MasteriesAllowed = info.MasteriesAllowed,

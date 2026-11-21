@@ -64,7 +64,7 @@ public sealed class SaveEncodingBaselineTests : IDisposable
 	{
 		var pc = this._fixtures.LoadPlayer();
 		var info = pc.PlayerInfo!;
-		var changed = new PlayerInfo(new TQVaultAE.Services.PathIO())
+		var changed = new PlayerInfo()
 		{
 			CurrentLevel = info.CurrentLevel,
 			MasteriesAllowed = info.MasteriesAllowed,

@@ -20,6 +20,7 @@
 	<ItemGroup>
 		<!-- Records read from a mod's database or the base game's, shared by the test projects. -->
 		<Compile Include="..\Shared\TestRecords.cs" Link="Fixtures\TestRecords.cs" />
+		<Compile Include="..\Shared\TestMasteries.cs" Link="Fixtures\TestMasteries.cs" />
 	</ItemGroup>
 
 </Project>

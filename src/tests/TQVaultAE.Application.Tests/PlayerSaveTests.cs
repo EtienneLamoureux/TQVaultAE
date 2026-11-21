@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using Moq;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.Session;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Application;
 
@@ -71,7 +72,7 @@ public class PlayerSaveTests
 		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
 		_translationServiceMock.Setup(t => t.TranslateXTag("x4tagNeidanWarfare", true, true)).Returns("Daoist");
 		_translationServiceMock.Setup(t => t.TranslateXTag("tagMenuImport05", false, false, false)).Returns("Level");
-		var info = new PlayerInfo(_pathIOMock.Object) { Class = string.Empty, CurrentLevel = 84 };
+		var info = new PlayerInfo() { Class = string.Empty, CurrentLevel = 84, MasteryTrees = TestMasteries.BaseGame };
 		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Skills\Warfare\WarfareMastery.dbr""", skillLevel = 40 });
 		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Xpack4\Skills\Neidan\NeidanMastery.dbr""", skillLevel = 40 });
 
@@ -83,10 +84,10 @@ public class PlayerSaveTests
 	[Fact]
 	public void ToString_ModMasteriesWithAClearedClass_TheClassItsDescriptionFound()
 	{
-		// A mod's masteries: the base game's records name none, the character's own map gave the class (ClassLabel).
+		// A mod's masteries, no tree known: the character's own map gave the class (ClassLabel).
 		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
 		_translationServiceMock.Setup(t => t.TranslateXTag("tagMenuImport05", false, false, false)).Returns("Level");
-		var info = new PlayerInfo(_pathIOMock.Object) { Class = string.Empty, CurrentLevel = 84 };
+		var info = new PlayerInfo() { Class = string.Empty, CurrentLevel = 84 };
 		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Skills\ModMasteries\HealerMastery.dbr""", skillLevel = 32 });
 
 		var playerSave = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object) { Info = info };

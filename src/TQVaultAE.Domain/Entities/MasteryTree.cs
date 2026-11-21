@@ -25,6 +25,11 @@ public sealed record MasteryTree(
 	/// <summary>Tells whether a skill record is this mastery or one of its skills.</summary>
 	public bool Contains(RecordId skillId)
 		=> this.Id == skillId || this.Skills.Any(s => s.Id == skillId);
+
+	/// <summary>The masteries the game database describes, in slot order.</summary>
+	/// <param name="getTree">Gives the tree of a mastery slot, or <see langword="null"/> when the database has none.</param>
+	public static IReadOnlyList<MasteryTree> AllOf(Func<Masteries, MasteryTree?> getTree)
+		=> [.. Enum.GetValues<Masteries>().Select(getTree).OfType<MasteryTree>()];
 }
 
 /// <summary>

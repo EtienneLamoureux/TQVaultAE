@@ -48,9 +48,7 @@ public sealed class CharacterSkillEditor
 		}
 
 		// The masteries in the order of the save, which is the order they were chosen.
-		var chosen = Enum.GetValues<Masteries>()
-			.Select(m => getTree(m))
-			.OfType<MasteryTree>()
+		var chosen = MasteryTree.AllOf(getTree)
 			.Where(t => savedLevels.ContainsKey(t.Id))
 			.OrderBy(t => savedOrder[t.Id])
 			.ToList();
@@ -78,7 +76,7 @@ public sealed class CharacterSkillEditor
 
 	/// <summary>The masteries the game database describes, to choose from.</summary>
 	public IReadOnlyList<MasteryTree> KnownMasteries
-		=> Enum.GetValues<Masteries>().Select(this._getTree).OfType<MasteryTree>().ToList();
+		=> MasteryTree.AllOf(this._getTree);
 
 	/// <summary>True when the set of masteries changed, which changes the class of the character.</summary>
 	public bool MasteriesChanged

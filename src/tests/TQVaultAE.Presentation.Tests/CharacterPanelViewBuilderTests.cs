@@ -7,6 +7,7 @@ using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
 using TQVaultAE.Presentation;
 using TQVaultAE.Services;
+using TQVaultAE.Tests.Shared;
 
 namespace TQVaultAE.Tests.Presentation;
 
@@ -38,7 +39,7 @@ public class CharacterPanelViewBuilderTests
 	private static CharacterPanelInput Input(int level = 30, long xp = 1000, int points = 0, bool editable = true, bool canUndo = false, bool classCleared = false,
 		IReadOnlyList<MasteryTree>? trees = null)
 	{
-		var info = new PlayerInfo(new PathIO()) { CurrentLevel = 12, Class = "tagCClassName001" };
+		var info = new PlayerInfo() { CurrentLevel = 12, Class = "tagCClassName001" };
 		return new CharacterPanelInput
 		{
 			Player = new PlayerCollection("Hero", @"C:\saves\_Hero\Player.chr") { PlayerInfo = info },
@@ -113,11 +114,17 @@ public class CharacterPanelViewBuilderTests
 	[Fact]
 	public void Build_ModMasteriesWhoseClassASaveCleared_ShowsTheClassTheirTreesMake()
 	{
-		// A class set gave a mod's masteries (own records, unknown to the base game's) and cleared the save's class.
+		// A class set gave a mod's masteries (own records, read with the character's map) and cleared the save's class.
 		this._translation.Setup(t => t.TranslateXTag("tagCClass36", true, true)).Returns("Mod Class");
-		MasteryTree Tree(Masteries mastery) => new(mastery, """records\skills\modmasteries\mastery.dbr""".ToRecordId(), "", "", "", 40, []);
-		var input = Input(trees: [Tree(Masteries.Spirit), Tree(Masteries.Nature)]);
+		MasteryTree[] trees =
+		[
+			TestMasteries.ModTree(Masteries.Spirit, """records\skills\modmasteries\witchmastery.dbr"""),
+			TestMasteries.ModTree(Masteries.Nature, """records\skills\modmasteries\healermastery.dbr"""),
+		];
+		var input = Input(trees: trees);
 		input.Info.Class = string.Empty;
+		input.Info.MasteryTrees = trees;
+		input.Info.SkillRecordList.AddRange(trees.Select(t => new SkillRecord { skillName = t.Id.Raw, skillLevel = 32 }));
 
 		this._builder.Build(input).ClassName.Should().Be("Mod Class");
 	}
@@ -126,7 +133,7 @@ public class CharacterPanelViewBuilderTests
 	public void FromSave_TakesTheSavedValues_InTheGameOrder()
 	{
 		// Arrange
-		var info = new PlayerInfo(new PathIO())
+		var info = new PlayerInfo()
 		{
 			BaseHealth = 500, BaseMana = 400, BaseStrength = 100, BaseIntelligence = 60, BaseDexterity = 80,
 			CurrentLevel = 42, CurrentXP = 12345, AttributesPoints = 2, DifficultyUnlocked = 3,
@@ -211,7 +218,7 @@ public class CharacterPanelViewBuilderTests
 
 	private static CharacterPanelInput SavedHero(SackCollection sack, IReadOnlyList<Item> worn)
 	{
-		var info = new PlayerInfo(new PathIO()) { BaseHealth = 300, BaseMana = 300, BaseStrength = 50, BaseIntelligence = 60, BaseDexterity = 70 };
+		var info = new PlayerInfo() { BaseHealth = 300, BaseMana = 300, BaseStrength = 50, BaseIntelligence = 60, BaseDexterity = 70 };
 		var player = new PlayerCollection("HeroA", @"C:\saves\_HeroA\Player.chr") { PlayerInfo = info, EquipmentSack = sack };
 		return CharacterPanelInput.FromSave(player, info, worn, [], []);
 	}
@@ -522,7 +529,7 @@ public class CharacterPanelViewBuilderTests
 	[Fact]
 	public void FromSave_WeaponSetChosen_IsCounted()
 	{
-		var info = new PlayerInfo(new PathIO());
+		var info = new PlayerInfo();
 		var player = new PlayerCollection("HeroA", @"C:\saves\_HeroA\Player.chr") { PlayerInfo = info, UseAlternate = false };
 
 		CharacterPanelInput.FromSave(player, info, [], [], []).CountsAlternateWeapons.Should().BeFalse();

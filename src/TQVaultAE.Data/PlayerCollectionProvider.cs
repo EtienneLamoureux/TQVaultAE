@@ -18,14 +18,14 @@ namespace TQVaultAE.Data;
 /// <summary>
 /// Loads, decodes, encodes and saves a Titan Quest player file.
 /// </summary>
-public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, ITQDataService tQData, IFileIO fileIO, IPathIO pathIO) : IPlayerCollectionProvider
+public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IItemProvider itemProvider, ISackCollectionProvider sackCollectionProvider, ITQDataService tQData, IFileIO fileIO, ISkillTreeProvider skillTreeProvider) : IPlayerCollectionProvider
 {
 	private readonly ILogger Log = log;
 	private readonly IItemProvider ItemProvider = itemProvider;
 	private readonly ISackCollectionProvider SackCollectionProvider = sackCollectionProvider;
 	private readonly ITQDataService TQData = tQData;
 	private readonly IFileIO FileIO = fileIO;
-	private readonly IPathIO PathIO = pathIO;
+	private readonly ISkillTreeProvider SkillTreeProvider = skillTreeProvider;
 
 	/// <summary>
 	/// array holding the byte pattern for the beginning of a block in the player file.
@@ -474,8 +474,12 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 	/// </summary>
 	public PlayerInfo ReadPlayerInfo(PlayerCollection pc)
 	{
-		var pi = new PlayerInfo(this.PathIO);
-		pi.Modified = false;
+		var pi = new PlayerInfo
+		{
+			Modified = false,
+			// Read with the character's own map, like its items: a mod's masteries have their own records.
+			MasteryTrees = MasteryTree.AllOf(this.SkillTreeProvider.GetMasteryTree),
+		};
 
 		ArgumentNullException.ThrowIfNull(pc.rawData);
 		var headerVersion = TQData.ReadIntAfter(pc.rawData, "headerVersion");

@@ -26,5 +26,5 @@ public sealed class PlayerTextureTests : IDisposable
 	[InlineData("""Creatures\pc\male\malepc01_white.tex""", false)]
 	[InlineData("", false)]
 	public void IsFemale_FollowsTheTextureFolder(string texture, bool expected)
-		=> new PlayerInfo(Mock.Of<IPathIO>()) { PlayerTexture = texture }.IsFemale.Should().Be(expected);
+		=> new PlayerInfo() { PlayerTexture = texture }.IsFemale.Should().Be(expected);
 }

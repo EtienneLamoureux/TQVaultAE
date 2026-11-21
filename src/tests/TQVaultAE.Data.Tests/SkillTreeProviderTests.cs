@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using Moq;
 using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Helpers;
@@ -259,4 +260,55 @@ public class SkillTreeProviderTests
 			("bitmapPositionsX", 718), ("bitmapPositionsY", 31));
 		this.Add("""records\ui\bar.dbr""", ("bitmapFullName", """InGameUI\Skills\StormSkillBar01.tex"""), ("bitmapPositionX", 47), ("bitmapPositionY", 26));
 	}
+
+	/// <summary>A pane of a mastery slot (<paramref name="index"/>, 1 to 8) whose mastery button shows <paramref name="masteryRecord"/>.</summary>
+	private void AddMasteryPane(int index, string masteryRecord)
+	{
+		var button = $"""records\ui\mastery{index}button.dbr""";
+		this.Add($"""records\xpack3\ui\skills\mastery {index}\panectrl.dbr""", ("tabSkillButtons", new[] { button }));
+		this.Add(button, ("skillName", masteryRecord), ("bitmapPositionX", 29), ("bitmapPositionY", 459));
+		this.Add(masteryRecord, ("Class", "Skill_Mastery"), ("skillMaxLevel", 40));
+	}
+
+	/// <summary>Loads the test character (Warfare 40) with the panes added, as <c>PlayerService</c> reads it.</summary>
+	private PlayerInfo LoadTestCharacter(string? dataScope = null)
+	{
+		using var fixtures = new SaveFixtures();
+		fixtures.Database.Setup(d => d.DataScope).Returns(dataScope ?? string.Empty);
+		fixtures.Database.Setup(d => d.GetRecordFromFile(It.IsAny<RecordId>()))
+			.Returns((RecordId id) => this._records.GetValueOrDefault(id));
+		return fixtures.LoadPlayer().PlayerInfo!;
+	}
+
+	[Fact]
+	public void ReadPlayerInfo_BaseGame_TheMasteriesOfThePanes()
+	{
+		this.AddMasteryPane(1, """Records\Skills\Warfare\WarfareMastery.dbr""");
+		this.AddMasteryPane(4, Mastery);
+
+		var info = this.LoadTestCharacter();
+
+		info.MasteryTrees.Select(t => t.Mastery).Should().Equal(Masteries.Storm, Masteries.Warfare);
+		info.ActiveMasteries.Should().Be(Masteries.Warfare);
+		info.Class = string.Empty;
+		info.ClassTag.Should().Be(CharacterClasses.TagOf(Masteries.Warfare));
+	}
+
+	[Fact]
+	public void ReadPlayerInfo_ModMasteryRecordInAnotherSlot_TheSlotItsPaneGives()
+	{
+		// The mod shows the record in its Spirit pane and its own mastery in the Warfare pane: the slot comes from the
+		// mod's panes, not from where the base game keeps the record.
+		this.AddMasteryPane(1, """records\testmod\skills\gladiator\gladiatormastery.dbr""");
+		this.AddMasteryPane(7, """Records\Skills\Warfare\WarfareMastery.dbr""");
+
+		var info = this.LoadTestCharacter("""C:\mods\TestMod""");
+
+		info.ActiveMasteries.Should().Be(Masteries.Spirit);
+		info.ActiveMasteryTrees.Should().ContainSingle().Which.Id.Raw.Should().Be("""Records\Skills\Warfare\WarfareMastery.dbr""");
+	}
+
+	[Fact]
+	public void ReadPlayerInfo_NoPane_NoMastery()
+		=> this.LoadTestCharacter().ActiveMasteries.Should().BeNull();
 }

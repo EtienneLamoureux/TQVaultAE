@@ -60,7 +60,7 @@ internal sealed class SaveFixtures : IDisposable
 			pathIO,
 			new UserSettings());
 		this.SackProvider = new SackCollectionProvider(NullLogger<SackCollectionProvider>.Instance, this.ItemProvider, this.TQData);
-		this.PlayerProvider = new PlayerCollectionProvider(NullLogger<PlayerCollectionProvider>.Instance, this.ItemProvider, this.SackProvider, this.TQData, fileIO, pathIO);
+		this.PlayerProvider = new PlayerCollectionProvider(NullLogger<PlayerCollectionProvider>.Instance, this.ItemProvider, this.SackProvider, this.TQData, fileIO, new SkillTreeProvider(this.Database.Object));
 		this.StashProvider = new StashProvider(NullLogger<StashProvider>.Instance, this.SackProvider, this.TQData, fileIO, pathIO);
 		Directory.CreateDirectory(this.TempFolder);
 	}

@@ -33,7 +33,7 @@ public class BuffRolloverTests
 
 	private static CharacterPanelInput Input()
 	{
-		var info = new PlayerInfo(new PathIO());
+		var info = new PlayerInfo();
 		return new CharacterPanelInput
 		{
 			Player = new PlayerCollection("HeroA", @"C:\saves\_HeroA\Player.chr") { PlayerInfo = info },

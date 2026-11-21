@@ -24,7 +24,6 @@ public class PlayerCollectionProviderTests
 	private readonly Mock<ISackCollectionProvider> _mockSackCollectionProvider;
 	private readonly Mock<ITQDataService> _mockTQDataService;
 	private readonly Mock<IFileIO> _mockFileIO;
-	private readonly Mock<IPathIO> _mockPathIO;
 	private readonly PlayerCollectionProvider _provider;
 
 	public PlayerCollectionProviderTests()
@@ -34,18 +33,17 @@ public class PlayerCollectionProviderTests
 		_mockSackCollectionProvider = new Mock<ISackCollectionProvider>();
 		_mockTQDataService = new Mock<ITQDataService>();
 		_mockFileIO = new Mock<IFileIO>();
-		_mockPathIO = new Mock<IPathIO>();
 		_provider = new PlayerCollectionProvider(
 			_mockLogger.Object,
 			_mockItemProvider.Object,
 			_mockSackCollectionProvider.Object,
 			_mockTQDataService.Object,
 			_mockFileIO.Object,
-			_mockPathIO.Object
+			new Mock<ISkillTreeProvider>().Object
 		);
 	}
 
-	private PlayerInfo CreateTestPlayerInfo() => new PlayerInfo(_mockPathIO.Object);
+	private PlayerInfo CreateTestPlayerInfo() => new PlayerInfo();
 
 	[Fact]
 	public void CommitPlayerInfo_WithNullPlayerInfo_ReturnsEarly()

@@ -1,7 +1,6 @@
-﻿using EnumsNET;
-using TQVaultAE.Application.Contracts.Services;
-using TQVaultAE.Application.Layout;
+﻿using TQVaultAE.Application.Layout;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Application.Session;
 
@@ -10,9 +9,6 @@ namespace TQVaultAE.Application.Session;
 /// </summary>
 public class PlayerInfo
 {
-	private readonly IPathIO PathIO;
-	const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
-
 	public bool MustResetMasteries =>
 		this.MasteriesAllowed_OldValue.HasValue && this.MasteriesAllowed < this.MasteriesAllowed_OldValue
 		|| this.MasteriesResetRequiered;
@@ -45,53 +41,19 @@ public class PlayerInfo
 	/// </summary>
 	public List<RecordId> SavedBuffs { get; } = [];
 
-	public bool MasteryDefensiveEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Defensive.AsString(EnumFormat.Description), noCase));
-	public bool MasteryStormEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Storm.AsString(EnumFormat.Description), noCase));
-	public bool MasteryEarthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Earth.AsString(EnumFormat.Description), noCase));
-	public bool MasteryNatureEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Nature.AsString(EnumFormat.Description), noCase));
-	public bool MasteryDreamEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Dream.AsString(EnumFormat.Description), noCase));
-	public bool MasteryRuneEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Rune.AsString(EnumFormat.Description), noCase));
-	public bool MasteryWarfareEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Warfare.AsString(EnumFormat.Description), noCase));
-	public bool MasteryHuntingEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Hunting.AsString(EnumFormat.Description), noCase));
-	public bool MasteryStealthEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Stealth.AsString(EnumFormat.Description), noCase));
-	public bool MasterySpiritEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Spirit.AsString(EnumFormat.Description), noCase));
-	public bool MasteryNeidanEnabled => this.SkillRecordList.Any(s => s.skillName.Equals(Masteries.Neidan.AsString(EnumFormat.Description), noCase));
+	/// <summary>
+	/// The masteries the character's game data describes (<see cref="MasteryTree.AllOf"/>, read with its own map when the
+	/// save is read): a mod's masteries are told by their own records.
+	/// </summary>
+	public IReadOnlyList<MasteryTree> MasteryTrees { get; set; } = [];
 
-	public string[] ActiveMasteriesRecordNames
-	{
-		get
-		{
-			string[] ret = [];
-			if (ActiveMasteries.HasValue)
-			{
-				var actives = ActiveMasteries.Value;
-				ret = Enums.GetValues<Masteries>().Where(v => actives.HasFlag(v)).Select(s => s.AsString(EnumFormat.Description)!).ToArray();
-			}
-			return ret;
-		}
-	}
+	/// <summary>The masteries the character has: those of <see cref="MasteryTrees"/> whose record is in its skills.</summary>
+	public IReadOnlyList<MasteryTree> ActiveMasteryTrees
+		=> [.. this.MasteryTrees.Where(t => this.SkillRecordList.Any(s => s.skillName.ToRecordId() == t.Id))];
 
+	/// <summary>The masteries the character has, <see langword="null"/> when none.</summary>
 	public Masteries? ActiveMasteries
-	{
-		get
-		{
-			Masteries? val = null;
-			int m = 0;
-			m = MasteryDefensiveEnabled ? m | (int)Masteries.Defensive : m;
-			m = MasteryStormEnabled ? m | (int)Masteries.Storm : m;
-			m = MasteryEarthEnabled ? m | (int)Masteries.Earth : m;
-			m = MasteryNatureEnabled ? m | (int)Masteries.Nature : m;
-			m = MasteryDreamEnabled ? m | (int)Masteries.Dream : m;
-			m = MasteryRuneEnabled ? m | (int)Masteries.Rune : m;
-			m = MasteryWarfareEnabled ? m | (int)Masteries.Warfare : m;
-			m = MasteryHuntingEnabled ? m | (int)Masteries.Hunting : m;
-			m = MasteryStealthEnabled ? m | (int)Masteries.Stealth : m;
-			m = MasterySpiritEnabled ? m | (int)Masteries.Spirit : m;
-			m = MasteryNeidanEnabled ? m | (int)Masteries.Neidan : m;
-			if (m > 0) val = (Masteries)m;
-			return val;
-		}
-	}
+		=> this.ActiveMasteryTrees.Aggregate((Masteries)0, (all, t) => all | t.Mastery) is var m and not 0 ? m : null;
 
 	/// <summary>
 	/// The bonuses of the skills that count in the character window (learned and granted by the equipped items, no buff),
@@ -134,27 +96,20 @@ public class PlayerInfo
 		=> this._SkillRecordListRemoved?.Sum(s => s.skillLevel) ?? 0;
 
 	/// <summary>
-	/// Reset masteries if any
+	/// Removes the masteries and the skills of their panes (<see cref="ActiveMasteryTrees"/>), wherever their records are.
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>False when the character has no mastery.</returns>
 	public bool ResetMasteries()
 	{
-		bool isActive = ActiveMasteries.HasValue;
-		if (isActive)
-		{
-			foreach (var mastery in ActiveMasteriesRecordNames)
-			{
-				var recBase = PathIO.GetDirectoryName(mastery);
-				// Remove all skills having the same base skill line (ex :  storm, earth, etc...)
-				this._SkillRecordListRemoved.AddRange(
-					this.SkillRecordList
-						.Where(sk => sk.skillName.StartsWith(recBase, noCase))
-				);
-			}
-			this.SkillRecordList.RemoveAll(s => this._SkillRecordListRemoved.Contains(s));
-			this.Modified = true;
-		}
-		return isActive;
+		var actives = this.ActiveMasteryTrees;
+		if (actives.Count == 0)
+			return false;
+
+		this._SkillRecordListRemoved.AddRange(
+			this.SkillRecordList.Where(s => actives.Any(t => t.Contains(s.skillName.ToRecordId()))));
+		this.SkillRecordList.RemoveAll(this._SkillRecordListRemoved.Contains);
+		this.Modified = true;
+		return true;
 	}
 
 	/// <summary>
@@ -299,21 +254,13 @@ public class PlayerInfo
 
 	/// <summary>
 	/// The tag of the class: the save's (<see cref="Class"/>), else the one the masteries make. A change of masteries clears
-	/// the save's and the game sets it again when it loads the character; until then the masteries tell it.
+	/// the save's and the game sets it again when it loads the character; until then the masteries tell it
+	/// (<see cref="ActiveMasteries"/>, a mod's too).
 	/// </summary>
 	public string? ClassTag
 		=> !string.IsNullOrEmpty(this.Class) ? this.Class
 			: this.ActiveMasteries is { } masteries ? CharacterClasses.TagOf(masteries) ?? this.Class
 			: this.Class;
-
-	/// <summary>
-	/// The tag of the class with the masteries the skill panes of the character's map find (its mastery trees): the save's,
-	/// else the one those masteries make, else <see cref="ClassTag"/>. A mod's masteries have their own records, which
-	/// <see cref="ActiveMasteries"/> (the base game's records) does not know.
-	/// </summary>
-	/// <param name="paneMasteries">The masteries of the character's trees, read with its own map.</param>
-	public string? ClassTagWith(IEnumerable<Masteries> paneMasteries)
-		=> !string.IsNullOrEmpty(this.Class) ? this.Class : CharacterClasses.TagOf(paneMasteries) ?? this.ClassTag;
 
 	/// <summary>
 	/// Character difficulty unlocked
@@ -384,9 +331,4 @@ public class PlayerInfo
 	public int GreatestMonsterKilledLevel { get; set; }
 
 	public int GreatestMonsterKilledLifeAndMana { get; set; }
-
-	public PlayerInfo(IPathIO pathIO)
-	{
-		PathIO = pathIO;
-	}
 }

@@ -15,7 +15,7 @@ public class PlayerInfoTextTests
 
 	private readonly Mock<ITranslationService> _translations = new();
 
-	private readonly PlayerInfo _info = new(new Mock<IPathIO>().Object)
+	private readonly PlayerInfo _info = new()
 	{
 		Class = ClassTag,
 		CurrentLevel = 42,
