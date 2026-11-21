@@ -743,7 +743,13 @@ public partial class ItemAttributeProvider : IItemAttributeProvider
 		if (data is null)
 			return false;
 
-		return string.Equals(data.Variable, variableName, StringComparison.OrdinalIgnoreCase);
+		if (!string.Equals(data.Variable, variableName, StringComparison.OrdinalIgnoreCase))
+			return false;
+
+		// The game reads its global flag only under its exact name: a few records spell it in another case
+		// (retaliationPercentcurrentLifeGlobal), and the game shows that effect apart, with its own chance.
+		return !string.Equals(variableName, "Global", StringComparison.OrdinalIgnoreCase)
+			|| string.Equals(variable.Name, data.FullAttribute, StringComparison.Ordinal);
 	}
 
 	/// <summary>

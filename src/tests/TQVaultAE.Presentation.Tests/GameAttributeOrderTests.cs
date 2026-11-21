@@ -93,8 +93,8 @@ public class GameAttributeOrderTests
 			, Lines(("prefix header", header), ("prefix fire", globalFire))
 			, Lines(("flat fire", FlatFire)));
 
-		// In the % output, so before the flat damage; each record keeps its own order.
-		merged.Should().Equal("base header", "base cold", "base fire", "prefix header", "prefix fire", "flat fire");
+		// In the % output, so before the flat damage; record by record, each in the store's order (fire before cold).
+		merged.Should().Equal("base header", "base fire", "base cold", "prefix header", "prefix fire", "flat fire");
 	}
 
 	[Fact]

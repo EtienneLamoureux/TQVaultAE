@@ -363,9 +363,9 @@ public static class GameAttributeOrder
 				// The game lists the racial bonuses of the prefix, then the suffix, then the base.
 				int rank = slot.Store == GameAttributeStore.Racial ? (source + 2) % 3 : source;
 
-				// A global chance keeps its groups together under its header line, record by record.
+				// A global chance keeps its groups together under its header line, record by record, in the store's order.
 				entries.Add(slot.Global
-					? (SectionRank(slot), 1, rank, 0, rank, line, text, range, source)
+					? (SectionRank(slot), 1, rank, slot.Index, rank, line, text, range, source)
 					: (SectionRank(slot), 0, 0, slot.Index, rank, line, text, range, source));
 			}
 		}
@@ -393,14 +393,15 @@ public static class GameAttributeOrder
 	/// <summary>
 	/// Where an attribute group of one record comes in the game's order for an item class: its store output (in the
 	/// class's order), then, inside it, the plain groups by attribute type and after them the groups of a global chance,
-	/// its header first. Groups with the same key keep the record's order (sort with a stable sort).
+	/// its header first, then in the store's order. Groups with the same key keep the record's order (sort with a stable
+	/// sort).
 	/// </summary>
 	/// <param name="itemClass">The class of the item, which orders the stores.</param>
 	/// <param name="slot">The slot of the group (<see cref="SlotOf"/>).</param>
 	public static (int Section, int Global, int Index) SortKeyOf(GameItemClass itemClass, GameAttributeSlot slot)
 	{
 		int section = SectionRank(Sections(itemClass), slot);
-		return slot.Global ? (section, 1, slot.Index < 0 ? -1 : 0) : (section, 0, slot.Index);
+		return slot.Global ? (section, 1, slot.Index) : (section, 0, slot.Index);
 	}
 
 	/// <summary>

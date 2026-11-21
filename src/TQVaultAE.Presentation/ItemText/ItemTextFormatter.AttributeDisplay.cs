@@ -537,7 +537,8 @@ public partial class ItemTextFormatter
 				label = $"{labelColor?.ColorTag()}{label}";
 		}
 
-		if (!string.IsNullOrEmpty(chance))
+		// The game writes an effect of a global chance without its own chance, a weight among the effects of the group.
+		if (!string.IsNullOrEmpty(chance) && !isGlobal)
 			strarray[numberOfStrings++] = chance;
 
 		if (!string.IsNullOrEmpty(amount))
@@ -640,7 +641,7 @@ public partial class ItemTextFormatter
 			modifierChance = GetChance(variableNumber, modifierChanceVar);
 
 		numberOfStrings = 0;
-		if (!string.IsNullOrEmpty(modifierChance))
+		if (!string.IsNullOrEmpty(modifierChance) && !isGlobal)
 			strarray[numberOfStrings++] = modifierChance;
 
 		if (!string.IsNullOrEmpty(modifier))

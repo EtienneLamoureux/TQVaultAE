@@ -6,8 +6,9 @@ namespace TQVaultAE.Data;
 public partial class ItemProvider
 {
 	/// <summary>
-	/// The base values of an item, not counted as attributes: base attack speed, base physical damage, armor, block,
-	/// pierce ratio and the global chances; the base elemental damage of a weapon (<c>offensiveBase*</c>) neither.
+	/// The base values of an item, not counted as attributes: base attack speed, base physical damage, armor, block and
+	/// the global chances; the base elemental damage of a weapon (<c>offensiveBase*</c>) neither. The pierce ratio counts
+	/// (Nu Ba's Nagamaki requires level 23 in game).
 	/// </summary>
 	private static readonly FrozenSet<string> uncountedAttributes = new[]
 	{
@@ -20,7 +21,6 @@ public partial class ItemProvider
 		"blockRecoveryTime",
 		"offensiveGlobalChance",
 		"retaliationGlobalChance",
-		"offensivePierceRatioMin",
 	}.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>

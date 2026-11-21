@@ -90,6 +90,24 @@ public class ItemTextFormatterSkillWindowEffectsTests : ItemProviderTextTestBase
 		skill!.Attributes.Select(a => a.RemoveLeadingColorTag()).Should().Equal("Extra Life Time 49 Seconds");
 	}
 
+	[Theory]
+	[InlineData(100f, "Chance for one of the following:")]
+	[InlineData(80f, "80% Chance for one of the following:")]
+	public void GlobalChance_AfterTheOtherEffects_InTheStoreOrder_WithoutTheirOwnChances(float chance, string header)
+	{
+		// Smoke Cloud and Rune Storm in the game: the damage first, then the global chance (no "100%"), then its effects
+		// in the store's order (stun before immobilization) without their weights.
+		this.Translations["GlobalPercentChanceOfOneTag"] = "{%.0f0}% Chance for one of the following:";
+		this.Translations["DamageStun"] = "second(s) of Stun";
+		this.Translations["DamageTrap"] = "second(s) of Immobilization";
+
+		this.Effects(1, Float("offensiveGlobalChance", chance),
+				Float("offensiveTrapMin", 1f), Float("offensiveTrapChance", 40f), Int("offensiveTrapGlobal", 1), Int("offensiveTrapXOR", 1),
+				Float("offensiveStunMin", 1f), Float("offensiveStunChance", 60f), Int("offensiveStunGlobal", 1), Int("offensiveStunXOR", 1),
+				Float("offensiveColdMin", 30f))
+			.Should().Equal("30 Cold Damage", header, "    1.0 second(s) of Stun", "    1.0 second(s) of Immobilization");
+	}
+
 	[Fact]
 	public void CharacterAttributes_FollowTheSkillOrder_ThenTheEnergyReserved()
 		=> this.Effects(1, Int("characterManaLimitReserve", 75), Float("characterAttackSpeedModifier", 5f), Float("characterRunSpeedModifier", 6f),

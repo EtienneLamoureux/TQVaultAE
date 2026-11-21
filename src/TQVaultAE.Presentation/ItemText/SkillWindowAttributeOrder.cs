@@ -123,6 +123,9 @@ public static class SkillWindowAttributeOrder
 	/// </summary>
 	private const int OffenseTailStart = 10_000;
 
+	/// <summary>Where the groups of a global chance start: after every other attribute of the store.</summary>
+	private const int GlobalStart = 100_000;
+
 	private static readonly Dictionary<string, int> OffenseTailRanks = OffenseTail
 		.Select((name, index) => (name, index))
 		.ToDictionary(p => p.name, p => p.index, StringComparer.OrdinalIgnoreCase);
@@ -161,12 +164,19 @@ public static class SkillWindowAttributeOrder
 			index = CharacterRanks.TryGetValue(variableName, out var rank) ? rank : CharacterSequence.Length + slot.Index;
 		}
 
+		// The game writes a global chance after the store's other attributes ("30 Damage" before "Chance for one of the
+		// following:"): its header, then its groups in the store's order.
+		if (slot.Global)
+		{
+			int last = Array.IndexOf(Stores, (slot.Store, 3));
+			return last < 0 ? Other : new(last + 1, GlobalStart + (slot.Index < 0 ? -1 : index));
+		}
+
 		int store = Array.IndexOf(Stores, (slot.Store, output));
 		if (store < 0)
 			return Other;
 
-		// A global chance keeps its groups right after its header line, in the order the record gives them.
-		return new(store + 1, slot.Global ? -1 : index);
+		return new(store + 1, index);
 	}
 }
 

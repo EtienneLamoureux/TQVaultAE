@@ -31,6 +31,10 @@ public partial class ItemTextFormatter
 			if (attributeList.Count > 1)
 				tag = "GlobalPercentChanceOfOneTag";
 
+			// As the game: no percentage at a chance of 100% or more ("Chance for one of the following:").
+			if (ShownSingle(v, varNum) >= 100F)
+				tag = tag.Replace("Percent", string.Empty, StringComparison.Ordinal);
+
 			string? formatSpec = this.GameFormat(tag);
 			font = formatSpec is null ? ItemStyle.Legendary.TQColor() : ItemStyle.Epic.TQColor();
 

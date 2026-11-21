@@ -93,6 +93,14 @@ public class ItemProviderRequirementsTests : ItemProviderTextTestBase
 	}
 
 	[Fact]
+	public void TotalAttributeCount_CountsThePierceRatio()
+	{
+		var sword = this.SwordWithAttributeCountCost(Float("offensivePierceRatioMin", 30f), Int("characterStrength", 5));
+
+		this.Provider.GetRequirementInfo(sword).Str.Should().Be(2 * 10, "pierce ratio and strength");
+	}
+
+	[Fact]
 	public void TotalAttributeCount_SumsTheBasePrefixAndSuffix_WithoutTheRelics()
 	{
 		var sword = this.SwordWithAttributeCountCost(Float("offensiveColdMin", 3f));

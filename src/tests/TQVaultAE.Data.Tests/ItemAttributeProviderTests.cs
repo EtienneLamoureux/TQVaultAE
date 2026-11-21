@@ -337,4 +337,15 @@ public class ItemAttributeProviderTests
 	}
 
 	#endregion
+
+	[Theory]
+	[InlineData("retaliationPercentCurrentLifeGlobal", true)]
+	[InlineData("retaliationPercentcurrentLifeGlobal", false)]
+	public void AttributeHas_Global_OnlyUnderItsExactName(string name, bool expected)
+		=> _provider.AttributeHas(new Variable(name, VariableDataType.Integer, 1) { [0] = 1 }, "Global").Should().Be(expected);
+
+	[Fact]
+	public void AttributeHas_OtherVariables_IgnoreTheCase()
+		=> _provider.AttributeHas(new Variable("retaliationPercentcurrentLifeXOR", VariableDataType.Integer, 1) { [0] = 1 }, "XOR")
+			.Should().BeTrue();
 }
