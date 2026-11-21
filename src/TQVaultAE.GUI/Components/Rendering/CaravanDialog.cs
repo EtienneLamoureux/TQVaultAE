@@ -144,6 +144,12 @@ internal static class CaravanDialog
 		finish?.Invoke();
 		dialog.ResumeLayout(false);
 		dialog.PerformLayout();
+
+		// The keyboard starts on the accept button, not on the first button of the window, the close button of its
+		// border, which took Enter and closed the dialog (a dialog may pick another control after this). A disabled
+		// button cannot take it (Mod link's Link before a mod is chosen).
+		if (accept is Control { Enabled: true } first && dialog.Contains(first))
+			dialog.ActiveControl = first;
 	}
 
 	/// <summary>

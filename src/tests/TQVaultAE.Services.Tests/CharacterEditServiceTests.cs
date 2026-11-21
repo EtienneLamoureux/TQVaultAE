@@ -125,6 +125,33 @@ public class CharacterEditServiceTests
 	}
 
 	[Fact]
+	public void BuildPlayerInfo_LevelAllowingFewerMasteries_ResetsThem()
+	{
+		var source = this.NewSource();
+		source.MasteriesAllowed = 2;
+
+		var result = this._service.BuildPlayerInfo(source, RequestFrom(source) with { Level = 5 });
+
+		result.MasteriesAllowed.Should().Be(1);
+		result.SkillRecordList.Should().BeEmpty();
+		result.SkillPoints.Should().Be(3 + 4 + 6);
+		result.Class.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void BuildPlayerInfo_LevelAllowingMoreMasteries_KeepsThem()
+	{
+		var source = this.NewSource();
+		source.MasteriesAllowed = 1;
+
+		var result = this._service.BuildPlayerInfo(source, RequestFrom(source) with { Level = 20 });
+
+		result.MasteriesAllowed.Should().Be(2);
+		result.SkillRecordList.Should().HaveCount(2);
+		result.Class.Should().Be("tagCClass01");
+	}
+
+	[Fact]
 	public void BuildPlayerInfo_ResetAttributes_PutsThemBackToTheMinimumAndRefundsTheSourcePoints()
 	{
 		var source = this.NewSource();

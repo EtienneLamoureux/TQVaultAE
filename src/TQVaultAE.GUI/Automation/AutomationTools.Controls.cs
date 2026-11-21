@@ -118,7 +118,7 @@ internal static partial class AutomationTools
 		});
 
 	[McpServerTool(Name = "character_list", Destructive = true)]
-	[Description("Opens the character list and reads it as drawn: 'header', the text of the selected character's box, and per entry its name, class, level, masteries, mod and the badges shown (Archived, Read-only, Modded and the link state). A linked character's class and masteries are its mod's names whatever character is selected. With refresh=true the entries are described again first, as after a tag change, with whatever map is active. With pick (a character name), first clicks its entry like the user, with mouse messages: the list scrolls to it, the click selects the character (loading it) and closes the list; picking the selected one leaves the list open, as for the user. Otherwise the list is left open.")]
+	[Description("Opens the character list and reads it as drawn: 'header', the text of the selected character's box, and per entry its name, class, level, masteries, mod and the badges shown (Archived, Read-only, Modded and the link state). A linked character's class and masteries are its mod's names whatever character is selected. With refresh=true the entries are described again first, as after a tag change, with whatever map is active. With pick (a character name), first clicks its entry like the user, with mouse messages: the list scrolls to it, the click selects the character (loading it); the list is closed afterwards ('listOpen' tells whether the click left it open). Otherwise the list is left open.")]
 	public static string CharacterList(
 		[Description("true to describe the entries again before reading them.")] bool refresh = false,
 		[Description("The name of a character to click in the list (as in get_state 'characters', before the comma); empty to only read.")] string? pick = null)
@@ -126,14 +126,17 @@ internal static partial class AutomationTools
 		{
 			if (refresh)
 				form.AutomationCharacterCombo.RefreshItems();
-			if (!string.IsNullOrWhiteSpace(pick))
-			{
-				form.AutomationCharacterCombo.AutomationPick(pick.Trim());
-			}
-
 			var combo = form.AutomationCharacterCombo;
+			if (!string.IsNullOrWhiteSpace(pick))
+				combo.AutomationPick(pick.Trim());
+
 			bool open = combo.AutomationDropDownOpen;
 			var (header, entries) = combo.AutomationEntries();
+
+			// Reading the entries opens the list: a pick leaves it closed, as a click on an entry does.
+			if (!string.IsNullOrWhiteSpace(pick))
+				combo.AutomationCloseDropDown();
+
 			return Serialize(new { header, selected = form.AutomationSelectedCharacter, characterFile = form.AutomationCurrentPlayerFile, listOpen = open, entries });
 		});
 

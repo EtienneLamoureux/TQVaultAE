@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Presentation.ItemText;
 
@@ -162,31 +163,19 @@ public partial class ItemTextFormatter
 				if (skillClass.Equals("SKILL_PASSIVE", noCase) && hiddenVariables is null)
 					continue;
 
-				string? skillNameTag = null;
 				string? skillName = null;
 				bool skillWindow = hiddenVariables is not null;
-				string buffSkillName = skillRecord1?.GetString("buffSkillName", 0) ?? string.Empty;
 
-				if (string.IsNullOrEmpty(buffSkillName))
+				// The record that shows the skill, a buff skill's buff, names it as for the item's granted skills.
+				if (this.ShownSkill(recordID.ToRecordId()) is { } shown)
 				{
-					record = skillRecord1;
-					skillNameTag = skillRecord1?.GetString("skillDisplayName", 0);
-					if (!string.IsNullOrWhiteSpace(skillNameTag))
-						TranslationService.TryTranslateXTag(skillNameTag, out skillName);
+					record = shown.Record;
+					recordID = shown.Id.Raw;
 				}
-				else
-				{
-					// This is a buff skill
-					DBRecordCollection? buffSkillRecord = Database.GetRecordFromFile(buffSkillName);
-					if (buffSkillRecord is not null)
-					{
-						record = buffSkillRecord;
-						recordID = buffSkillName;
-						skillNameTag = buffSkillRecord.GetString("skillDisplayName", 0);
-						if (!string.IsNullOrWhiteSpace(skillNameTag))
-							TranslationService.TryTranslateXTag(skillNameTag, out skillName);
-					}
-				}
+
+				string? skillNameTag = record?.GetString("skillDisplayName", 0);
+				if (!string.IsNullOrWhiteSpace(skillNameTag))
+					TranslationService.TryTranslateXTag(skillNameTag, out skillName);
 
 				// The skill window shows only the pet skills marked for it (isPetDisplayable, on the skill or its buff), not
 				// its innate armor and resistances or its death skill.

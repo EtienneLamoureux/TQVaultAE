@@ -19,16 +19,20 @@ public partial class SackPanel
 	/// <summary>Color of the frame around the relic or charm of the Insert into item selection.</summary>
 	private static readonly Color SocketFrameColor = TQColor.Orange.Color();
 
-	private bool _pairSubscribed;
+	private bool _dragInfoSubscribed;
 
-	/// <summary>Follows the pair selection from now on: cursor and frame change when it starts or ends.</summary>
-	private void SubscribePairSelection()
+	/// <summary>
+	/// Follows the shared drag from now on: cursor and frame change when the pair selection starts or ends, and a drag
+	/// cancelled anywhere (another panel, another window) wipes what this panel drew of it.
+	/// </summary>
+	private void SubscribeDragInfo()
 	{
-		if (this._pairSubscribed)
+		if (this._dragInfoSubscribed)
 			return;
 
 		this.DragInfo.PairSelection.Changed += this.PairSelectionChanged;
-		this._pairSubscribed = true;
+		this.DragInfo.Cancelled += this.DragCancelled;
+		this._dragInfoSubscribed = true;
 	}
 
 	private void PairSelectionChanged(object? sender, EventArgs e)
@@ -109,10 +113,11 @@ public partial class SackPanel
 
 	protected override void Dispose(bool disposing)
 	{
-		if (disposing && this._pairSubscribed)
+		if (disposing && this._dragInfoSubscribed)
 		{
 			this.DragInfo.PairSelection.Changed -= this.PairSelectionChanged;
-			this._pairSubscribed = false;
+			this.DragInfo.Cancelled -= this.DragCancelled;
+			this._dragInfoSubscribed = false;
 		}
 
 		// After the controls it holds, whose going may still repaint the panel.

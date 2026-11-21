@@ -189,6 +189,10 @@ internal sealed partial class KeyBindsDialog : VaultForm
 
 		this.RefreshCells();
 		this.FitAround(this.layout);
+
+		// The keyboard starts on OK, not on the first button of the window, the close button of its border, which took
+		// Enter and closed the dialog.
+		this.ActiveControl = this.buttonOk;
 	}
 
 	/// <summary>

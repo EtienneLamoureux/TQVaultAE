@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Application.DTOs;
 using TQVaultAE.Application.Results;
+using TQVaultAE.Application.Session;
 
 
 namespace TQVaultAE.GUI.Views;
@@ -159,78 +160,36 @@ public partial class MainFormUserControl
 
 	private void ExportVaultToFileClicked(object? sender, EventArgs e)
 	{
-		var vault = this.vaultPanel.Player;
-		if (vault is null)
-		{
-			this.Services.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
-			return;
-		}
-
-		using var saveDialog = new SaveFileDialog
-		{
-			Filter = Resources.GlobalJsonFileFilter,
-			FileName = $"{vault.PlayerName}.json",
-			DefaultExt = "json"
-		};
-
-		if (saveDialog.ShowDialog() == DialogResult.OK)
-		{
-			try
-			{
-				this.Services.ItemExchangeService.ExportVaultToFile(vault, saveDialog.FileName);
-				this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ExportVaultSuccessFile, saveDialog.FileName));
-			}
-			catch (Exception ex)
-			{
-				Log.LogError(ex, "Failed to export vault to file");
-				this.Services.MessageBoxes.Inform(Resources.ExportVaultFailFile, Resources.GlobalError, MessageBoxIcon.Error);
-			}
-		}
+		if (this.VaultToExport() is { } vault)
+			ExportActions.ToFile($"{vault.PlayerName}.json", path => this.Services.ItemExchangeService.ExportVaultToFile(vault, path), this.Log, "vault"
+				, new(this.Services.UIService, Resources.ExportVaultSuccessFile, Resources.ExportVaultFailFile));
 	}
 
 	private void ExportVaultToClipboardClicked(object? sender, EventArgs e)
 	{
-		var vault = this.vaultPanel.Player;
-		if (vault is null)
-		{
-			this.Services.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
-			return;
-		}
-
-		try
-		{
-			var json = this.Services.ItemExchangeService.SerializePlayerCollection(vault);
-			Clipboard.SetText(json);
-			this.Services.UIService.NotifyUser(Resources.ExportVaultSuccessClipboard);
-		}
-		catch (Exception ex)
-		{
-			Log.LogError(ex, "Failed to export vault to clipboard");
-			this.Services.MessageBoxes.Inform(Resources.ExportVaultFailClipboard, Resources.GlobalError, MessageBoxIcon.Error);
-		}
+		if (this.VaultToExport() is { } vault)
+			ExportActions.ToClipboard(() => this.Services.ItemExchangeService.SerializePlayerCollection(vault), this.Log, "vault"
+				, new(this.Services.UIService, Resources.ExportVaultSuccessClipboard, Resources.ExportVaultFailClipboard));
 	}
 
 	private async void ExportVaultToPasteBinClicked(object? sender, EventArgs e)
 	{
+		if (this.VaultToExport() is not { } vault)
+			return;
+
+		var exchange = this.Services.ItemExchangeService;
+		await ExportActions.ToPasteBinAsync(() => exchange.ExportToPasteBinAsync(exchange.SerializePlayerCollection(vault), vault.PlayerName)
+			, this.Services.UIService, Resources.ExportVaultSuccessPasteBin, this.Log, "vault", Resources.ExportVaultFailPasteBin);
+	}
+
+	/// <summary>The vault shown in the main panel, for its export; null, with a warning, when none is loaded.</summary>
+	private PlayerCollection? VaultToExport()
+	{
 		var vault = this.vaultPanel.Player;
 		if (vault is null)
-		{
 			this.Services.UIService.ShowWarning(Resources.GlobalNoVaultLoaded);
-			return;
-		}
 
-		try
-		{
-			var json = this.Services.ItemExchangeService.SerializePlayerCollection(vault);
-			var url = await this.Services.ItemExchangeService.ExportToPasteBinAsync(json, vault.PlayerName);
-			Clipboard.SetText(url);
-			this.Services.UIService.NotifyUser(string.Format(CultureInfo.CurrentCulture, Resources.ExportVaultSuccessPasteBin, url));
-		}
-		catch (Exception ex)
-		{
-			Log.LogError(ex, "Failed to export vault to PasteBin");
-			this.Services.MessageBoxes.Inform(string.Format(CultureInfo.CurrentCulture, Resources.ExportVaultFailPasteBin, ex.Message), Resources.GlobalError, MessageBoxIcon.Error);
-		}
+		return vault;
 	}
 
 	private void ImportFromFileClicked(object? sender, EventArgs e)

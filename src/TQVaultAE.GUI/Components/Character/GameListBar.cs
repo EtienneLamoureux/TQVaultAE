@@ -78,7 +78,7 @@ public abstract class GameListBar<TAction> : Control
 	public event EventHandler<ListBarEventArgs<TAction>>? ActionRequested;
 
 	/// <summary>The drop-down list of the names.</summary>
-	internal ContextMenuStrip ListMenu { get; }
+	internal WheelListMenu ListMenu { get; }
 
 	/// <summary>The right-click menu: every action.</summary>
 	internal ContextMenuStrip ActionMenu { get; }
@@ -230,13 +230,15 @@ public abstract class GameListBar<TAction> : Control
 		this.ListMenu.Font = this.MenuFont();
 		this.ListMenu.Items.Clear();
 		if (this.Names.Count == 0)
-		{
 			this.ListMenu.Items.Add(new ToolStripMenuItem(this.NoneText) { Enabled = false });
-			return;
+		else
+		{
+			foreach (var name in this.Names)
+				this.ListMenu.Items.Add(new ToolStripMenuItem(name) { Tag = name, Checked = name == this.Selected });
 		}
 
-		foreach (var name in this.Names)
-			this.ListMenu.Items.Add(new ToolStripMenuItem(name) { Tag = name, Checked = name == this.Selected });
+		// As wide as the gold box at least: the bar's own width is its field and the [+] button.
+		this.ListMenu.WidenRows(this.FieldBounds.Width);
 	}
 
 	private void FillActionMenu()

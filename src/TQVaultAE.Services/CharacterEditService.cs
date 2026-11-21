@@ -47,7 +47,8 @@ public class CharacterEditService(IPlayerCollectionProvider playerCollectionProv
 		{
 			MasteryTrees = source.MasteryTrees,
 			CurrentLevel = request.Level,
-			MasteriesAllowed = PlayerLevel.GetMasteriesAllowed(request.Level),
+			// The source's value first, so that a lower level resets the masteries (MustResetMasteries).
+			MasteriesAllowed = source.MasteriesAllowed,
 			CurrentXP = int.TryParse(request.XpText, out var xp) ? xp : source.CurrentXP,
 			Money = source.Money > 0 ? source.Money : 0,
 			DifficultyUnlocked = request.DifficultyUnlocked ?? source.DifficultyUnlocked,
@@ -60,6 +61,7 @@ public class CharacterEditService(IPlayerCollectionProvider playerCollectionProv
 			BaseMana = request.Mana,
 			Class = source.Class,
 		};
+		playerInfo.MasteriesAllowed = PlayerLevel.GetMasteriesAllowed(request.Level);
 		if (request.SkillRecords is not null && !request.ResetMasteries)
 		{
 			playerInfo.SkillRecordList.AddRange(request.SkillRecords);

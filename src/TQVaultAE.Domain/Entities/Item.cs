@@ -922,7 +922,12 @@ public class Item
 	public const string ICLASS_PREFIX_ARMORJEWELRY = "ArmorJewelry";
 	/// <summary>Start of the classes of weapons and shields.</summary>
 	public const string ICLASS_PREFIX_WEAPON = "Weapon";
+	/// <summary>Start of the classes of other armor pieces, which use the armor requirement equations.</summary>
+	public const string ICLASS_PREFIX_ARMORMISC = "ArmorMisc_";
+	/// <summary>Start of the classes of melee weapons (axes, maces, swords).</summary>
 	public const string ICLASS_PREFIX_MELEE = "WeaponMelee_";
+	/// <summary>Start of the classes of hunting weapons (bows, thrown weapons, spears).</summary>
+	public const string ICLASS_PREFIX_HUNTING = "WeaponHunting_";
 	public const string ICLASS_HEAD = "ArmorProtective_Head";
 	public const string ICLASS_FOREARM = "ArmorProtective_Forearm";
 	public const string ICLASS_UPPERBODY = "ArmorProtective_UpperBody";

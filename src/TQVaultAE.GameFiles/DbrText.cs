@@ -26,6 +26,10 @@ public static class DbrText
 		_ => value.ToString() ?? string.Empty,
 	};
 
+	/// <summary>One value of a variable of floats: 6 decimals whatever number type holds it.</summary>
+	public static string FloatValue(object? value)
+		=> value is IFormattable number ? number.ToString("f6", CultureInfo.InvariantCulture) : Value(value);
+
 	/// <summary>The line of one variable: <c>name,v1;v2,</c> (no line break).</summary>
 	public static string Line(string name, IReadOnlyList<object?> values)
 	{

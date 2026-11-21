@@ -198,6 +198,12 @@ public class ItemDragInfo
 	}
 
 	/// <summary>
+	/// Raised once a drag is cancelled (the item back where it was): a panel that drew the item over its cells, which
+	/// may sit in another window than the item's, wipes it.
+	/// </summary>
+	public event EventHandler? Cancelled;
+
+	/// <summary>
 	/// Cancels a drag
 	/// </summary>
 	public void Cancel()
@@ -221,6 +227,8 @@ public class ItemDragInfo
 		this.AutoMoveDestination = AutoMoveLocation.NotSet;
 		this.DestIndex = -1;
 		this.IsBeingCancelled = false;
+
+		this.Cancelled?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>

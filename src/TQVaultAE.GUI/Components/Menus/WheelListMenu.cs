@@ -14,6 +14,40 @@ internal sealed class WheelListMenu : ContextMenuStrip
 			handled.Handled = true;
 	}
 
+	/// <summary>
+	/// Opens at least <paramref name="minimumWidth"/> wide (the box it drops from), every row as wide as the list: the
+	/// highlight of the row under the mouse crosses the whole list. Called once the rows are in.
+	/// </summary>
+	internal void WidenRows(int minimumWidth) => this.MinimumSize = new Size(minimumWidth, 0);
+
+	private bool _widening;
+
+	/// <summary>
+	/// After the menu's layout, which gives every row the widest text's width even in a wider list, stretches the rows to
+	/// the list's inner width.
+	/// </summary>
+	protected override void OnLayout(LayoutEventArgs e)
+	{
+		base.OnLayout(e);
+		if (this._widening)
+			return;
+
+		int width = this.DisplayRectangle.Width;
+		this._widening = true;
+		try
+		{
+			foreach (ToolStripItem row in this.Items)
+			{
+				if (row.Available && row.Width < width)
+					row.Width = width;
+			}
+		}
+		finally
+		{
+			this._widening = false;
+		}
+	}
+
 	/// <summary>Scrolls the visible entries by rows: down for a positive count, up for a negative one, within the list.</summary>
 	internal void ScrollRows(int rows)
 	{

@@ -634,12 +634,13 @@ General rules:
 
 - **`character_list(refresh?, pick?)`**: opens the character list and reads it as drawn: `header`, the text of the
   selected character's box, and per entry `name`, `className`, `level`, `masteries`, `mod` and the `badges` shown
-  (Archived, Read-only, Modded, link state). Also returns `selected` and `characterFile`; the list is left open.
+  (Archived, Read-only, Modded, link state). Also returns `selected` and `characterFile`; the list is left open, except
+  after a `pick`.
   - A linked character's class and masteries are its mod's names whatever character is selected.
   - `refresh=true` describes the entries again first, as after a tag change, with whatever map is active.
   - `pick` (a character name) first clicks its entry like the user, with mouse messages to the label under the entry's
-    middle: the list scrolls to it, the click selects the character (which loads it) and closes the list. Picking the
-    selected character leaves the list open, as for the user (`listOpen`).
+    middle: the list scrolls to it, the click selects the character (which loads it); the list is closed afterwards
+    (`listOpen` tells whether the click left it open, as when picking the selected character).
   - `select_character` sets the selection directly instead.
 - **`open_character_editor`**: shows the selected character's editor in place of the main content, like the Edit
   button of the stash panel, before the call returns (`get_state` gives `view` `characterEditor`). Check the selected

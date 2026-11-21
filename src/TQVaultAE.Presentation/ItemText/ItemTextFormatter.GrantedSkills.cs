@@ -62,13 +62,20 @@ public partial class ItemTextFormatter
 	/// </summary>
 	/// <returns><see langword="null"/> when the skill record is missing or has no name, like the game's hidden helper skills.</returns>
 	private DBRecordCollection? DisplayedSkillRecord(RecordId skillId)
+		=> this.ShownSkill(skillId) is { Record: var shown } && !string.IsNullOrEmpty(shown.GetString("skillDisplayName", 0)) ? shown : null;
+
+	/// <summary>
+	/// The record that shows a skill, named or not, with its id: its buff record (<c>buffSkillName</c>) when it has one,
+	/// else the skill itself. A pet's skills are shown the same way.
+	/// </summary>
+	/// <returns><see langword="null"/> when the skill record is missing.</returns>
+	private (DBRecordCollection Record, RecordId Id)? ShownSkill(RecordId skillId)
 	{
 		if (Database.GetRecordFromFile(skillId) is not { } skillRecord)
 			return null;
 
 		var buffId = skillRecord.GetString("buffSkillName", 0).ToRecordId();
-		var shown = (RecordId.IsNullOrEmpty(buffId) ? null : Database.GetRecordFromFile(buffId)) ?? skillRecord;
-		return string.IsNullOrEmpty(shown.GetString("skillDisplayName", 0)) ? null : shown;
+		return !RecordId.IsNullOrEmpty(buffId) && Database.GetRecordFromFile(buffId) is { } buff ? (buff, buffId) : (skillRecord, skillId);
 	}
 
 	/// <summary>

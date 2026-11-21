@@ -456,11 +456,7 @@ public partial class SackPanel
 		{
 			try
 			{
-				this.CellsUnderDragItem = InvalidDragRectangle;
-				this.ItemsUnderDragItem.Clear();
-				this.LastDragLocation = InvalidDragLocation;
-				this.ItemsUnderOldDragLocation.Clear();
-				this.Invalidate();
+				this.ResetDragTarget();
 			}
 			catch (NullReferenceException exception)
 			{
@@ -468,5 +464,22 @@ public partial class SackPanel
 				this.Services.MessageBoxes.ShowException(exception);
 			}
 		}
+	}
+
+	/// <summary>Forgets where the item held was drawn over this panel, and redraws the panel without it.</summary>
+	private void ResetDragTarget()
+	{
+		this.CellsUnderDragItem = InvalidDragRectangle;
+		this.ItemsUnderDragItem.Clear();
+		this.LastDragLocation = InvalidDragLocation;
+		this.ItemsUnderOldDragLocation.Clear();
+		this.Invalidate();
+	}
+
+	/// <summary>A drag cancelled anywhere: wipes the item this panel still draws over its cells (the mouse is over it).</summary>
+	private void DragCancelled(object? sender, EventArgs e)
+	{
+		if (!this.IsDisposed && !this.Disposing && this.LastDragLocation != InvalidDragLocation)
+			this.ResetDragTarget();
 	}
 }

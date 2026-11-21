@@ -210,7 +210,7 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 		this.DragInfo = dragInfo;
 		this.AutoMoveLocation = autoMoveLocation;
 		this.DragInfo.AddAutoMoveLocationToList(autoMoveLocation);
-		this.SubscribePairSelection();
+		this.SubscribeDragInfo();
 		this.LastCellWithFocus = InvalidDragLocation;
 		this.contextMenuCellWithFocus = InvalidDragLocation;
 

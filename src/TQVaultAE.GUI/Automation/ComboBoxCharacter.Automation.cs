@@ -100,6 +100,9 @@ public partial class ComboBoxCharacter
 	/// <summary>Whether the character list is open.</summary>
 	internal bool AutomationDropDownOpen => this.DropDown.Visible;
 
+	/// <summary>Closes the character list, as a click outside it does.</summary>
+	internal void AutomationCloseDropDown() => this.DropDownClose();
+
 	/// <summary>Whether the drop-down entry of a character shows its "Read-only" badge.</summary>
 	internal bool AutomationShowsReadOnlyBadge(PlayerSave save)
 		=> this.DropDown.Items.FirstOrDefault(i => i.Item == save)?.AutomationShowsReadOnlyBadge ?? false;

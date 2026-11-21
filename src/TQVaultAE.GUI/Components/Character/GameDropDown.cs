@@ -138,17 +138,16 @@ internal sealed class GameDropDown : Control
 	private void FillListMenu()
 	{
 		this.ListMenu.Font = MenuStyle.MenuFont(this._fontService, this._uiService.FontZoom);
-		this.ListMenu.MinimumSize = new Size(this.Width, 0);
 		this.ListMenu.Items.Clear();
 		if (this.Items.Count == 0)
-		{
 			this.ListMenu.Items.Add(new ToolStripMenuItem(this.EmptyText ?? string.Empty) { Enabled = false });
-			return;
+		else
+		{
+			for (int i = 0; i < this.Items.Count; i++)
+				this.ListMenu.Items.Add(new ToolStripMenuItem(this.Items[i]) { Tag = i, Checked = i == this.SelectedIndex });
 		}
 
-		for (int i = 0; i < this.Items.Count; i++)
-			this.ListMenu.Items.Add(new ToolStripMenuItem(this.Items[i]) { Tag = i, Checked = i == this.SelectedIndex });
-
+		this.ListMenu.WidenRows(this.Width);
 		int row = this.ListMenu.Items[0].GetPreferredSize(Size.Empty).Height;
 		var padding = this.ListMenu.Padding.Vertical + 4;
 		this.ListMenu.MaximumSize = this.MaxDropDownItems > 0 && this.Items.Count > this.MaxDropDownItems

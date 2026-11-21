@@ -29,10 +29,10 @@ public static class EquipmentRequirements
 		Item.ICLASS_SHIELD => "Shield",
 		Item.ICLASS_STAFF => "Staff",
 		_ when itemClass.StartsWith(Item.ICLASS_PREFIX_ARMORPROTECTIVE, StringComparison.OrdinalIgnoreCase)
-			|| itemClass.StartsWith("ArmorMisc_", StringComparison.OrdinalIgnoreCase) => "Armor",
+			|| itemClass.StartsWith(Item.ICLASS_PREFIX_ARMORMISC,StringComparison.OrdinalIgnoreCase) => "Armor",
 		_ when itemClass.StartsWith(Item.ICLASS_PREFIX_ARMORJEWELRY, StringComparison.OrdinalIgnoreCase) => "Jewelry",
 		_ when itemClass.StartsWith(Item.ICLASS_PREFIX_MELEE, StringComparison.OrdinalIgnoreCase) => "Melee",
-		_ when itemClass.StartsWith("WeaponHunting_", StringComparison.OrdinalIgnoreCase) => "Hunting",
+		_ when itemClass.StartsWith(Item.ICLASS_PREFIX_HUNTING,StringComparison.OrdinalIgnoreCase) => "Hunting",
 		_ => null,
 	};
 

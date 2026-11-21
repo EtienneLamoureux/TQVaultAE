@@ -144,6 +144,12 @@ public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
 	/// Handles the ScalingButton Paint Event.
 	/// </summary>
 	/// <param name="pevent">PaintEventArgs data</param>
+	/// <summary>
+	/// A game picture button never draws the default button's frame (the flat style draws one even without a border):
+	/// Enter still clicks the window's <see cref="Form.AcceptButton"/>, which the window handles, not the button.
+	/// </summary>
+	public override void NotifyDefault(bool value) => base.NotifyDefault(value && !this.UseCustomGraphic);
+
 	protected override void OnPaint(PaintEventArgs pevent)
 	{
 		if (this.UseCustomGraphic && this.Image is not null && this.Size != this.Image.Size)
