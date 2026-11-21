@@ -93,6 +93,20 @@ public class ItemKeyTests
 	}
 
 	[Fact]
+	public void From_NoSecondRelic_IgnoresItsPieceCount()
+	{
+		// Without a second relic the game saves a meaningless value there: two copies of one club differed by it alone.
+		var worn = Piece();
+		worn.relic2ID = RecordId.Empty;
+		worn.RelicBonus2Id = RecordId.Empty;
+		worn.Var2 = 1069067592;
+		var copy = worn.Clone();
+		copy.Var2 = 2035248;
+
+		Same(worn, copy).Should().BeTrue();
+	}
+
+	[Fact]
 	public void Comparer_InASet_FindsTheCopyNotTheObject()
 	{
 		var set = new HashSet<Item>(ItemIdentityComparer.Instance) { Piece(1) };

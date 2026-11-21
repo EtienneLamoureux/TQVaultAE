@@ -9,7 +9,8 @@ namespace TQVaultAE.Domain.Entities;
 /// <c>Equals</c>: it is mutable, and drags, tool tips and the search rely on reference identity). Build the key when
 /// needed with <see cref="From"/>; never store its hash code, which changes from one run to the next.
 /// Record ids are compared normalized (case and separators ignored), "no record" being the same whether null or empty;
-/// the second relic fields are compared by value, so an item read without them equals one the game saved with them empty.
+/// the second relic fields are compared by value, so an item read without them equals one the game saved with them empty;
+/// without a second relic its piece count (<c>Var2</c>) is left out: the game saves a meaningless value there.
 /// </remarks>
 /// <param name="BaseItem">The base record.</param>
 /// <param name="Prefix">The prefix record.</param>
@@ -53,7 +54,9 @@ public readonly record struct ItemKey(
 			Of(item.RelicBonus2Id),
 			item.Seed,
 			item.Var1,
-			item.Var2,
+			// Without a second relic the game saves whatever was in memory there (two copies of one club: 2035248 and
+			// 1069067592): it means nothing, so it is left out.
+			RecordId.IsNullOrEmpty(item.relic2ID) ? 0 : item.Var2,
 			item.StackSize);
 	}
 
