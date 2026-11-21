@@ -132,6 +132,16 @@ public interface IPlayerService
 	IReadOnlyList<Item> GetWornEquipment(IEnumerable<Item> equipment, Item? held);
 
 	/// <summary>
+	/// The pieces of <paramref name="item"/>'s set that <paramref name="player"/> wears (the weapon set in hand only), as
+	/// the game counts them for the set bonus.
+	/// </summary>
+	/// <returns>Null without a character (a vault) or when the item belongs to no set.</returns>
+	IReadOnlySet<RecordId>? WornSetPieces(PlayerCollection? player, Item item);
+
+	/// <summary><see cref="WornSetPieces"/> for the current player.</summary>
+	IReadOnlySet<RecordId>? CurrentPlayerWornSetPieces(Item item);
+
+	/// <summary>
 	/// The worn pieces as the game attaches them for <paramref name="build"/> (<see cref="EquipmentState"/>): every piece
 	/// starts attached; a pass detaches the attached pieces whose requirements fail (their own bonuses counted) or, when
 	/// none, attaches again the detached ones that pass without them, then sums again, until nothing changes.

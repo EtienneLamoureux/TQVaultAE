@@ -289,7 +289,7 @@ public class ItemTextFormatterSkillAttributesTests : ItemProviderTextTestBase
 			$"{Mundane}    Heals you.",
 			$"{Mundane}Level:   2",
 			string.Empty,
-			$"{Epic}+20 Health");
+			$"{Mundane}+20 Health");
 	}
 
 	[Fact]
@@ -320,7 +320,7 @@ public class ItemTextFormatterSkillAttributesTests : ItemProviderTextTestBase
 			$"{Mundane}    Heals you.",
 			$"{Mundane}    Level:   3",
 			string.Empty,
-			$"{Epic}+30 Health");
+			$"{Mundane}+30 Health");
 	}
 
 	[Fact]
@@ -340,7 +340,7 @@ public class ItemTextFormatterSkillAttributesTests : ItemProviderTextTestBase
 			"Heals you and all of your",
 			"allies for a long time, then",
 			"heals you again.");
-		this.BaseAttributes(item).Should().Contain([$"{Mundane}Test Skill (Activated on low health)", $"{Mundane}Level:   2", $"{Epic}+20 Health"]);
+		this.BaseAttributes(item).Should().Contain([$"{Mundane}Test Skill (Activated on low health)", $"{Mundane}Level:   2", $"{Mundane}+20 Health"]);
 	}
 
 	[Fact]
@@ -393,7 +393,7 @@ public class ItemTextFormatterSkillAttributesTests : ItemProviderTextTestBase
 		var item = this.CreateItem("ArmorJewelry_Amulet",
 			Str("itemSkillName", SkillId), Str("itemSkillAutoController", ControllerId), Int("itemSkillLevel", 4));
 
-		this.BaseAttributes(item).Should().EndWith($"{Epic}+40 Health");
+		this.BaseAttributes(item).Should().EndWith($"{Mundane}+40 Health");
 	}
 
 	#endregion

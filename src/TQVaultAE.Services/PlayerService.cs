@@ -470,6 +470,24 @@ public class PlayerService(
 		=> equipment.Where(item => !ReferenceEquals(item, held)).ToList();
 
 	/// <inheritdoc/>
+	public IReadOnlySet<RecordId>? WornSetPieces(PlayerCollection? player, Item item)
+	{
+		if (player is null || player.IsVault || player.EquipmentSack is not { } equipment
+			|| this.ItemText.GetFriendlyNames(item, FriendlyNamesExtraScopes.ItemSet).ItemSet is not { setMembers.Count: > 0 } set)
+			return null;
+
+		var members = set.setMembers.Keys.Select(RecordId.Create).ToHashSet();
+		return equipment
+			.Where(piece => !piece.IsInInactiveWeaponSlot(player.UseAlternate) && members.Contains(piece.BaseItemId))
+			.Select(piece => piece.BaseItemId)
+			.ToHashSet();
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlySet<RecordId>? CurrentPlayerWornSetPieces(Item item)
+		=> this.WornSetPieces(this.userContext.CurrentPlayer, item);
+
+	/// <inheritdoc/>
 	public void UpdateAttributeBonuses(PlayerCollection player, IEnumerable<Item> equipment, Item? ignored = null)
 	{
 		if (player.PlayerInfo is not { } info)

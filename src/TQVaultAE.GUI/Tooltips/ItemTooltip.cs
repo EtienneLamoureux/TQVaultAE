@@ -174,9 +174,15 @@ public partial class ItemTooltip : BaseTooltip
 			? sackPanel.ReducedRequirements(this.FocusedItem)
 			: this.PlayerService?.CurrentPlayerReducedRequirements(this.FocusedItem);
 
+		// The set pieces that character wears, which color the pieces and give the set's bonus, as in the game.
+		var wornPieces = this.SackPanel is { } checkedPanel
+			? checkedPanel.WornSetPieces(this.FocusedItem)
+			: this.PlayerService?.CurrentPlayerWornSetPieces(this.FocusedItem);
+
 		var key = new TooltipKey(this.FocusedItem, UIService.Scale, this.View, this.ShowInGameValues
 			, setCounts is null ? string.Empty : string.Join(",", setCounts.Values)
-			, reduced is null ? string.Empty : string.Join(",", reduced.OrderBy(r => r.Key, StringComparer.Ordinal).Select(r => $"{r.Key}={r.Value.Value}/{r.Value.Percent}/{r.Value.Met}")));
+			, (reduced is null ? string.Empty : string.Join(",", reduced.OrderBy(r => r.Key, StringComparer.Ordinal).Select(r => $"{r.Key}={r.Value.Value}/{r.Value.Percent}/{r.Value.Met}")))
+				+ (wornPieces is null ? string.Empty : "|" + string.Join(",", wornPieces.Select(p => p.Normalized).Order(StringComparer.Ordinal))));
 
 		// Redraw
 		if (ToImage.TryGetCopy(key, out var cached, out var data))
@@ -192,7 +198,8 @@ public partial class ItemTooltip : BaseTooltip
 
 		this.Data = this.ItemText.GetFriendlyNames(FocusedItem, ItemTooltipContentBuilder.ScopesFor(this.View));
 		var requirements = reduced is null ? null : this.ItemText.FormatRequirements(this.Data.RequirementVariables, reduced);
-		var content = new ItemTooltipContentBuilder(this.TranslationService).Build(this.Data, this.View, setCounts, requirements);
+		var setWorn = wornPieces is null ? null : new SetWorn(wornPieces, this.ItemText.FormatSetBonus(this.FocusedItem, wornPieces.Count));
+		var content = new ItemTooltipContentBuilder(this.TranslationService).Build(this.Data, this.View, setCounts, requirements, setWorn);
 
 		// The relic lines may move to a column: note where their rows start and end.
 		int relicRowsStart = 0;

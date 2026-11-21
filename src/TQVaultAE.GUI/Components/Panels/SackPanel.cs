@@ -661,6 +661,10 @@ public partial class SackPanel : Panel, IScalingControl, IFontRebasing
 	internal virtual IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(Item item)
 		=> this.Services.PlayerService.CurrentPlayerReducedRequirements(item);
 
+	/// <summary>The pieces of the item's set worn by the character the item is checked against, as <see cref="ReducedRequirements"/>.</summary>
+	internal virtual IReadOnlySet<RecordId>? WornSetPieces(Item item)
+		=> this.Services.PlayerService.CurrentPlayerWornSetPieces(item);
+
 	/// <summary>
 	/// Indicates whether the items of the shown sack cannot change: a sack of a read-only character, or the equipment
 	/// with the <c>PlayerReadonly</c> setting on (<see cref="ItemActionRules.IsReadOnly"/>).

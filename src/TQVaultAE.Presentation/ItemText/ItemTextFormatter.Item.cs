@@ -8,6 +8,7 @@ using System.Globalization;
 using Microsoft.Extensions.Logging;
 using TQVaultAE.Application.Session;
 using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Presentation.ItemText;
 
@@ -37,6 +38,23 @@ public partial class ItemTextFormatter
 			}
 		}
 		return setMembers;
+	}
+
+	/// <inheritdoc/>
+	public IReadOnlyList<string> FormatSetBonus(Item itm, int worn)
+	{
+		using var modScope = this.ModScope(itm);
+		if (worn < 1 || this.ItemProvider.GetSetItems(itm) is not { } set)
+			return [];
+
+		// The set record holds one value per number of pieces worn; the game writes them in green, in its attribute order.
+		var lines = new List<string>();
+		var slots = new List<GameAttributeSlot>();
+		this.GetAttributesFromRecord(itm, set.setRecords, true, set.itemSetName.ToRecordId(), lines, skillLevelIndex: worn - 1, lineSlots: slots);
+		var green = ItemStyle.Rare.TQColor().ColorTag();
+		return [.. GameAttributeOrder.Merge(GameItemClass.Other, [.. lines.Zip(slots)], [], [])
+			.Where(l => l.Length != 0)
+			.Select(l => green + l.RemoveLeadingColorTag())];
 	}
 
 	/// <summary>

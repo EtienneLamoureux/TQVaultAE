@@ -44,6 +44,11 @@ public enum TooltipLineKind
 }
 
 /// <summary>
+/// The pieces of an item's set that a character wears, and the set's bonus lines at that count.
+/// </summary>
+public sealed record SetWorn(IReadOnlySet<RecordId> Pieces, IReadOnlyList<string> Bonus);
+
+/// <summary>
 /// One line of a tooltip.
 /// </summary>
 /// <param name="Kind">How the line is drawn.</param>
@@ -155,8 +160,10 @@ public class ItemTooltipContentBuilder
 	/// <param name="setCounts">How many of each set piece are loaded, shown on the right of the set pieces; null without them.</param>
 	/// <param name="requirements">The requirement lines for the character shown (<c>IItemTextFormatter.FormatRequirements</c>
 	/// with its reduced requirements), in place of the item's own; null without a character.</param>
+	/// <param name="setWorn">The set pieces the character shown wears and the set's bonus at that count; null without a
+	/// character.</param>
 	public ItemTooltipContent Build(ToFriendlyNameResult data, ItemTooltipView view, IReadOnlyDictionary<RecordId, int>? setCounts = null,
-		IReadOnlyList<string>? requirements = null)
+		IReadOnlyList<string>? requirements = null, SetWorn? setWorn = null)
 	{
 		var item = data.Item;
 		var lines = new List<TooltipLine>();
@@ -284,13 +291,22 @@ public class ItemTooltipContentBuilder
 			lines.Add(TooltipLine.Delimiter);
 			foreach (var str in set.Translations)
 			{
-				// The set name comes first, then one line per piece with its count on the right.
+				// The set name comes first, then one line per piece with its count on the right. As the game, with a
+				// character: the pieces it wears in yellow, the others in grey.
+				var text = str.Value;
+				if (setWorn is not null && str.Key != set.setName && !setWorn.Pieces.Contains(RecordId.Create(str.Key)))
+					text = ItemStyle.Broken.TQColor().ColorTag() + text.RemoveLeadingColorTag();
+
 				if (setCounts is not null && str.Key != set.setName
 					&& setCounts.TryGetValue(RecordId.Create(str.Key), out var count))
-					lines.Add(TooltipLine.WithRange(str.Value, count.ToString()));
+					lines.Add(TooltipLine.WithRange(text, count.ToString()));
 				else
-					lines.Add(TooltipLine.Of(str.Value));
+					lines.Add(TooltipLine.Of(text));
 			}
+
+			// The set's bonus for the pieces worn.
+			if (setWorn is not null)
+				lines.AddRange(setWorn.Bonus.Select(b => TooltipLine.Of(b)));
 		}
 
 		// Requirements

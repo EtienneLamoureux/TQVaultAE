@@ -149,6 +149,10 @@ public partial class EquipmentPanel : SackPanel, IScalingControl
 	internal override IReadOnlyDictionary<string, ReducedRequirement>? ReducedRequirements(Item item)
 		=> this.Services.PlayerService.ReducedRequirements(this.Owner, item, this.RequirementAttributes?.Invoke());
 
+	/// <summary>The set pieces worn by the character wearing the slots.</summary>
+	internal override IReadOnlySet<RecordId>? WornSetPieces(Item item)
+		=> this.Services.PlayerService.WornSetPieces(this.Owner, item);
+
 	/// <summary>An item suits the character wearing the slots (a Titan Quest original character takes base game items only).</summary>
 	protected override bool IsSuitableForCurrentPlayer(Item item)
 		=> this.Services.PlayerService.IsSuitableFor(this.Owner, item);

@@ -167,8 +167,19 @@ public partial class ItemTextFormatter
 	/// A skill granted by an item, as the game's item tool tip writes it: the skill window's lines and order (recharge,
 	/// "Extra Life Time" of a summon...), without the hit activation chance, which the activation line already gives.
 	/// </summary>
+	/// <remarks>The game writes the effects in plain white, the recharge keeping its aqua (Brennus' Great Helm).</remarks>
 	private GrantedSkill? GetItemGrantedSkill(Item itm, RecordId skillId, int level, string? autoController)
-		=> this.GetGrantedSkill(itm, skillId, Math.Max(1, level), autoController, SkillWindowContext.None, itemGranted: true);
+	{
+		if (this.GetGrantedSkill(itm, skillId, Math.Max(1, level), autoController, SkillWindowContext.None, itemGranted: true) is not { } skill)
+			return null;
+
+		var effect = ItemStyle.Epic.TQColor().ColorTag();
+		var plain = ItemStyle.Mundane.TQColor().ColorTag();
+		return skill with
+		{
+			Attributes = [.. skill.Attributes.Select(l => l.StartsWith(effect, StringComparison.Ordinal) ? plain + l[effect.Length..] : l)],
+		};
+	}
 
 	/// <summary>
 	/// Describes one granted skill at a level: name, icon, activation, description and effects.

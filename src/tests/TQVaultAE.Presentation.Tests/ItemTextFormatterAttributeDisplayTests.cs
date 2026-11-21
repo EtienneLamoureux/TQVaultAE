@@ -260,7 +260,7 @@ public class ItemTextFormatterAttributeDisplayTests
 		skills[0].Level.Should().Be(2);
 		skills[0].LevelText.Should().Be("Level: 2");
 		skills[0].Description.Should().Equal("Heals you.");
-		skills[0].Attributes.Should().Equal($"{Epic}+20 Health");
+		skills[0].Attributes.Should().Equal($"{Mundane}+20 Health");
 	}
 
 	[Fact]
@@ -281,7 +281,7 @@ public class ItemTextFormatterAttributeDisplayTests
 		inline.Should().Contain(line => line.Contains("Heals you.", StringComparison.Ordinal));
 		apart.BaseAttributes.Should().Contain(line => line.Contains("Test Skill", StringComparison.Ordinal));
 		apart.BaseAttributes.Should().NotContain(line => line.Contains("Heals you.", StringComparison.Ordinal));
-		apart.GrantedSkills.Should().ContainSingle().Which.Attributes.Should().Equal($"{Epic}+10 Health");
+		apart.GrantedSkills.Should().ContainSingle().Which.Attributes.Should().Equal($"{Mundane}+10 Health");
 	}
 
 	[Fact]

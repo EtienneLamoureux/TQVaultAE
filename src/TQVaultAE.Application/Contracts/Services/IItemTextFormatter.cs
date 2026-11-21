@@ -44,6 +44,11 @@ public interface IItemTextFormatter
 	/// </summary>
 	string[] FormatRequirements(SortedList<string, Variable> variables, IReadOnlyDictionary<string, ReducedRequirement>? reduced = null);
 	/// <summary>
+	/// The bonus lines of the item's set for <paramref name="worn"/> pieces worn, as the game lists them under the set
+	/// pieces; empty without set or bonus at that count.
+	/// </summary>
+	IReadOnlyList<string> FormatSetBonus(Item itm, int worn);
+	/// <summary>
 	/// Tells whether the item grants a skill, by its base record, its affixes, its relics or their completion bonuses.
 	/// Only skills with a name count, as in the tooltip: the game's hidden helper skills do not.
 	/// </summary>

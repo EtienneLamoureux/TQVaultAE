@@ -481,6 +481,19 @@ public class ItemTooltipContentBuilderTests
 	}
 
 	[Fact]
+	public void Build_SetWorn_GreysThePiecesNotWorn_ThenShowsTheBonus()
+	{
+		var data = Sword();
+		Set(data);
+		var worn = new SetWorn(new HashSet<RecordId> { RecordId.Create("""records\set\helm.dbr""") }, ["{^G}+10% Strength"]);
+
+		var content = this._builder.Build(data, Full, setWorn: worn);
+
+		content.Lines.SkipWhile(l => l.Text != "Set of the Bear").Take(4).Select(l => l.Text).Should().Equal(
+			"Set of the Bear", "Bear Helm", $"{ItemStyle.Broken.TQColor().ColorTag()}Bear Torso", "{^G}+10% Strength");
+	}
+
+	[Fact]
 	public void Build_SetPieceCounts_ShowsTheCountOfEachPieceOnItsRight()
 	{
 		var data = Sword();

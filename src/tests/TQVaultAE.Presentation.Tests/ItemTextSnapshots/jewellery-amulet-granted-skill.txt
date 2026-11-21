@@ -46,9 +46,9 @@ GrantedSkills[0].Description (2)
 GrantedSkills[0].Attributes (5)
   | {^a}28.0 Second(s) Recharge
   | {^W}25 Energy Cost
-  | {^B}6.0 Second Duration
-  | {^B}+4 Strength
-  | {^B}+8.0 Health Regenerated per second
+  | {^W}6.0 Second Duration
+  | {^W}+4 Strength
+  | {^W}+8.0 Health Regenerated per second
 GrantedSkills[0].ModifiedLines (0)
 PrefixAttributeRanges (0)
 SuffixAttributeRanges (0)
@@ -91,9 +91,9 @@ BaseAttributes (18)
   | 
   | {^a}28.0 Second(s) Recharge
   | {^W}25 Energy Cost
-  | {^B}6.0 Second Duration
-  | {^B}+4 Strength
-  | {^B}+8.0 Health Regenerated per second
+  | {^W}6.0 Second Duration
+  | {^W}+4 Strength
+  | {^W}+8.0 Health Regenerated per second
   | {^P}?Class?: ArmorJewelry_Amulet
   | {^P}?itemNameTag?: tagAmulet
   | {^P}?itemClassification?: Legendary
@@ -110,9 +110,9 @@ ClassicAttributes (18)
   | 
   | {^a}28.0 Second(s) Recharge
   | {^W}25 Energy Cost
-  | {^B}6.0 Second Duration
-  | {^B}+4 Strength
-  | {^B}+8.0 Health Regenerated per second
+  | {^W}6.0 Second Duration
+  | {^W}+4 Strength
+  | {^W}+8.0 Health Regenerated per second
   | {^P}?Class?: ArmorJewelry_Amulet
   | {^P}?itemNameTag?: tagAmulet
   | {^P}?itemClassification?: Legendary
