@@ -284,8 +284,9 @@ public static class GameAttributeOrder
 		],
 		GameItemClass.Shield =>
 		[
-			(GameAttributeStore.Offense, 1),
-			(GameAttributeStore.Defense, 1), (GameAttributeStore.Defense, 2), (GameAttributeStore.Offense, 2), (GameAttributeStore.Offense, 3),
+			// The block before the damage, as the game shows it (Mystic's Shield).
+			(GameAttributeStore.Defense, 1), (GameAttributeStore.Offense, 1),
+			(GameAttributeStore.Defense, 2), (GameAttributeStore.Offense, 2), (GameAttributeStore.Offense, 3),
 			(GameAttributeStore.Retaliation, 1), (GameAttributeStore.Retaliation, 2), (GameAttributeStore.Retaliation, 3),
 			(GameAttributeStore.Character, 1), (GameAttributeStore.Character, 2), (GameAttributeStore.Skill, 1),
 		],

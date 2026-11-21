@@ -1,8 +1,8 @@
 == GetFriendlyNames(ItemFullDisplay | GrantedSkills)
-FullNameClean: Burning Fine Sword of Testing Bronze Of Life
-FullName: Burning Fine Sword of Testing Bronze Of Life
-FullNameBagTooltipClean: Burning Fine Sword of Testing Bronze Of Life
-FullNameBagTooltip: Burning Fine Sword of Testing Bronze Of Life
+FullNameClean: Burning Fine Sword of Testing Bronze of Life
+FullName: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltipClean: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltip: Burning Fine Sword of Testing Bronze of Life
 PrefixInfoDescription: Burning
 PrefixAttributes (2)
   | {^B}+15% Fire Damage
@@ -114,10 +114,10 @@ AttributesAll (11)
   | +8 Strength
   | +12 Dexterity
 == GetFriendlyNames(ItemFullDisplay, filterExtra: false)
-FullNameClean: Burning Fine Sword of Testing Bronze Of Life
-FullName: Burning Fine Sword of Testing Bronze Of Life
-FullNameBagTooltipClean: Burning Fine Sword of Testing Bronze Of Life
-FullNameBagTooltip: Burning Fine Sword of Testing Bronze Of Life
+FullNameClean: Burning Fine Sword of Testing Bronze of Life
+FullName: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltipClean: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltip: Burning Fine Sword of Testing Bronze of Life
 PrefixInfoDescription: Burning
 PrefixAttributes (5)
   | {^B}+15% Fire Damage
@@ -324,7 +324,7 @@ AttributesAll (30)
   | ?Class?: LootRandomizer
 == Search
 FullText (20)
-  | Burning Fine Sword of Testing Bronze Of Life
+  | Burning Fine Sword of Testing Bronze of Life
   | Seed 20511 (0.63)
   | Ember
   | Completed Relic

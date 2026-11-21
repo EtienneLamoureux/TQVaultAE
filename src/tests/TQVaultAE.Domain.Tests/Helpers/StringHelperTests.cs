@@ -404,6 +404,11 @@ public class StringHelperTests
 		result.Should().NotContain("//");
 	}
 
+	[Fact]
+	public void RemoveEmptyAndSanitize_CapitalizesOnlyTheFirstText()
+		=> new[] { "{^R}", "rigid", "Seal of Hephaestus", "of Spirit" }.RemoveEmptyAndSanitize()
+			.Should().Equal("{^R}", "Rigid", "Seal of Hephaestus", "of Spirit");
+
 	#endregion
 
 	#region JoinString and JoinWithoutStartingSpaces Tests
@@ -752,6 +757,11 @@ public class StringHelperTests
 	#endregion
 
 	#region WrapWords Tests
+
+	[Fact]
+	public void WrapWords_SpacesBeforeALineBreak_LeaveNoEmptyLine()
+		=> StringHelper.WrapWords("Epona is one of the most widely venerated goddesses.  {^n}{^y}Can enchant leg armor only.", 40)
+			.Should().NotContain(l => l.Trim().Length == 0);
 
 	[Fact]
 	public void WrapWords_WithShortText_ReturnsSingleLine()

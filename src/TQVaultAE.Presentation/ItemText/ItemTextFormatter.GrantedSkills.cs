@@ -22,7 +22,7 @@ public partial class ItemTextFormatter
 		var skills = new List<GrantedSkill>();
 		foreach (var (source, skillId, level) in this.ItemProvider.GetGrantedSkillSources(itm))
 		{
-			if (this.GetGrantedSkill(itm, skillId, level, source.GetString("itemSkillAutoController", 0)) is { } skill)
+			if (this.GetItemGrantedSkill(itm, skillId, level, source.GetString("itemSkillAutoController", 0)) is { } skill)
 				skills.Add(skill);
 		}
 
@@ -96,7 +96,7 @@ public partial class ItemTextFormatter
 	{
 		"headVelocity", "tailVelocity", "maxDistance", "projectileLaunchRotation", "skillChargeDuration", "notDispelable",
 		"offensivePierceRatioMin", "offensivePierceRatioMax", "offensivePierceRatio", "alwaysUseSpecialAnimation",
-		"numRings", "spacingAngle", "distanceIncrement", "angleToCaster", "skipSkillLinking",
+		"numRings", "spacingAngle", "distanceIncrement", "angleToCaster", "skipSkillLinking", "surviveAfterMasterDeath",
 	};
 
 	/// <inheritdoc/>
@@ -164,6 +164,13 @@ public partial class ItemTextFormatter
 	}
 
 	/// <summary>
+	/// A skill granted by an item, as the game's item tool tip writes it: the skill window's lines and order (recharge,
+	/// "Extra Life Time" of a summon...), without the hit activation chance, which the activation line already gives.
+	/// </summary>
+	private GrantedSkill? GetItemGrantedSkill(Item itm, RecordId skillId, int level, string? autoController)
+		=> this.GetGrantedSkill(itm, skillId, Math.Max(1, level), autoController, SkillWindowContext.None, itemGranted: true);
+
+	/// <summary>
 	/// Describes one granted skill at a level: name, icon, activation, description and effects.
 	/// A buff skill (<c>buffSkillName</c>) takes its name, icon, description and effects from its buff record.
 	/// </summary>
@@ -173,7 +180,8 @@ public partial class ItemTextFormatter
 	/// modifiers into account, and what the skill window hides (<see cref="SkillWindowHiddenVariables"/>) is left out.
 	/// </param>
 	/// <returns><see langword="null"/> when the skill record is missing or has no name, like the game's hidden helper skills.</returns>
-	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, SkillWindowContext? context = null)
+	private GrantedSkill? GetGrantedSkill(Item itm, RecordId skillId, int level, string? autoController, SkillWindowContext? context = null
+		, bool itemGranted = false)
 	{
 		bool skillWindow = context is not null;
 		var hidden = skillWindow ? SkillWindowHiddenVariables : null;
@@ -215,6 +223,10 @@ public partial class ItemTextFormatter
 		// line in its own order (SkillWindowAttributeOrder).
 		var attributes = new List<string>();
 		var costs = context is null ? [] : this.SkillWindowCosts(skillRecord, buffRecord, level, context);
+
+		// The item tool tip keeps a line's first colour: the recharge's own aqua, not the leading plain one.
+		if (itemGranted)
+			costs = costs.Select(c => c with { Text = DropLeadingPlainColor(c.Text) }).ToList();
 		var ownLines = costs.Select(c => (c.Variable, c.Text)).ToList();
 		var order = skillWindow ? new SkillWindowLines(ownLines) : null;
 
@@ -237,12 +249,13 @@ public partial class ItemTextFormatter
 				this.GetAttributesFromRecord(itm, skillRecord, true, skillId, attributes, skillLevelIndex: level - 1, hiddenVariables: ownHidden, skillWindow: order);
 			}
 
-			this.ConvertPetStats(itm, skillRecord, attributes, level, hidden, context?.PetSkillBonus ?? 0);
+			// An item's summon keeps the pet's damage and skills, which the skill window leaves out.
+			this.ConvertPetStats(itm, skillRecord, attributes, level, itemGranted ? null : hidden, context?.PetSkillBonus ?? 0);
 		}
 		else
 		{
 			// "5% Chance of Activating" of a skill triggered by hits (onHitActivationChance), which item tool tips leave out.
-			float activationChance = skillWindow ? ValueAtLevel(skillRecord["onHitActivationChance"], level) : 0F;
+			float activationChance = skillWindow && !itemGranted ? ValueAtLevel(skillRecord["onHitActivationChance"], level) : 0F;
 			if (activationChance > 0)
 				ownLines.Add(("onHitActivationChance", this.ActivationChanceText(activationChance)));
 
@@ -421,6 +434,13 @@ public partial class ItemTextFormatter
 
 	/// <summary>The value of a skill parameter at a level: one value per level, the last one beyond.</summary>
 	private static float ValueAtLevel(Variable? variable, int level) => ShownSingle(variable, level - 1);
+
+	/// <summary>A line without its leading plain colour when another colour follows it ("{^W}{^a}6.0 Second(s) Recharge").</summary>
+	private static string DropLeadingPlainColor(string line)
+	{
+		var plain = ItemStyle.Mundane.TQColor().ColorTag();
+		return line.StartsWith(plain, StringComparison.Ordinal) && line[plain.Length..].HasColorPrefix() ? line[plain.Length..] : line;
+	}
 
 	/// <summary>Drops the blank lines at both ends; the ones between groups stay as separators.</summary>
 	private static string[] TrimEmptyLines(List<string> lines)

@@ -44,9 +44,9 @@ GrantedSkills[0].Description (2)
   | Bathes you in light that mends your 
   | wounds and those of your allies.
 GrantedSkills[0].Attributes (5)
-  | {^B}25 Energy Cost
+  | {^a}28.0 Second(s) Recharge
+  | {^W}25 Energy Cost
   | {^B}6.0 Second Duration
-  | {^B}{^a}28.0 Second(s) Recharge
   | {^B}+4 Strength
   | {^B}+8.0 Health Regenerated per second
 GrantedSkills[0].ModifiedLines (0)
@@ -89,9 +89,9 @@ BaseAttributes (18)
   | [text] {^W}    Bathes you in light that mends your 
   | [text] {^W}    wounds and those of your allies.
   | 
-  | {^B}25 Energy Cost
+  | {^a}28.0 Second(s) Recharge
+  | {^W}25 Energy Cost
   | {^B}6.0 Second Duration
-  | {^B}{^a}28.0 Second(s) Recharge
   | {^B}+4 Strength
   | {^B}+8.0 Health Regenerated per second
   | {^P}?Class?: ArmorJewelry_Amulet
@@ -108,9 +108,9 @@ ClassicAttributes (18)
   | [text] {^W}    Bathes you in light that mends your 
   | [text] {^W}    wounds and those of your allies.
   | 
-  | {^B}25 Energy Cost
+  | {^a}28.0 Second(s) Recharge
+  | {^W}25 Energy Cost
   | {^B}6.0 Second Duration
-  | {^B}{^a}28.0 Second(s) Recharge
   | {^B}+4 Strength
   | {^B}+8.0 Health Regenerated per second
   | {^P}?Class?: ArmorJewelry_Amulet
@@ -154,9 +154,9 @@ AttributesAll (16)
   | Healing Light (Activated on low health)\n25% Chance of Activating
   | [text]     Bathes you in light that mends your 
   | [text]     wounds and those of your allies.
+  | 28.0 Second(s) Recharge
   | 25 Energy Cost
   | 6.0 Second Duration
-  | 28.0 Second(s) Recharge
   | +4 Strength
   | +8.0 Health Regenerated per second
   | ?Class?: ArmorJewelry_Amulet
@@ -174,9 +174,9 @@ FullText (13)
   | Healing Light (Activated on low health)\n25% Chance of Activating
   |     Bathes you in light that mends your 
   |     wounds and those of your allies.
+  | 28.0 Second(s) Recharge
   | 25 Energy Cost
   | 6.0 Second Duration
-  | 28.0 Second(s) Recharge
   | +4 Strength
   | +8.0 Health Regenerated per second
   | Required Player Level: 40
@@ -186,9 +186,9 @@ AttributesAll (10)
   | Healing Light (Activated on low health)\n25% Chance of Activating
   | [text]     Bathes you in light that mends your 
   | [text]     wounds and those of your allies.
+  | 28.0 Second(s) Recharge
   | 25 Energy Cost
   | 6.0 Second Duration
-  | 28.0 Second(s) Recharge
   | +4 Strength
   | +8.0 Health Regenerated per second
 HasGrantedSkill: True

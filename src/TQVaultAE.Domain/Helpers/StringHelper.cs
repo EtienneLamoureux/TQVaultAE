@@ -349,16 +349,30 @@ public static partial class StringHelper
 			).Trim();
 	}
 
+	/// <summary>
+	/// The non-empty parts of a name, without "//"; only the first text gets a capital, as the game writes
+	/// "Rigid Seal of Hephaestus of Spirit".
+	/// </summary>
 	public static IEnumerable<string> RemoveEmptyAndSanitize(this IEnumerable<string?> TQText)
-		=> TQText.OfType<string>().Where(t => !string.IsNullOrWhiteSpace(t)).Select(t =>
+	{
+		bool first = true;
+		foreach (var t in TQText)
 		{
+			if (string.IsNullOrWhiteSpace(t))
+				continue;
+
 			// Split ColorTag & Content
 			var tag = t.GetColorFromTaggedString();
-			var text = t.RemoveLeadingColorTag()
-				.Replace("//", string.Empty).Trim()// Cleanup "//"
-				.ToFirstCharUpperCase();
-			return $"{(tag?.ColorTag())}{text}";
-		});
+			var text = t.RemoveLeadingColorTag().Replace("//", string.Empty).Trim();
+			if (first && text.Length > 0)
+			{
+				text = text.ToFirstCharUpperCase();
+				first = false;
+			}
+
+			yield return $"{(tag?.ColorTag())}{text}";
+		}
+	}
 	public static string JoinString(this IEnumerable<string> Text, string delim) => string.Join(delim, Text);
 
 	public static string JoinWithoutStartingSpaces(this IEnumerable<string> TQText, string delim)
@@ -414,7 +428,8 @@ public static partial class StringHelper
 			if (t.Length > Columns)
 			{
 				// split on spaces
-				var batch = AllContiguousSpaceRegEx().Split(t);
+				// Without the spaces before a line break ("fertility.  {^n}"): they left an empty line.
+				var batch = AllContiguousSpaceRegEx().Split(t.Trim());
 				string line = string.Empty;
 				string currentColor = string.Empty;
 				List<string> res = [];

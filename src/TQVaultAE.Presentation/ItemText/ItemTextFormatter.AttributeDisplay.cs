@@ -528,6 +528,15 @@ public partial class ItemTextFormatter
 		if (chanceVar is not null)
 			chance = GetChance(variableNumber, chanceVar);
 
+		// The game writes a shield's block in one sentence: "13% Chance to block 109 damage".
+		if (data.Effect.Equals("defensiveBlock", StringComparison.Ordinal) && chanceVar is not null && minVar is not null
+			&& this.GameFormat("tagShieldBlockInfo") is { } blockInfo)
+		{
+			amount = Format(blockInfo, ShownValue(chanceVar, variableNumber), ShownValue(minVar, variableNumber));
+			chance = string.Empty; // used, not written apart
+			label = null;
+		}
+
 		// Display the chance + label + Amount + Duration + DamageRatio
 		string[] strarray = new string[5];
 		int numberOfStrings = 0;

@@ -420,8 +420,12 @@ public partial class ItemTextFormatter
 				// Add the skill effects
 				if (skillRecord is not null)
 				{
+					// Equipment: as the game's item tool tip, the skill window's lines and order (D24, D25).
+					if (!itm.IsScroll && !itm.IsPotion
+						&& this.GetItemGrantedSkill(itm, SkillDescriptionAndEffectsVar.ToRecordId(), record.GetInt32("itemSkillLevel", 0), autoController) is { } granted)
+						results.AddRange(granted.Attributes);
 					// itm is a summon
-					if (skillRecord.GetString("Class", 0).Equals("SKILL_SPAWNPET", noCase))
+					else if (skillRecord.GetString("Class", 0).Equals("SKILL_SPAWNPET", noCase))
 						ConvertPetStats(itm, skillRecord, results);
 					else
 					{

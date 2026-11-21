@@ -155,6 +155,19 @@ public class GameAttributeOrderTests
 	}
 
 	[Fact]
+	public void Merge_Shield_ListsTheBlockBeforeTheDamage()
+	{
+		var block = Slot(ItemAttributesEffectType.ShieldEffect, "defensiveBlock");
+
+		var merged = GameAttributeOrder.Merge(GameItemClass.Shield
+			, Lines(("damage", BaseDamage), ("block", block))
+			, Lines(("fire resistance", FireResistance))
+			, Lines());
+
+		merged.Should().Equal("block", "damage", "", "fire resistance");
+	}
+
+	[Fact]
 	public void Merge_Armor_PrefixArmorGoesBelowTheBlankLine()
 	{
 		var merged = GameAttributeOrder.Merge(GameItemClass.Armor

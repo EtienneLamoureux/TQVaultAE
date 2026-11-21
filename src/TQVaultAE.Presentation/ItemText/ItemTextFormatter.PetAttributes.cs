@@ -183,12 +183,11 @@ public partial class ItemTextFormatter
 					|| (skillRecord1?.GetInt32("isPetDisplayable", 0) != 1 && record?.GetInt32("isPetDisplayable", 0) != 1)))
 					continue;
 
-				if (string.IsNullOrWhiteSpace(skillName))
-					valueStr = $"{ItemStyle.Legendary.TQColor().ColorTag()}{skillNameTag}";
-				else
-					valueStr = $"{ItemStyle.Mundane.TQColor().ColorTag()}{skillName}";
-
-				results.Add(valueStr);
+				// An unnamed skill (the Spriggling's attack) gets no title line.
+				if (!string.IsNullOrWhiteSpace(skillName))
+					results.Add($"{ItemStyle.Mundane.TQColor().ColorTag()}{skillName}");
+				else if (!string.IsNullOrWhiteSpace(skillNameTag))
+					results.Add($"{ItemStyle.Legendary.TQColor().ColorTag()}{skillNameTag}");
 
 				// "+1 to all Skills" of a pet's buff (allSkillEnhancement), which item tool tips leave out.
 				var ownLines = new List<(string Variable, string Text)>();

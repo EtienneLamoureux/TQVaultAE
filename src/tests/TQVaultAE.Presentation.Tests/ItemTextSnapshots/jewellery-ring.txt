@@ -1,8 +1,8 @@
 == GetFriendlyNames(ItemFullDisplay | GrantedSkills)
-FullNameClean: Ring of Testing Of Life
-FullName: Ring of Testing Of Life
-FullNameBagTooltipClean: Ring of Testing Of Life
-FullNameBagTooltip: Ring of Testing Of Life
+FullNameClean: Ring of Testing of Life
+FullName: Ring of Testing of Life
+FullNameBagTooltipClean: Ring of Testing of Life
+FullNameBagTooltip: Ring of Testing of Life
 PrefixAttributes (0)
 SuffixInfoDescription: of Life
 SuffixAttributes (1)
@@ -50,10 +50,10 @@ AttributesAll (4)
   | +1 to all Skills
   | 20.0% Chance of 1.0 ~ 1.5 Stun
 == GetFriendlyNames(ItemFullDisplay, filterExtra: false)
-FullNameClean: Ring of Testing Of Life
-FullName: Ring of Testing Of Life
-FullNameBagTooltipClean: Ring of Testing Of Life
-FullNameBagTooltip: Ring of Testing Of Life
+FullNameClean: Ring of Testing of Life
+FullName: Ring of Testing of Life
+FullNameBagTooltipClean: Ring of Testing of Life
+FullNameBagTooltip: Ring of Testing of Life
 PrefixAttributes (0)
 SuffixInfoDescription: of Life
 SuffixAttributes (4)
@@ -130,7 +130,7 @@ AttributesAll (11)
   | ?itemClassification?: Rare
 == Search
 FullText (7)
-  | Ring of Testing Of Life
+  | Ring of Testing of Life
   | Seed 9 (0.00)
   | +50 Health
   | +5 Attack Speed
