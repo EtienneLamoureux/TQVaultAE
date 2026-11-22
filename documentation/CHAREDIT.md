@@ -114,9 +114,12 @@ Computed with the game's formulas from the attributes, equipped items, item sets
 
 As in the game, a worn piece whose requirements are not met (level, strength, dexterity, intelligence, lowered by the
 requirement reductions; the buffs on in tab IV count) stays in its slot, red, and counts for nothing: its bonuses, its item
-set, the skills it grants or raises. A piece out of reach can still be put in a slot, red, as a warning. An item's tool tip
-shows each requirement as its base value, then the value once reduced for the character in brackets when it differs:
-`Required Strength: 430 (374)`.
+set, the skills it grants or raises. A piece out of reach can still be put in a slot, red, as a warning.
+
+An item's tool tip is written for the character, as in the game:
+- **Requirements**: the base value when the character meets it; else the reduced value and the reduction,
+  `Required Strength: 220 [ 424 - 48% Reduction]`, in red while still not met.
+- **Item set**: the pieces the character wears in yellow, the others in grey, then the set bonus for that number of pieces.
 
 | Tab | Shows |
 |---|---|
