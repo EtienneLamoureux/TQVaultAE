@@ -58,7 +58,8 @@ public partial class MainFormUserControl
 
 		var window = new CharacterWindow(owner, save, player, this.DragInfo, this.stashPanel.SlotsGeometry, this);
 
-		// Move to: the vault shown or the transfer stash, placed as from the main window's panels.
+		// Tool tips and Move to (the vault shown or the transfer stash) as in the main window's panels.
+		window.EquipmentPanel.OnNewItemHighlighted += this.NewItemHighlightedCallback;
 		window.EquipmentPanel.OnAutoMoveItem += this.AutoMoveItemCallback;
 		window.EquipmentChanged += this.CharacterWindowEquipmentChanged;
 		window.PlaceChanged += (_, _) => this.RememberCharacterWindow(window);

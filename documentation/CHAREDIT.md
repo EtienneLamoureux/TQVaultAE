@@ -29,6 +29,7 @@ every number at once.
 - Its buff toggles are its own, in memory only, as in tab IV.
 - Drag items between the window and the main window (inventory, stash, vaults), with the usual rules: a read-only
   character or *Player read-only* refuses changes. TQVault's **Save** writes them.
+- Hover an item for its tool tip, written for the window's character (requirements, set pieces worn).
 - Item menu: **Compare** with any item of either window; **Move Item To** the vault shown or the transfer stash.
 - The list right of the gold and the arrows on the stone show a loadout in place of the equipment, read-only, with its
   statistics. **Current gear** shows the equipment worn again.
