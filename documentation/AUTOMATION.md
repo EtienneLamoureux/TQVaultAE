@@ -391,9 +391,10 @@ General rules:
 - **`drop_item(panel, x, y)`**: drops the dragged item, top-left corner on cell (x, y); reports whether the panel
   accepted it.
 - **`cancel_drag`**: returns the dragged item where it was picked up, like a right click.
-- **`create_item(panel, baseItem, prefix?, suffix?, relic?, relicBonus?, relic2?, relicBonus2?, seed?)`** *(Debug)*:
+- **`create_item(panel, baseItem, prefix?, suffix?, relic?, relicBonus?, relic2?, relicBonus2?, seed?, relicShards?, relic2Shards?)`** *(Debug)*:
   builds an item in memory from database record ids and drags it, like the Duplicate menu entry; place it with
-  `drop_item` (a created item cannot be cancelled back).
+  `drop_item` (a created item cannot be cancelled back). `relicShards` and `relic2Shards` give the relics' piece counts
+  (one by default); `relicShards` is also the count of an item that is itself a relic or charm.
   - Tests combinations no vault holds, e.g. a relic whose completion bonus grants a skill, or any record in any slot as
     the Forge allows in God mode.
   - Saved with its vault or character like any item: create it in a test file (see [Safety](#safety)).

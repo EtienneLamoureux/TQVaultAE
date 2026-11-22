@@ -23,7 +23,9 @@ internal static partial class AutomationTools
 			[Description("Completion bonus of the first relic, or empty.")] string? relicBonus = null,
 			[Description("Relic or charm socketed in the second slot, or empty.")] string? relic2 = null,
 			[Description("Completion bonus of the second relic, or empty.")] string? relicBonus2 = null,
-			[Description("Item seed; 0 picks a random one.")] int seed = 0)
+			[Description("Item seed; 0 picks a random one.")] int seed = 0,
+			[Description("Pieces of the first relic (its completion needs the relic's full count), or of the item itself when it is a relic or charm; 0 for one.")] int relicShards = 0,
+			[Description("Pieces of the second relic; 0 for one.")] int relic2Shards = 0)
 			=> AutomationHost.OnUi(form =>
 			{
 				var named = ResolveShownPanel(form, panel);
@@ -41,11 +43,11 @@ internal static partial class AutomationTools
 				item.suffixID = suffix ?? string.Empty;
 				item.relicID = relic ?? string.Empty;
 				item.RelicBonusId = relicBonus ?? string.Empty;
-				item.Var1 = RecordId.IsNullOrEmpty(item.relicID) ? 0 : 1;
+				item.Var1 = RecordId.IsNullOrEmpty(item.relicID) ? Math.Max(0, relicShards) : Math.Max(1, relicShards);
 				item.relic2ID = relic2 ?? string.Empty;
 				item.RelicBonus2Id = relicBonus2 ?? string.Empty;
 				if (!RecordId.IsNullOrEmpty(item.relic2ID))
-					item.Var2 = 1;
+					item.Var2 = Math.Max(1, relic2Shards);
 				if (seed != 0)
 					item.Seed = seed;
 
