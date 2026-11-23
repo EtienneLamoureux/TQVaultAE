@@ -42,7 +42,7 @@ internal sealed class RecordOutput : IDisposable
 					|| outPath.EndsWith(".dbr", StringComparison.OrdinalIgnoreCase) || outPath.EndsWith(".txt", StringComparison.OrdinalIgnoreCase);
 				if (!singleFile)
 					return new RecordOutput(DbrRecordSink.ToDirectory(outPath!), null, null);
-				var text = CliContext.OpenTextOutput(outPath);
+				var text = CliContext.OpenTextOutput(outPath, Formats.Dbr);
 				return new RecordOutput(DbrRecordSink.ToStream(text, multipleRecords), null, text);
 			}
 			default:

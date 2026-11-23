@@ -423,7 +423,7 @@ internal sealed class DbrRecordSink : IRecordSink
 		var path = PathSanitizer.Combine(this._directory!, view.Info.Id);
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		using var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 1 << 14);
-		using var w = new StreamWriter(fs, Formats.Utf8);
+		using var w = new StreamWriter(fs, Formats.Dbr);
 		WriteBody(w, view.Record);
 	}
 

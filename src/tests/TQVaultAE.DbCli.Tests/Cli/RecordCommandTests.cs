@@ -105,6 +105,25 @@ public sealed class RecordCommandTests : IDisposable
 	}
 
 	[Fact]
+	public void Record_Dbr_IsWrittenInCp1252LikeArtManagerReadsIt()
+	{
+		var outFile = this._game.OutPath("relic.dbr");
+
+		var (folderCode, _) = this._game.Run("record", FakeGameInstall.Relic, "--format", "dbr", "--out", this._game.Out);
+		var (fileCode, _) = this._game.Run("record", FakeGameInstall.Relic, "--out", outFile);
+
+		folderCode.Should().Be(0);
+		fileCode.Should().Be(0);
+		byte[] expected = [.. "FileDescription,Valh"u8, 0xF6, .. "ll,"u8];
+		foreach (var path in new[] { this._game.OutPath(FakeGameInstall.Relic), outFile }) {
+			var bytes = File.ReadAllBytes(path);
+			bytes.AsSpan().IndexOf(expected).Should().BeGreaterThanOrEqualTo(0, path);
+			bytes.AsSpan().IndexOf("ö"u8).Should().Be(-1, "no UTF-8 in {0}", path);
+			bytes.AsSpan().StartsWith("\uFEFF"u8).Should().BeFalse();
+		}
+	}
+
+	[Fact]
 	public void Record_DbrToSingleFile_SeparatesRecordsWithTheirId()
 	{
 		var outFile = this._game.OutPath("both.dbr");

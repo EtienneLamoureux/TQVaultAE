@@ -206,7 +206,7 @@ Search records.
 | `--count` | Print only the number of matches, at most `--limit`. |
 | `--format json\|jsonl\|tsv\|dbr` | Default `tsv`, or inferred from the `--out` extension. |
 | `--compact` | Non-indented JSON. |
-| `-o, --out <path>` | Output file. With `--format dbr`, a **directory** receiving one `.dbr` per record (path mirrored, like ARZ Explorer), unless the path ends with `.dbr`/`.txt`. |
+| `-o, --out <path>` | Output file. With `--format dbr`, a **directory** receiving one `.dbr` per record (path mirrored, like ARZ Explorer), unless the path ends with `.dbr`/`.txt`. DBR text is written in Windows-1252 without a BOM, the encoding ArtManager reads (other text formats are UTF-8). |
 
 Examples:
 ```

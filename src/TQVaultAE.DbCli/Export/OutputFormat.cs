@@ -27,6 +27,9 @@ internal static class Formats
 	/// <summary>UTF-8 without BOM.</summary>
 	public static readonly Encoding Utf8 = new UTF8Encoding(false);
 
+	/// <summary>Windows-1252, the encoding ArtManager reads .dbr sources with (UTF-8 text would be rebuilt as mojibake).</summary>
+	public static Encoding Dbr => TextEncodings.Cp1252;
+
 	/// <summary>Buffer size of output streams.</summary>
 	public const int BufferSize = 1 << 16;
 

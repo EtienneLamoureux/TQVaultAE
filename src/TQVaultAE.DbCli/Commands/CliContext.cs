@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Text;
 using System.Collections.Concurrent;
 using TQVaultAE.DbCli.Core;
 using TQVaultAE.DbCli.Export;
@@ -130,7 +131,10 @@ internal sealed class CliContext : IDisposable
 	}
 
 	/// <summary>Text writer over <see cref="OpenOutput"/>.</summary>
-	public static StreamWriter OpenTextOutput(string? path) => new(OpenOutput(path), Formats.Utf8, Formats.BufferSize);
+	public static StreamWriter OpenTextOutput(string? path) => OpenTextOutput(path, Formats.Utf8);
+
+	/// <summary>Text writer over <see cref="OpenOutput"/> in <paramref name="encoding"/>.</summary>
+	public static StreamWriter OpenTextOutput(string? path, Encoding encoding) => new(OpenOutput(path), encoding, Formats.BufferSize);
 
 	/// <summary><c>--count</c> of the listing commands (records, text, files).</summary>
 	public static readonly OptionSpec CountOption = new("count", null, null, "Print only the number of matches, at most --limit.");

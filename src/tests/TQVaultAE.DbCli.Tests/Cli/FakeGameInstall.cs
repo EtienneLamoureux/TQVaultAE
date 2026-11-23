@@ -120,7 +120,7 @@ internal sealed class FakeGameInstall : IDisposable
 			new(OldSwordA, "WeaponMelee_Sword", 0,
 				Str("Class", "WeaponMelee_Sword"), Int("itemLevel", 1)),
 			new(Relic, "ItemRelic", 0,
-				Str("Class", "ItemRelic"), Str("description", "tagRelic"), Int("completedRelicLevel", 3)),
+				Str("Class", "ItemRelic"), Str("description", "tagRelic"), Int("completedRelicLevel", 3), Str("FileDescription", "Valhöll")),
 			new(LootTable, "LootItemTable_FixedWeight", 0,
 				Str("Class", "LootItemTable_FixedWeight"), Str("lootName1", SwordA), Str("lootName2", SwordB), Int("lootWeight1", 10)),
 		];
