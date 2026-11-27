@@ -31,7 +31,7 @@ TQDefiler can be download at
 
     1. It will detect you game version. 
 
-1. Run TQVault, enable "Titan Quest original support" in the settings and apply.\
+1. Run TQVault, enable "TQ original support" in the settings and apply.\
 ![TQ settings](tqoriginal/tqoriginalsettings.png)
     1. the link "How to play..." leads to this page.
 
@@ -62,7 +62,7 @@ Doing so, you will not be forced to run TQDefiler while using TQVault with TQ.
 1. Edit your character in TQVault.
 
     1. If you want to keep TQVault running and detect character changes while playing,
-    enable the "Hot Reload" feature in TQVault settings. This enable the tool to save your changes without closing. There is a new button `Save` in the top navigation bar.
+    enable the "Allow Hot Reload Features" setting in TQVault settings. This enable the tool to save your changes without closing. There is a new button `Save` in the top navigation bar.
 
 1. Load your character in game.
 

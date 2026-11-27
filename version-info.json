@@ -3,9 +3,9 @@
   // Should only be modified by the owner of the upstream repository.
   // Fork maintainers should not modify this file unless you intend to create
   // independent releases on your fork.
-  // Trigger 5.0.0
+  // Trigger 5.1.0
   "Major": 5,
-  "Minor": 0,
+  "Minor": 1,
   "Build": 0,
   "Revision": 0
 }

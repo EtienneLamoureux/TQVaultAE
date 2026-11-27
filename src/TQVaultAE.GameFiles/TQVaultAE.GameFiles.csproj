@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Readers for the Titan Quest game files (database.arz, .arc archives, Text_XX.arc).
+	     No dependencies, shared by TQVaultAE.Data and tqdb (TQVaultAE.DbCli). -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<RootNamespace>TQVaultAE.GameFiles</RootNamespace>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="TQVaultAE.Domain.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Data.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Services.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.DbCli.Tests" />
+		<InternalsVisibleTo Include="tqdb" />
+	</ItemGroup>
+
+</Project>

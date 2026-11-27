@@ -1,0 +1,142 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Arcane Formula - Eye of Testing
+FullName: Arcane Formula - Eye of Testing
+FullNameBagTooltipClean: Arcane Formula - Eye of Testing
+FullNameBagTooltip: Arcane Formula - Eye of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\ItemArtifactFormula.dbr
+BaseItemRarity: [Formulae]
+BaseItemInfoClass: xtagEnchant02
+BaseItemInfoDescription: Arcane Formula - Eye of Testing
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 45
+RequirementVariables (1)
+  | LevelRequirement = 45
+RequirementInfo: Lvl=45 Str= Dex= Int=
+BaseAttributes (4)
+  | {^Y}    Wolf Fang
+  | {^P}    ?reagent2BaseName?: records\test\relic_ember.dbr
+  | 
+  | {^G}Gold Cost: 50,000
+ClassicAttributes (4)
+  | {^Y}    Wolf Fang
+  | {^P}    ?reagent2BaseName?: records\test\relic_ember.dbr
+  | 
+  | {^G}Gold Cost: 50,000
+ClassicAttributeRanges (0)
+ClassicAttributeSources (4)
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+ArtifactRecipe: Arcane Formula
+FormulaeArtifactClass: Greater Artifact
+FormulaeArtifactName: Eye of Testing
+FormulaeFormat: {^O}Required Reagents (0/3)
+FormulaeArtifactAttributes (2)
+  | {^B}+20 Strength
+  | {^B}+150 Health
+AttributesAll (5)
+  |     Wolf Fang
+  |     ?reagent2BaseName?: records\test\relic_ember.dbr
+  | Gold Cost: 50,000
+  | +20 Strength
+  | +150 Health
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Arcane Formula - Eye of Testing
+FullName: Arcane Formula - Eye of Testing
+FullNameBagTooltipClean: Arcane Formula - Eye of Testing
+FullNameBagTooltip: Arcane Formula - Eye of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\ItemArtifactFormula.dbr
+BaseItemRarity: [Formulae]
+BaseItemInfoClass: xtagEnchant02
+BaseItemInfoDescription: Arcane Formula - Eye of Testing
+ItemSeed: Seed 0 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 45
+RequirementVariables (1)
+  | LevelRequirement = 45
+RequirementInfo: Lvl=45 Str= Dex= Int=
+BaseAttributes (7)
+  | {^P}?Class?: ItemArtifactFormula
+  | {^P}?description?: tagFormulaEye
+  | {^P}?artifactName?: records\test\artifact_eye.dbr
+  | {^Y}    Wolf Fang
+  | {^P}    ?reagent2BaseName?: records\test\relic_ember.dbr
+  | 
+  | {^G}Gold Cost: 50,000
+ClassicAttributes (7)
+  | {^P}?Class?: ItemArtifactFormula
+  | {^P}?description?: tagFormulaEye
+  | {^P}?artifactName?: records\test\artifact_eye.dbr
+  | {^Y}    Wolf Fang
+  | {^P}    ?reagent2BaseName?: records\test\relic_ember.dbr
+  | 
+  | {^G}Gold Cost: 50,000
+ClassicAttributeRanges (0)
+ClassicAttributeSources (7)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+ArtifactRecipe: Arcane Formula
+FormulaeArtifactClass: Greater Artifact
+FormulaeArtifactName: Eye of Testing
+FormulaeFormat: {^O}Required Reagents (0/3)
+FormulaeArtifactAttributes (2)
+  | {^B}+20 Strength
+  | {^B}+150 Health
+AttributesAll (8)
+  | ?Class?: ItemArtifactFormula
+  | ?description?: tagFormulaEye
+  | ?artifactName?: records\test\artifact_eye.dbr
+  |     Wolf Fang
+  |     ?reagent2BaseName?: records\test\relic_ember.dbr
+  | Gold Cost: 50,000
+  | +20 Strength
+  | +150 Health
+== Search
+FullText (8)
+  | Arcane Formula - Eye of Testing
+  | Seed 0 (0.00)
+  |     Wolf Fang
+  |     ?reagent2BaseName?: records\test\relic_ember.dbr
+  | Gold Cost: 50,000
+  | +20 Strength
+  | +150 Health
+  | Required Player Level: 45
+AttributesAll (5)
+  |     Wolf Fang
+  |     ?reagent2BaseName?: records\test\relic_ember.dbr
+  | Gold Cost: 50,000
+  | +20 Strength
+  | +150 Health
+HasGrantedSkill: False
+GrantedSkillNames (0)

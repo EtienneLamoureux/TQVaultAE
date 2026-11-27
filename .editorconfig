@@ -1,5 +1,97 @@
 # top-most EditorConfig file
 root = true
 
+# Line endings and BOM are left to git (core.autocrlf) and to each file:
+# the sources mix them, so no end_of_line or charset is set here.
+
 [*.cs]
 indent_style = tab
+insert_final_newline = true
+
+# Layout: Allman braces, as in the existing code.
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# Namespaces and usings
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_using_directive_placement = outside_namespace:suggestion
+dotnet_sort_system_directives_first = true
+
+# Null checks and pattern matching: `is null` / `is not null`, `x is T t` rather than `as` then a null check.
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
+
+# Collection expressions: `List<T> x = [];`, `int[] a = [1, 2];`.
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
+
+# Braces are mandatory for multi-line statements (CONTRIBUTING.md).
+csharp_prefer_braces = when_multiline:suggestion
+
+# Naming
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_style.prefix_i.required_prefix = I
+dotnet_naming_style.prefix_i.capitalization = pascal_case
+dotnet_naming_rule.interfaces_start_with_i.symbols = interfaces
+dotnet_naming_rule.interfaces_start_with_i.style = prefix_i
+dotnet_naming_rule.interfaces_start_with_i.severity = suggestion
+
+dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, delegate
+dotnet_naming_style.pascal.capitalization = pascal_case
+dotnet_naming_rule.types_are_pascal.symbols = types
+dotnet_naming_rule.types_are_pascal.style = pascal
+dotnet_naming_rule.types_are_pascal.severity = suggestion
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.underscore_camel.required_prefix = _
+dotnet_naming_style.underscore_camel.capitalization = camel_case
+dotnet_naming_rule.private_fields_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_underscore.style = underscore_camel
+dotnet_naming_rule.private_fields_underscore.severity = suggestion
+
+# Culture: game record ids, file paths and keys must not depend on the user's locale
+# (for example 'i'.ToUpper() is 'İ' in Turkish). Say which comparison or culture is meant.
+dotnet_diagnostic.CA1304.severity = warning
+dotnet_diagnostic.CA1309.severity = warning
+dotnet_diagnostic.CA1310.severity = warning
+dotnet_diagnostic.CA1311.severity = warning
+
+# Logging: message templates must be constant, with named placeholders, so log entries keep their fields.
+dotnet_diagnostic.CA2253.severity = warning
+dotnet_diagnostic.CA2254.severity = warning
+
+# Analyzers (AnalysisMode=Recommended in Directory.Build.props).
+# Rules the project does not follow:
+# Underscores in names: test names (Method_Case_Result) and WinForms event handlers.
+dotnet_diagnostic.CA1707.severity = none
+# Public fields: the item and save models expose fields used across the code base.
+dotnet_diagnostic.CA1051.severity = none
+# LoggerMessage delegates and guarded log arguments: logging is not on a hot path here.
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none
+# Cached CompositeFormat: formats come from the game's translations, not constants.
+dotnet_diagnostic.CA1863.severity = none
+# Naming rules that would rename public types, members or parameters kept for compatibility.
+dotnet_diagnostic.CA1708.severity = none
+dotnet_diagnostic.CA1711.severity = none
+dotnet_diagnostic.CA1715.severity = none
+dotnet_diagnostic.CA1720.severity = none
+dotnet_diagnostic.CA1725.severity = none
+dotnet_diagnostic.CA1727.severity = none
+# Explicit default field values are kept where they document intent.
+dotnet_diagnostic.CA1805.severity = none
+# WinForms resources are not localized through satellite assemblies.
+dotnet_diagnostic.CA1824.severity = none
+# Rules worth following, with too many existing sites to fix at once: shown as suggestions.
+# Members that could be static.
+dotnet_diagnostic.CA1822.severity = suggestion
+# IFormatProvider: UI text is formatted for the user's culture on purpose.
+dotnet_diagnostic.CA1305.severity = suggestion
+# Constant array arguments: only worth a static field on hot paths.
+dotnet_diagnostic.CA1861.severity = suggestion
+
+[src/tests/**.cs]
+# Tests build plain exceptions on purpose, to check how they are logged and formatted.
+dotnet_diagnostic.CA2201.severity = none

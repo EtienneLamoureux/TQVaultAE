@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using TQVaultAE.Domain.Entities;
 
@@ -5,15 +6,15 @@ namespace TQVaultAE.Presentation.Models;
 
 public class ConfRoot
 {
-	public List<ConfFile> list;
+	public List<ConfFile> list = [];
 }
 
 public class ConfFile
 {
 	[JsonPropertyName("file")]
-	public string fileName;
+	public string fileName = string.Empty;
 	[JsonPropertyName("img")]
-	public List<ConfMatch> imgMatch;
+	public List<ConfMatch> imgMatch = [];
 }
 
 public class ConfMatch
@@ -21,15 +22,16 @@ public class ConfMatch
 	[JsonPropertyName("ca")]
 	public IconCategory Category;
 	[JsonPropertyName("lt")]
-	public List<string> Literal;
+	public List<string>? Literal;
 	[JsonPropertyName("pa")]
-	public string Pattern;
+	public string? Pattern;
 	[JsonPropertyName("on")]
-	public string On;
+	public string On = string.Empty;
 	[JsonPropertyName("of")]
-	public string Off;
+	public string Off = string.Empty;
 	[JsonPropertyName("ov")]
-	public string Over;
+	public string Over = string.Empty;
+	[MemberNotNullWhen(true, nameof(Pattern))]
 	public bool IsRegex => !string.IsNullOrWhiteSpace(this.Pattern);
 
 }

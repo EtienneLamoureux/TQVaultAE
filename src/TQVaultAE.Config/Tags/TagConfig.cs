@@ -2,6 +2,6 @@
 
 public class TagConfig
 {
-	public List<TagInfo> tags = new();
-	public List<TagMapItem> mapping = new();
+	public List<TagInfo> tags = [];
+	public List<TagMapItem> mapping = [];
 }

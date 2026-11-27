@@ -23,6 +23,19 @@ You can create a "requirement range" via Min/Max checkboxes.
 
 _**Note:** Leaving a value to 0 means "ignore"._
 
+The popup also has check boxes (Having Prefix, Having Suffix, Having Relic, Having Charm, Set Item, Having Skill, Modded)
+and lists to tick: item types, rarity, origin and, when mods are installed, the installed mods. The screenshot below is
+older and shows only the first two boxes.
+
+*Modded* keeps the items that come from a mod, installed or not: the mod whose data gave at least one of the item's
+records, read with the data of its vault, character or shared stash (see [Mods](MODS.md#ItemMod) and
+[mod links](MODLINK.md)). Ticking mods in the mod list keeps only the items of those mods.
+
+Inside a list, the ticked entries add up (an item of any of them matches); the boxes, the requirement range and the lists
+must all match.
+
+<kbd>CTRL</kbd>+<kbd>S</kbd> selects all the highlighted items of the bag under the mouse.
+
 ![Vault and Player](highlight/highlight_ui_extended.png)
 
 ## Regular expression
@@ -34,6 +47,6 @@ Here's few examples.
 - `/rune|earth` : Everything with "rune" or "earth"
 - `/chance of .+%.+bleeding damage` : All chance of + percent bleeding damage
 - `/\+.+%.+(life|mana) leech` : Any + percentage of life or mana leech
-- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire leech
+- `/\+.+%.+(cold|fire) damage` : Any + percentage of cold or fire damage
 
 ![Regex](highlight/highlight_ui_regex.png)

@@ -5,21 +5,15 @@ using TQVaultAE.Config;
 
 namespace TQVaultAE.Services;
 
-public class PasteBinService : IPasteBinService
+public class PasteBinService(HttpClient httpClient, UserSettings userSettings) : IPasteBinService
 {
-	private readonly HttpClient _httpClient;
-	private readonly UserSettings _userSettings;
+	private readonly HttpClient _httpClient = httpClient;
+	private readonly UserSettings _userSettings = userSettings;
 
 	private const string PasteBinApiUrl = "https://pastebin.com/api/api_post.php";
 	private const string PasteBinRawUrl = "https://pastebin.com/raw/{0}";
 
-	public PasteBinService(HttpClient httpClient, UserSettings userSettings)
-	{
-		_httpClient = httpClient;
-		_userSettings = userSettings;
-	}
-
-	public async Task<string> UploadAsync(string text, string pasteName = null)
+	public async Task<string> UploadAsync(string text, string? pasteName = null)
 	{
 		var formData = new Dictionary<string, string>
 		{
@@ -27,15 +21,15 @@ public class PasteBinService : IPasteBinService
 			["api_option"] = "paste",
 			["api_paste_code"] = text,
 			["api_paste_private"] = "1",
-			["api_paste_expire_date"] = _userSettings.PasteBinExpiration ?? "1M"
+			["api_paste_expire_date"] = _userSettings.PasteBinExpiration ?? UserSettings.DefaultPasteBinExpiration
 		};
 
 		if (!string.IsNullOrWhiteSpace(pasteName))
 			formData["api_paste_name"] = pasteName;
 
-		var content = new FormUrlEncodedContent(formData);
+		using var content = new FormUrlEncodedContent(formData);
 
-		var response = await _httpClient.PostAsync(PasteBinApiUrl, content);
+		using var response = await _httpClient.PostAsync(PasteBinApiUrl, content);
 		var result = await response.Content.ReadAsStringAsync();
 
 		if (!response.IsSuccessStatusCode)
@@ -52,7 +46,7 @@ public class PasteBinService : IPasteBinService
 		var pasteId = GetPasteIdFromUrl(pasteUrl);
 		var rawUrl = string.Format(PasteBinRawUrl, pasteId);
 
-		var response = await _httpClient.GetAsync(rawUrl);
+		using var response = await _httpClient.GetAsync(rawUrl);
 		var result = await response.Content.ReadAsStringAsync();
 
 		if (!response.IsSuccessStatusCode)

@@ -1,0 +1,487 @@
+//-----------------------------------------------------------------------
+// <copyright file="SackPanel.Rendering.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Globalization;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.Presentation.Win32;
+using TQVaultAE.Presentation;
+
+namespace TQVaultAE.GUI.Components.Panels;
+
+/// <summary>
+/// Class for holding all of the UI functions of the sack panel.
+/// </summary>
+public partial class SackPanel : Panel, IScalingControl
+{
+	/// <summary>
+	/// Paint callback
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">PaintEventArgs data</param>
+	protected void PaintCallback(object? sender, PaintEventArgs e)
+	{
+		// A paint can still arrive while the form closes. Reading the cursor position then needs the handle,
+		// which a disposed control cannot recreate (ObjectDisposedException).
+		if (this.IsDisposed || this.Disposing)
+			return;
+
+		// Assign the clipping to the rectangle. Graphics.Clip returns and stores copies, so both regions are ours to dispose.
+		using Region oldClip = e.Graphics.Clip;
+		using (Region clip = new Region(e.ClipRectangle))
+			e.Graphics.Clip = clip;
+
+		try
+		{
+			if (this.Sack is null)
+			{
+				if (DefaultImage is not null)
+					// Draw the medallion if the sack is not created
+					e.Graphics.DrawImage(DefaultImage, 0, 0, this.Width, this.Height);
+			}
+			else
+			{
+				// Draw the border.
+				this.DrawBorder(e.Graphics);
+
+				// shade the area under all the items
+				this.PaintAreaUnderItem(e);
+
+				// Shade the area under the drag item
+				this.PaintAreaUnderDragItem(e);
+
+				// Draw the grid.
+				this.DrawGrid(e.Graphics);
+
+				// Draw the items.
+				this.PaintItems(e);
+
+				// Frame the first item of the compare selection.
+				this.PaintPairSelection(e.Graphics);
+
+				// The cursor position is only needed to draw a dragged item.
+				if (this.DragInfo.IsActive)
+				{
+					// Automation drives drags with a virtual cursor instead of the real one.
+					Point cursorPosition = Automation.VirtualCursor.GetClientPosition(this);
+					if (this.ClientRectangle.Contains(cursorPosition))
+						this.RedrawDragItem(e.Graphics, new Point(cursorPosition.X - this.DragInfo.MouseOffset.X, cursorPosition.Y - this.DragInfo.MouseOffset.Y));
+				}
+
+				if (mouseDraw)
+					e.Graphics.DrawRectangle(Pens.White, GetMouseDragRectangle());
+			}
+		}
+		finally
+		{
+			e.Graphics.Clip = oldClip;
+		}
+	}
+
+	/// <summary>
+	/// Draws the background under a dragged item during a Paint call.
+	/// </summary>
+	/// <param name="e">PaintEventArgs data</param>
+	protected virtual void PaintAreaUnderDragItem(PaintEventArgs e)
+	{
+		if (!this.DragInfo.IsActive || this.CellsUnderDragItem.Size.IsEmpty)
+			return;
+
+		Color highlightColor = this.HighlightInvalidItemColor;
+
+		if ((this.ItemsUnderDragItem is null || this.ItemsUnderDragItem.Count <= 1) && this.IsItemValidForPlacement(this.DragInfo.Item))
+			highlightColor = this.HighlightValidItemColor;
+
+		Point topLeft = this.CellTopLeft(this.CellsUnderDragItem.Location);
+		Point bottomRight = this.CellBottomRight(new Point(this.CellsUnderDragItem.Right - 1, this.CellsUnderDragItem.Bottom - 1));
+
+		using (SolidBrush brush = new SolidBrush(highlightColor))
+		{
+			// Draw the area
+			e.Graphics.FillRectangle(brush, topLeft.X, topLeft.Y, bottomRight.X - topLeft.X + 1, bottomRight.Y - topLeft.Y + 1);
+		}
+
+	}
+
+	/// <summary>
+	/// Draws the items in the panel during a Paint call.
+	/// </summary>
+	/// <param name="e">PaintEventArgs data</param>
+	protected virtual void PaintItems(PaintEventArgs e)
+	{
+		// Now draw all the sack items
+		foreach (Item item in this.ShownSack)
+		{
+			// Skip over empty and dragged items.
+			if (item != this.DragInfo.Item && !RecordId.IsNullOrEmpty(item.BaseItemId))
+				this.DrawItem(e.Graphics, item);
+		}
+	}
+
+	/// <summary>
+	/// Gets the item background shading color based on the item quality.
+	/// </summary>
+	/// <param name="item">Item that needs the color applied.</param>
+	/// <returns>Color for the item.  Returns base color if specific color is not found.</returns>
+	protected virtual Color GetItemBackgroundColor(Item item)
+		=> this.HasItemBackgroundColor(item) ? item.ItemStyle.Color() : this.DefaultItemBackgroundColor;
+
+	/// <summary>
+	/// Indicates whether the item has a specific background color based on the ItemStyle.
+	/// </summary>
+	/// <param name="item">Item that needs needs a background color</param>
+	/// <returns>True if the Item has a specific background color</returns>
+	protected virtual bool HasItemBackgroundColor(Item item)
+		=> this.ItemStyleBackGroundColorEnable.Contains(item.ItemStyle);
+
+	/// <summary>
+	/// Draws the background of the items in the panel during a Paint call.
+	/// </summary>
+	/// <param name="e">PaintEventArgs data</param>
+	protected void PaintAreaUnderItem(PaintEventArgs e)
+	{
+		Item? focusedItem = this.FindItem(this.LastCellWithFocus);
+		foreach (Item item in this.ShownSack)
+		{
+			// Do not draw the item being dragged.
+			if (item != this.DragInfo.Item)
+				this.ShadeItem(e.Graphics, item, this.ShadingOf(item, focusedItem));
+		}
+	}
+
+	/// <summary>How the background of an item is drawn: its color and alpha, its accent, the search highlight.</summary>
+	protected readonly record struct ItemShading(Color Color, int Alpha, bool Accent, bool Highlight);
+
+	/// <summary>
+	/// The background of <paramref name="item"/>: its quality color, the search highlight, the invalid color when the
+	/// player cannot use it (without accent), the drag target color under a dragged item; each of these, a selection and
+	/// the focus make it stand out more.
+	/// </summary>
+	private ItemShading ShadingOf(Item item, Item? focusedItem)
+	{
+		bool showAccent = true;
+		bool highlight = false;
+		int alpha = this.UserAlpha;
+		Color backgroundColor = this.GetItemBackgroundColor(item);
+
+		if (this.HighlightService.HighlightedItems.Count > 0 && this.HighlightService.HighlightedItems.Contains(item))
+		{
+			highlight = true;
+			backgroundColor = this.HighlightService.HighlightSearchItemColor;
+			alpha = AdjustAlpha(alpha);
+		}
+		else if (!this.SecondaryVaultShown && this.CannotUse(item))
+		{
+			// Un-equippable items show no accent: their background stands out instead.
+			backgroundColor = this.HighlightInvalidItemColor;
+			showAccent = false;
+			alpha = AdjustAlpha(alpha);
+		}
+
+		if (this.IsItemSelected(item))
+			alpha = AdjustAlpha(alpha);
+
+		if (this.DragInfo.IsActive && this.ItemsUnderDragItem.Contains(item))
+		{
+			backgroundColor = this.DragTargetColor();
+			alpha = AdjustAlpha(alpha);
+		}
+
+		if (!this.DragInfo.IsActive && item == focusedItem)
+			alpha = AdjustAlpha(alpha);
+
+		return new ItemShading(backgroundColor, alpha, showAccent, highlight);
+	}
+
+	/// <summary>
+	/// The color of the items under a dragged item: valid when it is the only one (the drop swaps them), invalid otherwise.
+	/// </summary>
+	protected virtual Color DragTargetColor()
+		=> this.ItemsUnderDragItem.Count > 1 ? this.HighlightInvalidItemColor : this.HighlightValidItemColor;
+
+	/// <summary>Draws the background of <paramref name="item"/> and its accent.</summary>
+	protected virtual void ShadeItem(Graphics graphics, Item item, ItemShading shading)
+	{
+		this.ShadeAreaUnderItem(graphics, item, shading.Color, shading.Alpha, shading.Highlight);
+		this.DrawAccentOf(graphics, item, item, shading);
+	}
+
+	/// <summary>Draws the accent of <paramref name="item"/> on <paramref name="at"/>, when it shows one.</summary>
+	protected void DrawAccentOf(Graphics graphics, Item item, Item at, ItemShading shading)
+	{
+		if (shading.Accent && this.HasItemBackgroundColor(item))
+			this.DrawItemAccent(graphics, at, shading.Color, AdjustAlpha(shading.Alpha));
+	}
+
+	/// <summary>
+	/// Whether the player cannot use <paramref name="item"/>: requirements not met (a worn piece: detached), or an item for
+	/// another kind of character.
+	/// </summary>
+	protected bool CannotUse(Item item)
+		=> !this.PlayerMeetRequierements(item) || !this.IsSuitableForCurrentPlayer(item);
+
+	/// <summary>
+	/// Draws an item on the screen at the specified coordinates without background shading.
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="item">item we are drawing</param>
+	protected virtual void DrawItem(Graphics graphics, Item item)
+		=> this.DrawItem(graphics, item, this.CellTopLeft(item.Location));
+
+	/// <summary>
+	/// Draws an item on the screen at the specified coordinates without background shading.
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="item">item we are drawing</param>
+	/// <param name="screenLocation">Point containing the screen coordinates where the item will be drawn</param>
+	protected void DrawItem(Graphics graphics, Item item, Point screenLocation)
+		=> this.DrawItem(graphics, item, screenLocation, null);
+
+	/// <summary>
+	/// Draws an item on the screen at the specified coordinates without background shading but with specific ImageAttributes.
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="item">item we are drawing</param>
+	/// <param name="screenLocation">Point containing the screen coordinates where the item will be drawn</param>
+	/// <param name="imageAttributes">ImageAttributes used for drawing the image, <see langword="null"/> to draw it as it is.</param>
+	protected void DrawItem(Graphics graphics, Item item, Point screenLocation, System.Drawing.Imaging.ImageAttributes? imageAttributes)
+	{
+		if (item is null || graphics is null || this.UIService.GetBitmap(item) is not { } ibmp)
+			return;
+
+		Rectangle itemRect = new Rectangle(
+			screenLocation.X
+			, screenLocation.Y
+			, Convert.ToInt32(ibmp.Width * this.CellScale)
+			, Convert.ToInt32(ibmp.Height * this.CellScale)
+		);
+
+		graphics.DrawImage(ibmp, itemRect, 0, 0, ibmp.Width, ibmp.Height, GraphicsUnit.Pixel, imageAttributes);
+
+		// Add the relic overlay if this item has a relic in it.
+		if (item.HasRelicOrCharmSlot1 || item.HasRelicOrCharmSlot2)
+		{
+			Bitmap? relicOverlay = UIService.LoadRelicOverlayBitmap();
+			if (relicOverlay is not null)
+			{
+				// draw it in the bottom-right most cell of this item
+				int x2 = screenLocation.X + ((item.Width - 1) * this.UnitSize);
+				int y2 = screenLocation.Y + ((item.Height - 1) * this.UnitSize);
+
+				Rectangle overlayRect = new Rectangle(x2, y2
+					, Convert.ToInt32(relicOverlay.Width * this.CellScale)
+					, Convert.ToInt32(relicOverlay.Height * this.CellScale)
+				);
+
+				graphics.DrawImage(relicOverlay, overlayRect, 0, 0, relicOverlay.Width, relicOverlay.Height, GraphicsUnit.Pixel, imageAttributes);
+			}
+		}
+
+		// Add any number we need to add.
+		// Only show the number when there is more than 1 in the stack
+		// Relics and charms still show the number.
+		if (item.HasNumber && !(item.DoesStack && item.Number == 1))
+		{
+			string numberString = item.Number.ToString(CultureInfo.CurrentCulture);
+
+			// Draw the number along the bottom of the cell
+			Point loc = new Point(screenLocation.X, screenLocation.Y + (item.Height * this.UnitSize) - 1);
+			float height = (float)this.numberFont.Height * this.CellScale;
+			float width = (float)item.Width * this.UnitSize;
+			float fy = (float)(loc.Y - (0.75F * this.numberFont.Height) - 1.0F);
+			float fx = (float)loc.X;
+
+			RectangleF rect = new RectangleF(fx, fy, width, height);
+			graphics.DrawString(numberString, this.numberFont, this.numberBrush, rect, this.numberFormat);
+		}
+	}
+
+	/// <summary>
+	/// Draws an accent on the item graphic
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="item">item we are adding the accent to</param>
+	/// <param name="accentColor">Color that the accent will be painted</param>
+	/// <param name="alpha">alpha value for the color</param>
+	protected virtual void DrawItemAccent(Graphics graphics, Item item, Color accentColor, int alpha)
+	{
+		if (item is null)
+			return;
+
+		Point screenLocation = this.CellTopLeft(item.Location);
+		this.DrawItemAccent(graphics, new Rectangle(screenLocation, new Size(item.Width * this.UnitSize, item.Height * this.UnitSize)), accentColor, alpha);
+	}
+
+	/// <summary>
+	/// Draws an accent on the item graphic
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="itemRectangle">cell rectangle for the item</param>
+	/// <param name="accentColor">Color that the accent will be painted</param>
+	/// <param name="alpha">alpha value for the color</param>
+	protected virtual void DrawItemAccent(Graphics graphics, Rectangle itemRectangle, Color accentColor, int alpha)
+	{
+		if (graphics is null)
+			return;
+
+		System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix()
+		{
+			Matrix00 = accentColor.R / 255.0f, // Red
+			Matrix11 = accentColor.G / 255.0f, // Green
+			Matrix22 = accentColor.B / 255.0f, // Blue
+			Matrix33 = alpha / 255.0f,         // alpha
+			Matrix44 = 1.00f                   // w
+		};
+
+		using var imgAttr = new System.Drawing.Imaging.ImageAttributes();
+		imgAttr.SetColorMatrix(colorMatrix);
+
+		var accent = UIPictures.ItemAccent;
+		graphics.DrawImage(accent, itemRectangle, 0, 0, accent.Width, accent.Height, GraphicsUnit.Pixel, imgAttr);
+	}
+
+	/// <summary>
+	/// Shades the background of an item with alpha blending.
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="item">item we are shading</param>
+	/// <param name="backgroundColor">Color that the background will be painted</param>
+	/// <param name="alpha">alpha value for the color</param>
+	protected virtual void ShadeAreaUnderItem(Graphics graphics, Item item, Color backgroundColor, int alpha, bool highlight)
+	{
+		if (item is null)
+			return;
+
+		Point screenLocation = this.CellTopLeft(item.Location);
+		this.ShadeAreaUnderItem(graphics, new Rectangle(screenLocation, new Size(item.Width * this.UnitSize, item.Height * this.UnitSize)), backgroundColor, alpha, highlight);
+	}
+
+	/// <summary>
+	/// Shades the background of an item with alpha blending.
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="backgroundRectangle">cell rectangle which needs to be drawn</param>
+	/// <param name="backgroundColor">Color that the background will be painted</param>
+	/// <param name="alpha">alpha value for the color</param>
+	protected virtual void ShadeAreaUnderItem(Graphics graphics, Rectangle backgroundRectangle, Color backgroundColor, int alpha, bool highlight)
+	{
+		if (graphics is null)
+			return;
+
+		using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, backgroundColor)))
+		{
+			graphics.FillRectangle(brush, backgroundRectangle);
+
+			// Add highlight borders
+			if (highlight)
+				graphics.DrawRectangle(this.HighlightSearchItemBorder, backgroundRectangle);
+
+		}
+	}
+
+	/// <summary>
+	/// Redraws the drag item.
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	/// <param name="location">screen coordinates where we will be drawing</param>
+	private void RedrawDragItem(Graphics graphics, Point location)
+	{
+		if (this.DragInfo.Item is not { } dragged)
+			return;
+
+		try
+		{
+			this.UpdateDragTarget(location);
+			this.DrawItem(graphics, dragged, this.LastDragLocation);
+		}
+		catch (NullReferenceException exception)
+		{
+			Log.LogError(exception, "Failed to redraw the dragged item {Item} at {Location}", dragged.BaseItemId, location);
+			this.Services.MessageBoxes.ShowException(exception);
+		}
+	}
+
+	/// <summary>
+	/// Sets the drop target of the dragged item drawn at <paramref name="location"/>: the cells under it, the items in
+	/// them and the drag location. Done on a mouse move, before the repaint, and again by the paint.
+	/// </summary>
+	/// <param name="location">screen coordinates of the dragged item</param>
+	protected void UpdateDragTarget(Point location)
+	{
+		if (this.DragInfo.Item is not { } dragged)
+			return;
+
+		// Identify all the cells and items under the drag item.  We want the actual cells that we will
+		// drop into so we add 1/2 a cell to the drag location so that we pick the cells closest
+		// to the center of the item.
+		Point topLeftCell = this.FindCell(new Point(location.X + this.HalfUnit, location.Y + this.HalfUnit));
+		if (topLeftCell.X < 0 || topLeftCell.Y < 0)
+		{
+			// out of area
+			this.CellsUnderDragItem = InvalidDragRectangle;
+		}
+		else
+		{
+			this.CellsUnderDragItem = new Rectangle(topLeftCell, dragged.Size);
+
+			// See if the area is big enough to hold the item (ie the item does not go off the panel)
+			int right = this.CellsUnderDragItem.Right - 1;
+			int bottom = this.CellsUnderDragItem.Bottom - 1;
+			if (right >= this.SackSize.Width || bottom >= this.SackSize.Height)
+			{
+				// uh oh we do not fit!
+				// reset the cells to "out of area"
+				this.CellsUnderDragItem = InvalidDragRectangle;
+			}
+		}
+
+		this.ItemsUnderDragItem.Clear();
+		foreach (Item item in this.FindAllItems(this.CellsUnderDragItem))
+			this.ItemsUnderDragItem.Add(item);
+
+		this.LastDragLocation = location;
+		this.ItemsUnderOldDragLocation.Clear();
+		foreach (Item item in this.ItemsUnderDragItem)
+			this.ItemsUnderOldDragLocation.Add(item);
+	}
+
+	/// <summary>
+	/// Draw the sack panel border
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	private void DrawBorder(Graphics graphics)
+	{
+		if (this.DisableBorder || graphics is null)
+			return;
+
+		if (this.CaravanFramed)
+		{
+			this.caravanFrame ??= new CaravanFrame.FrameCache(this);
+			this.caravanFrame.DrawEdges(graphics, this.Size);
+			return;
+		}
+
+		graphics.DrawRectangle(this.borderPen, 0, 0, this.Size.Width, this.Size.Height);
+	}
+
+	/// <summary>
+	/// Draws the grid within the sack panel
+	/// </summary>
+	/// <param name="graphics">graphics instance</param>
+	private void DrawGrid(Graphics graphics)
+	{
+		if (this.DisableGrid || graphics is null)
+			return;
+
+		for (int x = 1; x < this.SackSize.Width; ++x)
+			graphics.DrawLine(this.gridPen, this.CellTopLeft(new Point(x, 0)), this.CellBottomLeft(new Point(x, this.SackSize.Height - 1)));
+
+		for (int y = 1; y < this.SackSize.Height; ++y)
+			graphics.DrawLine(this.gridPen, this.CellTopLeft(new Point(0, y)), this.CellTopRight(new Point(this.SackSize.Width - 1, y)));
+	}
+}

@@ -11,7 +11,8 @@ public class PathIO : IPathIO
 
 	public virtual string GetDirectoryName(string path)
 	{
-		return System.IO.Path.GetDirectoryName(path);
+		// Empty for a root path, so the result can always be combined.
+		return System.IO.Path.GetDirectoryName(path) ?? string.Empty;
 	}
 
 	public virtual string GetFileName(string path)

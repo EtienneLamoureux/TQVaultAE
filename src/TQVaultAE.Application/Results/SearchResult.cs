@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Result.cs" company="None">
+// <copyright file="SearchResult.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -44,9 +44,20 @@ public class SearchResult
 	/// </summary>
 	public StashType? StashType => this.Item?.Place?.StashType;
 
+	/// <summary>
+	/// Gets the loadout's name, for an item of a character's loadout; null otherwise
+	/// </summary>
+	public string? LoadoutName => this.Item?.Place?.Loadout;
+
 	private readonly Lazy<ToFriendlyNameResult> FriendlyNamesLazyLoader;
-	public ToFriendlyNameResult FriendlyNames { get; private set; }
-	public string ItemName { get; private set; }
+	public ToFriendlyNameResult? FriendlyNames { get; private set; }
+
+	/// <summary>
+	/// <see cref="FriendlyNames"/> of a result already loaded by <see cref="LazyLoad"/>.
+	/// </summary>
+	public ToFriendlyNameResult LoadedFriendlyNames => this.FriendlyNames
+		?? throw new InvalidOperationException("The search result is not loaded yet.");
+	public string ItemName { get; private set; } = string.Empty;
 	public ItemStyle ItemStyle { get; private set; }
 	public TQColor TQColor { get; private set; }
 	public int RequiredLevel { get; private set; }
@@ -57,6 +68,7 @@ public class SearchResult
 			, ContainerName
 			, SackNumber.ToString()
 			, this.SackType.ToString()
+			, this.LoadoutName ?? string.Empty
 			, this.FriendlyNames?.FullNameBagTooltip ?? string.Empty
 		});
 
@@ -84,7 +96,7 @@ public class SearchResult
 	private int GetRequirement(IList<Variable> variables, string key)
 	{
 		return variables
-			.Where(v => string.Equals(v.Name, key, StringComparison.InvariantCultureIgnoreCase) && v.DataType == VariableDataType.Integer && v.NumberOfValues > 0)
+			.Where(v => string.Equals(v.Name, key, StringComparison.OrdinalIgnoreCase) && v.DataType == VariableDataType.Integer && v.NumberOfValues > 0)
 			.Select(v => v.GetInt32(0))
 			.DefaultIfEmpty(0)
 			.Max();

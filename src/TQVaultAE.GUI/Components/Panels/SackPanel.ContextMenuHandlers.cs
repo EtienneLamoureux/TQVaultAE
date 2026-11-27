@@ -1,0 +1,508 @@
+//-----------------------------------------------------------------------
+// <copyright file="SackPanel.ContextMenuHandlers.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Collections.ObjectModel;
+using TQVaultAE.Application.Contracts.Services;
+using System.Globalization;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.Domain.Actions;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.GUI.Components.Menus;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.GUI.Tooltips;
+using TQVaultAE.Presentation;
+using TQVaultAE.Services;
+
+namespace TQVaultAE.GUI.Components.Panels;
+
+/// <summary>
+/// Class for holding all of the UI functions of the sack panel.
+/// </summary>
+public partial class SackPanel
+{
+	/// <summary>
+	/// Deletes the highlighted item
+	/// </summary>
+	/// <param name="focusedItem">Item containing the focus (which will get deleted)</param>
+	/// <param name="suppressMessage">Determines whether we will show a delete confirmation message.</param>
+	private void DeleteItem(Item focusedItem, bool suppressMessage)
+	{
+		if (focusedItem is not null)
+		{
+			if (suppressMessage || USettings.SuppressWarnings || this.Services.MessageBoxes.Confirm(Resources.SackPanelDeleteMsg, Resources.SackPanelDelete, MessageBoxIcon.Warning))
+			{
+				// remove item
+				this.ShownSack.RemoveItem(focusedItem);
+				// Remove from search database
+				this.ItemDatabaseService.RemoveItemFromDatabase(focusedItem);
+				this.Refresh();
+				BagButtonTooltip.InvalidateCache(this.ShownSack);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Adds the highlighted item to the selected items list.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">MouseEventArgs data</param>
+	private void AddFocusedItemToSelectedItems(object? sender, MouseEventArgs e)
+	{
+		if (this.DisableMultipleSelection)
+			return;
+
+		this.MouseMoveCallback(sender, e); // process the mouse moving to this location...just in case
+
+		Item? focusedItem = this.FindItem(this.LastCellWithFocus);
+		if (focusedItem is not null)
+		{
+			// Allocate the List if not already done.
+			if (this.selectedItems is null)
+				this.selectedItems = [];
+
+			if (!this.IsItemSelected(focusedItem))
+			{
+				// Check to see if the item is already selected
+				this.selectedItems.Add(focusedItem);
+				this.selectedItemsChanged = true;
+			}
+			else
+				this.RemoveSelectedItem(focusedItem);
+
+			this.Invalidate(this.GetItemScreenRectangle(focusedItem));
+		}
+
+		this.OnItemSelected?.Invoke(this, new SackPanelEventArgs(null, null));
+		this.MouseMoveCallback(sender, e); // process mouse move again to apply the graphical effects of dragging an item.
+	}
+
+	/// <summary>
+	/// Adds the items inside of the mouse drag to the selected items list.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">MouseEventArgs data</param>
+	private void SelectItemsInMouseDraw(object? sender, MouseEventArgs e)
+	{
+		if (!this.mouseDraw)
+			return;
+
+		// Allocate the List if not already done.
+		if (this.selectedItems is null)
+			this.selectedItems = [];
+
+		Collection<Item> itemsUnderDraw = FindAllItems(FindAllCells(GetMouseDragRectangle()));
+
+		if (itemsUnderDraw is not null)
+		{
+			foreach (Item item in itemsUnderDraw)
+			{
+				if (!selectedItems.Contains(item))
+				{
+					this.selectedItems.Add(item);
+				}
+			}
+
+			this.OnItemSelected?.Invoke(this, new SackPanelEventArgs(null, null));
+		}
+	}
+
+	/// <summary>
+	/// Gets the localized string for an AutoMoveLocation.
+	/// </summary>
+	/// <param name="autoMoveLocation">AutoMoveLocation that is to be translated</param>
+	/// <returns>Localized String name of the AutoMoveLocation</returns>
+	private static string GetStringFromAutoMove(AutoMoveLocation autoMoveLocation)
+		=> autoMoveLocation switch
+		{
+			AutoMoveLocation.SecondaryVault => Resources.SackPanelMenuVault2,
+			AutoMoveLocation.Player => Resources.SackPanelMenuPlayer,
+			AutoMoveLocation.Stash => Resources.SackPanelMenuStash,
+			AutoMoveLocation.Vault => Resources.SackPanelMenuVault,
+			AutoMoveLocation.Trash => Resources.SackPanelMenuTrash,
+			_ => string.Empty,
+		};
+
+	/// <summary>
+	/// Handler for selecting Move Item from the context menu
+	/// Auto moves an item to another sack or panel.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MoveItemClicked(object? sender, EventArgs e)
+	{
+		if (!this.DragInfo.IsActive)
+		{
+			// Find out what was selected: a bag of this panel or another panel.
+			AutoMoveLocation automoveDestination = AutoMoveLocation.NotSet;
+			int destIndex = -1;
+			switch ((sender as ToolStripItem)?.Tag)
+			{
+				case MenuItemTagBagIndex mit:
+					automoveDestination = this.AutoMoveLocation;
+					destIndex = mit.Index;
+					break;
+				case AutoMoveLocation location:
+					automoveDestination = location;
+					break;
+			}
+
+			// The selection, or the item under the cursor when nothing is selected.
+			var plan = AutoMovePlanner.Plan(
+				this.selectedItems
+				, this.selectedItems is null ? this.FindItem(this.contextMenuCellWithFocus) : null
+				, automoveDestination
+				, destIndex);
+			this.RaiseAutoMove(this.ShownSack, plan);
+
+			if (this.selectedItems is not null)
+				this.ClearSelectedItems();
+
+			ItemTooltip.HideTooltip();
+			BagButtonTooltip.InvalidateCache(this.ShownSack);
+		}
+	}
+
+	/// <summary>
+	/// Moves the planned items one by one: each is set as the drag item and <see cref="OnAutoMoveItem"/> places it.
+	/// An item left in the drag (no room) stops the moves after it.
+	/// </summary>
+	private void RaiseAutoMove(SackCollection sack, AutoMovePlan plan)
+	{
+		foreach (Item item in plan.Items)
+		{
+			if (this.DragInfo.IsActive)
+				continue;
+
+			this.DragInfo.Set(this, sack, item, new Point(1, 1));
+			this.DragInfo.AutoMoveDestination = plan.Destination;
+			this.DragInfo.DestIndex = plan.DestIndex;
+			this.OnAutoMoveItem?.Invoke(this, new SackPanelEventArgs(null, null));
+		}
+	}
+
+	/// <summary>
+	/// Gets the items the export entries act on: the selection when there is one, else the item under the context menu.
+	/// </summary>
+	private List<Item> ItemsToExport()
+	{
+		if (this.selectedItems is not null)
+			return this.selectedItems;
+
+		return this.FindItem(this.contextMenuCellWithFocus) is { } focusedItem ? [focusedItem] : [];
+	}
+
+	private void ExportItemToClipboardClicked(object? sender, EventArgs e)
+		=> ExportActions.ToClipboard(() => this.ExchangeService?.SerializeSelection(this.ItemsToExport()), this.Log, "item");
+
+	/// <summary>
+	/// Writes the export of <see cref="ItemsToExport"/> to a file.
+	/// </summary>
+	/// <returns><see langword="false"/> when there was nothing to export.</returns>
+	private bool ExportItemsToFile(string path)
+	{
+		var json = this.ExchangeService?.SerializeSelection(this.ItemsToExport());
+		if (json is null)
+			return false;
+
+		this.ExchangeService!.ExportToFile(json, path);
+		return true;
+	}
+
+	private void ExportItemToFileClicked(object? sender, EventArgs e)
+	{
+		var items = this.ItemsToExport();
+		if (this.ExchangeService is not null && items.Count != 0)
+			ExportActions.ToFile(IItemExchangeService.ItemsExportFileName(items.Count), path => this.ExportItemsToFile(path), this.Log, "item");
+	}
+
+	private async void ExportItemToPasteBinClicked(object? sender, EventArgs e)
+	{
+		var items = this.ItemsToExport();
+		if (this.ExchangeService is { } exchangeService && items.Count != 0)
+			await ExportActions.ToPasteBinAsync(
+				() => exchangeService.ExportSelectionToPasteBinAsync(items),
+				this.UIService,
+				items.Count == 1 ? Resources.ExportItemSuccessPasteBin : Resources.ExportItemsSuccessPasteBin,
+				this.Log,
+				"item");
+	}
+
+	/// <summary>
+	/// Handler for selecting New Set Item from the context menu
+	/// Creates the selected item from the set and sets it as the drag item.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void NewSetItemClicked(object? sender, EventArgs e)
+	{
+		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null)
+		{
+			ToolStripMenuItem? item = (ToolStripMenuItem)sender!;
+			if (item is not null)
+			{
+				// Create the item
+				var newId = item.Name.ToRecordId();
+				Item newItem = this.Services.ItemEditService.NewSetMember(focusedItem, newId);
+
+				// Set DragInfo to focused item.
+				this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
+
+				// now drag the new item
+				this.DragInfo.MarkModified(newItem);
+				Refresh();
+
+				ItemTooltip.HideTooltip();
+				BagButtonTooltip.InvalidateCache(this.ShownSack);
+			}
+		}
+	}
+
+	/// <summary>An affix or bonus of <paramref name="item"/> changed: its cached texts go, and its sack is told.</summary>
+	private void ItemChangedInPlace(Item item)
+	{
+		this.InvalidateItemCacheAll(item);
+		this.OnShownItemsChanged();
+	}
+
+	/// <summary>
+	/// Runs <paramref name="edit"/> on the item under the context menu; when it changed the item, its cached texts go and
+	/// its sack is told.
+	/// </summary>
+	private void EditFocusedItem(Func<Item, bool> edit)
+	{
+		if (this.FindItem(this.contextMenuCellWithFocus) is Item focusedItem && edit(focusedItem))
+			this.ItemChangedInPlace(focusedItem);
+	}
+
+	private void RemoveSuffixItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item =>
+		{
+			this.Services.ItemEditService.RemoveSuffix(this.ShownSack, item);
+			return true;
+		});
+
+	private void RemovePrefixItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item =>
+		{
+			this.Services.ItemEditService.RemovePrefix(this.ShownSack, item);
+			return true;
+		});
+
+	/// <summary>
+	/// Handler for changing suffix from the context menu: the entry's name is the new suffix.
+	/// </summary>
+	private void ChangeSuffixItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangeSuffix(this.ShownSack, item, menuItem.Name.ToRecordId()));
+
+	/// <summary>
+	/// Handler for changing prefix from the context menu: the entry's name is the new prefix.
+	/// </summary>
+	private void ChangePrefixItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangePrefix(this.ShownSack, item, menuItem.Name.ToRecordId()));
+
+	/// <summary>
+	/// Handler for selecting Change Bonus from the context menu
+	/// Changes a socketed item's completion bonus: the entry's tag tells whether it is the first relic's.
+	/// </summary>
+	private void ChangeSocketedBonusItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangeCompletionBonus(
+				this.ShownSack, item, menuItem.Name.ToRecordId(), secondRelic: !((menuItem.Tag as bool?) ?? false)));
+
+	/// <summary>
+	/// Handler for selecting Change Bonus from the context menu
+	/// Changes an item's completion bonus.
+	/// </summary>
+	private void ChangeBonusItemClicked(object? sender, EventArgs e)
+		=> this.EditFocusedItem(item => sender is ToolStripMenuItem menuItem
+			&& this.Services.ItemEditService.ChangeCompletionBonus(this.ShownSack, item, menuItem.Name.ToRecordId()));
+
+	/// <summary>
+	/// Runs Copy, Duplicate or Delete on the item under the cursor alone, for the context menu and the keys
+	/// (see <see cref="ItemActionRules.KeyAction"/>): a copy is picked up, a delete asks first.
+	/// </summary>
+	private void RunFocusedItemAction(ItemActions action, Item focusedItem)
+	{
+		if (action == ItemActions.Delete)
+		{
+			this.DeleteItem(focusedItem, false);
+			this.OnShownItemsChanged();
+		}
+		else if (action is ItemActions.Copy or ItemActions.Duplicate)
+		{
+			// Set DragInfo to focused item.
+			this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
+
+			// copy the item
+			Item newItem = action == ItemActions.Copy
+				? this.Services.ItemEditService.Copy(focusedItem)
+				: this.Services.ItemEditService.Duplicate(focusedItem);
+
+			// now drag it
+			this.DragInfo.MarkModified(newItem);
+		}
+
+		this.Refresh();
+	}
+
+	/// <summary>
+	/// Handler for clicking an item on the context menu
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">ToolStripItemClickedEventArgs data</param>
+	private void ContextMenuItemClicked(object? sender, ToolStripItemClickedEventArgs e)
+	{
+		// A slot of the Insert into item menu, shown in place of the item menu.
+		if (e.ClickedItem?.Tag is SocketSlotChoice choice)
+		{
+			this.Socket(choice);
+			return;
+		}
+
+		Item? focusedItem = this.FindItem(this.contextMenuCellWithFocus);
+		if (focusedItem is not null || this.selectedItems is not null)
+		{
+			var action = e.ClickedItem?.Tag as ItemActions? ?? ItemActions.None;
+			if (action == ItemActions.Delete)
+			{
+				if (this.selectedItems is not null)
+				{
+					if (USettings.SuppressWarnings || this.Services.MessageBoxes.Confirm(Resources.SackPanelDeleteMultiMsg, Resources.SackPanelDeleteMulti, MessageBoxIcon.Warning))
+					{
+						foreach (Item sackSelectedItem in this.selectedItems)
+							this.DeleteItem(sackSelectedItem, true);
+
+						this.ClearSelection();
+					}
+				}
+				else if (focusedItem is not null)
+				{
+					this.DeleteItem(focusedItem, false);
+				}
+			}
+			else if (action == ItemActions.ClearSelection)
+			{
+				// Before the focused item test: the selection can be cleared from an empty cell.
+				this.ClearSelection();
+				Refresh();
+			}
+			else if (action == ItemActions.Compare)
+			{
+				// The item is the first one; the next left click on an item, in any panel, picks the second.
+				if (focusedItem is not null)
+					this.StartCompareSelection(focusedItem);
+			}
+			else if (focusedItem is null)
+			{
+				// The other entries apply to the focused item.
+			}
+			else if (action is ItemActions.RemoveRelic or ItemActions.RemoveRelic2)
+			{
+				if (USettings.SuppressWarnings || this.Services.MessageBoxes.Confirm(Resources.SackPanelRemoveRelicMsg, Resources.SackPanelMenuRemoveRelic))
+				{
+					// Set DragInfo to focused item.
+					this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
+
+					// pull out the relic
+					Item? relic = this.Services.ItemEditService.RemoveRelic(this.ShownSack, focusedItem, secondSlot: action == ItemActions.RemoveRelic2);
+					if (relic is null)
+					{
+						// Only relics and charms come back to be placed; anything else is removed with the slot.
+						this.DragInfo.Cancel();
+						this.UIService.NotifyUser(Resources.SackPanelSocketedNotAnItem, TQColor.Yellow);
+					}
+					else
+					{
+						// Put relic in DragInfo
+						this.DragInfo.MarkModified(relic);
+					}
+
+					this.InvalidateItemCacheItemTooltip(focusedItem);
+					Refresh();
+				}
+			}
+			else if (action is ItemActions.Copy or ItemActions.Duplicate)
+			{
+				this.RunFocusedItemAction(action, focusedItem);
+			}
+			else if (action == ItemActions.Properties)
+			{
+				using var dlg = this.Services.Forms.Create<ItemProperties>();
+				dlg.Item = focusedItem;
+				dlg.ShowDialog();
+			}
+			else if (action == ItemActions.Seed)
+			{
+				using var dlg = this.Services.Forms.Create<ItemSeedDialog>();
+				dlg.SelectedItem = focusedItem;
+				dlg.ShowDialog();
+
+				if (dlg.NewSeed is int seed && this.Services.ItemEditService.SetSeed(this.ShownSack, focusedItem, seed))
+					this.InvalidateItemCacheItemTooltip(focusedItem);
+			}
+			else if (action == ItemActions.ForceSeed)
+			{
+				if (this.Services.ItemEditService.ForceSeed(this.ShownSack, focusedItem))
+					this.InvalidateItemCacheItemTooltip(focusedItem);
+			}
+			else if (action == ItemActions.CompleteRelic)
+			{
+				this.Services.ItemEditService.CompleteRelic(this.ShownSack, focusedItem);
+				InvalidateItemCacheItemTooltip(focusedItem);
+				Refresh();
+			}
+			else if (action == ItemActions.CraftArtifact)
+			{
+				// Set DragInfo to focused item.
+				this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
+
+				// create artifact
+				Item? artifact = this.Services.ItemEditService.CraftArtifact(focusedItem);
+				if (artifact is null)
+				{
+					// Nothing crafted: do not leave the formula picked up.
+					this.DragInfo.Cancel();
+					return;
+				}
+
+				// Put artifact in DragInfo
+				this.DragInfo.MarkModified(artifact);
+
+				InvalidateItemCacheItemTooltip(focusedItem);
+
+				Refresh();
+			}
+			else if (action == ItemActions.Split)
+			{
+				// Set DragInfo to focused item.
+				this.DragInfo.Set(this, this.ShownSack, focusedItem, new Point(1, 1));
+
+				// pull out all but one item
+				Item? newItem = this.Services.ItemEditService.Split(this.ShownSack, focusedItem);
+
+				// Put the item in DragInfo
+				if (newItem is not null)
+					this.DragInfo.MarkModified(newItem);
+				else
+					// Nothing split off: do not leave the stack picked up.
+					this.DragInfo.Cancel();
+
+				InvalidateItemCacheItemTooltip(focusedItem);
+
+				Refresh();
+			}
+
+			ItemTooltip.HideTooltip();
+			BagButtonTooltip.InvalidateCache(this.ShownSack);
+			this.OnShownItemsChanged();
+		}
+	}
+}

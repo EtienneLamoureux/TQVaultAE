@@ -1,0 +1,491 @@
+﻿using TQVaultAE.Presentation.Win32;
+
+//-----------------------------------------------------------------------
+// <copyright file="ScalingButton.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace TQVaultAE.GUI.Components.Scaling;
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+using TQVaultAE.Presentation;
+using TQVaultAE.GUI.Components.Rendering;
+
+/// <summary>
+/// Button class to support skinning and scaling of the fonts.
+/// </summary>
+public class ScalingButton : Button, IScalingControl, IZoomedFont, IFontRebasing
+{
+	/// <summary>
+	/// Base Font used for scaling of the text to fit within the bounds of the button.
+	/// </summary>
+	private Font? baseFont;
+
+	/// <summary>The DPI of the last font set from outside (<see cref="OnFontChanged"/>), the DPI of the base font.</summary>
+	private int baseFontDpi;
+
+	/// <summary>
+	/// Set while the button changes its own font to fit its text, so that change is not taken as a new base font.
+	/// </summary>
+	private bool fittingFont;
+
+	/// <summary>
+	/// Used to indicate that the custom button graphic is being used.
+	/// </summary>
+	private bool useCustomGraphic;
+
+	/// <summary>
+	/// Used to indicate whether the button size is forced to be the same as the custom graphic.
+	/// </summary>
+	private bool sizeToGraphic;
+
+	/// <summary>
+	/// Initializes a new instance of the ScalingButton class.
+	/// </summary>
+	public ScalingButton()
+	{
+		InitializeComponent();
+
+		this.DownBitmap = UIPictures.MainButtonDown;
+		this.OverBitmap = UIPictures.MainButtonOver;
+		this.UpBitmap = UIPictures.MainButtonUp;
+	}
+
+	private void InitializeComponent()
+	{
+		this.SuspendLayout();
+		// 
+		// ScalingButton
+		// 
+		this.TextChanged += new System.EventHandler(this.TextChangedCallback);
+		this.GotFocus += new System.EventHandler(this.ShowOverImage);
+		this.LostFocus += new System.EventHandler(this.ShowUpImage);
+		this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCallback);
+		this.MouseEnter += new System.EventHandler(this.ShowOverImage);
+		this.MouseLeave += new System.EventHandler(this.ShowUpImage);
+		this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCallback);
+		this.ResumeLayout(false);
+	}
+		
+	/// <summary>
+	/// Gets or sets a value indicating whether the custom button graphic is shown.
+	/// </summary>
+	public bool UseCustomGraphic
+	{
+		get => this.useCustomGraphic;
+
+		set
+		{
+			if (value)
+			{
+				this.BackColor = Color.Transparent;
+				this.FlatStyle = FlatStyle.Flat;
+				this.FlatAppearance.BorderSize = 0;
+				this.FlatAppearance.MouseOverBackColor = Theme.TransparentButton;
+				this.FlatAppearance.MouseDownBackColor = Theme.TransparentButton;
+				if (this.UpBitmap is not null)
+					this.Image = this.UpBitmap;
+			}
+			else
+			{
+				this.BackColor = Color.Gold;
+				this.FlatStyle = FlatStyle.Standard;
+				this.FlatAppearance.BorderSize = 1;
+				this.FlatAppearance.MouseOverBackColor = SystemColors.ButtonHighlight;
+				this.FlatAppearance.MouseDownBackColor = SystemColors.ButtonShadow;
+				this.Image = null;
+			}
+
+			this.useCustomGraphic = value;
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets a value indicating whether only the picture is drawn, not the text. The text stays the button's name
+	/// for accessibility and automation (window caption buttons: Close, Maximize...).
+	/// </summary>
+	public bool ImageOnly { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the button size is forced to be the same as the custom graphic.
+	/// </summary>
+	public bool SizeToGraphic
+	{
+		get => this.sizeToGraphic;
+
+		set
+		{
+			if (value && this.UpBitmap is not null)
+				this.Size = this.UpBitmap.Size;
+
+			this.sizeToGraphic = value;
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the Bitmap used when the button is pressed.
+	/// </summary>
+	public Bitmap DownBitmap { get; set; }
+
+	/// <summary>
+	/// Gets or sets the Bitmap used when the mouse hovers over the button.
+	/// </summary>
+	public Bitmap OverBitmap { get; set; }
+
+	/// <summary>
+	/// Gets or sets the Bitmap used when the button neither highlighted or pressed.
+	/// </summary>
+	public Bitmap UpBitmap { get; set; }
+
+	/// <summary>
+	/// Handles the ScalingButton Paint Event.
+	/// </summary>
+	/// <param name="pevent">PaintEventArgs data</param>
+	/// <summary>
+	/// A game picture button never draws the default button's frame (the flat style draws one even without a border):
+	/// Enter still clicks the window's <see cref="Form.AcceptButton"/>, which the window handles, not the button.
+	/// </summary>
+	public override void NotifyDefault(bool value) => base.NotifyDefault(value && !this.UseCustomGraphic);
+
+	protected override void OnPaint(PaintEventArgs pevent)
+	{
+		if (this.UseCustomGraphic && this.Image is not null && this.Size != this.Image.Size)
+		{
+			// The copies were made for another size: drop them (this can put the source image back).
+			if (this.scaledSize != this.Size)
+				this.ReleaseScaledImages();
+
+			if (this.Image is { } source && this.Size != source.Size)
+				this.Image = this.ScaledImage(source);
+		}
+
+		if (this.ImageOnly && this.Image is { } picture)
+		{
+			// The background (and the parent behind a transparent one) is painted by OnPaintBackground.
+			pevent.Graphics.DrawImage(picture, this.ClientRectangle);
+			return;
+		}
+
+		base.OnPaint(pevent);
+	}
+
+	/// <summary>
+	/// Copies of the up, over and down pictures at the button size, by source picture. The mouse and focus handlers put the
+	/// source back on each change, so without them every hover made a new bitmap.
+	/// </summary>
+	private readonly Dictionary<Image, Bitmap> scaledImages = [];
+
+	/// <summary>Size the <see cref="scaledImages"/> were made for.</summary>
+	private Size scaledSize;
+
+	private Bitmap ScaledImage(Image source)
+	{
+		if (this.scaledImages.TryGetValue(source, out var scaled))
+			return scaled;
+
+		// Scaling smaller can make the outside border disappear.
+		// To avoid this we scale the image and then copy a 4 pixel strip from each edge to restore the border.
+		if (this.Width < source.Width)
+		{
+			int width = 4;
+			scaled = new Bitmap(this.Width, this.Height);
+			using Graphics graphics = Graphics.FromImage(scaled);
+
+			// First draw the new image scaled to the size of the button.
+			graphics.DrawImage(source, new Rectangle(new Point(0, 0), this.Size));
+
+			// Grab the left border from the source image and paint it onto the new image.
+			graphics.DrawImage(source, new Rectangle(0, 0, width, this.Height), new Rectangle(0, 0, width, source.Height), GraphicsUnit.Pixel);
+
+			// Now grab the right border from the source image and paint it onto the new image.
+			graphics.DrawImage(
+				source,
+				new Rectangle(this.Width - width, 0, width, this.Height),
+				new Rectangle(source.Width - width, 0, width, source.Height),
+				GraphicsUnit.Pixel);
+		}
+		else
+			// Just scale the image normally.
+			scaled = new Bitmap(source, this.Size);
+
+		this.scaledImages[source] = scaled;
+		return scaled;
+	}
+
+	/// <summary>Disposes the scaled copies, giving the button its source picture back if it shows one of them.</summary>
+	private void ReleaseScaledImages()
+	{
+		foreach (var (source, scaled) in this.scaledImages)
+		{
+			if (ReferenceEquals(this.Image, scaled))
+				this.Image = source;
+
+			scaled.Dispose();
+		}
+
+		this.scaledImages.Clear();
+		this.scaledSize = this.Size;
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		// Disposed after the control, which may still draw with it while it goes.
+		var fitted = disposing && !ReferenceEquals(this.fittedFont, this.baseFont) ? this.fittedFont : null;
+		if (disposing)
+			this.ReleaseScaledImages();
+
+		base.Dispose(disposing);
+		fitted?.Dispose();
+		this.fittedFont = null;
+	}
+
+	/// <inheritdoc/>
+	Font IZoomedFont.ZoomedFont
+	{
+		get => this.baseFont ?? this.Font;
+		set
+		{
+			this.baseFont = value;
+			this.Font = value;
+		}
+	}
+
+	/// <summary>
+	/// Override of ScaleControl which supports font scaling.
+	/// </summary>
+	/// <param name="factor">SizeF for the scale factor</param>
+	/// <param name="specified">BoundsSpecified value.</param>
+	protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+	{
+		// A DPI scaling (at load, or on a monitor of another DPI): Windows Forms scales the font itself, before the
+		// bounds, and that new font is the base font (OnFontChanged). The text fits it once the bounds are scaled
+		// (OnSizeChanged); the font fitted to the old width in between must not become the base font: after
+		// 144 -> 96 -> 144 dpi the buttons kept a smaller text (12 pt became 11 and 10.5).
+		if (!ZoomScope.IsZooming)
+		{
+			this.baseFont ??= this.Font;
+			if (this.Image is not null)
+				this.Image = this.UpBitmap;
+
+			base.ScaleControl(factor, specified);
+			return;
+		}
+
+		this.baseFont = ZoomScope.ScaleFont(this, this.EnsureBaseFont(), factor.Height);
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, Convert.ToInt32((float)this.Width * factor.Width)));
+
+		// Reset the image to the original size.  Assume that we are resizing and that this button is not under the mouse.
+		if (this.Image is not null)
+			this.Image = this.UpBitmap;
+
+		base.ScaleControl(factor, specified);
+	}
+
+	/// <summary>
+	/// Shows the hover picture, when the mouse enters the button or it gets the focus.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ShowOverImage(object? sender, EventArgs e)
+	{
+		if (this.UseCustomGraphic)
+		{
+			if (this.OverBitmap is not null)
+				this.Image = this.OverBitmap;
+			else
+			{
+				this.FlatAppearance.MouseOverBackColor = SystemColors.ButtonHighlight;
+				this.Image = this.UpBitmap;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Shows the normal picture, when the mouse leaves the button or it loses the focus.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void ShowUpImage(object? sender, EventArgs e)
+	{
+		if (this.UseCustomGraphic)
+			this.Image = this.UpBitmap;
+	}
+
+	/// <summary>
+	/// Handler for when the mouse button is released.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MouseUpCallback(object? sender, EventArgs e)
+	{
+		if (this.UseCustomGraphic)
+		{
+			if (this.OverBitmap is not null)
+				this.Image = this.OverBitmap;
+			else
+				this.Image = this.UpBitmap;
+		}
+	}
+
+	/// <summary>
+	/// Handler for when the mouse button is pressed.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void MouseDownCallback(object? sender, EventArgs e)
+	{
+		if (this.UseCustomGraphic)
+		{
+			if (this.DownBitmap is not null)
+				this.Image = this.DownBitmap;
+			else
+			{
+				this.FlatAppearance.MouseDownBackColor = SystemColors.ButtonShadow;
+				this.Image = this.UpBitmap;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Fits the new text to the button.
+	/// </summary>
+	/// <param name="sender">sender object</param>
+	/// <param name="e">EventArgs data</param>
+	private void TextChangedCallback(object? sender, EventArgs e)
+		=> this.SetFittedFont(this.GetScaledButtonTextFont(this.EnsureBaseFont(), this.Width));
+
+	/// <summary>
+	/// The base font the text is fitted from: the current font when there is none yet, or when the font family changed.
+	/// </summary>
+	private Font EnsureBaseFont()
+	{
+		if (this.baseFont is null || this.baseFont.FontFamily != this.Font.FontFamily)
+			this.baseFont = this.Font;
+
+		return this.baseFont;
+	}
+
+	/// <summary>
+	/// A font set from outside (a form applying the game font after the text, DPI scaling) is the new base font, and
+	/// the text has to fit again: a translation longer than the English text was otherwise drawn too big and cut.
+	/// </summary>
+	protected override void OnFontChanged(EventArgs e)
+	{
+		base.OnFontChanged(e);
+		if (this.fittingFont)
+			return;
+
+		// On a monitor of another DPI, Windows Forms scales the font the button shows, which may be the font fitted to a
+		// long text: the base font is scaled instead, or each move shrank the text again ("Appliquer" 11.5 pt at 144 dpi
+		// became 7.67 at 96, then fitted to 6.67, where "Annuler" got 8).
+		this.baseFont = this.baseFont is { } previous && this.baseFontDpi > 0 && this.baseFontDpi != this.DeviceDpi && !ZoomScope.IsZooming
+			? new Font(previous.FontFamily, previous.Size * this.DeviceDpi / this.baseFontDpi, previous.Style, previous.Unit)
+			: this.Font;
+		this.baseFontDpi = this.DeviceDpi;
+		this.ReleaseFittedFont();
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// The base font changed: the base font to fit moves to it, not the font fitted from it, which may be smaller.
+	/// </summary>
+	void IFontRebasing.RebaseFonts(TQVaultAE.Presentation.Win32.Contracts.IFontService fontService)
+	{
+		var baseFont = fontService.Rebase(this.baseFont ?? this.Font);
+		if (ReferenceEquals(baseFont, this.baseFont ?? this.Font))
+			return;
+
+		this.baseFont = baseFont;
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// Fits the text again when the button is resized (layout, DPI scaling).
+	/// </summary>
+	protected override void OnSizeChanged(EventArgs e)
+	{
+		base.OnSizeChanged(e);
+		if (this.fittingFont || this.baseFont is null)
+			return;
+
+		this.SetFittedFont(this.GetScaledButtonTextFont(this.baseFont, this.Width));
+	}
+
+	/// <summary>
+	/// Sets a font made to fit the text, without taking it as the base font.
+	/// </summary>
+	private void SetFittedFont(Font? font)
+	{
+		if (font is null)
+			return;
+
+		if (font.Equals(this.Font))
+		{
+			// An equal copy made by the fit is not needed.
+			if (!this.IsKept(font))
+				font.Dispose();
+
+			return;
+		}
+
+		this.fittingFont = true;
+		try
+		{
+			this.Font = font;
+		}
+		finally
+		{
+			this.fittingFont = false;
+		}
+
+		this.ReleaseFittedFont();
+		if (!ReferenceEquals(font, this.baseFont))
+			this.fittedFont = font;
+	}
+
+	/// <summary>The font made smaller to fit the text, which the button owns; null while it shows its base font.</summary>
+	private Font? fittedFont;
+
+	/// <summary>Whether <paramref name="font"/> is shown or is the base font.</summary>
+	private bool IsKept(Font font) => ReferenceEquals(font, this.Font) || ReferenceEquals(font, this.baseFont) || ReferenceEquals(font, this.fittedFont);
+
+	/// <summary>Disposes the fitted font once the button shows another one.</summary>
+	private void ReleaseFittedFont()
+	{
+		if (this.fittedFont is { } font && !ReferenceEquals(font, this.Font) && !ReferenceEquals(font, this.baseFont))
+			font.Dispose();
+
+		if (!ReferenceEquals(this.fittedFont, this.Font))
+			this.fittedFont = null;
+	}
+
+	/// <summary>The room kept around the text, at the DPI of the monitor (12 px at 144 dpi, 8 at 96).</summary>
+	private int TextMargin => this.LogicalToDeviceUnits(8);
+
+	/// <summary>
+	/// Gets the width at which the text fits in its base font, without being made smaller: buttons side by side given
+	/// the largest of their widths show their texts at one size.
+	/// </summary>
+	internal int TextFitWidth => TextRenderer.MeasureText(this.Text, this.baseFont ?? this.Font).Width + this.TextMargin + 1;
+
+	/// <summary>
+	/// Gets the scaled font size for the button text taking into account the size of the button.
+	/// </summary>
+	/// <param name="font">Font that we attempting to scale</param>
+	/// <param name="newWidth">width of the new button.  Used for fit tests.</param>
+	/// <returns>Scaled font</returns>
+	private Font? GetScaledButtonTextFont(Font? font, int newWidth)
+	{
+		// Make sure we have something to test.
+		if (font is null)
+			return null;
+
+		// The room left around the text, at the DPI of the monitor: a fixed 12 px left less room at 96 dpi, where a
+		// long text (French "Appliquer") was fitted smaller than its neighbour's.
+		int room = newWidth - this.TextMargin;
+		return TextFit.Shrink(font, 0.25F, 0.5F, f => TextRenderer.MeasureText(this.Text, f).Width < room);
+	}
+}

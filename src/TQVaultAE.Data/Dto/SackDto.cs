@@ -10,10 +10,10 @@ public class SackDto
 	/// <summary>
 	/// Persisted icon info
 	/// </summary>
-	public BagButtonIconInfo iconinfo { get; set; }
+	public BagButtonIconInfo? iconinfo { get; set; }
 
 	/// <summary>
 	/// List of items
 	/// </summary>
-	public List<ItemDto> items { get; set; }
+	public List<ItemDto> items { get; set; } = [];
 }

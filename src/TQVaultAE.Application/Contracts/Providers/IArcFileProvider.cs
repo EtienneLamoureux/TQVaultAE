@@ -6,17 +6,11 @@ public interface IArcFileProvider
 {
 
 	/// <summary>
-	/// Extracts the decoded ARC file contents into a folder.
-	/// </summary>
-	/// <param name="destination">Destination folder for the files.</param>
-	/// <returns>true if successful, false on error.</returns>
-	bool ExtractArcFile(ArcFile file, string destination);
-	/// <summary>
 	/// Reads data from an ARC file and puts it into a Byte array (or NULL if not found)
 	/// </summary>
 	/// <param name="dataId">The string ID for the data which we are retieving.</param>
 	/// <returns>Returns byte array of the data corresponding to the string ID.</returns>
-	byte[] GetData(ArcFile file, RecordId dataId);
+	byte[]? GetData(ArcFile file, RecordId dataId);
 	/// <summary>
 	/// Read the table of contents of the ARC file
 	/// </summary>

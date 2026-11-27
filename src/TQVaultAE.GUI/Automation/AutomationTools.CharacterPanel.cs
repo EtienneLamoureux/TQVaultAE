@@ -1,0 +1,115 @@
+using System.ComponentModel;
+using ModelContextProtocol;
+using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
+using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Components.Character.Editor;
+using static TQVaultAE.Automation.ControlTree;
+
+namespace TQVaultAE.GUI.Automation;
+
+internal static partial class AutomationTools
+{
+	#region Character panel
+
+	[McpServerTool(Name = "character_panel", ReadOnly = true)]
+	[Description("In the open character editor, reads its statistics panel (drawn like the game's character window) on tab 1, 2, 3 or 4 (Buffs, see character_buffs): name, class, level and XP lines, points line, attribute rows (label, value, tool tip), whether the + buttons show, leveling rows and values, tab III statistics, gold and Electrum, the values computed like the game (armor, resistances, tab II rows, tab III damage and race bonuses with their tool tips), and the side panel next to it (leveling rows, masteries, the statistics option Difficulty, and their editors: visible, enabled, text). With capture=true the panel is also returned as a PNG (saved under %TEMP%).")]
+	public static IEnumerable<ContentBlock> CharacterPanel(
+		[Description("Tab of the panel: 1 (I), 2 (II), 3 (III) or 4 (Buffs).")] int tab = 1,
+		[Description("true to return a PNG of the panel too.")] bool capture = false)
+	{
+		var (state, png) = AutomationHost.OnUi(_ =>
+		{
+			var panel = ShowCharacterPanel();
+			panel.Tab = Math.Clamp(tab, 1, 4) - 1;
+			var side = AllControls(FindCharacterEditor()).OfType<CharacterSidePanel>().FirstOrDefault();
+			var state = Serialize(new { stats = panel.AutomationState(), side = side?.AutomationState() });
+			if (!capture)
+				return (state, (byte[]?)null);
+
+			using var bitmap = AutomationImages.Render(panel);
+			return (state, AutomationImages.Png(bitmap));
+		});
+
+		return AutomationImages.Result(state, png, $"characterpanel{tab}");
+	}
+
+	[McpServerTool(Name = "character_tooltip", ReadOnly = true)]
+	[Description("In the open character editor, renders a rollover of the statistics panel's tab 1, 2, 3 or 4 as the game-style tool tip shows it on hover: its lines (text, colour, title) and a PNG (saved under %TEMP%). The rollovers are numbered in the order of character_panel's areas with a tool tip on that tab (attribute rows, armor, icons, rows); without index, the list of their first lines.")]
+	public static IEnumerable<ContentBlock> CharacterTooltip(
+		[Description("Tab of the panel: 1 (I), 2 (II), 3 (III) or 4 (Buffs).")] int tab,
+		[Description("Rollover number from 0; omit for the list.")] int? index = null)
+	{
+		var (text, png) = AutomationHost.OnUi(_ =>
+		{
+			var panel = ShowCharacterPanel();
+			panel.Tab = Math.Clamp(tab, 1, 4) - 1;
+			var tips = panel.AutomationToolTips();
+			if (index is null)
+				return (Serialize(tips.Select((t, i) => new { index = i, first = t.Count > 0 ? t[0].Text : null }).ToList()), (byte[]?)null);
+
+			if (index < 0 || index >= tips.Count)
+				throw new McpException($"No rollover {index} on tab {tab}: 0 to {tips.Count - 1}.");
+
+			var lines = tips[index.Value];
+			var tooltip = panel.Tooltip ?? throw new McpException("The panel has no game tool tip.");
+			using var bitmap = tooltip.Render(lines);
+			return (Serialize(lines.Select(l => new { text = l.Text, color = AutomationJson.HexOrNull(l.Color), title = l.Title }).ToList()), AutomationImages.Png(bitmap));
+		});
+
+		return AutomationImages.Result(text, png, "charactertooltip");
+	}
+
+	[McpServerTool(Name = "character_attribute_click", Destructive = true)]
+	[Description("In the open character editor, clicks the + button of an attribute on tab I of the statistics panel like the mouse, through its hit test: 'left' spends an attribute point, 'right' takes one back, shift=true all the points left or back to the value at the start. Attributes: health, energy, strength, intelligence, dexterity (or 0-4); 'undo' clicks the Undo button that replaces the Attributes title once an attribute changed (all back to the start). Refused when the button does not show (no + button while no point is left). Returns the panel state. Debug builds: work only on test characters (player-test*, player-mod*).")]
+	public static string CharacterAttributeClick(
+		[Description("health, energy, strength, intelligence, dexterity, 0-4, or undo.")] string attribute,
+		[Description("'left' or 'right'.")] string button = "left",
+		[Description("true for a Shift click.")] bool shift = false,
+		[Description("Modifiers held for the click, like 'ctrl' or 'shift' (the key binds decide what they do); with shift=true Shift is added.")] string modifiers = "")
+		=> AutomationHost.OnUi(_ =>
+		{
+			var panel = ShowCharacterPanel();
+			panel.Tab = 0;
+			if (string.Equals(attribute, "undo", StringComparison.OrdinalIgnoreCase))
+			{
+				if (!panel.AutomationUndo())
+					throw new McpException("No Undo button: it shows only once an attribute changed.");
+
+				return Serialize(panel.AutomationState());
+			}
+
+			string[] names = ["health", "energy", "strength", "intelligence", "dexterity"];
+			var index = int.TryParse(attribute, out var n) ? n : Array.IndexOf(names, attribute.ToLowerInvariant());
+			if (index is < 0 or > 4)
+				throw new McpException($"Unknown attribute '{attribute}': {string.Join(", ", names)}.");
+
+			var step = ParseButton(button) == MouseButtons.Left ? 1 : -1;
+			if (!panel.AutomationClick(index, step, ClickModifiers(modifiers, shift)))
+				throw new McpException("No + button there: the panel shows none while no attribute point is left.");
+
+			return Serialize(panel.AutomationState());
+		});
+
+	[McpServerTool(Name = "character_stat_sources", ReadOnly = true)]
+	[Description("In the open character editor, returns the sums behind the statistics the editor computes like the game: the variables of the gear sources turned on in the Buffs tab (equipped items and item sets), of the other sources turned on (skills with their modifiers, granted skills, curses, shrines, pets, Tartarus, scroll), and the racial bonuses; the difficulty and the keys of the sources on; tab I's offense inputs. With sources=true, also each buff source on its own: key, section, name, on, level, gear role and its variables. 'filter' keeps the variables whose name contains it (e.g. 'defensive').")]
+	public static string CharacterStatSources(
+		[Description("Part of the variable names to keep; empty for all.")] string filter = "",
+		[Description("true to list each buff source with its own variables.")] bool sources = false)
+		=> AutomationHost.OnUi(_ =>
+		{
+			return Serialize(FindCharacterEditor().AutomationStatSources(filter, sources));
+		});
+
+	/// <summary>The character editor shown in the main window.</summary>
+	private static Views.CharacterEditorUserControl FindCharacterEditor()
+		=> AutomationHost.MainForm?.AutomationShownView(nameof(Views.CharacterEditorUserControl)) as Views.CharacterEditorUserControl
+			?? throw new McpException($"The character editor is not shown (view shown: {AutomationHost.MainForm?.AutomationShownViewName}). Use open_character_editor.");
+
+	/// <summary>The statistics panel of the open character editor, always shown beside the mastery pages.</summary>
+	private static CharacterStatsPanel ShowCharacterPanel()
+		=> AllControls(FindCharacterEditor()).OfType<CharacterStatsPanel>().FirstOrDefault()
+			?? throw new McpException("No statistics panel in the character editor.");
+
+	#endregion
+}

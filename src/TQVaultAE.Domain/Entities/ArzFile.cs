@@ -7,9 +7,10 @@ namespace TQVaultAE.Domain.Entities;
 
 using System.Collections.Generic;
 using System.Linq;
+using TQVaultAE.GameFiles;
 
 /// <summary>
-/// Class for decoding Titan Quest ARZ files.
+/// A Titan Quest database (.arz) and its record table.
 /// </summary>
 public class ArzFile
 {
@@ -19,14 +20,20 @@ public class ArzFile
 	public readonly string FileName;
 
 	/// <summary>
-	/// String table
+	/// Which database this is (base game, Immortal Throne or a mod): every record read from it carries it
+	/// (<see cref="DBRecordCollection.Source"/>).
 	/// </summary>
-	public string[] Strings;
+	public RecordSource Source { get; init; } = RecordSource.BaseGame;
 
 	/// <summary>
-	/// RecordInfo keyed by their ID
+	/// Open reader for the file, set by <c>IArzFileProvider.Read</c>; records are decoded from it on demand.
 	/// </summary>
-	public Dictionary<RecordId, RecordInfo> RecordInfo = new();
+	public IArzDatabase? Database { get; set; }
+
+	/// <summary>
+	/// Record table entries (class, place in the file) keyed by their ID: available without decompressing the records.
+	/// </summary>
+	public Dictionary<RecordId, ArzRecordInfo> RecordInfo = [];
 
 	/// <summary>
 	/// Ordered keys for the recordInfo Dictionary
@@ -46,12 +53,4 @@ public class ArzFile
 	/// Gets the number of DBRecords
 	/// </summary>
 	public int Count => this.RecordInfo?.Count ?? 0;
-
-	/// <summary>
-	/// Retrieves a string from the string table.
-	/// </summary>
-	/// <param name="index">Offset in the string table.</param>
-	/// <returns>string from the string table</returns>
-	public string Getstring(int index) => this.Strings[index];
-
 }

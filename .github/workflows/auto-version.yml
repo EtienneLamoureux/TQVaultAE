@@ -46,6 +46,9 @@ jobs:
       - name: Build Release
         run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
+      - name: Publish release outputs
+        run: pwsh -File .github/scripts/Publish-Release.ps1 -OutputDir publish
+
       - name: Read version for tag
         id: version-tag
         shell: pwsh
@@ -65,37 +68,51 @@ jobs:
         run: |
           $version = "${{ steps.version-tag.outputs.version }}"
           
-          # Create TQVaultAE.GUI archive (.NET 10.0 Windows)
-          Compress-Archive -Path "src/TQVaultAE.GUI/bin/Release/net10.0-windows/*" -DestinationPath "TQVaultAE.GUI-$version.zip" -Force
-          
-          # Create TQSaveFilesExplorer archive (.NET Framework 4.8)
-          Compress-Archive -Path "src/TQSaveFilesExplorer/bin/Release/net48/*" -DestinationPath "TQSaveFilesExplorer-$version.zip" -Force
-          
-          # Create ARZExplorer archive (.NET 10.0 Windows)
-          Compress-Archive -Path "src/ARZExplorer/bin/Release/net10.0-windows/*" -DestinationPath "ARZExplorer-$version.zip" -Force
+          # Windows applications: self-contained win-x64
+          Compress-Archive -Path "publish/TQVaultAE/*" -DestinationPath "TQVaultAE.GUI-$version.zip" -Force
+          Compress-Archive -Path "publish/TQSaveFilesExplorer/*" -DestinationPath "TQSaveFilesExplorer-$version.zip" -Force
+          Compress-Archive -Path "publish/ARZExplorer/*" -DestinationPath "ARZExplorer-$version.zip" -Force
+
+          # tqdb: self-contained single file, for Windows and Linux
+          Compress-Archive -Path "publish/tqdb-win-x64/*" -DestinationPath "tqdb-win-x64-$version.zip" -Force
+          Compress-Archive -Path "publish/tqdb-linux-x64/*" -DestinationPath "tqdb-linux-x64-$version.zip" -Force
           
           Write-Host "Created release archives:"
           Get-ChildItem *.zip
 
-      - name: Upload TQVaultAE.GUI artifacts (Release)
+      - name: Upload TQVaultAE-GUI-Release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: TQVaultAE-GUI-Release
-          path: src/TQVaultAE.GUI/bin/Release/net10.0-windows/
+          path: publish/TQVaultAE/
           retention-days: 3
 
-      - name: Upload TQ.SaveFilesExplorer artifacts (Release)
-        uses: actions/upload-artifact@v4
-        with:
-          name: TQ-SaveFilesExplorer-Release
-          path: src/TQSaveFilesExplorer/bin/Release/net48/
-          retention-days: 3
-
-      - name: Upload ARZExplorer artifacts (Release)
+      - name: Upload ARZExplorer-Release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ARZExplorer-Release
-          path: src/ARZExplorer/bin/Release/net10.0-windows/
+          path: publish/ARZExplorer/
+          retention-days: 3
+
+      - name: Upload TQ-SaveFilesExplorer-Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TQ-SaveFilesExplorer-Release
+          path: publish/TQSaveFilesExplorer/
+          retention-days: 3
+
+      - name: Upload tqdb-win-x64-Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tqdb-win-x64-Release
+          path: publish/tqdb-win-x64/
+          retention-days: 3
+
+      - name: Upload tqdb-linux-x64-Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tqdb-linux-x64-Release
+          path: publish/tqdb-linux-x64/
           retention-days: 3
 
       - name: Create GitHub Release
@@ -106,6 +123,7 @@ jobs:
             TQVaultAE.GUI-*.zip
             TQSaveFilesExplorer-*.zip
             ARZExplorer-*.zip
+            tqdb-*.zip
           draft: false
           prerelease: false
         env:

@@ -36,27 +36,44 @@ jobs:
         run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build Release
-        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore -warnaserror
 
-      - name: Upload TQVaultAE.GUI artifacts (Release)
+      - name: Publish release outputs
+        run: pwsh -File .github/scripts/Publish-Release.ps1 -OutputDir publish
+
+      - name: Upload TQVaultAE-GUI-Release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: TQVaultAE-GUI-Release
-          path: src/TQVaultAE.GUI/bin/Release/net10.0-windows/
+          path: publish/TQVaultAE/
           retention-days: 3
 
-      - name: Upload TQ.SaveFilesExplorer artifacts (Release)
-        uses: actions/upload-artifact@v4
-        with:
-          name: TQ-SaveFilesExplorer-Release
-          path: src/TQSaveFilesExplorer/bin/Release/net48/
-          retention-days: 3
-
-      - name: Upload ARZExplorer artifacts (Release)
+      - name: Upload ARZExplorer-Release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ARZExplorer-Release
-          path: src/ARZExplorer/bin/Release/net10.0-windows/
+          path: publish/ARZExplorer/
+          retention-days: 3
+
+      - name: Upload TQ-SaveFilesExplorer-Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TQ-SaveFilesExplorer-Release
+          path: publish/TQSaveFilesExplorer/
+          retention-days: 3
+
+      - name: Upload tqdb-win-x64-Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tqdb-win-x64-Release
+          path: publish/tqdb-win-x64/
+          retention-days: 3
+
+      - name: Upload tqdb-linux-x64-Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tqdb-linux-x64-Release
+          path: publish/tqdb-linux-x64/
           retention-days: 3
 
   test:
@@ -80,10 +97,10 @@ jobs:
         run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build test project
-        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore -warnaserror
 
       - name: Run tests
-        run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --verbosity normal --no-build --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test --solution ${{ env.SOLUTION_FILE }} --configuration Release --no-build --report-xunit-trx
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

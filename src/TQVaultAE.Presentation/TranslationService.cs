@@ -1,4 +1,6 @@
-﻿using EnumsNET;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
+using EnumsNET;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using TQVaultAE.Domain.Entities;
@@ -20,7 +22,7 @@ public class TranslationService : ITranslationService
 
 	public string Translate(ItemStyle itemStyle)
 	{
-		var tags = itemStyle.AsString(EnumFormat.Description);
+		var tags = itemStyle.AsString(EnumFormat.Description) ?? string.Empty;
 		var values = tags.Split('|');
 		var trans = (values.Length > 1)
 			? string.Format(values.Last(), this.TranslateXTag(values.First()))
@@ -47,7 +49,7 @@ public class TranslationService : ITranslationService
 
 	public string TranslateXTag(string xTagName, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false)
 	{
-		string resx = LookFortranslation(xTagName);
+		string? resx = LookFortranslation(xTagName);
 
 		if (string.IsNullOrWhiteSpace(resx))
 			return xTagName;
@@ -60,11 +62,17 @@ public class TranslationService : ITranslationService
 
 	public bool TryTranslateXTag(string xTagName, out string translation, bool removeAllTQTags = false, bool doCleanup = false, bool doCleanupKeepLeadingColorTag = false)
 	{
-		string resx = LookFortranslation(xTagName);
+		string? resx = LookFortranslation(xTagName);
+
+		// A tag has no space: some records write the text itself where a tag is expected ("Storm Orb" as a skill
+		// name), and the game shows it as is.
+		if (string.IsNullOrWhiteSpace(resx) && xTagName is not null && xTagName.Trim().Contains(' '))
+			resx = xTagName.Trim();
 
 		if (string.IsNullOrWhiteSpace(resx))
 		{
-			translation = null;
+			// Like TranslateXTag: show the tag itself, so a missing translation is visible in the UI.
+			translation = xTagName!;
 			return false;
 		}
 
@@ -75,13 +83,22 @@ public class TranslationService : ITranslationService
 		return true;
 	}
 
-	private string LookFortranslation(string xTagName)
+	/// <summary>
+	/// <c>TextTag_</c> resource strings by culture and tag, misses included. Most tags have none, and a miss walks the
+	/// culture fallback chain under the <see cref="System.Resources.ResourceManager"/> lock, which the parallel search
+	/// warm-up contended on.
+	/// </summary>
+	private readonly ConcurrentDictionary<(string Culture, string Tag), string?> _textTags = new();
+
+	private string? LookFortranslation(string xTagName)
 	{
 		// all xtag substitute must have a "TextTag_" prefix in resource file (avoid colision & strong naming rule).
-		var resx = Resources.ResourceManager.GetString($"TextTag_{xTagName}");
+		var culture = CultureInfo.CurrentUICulture;
+		var resx = this._textTags.GetOrAdd((culture.Name, xTagName)
+			, static (key, culture) => Resources.ResourceManager.GetString($"TextTag_{key.Tag}", culture), culture);
 
 		// Check if the value is a @redirectTag 
-		if (resx != null && resx.StartsWith("@"))
+		if (resx is not null && resx.StartsWith('@'))
 			resx = this.Database.GetFriendlyName(resx.TrimStart('@'));
 
 		if (resx is null)
@@ -94,11 +111,10 @@ public class TranslationService : ITranslationService
 
 	public string TranslateMastery(string characterXtagClass)
 	{
-		var tags = Resources.ResourceManager.GetString($"Masteries{characterXtagClass}");
-		var dualclass = tags.Split('-');
-		return dualclass.Count() > 1
-			? $"{TranslateXTag(dualclass.First())}-{TranslateXTag(dualclass.Last())}"
-			: TranslateXTag(dualclass.First());
+		var masteries = CharacterClasses.MasteriesOf(characterXtagClass);
+		return masteries.Count == 0
+			? TranslateXTag(characterXtagClass)
+			: string.Join("-", masteries.Select(m => TranslateXTag(CharacterClasses.BriefTag(m))));
 	}
 
 	public string ItemIT => Resources.ItemIT;

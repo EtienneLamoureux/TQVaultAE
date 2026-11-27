@@ -18,29 +18,52 @@ dotnet restore
 
 ## Test Commands
 
+The tests use xunit v3 on Microsoft.Testing.Platform (selected in `global.json`): run them one project at a time with `dotnet test --project <csproj>` (never `--solution`); filters are xunit options.
+
+There is one test project per layer, `src/tests/TQVaultAE.<Layer>.Tests`, plus `src/tests/TQVaultAE.Tests.Win32` for the
+Windows-only projects. To check a change, run the test projects of the layers it touches, not the whole solution:
+
+| Changed project | Test project to run |
+|-----------------|---------------------|
+| TQVaultAE.Domain, TQVaultAE.GameFiles | TQVaultAE.Domain.Tests (and the layers above when an API changes) |
+| TQVaultAE.Application | TQVaultAE.Application.Tests |
+| TQVaultAE.Config | TQVaultAE.Config.Tests |
+| TQVaultAE.Data | TQVaultAE.Data.Tests |
+| TQVaultAE.Services | TQVaultAE.Services.Tests (and TQVaultAE.Services.Git.Tests for `GitBackup`, slow: real git, about 3 min) |
+| TQVaultAE.Presentation | TQVaultAE.Presentation.Tests |
+| TQVaultAE.DbCli | TQVaultAE.DbCli.Tests |
+| TQVaultAE.Presentation.Win32, TQVaultAE.Services.Win32, ARZExplorer, TQSaveFilesExplorer, the GUI's exception formatting (`GUI/Infrastructure/ILogExtension.cs`) | TQVaultAE.Tests.Win32 |
+
+The test projects share their settings through `src/tests/TestProject.props`. A lower layer's change can break the tests of
+the layers above it: run every test project (`src/tests/*/*.csproj`, one `dotnet test --project` each) before a commit
+that changes a shared API.
+
 ```bash
-# Run all tests
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj
+# Run all tests: each test project in turn
+for p in src/tests/*/*.csproj; do dotnet test --project "$p"; done
+
+# Run the tests of one layer
+dotnet test --project src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj
 
 # Run single test class
-dotnet test --filter "FullyQualifiedName~TagServiceTests"
+dotnet test --project src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --filter-class "*TagServiceTests"
 
 # Run single test method
-dotnet test --filter "FullyQualifiedName~TagServiceTests.AddTag_WithNewTagName_ReturnsTrue"
+dotnet test --project src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --filter-method "*TagServiceTests.AddTag_WithNewTagName_ReturnsTrue"
 
-# Run with coverage
-dotnet test --collect:"XPlat Code Coverage;Format=opencover"
+# Run with coverage (coverlet.MTP, written to TestResults/; src/tests/testconfig.json limits it to our assemblies)
+dotnet test --project src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --coverlet --coverlet-output-format opencover
 
 # Build before testing
-dotnet build src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --configuration Debug
-dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --no-build
+dotnet build src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --configuration Debug
+dotnet test --project src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj --no-build
 ```
 
 ## Code Style
 
 ### Formatting
 - **Indentation**: Tabs
-- **Braces**: K&R style (opening brace on same line)
+- **Braces**: Allman style (opening brace on its own line), as in the existing code
 - **Namespaces**: File-scoped
 - **This Prefix**: Use `this.` for all instance members
 
@@ -101,21 +124,40 @@ dotnet test src/TQVaultAE.Tests/TQVaultAE.Tests.csproj --no-build
 ## Architecture
 
 ### Layer Dependencies
+The project references, each project with the ones it references (`src/*/*.csproj`):
 ```
-GUI → Presentation → Services → Domain → Data
-     ↓
-Application (DTOs, Results, Search)
+GUI                → all the projects below
+Services.Win32     → Services, Config, Domain
+Presentation.Win32 → Presentation, Application, Config, Domain
+Services           → Data, Application, Config, Domain
+Presentation       → Application, Config, Domain
+Data               → Application, Config, Domain
+Application        → Domain     (DTOs, Results, service contracts, session, search, layout and character maths)
+Config             → Domain
+Domain             → GameFiles
+DbCli              → GameFiles
 ```
+Services and Presentation do not reference each other. Services builds no UI text: it returns keys, enums or neutral
+data (Application types), and the GUI or Presentation turns them into translated text (for example
+`ModLinkText.CharacterLabel`, `SharedStashText.Localize`, `GitBackupText.Message`).
 
 ### Projects
 | Project | Framework | Purpose |
 |---------|-----------|---------|
 | TQVaultAE.GUI | .NET 10.0 | Windows Forms UI |
 | TQVaultAE.Services | .NET 10.0 | Business logic |
-| TQVaultAE.Application | .NET 10.0 | DTOs, Results |
+| TQVaultAE.Application | .NET 10.0 | Service contracts (`Contracts/`), DTOs, Results, key binds, session (`Session/`), search (`Search/`), layout (`Layout/`) and character maths (`Character/`) |
 | TQVaultAE.Data | .NET 10.0 | Data access |
 | TQVaultAE.Domain | .NET 10.0 | Entities |
-| TQVaultAE.Tests | .NET 10.0 | Unit tests |
+| TQVaultAE.Presentation | .NET 10.0 | Localized UI strings (`Resources`), translation, item texts (`ItemText/ItemTextFormatter`) |
+| TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | `System.Drawing` bitmaps, fonts, icons, tooltip image cache, UI images (`Images`) |
+| TQVaultAE.GameFiles | .NET 10.0 | Game file readers (`.arz`, `.arc`, text), shared by Data and `tqdb` |
+| TQVaultAE.DbCli | .NET 10.0 | `tqdb` command line |
+| TQVaultAE.Automation | .NET 10.0 Windows | Code shared by the automation endpoints of the GUI and ARZExplorer (server start, control pictures, UI thread calls, control walks, headless mode); referenced by the GUI in every build (its headless mode too), by ARZExplorer in Debug builds only |
+| TQVaultAE.<Layer>.Tests | .NET 10.0 | Unit tests, one project per layer (Domain, Application, Config, Data, Services, Presentation, DbCli), plus TQVaultAE.Services.Git.Tests (`GitBackup` against real git) |
+| TQVaultAE.Tests.Win32 | .NET 10.0 Windows | Unit tests of the Windows-only projects |
+
+Keep `System.Drawing` (except `Color`, `Point`, `Size`, `Rectangle`) and other Windows-only APIs in the `*.Win32` projects and the GUI, so the other projects stay cross-platform.
 
 ### Key Abstractions (for DI)
 - `IFileIO` - File operations
@@ -126,18 +168,62 @@ Application (DTOs, Results, Search)
 ## Adding New Code
 
 ### Adding a Service
-1. Create interface in `src/TQVaultAE.Application/contracts/Services/`
+1. Create interface in `src/TQVaultAE.Application/Contracts/Services/`
 2. Implement in `src/TQVaultAE.Services/`
 3. Use `IFileIO`/`IPathIO` for file operations
 4. Register in `Program.cs`
 5. Add tests with meaningful assertions
 
 ### Adding a Test
-1. Create test class: `src/TQVaultAE.Tests/<Category>/<Name>Tests.cs`
+1. Create test class in the test project of the tested class's layer: `src/tests/TQVaultAE.<Layer>.Tests/<Name>Tests.cs`
 2. Mock all dependencies in constructor
 3. Follow Arrange-Act-Assert pattern
 4. Verify actual behavior, not property assignments
 
+## Verifying GUI Changes (`tqvault` MCP)
+
+Debug builds of `TQVaultAE.GUI` host an MCP server inside the app at `http://127.0.0.1:47017/mcp`, with the user tools and the developer tools (Release builds serve the user tools only, when the user turns the endpoint on in the settings: `documentation/mcp.md`). It is registered for MCP clients in the repository's `.mcp.json`. Use it to check UI changes on the running app, instead of screenshots and real mouse clicks.
+
+1. Build Debug: `dotnet build TQVaultAE.slnx`.
+2. Run `src/TQVaultAE.GUI/bin/Debug/net10.0-windows/TQVaultAE.exe`. Prefer `TQVaultAE.exe --headless`: it runs on a hidden desktop, so no window, taskbar button or focus change reaches the user. Message boxes then take their default answer (Cancel/No/Ignore/OK) unless one is queued, and native file/folder dialogs are cancelled. Add `TQVAULT_MCP_PORT=47018` when another Debug instance already uses 47017. See "Headless mode" in `documentation/AUTOMATION.md`.
+3. Use the `mcp__tqvault__*` tools:
+
+| Purpose | Tools |
+|---|---|
+| Dialog controls | `control_values(form)`, `set_control(form, control, value)`, `click_control(form, control)`, `mouse_click(form, control, x, y, button?, clicks?)` (mouse messages at a point, e.g. a check group box caption; right button with its context menu, double click), `mouse_wheel(form, control, x, y, notches)` (wheel over a point), `open_character_editor` (shows the editor in place of the main content; form `Character Editor`, closed with `close_dialog`), `skill_panel` / `skill_panel_click` / `skill_tooltip` (character editor skill panes), `character_panel` / `character_attribute_click` / `character_tooltip` / `character_stat_sources` (its statistics panel and the sums behind its computed statistics), `character_buffs` / `character_buff_toggle` (Debug: the Buffs tab of the editor's, the main window's or a floating window's panel: sources, toggles, scroll choice), `character_weapon_set` (Debug: the weapon set gems I / II of tab I, `set` clicks one), `class_sets` (Debug: the editor's class set bar, its mark, sets and build shown; `select`, `saveAs`, `save`, `rename`, `delete` through the bar, `hover` for its tool tips), `character_window_open` / `character_window` / `character_window_loadout` / `character_window_list` / `character_window_close` (Debug: floating character windows; equipment panel `window:<name>`; a loadout shown read-only in place of the equipment), `select_tab`, `grid_values` / `set_grid_cell`, `tag_box` / `list_tags`, `list_items` / `check_list_items` / `grid_click` for check box lists and grids (search dialog, results), `list_keys` / `list_state` (keyboard and width of a check box list), `search_dialog_state` / `search_dialog_scroll` (the Advanced Search dialog's whole user state, kept across zoom changes), `search_tooltip(kind)` (its selected filters and results tool tips), `archive_character`, `character_read_only` (the character menu's *Read-only* toggle and the files' read-only attribute) and `open_mod_link` (mod link dialog): test characters only (`player-test`, `player-mod`); `tag_archive_all(tag, archived)` (test tags `test-`) |
+| Message boxes | `queue_dialog_answers(answers)` answers the next boxes without showing them (`text:<name>` types the next name dialog's text and clicks its OK); `dialog_answers` lists them, and with `--headless` also the boxes that took their default answer and the native dialogs cancelled; `close_dialog` for the others |
+| Windows and dialogs | `list_windows`, `close_form(form)` for a modeless form without buttons (the search results window), `close_dialog` (for example "Default Vault Path" → OK; also the settings, a view of the main window shown by `click_control("", "configureButton")`: "Settings" → OK or Cancel, and the form `Settings` for `control_values`, `set_control`, `click_control`, `control_tree`; the same for the character editor view, "Character Editor"), `list_forms`, `open_form(name, show?)` to create any registered form or dialog, `open_item_dialog(panel, x, y, dialog)` for an item's Properties or Seed dialog, `open_input_dialog(prompt?, title?, value?)` for the text input dialog (character and loadout names), `open_bag_settings(panel, bag?)` for the bag icon picker of a vault bag (its menu's *Change icon*) |
+| Read the state from the app's models | `get_state(panel?)`, which returns characters, vaults, panels and items with their cells; `character_list(refresh?, pick?)` for the character list entries as drawn (class, masteries, mod, badges) and the selected character's box (`pick` clicks an entry like the user); `mod_state` for the active custom map (mod), the loaded databases and each character's mod link; `mod_suggest(character)` for the mod suggestion; `search_containers(filter?)` for the containers of the search database and their items; `select_search_result(container, x?, y?)` shows a search result like the results dialog; `find_copies(panel, x, y, kind)` runs the item menu's *Search* (SameSeed, AllCopies, SameBase, SamePrefix, SameSuffix) and reads the results window it opens (title, rows, the source first); `results_move(action, rows?, path?, menu?)` selects its rows and clicks its *Move To* / *Undo* entries (`capture_results_menu` renders its menus); `player_info` for the player information panel as displayed, with the attributes the item requirements are checked against (`player_stats_hover(tab, index)` hovers one of its rollovers and reports where the tool tip lands); `player_stats_fonts` for its fonts; `stash_background_switch(bag)` to check that the stash backgrounds replaced at a tab switch are disposed; `gdi_census(action, target?, count?)` for the GDI/USER objects and undisposed bitmaps/fonts an action leaves (repaint, zoom, character list, form); `owned_skill_items` for every owned item that grants a skill; `raw_tooltip_lines` for the tooltip lines still shown raw; `tooltip_text_dump(path, views)` for the rows of every item tooltip as rendered (text, color, bold, kind), written to a JSON file to diff; `item_properties_dump(path)` for the sections of the Item Properties dialog of every item; `compare_items(panel, x, y, x2, y2, panel2?, path?, keepOpen?, alignRows?, hideUnchanged?, showSources?, toggle?, height?, scroll?)` for the four columns of an item comparison (rows and a PNG; it opens like the user's Compare, in a new modeless window, closed at the end unless `keepOpen`; `toggle` clicks stats open or closed to show their sources; `height` and `scroll` resize it and scroll its columns with real scroll messages); `compare_click(panel, x, y, button?)` for the second click of the compare selection started by the item menu's `Compare` (opens a new comparison window beside the others); `comparison_windows(action?, index?)` lists the comparison windows open, or closes one or all; `search_entries(baseItemId)` for the search database entries of one base item, with each entry's place and mod (`mod`, `containerMod`); `game_text(tags)` translates text tags; `load_resource(resourceIds)` loads resources like the app |
+| Navigation | `select_character`, `select_vault` (its first entry opens *Maintain Vault Files*), `select_bag` |
+| Test files | `create_vault(name)` and `duplicate_character(name)`, which only accept test names (`vault-` for a vault, `player-test` or `player-mod` for a character); `save_files` like the Save button (answer its error box with `close_dialog` from another call); `export_vault(path)`, `export_items(panel, x, y, path)` (the item menu's `Share to File...`), `export_tab(path, bag)` (a vault bag menu's *Export tab > File*) and `import_file(path)` (into a `vault-` vault) without the file dialogs; `import_text(text?, path?)` pastes like Ctrl+V without touching the clipboard; `export_csv(path, bag?)` like the vault menu's *Export CSV* |
+| Drag and drop through the panels' own handlers | `pick_item`, `move_drag`, `drop_item`, `cancel_drag`; `create_item` drags a new item built from record ids |
+| Keyboard and modifier clicks | `press_key(panel, x, y, key)` posts real key messages to the focused window (message loop, key preview, `KeyDown`) with the modifiers in the keyboard state; `click_cell(panel, x, y, modifiers)`, `drag_select(panel, x1, y1, x2, y2, modifiers)` and `select_items(panel, cells)` click with modifiers held; `key_binds()` reads the bindings, `key_binds_dialog(...)` drives the key binds dialog with real clicks and keys |
+| Item tooltips | `hover_item(panel, x, y)`, which returns the tooltip as a PNG; `hover_end`; `hover_bag(panel, bag)` for a bag button's tooltips (summary and custom label, with their sizes and fonts; `capture("tooltip:BagButtonLabelTooltip")`) |
+| Context menus | `context_menu(panel, x, y)`, which returns the entries of the right-click menu and closes it; `context_menu_click(panel, x, y, path)` clicks one (`Move Item To > Bag #3`); `vault_menu(path?)` reads or clicks the menu of the vault tools button (`Modded vault > shadowchampions`); `menu_click(target, path?)` opens and clicks the menus opened by a click (`characterTools`, `loadouts`, `loadouts.list`, `stash.bag<N>`, `systemMenu`), which `duplicate_character`, `open_mod_link`, `archive_character` and `tag_box` delete use; `capture_menu(target, x?, y?, open?)` renders a menu with its opened sub menus to PNG (vault tools, character tools, a cell's menu, `<panel>.sort` for a sort button's menu, `loadouts` / `loadouts.list` for the loadout bar's menus); menu entries give `Checked` and the right-hand `Hint`; `select_items(panel, cells)` Ctrl-clicks a selection; `press_key(panel, x, y, key)` presses a key through the window's then the panel's handler (c, d, Backspace, any gesture; empty panel for the forge keys); `click_cell(panel, x, y, modifiers)` clicks with modifiers held (Ctrl+Alt duplicates, Alt copies by default); `key_binds` / `key_binds_dialog` read the bindings and drive the key binds dialog; `bag_menu(panel, bag, path?)` for the bag buttons, `bag_settings_pick_icon` and `bag_settings_drag_icon` in the icon picker (`bag_settings_hover_icon` for its magnifier); `sort_menu(panel, path?)` reads or picks the own sort order of a sort button (vault, secondaryVault, player, playerBag, stash: one per button), `sort_click(panel)` sorts like a left click |
+| Highlight | `highlight_filters(check, uncheck, apply, checkItems, uncheckItems)` ticks the highlight filter check boxes and list entries (`Mods:<mod>;Origin:<game>`) and applies them |
+| Layout and scaling | `zoom(step)` (in, out, reset); `control_tree(form, depth)` for control bounds, fonts and auto scale modes; `text_fit(form)` for text cut by its control (check each UI language); `move_window(x, y, form?)` to move the window or a dialog to a monitor of another DPI; `window_bounds()` for the window state, whether the panels' table fits inside the border (`layout`) and the zoom step and the largest one Windows lets the window take (`step`, `largestStep`); `window_state(state)` to minimize, restore (as from the taskbar) or maximize it |
+| Forge | `forge_show`, `forge_state`, `forge_set_mode`, `forge_mode_card(mode)` (the text and PNG of a mode card), `forge_set_hardcore`, `forge_drop(slot)`, `forge_select_part`, `forge_drag_cursor`, `forge_hover(slot, hide?)` (a slot's tooltip, for Base the preview, drawn on a PNG of the main window), `forge_reset`, `forge_forge`, `forge_cancel` |
+| Evidence | `capture(control, shown?)`, a PNG made with `DrawToBitmap` that works even when the window is hidden (`shown=true` copies the pixels the window shows on its desktop instead) (`capture("playerInfo")` for the player information panel, whose labels `DrawToBitmap` leaves out); `recent_log(n)`; `recent_sounds(n)`, with the sounds played and whether their data loaded; `picture_fault(resourceId, mode)` makes a picture read as missing or damaged (in memory) to check the placeholder of an item whose picture cannot be loaded |
+
+Loadouts (saved equipment sets, `documentation/LOADOUTS.md`):
+
+| Purpose | Tools |
+|---|---|
+| Loadout bar | `loadouts(action?, name?, newName?, menu?, to?, gameRunning?, slot?)` reads the bar, its menus, the loadouts file and each loadout's pieces (identical to the worn one or not) and the `marks` beside the equipment slots; actions `select`, `add`, `update`, `rename`, `copy`, `delete`, `swap`, `empty` and `emptyButton` (`to`: inventory, stash, vault) on test characters, `compare` (`slot`) clicks a mark (opens Item Comparison), `hover` (`slot`) returns a mark's tool tip (`markTooltip`), `gameRunning` stands for the game process; `select_search_result` gives a loadout result's `loadout` |
+
+Rules:
+- Nothing blocks saves: work only in your own test files, vaults `vault-test1`, `vault-test2`, ... and characters `player-test1`, ... made with Duplicate Character. Never change a real character or vault (see Safety in `documentation/AUTOMATION.md`).
+- Put items back with `cancel_drag`.
+- `PlayerReadonly` blocks picking from and dropping on the equipment panel. A read-only character (its save files carry the read-only attribute) blocks all of its bags, equipment and storage area.
+- Release builds serve the user tools (methods of `AutomationTools`) when the setting is on. A developer tool goes in `Automation/Dev/` (nested class `AutomationTools.DevTools`, left out of Release builds), its accessors and helpers in `Automation/Dev/` partial files and its hooks elsewhere inside `#if DEBUG`; add every new tool to one of the two lists of `AutomationToolLevelsTests` and mark it in `documentation/AUTOMATION.md` (and `documentation/mcp.md` for a user tool).
+
+Full reference: `documentation/AUTOMATION.md`.
+
+ARZExplorer has its own Debug endpoint at `http://127.0.0.1:47020/mcp` (`ARZExplorer.exe --headless`, message boxes recorded by `dialogs`): see "ARZExplorer endpoint" in `documentation/AUTOMATION.md`.
+
 ## Resources
+- Game file formats (ARC, ARZ, text, TEX, item stat jitter): `documentation/tq-file-formats.md`
+- DB CLI (`tqdb`) usage: `documentation/DBCLI.md`
+- In-app automation endpoint (`tqvault` MCP, Debug only): `documentation/AUTOMATION.md`
 - GitHub: https://github.com/EtienneLamoureux/TQVaultAE
 - Issues: https://github.com/EtienneLamoureux/TQVaultAE/issues

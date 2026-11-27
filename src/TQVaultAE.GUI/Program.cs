@@ -7,22 +7,27 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.Reflection;
 using System.Resources;
-using System.Security.Permissions;
 using System.Text.Json;
+using TQVaultAE.Application.Session;
 using TQVaultAE.Data;
 using TQVaultAE.Domain.Entities;
 using TQVaultAE.Domain.Exceptions;
-using TQVaultAE.Logs;
+using TQVaultAE.GUI.Dialogs;
+using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.Presentation.Win32;
 using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.ItemText;
 using TQVaultAE.Services;
 using TQVaultAE.Services.Win32;
 using Microsoft.Extensions.Logging;
-using TQVaultAE.Application;
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.KeyBinds;
+using TQVaultAE.Application.Results;
 using TQVaultAE.Config;
-using TQVaultAE.GUI.Inputs.Filters;
-using TQVaultAE.GUI.Models.SearchDialogAdvanced;
+using TQVaultAE.GUI.Infrastructure.Filters;
 
 namespace TQVaultAE.GUI;
 
@@ -31,23 +36,22 @@ namespace TQVaultAE.GUI;
 /// </summary>
 public static class Program
 {
-	private static ILogger Log;
+	// Set first thing in Main.
+	private static ILogger Log = null!;
 
-	/// <summary>
-	/// Right to left reading options for message boxes
-	/// </summary>
-	private static MessageBoxOptions rightToLeft;
-
-	internal static ServiceProvider ServiceProvider { get; private set; }
-	private static ILoggerFactory LoggerFactory;
+	internal static ServiceProvider ServiceProvider { get; private set; } = null!;
+	// Registered in the services as ILoggerFactory: keep the interface type.
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859", Justification = "Registered as ILoggerFactory.")]
+	private static ILoggerFactory LoggerFactory = null!;
 
 	/// <summary>
 	/// The main entry point for the application.
 	/// </summary>
 	[STAThread]
-	[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
 	public static void Main()
 	{
+		var commandLine = Environment.GetCommandLineArgs();
+
 		try
 		{
 			// Add the event handler for handling UI thread exceptions to the event.
@@ -59,6 +63,10 @@ public static class Program
 			// Add the event handler for handling non-UI thread exceptions to the event.
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+			// Sharp on every monitor: the designer layout scales by itself (AutoScaleMode.Dpi), also when a window moves to a
+			// monitor of another DPI, and UIService.DpiScale carries the same factor to the panels and drawing built in code
+			// (see MainForm.OnDpiChanged).
+			System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 			System.Windows.Forms.Application.EnableVisualStyles();
 			System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
@@ -66,6 +74,32 @@ public static class Program
 			LoggerFactory = new LoggerFactory();
 			LoggerFactory.AddLog4Net();
 			Log = LoggerFactory.CreateLogger(typeof(Program));// Make static level logger
+
+			// --headless: TQVault runs on a hidden desktop, driven through the automation endpoint. See documentation/AUTOMATION.md
+			if (TQVaultAE.Automation.HeadlessDesktop.IsRequested(commandLine))
+			{
+				if (!TQVaultAE.GUI.Automation.Headless.TryAttach())
+				{
+					// This process only starts the instance that runs on the hidden desktop.
+					var headlessError = TQVaultAE.GUI.Automation.Headless.StartOnHiddenDesktop();
+					if (headlessError is not null)
+					{
+						Log.LogError("Headless mode: TQVault could not start on a hidden desktop: {Error}", headlessError);
+						Environment.ExitCode = 1;
+					}
+					return;
+				}
+
+				commandLine = TQVaultAE.Automation.HeadlessDesktop.WithoutSwitch(commandLine);
+				Log.LogInformation("Headless mode: running on the hidden desktop {Desktop}", TQVaultAE.Automation.HeadlessDesktop.DesktopName);
+			}
+
+#if DEBUG
+			// In-app MCP automation endpoint with the developer tools, started early whatever the settings, so that startup
+			// dialogs can be answered. See documentation/AUTOMATION.md
+			LoggerFactory.AddProvider(TQVaultAE.GUI.Automation.AutomationHost.RecentLog);
+			TQVaultAE.GUI.Automation.AutomationHost.Start(LoggerFactory);
+#endif
 
 		restart:
 			// Configure DI
@@ -75,7 +109,7 @@ public static class Program
 				.AddSingleton(typeof(ILogger<>), typeof(Logger<>))
 				// Config
 				.AddSingleton<UserSettings>(sp => UserSettings.Read())
-				.AddSingleton<SearchQueries>()
+				.AddSingleton(sp => KeyBindMap.FromOverrides(sp.GetRequiredService<UserSettings>().KeyBinds.Overrides))
 				.AddSingleton(new JsonSerializerOptions { IncludeFields = true, PropertyNameCaseInsensitive = true, WriteIndented = true })
 				// States
 				.AddSingleton<SessionContext>()
@@ -84,14 +118,20 @@ public static class Program
 				.AddTransient<IPathIO, PathIO>()
 				.AddTransient<IDirectoryIO, DirectoryIO>()
 				// Providers
-				.AddTransient<IRecordInfoProvider, RecordInfoProvider>()
 				.AddTransient<IArcFileProvider, ArcFileProvider>()
 				.AddTransient<IArzFileProvider, ArzFileProvider>()
-				.AddSingleton<IDatabase, Database>()
+				// One database per custom map (mod), the active one answering as IDatabase
+				.AddTransient<Database>()
+				.AddSingleton<Func<Database>>(sp => () => sp.GetRequiredService<Database>())
+				.AddSingleton<DatabaseSelector>()
+				.AddSingleton<IDatabase>(sp => sp.GetRequiredService<DatabaseSelector>())
+				.AddSingleton<IDatabaseMaps>(sp => sp.GetRequiredService<DatabaseSelector>())
 				.AddSingleton<IItemProvider, ItemProvider>()
+				.AddSingleton<IItemTextFormatter, ItemTextFormatter>()
 				.AddSingleton<ILootTableCollectionProvider, LootTableCollectionProvider>()
 				.AddTransient<IStashProvider, StashProvider>()
 				.AddTransient<IPlayerCollectionProvider, PlayerCollectionProvider>()
+				.AddSingleton<ISkillTreeProvider, SkillTreeProvider>()
 				.AddTransient<ISackCollectionProvider, SackCollectionProvider>()
 				.AddSingleton<IItemAttributeProvider, ItemAttributeProvider>()
 				.AddTransient<IDBRecordCollectionProvider, DBRecordCollectionProvider>()
@@ -104,49 +144,94 @@ public static class Program
 			.AddTransient<IFontService, FontService>()
 			.AddTransient<ITranslationService, TranslationService>()
 			.AddSingleton<IUIService, UIService>()
+			.AddSingleton<IUserNotifier>(sp => sp.GetRequiredService<IUIService>())
 			.AddSingleton<IIconService, IconService>()
 			.AddSingleton<ITQDataService, TQDataService>()
 			.AddTransient<IBitmapService, BitmapService>()
+#if DEBUG
+			// Records the sounds played, for the automation endpoint's recent_sounds tool.
+			.AddSingleton<SoundServiceWin>()
+			.AddSingleton<ISoundService>(sp => new TQVaultAE.GUI.Automation.RecordingSoundService(
+				sp.GetRequiredService<SoundServiceWin>(), sp.GetRequiredService<UserSettings>()))
+#else
 			.AddSingleton<ISoundService, SoundServiceWin>()
-			.AddTransient<IGameFileService, GameFileServiceWin>()
+#endif
+			.AddTransient<IGameFileService, GameFileService>()
 			.AddSingleton<ITagService, TagService>()
-			.AddTransient<IDecompressionService, DeflateDecompressionService>()
 
 		// Application Layer - Core Services
 		.AddSingleton<IItemMovementService, ItemMovementService>()
+		.AddSingleton<IAffixCatalogService, AffixCatalogService>()
 		.AddSingleton<IHighlightService, HighlightService>()
 		.AddSingleton<IItemDatabaseService, ItemDatabaseService>()
 		.AddSingleton<IItemExchangeService, ItemExchangeService>()
 		.AddSingleton<IPasteBinService, PasteBinService>()
+		.AddSingleton<IForgeService, ForgeService>()
 		.AddSingleton<HttpClient>()
+		.AddSingleton<ISettingsPersistenceService, SettingsPersistenceService>()
+		.AddSingleton<IStartupService, StartupService>()
+		.AddSingleton(new CommandLineArgs(commandLine))
+		.AddTransient<ILoadAllService, LoadAllService>()
+		.AddSingleton<IItemEditService, ItemEditService>()
+		.AddSingleton<IItemStackingService, ItemStackingService>()
+		.AddSingleton<IItemSortService, ItemSortService>()
+		.AddSingleton<IItemComparisonService, ItemComparisonService>()
+		.AddTransient<IItemDropService, ItemDropService>()
+		.AddTransient<ISaveOrchestrator, SaveOrchestrator>()
+		.AddSingleton<ISearchCategoryService, SearchCategoryService>()
+		.AddSingleton<ISearchQueryService, SearchQueryService>()
+		.AddSingleton<ICharacterEditService, CharacterEditService>()
+		.AddSingleton<ICharacterStatsService, CharacterStatsService>()
+		.AddSingleton<IModLinkService, ModLinkService>()
+		.AddSingleton<ILoadoutService, LoadoutService>()
+		.AddSingleton<IClassSetService, ClassSetService>()
+		.AddSingleton<IResultsMoveService, ResultsMoveService>()
+		.AddSingleton<IGameProcessService, GameProcessService>()
+		.AddSingleton<ICharacterReadOnlyService, CharacterReadOnlyService>()
+		.AddSingleton<IItemModService, ItemModService>()
+		.AddSingleton<IGameMapService, GameMapService>()
+		// Caches of game data, emptied when the active custom map changes
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IItemTextFormatter>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ILootTableCollectionProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ISkillTreeProvider>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<IUIService>())
+		.AddSingleton<IGameDataCache>(sp => (IGameDataCache)sp.GetRequiredService<ICharacterStatsService>())
 
-				// Performance: Memory-Mapped File Services
-				.AddSingleton<IFileDataService, MemoryMappedFileService>()
+				// GUI: services passed to forms and controls, and the only way to create forms
+				.AddSingleton<GuiServices>()
+				.AddSingleton<IMessageBoxService, MessageBoxService>()
+				.AddSingleton<FormFactory>()
 
 				// Forms
 				.AddSingleton<MainForm>()
+				.AddSingleton<TQVaultAE.GUI.Views.MainFormUserControl>()
 				.AddTransient<AboutBox>()
-				.AddSingleton<BagButtonSettings>()
-				.AddTransient<CharacterEditDialog>()
+				.AddTransient<BagButtonSettings>()
 				.AddTransient<ItemProperties>()
+				.AddTransient<InputDialog>()
+				.AddTransient<ItemComparisonDialog>()
 				.AddTransient<ItemSeedDialog>()
+				.AddTransient<KeyBindsDialog>()
+				.AddTransient<ModLinkDialog>()
 				.AddTransient<ResultsDialog>()
 				.AddTransient<SearchDialogAdvanced>()
-				.AddTransient<SettingsDialog>()
 				.AddTransient<VaultMaintenanceDialog>()
 				.AddTransient<SplashScreenForm>();
 
 			Program.ServiceProvider = scol.BuildServiceProvider();
 
-			var gamePathResolver = Program.ServiceProvider.GetService<IGamePathService>();
-			var userSettings = ServiceProvider.GetService<UserSettings>();
+			var userSettings = ServiceProvider.GetRequiredService<UserSettings>();
+
+			// The MCP automation endpoint, when the user turned it on in the settings (off by default). See documentation/mcp.md
+			TQVaultAE.GUI.Automation.AutomationHost.Apply(userSettings.EnableMcpServer, userSettings.McpServerPort, LoggerFactory);
+			var startupService = ServiceProvider.GetRequiredService<IStartupService>();
 
 			try
 			{
 				ManageCulture();
-				SetUILanguage(userSettings);
-				SetupGamePaths(gamePathResolver, userSettings);
-				SetupMapName(gamePathResolver, userSettings);
+				SetUILanguage(startupService.ResolveUICultureName());
+				ShowStartupNotice(startupService.SetupGamePaths());
 			}
 			catch (ExGamePathNotFound ex)
 			{
@@ -156,7 +241,7 @@ public static class Program
 
 					if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
 					{
-						userSettings.ForceGamePath = fbd.SelectedPath;
+						startupService.ApplyChosenGamePath(fbd.SelectedPath);
 						userSettings.Save();
 						goto restart;
 					}
@@ -165,20 +250,33 @@ public static class Program
 			}
 
 			// Initialize the Database AFTER game paths are configured
-			var database = ServiceProvider.GetService<IDatabase>();
+			var database = ServiceProvider.GetRequiredService<IDatabase>();
 			database.LoadDBFile();
 
-			var mainform = Program.ServiceProvider.GetService<MainForm>();
+			// Game texts the game font may lack letters of (Cyrillic): the fonts then take a family that has them all.
+			ServiceProvider.GetRequiredService<IFontService>().EnsureCovers(string.Concat(
+				new[] { "Strength", "Dexterity", "Intelligence", "tagCAttributes", "tagMenuButton07", "tagMenuButton06", "xtagLobbySearchSearch", "tagWindowName01" }
+					.Select(database.GetFriendlyName)));
+
+			var mainform = Program.ServiceProvider.GetRequiredService<MainForm>();
 			var filterMouseWheel = new FormFilterMouseWheelGlobally(mainform);
 			var filterMouseButtons = new FormFilterMouseButtonGlobally(mainform);
 			System.Windows.Forms.Application.AddMessageFilter(filterMouseWheel);
 			System.Windows.Forms.Application.AddMessageFilter(filterMouseButtons);
+			TQVaultAE.GUI.Automation.AutomationHost.AttachMainForm(mainform);
 			System.Windows.Forms.Application.Run(mainform);
 		}
 		catch (Exception ex)
 		{
-			Log.ErrorException(ex);
-			MessageBox.Show(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+			Log.LogError(ex, "TQVault failed to start or stopped on an unhandled error");
+#if DEBUG
+			// DefaultDesktopOnly boxes are shown by Windows, out of the process' windows: list_windows and close_dialog
+			// could not see this one.
+			ShowMessageBox(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxService.ReadingOptions);
+			TQVaultAE.GUI.Automation.AutomationHost.ExitAfterFatalError();
+#else
+			ShowMessageBox(Log.FormatException(ex), Resources.GlobalError, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxOptions.DefaultDesktopOnly);
+#endif
 		}
 
 	exit:;
@@ -187,126 +285,63 @@ public static class Program
 	#region Init
 
 	/// <summary>
-	/// Reads the paths from the config files and sets them.
+	/// Shows a message box outside the message box service (startup, fatal errors), with its first button as default.
 	/// </summary>
-	private static void SetupGamePaths(IGamePathService gamePathResolver, UserSettings userSettings)
+	/// <param name="headlessAnswer">Debug: the answer in headless mode when none is queued, instead of the one that changes nothing.</param>
+	private static DialogResult ShowMessageBox(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxOptions options, DialogResult? headlessAnswer = null)
 	{
-		if (userSettings.AutoDetectGamePath)
+		// Queued automation answers, and never a box in headless mode.
+		if (TQVaultAE.GUI.Automation.AutomationHost.TryTakeDialogAnswer(caption, message, buttons, out var automated, headlessAnswer))
 		{
-			gamePathResolver.GamePathTQ = gamePathResolver.ResolveGamePath();
-			gamePathResolver.GamePathTQIT = gamePathResolver.ResolveGamePath();
+			Log?.LogInformation("Message box \"{Caption}\" answered {Answer} by automation", caption, automated);
+			return automated;
 		}
-		else
+		return MessageBox.Show(message, caption, buttons, icon, MessageBoxDefaultButton.Button1, options);
+	}
+
+	/// <summary>
+	/// Shows the message about the vault folder chosen while the game paths were set up.
+	/// </summary>
+	private static void ShowStartupNotice(StartupNotice notice)
+	{
+		switch (notice)
 		{
-			gamePathResolver.GamePathTQ = userSettings.TQPath;
-			gamePathResolver.GamePathTQIT = userSettings.TQITPath;
-		}
-
-		var titanQuestGamePath = gamePathResolver.GamePathTQ;
-		if (!string.IsNullOrWhiteSpace(titanQuestGamePath)) DetectGameType();
-
-		titanQuestGamePath = gamePathResolver.GamePathTQIT;
-		if (!string.IsNullOrWhiteSpace(titanQuestGamePath)) DetectGameType();
-
-		Log.LogInformation("Selected TQ path {0}", gamePathResolver.GamePathTQ);
-		Log.LogInformation("Selected TQIT path {0}", gamePathResolver.GamePathTQIT);
-
-		// Show a message that the default path is going to be used.
-		if (string.IsNullOrEmpty(userSettings.VaultPath))
-		{
-			string folderPath = Path.Combine(gamePathResolver.SaveFolderTQ, "TQVaultData");
-
-			// Check to see if we are still using a shortcut to specify the vault path and display a message
-			// to use the configuration UI if we are.
-			if (!Directory.Exists(folderPath) && File.Exists(Path.ChangeExtension(folderPath, ".lnk")))
-			{
-				MessageBox.Show(Resources.DataLinkMsg, Resources.DataLink, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, VaultForm.RightToLeftOptions);
-			}
-			else
-			{
-				MessageBox.Show(Resources.DataDefaultPathMsg, Resources.DataDefaultPath, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, VaultForm.RightToLeftOptions);
-			}
-		}
-
-		gamePathResolver.TQVaultSaveFolder = userSettings.VaultPath;
-
-		void DetectGameType()
-		{
-			if (File.Exists(Path.Combine(titanQuestGamePath, "TQ.exe"))) gamePathResolver.GameType = GameType.TQAE;
-			else if (File.Exists(Path.Combine(titanQuestGamePath, "TQIT.exe"))) gamePathResolver.GameType = GameType.TQIT;
-			else gamePathResolver.GameType = GameType.TQ;
+			case StartupNotice.LegacyVaultShortcut:
+				// The vault path is still given by a shortcut: tell to use the configuration UI.
+				ShowMessageBox(Resources.DataLinkMsg, Resources.DataLink, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxService.ReadingOptions);
+				break;
+			case StartupNotice.DefaultVaultPath:
+				ShowMessageBox(Resources.DataDefaultPathMsg, Resources.DataDefaultPath, MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxService.ReadingOptions);
+				break;
 		}
 	}
 
 	/// <summary>
-	/// Attempts to read language from config file and set the Current Thread's Culture and UICulture.
-	/// Defaults to to OS UI Culture.
+	/// Sets the Current Thread's Culture and UICulture to the language of the settings.
+	/// Keeps the OS UI Culture when there is none.
 	/// </summary>
-	private static void SetUILanguage(UserSettings userSettings)
+	/// <param name="cultureName">The culture found from the settings, or null.</param>
+	private static void SetUILanguage(string? cultureName)
 	{
-		string settingsCulture = null;
-		if (!string.IsNullOrEmpty(userSettings.UILanguage))
+		if (string.IsNullOrEmpty(cultureName))
+			return;
+
+		try
 		{
-			settingsCulture = userSettings.UILanguage;
+			// Sets the culture
+			Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
+
+			// Sets the UI culture
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureName);
 		}
-		else if (!userSettings.AutoDetectLanguage)
+		catch (ArgumentNullException e)
 		{
-			settingsCulture = userSettings.TQLanguage;
+			Log.LogError(e, "Argument Null Exception when setting the language");
 		}
-		else if (!userSettings.AutoDetectLanguage)
+		catch (NotSupportedException e)
 		{
-			settingsCulture = userSettings.TQLanguage;
+			Log.LogError(e, "Not Supported Exception when setting the language");
 		}
-
-		if (!string.IsNullOrEmpty(settingsCulture))
-		{
-			string myCulture = null;
-			foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-			{
-				if (ci.EnglishName.Equals(settingsCulture, StringComparison.InvariantCultureIgnoreCase))
-				{
-					myCulture = ci.TextInfo.CultureName;
-					break;
-				}
-			}
-
-			// We found something so we will use it.
-			if (!string.IsNullOrEmpty(myCulture))
-			{
-				try
-				{
-					// Sets the culture
-					Thread.CurrentThread.CurrentCulture = new CultureInfo(myCulture);
-
-					// Sets the UI culture
-					Thread.CurrentThread.CurrentUICulture = new CultureInfo(myCulture);
-				}
-				catch (ArgumentNullException e)
-				{
-					Log.LogError(e, "Argument Null Exception when setting the language");
-				}
-				catch (NotSupportedException e)
-				{
-					Log.LogError(e, "Not Supported Exception when setting the language");
-				}
-			}
-
-			// If not then we just default to the OS UI culture.
-		}
-	}
-
-	/// <summary>
-	/// Sets the name of the game map if a custom map is set in the config file.
-	/// Defaults to Main otherwise.
-	/// </summary>
-	private static void SetupMapName(IGamePathService gamePathResolver, UserSettings userSettings)
-	{
-		// Set the map name.  Command line argument can override this setting in LoadResources().
-		string mapName = "main";
-		if (userSettings.ModEnabled)
-			mapName = userSettings.CustomMap;
-
-		gamePathResolver.MapName = mapName;
 	}
 
 	#endregion
@@ -315,17 +350,10 @@ public static class Program
 		if (CultureInfo.CurrentCulture.IsNeutralCulture)
 		{
 			// Neutral cultures are not supported. Fallback to application's default.
-			String assemblyCultureName = ((NeutralResourcesLanguageAttribute)Attribute.GetCustomAttribute(
+			String? assemblyCultureName = ((NeutralResourcesLanguageAttribute?)Attribute.GetCustomAttribute(
 					Assembly.GetExecutingAssembly(), typeof(NeutralResourcesLanguageAttribute), false))
-				.CultureName;
+				?.CultureName ?? "en";
 			Thread.CurrentThread.CurrentCulture = new CultureInfo(assemblyCultureName, true);
-		}
-
-		// Set options for Right to Left reading.
-		rightToLeft = (MessageBoxOptions)0;
-		if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-		{
-			rightToLeft = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
 		}
 	}
 
@@ -334,20 +362,24 @@ public static class Program
 	/// </summary>
 	/// <param name="sender">sender object</param>
 	/// <param name="t">ThreadExceptionEventArgs data</param>
-	private static void MainForm_UIThreadException(object sender, ThreadExceptionEventArgs t)
+	private static void MainForm_UIThreadException(object? sender, ThreadExceptionEventArgs t)
 	{
 		DialogResult result = DialogResult.Cancel;
 		try
 		{
 			Log.LogError(t.Exception, "UI Thread Exception");
-			result = MessageBox.Show(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+			DialogResult? headlessAnswer = null;
+			// Headless: an error before the main form has loaded leaves nothing usable, so quit rather than ignore it.
+			if (TQVaultAE.GUI.Automation.AutomationHost.MainForm?.AutomationLoadingComplete != true)
+				headlessAnswer = DialogResult.Abort;
+			result = ShowMessageBox(Log.FormatException(t.Exception), "Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxService.ReadingOptions, headlessAnswer);
 		}
 		catch
 		{
 			try
 			{
 				Log.LogCritical(t.Exception, "Fatal Windows Forms Error");
-				MessageBox.Show(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, rightToLeft);
+				ShowMessageBox(Log.FormatException(t.Exception), "Fatal Windows Forms Error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop, MessageBoxService.ReadingOptions);
 			}
 			finally
 			{
@@ -368,7 +400,7 @@ public static class Program
 	/// <remarks>NOTE: This exception cannot be kept from terminating the application - it can only log the event, and inform the user about it.</remarks>
 	/// <param name="sender">sender object</param>
 	/// <param name="e">UnhandledExceptionEventArgs data</param>
-	private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+	private static void CurrentDomain_UnhandledException(object? sender, UnhandledExceptionEventArgs e)
 	{
 		try
 		{

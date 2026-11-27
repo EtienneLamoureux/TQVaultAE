@@ -1,0 +1,169 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Burning Plate of Testing
+FullName: Burning Plate of Testing
+FullNameBagTooltipClean: Burning Plate of Testing
+FullNameBagTooltip: Burning Plate of Testing
+PrefixInfoDescription: Burning
+PrefixAttributes (1)
+  | {^B}8 {^P}?DefenseProtectionModifier?
+PrefixInfoRecords: records\test\prefix_fire.dbr
+SuffixAttributes (0)
+BaseItemId: records\test\ArmorProtective_UpperBody.dbr
+BaseItemRarity: [Epic]
+BaseItemInfoClass: tagCR_Torso
+BaseItemInfoDescription: Plate of Testing
+ItemSeed: Seed 4242 (0.13)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (2)
+  | Required Player Level: 32
+  | Required Strength: 140
+RequirementVariables (2)
+  | LevelRequirement = 32
+  | Strength = 140
+RequirementInfo: Lvl=32 Str=140 Dex= Int=
+BaseAttributes (4)
+  | {^W}120 Armor
+  | {^B}20% Poison Resistance
+  | {^B}+15 Strength
+  | {^B}+80 Health
+ClassicAttributes (6)
+  | {^W}120 Armor
+  | 
+  | {^B}8 {^P}?DefenseProtectionModifier?
+  | {^B}20% Poison Resistance
+  | {^B}+15 Strength
+  | {^B}+80 Health
+ClassicAttributeRanges (0)
+ClassicAttributeSources (6)
+  | Base
+  | Base
+  | Prefix
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (5)
+  | 120 Armor
+  | 20% Poison Resistance
+  | +15 Strength
+  | +80 Health
+  | 8 ?DefenseProtectionModifier?
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Burning Plate of Testing
+FullName: Burning Plate of Testing
+FullNameBagTooltipClean: Burning Plate of Testing
+FullNameBagTooltip: Burning Plate of Testing
+PrefixInfoDescription: Burning
+PrefixAttributes (4)
+  | {^B}8 {^P}?DefenseProtectionModifier?
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagPrefixFire
+  | {^P}?itemClassification?: Magical
+PrefixInfoRecords: records\test\prefix_fire.dbr
+SuffixAttributes (0)
+BaseItemId: records\test\ArmorProtective_UpperBody.dbr
+BaseItemRarity: [Epic]
+BaseItemInfoClass: tagCR_Torso
+BaseItemInfoDescription: Plate of Testing
+ItemSeed: Seed 4242 (0.13)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (2)
+  | Required Player Level: 32
+  | Required Strength: 140
+RequirementVariables (2)
+  | LevelRequirement = 32
+  | Strength = 140
+RequirementInfo: Lvl=32 Str=140 Dex= Int=
+BaseAttributes (9)
+  | {^W}120 Armor
+  | {^B}20% Poison Resistance
+  | {^B}+15 Strength
+  | {^B}+80 Health
+  | {^P}?Class?: ArmorProtective_UpperBody
+  | {^P}?itemNameTag?: tagTorso
+  | {^P}?itemClassification?: Epic
+  | {^P}?levelRequirement?: 32
+  | {^P}?strengthRequirement?: 140
+ClassicAttributes (14)
+  | {^W}120 Armor
+  | 
+  | {^B}8 {^P}?DefenseProtectionModifier?
+  | {^B}20% Poison Resistance
+  | {^B}+15 Strength
+  | {^B}+80 Health
+  | {^P}?Class?: ArmorProtective_UpperBody
+  | {^P}?itemNameTag?: tagTorso
+  | {^P}?itemClassification?: Epic
+  | {^P}?levelRequirement?: 32
+  | {^P}?strengthRequirement?: 140
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagPrefixFire
+  | {^P}?itemClassification?: Magical
+ClassicAttributeRanges (0)
+ClassicAttributeSources (14)
+  | Base
+  | Base
+  | Prefix
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Prefix
+  | Prefix
+  | Prefix
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (13)
+  | 120 Armor
+  | 20% Poison Resistance
+  | +15 Strength
+  | +80 Health
+  | ?Class?: ArmorProtective_UpperBody
+  | ?itemNameTag?: tagTorso
+  | ?itemClassification?: Epic
+  | ?levelRequirement?: 32
+  | ?strengthRequirement?: 140
+  | 8 ?DefenseProtectionModifier?
+  | ?Class?: LootRandomizer
+  | ?lootRandomizerName?: tagPrefixFire
+  | ?itemClassification?: Magical
+== Search
+FullText (9)
+  | Burning Plate of Testing
+  | Seed 4242 (0.13)
+  | 120 Armor
+  | 20% Poison Resistance
+  | +15 Strength
+  | +80 Health
+  | 8 ?DefenseProtectionModifier?
+  | Required Player Level: 32
+  | Required Strength: 140
+AttributesAll (5)
+  | 120 Armor
+  | 20% Poison Resistance
+  | +15 Strength
+  | +80 Health
+  | 8 ?DefenseProtectionModifier?
+HasGrantedSkill: False
+GrantedSkillNames (0)

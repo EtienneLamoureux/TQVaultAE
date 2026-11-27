@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
+		<ProjectReference Include="..\..\TQVaultAE.GameFiles\TQVaultAE.GameFiles.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="TQVaultAE.GameFiles" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Records read from a mod's database or the base game's, shared by the test projects. -->
+		<Compile Include="..\Shared\TestRecords.cs" Link="Fixtures\TestRecords.cs" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,503 @@
+//-----------------------------------------------------------------------
+// <copyright file="SettingsUserControl.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System.Diagnostics;
+using EnumsNET;
+using Microsoft.Extensions.Logging;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Results;
+using TQVaultAE.Config;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Models;
+using TQVaultAE.Presentation;
+using TQVaultAE.Presentation.Win32.Contracts;
+using TQVaultAE.Services.Settings;
+
+namespace TQVaultAE.GUI.Views;
+
+/// <summary>
+/// The settings: every option with its rules, the key binds button and the OK, Cancel and reset buttons, with the
+/// caravan frames over the main window's own background. The main window shows it in place of its main content: it
+/// shows the settings in use with <see cref="ShowSettingsInUse"/> at each opening, and leaves it on <see cref="Applied"/> (OK, the edits saved in
+/// <see cref="UserSettings"/>) or <see cref="Cancelled"/> (Cancel or Escape, the edits dropped).
+/// </summary>
+/// <remarks>
+/// Sized to its content (<see cref="Control.AutoSize"/>) by default; given an area by its host instead (AutoSize off), it
+/// lays its content in the middle, with scroll bars when the area is smaller (<see cref="ScrollableControl.AutoScroll"/>).
+/// </remarks>
+internal sealed partial class SettingsUserControl : MainWindowView, IMainWindowView
+{
+	#region Properties & Fields
+
+	private readonly GuiServices Services;
+	private readonly UserSettings USettings;
+	private readonly IUIService UIService;
+	private readonly IFontService FontService;
+	private readonly IGamePathService GamePathResolver;
+	private readonly ILogger<SettingsUserControl> Log;
+
+	/// <summary>
+	/// The settings being edited, with the rules between them and the changes made.
+	/// </summary>
+	private SettingsEditor editor = new(new SettingsValues());
+
+	/// <summary>
+	/// Save path for the vault files
+	/// </summary>
+	public string VaultPath => this.editor.Current.VaultPath;
+
+	/// <summary>
+	/// Indicates whether the vault path has been changed
+	/// </summary>
+	public bool VaultPathChanged => this.editor.VaultPathChanged;
+
+	/// <summary>
+	/// Indicates that any configuration item has been changed
+	/// </summary>
+	public bool ConfigurationChanged => this.editor.ConfigurationChanged;
+
+	/// <inheritdoc/>
+	bool IMainWindowView.HasChanges => this.ConfigurationChanged;
+
+	/// <inheritdoc/>
+	string IMainWindowView.DiscardChangesQuestion => Resources.SettingsDiscardChanges;
+
+	/// <summary>
+	/// Indicates that the settings have been loaded
+	/// </summary>
+	private bool settingsLoaded;
+
+	/// <summary>
+	/// Indicates that the ItemBGColorOpacity setting has been changed
+	/// </summary>
+	public bool ItemBGColorOpacityChanged => this.editor.ItemBGColorOpacityChanged;
+
+	/// <summary>
+	/// Indicates that the allow character edit setting has been changed.
+	/// </summary>
+	public bool EnableCharacterEditChanged => this.editor.EnableCharacterEditChanged;
+
+	/// <summary>
+	/// Indicates that the <see cref="Config.UserSettings.EnableTQVaultSounds"/> setting has been changed
+	/// </summary>
+	public bool EnableTQVaultSoundsChanged => this.editor.EnableTQVaultSoundsChanged;
+
+	/// <summary>
+	/// Indicates that the MCP automation endpoint was turned on or off, or that its port changed.
+	/// </summary>
+	public bool McpServerChanged => this.editor.McpServerChanged;
+
+	/// <summary>
+	/// Why the changes need a restart, if they do.
+	/// </summary>
+	public RestartReason RestartReason => this.editor.RestartReason;
+
+	// Applied: OK was pressed and the settings checked: the edits, if any, are in UserSettings (not saved to the file
+	// yet) and the change flags tell what changed. Cancelled: the edits are dropped at the next ShowSettingsInUse.
+
+	/// <summary>Escape presses Cancel.</summary>
+	protected override IButtonControl EscapeButton => this.cancelButton;
+
+	private static readonly Dictionary<string, string> PasteBinExpirationOptions = new()
+	{
+		["10M"] = "10 Minutes",
+		["1H"] = "1 Hour",
+		["1D"] = "1 Day",
+		["1W"] = "1 Week",
+		["2W"] = "2 Weeks",
+		["1M"] = "1 Month",
+		["6M"] = "6 Months",
+		["1Y"] = "1 Year",
+		["N"] = "Never"
+	};
+
+	/// <summary>
+	/// Opens the key binds dialog, in the free first cell of the button row. Made here rather than in the designer file,
+	/// with the look of the other buttons.
+	/// </summary>
+	private readonly ScalingButton keyBindsButton;
+
+	#endregion
+
+	/// <summary>
+	/// Initializes a new instance of the SettingsUserControl class.
+	/// </summary>
+	public SettingsUserControl(GuiServices services)
+	{
+		this.Services = services;
+		this.USettings = services.Settings;
+		this.UIService = services.UIService;
+		this.FontService = services.FontService;
+		this.GamePathResolver = services.GamePathService;
+		this.Log = services.Logger<SettingsUserControl>();
+
+		this.InitializeComponent();
+		this.BindCheckBoxes();
+
+		// The control follows its inner table: the font, a translation, a group shown or a monitor of another DPI change it.
+		this.AutoSize = true;
+		this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+		foreach (var kvp in PasteBinExpirationOptions)
+		{
+			this.pasteBinExpirationComboBox.Items.Add(new DisplayItem<string>(kvp.Key, kvp.Value));
+		}
+
+		this.SuspendLayout();
+
+		this.linkLabelTQOriginalSupport.LinkColor = TQColor.Aqua.Color();
+
+		#region Apply custom font
+
+		// The marble dialogs' font rule, for every control, the PasteBin group's included.
+		CaravanLook.ApplyFonts(this, this.FontService);
+		var font12 = FontService.GetFontLight(CaravanLook.ButtonTextSize);
+
+		#endregion
+
+		// Shown in the main window: over the window's own background, which the main content shows too.
+		CaravanLook.ApplyFrames(this, this.bufferedTableLayoutPanelSkeleton);
+
+		this.groupBoxVaultPath.Text = Resources.SettingsLabel1;
+		this.languageLabel.Text = Resources.SettingsLabel2;
+		this.titanQuestPathLabel.Text = Resources.SettingsLabel3;
+		this.immortalThronePathLabel.Text = Resources.SettingsLabel4;
+		this.detectGamePathsCheckBox.Text = Resources.SettingsDetectGamePath;
+		this.detectLanguageCheckBox.Text = Resources.SettingsDetectLanguage;
+		this.allowItemCopyCheckBox.Text = Resources.SettingsAllowCopy;
+		this.toolTip.SetToolTip(this.allowItemCopyCheckBox, Resources.SettingsAllowCopyTT);
+		this.allowItemEditCheckBox.Text = Resources.SettingsAllowEdit;
+		this.toolTip.SetToolTip(this.allowItemEditCheckBox, Resources.SettingsAllowEdit);
+		this.characterEditCheckBox.Text = Resources.SettingsAllowEditCE;
+		this.toolTip.SetToolTip(this.characterEditCheckBox, Resources.SettingsAllowEditCE);
+		this.loadLastCharacterCheckBox.Text = Resources.SettingsLoadChar;
+		this.toolTip.SetToolTip(this.loadLastCharacterCheckBox, Resources.SettingsLoadCharTT);
+		this.loadLastVaultCheckBox.Text = Resources.SettingsLoadVault;
+		this.toolTip.SetToolTip(this.loadLastVaultCheckBox, Resources.SettingsLoadVaultTT);
+		this.loadAllFilesCheckBox.Text = Resources.SettingsPreLoad;
+		this.toolTip.SetToolTip(this.loadAllFilesCheckBox, Resources.SettingsPreLoadTT);
+		this.suppressWarningsCheckBox.Text = Resources.SettingsNoWarning;
+		this.toolTip.SetToolTip(this.suppressWarningsCheckBox, Resources.SettingsNoWarningTT);
+		this.playerReadonlyCheckbox.Text = Resources.SettingsPlayerReadonly;
+		this.toolTip.SetToolTip(this.playerReadonlyCheckbox, Resources.SettingsPlayerReadonlyTT);
+		this.resetButton.Text = Resources.SettingsReset;
+		this.toolTip.SetToolTip(this.resetButton, Resources.SettingsResetTT);
+		this.groupBoxTooltipEnhanced.Text = Resources.SettingTooltipEnhanced;
+		this.groupBoxStackable.Text = Resources.SettingsStackable;
+		this.scalingCheckBoxTooltipDetailedView.Text = Resources.SettingTooltipDetailedView;
+		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipDetailedView, Resources.SettingTooltipDetailedViewTT);
+		this.scalingCheckBoxTooltipInGameRolls.Text = Resources.SettingTooltipShowInGameRolls;
+		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipInGameRolls, Resources.SettingTooltipShowInGameRollsTT);
+		this.scalingCheckBoxTooltipValueRanges.Text = Resources.SettingTooltipShowValueRanges;
+		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipValueRanges, Resources.SettingTooltipShowValueRangesTT);
+		this.scalingCheckBoxTooltipGrantedSkills.Text = Resources.SettingTooltipShowGrantedSkills;
+		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipGrantedSkills, Resources.SettingTooltipShowGrantedSkillsTT);
+		this.scalingCheckBoxTooltipSetPieceCounts.Text = Resources.SettingTooltipShowSetPieceCounts;
+		this.toolTip.SetToolTip(this.scalingCheckBoxTooltipSetPieceCounts, Resources.SettingTooltipShowSetPieceCountsTT);
+		this.ShowInGameValuesCheckBox.Text = Resources.SettingShowInGameValues;
+		this.toolTip.SetToolTip(this.ShowInGameValuesCheckBox, Resources.SettingShowInGameValuesTT);
+		this.ItemBGColorOpacityLabel.Text = Resources.SettingsItemBGColorOpacityLabel;
+		this.toolTip.SetToolTip(this.ItemBGColorOpacityLabel, Resources.SettingsItemBGColorOpacityLabelTT);
+		this.hotReloadCheckBox.Text = Resources.SettingsEnableHotReload;
+		this.toolTip.SetToolTip(this.hotReloadCheckBox, Resources.SettingsEnableHotReloadTT);
+
+		this.scalingLabelCSVDelim.Text = Resources.SettingsCsvDelimiterLabel;
+
+		this.scalingCheckBoxEnableEpicLegendaryAffixes.Text = Resources.SettingsEnableEpicLegendaryAffixes;
+		this.toolTip.SetToolTip(this.scalingCheckBoxEnableEpicLegendaryAffixes, Resources.SettingsEnableEpicLegendaryAffixesTT);
+
+		this.scalingCheckBoxDisableAutoStacking.Text = Resources.SettingsDisableAutoStacking;
+		this.toolTip.SetToolTip(this.scalingCheckBoxDisableAutoStacking, Resources.SettingsDisableAutoStackingTT);
+		this.scalingCheckBoxMergeRelicsOnSort.Text = Resources.SettingsMergeRelicsOnSort;
+		this.toolTip.SetToolTip(this.scalingCheckBoxMergeRelicsOnSort, Resources.SettingsMergeRelicsOnSortTT);
+
+		this.checkGroupBoxAllowCheats.Text = Resources.SettingsAllowCheats;
+		this.scalingCheckBoxDisableLegacyBackup.Text = Resources.SettingsDisableLegacyBackup;
+		this.toolTip.SetToolTip(this.scalingCheckBoxDisableLegacyBackup, Resources.SettingsDisableLegacyBackupTT);
+		this.scalingLabelGitRepository.Text = Resources.SettingsGitRepositoryUrl;
+
+		this.scalingCheckBoxBackupPlayerSaves.Text = Resources.SettingsBackupPlayerSaves;
+		this.toolTip.SetToolTip(this.scalingCheckBoxBackupPlayerSaves, Resources.SettingsBackupPlayerSavesTT);
+
+		this.checkGroupBoxOriginalTQSupport.Text = Resources.SettingsOriginalTQSupport;
+		this.toolTip.SetToolTip(this.checkGroupBoxOriginalTQSupport, Resources.SettingsOriginalTQSupportTT);
+		this.linkLabelTQOriginalSupport.Text = Resources.SettingsHowToPlay;
+
+		this.checkGroupBoxMcpServer.Text = Resources.SettingsMcpServer;
+		this.toolTip.SetToolTip(this.checkGroupBoxMcpServer, Resources.SettingsMcpServerTT);
+		this.scalingLabelMcpServerPort.Text = Resources.SettingsMcpServerPort;
+		this.toolTip.SetToolTip(this.scalingLabelMcpServerPort, Resources.SettingsMcpServerPortTT);
+		this.toolTip.SetToolTip(this.numericUpDownMcpServerPort, Resources.SettingsMcpServerPortTT);
+
+		this.cancelButton.Text = Resources.GlobalCancel;
+		this.okayButton.Text = Resources.GlobalOK;
+		this.Text = Resources.SettingsTitle;
+
+		this.keyBindsButton = new ScalingButton()
+		{
+			Name = nameof(this.keyBindsButton),
+			Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+			BackColor = Color.Transparent,
+			FlatStyle = FlatStyle.Flat,
+			Font = font12,
+			ForeColor = this.resetButton.ForeColor,
+			Size = this.resetButton.Size,
+			SizeToGraphic = false,
+			UseCustomGraphic = true,
+			UseVisualStyleBackColor = false,
+			TabIndex = this.okayButton.TabIndex,
+			Text = Resources.SettingsKeyBinds,
+		};
+		this.keyBindsButton.FlatAppearance.BorderSize = 0;
+		this.keyBindsButton.FlatAppearance.MouseDownBackColor = this.resetButton.FlatAppearance.MouseDownBackColor;
+		this.keyBindsButton.FlatAppearance.MouseOverBackColor = this.resetButton.FlatAppearance.MouseOverBackColor;
+		this.keyBindsButton.Click += this.KeyBindsButtonClick;
+		this.toolTip.SetToolTip(this.keyBindsButton, Resources.SettingsKeyBindsTT);
+		this.tableLayoutPanelButtons.Controls.Add(this.keyBindsButton, 0, 0);
+
+		this.ResumeLayout(false);
+		this.PerformLayout();
+	}
+
+	/// <summary>Designed at zoom 1: scaled to the user's zoom when built, its font growing with it.</summary>
+	protected override bool FollowsUserZoom => true;
+
+	/// <summary>
+	/// The settings and their many transparent controls are painted in one pass (<c>WS_EX_COMPOSITED</c>): shown in
+	/// place of the main content, they appeared control by control over its panels for a few frames.
+	/// </summary>
+	protected override CreateParams CreateParams
+	{
+		get
+		{
+			const int WS_EX_COMPOSITED = 0x02000000;
+			var parameters = base.CreateParams;
+			parameters.ExStyle |= WS_EX_COMPOSITED;
+			return parameters;
+		}
+	}
+
+
+	/// <summary>
+	/// In an area given by the host, the settings sit in its middle; at its top left when it is smaller, scrolled.
+	/// </summary>
+	protected override void OnLayout(LayoutEventArgs e)
+	{
+		base.OnLayout(e);
+
+		if (this.AutoSize)
+			return;
+
+		var content = this.bufferedTableLayoutPanelSkeleton;
+		var location = new Point(
+			Math.Max(0, (this.ClientSize.Width - content.Width) / 2) + this.AutoScrollPosition.X,
+			Math.Max(0, (this.ClientSize.Height - content.Height) / 2) + this.AutoScrollPosition.Y);
+		if (content.Location != location)
+			content.Location = location;
+	}
+
+
+	/// <summary>
+	/// Shows the settings in use, dropping the edits: at each opening and by the reset button. The settings changed
+	/// elsewhere since the last opening show too.
+	/// </summary>
+	public void ShowSettingsInUse()
+	{
+		this.LoadSettings();
+		this.UpdateDialogSettings();
+	}
+
+	/// <summary>
+	/// Loads the settings from the config file
+	/// </summary>
+	private void LoadSettings()
+	{
+		// Force English since there was some issue with getting the proper language setting.
+		var gl = this.Services.SettingsPersistence.GameLanguage;
+		var language = gl is null ? "English" : gl;
+
+		this.editor = new SettingsEditor(SettingsValues.From(USettings, language, GamePathResolver.GamePathTQ, GamePathResolver.GamePathTQIT));
+
+		this.settingsLoaded = true;
+	}
+
+	/// <summary>
+	/// Updates the dialog settings display
+	/// </summary>
+	private void UpdateDialogSettings()
+	{
+		// Check to see that we can update things
+		if (!this.settingsLoaded)
+			return;
+
+		var values = this.editor.Current;
+
+		// Read before the language combo box is cleared, which can raise its handler with no selection.
+		var language = values.TQLanguage;
+
+		this.SuspendLayout();
+
+		// Build language combo box
+		this.languageComboBox.Items.Clear();
+
+		// The languages of the config file, English names as values; English alone when none is valid.
+		ComboBoxItem[] languages = [.. SettingsChoices.GameLanguages(USettings.GameLanguages)
+			.Select(choice => new ComboBoxItem() { Value = choice.Value, DisplayName = choice.DisplayName })];
+
+		this.languageComboBox.Items.AddRange(languages);
+
+		// The controls raise their handlers, which write back to the editor and apply its rules, as the fields did.
+		this.vaultPathTextBox.Text = values.VaultPath;
+		this.allowItemEditCheckBox.Checked = values.AllowItemEdit;
+		this.allowItemCopyCheckBox.Checked = values.AllowItemCopy;
+		this.characterEditCheckBox.Checked = values.AllowCharacterEdit;
+		this.loadLastCharacterCheckBox.Checked = values.LoadLastCharacter;
+		this.loadLastVaultCheckBox.Checked = values.LoadLastVault;
+		this.detectLanguageCheckBox.Checked = values.AutoDetectLanguage;
+		this.detectGamePathsCheckBox.Checked = values.AutoDetectGamePath;
+		this.immortalThronePathTextBox.Text = values.TQITPath;
+		this.immortalThronePathTextBox.Enabled = !values.AutoDetectGamePath;
+		this.immortalThronePathBrowseButton.Enabled = !values.AutoDetectGamePath;
+		this.titanQuestPathTextBox.Text = values.TQPath;
+		this.titanQuestPathTextBox.Enabled = !values.AutoDetectGamePath;
+		this.titanQuestPathBrowseButton.Enabled = !values.AutoDetectGamePath;
+		this.loadAllFilesCheckBox.Checked = values.LoadAllFiles;
+		this.suppressWarningsCheckBox.Checked = values.SuppressWarnings;
+		this.playerReadonlyCheckbox.Checked = values.PlayerReadonly;
+		this.scalingCheckBoxTooltipDetailedView.Checked = values.EnableDetailedTooltipView;
+		this.scalingCheckBoxTooltipInGameRolls.Checked = values.TooltipShowInGameRolls;
+		this.scalingCheckBoxTooltipValueRanges.Checked = values.TooltipShowValueRanges;
+		this.scalingCheckBoxTooltipGrantedSkills.Checked = values.TooltipShowGrantedSkills;
+		this.scalingCheckBoxTooltipSetPieceCounts.Checked = values.TooltipShowSetPieceCounts;
+		this.ShowInGameValuesCheckBox.Checked = values.ShowInGameValues;
+		this.ItemBGColorOpacityTrackBar.Value = values.ItemBGColorOpacity;
+		this.hotReloadCheckBox.Checked = values.EnableHotReload;
+		this.scalingCheckBoxEnableSounds.Checked = values.EnableTQVaultSounds;
+		this.scalingCheckBoxEnableEpicLegendaryAffixes.Checked = values.EnableEpicLegendaryAffixes;
+		this.scalingCheckBoxDisableAutoStacking.Checked = values.DisableAutoStacking;
+		this.scalingCheckBoxMergeRelicsOnSort.Checked = values.MergeRelicsOnSort;
+		this.checkGroupBoxAllowCheats.Checked = values.AllowCheats;
+		this.checkGroupBoxGitBackup.Checked = values.GitBackupEnabled;
+		this.scalingCheckBoxDisableLegacyBackup.Checked = values.DisableLegacyBackup;
+		this.scalingTextBoxGitRepository.Text = values.GitBackupRepository;
+		this.scalingCheckBoxBackupPlayerSaves.Checked = values.GitBackupPlayerSavesEnabled;
+		this.checkGroupBoxOriginalTQSupport.Checked = values.EnableOriginalTQSupport;
+		this.checkGroupBoxMcpServer.Checked = values.EnableMcpServer;
+		this.numericUpDownMcpServerPort.Value = values.McpServerPort;
+
+		this.pasteBinApiKeyTextBox.Text = values.PasteBinApiKey;
+
+		PasteBinExpirationOptions.TryGetValue(values.PasteBinExpiration, out var expLabel);
+		if (expLabel is not null)
+		{
+			this.pasteBinExpirationComboBox.SelectedItem = this.pasteBinExpirationComboBox.Items
+				.OfType<DisplayItem<string>>()
+				.FirstOrDefault(i => i.Value == values.PasteBinExpiration);
+		}
+
+		this.languageComboBox.SelectedItem = languages.FirstOrDefault(cb => cb.Value.Equals(language,StringComparison.OrdinalIgnoreCase));
+
+		this.languageComboBox.Enabled = !values.AutoDetectLanguage;
+
+		// Build Font combo box
+		this.baseFontComboBox.Items.Clear();
+		var listItem = Enums.GetMembers<FontFamilyList>()
+			.Select(m => new ComboBoxItem()
+			{
+				Value = m.AsString(EnumFormat.Name) ?? string.Empty,
+				DisplayName = m.AsString(EnumFormat.Description, EnumFormat.Name) ?? string.Empty
+			}).ToArray();
+		this.baseFontComboBox.Items.AddRange(listItem);
+		this.baseFontComboBox.SelectedItem = listItem.Where(i => i.Value == values.BaseFont).FirstOrDefault() ?? listItem.First();
+
+		// Build CsvDelim combo box
+		this.scalingComboBoxCSVDelim.Items.Clear();
+		ComboBoxItem<CsvDelimiter, char>[] listItemDelim = [.. SettingsChoices.CsvDelimiters()
+			.Select(choice => new ComboBoxItem<CsvDelimiter, char>()
+			{
+				ComboValue = choice.Value,
+				Value = choice.Value.ToChar(),
+				DisplayName = choice.DisplayName
+			})];
+		this.scalingComboBoxCSVDelim.Items.AddRange(listItemDelim);
+		// The edited value, read the way the export reads it (an unknown value is a comma).
+		var delimiter = CsvDelimiters.Parse(values.CSVDelimiter);
+		this.scalingComboBoxCSVDelim.SelectedItem = listItemDelim.First(i => i.ComboValue == delimiter);
+
+		this.ResumeLayout(false);
+		this.PerformLayout();
+	}
+
+	private void ItemBGColorOpacityTrackBar_Scroll(object? sender, EventArgs e)
+	{
+		this.editor.Current.ItemBGColorOpacity = this.ItemBGColorOpacityTrackBar.Value;
+	}
+
+	private void scalingTextBoxGitRepository_TextChanged(object? sender, EventArgs e)
+	{
+		this.editor.Current.GitBackupRepository = this.scalingTextBoxGitRepository.Text;
+	}
+
+	private void linkLabelTQOriginalSupport_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
+	{
+		ProcessStartInfo psInfo = new ProcessStartInfo
+		{
+			FileName = this.USettings.TQOriginalHowtoUrl,
+			UseShellExecute = true
+		};
+		Process.Start(psInfo);
+	}
+
+	private void PasteBinApiKeyTextBoxTextChanged(object? sender, EventArgs e)
+	{
+		this.editor.Current.PasteBinApiKey = this.pasteBinApiKeyTextBox.Text ?? string.Empty;
+	}
+
+	/// <summary>
+	/// The settings a check box or check group box holds by itself: a click writes its value to the edited settings.
+	/// The settings with rules between them have their own handlers (SettingsUserControl.EventHandlers.cs).
+	/// </summary>
+	private void BindCheckBoxes()
+	{
+		void Bind(Control box, Action<SettingsValues, bool> set)
+		{
+			switch (box)
+			{
+				case CheckBox check:
+					check.CheckedChanged += (_, _) => set(this.editor.Current, check.Checked);
+					break;
+				case Components.CheckGroupBox group:
+					group.CheckedChanged += (_, _) => set(this.editor.Current, group.Checked);
+					break;
+			}
+		}
+
+		Bind(this.allowItemCopyCheckBox, (s, on) => s.AllowItemCopy = on);
+		Bind(this.loadLastCharacterCheckBox, (s, on) => s.LoadLastCharacter = on);
+		Bind(this.loadLastVaultCheckBox, (s, on) => s.LoadLastVault = on);
+		Bind(this.loadAllFilesCheckBox, (s, on) => s.LoadAllFiles = on);
+		Bind(this.suppressWarningsCheckBox, (s, on) => s.SuppressWarnings = on);
+		Bind(this.playerReadonlyCheckbox, (s, on) => s.PlayerReadonly = on);
+		Bind(this.characterEditCheckBox, (s, on) => s.AllowCharacterEdit = on);
+		Bind(this.scalingCheckBoxTooltipDetailedView, (s, on) => s.EnableDetailedTooltipView = on);
+		Bind(this.scalingCheckBoxTooltipInGameRolls, (s, on) => s.TooltipShowInGameRolls = on);
+		Bind(this.scalingCheckBoxTooltipValueRanges, (s, on) => s.TooltipShowValueRanges = on);
+		Bind(this.scalingCheckBoxTooltipGrantedSkills, (s, on) => s.TooltipShowGrantedSkills = on);
+		Bind(this.scalingCheckBoxTooltipSetPieceCounts, (s, on) => s.TooltipShowSetPieceCounts = on);
+		Bind(this.ShowInGameValuesCheckBox, (s, on) => s.ShowInGameValues = on);
+		Bind(this.hotReloadCheckBox, (s, on) => s.EnableHotReload = on); // Force restart
+		Bind(this.scalingCheckBoxEnableEpicLegendaryAffixes, (s, on) => s.EnableEpicLegendaryAffixes = on);
+		Bind(this.scalingCheckBoxEnableSounds, (s, on) => s.EnableTQVaultSounds = on);
+		Bind(this.scalingCheckBoxDisableAutoStacking, (s, on) => s.DisableAutoStacking = on);
+		Bind(this.scalingCheckBoxMergeRelicsOnSort, (s, on) => s.MergeRelicsOnSort = on);
+		Bind(this.scalingCheckBoxDisableLegacyBackup, (s, on) => s.DisableLegacyBackup = on);
+		Bind(this.scalingCheckBoxBackupPlayerSaves, (s, on) => s.GitBackupPlayerSavesEnabled = on);
+		Bind(this.checkGroupBoxOriginalTQSupport, (s, on) => s.EnableOriginalTQSupport = on);
+		Bind(this.checkGroupBoxMcpServer, (s, on) => s.EnableMcpServer = on);
+	}
+}

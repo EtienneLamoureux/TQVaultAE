@@ -10,6 +10,23 @@ public interface IFileIO
 	string ReadAllText(string path);
 	void WriteAllText(string path, string contents);
 	void Delete(string path);
+
+	/// <summary>Whether the file carries the file system read-only attribute.</summary>
+	bool IsReadOnly(string path);
+
+	/// <summary>Sets or clears the file system read-only attribute of a file, keeping its other attributes.</summary>
+	void SetReadOnly(string path, bool makeReadOnly);
+
+	/// <summary>
+	/// Whether <see cref="MoveToRecycleBin"/> can keep this file: on Windows, on a fixed local drive. Elsewhere (a network
+	/// or removable drive) Windows would delete the file for good without telling.
+	/// </summary>
+	bool CanMoveToRecycleBin(string path);
+
+	/// <summary>
+	/// Moves a file to the Recycle Bin, where the user can restore it. Check <see cref="CanMoveToRecycleBin"/> first.
+	/// </summary>
+	void MoveToRecycleBin(string path);
 	void Copy(string sourceFileName, string destFileName);
 	void Copy(string sourceFileName, string destFileName, bool overwrite);
 	void Move(string sourceFileName, string destFileName);

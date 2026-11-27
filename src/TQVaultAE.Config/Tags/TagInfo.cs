@@ -3,5 +3,5 @@
 public class TagInfo
 {
 	public string name = string.Empty;
-	public TagInfoColor color;
+	public TagInfoColor color = new();
 }

@@ -7,9 +7,10 @@ namespace TQVaultAE.Domain.Entities;
 
 using System.Collections.Generic;
 using System.Linq;
+using TQVaultAE.GameFiles;
 
 /// <summary>
-/// Reads and decodes a Titan Quest ARC file.
+/// A Titan Quest ARC archive and its table of contents.
 /// </summary>
 public class ArcFile
 {
@@ -19,9 +20,14 @@ public class ArcFile
 	public bool FileHasBeenRead;
 
 	/// <summary>
-	/// Dictionary of the directory entries.
+	/// Open reader for the archive, set by <c>IArcFileProvider.ReadARCToC</c>; entries are read from it on demand.
 	/// </summary>
-	public Dictionary<RecordId, ArcDirEntry> DirectoryEntries = new();
+	public IArcArchive? Archive { get; set; }
+
+	/// <summary>
+	/// Entries of the archive's directory, keyed by their name.
+	/// </summary>
+	public Dictionary<RecordId, ArcEntry> DirectoryEntries = [];
 
 	/// <summary>
 	/// Ordered keys for the directoryEntries dictionary.

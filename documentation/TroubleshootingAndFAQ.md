@@ -8,7 +8,8 @@
 
 > No, unless you specifically use the cheats, TQVaultAE doesn't alter items in any way.\
 > The difference you see is simply due to the way stats are generated in Titan Quest: each item has base stats and a unique seed that modifies those stats.\
-> TQVaultAE only displays the base stats (and not the modifications due to the RNG).
+> With the "Show In-Game Values" setting (on by default), TQVaultAE applies the seed to the tool tips of the equipment, as the game does.\
+> With the setting off, it only displays the base stats (and not the modifications due to the RNG).
 </details>
 
 <details>
@@ -17,7 +18,7 @@
 #### Can I use TQVaultAE while playing the game?
 </summary>
 
-> Only when using the "Allow hot reload features" setting, otherwise it is not safe to do so.\
+> Only when using the "Allow Hot Reload Features" setting, otherwise it is not safe to do so.\
 > Even then, be aware that any unsaved changes made in TQVaultAE will be lost when interacting with in-game inventories.
 </details>
 
@@ -36,7 +37,7 @@
 #### How to enable/disable the cheats (character edition, item edition, item copy)?
 </summary>
 
-> There is a dedicated checkbox in the tool settings window.
+> There is a dedicated checkbox in the tool settings window: "Allow Cheats". Under it, "Allow Character Editing Features", "Allow Item Editing Features" and "Allow Item Copying" turn each cheat on or off; unticking "Allow Cheats" turns the three off.
 </details>
 
 <details>
@@ -55,22 +56,26 @@
 </summary>
 
 \
-*Follow these steps:*
+*When TQVaultAE does not find the game at start-up, it asks for the game folder and remembers it. The game paths can also be changed in the configuration menu.*
+
+*If that is not enough, follow these steps:*
 1. *Navigate the the installation folder of TQVaultAE*
 2. *Open `UserConfig.xml` in a text editor (i.e. notepad, **not Microsoft Word**)*
 3. *Replace the following sections:*
 
 ```xml
-<AutoDetectGamePath>1</AutoDetectGamePath>
+<AutoDetectGamePath>true</AutoDetectGamePath>
 ...
 <TQITPath></TQITPath>
 <TQPath></TQPath>
 ```
 
+*(a file TQVault has never saved shows `1` instead of `true`)*
+
 *by (replace the path to the correct one for your computer)*
 
 ```xml
-<AutoDetectGamePath>0</AutoDetectGamePath>
+<AutoDetectGamePath>false</AutoDetectGamePath>
 ...
 <TQITPath>C:\examplePath\Titan Quest Anniversary Edition</TQITPath>
 <TQPath>C:\examplePath\Titan Quest Anniversary Edition</TQPath>

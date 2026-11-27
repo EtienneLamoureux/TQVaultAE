@@ -6,6 +6,13 @@ namespace TQVaultAE.Application.Contracts.Providers;
 public interface IDatabase
 {
 	/// <summary>
+	/// Names the data the calling thread reads now: the folder of the custom map (mod) in scope, empty for the base
+	/// game. A cache of anything read from the database keeps it in its key: the same record id gives other data
+	/// under another scope.
+	/// </summary>
+	string DataScope { get; }
+
+	/// <summary>
 	/// Return all loot randomizer (Affix effect infos)
 	/// </summary>
 	ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizer { get; }
@@ -19,19 +26,19 @@ public interface IDatabase
 	/// </summary>
 	/// <param name="itemId"></param>
 	/// <returns></returns>
-	ReadOnlyCollection<AffixTableMapItem> GetItemAffixTableMap(RecordId itemId);
+	ReadOnlyCollection<AffixTableMapItem>? GetItemAffixTableMap(RecordId itemId);
 	/// <summary>
 	/// Gets the instance of the Titan Quest Database ArzFile.
 	/// </summary>
-	ArzFile ArzFile { get; }
+	ArzFile? ArzFile { get; }
 	/// <summary>
 	/// Gets the instance of the Immortal Throne Database ArzFile.
 	/// </summary>
-	ArzFile ArzFileIT { get; }
+	ArzFile? ArzFileIT { get; }
 	/// <summary>
 	/// Gets the instance of a custom map Database ArzFile.
 	/// </summary>
-	ArzFile ArzFileMod { get; }
+	ArzFile? ArzFileMod { get; }
 	/// <summary>
 	/// Gets or sets a value indicating whether the game language is being auto detected.
 	/// </summary>
@@ -40,21 +47,12 @@ public interface IDatabase
 	/// Gets the game language setting as a an English DisplayName.
 	/// </summary>
 	/// <remarks>Changed to property by VillageIdiot to support changing of Language in UI</remarks>
-	string GameLanguage { get; }
+	string? GameLanguage { get; }
 	/// <summary>
 	/// Gets or sets the game language from the config file.
 	/// </summary>
 	string TQLanguage { get; set; }
 
-	/// <summary>
-	/// Used to Extract an ARC file into the destination directory.
-	/// The ARC file will not be added to the cache.
-	/// </summary>
-	/// <remarks>Added by VillageIdiot</remarks>
-	/// <param name="arcFileName">Name of the arc file</param>
-	/// <param name="destination">Destination path for extracted data</param>
-	/// <returns>Returns true on success otherwise false</returns>
-	bool ExtractArcFile(string arcFileName, string destination);
 	/// <summary>
 	/// Uses the text database to convert the tag to a name in the localized language.
 	/// The tag is normalized to upper case internally.
@@ -67,7 +65,7 @@ public interface IDatabase
 	/// </summary>
 	/// <param name="itemId">Item ID which we are looking up.  Will be normalized internally.</param>
 	/// <returns>Returns Infor for item ID and NULL if not found.</returns>
-	Info GetInfo(RecordId itemId);
+	Info? GetInfo(RecordId itemId);
 	/// <summary>
 	/// Converts the item attribute to a name in the localized language
 	/// </summary>
@@ -85,7 +83,7 @@ public interface IDatabase
 	/// </remarks>
 	/// <param name="itemId">Item Id which we are looking up</param>
 	/// <returns>Returns the DBRecord for the item Id</returns>
-	DBRecordCollection GetRecordFromFile(RecordId itemId);
+	DBRecordCollection? GetRecordFromFile(RecordId itemId);
 
 	/// <summary>
 	/// Gets a resource from the database using the resource Id.
@@ -94,6 +92,12 @@ public interface IDatabase
 	/// <param name="resourceId">Resource which we are fetching</param>
 	/// <returns>Retruns a byte array of the resource.</returns>
 	byte[]? LoadResource(RecordId resourceId);
+
+	/// <summary>
+	/// Gets the size in pixels of a texture resource, read from its headers. Only the size is cached, not the texture data.
+	/// </summary>
+	/// <returns><see langword="null"/> when the resource is missing or is not a texture.</returns>
+	(int Width, int Height)? GetTextureSize(RecordId resourceId);
 	/// <summary>
 	/// Gets the formatted string for the variable attribute.
 	/// </summary>

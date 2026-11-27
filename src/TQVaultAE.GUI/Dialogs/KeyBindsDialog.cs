@@ -1,0 +1,356 @@
+using TQVaultAE.Application.KeyBinds;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Rendering;
+using TQVaultAE.GUI.Components.Scaling;
+using TQVaultAE.GUI.Forms;
+using TQVaultAE.GUI.Infrastructure;
+using TQVaultAE.Presentation;
+
+namespace TQVaultAE.GUI.Dialogs;
+
+/// <summary>
+/// Lists every key and mouse binding of the application (<see cref="KeyBindRegistry"/>) and lets the user change them:
+/// a click on a shortcut arms it, the next key (or, for a click action, the next click with its modifiers) replaces it.
+/// Conflicts within a scope are shown in red and keep OK disabled. Opened from the settings dialog, which saves the
+/// result with the other settings. A TQ window like the other dialogs: marble, the list in a caravan frame, gold
+/// buttons; laid out in code at the user's zoom, following the DPI.
+/// </summary>
+internal sealed partial class KeyBindsDialog : VaultForm
+{
+	/// <summary>Widths of the action and shortcut columns, height of a row and of the list, at zoom 1.</summary>
+	private const int ActionWidth = 340, GestureWidth = 180, RowHeight = 24, ListHeight = 430, ContentWidth = ActionWidth + (2 * GestureWidth) + 30;
+
+	private static readonly Color CellBack = Color.FromArgb(30, 26, 18);
+	private static readonly Color ArmedBack = Color.FromArgb(70, 58, 24);
+
+	private readonly Panel listPanel;
+	private readonly TableLayoutPanel layout;
+	private readonly TableLayoutPanel table;
+	private readonly ScalingLabel labelStatus;
+	private readonly ScalingButton buttonClear;
+	private readonly ScalingButton buttonDefaults;
+	private readonly ScalingButton buttonOk;
+	private readonly ScalingButton buttonCancel;
+	private readonly ToolTip toolTip = new();
+
+	/// <summary>The cell of each shortcut slot.</summary>
+	private readonly Dictionary<(KeyBindAction Action, int Slot), Label> cells = [];
+
+	/// <summary>The name of each action.</summary>
+	private readonly Dictionary<KeyBindAction, Label> names = [];
+
+	private KeyBindMap map = KeyBindMap.Defaults();
+
+	private KeyBindOptions options = KeyBindOptions.All;
+
+	/// <summary>The slot waiting for its new gesture.</summary>
+	private (KeyBindAction Action, int Slot)? armed;
+
+	/// <summary>
+	/// The bindings edited: set a copy before showing the dialog, read it after OK.
+	/// </summary>
+	public KeyBindMap Bindings
+	{
+		get => this.map;
+		set
+		{
+			this.map = value.Clone();
+			this.armed = null;
+			this.RefreshCells();
+		}
+	}
+
+	/// <summary>
+	/// The settings the actions depend on, as edited in the settings dialog: the actions they turn off are greyed, with
+	/// the setting to tick in their tool tip and under the list. They can still be rebound.
+	/// </summary>
+	public KeyBindOptions Options
+	{
+		get => this.options;
+		set
+		{
+			this.options = value;
+			this.RefreshCells();
+		}
+	}
+
+	public KeyBindsDialog(GuiServices services) : base(services)
+	{
+		// Sizes at zoom 1 and 96 dpi: the zoom is applied here, the DPI by Windows Forms (AutoScaleMode.Dpi).
+		float zoom = this.UserZoomForLayout();
+		int Zoomed(int value) => (int)Math.Round(value * zoom);
+
+		var font = this.FontService.GetFontLight(CaravanLook.TextSize, zoom);
+		var headerFont = this.FontService.GetFontLight(11.5F, FontStyle.Bold, zoom);
+
+		this.table = new TableLayoutPanel()
+		{
+			Name = nameof(this.table),
+			AutoSize = true,
+			AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			BackColor = Color.Black,
+			ColumnCount = 3,
+			Location = Point.Empty,
+			Margin = new Padding(0),
+			Padding = new Padding(Zoomed(4), 0, Zoomed(4), Zoomed(4)),
+		};
+
+		Label NewText(string text, Font textFont, Color color, int width) => new()
+		{
+			AutoSize = false,
+			Font = textFont,
+			ForeColor = color,
+			BackColor = Color.Transparent,
+			Margin = new Padding(0, Zoomed(1), Zoomed(4), Zoomed(1)),
+			Size = new Size(Zoomed(width), Zoomed(RowHeight)),
+			Text = text,
+			TextAlign = ContentAlignment.MiddleLeft,
+			AutoEllipsis = true,
+			UseMnemonic = false,
+		};
+
+		this.table.SuspendLayout();
+		this.table.Controls.Add(NewText(Resources.KeyBindsColumnAction, headerFont, TQColor.Yellow.Color(), ActionWidth));
+		this.table.Controls.Add(NewText(Resources.KeyBindsColumnShortcut, headerFont, TQColor.Yellow.Color(), GestureWidth));
+		this.table.Controls.Add(NewText(Resources.KeyBindsColumnAlternate, headerFont, TQColor.Yellow.Color(), GestureWidth));
+
+		foreach (var group in KeyBindRegistry.All.GroupBy(d => d.Category))
+		{
+			var header = NewText(KeyBindText.Category(group.Key), headerFont, TQColor.Orange.Color(), ActionWidth + (2 * GestureWidth));
+			header.Margin = new Padding(0, Zoomed(6), 0, Zoomed(1));
+			this.table.Controls.Add(header);
+			this.table.SetColumnSpan(header, 3);
+
+			foreach (var definition in group)
+			{
+				var name = NewText(KeyBindText.Action(definition.Action), font, TQColor.White.Color(), ActionWidth);
+				this.names[definition.Action] = name;
+				this.table.Controls.Add(name);
+				for (int slot = 0; slot < KeyBindMap.MaxGestures; slot++)
+				{
+					var cell = NewText(string.Empty, font, TQColor.Silver.Color(), GestureWidth);
+					cell.Name = $"{definition.Action}{slot}";
+					cell.TextAlign = ContentAlignment.MiddleCenter;
+					if (definition.Editable)
+					{
+						cell.BackColor = CellBack;
+						cell.Cursor = Cursors.Hand;
+						var key = (definition.Action, slot);
+						cell.MouseDown += (_, e) => this.CellMouseDown(key, e.Button, ModifierKeys);
+					}
+					else
+						this.toolTip.SetToolTip(cell, Resources.KeyBindsFixed);
+
+					this.cells[(definition.Action, slot)] = cell;
+					this.table.Controls.Add(cell);
+				}
+			}
+		}
+
+		this.table.ResumeLayout();
+
+		// The list draws its rows from its corner and scrolls: the frame goes around it (CaravanFrame.FrameAround).
+		this.listPanel = new Panel()
+		{
+			Name = nameof(this.listPanel),
+			AutoScroll = true,
+			BackColor = Color.Black,
+			Margin = new Padding(0, 0, 0, Zoomed(6)),
+			Size = new Size(Zoomed(ContentWidth), Zoomed(ListHeight)),
+		};
+		this.listPanel.Controls.Add(this.table);
+		this.table.SizeChanged += (_, _) => this.FitList();
+
+		this.labelStatus = new ScalingLabel()
+		{
+			Name = nameof(this.labelStatus),
+			AutoSize = true,
+			MaximumSize = new Size(Zoomed(ContentWidth), 0),
+			Margin = new Padding(0, 0, 0, Zoomed(6)),
+			UseMnemonic = false,
+		};
+
+		ScalingButton NewButton(string name, string text) => CaravanDialog.Button(this.FontService, zoom, name, text);
+
+		this.buttonClear = NewButton(nameof(this.buttonClear), Resources.KeyBindsClear);
+		this.buttonClear.Click += (_, _) => this.ClearArmed();
+		this.buttonDefaults = NewButton(nameof(this.buttonDefaults), Resources.KeyBindsDefaults);
+		this.buttonDefaults.Click += (_, _) => this.ResetAll();
+		this.buttonOk = NewButton(nameof(this.buttonOk), Resources.GlobalOK);
+		this.buttonOk.DialogResult = DialogResult.OK;
+		this.buttonCancel = NewButton(nameof(this.buttonCancel), Resources.GlobalCancel);
+		this.buttonCancel.DialogResult = DialogResult.Cancel;
+
+		var buttons = CaravanDialog.Row(Zoomed(4), this.buttonClear, this.buttonDefaults, this.buttonOk, this.buttonCancel);
+		this.layout = CaravanDialog.Table(this.listPanel, this.labelStatus, buttons);
+		CaravanFrame.FrameAround(this.listPanel);
+
+		CaravanDialog.Lay(this, nameof(KeyBindsDialog), Resources.KeyBindsTitle, this.layout, font, zoom, null, this.buttonCancel, [buttons]);
+
+		this.RefreshCells();
+		this.FitAround(this.layout);
+
+		// The keyboard starts on OK, not on the first button of the window, the close button of its border, which took
+		// Enter and closed the dialog.
+		this.ActiveControl = this.buttonOk;
+	}
+
+	/// <summary>
+	/// The list as wide as its rows and a vertical scroll bar at the window's DPI, the text under it wrapped at its width.
+	/// </summary>
+	private void FitList()
+	{
+		this.listPanel.Width = this.table.Width + this.VerticalScrollBarWidth() + 2;
+		this.labelStatus.MaximumSize = new Size(this.listPanel.Width + this.listPanel.Margin.Horizontal, 0);
+	}
+
+	/// <summary>
+	/// The list follows the DPI; the window follows its table (<see cref="VaultForm.FitAround"/>).
+	/// </summary>
+	protected override void OnDpiChanged(DpiChangedEventArgs e)
+	{
+		base.OnDpiChanged(e);
+		this.FitList();
+	}
+
+	protected override void OnLoad(EventArgs e)
+	{
+		base.OnLoad(e);
+		this.FitList();
+	}
+
+	#region Capture
+
+	/// <summary>
+	/// A mouse button pressed on a shortcut cell: arms it; on the armed cell of a click action, a left click with its
+	/// modifiers becomes the gesture; a right click, or a click on the armed cell of a key action, disarms it.
+	/// </summary>
+	private void CellMouseDown((KeyBindAction Action, int Slot) cell, MouseButtons button, Keys modifiers)
+	{
+		if (this.armed != cell)
+		{
+			if (button == MouseButtons.Left)
+				this.Arm(cell);
+			return;
+		}
+
+		if (button == MouseButtons.Left && KeyBindRegistry.Get(cell.Action).Kind == KeyBindKind.Click)
+			this.SetArmed(KeyBindInput.Click(modifiers));
+		else
+			this.Disarm();
+	}
+
+	/// <summary>A key pressed while a key action is armed becomes its gesture; Escape disarms a click action.</summary>
+	/// <returns>true when the key was taken.</returns>
+	private bool CaptureKey(Keys keyData)
+	{
+		if (this.armed is not { } cell)
+			return false;
+
+		if (KeyBindRegistry.Get(cell.Action).Kind == KeyBindKind.Click)
+		{
+			if ((keyData & Keys.KeyCode) == Keys.Escape)
+			{
+				this.Disarm();
+				return true;
+			}
+
+			return false;
+		}
+
+		// A modifier alone: wait for the key it goes with.
+		var gesture = KeyBindInput.FromKeys(keyData);
+		if (gesture.IsKey)
+			this.SetArmed(gesture);
+
+		return true;
+	}
+
+	/// <summary>Every key reaches the armed slot first, Tab, Enter, Escape and Alt combinations included.</summary>
+	protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		=> this.CaptureKey(keyData) || base.ProcessCmdKey(ref msg, keyData);
+
+	private void Arm((KeyBindAction Action, int Slot) cell)
+	{
+		this.armed = cell;
+		this.RefreshCells();
+	}
+
+	private void Disarm()
+	{
+		this.armed = null;
+		this.RefreshCells();
+	}
+
+	private void SetArmed(KeyGesture gesture)
+	{
+		if (this.armed is { } cell)
+			this.map.Set(cell.Action, cell.Slot, gesture);
+
+		this.Disarm();
+	}
+
+	/// <summary>Empties the armed slot.</summary>
+	private void ClearArmed() => this.SetArmed(KeyGesture.None);
+
+	private void ResetAll()
+	{
+		this.map.ResetAll();
+		this.Disarm();
+	}
+
+	#endregion
+
+	/// <summary>
+	/// Shows the gestures, the armed slot, the conflicts in red, the actions turned off by a setting greyed, and under
+	/// the list the conflicts or the hint, then the settings that turn actions off.
+	/// </summary>
+	private void RefreshCells()
+	{
+		foreach (var (action, name) in this.names)
+		{
+			var definition = KeyBindRegistry.Get(action);
+			bool isOn = definition.IsOn(this.options);
+			name.ForeColor = isOn ? TQColor.White.Color() : TQColor.DarkGray.Color();
+			this.toolTip.SetToolTip(name, isOn ? name.Text : $"{name.Text}{Environment.NewLine}{KeyBindText.TurnedOff(definition.Requirement)}");
+		}
+
+		foreach (var ((action, slot), cell) in this.cells)
+		{
+			var definition = KeyBindRegistry.Get(action);
+			var gesture = this.map.Get(action, slot);
+			bool isArmed = this.armed == (action, slot);
+			bool isOn = definition.IsOn(this.options);
+
+			cell.Text = isArmed
+				? (definition.Kind == KeyBindKind.Click ? Resources.KeyBindsClickWithModifiers : Resources.KeyBindsPressKey)
+				: gesture.IsNone ? (definition.Editable ? "-" : string.Empty) : KeyBindText.Gesture(gesture);
+			cell.BackColor = !definition.Editable ? Color.Transparent : isArmed ? ArmedBack : CellBack;
+			cell.ForeColor = isArmed ? TQColor.Aqua.Color()
+				: this.map.HasConflict(action, slot) ? TQColor.Red.Color()
+				: !definition.Editable || !isOn ? TQColor.DarkGray.Color()
+				: TQColor.Silver.Color();
+			if (definition.Editable)
+				this.toolTip.SetToolTip(cell, isOn ? null : KeyBindText.TurnedOff(definition.Requirement));
+		}
+
+		var conflicts = this.map.Conflicts();
+		var note = KeyBindText.TurnedOffNote(this.options);
+		this.labelStatus.ForeColor = conflicts.Count > 0 ? TQColor.Red.Color() : Color.White;
+		this.labelStatus.Text = string.Join(
+			Environment.NewLine
+			, (conflicts.Count > 0 ? conflicts.Select(KeyBindText.Conflict) : [Resources.KeyBindsHint])
+				.Append(note)
+				.Where(line => line.Length > 0));
+		this.buttonOk.Enabled = conflicts.Count == 0;
+		this.buttonClear.Enabled = this.armed is not null;
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+			this.toolTip.Dispose();
+
+		base.Dispose(disposing);
+	}
+}

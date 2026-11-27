@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <UserSettings>
-	<SkipTitle>1</SkipTitle>
 	<LoadLastVault>1</LoadLastVault>
 	<LoadLastCharacter>1</LoadLastCharacter>
 	<LastVaultName></LastVaultName>
@@ -11,13 +10,10 @@
 	<VaultPath></VaultPath>
 	<LoadAllFiles >1</LoadAllFiles>
 	<SuppressWarnings>0</SuppressWarnings>
-	<CheckForNewVersions>0</CheckForNewVersions>
 	<AllowItemCopy>0</AllowItemCopy>
 	<AllowItemEdit>0</AllowItemEdit>
 	<TQITPath></TQITPath>
 	<TQPath></TQPath>
-	<ModEnabled>0</ModEnabled>
-	<CustomMap></CustomMap>
 	<Scale>1</Scale>
 	<LoadAllFilesCompleted>1</LoadAllFilesCompleted>
 	<PlayerReadonly>1</PlayerReadonly>
@@ -26,13 +22,16 @@
 	<ForceGamePath></ForceGamePath>
 	<BaseFont>AlbertusMT</BaseFont>
 	<EnableDetailedTooltipView>0</EnableDetailedTooltipView>
+	<TooltipShowInGameRolls>0</TooltipShowInGameRolls>
+	<TooltipShowValueRanges>0</TooltipShowValueRanges>
+	<TooltipShowGrantedSkills>1</TooltipShowGrantedSkills>
+	<TooltipShowSetPieceCounts>0</TooltipShowSetPieceCounts>
 	<ItemBGColorOpacity>15</ItemBGColorOpacity>
-	<EnableItemRequirementRestriction>0</EnableItemRequirementRestriction>
 	<EnableHotReload>0</EnableHotReload>
 	<DisableTooltipEquipment>0</DisableTooltipEquipment>
 	<DisableTooltipStash>0</DisableTooltipStash>
 	<DisableTooltipTransfer>0</DisableTooltipTransfer>
-	<DisableTooltipRelic>0</DisableTooltipRelic>
+	<DisableTooltipRelic>1</DisableTooltipRelic>
 	<EnableTQVaultSounds>1</EnableTQVaultSounds>
 	<CSVDelimiter>Comma</CSVDelimiter>
 	<EnableEpicLegendaryAffixes>0</EnableEpicLegendaryAffixes>

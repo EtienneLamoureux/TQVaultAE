@@ -1,6 +1,8 @@
 # Contributing in TQVaultAE
 - [Contributing in TQVaultAE](#contributing-in-tqvaultae)
   * [Prerequisite](#prerequisite)
+  * [Game file formats](#game-file-formats)
+  * [Driving the app from an AI agent](#driving-the-app-from-an-ai-agent)
   * [Style and format](#style-and-format)
   * [Contributions](#contributions)
     + [What to work on](#what-to-work-on)
@@ -8,8 +10,19 @@
     + [Pull requests](#pull-requests)
 
 ## Prerequisite
-This project use DDS to PNG conversion from nuget [Magick.NET-Q8-AnyCPU](https://github.com/dlemstra/Magick.NET) so you need to install [ImageMagick](https://imagemagick.org/script/download.php#gsc.tab=0) to resolve DLL during build.<br/>
-The simple way to do that is to use command `winget install ImageMagick.Q8` before opening the solution.
+This project uses the NuGet package [Magick.NET-Q8-AnyCPU](https://github.com/dlemstra/Magick.NET) for texture (DDS/PNG) conversion; it includes the native ImageMagick binaries, so nothing else needs to be installed. You need the .NET 10 SDK.
+
+## Game file formats
+Working on the game file readers (`src/TQVaultAE.GameFiles`, used by `src/TQVaultAE.Data` and `src/TQVaultAE.DbCli`)? The `.arc`, `.arz`, text and `.tex` formats, the known pitfalls and the item stat randomization are documented in [Titan Quest Game File Formats](documentation/tq-file-formats.md).
+
+## Driving the app from an AI agent
+Debug builds start an [MCP](https://modelcontextprotocol.io) server inside TQVault, at `http://127.0.0.1:47017/mcp` (loopback only). It lets an AI agent (any MCP client) check UI changes on the running app without screenshots:
+- read windows, vaults, characters and the items in each panel;
+- answer dialogs;
+- drag items through the panels' own code;
+- capture a panel to PNG.
+
+The repository's `.mcp.json` registers it as `tqvault`: start the Debug build, then open your MCP client at the repository root. Automation saves like a user does, so in Debug builds it works only in test vaults and characters (the neutral `player-test*` and `player-mod*` characters, `vault-*` vaults and `test-*` tags). Release builds serve only the user tools, and only when the user turns the endpoint on in the settings (see [AI agents (MCP)](documentation/mcp.md)); the developer tools and the headless mode are Debug-only. See [Automation endpoint](documentation/AUTOMATION.md).
 
 ## Style and format
 TQVaultAE follows the standard C# format and import order. Refrain from submitting white-space changes mixed-in with your functional changes. 

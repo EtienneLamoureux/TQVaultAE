@@ -22,7 +22,6 @@ public class PlayerLevel
 	//
 	//By the end of the Immortal Throne expansion, the player would have recieved 
 	//a total of 855 Health, 42 Strength, 18 Intelligence, 18 Dexterity and 18 attribute points.
-	public static int MaxAttributePoints => 168;
 
 	public static int HealthAndManaIncrementPerPoint => 40;
 
@@ -56,12 +55,11 @@ public class PlayerLevel
 	//30 from the 10 new character levels
 	//9 for completing quests in Act V(3 per difficulty)
 
-	public static int MaxSkillPoints => 282;
-
 	public static int SkillPointsPerLevel => 3;
 
 
-	static Dictionary<int, int> _levelKey = new Dictionary<int, int>() {
+	static Dictionary<int, int> _levelKey = new Dictionary<int, int>()
+	{
 		{1    ,       0},
 		{2    ,     621},
 		{3    ,    2315},
@@ -151,10 +149,135 @@ public class PlayerLevel
 
 	public static int GetLevelMinXP(int level)
 	{
-		if (_levelKey.ContainsKey(level))
+		if (_levelKey.TryGetValue(level, out int value))
 		{
-			return (_levelKey[level]);
+			return (value);
 		}
-		throw new ArgumentOutOfRangeException("Level does not exist or is not supported");
+		throw new ArgumentOutOfRangeException(nameof(level), level, "Level does not exist or is not supported");
 	}
+
+	/// <summary>
+	/// The experience a character gets when its level is set: one point above the minimum of the level, so the game
+	/// keeps it at that level.
+	/// </summary>
+	/// <exception cref="ArgumentOutOfRangeException">The level is not supported.</exception>
+	public static int LevelStartXp(int level) => GetLevelMinXP(level) + 1;
+
+	/// <summary>
+	/// Money the character gets at least when it unlocks Epic.
+	/// </summary>
+	public static int EpicMoneyFloor => 5000000;
+
+	/// <summary>
+	/// Money the character gets at least when it unlocks Legendary.
+	/// </summary>
+	public static int LegendaryMoneyFloor => 7500000;
+
+	/// <summary>
+	/// Number of masteries a character of <paramref name="level"/> may choose: none under 2, one under 8, else two.
+	/// </summary>
+	public static int GetMasteriesAllowed(int level)
+		=> level < 2 ? 0
+		: level < 8 ? 1
+		: 2;
+
+	/// <summary>The minimum of an attribute, in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</summary>
+	public static int MinimumOf(int attribute)
+		=> attribute switch
+		{
+			0 => MinHealth,
+			1 => MinMana,
+			2 => MinStrength,
+			3 => MinIntelligence,
+			_ => MinDexterity,
+		};
+
+	/// <summary>
+	/// The whole points invested in an attribute over its minimum (none for a value under it); the attribute in the
+	/// game's order (<see cref="MinimumOf"/>).
+	/// </summary>
+	public static int InvestedPoints(int attribute, int value)
+		=> Math.Max(0, value - MinimumOf(attribute)) / IncrementPerPoint(attribute < 2);
+
+	/// <summary>
+	/// Attribute points invested in the base attributes over their minimum, which a reset of the attributes gives back.
+	/// </summary>
+	/// <param name="values">The base attributes in the game's order: Health, Energy, Strength, Intelligence, Dexterity.</param>
+	public static int GetInvestedAttributePoints(IReadOnlyList<int> values)
+		=> Enumerable.Range(0, 5).Sum(i => InvestedPoints(i, values[i]));
+
+	/// <summary>
+	/// Money of a character that unlocked another difficulty: at least 5M for Epic, 7.5M for Legendary.
+	/// </summary>
+	/// <param name="money">The money of the character.</param>
+	/// <param name="previousDifficulty">The difficulty unlocked before the edit.</param>
+	/// <param name="difficulty">The difficulty unlocked by the edit.</param>
+	public static int GetMoneyAfterDifficultyChange(int money, int previousDifficulty, int difficulty)
+	{
+		if (difficulty == previousDifficulty)
+			return money;
+
+		return difficulty switch
+		{
+			1 => Math.Max(money, EpicMoneyFloor),
+			2 => Math.Max(money, LegendaryMoneyFloor),
+			_ => money,
+		};
+	}
+
+	/// <summary>
+	/// The attribute and skill points a level change gives, or takes back when the level goes down.
+	/// </summary>
+	/// <param name="previousLevel">The level before the change.</param>
+	/// <param name="level">The new level.</param>
+	public static (int AttributePoints, int SkillPoints) GetLevelChangePoints(int previousLevel, int level)
+	{
+		var levels = level - previousLevel;
+		return (levels * AtrributePointsPerLevel, levels * SkillPointsPerLevel);
+	}
+
+	/// <summary>
+	/// The attribute point pool after a base attribute moved from <paramref name="previousValue"/> to
+	/// <paramref name="value"/>: raising it spends points, lowering it gives them back.
+	/// </summary>
+	/// <param name="previousValue">The attribute before the change.</param>
+	/// <param name="value">The attribute after the change.</param>
+	/// <param name="incrementPerPoint">How much of the attribute one point buys.</param>
+	/// <param name="pool">The attribute points left before the change.</param>
+	/// <param name="newPool">The attribute points left after the change.</param>
+	/// <returns>false when the pool cannot pay for the raise: the change must be undone.</returns>
+	public static bool TryChangeAttribute(int previousValue, int value, int incrementPerPoint, int pool, out int newPool)
+	{
+		newPool = pool + (previousValue - value) / incrementPerPoint;
+		if (newPool >= 0)
+			return true;
+
+		newPool = pool;
+		return false;
+	}
+
+	/// <summary>How much of an attribute one point buys: 40 health or energy, 4 strength, intelligence or dexterity.</summary>
+	public static int IncrementPerPoint(bool healthOrEnergy)
+		=> healthOrEnergy ? HealthAndManaIncrementPerPoint : AtrributeIncrementPerPoint;
+
+	/// <summary>
+	/// The value a click on an attribute's "+" button asks for: a left click (<paramref name="step"/> &gt; 0) one point
+	/// more, with Shift every point left; a right click one point back, with Shift back to the value at the start (never
+	/// above the current one). Kept within the attribute's bounds; the pool then pays or refunds it
+	/// (<see cref="TryChangeAttribute"/>).
+	/// </summary>
+	public static int AttributeClickTarget(int current, int start, int incrementPerPoint, int pointsLeft, int step, bool toEnd, int minimum, int maximum)
+	{
+		var target = step > 0
+			? current + incrementPerPoint * (toEnd ? pointsLeft : 1)
+			: toEnd ? Math.Min(current, start) : current - incrementPerPoint;
+		return Math.Clamp(target, minimum, maximum);
+	}
+
+	/// <summary>
+	/// The order in which Undo puts the attributes back to their start values: the raised ones first, which gives their
+	/// points back for the lowered ones.
+	/// </summary>
+	public static IEnumerable<int> AttributeUndoOrder(IReadOnlyList<int> current, IReadOnlyList<int> start)
+		=> Enumerable.Range(0, current.Count).OrderBy(i => current[i] > start[i] ? 0 : 1);
 }

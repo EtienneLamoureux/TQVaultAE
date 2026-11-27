@@ -8,12 +8,12 @@ public record ContainerPlace
 	/// <summary>
 	/// Gets or sets the container file path (vault/player/stash file)
 	/// </summary>
-	public string Path { get; set; }
+	public string Path { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Gets or sets the container display name
 	/// </summary>
-	public string Name { get; set; }
+	public string Name { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Gets or sets the sack number within the container
@@ -30,4 +30,23 @@ public record ContainerPlace
 	/// Null if not a stash
 	/// </summary>
 	public StashType? StashType { get; set; }
+
+	/// <summary>
+	/// Gets or sets the loadout's name, for <see cref="SackType.Loadout"/>; null otherwise
+	/// </summary>
+	public string? Loadout { get; set; }
+
+	/// <summary>
+	/// Copies another place into this one, keeping this instance: the item and its search result share it.
+	/// </summary>
+	/// <param name="other">The place to copy.</param>
+	public void CopyFrom(ContainerPlace other)
+	{
+		this.SackType = other.SackType;
+		this.Path = other.Path;
+		this.Name = other.Name;
+		this.StashType = other.StashType;
+		this.SackNumber = other.SackNumber;
+		this.Loadout = other.Loadout;
+	}
 }

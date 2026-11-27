@@ -1,0 +1,197 @@
+using TQVaultAE.Application.Session;
+using TQVaultAE.Domain.Entities;
+
+namespace TQVaultAE.Application.DTOs;
+
+/// <summary>
+/// Where an installed mod (custom map) was found.
+/// </summary>
+public enum ModSource
+{
+	/// <summary>
+	/// <c>My Games\Titan Quest - Immortal Throne\CustomMaps\&lt;mod&gt;</c>.
+	/// </summary>
+	Legacy,
+
+	/// <summary>
+	/// <c>steamapps\workshop\content\475150\&lt;item id&gt;\&lt;mod&gt;</c>.
+	/// </summary>
+	SteamWorkshop,
+}
+
+/// <summary>
+/// A mod (custom map) installed on this computer.
+/// </summary>
+/// <param name="Name">The mod's folder name: the game names the mod's stash folder (<c>SaveData\Sys\&lt;Name&gt;</c>)
+/// and its database (<c>database\&lt;Name&gt;.arz</c>) after it.</param>
+/// <param name="Folder">The mod's folder, the custom map path used for its data.</param>
+/// <param name="Source">Where it was found.</param>
+public sealed record InstalledMod(string Name, string Folder, ModSource Source)
+{
+	/// <summary>
+	/// The name shown in lists, with its source.
+	/// </summary>
+	public string DisplayName => this.Source == ModSource.SteamWorkshop
+		? $"Steam Workshop : {this.Name}"
+		: $"Legacy : {this.Name}";
+
+	/// <summary>
+	/// Where it is installed from, as files keep it (<c>"modSource"</c>): <c>workshop:&lt;item id&gt;</c> for a Steam
+	/// Workshop mod (the id is the name of the folder holding the mod's folder), <c>custommaps</c> for a custom map.
+	/// </summary>
+	public string SourceKey => this.Source == ModSource.SteamWorkshop
+		? ModIdentity.WorkshopPrefix + System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(System.IO.Path.TrimEndingDirectorySeparator(this.Folder)))
+		: ModIdentity.CustomMaps;
+
+	/// <summary>
+	/// The mod's identity, as items, vaults and links name it (<see cref="ModIdentity"/>): a Steam Workshop mod and a
+	/// custom map with the same folder name are two mods.
+	/// </summary>
+	public string Id => ModIdentity.Compose(this.Name, this.SourceKey)!;
+
+	/// <summary>
+	/// The name shown in a list of mods (menus, filters): the folder name, with where it comes from
+	/// (<see cref="DisplayName"/>) when another mod of the list has the same name.
+	/// </summary>
+	public string LabelAmong(IReadOnlyList<InstalledMod> mods)
+		=> mods.Count(m => m.Name.Equals(this.Name, StringComparison.OrdinalIgnoreCase)) > 1 ? this.DisplayName : this.Name;
+
+	/// <summary>
+	/// The name shown for a mod identity (<see cref="Item.Mod"/>) among the installed mods: <see cref="LabelAmong"/> for
+	/// an installed mod, else the folder name it keeps.
+	/// </summary>
+	/// <returns>Null for no mod.</returns>
+	public static string? LabelOf(string? mod, IReadOnlyList<InstalledMod> installed)
+	{
+		if (string.IsNullOrWhiteSpace(mod))
+			return null;
+
+		var found = installed.FirstOrDefault(m => m.Id.Equals(mod, StringComparison.OrdinalIgnoreCase));
+		return found?.LabelAmong(installed) ?? ModIdentity.NameOf(mod);
+	}
+
+	public override string ToString() => this.DisplayName;
+}
+
+/// <summary>
+/// Content of the link file written in a modded character's save folder: the mod the character plays.
+/// </summary>
+public sealed class ModLinkFile
+{
+	/// <summary>
+	/// Version of the file format, for later changes.
+	/// </summary>
+	public int Version { get; set; } = 1;
+
+	/// <summary>
+	/// The mod's folder name (<see cref="InstalledMod.Name"/>), the key that finds the mod again when it moved
+	/// (another Steam library, another computer).
+	/// </summary>
+	public string Mod { get; set; } = string.Empty;
+
+	/// <summary>
+	/// Where the mod was installed from (<see cref="InstalledMod.SourceKey"/>): with <see cref="Mod"/>, it tells a Steam
+	/// Workshop mod from a custom map of the same name. A link without it is not read (the character is not linked).
+	/// </summary>
+	public string? Source { get; set; }
+
+	/// <summary>
+	/// When the link was made (UTC).
+	/// </summary>
+	public DateTime LinkedUtc { get; set; }
+}
+
+/// <summary>
+/// How a character relates to the installed mods.
+/// </summary>
+public enum CharacterModState
+{
+	/// <summary>
+	/// A main campaign character (<c>SaveData\Main</c>) without a link: base game data.
+	/// </summary>
+	BaseGame,
+
+	/// <summary>
+	/// A character linked to an installed mod (a main campaign one: a bounce mod).
+	/// </summary>
+	Linked,
+
+	/// <summary>
+	/// A character linked to a mod that is not installed (any more).
+	/// </summary>
+	LinkedModMissing,
+
+	/// <summary>
+	/// A custom map character without a link.
+	/// </summary>
+	Unlinked,
+}
+
+/// <summary>
+/// The mod of a character, as resolved from its link file.
+/// </summary>
+/// <param name="State">How the character relates to the installed mods.</param>
+/// <param name="Mod">The linked mod, when installed.</param>
+/// <param name="Link">The link file, when there is one.</param>
+public sealed record CharacterMod(CharacterModState State, InstalledMod? Mod, ModLinkFile? Link)
+{
+	public static readonly CharacterMod BaseGame = new(CharacterModState.BaseGame, null, null);
+
+	public static readonly CharacterMod Unlinked = new(CharacterModState.Unlinked, null, null);
+
+	/// <summary>
+	/// Whether a character can be linked to <paramref name="selected"/>: a mod chosen, not the one it is linked to
+	/// already.
+	/// </summary>
+	/// <param name="selected">The mod chosen, or <see langword="null"/>.</param>
+	public bool CanLinkTo(InstalledMod? selected)
+		=> selected is not null && !Equals(selected, this.Mod);
+}
+
+/// <summary>
+/// How well an installed mod explains the records of a character.
+/// </summary>
+/// <param name="Mod">The mod.</param>
+/// <param name="Matched">Number of the character's mod-only records found in the mod's database.</param>
+public sealed record ModMatch(InstalledMod Mod, int Matched);
+
+/// <summary>
+/// The mods that could be the one of a character, from the records its save uses that the base game does not have.
+/// </summary>
+/// <param name="ModOnlyRecords">Number of distinct records of the save that the base game database does not have.</param>
+/// <param name="Matches">Mods having at least one of those records, best first.</param>
+public sealed record ModSuggestion(int ModOnlyRecords, IReadOnlyList<ModMatch> Matches)
+{
+	/// <summary>
+	/// The best match, when one mod has more of the records than any other.
+	/// </summary>
+	public ModMatch? Best => this.Matches.Count switch
+	{
+		0 => null,
+		1 => this.Matches[0],
+		_ => this.Matches[0].Matched > this.Matches[1].Matched ? this.Matches[0] : null,
+	};
+
+	/// <summary>
+	/// True when the save only uses base game records: no mod can be told from its data.
+	/// </summary>
+	public bool OnlyBaseGameRecords => this.ModOnlyRecords == 0;
+
+	/// <summary>
+	/// The mods tied first, with as many records as the first match; empty without a match.
+	/// </summary>
+	public IReadOnlyList<ModMatch> Tied
+		=> this.Matches.Count == 0 ? [] : [.. this.Matches.TakeWhile(m => m.Matched == this.Matches[0].Matched)];
+}
+
+/// <summary>
+/// The data a shared stash file (transfer stash, relic vault) is read with.
+/// </summary>
+/// <param name="Map">The custom map folder whose database reads it; empty for the base game.</param>
+/// <param name="Mod">The map its items inherit (<see cref="Item.ContainerMod"/>); null for the base game.</param>
+public sealed record SharedStashData(string Map, string? Mod)
+{
+	/// <summary>True when both read the file the same way.</summary>
+	public bool SameAs(SharedStashData other)
+		=> GameMaps.Same(this.Map, other.Map) && string.Equals(this.Mod, other.Mod, StringComparison.OrdinalIgnoreCase);
+}

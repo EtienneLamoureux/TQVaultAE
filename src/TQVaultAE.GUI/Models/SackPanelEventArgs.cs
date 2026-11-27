@@ -16,19 +16,19 @@ public class SackPanelEventArgs : EventArgs
 	/// <summary>
 	/// Sack which we are working with
 	/// </summary>
-	private SackCollection sack;
+	private SackCollection? sack;
 
 	/// <summary>
 	/// Item that we are working with.
 	/// </summary>
-	private Item item;
+	private Item? item;
 
 	/// <summary>
 	/// Initializes a new instance of the SackPanelEventArgs class.
 	/// </summary>
 	/// <param name="sack">sack that we are working with</param>
 	/// <param name="item">item that we are working with</param>
-	public SackPanelEventArgs(SackCollection sack, Item item)
+	public SackPanelEventArgs(SackCollection? sack, Item? item)
 	{
 		this.sack = sack;
 		this.item = item;
@@ -37,7 +37,7 @@ public class SackPanelEventArgs : EventArgs
 	/// <summary>
 	/// Gets the sack.
 	/// </summary>
-	public SackCollection Sack
+	public SackCollection? Sack
 	{
 		get
 		{
@@ -48,7 +48,7 @@ public class SackPanelEventArgs : EventArgs
 	/// <summary>
 	/// Gets the item.
 	/// </summary>
-	public Item Item
+	public Item? Item
 	{
 		get
 		{

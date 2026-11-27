@@ -15,7 +15,7 @@ namespace TQVaultAE.Services.Win32;
 public class SoundServiceWin : ISoundService, IDisposable
 {
 	private readonly ILogger Log;
-	private readonly IDatabase DataBase;
+	private readonly IDatabase? DataBase;
 	private readonly UserSettings USettings;
 
 	#region Predefined sounds
@@ -57,19 +57,19 @@ public class SoundServiceWin : ISoundService, IDisposable
 
 	private static readonly RecordId SoundLevelUp = @"Sounds\UI\UI_LEVELUP.MP3";
 
-	private static SoundPlayer[] SoundPoolMetalHit;
-	private static SoundPlayer[] SoundPoolItemDrop;
-	private static SoundPlayer[] SoundPoolRelicDrop;
-	private static SoundPlayer[] SoundPoolVoice;
-	private static SoundPlayer[] SoundPoolCancel;
+	private static SoundPlayer[] SoundPoolMetalHit = [];
+	private static SoundPlayer[] SoundPoolItemDrop = [];
+	private static SoundPlayer[] SoundPoolRelicDrop = [];
+	private static SoundPlayer[] SoundPoolVoice = [];
+	private static SoundPlayer[] SoundPoolCancel = [];
 
 	#endregion
 
 	// Cache
-	private static Dictionary<RecordId, byte[]> SoundData = new();
-	private static Dictionary<RecordId, (SoundPlayer Player, MemoryStream MS)> LoadedPlayers = new();
+	private static Dictionary<RecordId, byte[]> SoundData = [];
+	private static Dictionary<RecordId, (SoundPlayer Player, MemoryStream MS)> LoadedPlayers = [];
 
-	public SoundServiceWin(ILogger<SoundServiceWin> log, IDatabase database, UserSettings uSettings)
+	public SoundServiceWin(ILogger<SoundServiceWin> log, IDatabase? database, UserSettings uSettings)
 	{
 		this.Log = log;
 		this.DataBase = database;
@@ -80,7 +80,7 @@ public class SoundServiceWin : ISoundService, IDisposable
 
 	public void InitAllPlayers()
 	{
-		LoadedPlayers.Clear();
+		ClearPlayers();
 
 		if (this.DataBase is null)
 			return;
@@ -92,8 +92,25 @@ public class SoundServiceWin : ISoundService, IDisposable
 		SoundPoolCancel = InitPlayers(SoundPoolCancelIds);
 	}
 
+	/// <summary>Disposes the loaded players and empties the pools.</summary>
+	private static void ClearPlayers()
+	{
+		foreach (var (player, stream) in LoadedPlayers.Values)
+		{
+			player?.Dispose();
+			stream?.Dispose();
+		}
+
+		LoadedPlayers.Clear();
+		SoundPoolCancel = [];
+		SoundPoolItemDrop = [];
+		SoundPoolMetalHit = [];
+		SoundPoolRelicDrop = [];
+		SoundPoolVoice = [];
+	}
+
 	private SoundPlayer[] InitPlayers(RecordId[] list)
-		=> list.Select(id => GetSoundPlayer(id)).Where(p => p is not null).ToArray();
+		=> list.Select(id => GetSoundPlayer(id)).OfType<SoundPlayer>().ToArray();
 
 	public void ConvertMp3ToWav(Stream inMp3, Stream outWav)
 	{
@@ -108,10 +125,10 @@ public class SoundServiceWin : ISoundService, IDisposable
 		if (!IsSoundRecordId(resourceId))
 			return false;// Not a sound
 
-		if (!(resourceData?.Any() ?? false))
+		if (resourceData is not { Length: > 0 })
 			return false;// Not a sound
 
-		if (resourceId.Normalized.EndsWith(".MP3"))
+		if (resourceId.Normalized.EndsWith(".MP3", StringComparison.Ordinal))
 		{
 			using (var mp3 = new MemoryStream(resourceData))
 			using (var wav = new MemoryStream())
@@ -130,7 +147,7 @@ public class SoundServiceWin : ISoundService, IDisposable
 		return resourceId.Normalized.Contains(".MP3") || resourceId.Normalized.Contains(".WAV");
 	}
 
-	public byte[] GetSoundResource(RecordId resourceId)
+	public byte[]? GetSoundResource(RecordId resourceId)
 	{
 		if (!IsSoundRecordId(resourceId))
 			return null;// Not a sound
@@ -149,7 +166,7 @@ public class SoundServiceWin : ISoundService, IDisposable
 		return null;
 	}
 
-	public SoundPlayer GetSoundPlayer(RecordId resourceId)
+	public SoundPlayer? GetSoundPlayer(RecordId resourceId)
 	{
 		if (!this.USettings.EnableTQVaultSounds)
 			return null;
@@ -172,16 +189,13 @@ public class SoundServiceWin : ISoundService, IDisposable
 		return playerInstance.Player;
 	}
 
-	private SoundPlayer GetRandomPlayer(SoundPlayer[] pool)
+	private SoundPlayer? GetRandomPlayer(SoundPlayer[] pool)
 	{
-		if (!this.USettings.EnableTQVaultSounds)
+		// The pool is empty when the sounds could not be loaded.
+		if (!this.USettings.EnableTQVaultSounds || pool.Length == 0)
 			return null;
 
-		var rand = new Random(DateTime.Now.Millisecond);
-		var multi = (pool.Length * 100) - 1;
-		var playerIdx = rand.Next(0, multi);
-		playerIdx = playerIdx / 100;
-		return pool[playerIdx];
+		return pool[Random.Shared.Next(pool.Length)];
 	}
 
 	public void PlaySound(RecordId resourceId)
@@ -223,28 +237,9 @@ public class SoundServiceWin : ISoundService, IDisposable
 		}
 
 		if (disposing)
-		{
-			// dispose managed state (managed objects).
-			// Cleanup SoundPlayers
-			foreach (var player in LoadedPlayers)
-			{
-				var val = player.Value;
-				val.Player?.Dispose();
-				val.MS?.Dispose();
-				val.Player = null;
-				val.MS = null;
-			}
-		}
+			ClearPlayers();
 
-		// free unmanaged resources (unmanaged objects) and override a finalizer below.
-		// set large fields to null.
-		SoundData = null;
-		LoadedPlayers = null;
-		SoundPoolCancel = null;
-		SoundPoolItemDrop = null;
-		SoundPoolMetalHit = null;
-		SoundPoolRelicDrop = null;
-		SoundPoolVoice = null;
+		SoundData.Clear();
 
 		_disposed = true;
 	}

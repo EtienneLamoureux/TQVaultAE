@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\TestProject.props" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\TQVaultAE.Application\TQVaultAE.Application.csproj" />
+		<!-- The real file wrappers (PathIO, FileIO, DirectoryIO) of the tests that read files. -->
+		<ProjectReference Include="..\..\TQVaultAE.Services\TQVaultAE.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Records read from a mod's database or the base game's, shared by the test projects. -->
+		<Compile Include="..\Shared\TestRecords.cs" Link="Fixtures\TestRecords.cs" />
+		<Compile Include="..\Shared\TestMasteries.cs" Link="Fixtures\TestMasteries.cs" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,137 @@
+using System.ComponentModel;
+using ModelContextProtocol;
+using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.GUI.Components.Character;
+using TQVaultAE.GUI.Components.Character.Editor;
+using static TQVaultAE.Automation.ControlTree;
+
+namespace TQVaultAE.GUI.Automation;
+
+internal static partial class AutomationTools
+{
+	#region Skill pane
+
+	[McpServerTool(Name = "skill_panel", ReadOnly = true)]
+	[Description("In the open character editor, shows the page of a mastery slot and reads its skill pane as drawn: mastery, mastery level, bar fill, points left, and per skill its id, name, tier, button position, round or square border, level, item bonus, level text, state border (CanRaise green, NoPointLeft gold, Maxed blue, TierLocked gray, ParentLocked red), icon and number of connector pieces. With capture=true the pane is also returned as a PNG (saved under %TEMP%).")]
+	public static IEnumerable<ContentBlock> SkillPanel(
+		[Description("Mastery slot, from 1.")] int slot = 1,
+		[Description("true to return a PNG of the pane too.")] bool capture = false)
+	{
+		var (state, png) = AutomationHost.OnUi(_ =>
+		{
+			var pane = ShowSkillPane(slot);
+			var state = Serialize(pane.AutomationState());
+			if (!capture)
+				return (state, (byte[]?)null);
+
+			using var bitmap = AutomationImages.Render(pane);
+			return (state, AutomationImages.Png(bitmap));
+		});
+
+		return AutomationImages.Result(state, png, $"skillpane{slot}");
+	}
+
+	[McpServerTool(Name = "skill_panel_click", Destructive = true)]
+	[Description("In the open character editor, clicks a button of a mastery slot's skill pane like the mouse, through its hit test: left raises the skill (or the mastery) by one point, right lowers it, shift=true goes to the highest level the points allow or down to the lowest. The editor's rules apply (tier, parent skill, points left). Returns the pane state afterwards. Debug builds: work only on test characters (player-test*, player-mod*).")]
+	public static string SkillPanelClick(
+		[Description("Mastery slot, from 1.")] int slot,
+		[Description("The skill: its record id, part of its name, or 'mastery' for the mastery button.")] string skill,
+		[Description("'left' or 'right'.")] string button = "left",
+		[Description("true for a Shift click.")] bool shift = false,
+		[Description("Modifiers held for the click, like 'ctrl' or 'shift' (the key binds decide what they do); with shift=true Shift is added.")] string modifiers = "")
+		=> AutomationHost.OnUi(_ =>
+		{
+			var pane = ShowSkillPane(slot);
+			var step = ParseButton(button) == MouseButtons.Left ? 1 : -1;
+
+			MasterySkill? target = null;
+			if (!string.Equals(skill, "mastery", StringComparison.OrdinalIgnoreCase))
+			{
+				var skills = pane.Tree?.Skills ?? throw new McpException($"Slot {slot} has no mastery.");
+				target = skills.FirstOrDefault(s => string.Equals(s.Id.Raw, skill, StringComparison.OrdinalIgnoreCase))
+					?? skills.FirstOrDefault(s => pane.Translate(s.NameTag).Contains(skill, StringComparison.OrdinalIgnoreCase))
+					?? throw new McpException($"No skill '{skill}' in slot {slot}.");
+			}
+
+			var hit = pane.AutomationClick(target, step, ClickModifiers(modifiers, shift))
+				?? throw new McpException("The click hit no button: the hit test missed it.");
+			return Serialize(new { clicked = hit is MasterySkill s ? s.Id.Raw : "mastery", state = pane.AutomationState() });
+		});
+
+	[McpServerTool(Name = "skill_tooltip", ReadOnly = true)]
+	[Description("In the open character editor, renders the game-style tool tip of a skill (or of the mastery button with 'mastery') of a mastery slot's pane, as it shows on hover: its lines (text, colour) and a PNG (saved under %TEMP%).")]
+	public static IEnumerable<ContentBlock> SkillTooltip(
+		[Description("Mastery slot, from 1.")] int slot,
+		[Description("The skill: its record id, part of its name, or 'mastery'.")] string skill)
+	{
+		var (text, png) = AutomationHost.OnUi(_ =>
+		{
+			var pane = ShowSkillPane(slot);
+			MasterySkill? target = null;
+			if (!string.Equals(skill, "mastery", StringComparison.OrdinalIgnoreCase))
+			{
+				var skills = pane.Tree?.Skills ?? throw new McpException($"Slot {slot} has no mastery.");
+				target = skills.FirstOrDefault(s => string.Equals(s.Id.Raw, skill, StringComparison.OrdinalIgnoreCase))
+					?? skills.FirstOrDefault(s => pane.Translate(s.NameTag).Contains(skill, StringComparison.OrdinalIgnoreCase))
+					?? throw new McpException($"No skill '{skill}' in slot {slot}.");
+			}
+
+			var lines = pane.ToolTipLines?.Invoke(target) ?? [];
+			var tooltip = pane.Tooltip ?? throw new McpException("The pane has no tool tip.");
+			using var bitmap = tooltip.Render(lines);
+			var text = Serialize(lines.Select(l => new { text = l.Text, color = AutomationJson.HexOrNull(l.Color), title = l.Title }).ToList());
+			return (text, AutomationImages.Png(bitmap));
+		});
+
+		return AutomationImages.Result(text, png, "skilltooltip");
+	}
+
+	[McpServerTool(Name = "select_tab")]
+	[Description("Selects a page of a tab control of an open form, like a click on its tab (for example a mastery page of the character editor), so that capture shows it. Returns the pages of the tab controls of the form.")]
+	public static string SelectTab(
+		[Description("Part of the form title or its type name (case-insensitive).")] string form,
+		[Description("The page: its index, name or part of its text.")] string tab)
+		=> AutomationHost.OnUi(_ =>
+		{
+			var target = FindOpenForm(form);
+
+			// Pages of WinForms tab controls and of the game-styled frame of the character editor.
+			var pages = new List<(string Owner, string Name, string Text, int Index, Action Select, Func<bool> Selected)>();
+			foreach (var tabs in AllControls(target).OfType<TabControl>())
+				foreach (var (page, i) in tabs.TabPages.Cast<TabPage>().Select((p, i) => (p, i)))
+					pages.Add((tabs.Name, page.Name, page.Text, i, () => tabs.SelectedTab = page, () => tabs.SelectedTab == page));
+			foreach (var frame in AllControls(target).OfType<GameTabControl>())
+				for (int i = 0; i < frame.Pages.Count; i++)
+				{
+					var index = i;
+					pages.Add((frame.Name, frame.Pages[i].Content.Name, frame.Pages[i].Text, i, () => frame.SelectedIndex = index, () => frame.SelectedIndex == index));
+				}
+
+			var found = int.TryParse(tab, out var number) ? pages.FirstOrDefault(p => p.Index == number) : default;
+			if (found.Select is null)
+				found = pages.FirstOrDefault(p => string.Equals(p.Name, tab, StringComparison.OrdinalIgnoreCase)
+					|| p.Text.Contains(tab, StringComparison.OrdinalIgnoreCase));
+			if (found.Select is null)
+				throw new McpException($"No page '{tab}' in '{target.Text}'. Pages: {string.Join(", ", pages.Select(p => $"'{p.Text}'"))}");
+
+			found.Select();
+			return Serialize(pages.Select(p => new { owner = p.Owner, name = p.Name, text = p.Text, selected = p.Selected() }).ToList());
+		});
+
+	/// <summary>Selects the page of a mastery slot in the open character editor and returns its pane.</summary>
+	private static SkillPaneControl ShowSkillPane(int slot)
+	{
+		var form = FindCharacterEditor();
+		var name = $"SkillsMastery{slot}Pane";
+		var pane = AllControls(form).OfType<SkillPaneControl>().FirstOrDefault(p => p.Name == name)
+			?? throw new McpException($"No skill pane for slot {slot}.");
+		if (AllControls(form).OfType<GameTabControl>().FirstOrDefault() is { } frame)
+			frame.SelectedIndex = frame.Pages.Select((p, i) => (p, i)).First(x => x.p.Content.Contains(pane)).i;
+
+		return pane;
+	}
+
+	#endregion
+}

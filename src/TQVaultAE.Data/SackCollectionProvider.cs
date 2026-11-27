@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="SackCollection.cs" company="None">
+// <copyright file="SackCollectionProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,18 +15,11 @@ namespace TQVaultAE.Data;
 /// <summary>
 /// Encodes and decodes a Titan Quest item sack from a player file.
 /// </summary>
-public class SackCollectionProvider : ISackCollectionProvider
+public class SackCollectionProvider(ILogger<SackCollectionProvider> log, IItemProvider itemProvider, ITQDataService tQData) : ISackCollectionProvider
 {
-	private readonly ILogger Log;
-	private readonly IItemProvider ItemProvider;
-	private readonly ITQDataService TQData;
-
-	public SackCollectionProvider(ILogger<SackCollectionProvider> log, IItemProvider itemProvider, ITQDataService tQData)
-	{
-		this.Log = log;
-		this.ItemProvider = itemProvider;
-		this.TQData = tQData;
-	}
+	private readonly ILogger Log = log;
+	private readonly IItemProvider ItemProvider = itemProvider;
+	private readonly ITQDataService TQData = tQData;
 
 	/// <summary>
 	/// Encodes the sack into binary form
@@ -37,8 +30,7 @@ public class SackCollectionProvider : ISackCollectionProvider
 		if (sc.SackType == SackType.Stash)
 		{
 			// Item stacks are stored as single items in the stash
-			TQData.WriteCString(writer, "numItems");
-			writer.Write(sc.Count);
+			TQData.WriteKeyInt(writer, "numItems", sc.Count);
 		}
 		else if (sc.SackType == SackType.Equipment)
 		{
@@ -47,14 +39,11 @@ public class SackCollectionProvider : ISackCollectionProvider
 		}
 		else
 		{
-			TQData.WriteCString(writer, "begin_block");
-			writer.Write(sc.beginBlockCrap);
+			TQData.WriteKeyInt(writer, "begin_block", sc.beginBlockCrap);
 
-			TQData.WriteCString(writer, "tempBool");
-			writer.Write(sc.tempBool);
+			TQData.WriteKeyInt(writer, "tempBool", sc.tempBool);
 
-			TQData.WriteCString(writer, "size");
-			writer.Write(sc.CountTQItems());
+			TQData.WriteKeyInt(writer, "size", sc.CountTQItems());
 		}
 
 		int slotNumber = -1;
@@ -62,52 +51,32 @@ public class SackCollectionProvider : ISackCollectionProvider
 		{
 			++slotNumber;
 			item.Place.SackType = sc.SackType;
-			int itemAttached = 0;
-			int alternate = 0;
-
 			// Additional logic to encode the weapon slots in the equipment section
 			if (sc.SackType == SackType.Equipment && (slotNumber == 7 || slotNumber == 9))
 			{
-				TQData.WriteCString(writer, "begin_block");
-				writer.Write(sc.beginBlockCrap);
+				TQData.WriteKeyInt(writer, "begin_block", sc.beginBlockCrap);
 
-				TQData.WriteCString(writer, "alternate");
-				if (slotNumber == 9)
-					// Only set the flag for the second set of weapons
-					alternate = 1;
-				else
-					// Otherwise set the flag to false.
-					alternate = 0;
-
-				writer.Write(alternate);
+				// Only set the flag for the second set of weapons
+				TQData.WriteKeyInt(writer, "alternate", slotNumber == 9 ? 1 : 0);
 			}
 
 			ItemProvider.Encode(item, writer);
 
 			if (sc.SackType == SackType.Equipment)
 			{
-				TQData.WriteCString(writer, "itemAttached");
-				if (!RecordId.IsNullOrEmpty(item.BaseItemId) && slotNumber != 9 && slotNumber != 10)
-					// If there is an item in sc slot, set the flag.
-					// Unless it's in the secondary weapon slot.
-					itemAttached = 1;
-				else
-					// sc is only a dummy item so we do not set the flag.
-					itemAttached = 0;
-
-				writer.Write(itemAttached);
+				// If there is an item in the slot, set the flag, unless it's in the secondary weapon slot
+				// (an empty slot holds a dummy item, without the flag).
+				TQData.WriteKeyInt(writer, "itemAttached", !item.IsEmpty && slotNumber != 9 && slotNumber != 10 ? 1 : 0);
 			}
 
 			// Additional logic to encode the weapon slots in the equipment section
 			if (sc.SackType == SackType.Equipment && (slotNumber == 8 || slotNumber == 10))
 			{
-				TQData.WriteCString(writer, "end_block");
-				writer.Write(sc.endBlockCrap);
+				TQData.WriteKeyInt(writer, "end_block", sc.endBlockCrap);
 			}
 		}
 
-		TQData.WriteCString(writer, "end_block");
-		writer.Write(sc.endBlockCrap);
+		TQData.WriteKeyInt(writer, "end_block", sc.endBlockCrap);
 	}
 
 	/// <summary>
@@ -123,8 +92,7 @@ public class SackCollectionProvider : ISackCollectionProvider
 			if (sc.SackType == SackType.Stash)
 			{
 				// IL decided to use a different format for the stash files.
-				TQData.ValidateNextString("numItems", reader);
-				sc.size = reader.ReadInt32();
+				sc.size = TQData.ReadKeyInt(reader, "numItems");
 			}
 			else if (sc.SackType == SackType.Equipment)
 			{
@@ -142,32 +110,25 @@ public class SackCollectionProvider : ISackCollectionProvider
 			else
 			{
 				// sc is just a regular sack.
-				TQData.ValidateNextString("begin_block", reader); // make sure we just read a new block
-				sc.beginBlockCrap = reader.ReadInt32();
+				sc.beginBlockCrap = TQData.ReadKeyInt(reader, "begin_block"); // make sure we just read a new block
 
-				TQData.ValidateNextString("tempBool", reader);
-				sc.tempBool = reader.ReadInt32();
+				sc.tempBool = TQData.ReadKeyInt(reader, "tempBool");
 
-				TQData.ValidateNextString("size", reader);
-				sc.size = reader.ReadInt32();
+				sc.size = TQData.ReadKeyInt(reader, "size");
 			}
 
 			sc.items = new List<Item>(sc.size);
 
-			Item prevItem = null;
+			Item? prevItem = null;
 			for (int i = 0; i < sc.size; ++i)
 			{
 				// Additional logic to decode the weapon slots in the equipment section
 				if (sc.SackType == SackType.Equipment && (i == 7 || i == 9))
 				{
-					TQData.ValidateNextString("begin_block", reader);
-					sc.beginBlockCrap = reader.ReadInt32();
+					sc.beginBlockCrap = TQData.ReadKeyInt(reader, "begin_block");
 
 					// Eat the alternate tag and flag
-					TQData.ValidateNextString("alternate", reader);
-
-					// Skip over the alternateCrap
-					reader.ReadInt32();
+					TQData.ReadKeyInt(reader, "alternate");
 				}
 
 				Item item = new Item();
@@ -175,7 +136,7 @@ public class SackCollectionProvider : ISackCollectionProvider
 				ItemProvider.Parse(item, reader);
 
 				// Stack sc item with the previous item if necessary
-				if ((prevItem != null) && item.DoesStack && (item.PositionX == -1) && (item.PositionY == -1))
+				if ((prevItem is not null) && item.DoesStack && (item.PositionX == -1) && (item.PositionY == -1))
 					prevItem.StackSize++;
 				else
 				{
@@ -188,23 +149,18 @@ public class SackCollectionProvider : ISackCollectionProvider
 						item.PositionY = SackCollection.GetEquipmentLocationOffset(i).Y;
 
 						// Eat the itemAttached tag and flag
-						TQData.ValidateNextString("itemAttached", reader);
-
-						// Skip over the itemAttachedCrap
-						reader.ReadInt32();
+						TQData.ReadKeyInt(reader, "itemAttached");
 					}
 				}
 
 				// Additional logic to decode the weapon slots in the equipment section
 				if (sc.SackType == SackType.Equipment && (i == 8 || i == 10))
 				{
-					TQData.ValidateNextString("end_block", reader);
-					sc.endBlockCrap = reader.ReadInt32();
+					sc.endBlockCrap = TQData.ReadKeyInt(reader, "end_block");
 				}
 			}
 
-			TQData.ValidateNextString("end_block", reader);
-			sc.endBlockCrap = reader.ReadInt32();
+			sc.endBlockCrap = TQData.ReadKeyInt(reader, "end_block");
 		}
 		catch (ArgumentException ex)
 		{
@@ -213,79 +169,6 @@ public class SackCollectionProvider : ISackCollectionProvider
 			Log.LogDebug(ex, "ValidateNextString fail !");
 			throw;
 		}
-	}
-
-	/// <summary>
-	/// Parses the header portion of sack data using ReadOnlySpan for zero-copy parsing.
-	/// Enables bounds-check elimination in high-frequency parsing paths.
-	/// </summary>
-	/// <param name="sc">SackCollection to populate</param>
-	/// <param name="data">ReadOnlySpan of binary data</param>
-	/// <param name="offset">Offset that will be advanced by the method</param>
-	/// <returns>Number of bytes consumed for header</returns>
-	public int ParseHeader(SackCollection sc, ReadOnlySpan<byte> data, ref int offset)
-	{
-		int startOffset = offset;
-
-		sc.IsModified = false;
-
-		if (sc.SackType == SackType.Stash)
-		{
-			// Stash format: "numItems" + int32
-			if (!TQData.ValidateNextString("numItems", data, ref offset))
-			{
-				Log.LogError("Expected 'numItems' tag at offset {Offset}", offset);
-				throw new ArgumentException("Expected 'numItems' tag");
-			}
-			sc.size = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-			offset += sizeof(int);
-		}
-		else if (sc.SackType == SackType.Equipment)
-		{
-			// Equipment has fixed size based on game
-			if (sc.IsImmortalThrone)
-			{
-				sc.size = 12;
-				sc.slots = 12;
-			}
-			else
-			{
-				sc.size = 11;
-				sc.slots = 11;
-			}
-		}
-		else
-		{
-			// Regular sack format: "begin_block" + int32 + "tempBool" + int32 + "size" + int32
-			if (!TQData.ValidateNextString("begin_block", data, ref offset))
-			{
-				Log.LogError("Expected 'begin_block' tag at offset {Offset}", offset);
-				throw new ArgumentException("Expected 'begin_block' tag");
-			}
-
-			sc.beginBlockCrap = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-			offset += sizeof(int);
-
-			if (!TQData.ValidateNextString("tempBool", data, ref offset))
-			{
-				Log.LogError("Expected 'tempBool' tag at offset {Offset}", offset);
-				throw new ArgumentException("Expected 'tempBool' tag");
-			}
-
-			sc.tempBool = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-			offset += sizeof(int);
-
-			if (!TQData.ValidateNextString("size", data, ref offset))
-			{
-				Log.LogError("Expected 'size' tag at offset {Offset}", offset);
-				throw new ArgumentException("Expected 'size' tag");
-			}
-
-			sc.size = BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset));
-			offset += sizeof(int);
-		}
-
-		return offset - startOffset;
 	}
 
 }

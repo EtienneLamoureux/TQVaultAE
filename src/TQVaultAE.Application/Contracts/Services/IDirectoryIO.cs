@@ -2,7 +2,7 @@ namespace TQVaultAE.Application.Contracts.Services;
 
 public interface IDirectoryIO
 {
-	bool Exists(string path);
+	bool Exists(string? path);
 	void CreateDirectory(string path);
 	string[] GetFiles(string path);
 	string[] GetFiles(string path, string searchPattern);

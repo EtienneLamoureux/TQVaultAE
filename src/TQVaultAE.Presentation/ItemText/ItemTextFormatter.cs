@@ -1,0 +1,642 @@
+//-----------------------------------------------------------------------
+// <copyright file="ItemTextFormatter.cs" company="None">
+//     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using TQVaultAE.Application.Contracts.Providers;
+using TQVaultAE.Application.Contracts.Services;
+using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using TQVaultAE.Config;
+using TQVaultAE.Domain.Comparison;
+using TQVaultAE.Domain.Entities;
+using TQVaultAE.Domain.Helpers;
+using TQVaultAE.Domain.Jitter;
+using TQVaultAE.Domain.Results;
+
+namespace TQVaultAE.Presentation.ItemText;
+
+/// <summary>
+/// Builds the texts of an item for its tool tips, its properties and the search: names, attribute lines with their colour
+/// tags, requirements, set, granted skills. The records come from the <see cref="IItemProvider"/> and the database.
+/// </summary>
+public partial class ItemTextFormatter : IItemTextFormatter, IGameDataCache
+{
+	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
+
+	private readonly ILogger Log;
+	private readonly IDatabase Database;
+	private readonly IItemProvider ItemProvider;
+	private readonly IItemAttributeProvider ItemAttributeProvider;
+	private readonly ITranslationService TranslationService;
+	private readonly IPathIO PathIO;
+	private readonly UserSettings USettings;
+
+	/// <summary>
+	/// Gives an item linked to a mod its mod's database; null in tests that do not need it.
+	/// </summary>
+	private readonly IItemModService? ItemMods;
+
+	/// <summary>
+	/// The database of the item's mod for the current thread, until disposed.
+	/// </summary>
+	private IDisposable ModScope(Item? itm) => this.ItemMods.ScopeOrNone(itm);
+	private readonly LazyConcurrentDictionary<(Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra), ToFriendlyNameResult> FriendlyNamesCache = new LazyConcurrentDictionary<(Item, FriendlyNamesExtraScopes?, bool), ToFriendlyNameResult>();
+	private volatile bool _cachedShowInGameValues;
+
+	/// <inheritdoc/>
+	public void ClearGameDataCache() => this.FriendlyNamesCache.Clear();
+
+	public ItemTextFormatter(
+			ILogger<ItemTextFormatter> log
+			, IDatabase database
+			, IItemProvider itemProvider
+			, IItemAttributeProvider itemAttributeProvider
+			, ITranslationService translationService, IPathIO pathIO
+			, UserSettings uSettings
+			, IItemModService? itemMods = null
+		)
+	{
+		this.ItemMods = itemMods;
+		this.Log = log;
+		this.Database = database;
+		this.ItemProvider = itemProvider;
+		this.ItemAttributeProvider = itemAttributeProvider;
+		this.TranslationService = translationService;
+		this.PathIO = pathIO;
+		this.USettings = uSettings;
+
+		this.SortArmorAttributeGroups = ((IComparer<List<Variable?>>)new ItemAttributeListCompare(true, itemAttributeProvider)).Compare;
+		this.SortOtherAttributeGroups = ((IComparer<List<Variable?>>)new ItemAttributeListCompare(false, itemAttributeProvider)).Compare;
+		this.SortDamageQualifiers = ((IComparer<Variable?>)new ItemAttributeSubListCompare(itemAttributeProvider)).Compare;
+	}
+
+	// Sort delegates made once (TQVault's order, kept for a skill's effects and the damage qualifiers): Array.Sort and
+	// List.Sort given an IComparer build a Comparison from it on every call,
+	// and building that delegate was the most contended step of the parallel search warm-up.
+	private readonly Comparison<List<Variable?>> SortArmorAttributeGroups;
+	private readonly Comparison<List<Variable?>> SortOtherAttributeGroups;
+	private readonly Comparison<Variable?> SortDamageQualifiers;
+
+
+	private static string FormatInGameRoll(RolledValue roll)
+		=> string.Format(CultureInfo.CurrentCulture, "{0} {1}: {2:0.##} -> {3:0.##}", roll.Source, roll.Variable, roll.Original, roll.Rolled);
+
+	public bool InvalidateFriendlyNamesCache(params IEnumerable<Item> items)
+	{
+		// A set: a whole vault can be passed, against a cache of every item shown so far.
+		var set = items.Where(i => i is not null).ToHashSet(ReferenceEqualityComparer.Instance);
+		var keylist = this.FriendlyNamesCache.Where(i => set.Contains(i.Key.Item)).Select(i => i.Key).ToList();
+		foreach (var k in keylist) this.FriendlyNamesCache.TryRemove(k, out var outVal);
+		return keylist.Count != 0;
+	}
+
+	/// <summary>
+	/// Formats a string based on the formatspec
+	/// </summary>
+	/// <param name="formatSpec">format specification</param>
+	/// <param name="parameter1">first parameter</param>
+	/// <param name="parameter2">second parameter</param>
+	/// <param name="parameter3">third parameter</param>
+	/// <returns>formatted string.</returns>
+	public string Format(string? formatSpec, object? parameter1, object? parameter2 = null, object? parameter3 = null)
+	{
+		try
+		{
+			// A null format throws ArgumentNullException, reported below like a bad format. A non-zero value keeps the
+			// decimals it needs to show (never "+0" nor "-+0").
+			var format = formatSpec is null ? null : GameNumberFormat.KeepNonZero(formatSpec, parameter1, parameter2, parameter3);
+			return string.Format(CultureInfo.CurrentCulture, format!, parameter1, parameter2, parameter3);
+		}
+		// A malformed format (often a translation) shows this one line raw instead of failing the whole item text.
+		catch (Exception ex) when (ex is ArgumentException or FormatException)
+		{
+			string parameters = string.Format(
+				CultureInfo.InvariantCulture,
+				"\", '{0}', '{1}', '{2}'>",
+				parameter1 is null ? "NULL" : parameter1,
+				parameter2 is null ? "NULL" : parameter2,
+				parameter3 is null ? "NULL" : parameter3);
+
+			string error = string.Concat("FormatErr(\"", formatSpec, parameters);
+
+			Log.LogWarning(ex, "Failed to format an item text line: {Message}", error);
+
+			return error;
+		}
+	}
+
+	/// <summary>
+	/// The game's text of <paramref name="tag"/> as a .NET format (<see cref="IItemAttributeProvider.ConvertFormat"/>), or
+	/// <see langword="null"/> when the game has no such text.
+	/// </summary>
+	private string? GameFormat(string tag)
+	{
+		if (!this.TranslationService.TryTranslateXTag(tag, out var text))
+			return null;
+
+		if (this.USettings.ItemDebugLevel > 2)
+			this.Log.LogDebug("Item.formatspec ({Tag}) = {FormatSpec}", tag, text);
+
+		return this.ItemAttributeProvider.ConvertFormat(text);
+	}
+
+	/// <summary>The game's format of <paramref name="tag"/>, else <paramref name="fallback"/> (a .NET format).</summary>
+	private string GameFormat(string tag, string fallback) => this.GameFormat(tag) ?? fallback;
+
+	/// <summary>
+	/// The index of the value shown for a variable that has one value per level or per relic shard (the skill level, the
+	/// relic's shard count): the last one beyond.
+	/// </summary>
+	private static int ShownIndex(Variable variable, int index) => Math.Max(0, Math.Min(variable.NumberOfValues - 1, index));
+
+	/// <summary>The value at <see cref="ShownIndex"/>.</summary>
+	private static object ShownValue(Variable variable, int index) => variable[ShownIndex(variable, index)];
+
+	/// <summary>The value at <see cref="ShownIndex"/> as a number; 0 for a missing variable or one without values.</summary>
+	private static float ShownSingle(Variable? variable, int index)
+		=> variable is null || variable.NumberOfValues == 0 ? 0F : variable.GetSingle(ShownIndex(variable, index));
+
+	/// <summary>
+	/// The text tag of an attribute's label, or "?attribute?" in the legendary colour when the attribute has none.
+	/// </summary>
+	private string AttributeLabelTag(ItemAttributesData data, ref TQColor? color)
+	{
+		string tag = this.ItemAttributeProvider.GetAttributeTextTag(data);
+		if (!string.IsNullOrWhiteSpace(tag))
+			return tag;
+
+		color = ItemStyle.Legendary.TQColor();
+		return string.Concat("?", data.FullAttribute, "?");
+	}
+
+	/// <summary>The game's text of a label tag, or "?tag?" in the legendary colour when the game has none.</summary>
+	private string TranslateLabel(string labelTag, ref TQColor? color)
+	{
+		if (this.TranslationService.TryTranslateXTag(labelTag, out var label))
+			return label;
+
+		color = ItemStyle.Legendary.TQColor();
+		return string.Concat("?", labelTag, "?");
+	}
+
+	/// <summary>
+	/// <see cref="ITranslationService.TryTranslateXTag"/> for a <see cref="ToFriendlyNameResult"/> property, which
+	/// cannot be an <c>out</c> argument: <paramref name="assign"/> always receives the translation, as the out value did.
+	/// </summary>
+	private bool TryTranslateXTag(string tag, Action<string> assign)
+	{
+		bool found = this.TranslationService.TryTranslateXTag(tag, out var value);
+		assign(value);
+		return found;
+	}
+
+	/// <summary>
+	/// Gets the item name and attributes.
+	/// </summary>
+	/// <param name="itm"></param>
+	/// <param name="scopes">Extra data scopes as a bitmask</param>
+	/// <param name="filterExtra">filter extra properties</param>
+	/// <returns>An object containing the item name and attributes</returns>
+	public ToFriendlyNameResult GetFriendlyNames(Item itm, FriendlyNamesExtraScopes? scopes = null, bool filterExtra = true)
+	{
+		using var modScope = this.ModScope(itm);
+		// Cached results depend on the in-game values setting: drop them when it changes.
+		if (this.USettings.ShowInGameValues != this._cachedShowInGameValues)
+		{
+			this.FriendlyNamesCache.Clear();
+			this._cachedShowInGameValues = this.USettings.ShowInGameValues;
+		}
+
+		var key = (itm, scopes, filterExtra);
+		return FriendlyNamesCache.GetOrAddAtomic(key, k =>
+		{
+			// The lines are gathered through the item's CurrentFriendlyNameResult: one computation per item at a time
+			// (the search preparation computes on other threads while the panels paint), the previous one put back after.
+			lock (k.Item)
+				return Compute(k);
+		});
+
+		ToFriendlyNameResult Compute((Item Item, FriendlyNamesExtraScopes? Scope, bool FilterExtra) k)
+		{
+			var previous = k.Item.CurrentFriendlyNameResult;
+			var res = new ToFriendlyNameResult(k.Item)
+			{
+				GrantedSkillsApart = k.Scope?.HasFlag(FriendlyNamesExtraScopes.GrantedSkills) ?? false,
+			};
+			k.Item.CurrentFriendlyNameResult = res;
+
+			#region Minimal Info (ButtonBag tooltip + Common item properties)
+
+			// Item Seed
+			res.ItemSeed = string.Format(CultureInfo.CurrentCulture, this.TranslationService.ItemSeed, k.Item.Seed, (k.Item.Seed != 0) ? (k.Item.Seed / (float)Int16.MaxValue) : 0.0f);
+			res.ItemQuest = this.TranslationService.ItemQuest;
+
+			res.ItemThrown = itm.IsThrownWeapon ? this.TranslationService.TranslateXTag("x2tagThrownWeapon") : null;
+
+			res.ItemOrigin = itm.GameDlc switch
+			{
+				GameDlc.Atlantis => this.TranslationService.ItemAtlantis,
+				GameDlc.EternalEmbers => this.TranslationService.ItemEmbers,
+				GameDlc.Ragnarok => this.TranslationService.ItemRagnarok,
+				GameDlc.ImmortalThrone => this.TranslationService.ItemIT,
+				_ => null
+			};
+
+			#region Prefix translation
+
+			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.prefixID))
+			{
+				// A record the loaded data lacks (a mod not loaded): its file name, the item is shown incomplete.
+				res.PrefixInfoDescription = k.Item.prefixID.PrettyFileName;
+				if (k.Item.prefixInfo is not null)
+				{
+					if (TranslationService.TryTranslateXTag(k.Item.prefixInfo.DescriptionTag, out var desc))
+						res.PrefixInfoDescription = desc.TQCleanup(true);
+				}
+			}
+
+			#endregion
+
+			#region Base Item translation
+
+			DBRecordCollection? baseRecord = null;
+
+			// Load common relic translations if item is relic related by any means
+			if (k.Item.IsRelicOrCharm || k.Item.HasRelicOrCharmSlot1 || k.Item.HasRelicOrCharmSlot2 || k.Item.RelicInfo is not null || k.Item.Relic2Info is not null)
+			{
+				res.ItemWith = this.TranslationService.ItemWith;
+
+				if (k.Item.RelicInfo is not null)
+					this.TryTranslateXTag(k.Item.RelicInfo.DescriptionTag, v => res.RelicInfo1Description = v);
+
+				if (k.Item.Relic2Info is not null)
+					this.TryTranslateXTag(k.Item.Relic2Info.DescriptionTag, v => res.RelicInfo2Description = v);
+
+				var labelCompleted = "Completed";
+				if (!this.TryTranslateXTag("tagAnimalPartComplete", v => res.AnimalPartComplete = v))
+					res.AnimalPartComplete = labelCompleted;
+
+				if (!this.TryTranslateXTag("tagRelicComplete", v => res.RelicComplete = v))
+					res.RelicComplete = labelCompleted;
+
+				var labelPartcomplete = "Completion Bonus: ";
+				if (!this.TryTranslateXTag("tagAnimalPartcompleteBonus", v => res.AnimalPartCompleteBonus = v))
+					res.AnimalPartCompleteBonus = labelPartcomplete;
+
+				if (!this.TryTranslateXTag("tagRelicBonus", v => res.RelicBonus = v))
+					res.RelicBonus = labelPartcomplete;
+
+				var labelRelic = "Relic";
+				if (!this.TryTranslateXTag("tagAnimalPart", v => res.AnimalPart = v))
+					res.AnimalPart = labelRelic;
+
+				if (!this.TryTranslateXTag("tagRelicShard", v => res.RelicShard = v))
+					res.RelicShard = labelRelic;
+
+				var labelRelicPattern = "{0} - {1} / {2}";
+				res.AnimalPartRatio = this.GameFormat("tagAnimalPartRatio", labelRelicPattern);
+				res.RelicRatio = this.GameFormat("tagRelicRatio", labelRelicPattern);
+			}
+
+			res.BaseItemId = k.Item.BaseItemId;
+
+			// Set Rarity translation
+			res.BaseItemRarity = TranslationService.Translate(k.Item.ItemStyle);
+
+			if (k.Item.baseItemInfo is not null)
+			{
+				// style quality description
+				if (!string.IsNullOrEmpty(k.Item.baseItemInfo.StyleTag))
+				{
+					if (!k.Item.IsPotion && !k.Item.IsRelicOrCharm && !k.Item.IsScroll && !k.Item.IsParchment && !k.Item.IsQuestItem)
+					{
+						if (!this.TryTranslateXTag(k.Item.baseItemInfo.StyleTag, v => res.BaseItemInfoStyle = v))
+							res.BaseItemInfoStyle = k.Item.baseItemInfo.StyleTag;
+					}
+				}
+
+				if (!string.IsNullOrEmpty(k.Item.baseItemInfo.QualityTag))
+				{
+					if (!this.TryTranslateXTag(k.Item.baseItemInfo.QualityTag, v => res.BaseItemInfoQuality = v))
+						res.BaseItemInfoQuality = k.Item.baseItemInfo.QualityTag;
+				}
+
+				if (!this.TryTranslateXTag(k.Item.baseItemInfo.DescriptionTag, v => res.BaseItemInfoDescription = v))
+					res.BaseItemInfoDescription = k.Item.BaseItemId.Raw;
+
+				res.BaseItemInfoClass = TranslationService.TranslateXTag(k.Item.ItemClassTagName, removeAllTQTags: true);
+
+				baseRecord = Database.GetRecordFromFile(k.Item.BaseItemId);
+
+				if (k.Item.IsRelicOrCharm)
+				{
+					// Add the number of charms in the set acquired.
+					if (k.Item.IsRelicComplete)
+					{
+						if (k.Item.IsCharmOnly)
+						{
+							res.RelicCompletionFormat = res.AnimalPartComplete;
+							res.RelicBonusTitle = res.AnimalPartCompleteBonus;
+						}
+						else
+						{
+							res.RelicCompletionFormat = res.RelicComplete;
+							res.RelicBonusTitle = res.RelicBonus;
+						}
+
+						res.RelicBonusFormat = RecordId.IsNullOrEmpty(k.Item.RelicBonusId)
+							? res.RelicBonusTitle ?? string.Empty
+							: $"{res.RelicBonusTitle} {TQColor.Yellow.ColorTag()}{k.Item.RelicBonusId.PrettyFileName}";
+					}
+					else
+					{
+						var (relicClass, relicPattern) = k.Item.IsCharmOnly ? (res.AnimalPart, res.AnimalPartRatio) : (res.RelicShard, res.RelicRatio);
+						res.RelicCompletionFormat = Format(relicPattern, relicClass, k.Item.Number, k.Item.baseItemInfo?.CompletedRelicLevel);
+						res.RelicBonusFormat = res.RelicCompletionFormat;
+					}
+
+				}
+				else if (k.Item.IsArtifact)
+				{
+					// Add Artifact completion bonus
+					if (!RecordId.IsNullOrEmpty(k.Item.RelicBonusId))
+						res.ArtifactBonus = TranslationService.TranslateXTag("xtagArtifactBonus");
+
+					// Show Artifact Class (Lesser / Greater / Divine).
+					string artifactClassification = k.Item.baseItemInfo.GetString("artifactClassification").ToUpperInvariant();
+					res.ArtifactClass = TranslateArtifactClassification(artifactClassification);
+
+				}
+				else if (k.Item.IsFormulae)
+				{
+					// Added to show recipe type for Formulae
+					if (!this.TryTranslateXTag("xtagArtifactRecipe", v => res.ArtifactRecipe = v))
+						res.ArtifactRecipe = "Recipe";
+
+					// Get Reagents format
+					string reagents = this.GameFormat("xtagArtifactReagents", "Required Reagents  ({0}/{1})");
+
+					// it looks like the formulae reagents is hard coded at 3
+					res.FormulaeFormat = Format(reagents, (object)0, 3);
+					res.FormulaeFormat = $"{TQColor.Orange.ColorTag()}{res.FormulaeFormat}";
+
+				}
+				else if (k.Item.DoesStack)
+				{
+					// display the # potions
+					if (k.Item.Number > 1)
+						res.NumberFormat = string.Format(CultureInfo.CurrentCulture, "({0:n0})", k.Item.Number);
+				}
+			}
+			else if (!k.Item.IsEmpty)
+			{
+				// A base record the loaded data lacks: its file name rather than no name at all.
+				res.BaseItemInfoDescription = k.Item.BaseItemId.PrettyFileName;
+			}
+
+			#endregion
+
+			#region Suffix translation
+
+			if (!k.Item.IsRelicOrCharm && !RecordId.IsNullOrEmpty(k.Item.suffixID))
+			{
+				if (k.Item.suffixInfo is not null)
+				{
+					res.SuffixInfoDescription =
+							this.TryTranslateXTag(k.Item.suffixInfo.DescriptionTag, v => res.SuffixInfoDescription = v)
+								? res.SuffixInfoDescription!.TQCleanup(true)
+								: k.Item.suffixID.Raw;
+				}
+				else
+					res.SuffixInfoDescription = k.Item.suffixID.PrettyFileName;
+			}
+
+			#endregion
+
+			#region flavor text
+
+			// Removed Scroll flavor text since it gets printed by the skill effect code
+			if ((k.Item.IsPotion || k.Item.IsRelicOrCharm || k.Item.IsScroll || k.Item.IsParchment || k.Item.IsQuestItem) && !string.IsNullOrWhiteSpace(k.Item.baseItemInfo?.StyleTag))
+			{
+				if (TranslationService.TryTranslateXTag(k.Item.baseItemInfo.StyleTag, out var flavor))
+				{
+					var ft = StringHelper.WrapWords(flavor, 40);
+					res.FlavorText = ft.ToArray();
+				}
+			}
+
+			#endregion
+
+			#endregion
+
+			List<string> results = [];
+			List<string?> ranges = [];
+
+			// The lines of each record with where the game lists them, merged in the game's order for the classic display.
+			List<GameAttributeSlot> prefixSlots = [];
+			List<GameAttributeSlot> suffixSlots = [];
+			List<GameAttributeSlot> baseSlots = [];
+
+			// In-game values (issue #552): jittered copies used for display only.
+			// The legacy display multiplier (attributeScalePercent) may remain from a render without in-game values.
+			if (this.USettings.ShowInGameValues)
+				k.Item.itemScalePercent = 1.00F;
+
+			var inGame = this.USettings.ShowInGameValues ? this.ItemProvider.RollInGameValues(k.Item, baseRecord) : null;
+			if (inGame is not null)
+				res.InGameRolls = inGame.Rolls.Select(FormatInGameRoll).ToArray();
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.PrefixAttributes) ?? false)
+			{
+				if (k.Item.prefixInfo is not null)
+					res.PrefixInfoRecords = Database.GetRecordFromFile(k.Item.prefixID);
+
+				if (res.PrefixInfoRecords is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, inGame?.Prefix ?? res.PrefixInfoRecords, k.FilterExtra, k.Item.prefixID, results
+						, valueRanges: inGame?.RangesOf(RollSource.Prefix), lineRanges: ranges, lineSlots: prefixSlots);
+
+				res.PrefixAttributes = results.ToArray();
+				res.PrefixAttributeRanges = inGame is null ? [] : ranges.ToArray();
+			}
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.SuffixAttributes) ?? false)
+			{
+				results.Clear();
+				ranges.Clear();
+
+				if (k.Item.suffixInfo is not null)
+					res.SuffixInfoRecords = Database.GetRecordFromFile(k.Item.suffixID);
+
+				if (res.SuffixInfoRecords is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, inGame?.Suffix ?? res.SuffixInfoRecords, k.FilterExtra, k.Item.suffixID, results
+						, valueRanges: inGame?.RangesOf(RollSource.Suffix), lineRanges: ranges, lineSlots: suffixSlots);
+
+				res.SuffixAttributes = results.ToArray();
+				res.SuffixAttributeRanges = inGame is null ? [] : ranges.ToArray();
+			}
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false)
+			{
+				results.Clear();
+				ranges.Clear();
+
+				// res.baseItemInfoRecords should be already loaded
+				if (baseRecord is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, inGame?.Base ?? baseRecord, k.FilterExtra, k.Item.BaseItemId, results
+						, valueRanges: inGame?.RangesOf(RollSource.Base), lineRanges: ranges, lineSlots: baseSlots);
+			}
+
+			res.BaseAttributes = results.ToArray();
+			res.BaseAttributeRanges = inGame is null ? [] : ranges.ToArray();
+
+			if (prefixSlots.Count == res.PrefixAttributes.Length && suffixSlots.Count == res.SuffixAttributes.Length
+				&& baseSlots.Count == res.BaseAttributes.Length)
+			{
+				static (string, GameAttributeSlot, string?)[] Lines(string[] texts, List<GameAttributeSlot> slots, string?[] lineRanges)
+					=> [.. texts.Select((text, i) => (text, slots[i], i < lineRanges.Length ? lineRanges[i] : null))];
+
+				var classic = GameAttributeOrder.MergeWithSources(GameAttributeOrder.ClassOf(k.Item)
+					, Lines(res.BaseAttributes, baseSlots, res.BaseAttributeRanges)
+					, Lines(res.PrefixAttributes, prefixSlots, res.PrefixAttributeRanges)
+					, Lines(res.SuffixAttributes, suffixSlots, res.SuffixAttributeRanges));
+				res.ClassicAttributes = [.. classic.Select(l => l.Text)];
+				res.ClassicAttributeRanges = inGame is null ? [] : [.. classic.Select(l => l.Range)];
+				res.ClassicAttributeSources = [.. classic.Select(l => l.Source switch
+				{
+					1 => StatSource.Prefix,
+					2 => StatSource.Suffix,
+					_ => StatSource.Base,
+				})];
+			}
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
+			{
+				var tmp = new List<string>();
+
+				var relicRecord = k.Item.RelicInfo is null ? null : Database.GetRecordFromFile(k.Item.relicID);
+				if (relicRecord is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, relicRecord, k.FilterExtra, k.Item.relicID, tmp);
+
+				res.Relic1Attributes = tmp.ToArray();
+			}
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false)
+			{
+				var tmp = new List<string>();
+
+				var relic2Record = k.Item.Relic2Info is null ? null : Database.GetRecordFromFile(k.Item.relic2ID);
+				if (relic2Record is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, relic2Record, k.FilterExtra, k.Item.relic2ID, tmp);
+
+				res.Relic2Attributes = tmp.ToArray();
+			}
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.ItemSet) ?? false)
+				res.ItemSet = this.GetItemSetTranslations(k.Item);
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Requirements) ?? false)
+			{
+				var reqs = this.GetRequirements(k.Item);
+				res.Requirements = reqs.Requirements;
+				res.RequirementVariables = reqs.RequirementVariables;
+				res.RequirementInfo = this.ItemProvider.GetRequirementInfo(k.Item, reqs.RequirementVariables);
+			}
+
+			#region Extra Attributes for specific types
+
+			// Shows Artifact stats for the formula
+			if (k.Item.IsFormulae && k.Item.baseItemInfo is not null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.BaseAttributes) ?? false))
+			{
+				string artifactName = k.Item.baseItemInfo.GetString("artifactName");
+
+				if (!string.IsNullOrWhiteSpace(artifactName))
+				{
+					List<string> tmp = [];
+
+					var artifactRecord = Database.GetRecordFromFile(artifactName);
+
+					// Display the name of the Artifact
+					if (!this.TryTranslateXTag(artifactRecord?.GetString("description", 0) ?? string.Empty, v => res.FormulaeArtifactName = v))
+						res.FormulaeArtifactName = "?Unknown Artifact Name?";
+
+					// Class
+					string artifactClassification = (artifactRecord?.GetString("artifactClassification", 0) ?? string.Empty).ToUpperInvariant();
+					res.FormulaeArtifactClass = TranslateArtifactClassification(artifactClassification);
+
+					// Attributes
+					GetAttributesFromRecord(k.Item, artifactRecord, true, artifactName, tmp);
+					res.FormulaeArtifactAttributes = tmp.ToArray();
+				}
+			}
+
+			// Show the completion bonus.
+			if (k.Item.RelicBonusInfo is not null
+				&& (k.Scope?.HasFlag(FriendlyNamesExtraScopes.RelicAttributes) ?? false)
+				&& (k.Item.IsArtifact // Artifact completion bonus
+					|| k.Item.IsRelicOrCharm // Relic completion bonus
+					|| k.Item.HasRelicOrCharmSlot1
+				)
+			)
+			{
+				var tmp = new List<string>();
+
+				var bonusRecord = Database.GetRecordFromFile(k.Item.RelicBonusId);
+				if (bonusRecord is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, bonusRecord, k.FilterExtra, k.Item.RelicBonusId, tmp);
+
+				res.RelicBonus1Attributes = tmp.ToArray();
+			}
+
+			// Show the Relic2 completion bonus.
+			if (k.Item.HasRelicOrCharmSlot2 && k.Item.RelicBonus2Info is not null && (k.Scope?.HasFlag(FriendlyNamesExtraScopes.Relic2Attributes) ?? false))
+			{
+				var tmp = new List<string>();
+				var bonus2Record = Database.GetRecordFromFile(k.Item.RelicBonus2Id);
+				if (bonus2Record is { Count: > 0 })
+					GetAttributesFromRecord(k.Item, bonus2Record, k.FilterExtra, k.Item.RelicBonus2Id, tmp);
+
+				res.RelicBonus2Attributes = tmp.ToArray();
+			}
+
+			#endregion
+
+			if (k.Scope?.HasFlag(FriendlyNamesExtraScopes.GrantedSkills) ?? false)
+				res.GrantedSkills = this.GetGrantedSkills(k.Item);
+
+			k.Item.CurrentFriendlyNameResult = previous;
+			return res;
+		}
+
+		#region Local Helper
+
+		string TranslateArtifactClassification(string artifactClassificationKey)
+		{
+			string? tag = string.Empty;
+			string resartifactClass = string.Empty;
+			if (artifactClassificationKey is null)
+				tag = null;
+			else if (artifactClassificationKey == "LESSER")
+				tag = "xtagArtifactClass01";
+			else if (artifactClassificationKey == "GREATER")
+				tag = "xtagArtifactClass02";
+			else if (artifactClassificationKey == "DIVINE")
+				tag = "xtagArtifactClass03";
+			else
+				tag = null;
+
+			if (tag is not null)
+				resartifactClass = TranslationService.TranslateXTag(tag);
+			else
+				resartifactClass = "Unknown Artifact Class";
+
+			return string.IsNullOrWhiteSpace(resartifactClass) ? "Unknown Artifact Class" : resartifactClass;
+		}
+
+		#endregion
+	}
+}
+

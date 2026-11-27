@@ -5,7 +5,7 @@
 /// </summary>
 public class RequirementInfo
 {
-	public Item Item;
+	public Item? Item;
 	public int? Lvl;
 	public int? Str;
 	public int? Dex;

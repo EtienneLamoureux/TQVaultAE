@@ -7,7 +7,7 @@ namespace TQVaultAE.Domain.Entities;
 
 using System;
 using System.Globalization;
-using System.Text;
+using TQVaultAE.GameFiles;
 
 
 /// <summary>
@@ -76,7 +76,11 @@ public class Variable
 	public object this[int index]
 	{
 		get => this.values[index];
-		set => this.values[index] = value;
+		set
+		{
+			this.values[index] = value;
+			this._toString = null;
+		}
 	}
 
 	/// <summary>
@@ -101,7 +105,7 @@ public class Variable
 	/// <returns>
 	/// string of value.
 	/// </returns>
-	public string GetString(int index = 0) => Convert.ToString(this.values[index], CultureInfo.InvariantCulture);
+	public string GetString(int index = 0) => Convert.ToString(this.values[index], CultureInfo.InvariantCulture) ?? string.Empty;
 
 	/// <summary>
 	/// Indicates whether any of the values in the variable are not zero.
@@ -133,32 +137,46 @@ public class Variable
 	/// </summary>
 	/// <returns>Returns converted string for the values including the variable name.</returns>
 	public override string ToString()
+		=> _toString ??= DbrText.Line(this.Name, this.DataType == VariableDataType.Float ? [.. this.values.Select(DbrText.FloatValue)] : this.values);
+
+	/// <summary>A value as the <c>.dbr</c> text writes it (<see cref="DbrText"/>): floats with 6 decimals, invariant culture.</summary>
+	private string ValueText(object? value)
+		=> this.DataType == VariableDataType.Float ? DbrText.FloatValue(value) : DbrText.Value(value);
+
+	/// <summary>Characters a value formatted by <see cref="ToString"/> can hold, NaN and infinity aside.</summary>
+	private static readonly System.Buffers.SearchValues<char> NumberChars = System.Buffers.SearchValues.Create("0123456789.-");
+
+	/// <summary>
+	/// Whether <see cref="ToString"/> contains <paramref name="text"/>, ignoring case, without building that string:
+	/// the name and each value are checked on their own, and numbers are formatted only when the text could appear in
+	/// one. A text holding a separator (',' or ';') may span two parts: it is looked up in <see cref="ToString"/>.
+	/// </summary>
+	/// <remarks>Searching every record of the database built the text of every variable: half the search time.</remarks>
+	public bool TextContains(string text)
 	{
-		if (_toString is not null)
-			return _toString;
+		if (_toString is not null || text.AsSpan().IndexOfAny(',', ';') >= 0)
+			return this.ToString().Contains(text, StringComparison.OrdinalIgnoreCase);
 
-		// First set our val format string based on the data type
-		string formatSpec = "{0}";
-		if (this.DataType == VariableDataType.Float)
-			formatSpec = "{0:f6}";
+		if (this.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
+			return true;
 
-		StringBuilder ans = new(64);
-		ans.Append(this.Name);
-		ans.Append(",");
-
+		bool numberLike = text.AsSpan().IndexOfAnyExcept(NumberChars) < 0;
 		for (int i = 0; i < this.NumberOfValues; ++i)
 		{
-			if (i > 0)
-				ans.Append(";");
-
-			ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
+			var value = this.values[i];
+			if (value is string s)
+			{
+				if (s.Contains(text, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			else if (numberLike || value is float f && !float.IsFinite(f))
+			{
+				if (this.ValueText(value).Contains(text, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
 		}
 
-		ans.Append(",");
-
-		_toString = ans.ToString();
-
-		return _toString;
+		return false;
 	}
 
 	/// <summary>
@@ -202,22 +220,5 @@ public class Variable
 	/// Format is name,val1;val2;val3;val4;...;valn,
 	/// </summary>
 	/// <returns>Returns converted string for the values.</returns>
-	public string ToStringValue()
-	{
-		// First set our val format string based on the data type
-		string formatSpec = "{0}";
-		if (this.DataType == VariableDataType.Float)
-			formatSpec = "{0:f6}";
-
-		StringBuilder ans = new StringBuilder(64);
-		for (int i = 0; i < this.NumberOfValues; ++i)
-		{
-			if (i > 0)
-				ans.Append(", ");
-
-			ans.AppendFormat(CultureInfo.InvariantCulture, formatSpec, this.values[i]);
-		}
-
-		return ans.ToString();
-	}
+	public string ToStringValue() => string.Join(", ", this.values.Select(this.ValueText));
 }

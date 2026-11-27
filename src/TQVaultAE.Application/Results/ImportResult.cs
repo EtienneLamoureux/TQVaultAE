@@ -3,20 +3,55 @@ using TQVaultAE.Domain.Entities;
 
 namespace TQVaultAE.Application.Results;
 
+/// <summary>Why an import failed; the GUI shows it in the user's language.</summary>
+public enum ImportError
+{
+	None,
+	/// <summary>No export format, or a version this version does not read.</summary>
+	UnsupportedFormat,
+	MissingScope,
+	/// <summary>A scope this version does not know (<see cref="ImportResult.ErrorDetail"/>).</summary>
+	UnsupportedScope,
+	MissingData,
+	/// <summary>Not JSON (<see cref="ImportResult.ErrorDetail"/>: the parser's message).</summary>
+	InvalidJson,
+	/// <summary>The data of the scope could not be read.</summary>
+	UnreadableData,
+	NothingToImport,
+	/// <summary>The paste could not be fetched (<see cref="ImportResult.ErrorDetail"/>: the error's message).</summary>
+	PasteBinFailed,
+}
+
 public class ImportResult
 {
 	public bool Success { get; set; }
 	public ExportScope Scope { get; set; }
-	public Item Item { get; set; }
-	public IReadOnlyList<Item> Items { get; set; }
+	public Item? Item { get; set; }
+	public IReadOnlyList<Item> Items { get; set; } = [];
 	public int SackNumber { get; set; }
-	public string VaultName { get; set; }
-	public Dictionary<int, List<Item>> SackItems { get; set; }
+	public string VaultName { get; set; } = string.Empty;
+
+	/// <summary>The mod the imported vault is linked to; null for none or when not a vault.</summary>
+	public string? VaultMod { get; set; }
+	/// <summary>Items of each tab, for a vault import only.</summary>
+	public Dictionary<int, List<Item>>? SackItems { get; set; }
 	public int ImportedCount { get; set; }
 	public int TotalCount { get; set; }
-	public string ErrorMessage { get; set; }
-	public BagButtonIconInfo TabIconInfo { get; set; }
-	public Dictionary<int, BagButtonIconInfo> SackIconInfo { get; set; }
+	public ImportError Error { get; set; }
+
+	/// <summary>What the error names: the scope, the parser's or the download's message; untranslated.</summary>
+	public string? ErrorDetail { get; set; }
+	public BagButtonIconInfo? TabIconInfo { get; set; }
+
+	/// <summary>The mods the export names that are not installed here: their links were dropped.</summary>
+	public IReadOnlyList<string> DroppedMods { get; set; } = [];
+	public Dictionary<int, BagButtonIconInfo>? SackIconInfo { get; set; }
+
+	/// <summary>True when a tab import gives its icon to the tab it is imported into.</summary>
+	public bool SetsTabIcon => this.Scope == ExportScope.Tab && this.TabIconInfo is not null;
+
+	/// <summary>True when a vault import gives an icon to the bag <paramref name="bag"/> (0-based).</summary>
+	public bool SetsBagIcon(int bag) => this.SackIconInfo?.ContainsKey(bag) == true;
 
 	public static ImportResult Succeeded(Item item)
 		=> new()
@@ -28,7 +63,7 @@ public class ImportResult
 			TotalCount = 1
 		};
 
-	public static ImportResult SucceededTab(IReadOnlyList<Item> items, int sackNumber, BagButtonIconInfo iconInfo = null)
+	public static ImportResult SucceededTab(IReadOnlyList<Item> items, int sackNumber, BagButtonIconInfo? iconInfo = null)
 		=> new()
 		{
 			Success = true,
@@ -40,7 +75,8 @@ public class ImportResult
 			TotalCount = items.Count
 		};
 
-	public static ImportResult SucceededVault(string vaultName, Dictionary<int, List<Item>> sackItems, Dictionary<int, BagButtonIconInfo> sackIconInfo = null)
+	public static ImportResult SucceededVault(string vaultName, Dictionary<int, List<Item>> sackItems, Dictionary<int, BagButtonIconInfo>? sackIconInfo = null
+		, string? vaultMod = null)
 	{
 		var total = 0;
 		foreach (var kv in sackItems)
@@ -51,6 +87,7 @@ public class ImportResult
 			Success = true,
 			Scope = ExportScope.Vault,
 			VaultName = vaultName,
+			VaultMod = vaultMod,
 			SackItems = sackItems,
 			SackIconInfo = sackIconInfo,
 			ImportedCount = total,
@@ -68,10 +105,11 @@ public class ImportResult
 			TotalCount = items.Count
 		};
 
-	public static ImportResult Failed(string errorMessage)
+	public static ImportResult Failed(ImportError error, string? detail = null)
 		=> new()
 		{
 			Success = false,
-			ErrorMessage = errorMessage
+			Error = error,
+			ErrorDetail = detail,
 		};
 }

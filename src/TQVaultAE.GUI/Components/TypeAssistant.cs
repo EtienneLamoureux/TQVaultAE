@@ -1,11 +1,14 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace TQVaultAE.GUI.Components;
 
+/// <summary>
+/// Raises <see cref="Idled"/> once typing has paused for <see cref="WaitingMilliSeconds"/>, on a thread pool thread.
+/// </summary>
 // Inspired from https://stackoverflow.com/questions/33776387/dont-raise-textchanged-while-continuous-typing
 public class TypeAssistant : Component
 {
-	System.Threading.Timer waitingTimer;
+	private readonly System.Threading.Timer waitingTimer;
 
 	public event EventHandler Idled = delegate { };
 
@@ -14,12 +17,23 @@ public class TypeAssistant : Component
 
 	public TypeAssistant()
 	{
-		waitingTimer = new System.Threading.Timer(p =>
+		this.waitingTimer = new System.Threading.Timer(p =>
 		{
-			Idled(this, EventArgs.Empty);
+			this.Idled(this, EventArgs.Empty);
 		});
 	}
 
+	/// <summary>A type assistant disposed with <paramref name="container"/> (the form's designer components).</summary>
+	public TypeAssistant(IContainer container) : this()
+		=> container.Add(this);
+
 	public void TextChanged()
-		=> waitingTimer.Change(WaitingMilliSeconds, System.Threading.Timeout.Infinite);
+		=> this.waitingTimer.Change(this.WaitingMilliSeconds, System.Threading.Timeout.Infinite);
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+			this.waitingTimer.Dispose();
+		base.Dispose(disposing);
+	}
 }

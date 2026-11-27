@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Stash.cs" company="None">
+// <copyright file="StashProvider.cs" company="None">
 //     Copyright (c) Brandon Wallace and Jesse Calhoun. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -7,6 +7,9 @@
 using TQVaultAE.Application.Contracts.Providers;
 using TQVaultAE.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
+using System.Buffers.Binary;
+using System.Drawing;
+using TQVaultAE.Domain.Actions;
 using System.Globalization;
 using TQVaultAE.Domain.Entities;
 
@@ -15,7 +18,7 @@ namespace TQVaultAE.Data;
 /// <summary>
 /// Class for handling the stash file
 /// </summary>
-public class StashProvider : IStashProvider
+public class StashProvider(ILogger<StashProvider> log, ISackCollectionProvider sackCollectionProvider, ITQDataService tQData, IFileIO fileIO, IPathIO pathIO) : IStashProvider
 {
 	
 	/// <summary>
@@ -27,7 +30,7 @@ public class StashProvider : IStashProvider
 	/// CRC32 hash table.  Used for calculating the file CRC
 	/// </summary>
 	public uint[] crc32Table =
-	{
+	[
 		0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
 		0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
 		0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
@@ -71,22 +74,13 @@ public class StashProvider : IStashProvider
 		0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693,
 		0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
 		0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
-	};
+	];
 		
-	private readonly ILogger Log;
-	private readonly ISackCollectionProvider SackCollectionProvider;
-	private readonly ITQDataService TQData;
-	private readonly IFileIO FileIO;
-	private readonly IPathIO PathIO;
-
-	public StashProvider(ILogger<StashProvider> log, ISackCollectionProvider sackCollectionProvider, ITQDataService tQData, IFileIO fileIO, IPathIO pathIO)
-	{
-		this.Log = log;
-		this.SackCollectionProvider = sackCollectionProvider;
-		this.TQData = tQData;
-		this.FileIO = fileIO;
-		this.PathIO = pathIO;
-	}
+	private readonly ILogger Log = log;
+	private readonly ISackCollectionProvider SackCollectionProvider = sackCollectionProvider;
+	private readonly ITQDataService TQData = tQData;
+	private readonly IFileIO FileIO = fileIO;
+	private readonly IPathIO PathIO = pathIO;
 
 	/// <summary>
 	/// Saves the stash file
@@ -98,10 +92,7 @@ public class StashProvider : IStashProvider
 
 		data = CalculateCRC(data);
 
-		using (FileStream outStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-		{
-			outStream.Write(data, 0, data.Length);
-		}
+		this.FileIO.WriteAllBytes(fileName, data);
 
 		// Save the corresponding dxg file
 		data = EncodeBackupFile(data);
@@ -110,65 +101,40 @@ public class StashProvider : IStashProvider
 		data = CalculateCRC(data);
 
 		string dxgFilename = this.PathIO.ChangeExtension(fileName, ".dxg");
-		using (FileStream dxgOutStream = new FileStream(dxgFilename, FileMode.Create, FileAccess.Write))
-		{
-			dxgOutStream.Write(data, 0, data.Length);
-		}
+		this.FileIO.WriteAllBytes(dxgFilename, data);
 	}
 
 	/// <summary>
 	/// Converts the live data back into the raw binary data format
 	/// </summary>
 	/// <returns>byte array holding the raw data</returns>
-	public byte[] Encode(Stash sta)
+	public byte[] Encode(Stash sta) => SaveBytes.Encode(writer =>
 	{
-		int dataLength;
-		byte[] data;
+		// Write zero into the checksum value
+		writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
 
-		// Encode the item data into a memory stream
-		using (MemoryStream writeStream = new MemoryStream(2048))
-		{
-			using (BinaryWriter writer = new BinaryWriter(writeStream))
-			{
-				// Write zero into the checksum value
-				writer.Write(Convert.ToInt32(0, CultureInfo.InvariantCulture));
+		TQData.WriteKeyInt(writer, "begin_block", sta.beginBlockCrap);
 
-				TQData.WriteCString(writer, "begin_block");
-				writer.Write(sta.beginBlockCrap);
+		TQData.WriteKeyInt(writer, "stashVersion", sta.stashVersion);
 
-				TQData.WriteCString(writer, "stashVersion");
-				writer.Write(sta.stashVersion);
+		TQData.WriteCString(writer, "fName");
 
-				TQData.WriteCString(writer, "fName");
+		// Changed to raw data to support extended characters
+		writer.Write(sta.name.Length);
+		writer.Write(sta.name);
 
-				// Changed to raw data to support extended characters
-				writer.Write(sta.name.Length);
-				writer.Write(sta.name);
+		// SackType should already be set at sta point
+		ArgumentNullException.ThrowIfNull(sta.Sack);
 
-				TQData.WriteCString(writer, "sackWidth");
-				writer.Write(sta.Width);
+		// The file's own size, grown only to hold an item put beyond it (a grid shown larger with a mod's caravan size):
+		// looking at a shared stash with a mod does not change the size the base game reads.
+		var size = SackLayout.Covering(new Size(sta.Width, sta.Height), [sta.Sack]);
+		TQData.WriteKeyInt(writer, "sackWidth", size.Width);
 
-				TQData.WriteCString(writer, "sackHeight");
-				writer.Write(sta.Height);
+		TQData.WriteKeyInt(writer, "sackHeight", size.Height);
 
-				// SackType should already be set at sta point
-				SackCollectionProvider.Encode(sta.Sack, writer);
-				dataLength = (int)writeStream.Length;
-			}
-
-			// now just return the buffer we wrote to.
-			data = writeStream.GetBuffer();
-		}
-
-		// The problem is that data[] may be bigger than the amount of data in it.
-		// We need to resize the array
-		if (dataLength == data.Length)
-			return data;
-
-		byte[] realData = new byte[dataLength];
-		Array.Copy(data, realData, dataLength);
-		return realData;
-	}
+		SackCollectionProvider.Encode(sta.Sack, writer);
+	});
 
 	/// <summary>
 	/// Loads a stash file
@@ -179,14 +145,8 @@ public class StashProvider : IStashProvider
 		if (!this.FileIO.Exists(sta.StashFile))
 			return false;
 
-		using (FileStream file = new FileStream(sta.StashFile, FileMode.Open, FileAccess.Read))
-		{
-			using (BinaryReader reader = new BinaryReader(file))
-			{
-				// Just suck the entire file into memory
-				sta.rawData = reader.ReadBytes((int)file.Length);
-			}
-		}
+		// Just suck the entire file into memory
+		sta.rawData = this.FileIO.ReadAllBytes(sta.StashFile);
 
 		try
 		{
@@ -195,7 +155,7 @@ public class StashProvider : IStashProvider
 		}
 		catch (ArgumentException ex)
 		{
-			Log.LogError(ex, "ParseRawData fail !");
+			Log.LogError(ex, "Failed to parse the stash {StashFile}", sta.StashFile);
 			throw;
 		}
 
@@ -213,7 +173,7 @@ public class StashProvider : IStashProvider
 		var dataSpan = data.AsSpan();
 		// Find the length of the filename string.
 		// It's an Int32 starting at offset 52 in the file.
-		int offset = dataSpan[52] + (256 * dataSpan[53]) + (65536 * dataSpan[54]) + (16777216 * dataSpan[55]);
+		int offset = BinaryPrimitives.ReadInt32LittleEndian(dataSpan.Slice(52));
 
 		// Adjust for the location of the filename string - 1
 		// which is at offset 56.  Subtract 1 to get the last letter of the filename.
@@ -288,11 +248,9 @@ public class StashProvider : IStashProvider
 		reader.BaseStream.Seek(fileOffset, SeekOrigin.Begin);
 		reader.ReadInt32();
 
-		TQData.ValidateNextString("begin_block", reader);
-		sta.beginBlockCrap = reader.ReadInt32();
+		sta.beginBlockCrap = TQData.ReadKeyInt(reader, "begin_block");
 
-		TQData.ValidateNextString("stashVersion", reader);
-		sta.stashVersion = reader.ReadInt32();
+		sta.stashVersion = TQData.ReadKeyInt(reader, "stashVersion");
 
 		TQData.ValidateNextString("fName", reader);
 
@@ -300,11 +258,9 @@ public class StashProvider : IStashProvider
 		int stringLength = reader.ReadInt32();
 		sta.name = reader.ReadBytes(stringLength);
 
-		TQData.ValidateNextString("sackWidth", reader);
-		sta.Width = reader.ReadInt32();
+		sta.Width = TQData.ReadKeyInt(reader, "sackWidth");
 
-		TQData.ValidateNextString("sackHeight", reader);
-		sta.Height = reader.ReadInt32();
+		sta.Height = TQData.ReadKeyInt(reader, "sackHeight");
 
 		sta.numberOfSacks = 1;
 		sta.Sack = new SackCollection();

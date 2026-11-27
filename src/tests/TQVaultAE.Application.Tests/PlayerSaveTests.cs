@@ -1,0 +1,205 @@
+using AwesomeAssertions;
+using Moq;
+using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Application.Session;
+using TQVaultAE.Tests.Shared;
+
+namespace TQVaultAE.Tests.Application;
+
+/// <summary>
+/// Tests for PlayerSave - only meaningful tests that verify business logic
+/// </summary>
+public class PlayerSaveTests
+{
+	private readonly Mock<ITranslationService> _translationServiceMock;
+	private readonly Mock<IPathIO> _pathIOMock;
+
+	public PlayerSaveTests()
+	{
+		_translationServiceMock = new Mock<ITranslationService>();
+		_pathIOMock = new Mock<IPathIO>();
+	}
+
+	[Fact]
+	public void Constructor_StripsLeadingUnderscoreFromName()
+	{
+		// Arrange
+		var folder = "/path/_Character";
+		_pathIOMock.Setup(p => p.GetFileName(folder)).Returns("_Character");
+
+		// Act
+		var playerSave = new PlayerSave(folder, false, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+
+		// Assert - Name uses Substring(1) to strip underscore
+		playerSave.Name.Should().Be("Character");
+	}
+
+	[Fact]
+	public void Constructor_RetainsLeadingUnderscoreInCustomMapName()
+	{
+		// Arrange - CustomMapName does NOT strip underscore, unlike Name
+		var folder = "/path/_Player";
+		var customMap = "/maps/_MapName";
+		_pathIOMock.Setup(p => p.GetFileName(folder)).Returns("_Player");
+		_pathIOMock.Setup(p => p.GetFileName(customMap)).Returns("_MapName");
+
+		// Act
+		var playerSave = new PlayerSave(folder, false, false, true, customMap, _translationServiceMock.Object, _pathIOMock.Object);
+
+		// Assert - CustomMapName keeps the underscore
+		playerSave.CustomMapName.Should().Be("_MapName");
+	}
+
+	[Fact]
+	public void ToString_WithNullInfo_ReturnsNameOnly()
+	{
+		// Arrange
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_TestPlayer");
+		_translationServiceMock.Setup(t => t.TranslateXTag(It.IsAny<string>(), true, true)).Returns("TranslatedClass");
+
+		var playerSave = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+
+		// Act
+		var result = playerSave.ToString();
+
+		// Assert
+		result.Should().Contain("TestPlayer");
+	}
+
+	[Fact]
+	public void ToString_ClassClearedByAChangeOfMasteries_TheClassTheMasteriesMake()
+	{
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
+		_translationServiceMock.Setup(t => t.TranslateXTag("x4tagNeidanWarfare", true, true)).Returns("Daoist");
+		_translationServiceMock.Setup(t => t.TranslateXTag("tagMenuImport05", false, false, false)).Returns("Level");
+		var info = new PlayerInfo() { Class = string.Empty, CurrentLevel = 84, MasteryTrees = TestMasteries.BaseGame };
+		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Skills\Warfare\WarfareMastery.dbr""", skillLevel = 40 });
+		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Xpack4\Skills\Neidan\NeidanMastery.dbr""", skillLevel = 40 });
+
+		var playerSave = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object) { Info = info };
+
+		playerSave.ToString().Should().StartWith("Hero, Daoist - ");
+	}
+
+	[Fact]
+	public void ToString_ModMasteriesWithAClearedClass_TheClassItsDescriptionFound()
+	{
+		// A mod's masteries, no tree known: the character's own map gave the class (ClassLabel).
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Hero");
+		_translationServiceMock.Setup(t => t.TranslateXTag("tagMenuImport05", false, false, false)).Returns("Level");
+		var info = new PlayerInfo() { Class = string.Empty, CurrentLevel = 84 };
+		info.SkillRecordList.Add(new TQVaultAE.Domain.Entities.SkillRecord { skillName = """Records\Skills\ModMasteries\HealerMastery.dbr""", skillLevel = 32 });
+
+		var playerSave = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object) { Info = info };
+		playerSave.ToString().Should().StartWith("Hero Level", "no class known yet");
+
+		playerSave.ClassLabel = ("tagCClass36", "Mod Class");
+		playerSave.ToString().Should().StartWith("Hero, Mod Class - Level");
+	}
+
+	[Fact]
+	public void ToString_IsImmortalThroneOmitsTQMarker()
+	{
+		// Arrange
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("_Test");
+		_translationServiceMock.Setup(t => t.TranslateXTag(It.IsAny<string>(), true, true)).Returns("");
+
+		var immortalThrone = new PlayerSave("/folder", true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+		var titanQuest = new PlayerSave("/folder", false, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+
+		// Act
+		var itResult = immortalThrone.ToString();
+		var tqResult = titanQuest.ToString();
+
+		// Assert - IsImmortalThrone omits "(TQ)" marker
+		itResult.Should().NotContain("(TQ)");
+		tqResult.Should().Contain("(TQ)");
+	}
+
+	[Fact]
+	public void Dispose_WithNullWatcher_DoesNotThrow()
+	{
+		// Arrange - PlayerSaveWatcher is null
+		_pathIOMock.Setup(p => p.GetFileName(It.IsAny<string>())).Returns("test");
+		var playerSave = new PlayerSave("/folder", false, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+
+		// Act & Assert - Should handle null watcher gracefully
+		var act = () => playerSave.Dispose();
+		act.Should().NotThrow();
+	}
+
+	private PlayerSave Save(string folder)
+	{
+		_pathIOMock.Setup(p => p.GetFileName(folder)).Returns("_Hero");
+		return new PlayerSave(folder, true, false, false, "", _translationServiceMock.Object, _pathIOMock.Object);
+	}
+
+	private static FileSystemWatcher Watcher(string folder) => new(folder) { EnableRaisingEvents = true };
+
+	[Fact]
+	public void Dispose_DisposesBothWatchers()
+	{
+		// Arrange
+		var folder = Path.GetTempPath();
+		var save = Save(folder);
+		var player = Watcher(folder);
+		var stash = Watcher(folder);
+		save.PlayerSaveWatcher = player;
+		save.PlayerStashWatcher = stash;
+
+		// Act
+		save.Dispose();
+
+		// Assert: a disposed watcher refuses to start again
+		((Action)(() => player.EnableRaisingEvents = true)).Should().Throw<ObjectDisposedException>();
+		((Action)(() => stash.EnableRaisingEvents = true)).Should().Throw<ObjectDisposedException>("the stash watcher leaked before");
+	}
+
+	[Fact]
+	public void SettingAnotherWatcher_DisposesTheOldOne()
+	{
+		var folder = Path.GetTempPath();
+		var save = Save(folder);
+		var old = Watcher(folder);
+		save.PlayerStashWatcher = old;
+
+		save.PlayerStashWatcher = Watcher(folder);
+
+		((Action)(() => old.EnableRaisingEvents = true)).Should().Throw<ObjectDisposedException>();
+		save.Dispose();
+	}
+
+	[Fact]
+	public void PauseWatching_StopsTheEventsUntilDisposed_AndMovedToFollowsTheFolder()
+	{
+		// Arrange
+		var folder = Path.GetTempPath();
+		var moved = Directory.CreateTempSubdirectory("LotServices").FullName;
+		var save = Save(folder);
+		save.PlayerSaveWatcher = Watcher(folder);
+		save.PlayerStashWatcher = new FileSystemWatcher(folder);
+
+		try
+		{
+			// Act
+			using (save.PauseWatching())
+			{
+				save.PlayerSaveWatcher.EnableRaisingEvents.Should().BeFalse();
+				save.MovedTo(moved, isArchived: true);
+			}
+
+			// Assert: only the watcher that ran runs again, both watch the new folder
+			save.PlayerSaveWatcher.EnableRaisingEvents.Should().BeTrue();
+			save.PlayerStashWatcher.EnableRaisingEvents.Should().BeFalse();
+			save.PlayerSaveWatcher.Path.Should().Be(moved);
+			save.PlayerStashWatcher.Path.Should().Be(moved);
+			save.Folder.Should().Be(moved);
+			save.IsArchived.Should().BeTrue();
+		}
+		finally
+		{
+			save.Dispose();
+			Directory.Delete(moved);
+		}
+	}
+}

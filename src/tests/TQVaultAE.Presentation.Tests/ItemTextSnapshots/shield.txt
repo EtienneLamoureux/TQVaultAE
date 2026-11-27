@@ -1,0 +1,122 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Shield of Testing
+FullName: Shield of Testing
+FullNameBagTooltipClean: Shield of Testing
+FullNameBagTooltip: Shield of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\WeaponArmor_Shield.dbr
+BaseItemRarity: [Rare]
+BaseItemInfoClass: tagItemWarShield
+BaseItemInfoDescription: Shield of Testing
+ItemSeed: Seed 77 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 18
+RequirementVariables (1)
+  | LevelRequirement = 18
+RequirementInfo: Lvl=18 Str= Dex= Int=
+BaseAttributes (3)
+  | {^B}+60 Armor
+  | {^W}25.0% Chance of 150 Damage Blocked
+  | {^W}1 {^P}?ShieldBlockRecoveryTime?
+ClassicAttributes (3)
+  | {^B}+60 Armor
+  | {^W}25.0% Chance of 150 Damage Blocked
+  | {^W}1 {^P}?ShieldBlockRecoveryTime?
+ClassicAttributeRanges (0)
+ClassicAttributeSources (3)
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (3)
+  | +60 Armor
+  | 25.0% Chance of 150 Damage Blocked
+  | 1 ?ShieldBlockRecoveryTime?
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Shield of Testing
+FullName: Shield of Testing
+FullNameBagTooltipClean: Shield of Testing
+FullNameBagTooltip: Shield of Testing
+PrefixAttributes (0)
+SuffixAttributes (0)
+BaseItemId: records\test\WeaponArmor_Shield.dbr
+BaseItemRarity: [Rare]
+BaseItemInfoClass: tagItemWarShield
+BaseItemInfoDescription: Shield of Testing
+ItemSeed: Seed 77 (0.00)
+ItemQuest: Quest Item
+FlavorText (0)
+Requirements (1)
+  | Required Player Level: 18
+RequirementVariables (1)
+  | LevelRequirement = 18
+RequirementInfo: Lvl=18 Str= Dex= Int=
+BaseAttributes (7)
+  | {^B}+60 Armor
+  | {^W}25.0% Chance of 150 Damage Blocked
+  | {^W}1 {^P}?ShieldBlockRecoveryTime?
+  | {^P}?Class?: WeaponArmor_Shield
+  | {^P}?itemNameTag?: tagShield
+  | {^P}?itemClassification?: Rare
+  | {^P}?levelRequirement?: 18
+ClassicAttributes (8)
+  | {^B}+60 Armor
+  | {^W}25.0% Chance of 150 Damage Blocked
+  | {^W}1 {^P}?ShieldBlockRecoveryTime?
+  | 
+  | {^P}?Class?: WeaponArmor_Shield
+  | {^P}?itemNameTag?: tagShield
+  | {^P}?itemClassification?: Rare
+  | {^P}?levelRequirement?: 18
+ClassicAttributeRanges (0)
+ClassicAttributeSources (8)
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+Relic1Attributes (0)
+Relic2Attributes (0)
+RelicBonus1Attributes (0)
+RelicBonus2Attributes (0)
+FormulaeArtifactAttributes (0)
+AttributesAll (7)
+  | +60 Armor
+  | 25.0% Chance of 150 Damage Blocked
+  | 1 ?ShieldBlockRecoveryTime?
+  | ?Class?: WeaponArmor_Shield
+  | ?itemNameTag?: tagShield
+  | ?itemClassification?: Rare
+  | ?levelRequirement?: 18
+== Search
+FullText (6)
+  | Shield of Testing
+  | Seed 77 (0.00)
+  | +60 Armor
+  | 25.0% Chance of 150 Damage Blocked
+  | 1 ?ShieldBlockRecoveryTime?
+  | Required Player Level: 18
+AttributesAll (3)
+  | +60 Armor
+  | 25.0% Chance of 150 Damage Blocked
+  | 1 ?ShieldBlockRecoveryTime?
+HasGrantedSkill: False
+GrantedSkillNames (0)

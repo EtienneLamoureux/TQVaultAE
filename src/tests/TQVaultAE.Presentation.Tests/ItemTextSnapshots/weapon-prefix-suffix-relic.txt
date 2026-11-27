@@ -1,0 +1,296 @@
+== GetFriendlyNames(ItemFullDisplay | GrantedSkills)
+FullNameClean: Burning Fine Sword of Testing Bronze of Life
+FullName: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltipClean: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltip: Burning Fine Sword of Testing Bronze of Life
+PrefixInfoDescription: Burning
+PrefixAttributes (2)
+  | {^B}+15% Fire Damage
+  | {^B}5 ~ 9 Fire Damage
+PrefixInfoRecords: records\test\prefix_fire.dbr
+SuffixInfoDescription: of Life
+SuffixAttributes (3)
+  | {^B}12% Poison Resistance
+  | {^B}+40 Health
+  | {^B}+1.5 Health Regenerated per second
+SuffixInfoRecords: records\test\suffix_life.dbr
+BaseItemId: records\test\sword.dbr
+BaseItemRarity: [Rare]
+BaseItemInfoClass: tagItemWarBlade
+BaseItemInfoStyle: Bronze
+BaseItemInfoQuality: Fine
+BaseItemInfoDescription: Sword of Testing
+ItemSeed: Seed 1234 (0.04)
+ItemQuest: Quest Item
+ItemWith: with
+FlavorText (0)
+Requirements (4)
+  | Required Player Level: 20
+  | Required Strength: 58
+  | Required Dexterity: 30
+  | Required Intelligence: 30
+RequirementVariables (4)
+  | Dexterity = 30
+  | Intelligence = 30
+  | LevelRequirement = 20
+  | Strength = 58
+RequirementInfo: Lvl=20 Str=58 Dex=30 Int=30
+BaseAttributes (3)
+  | {^W}12 ~ 20 Physical Damage
+  | {^W}Fast Attack Speed
+  | {^B}3 ~ 6 Cold Damage
+ClassicAttributes (9)
+  | {^W}12 ~ 20 Physical Damage
+  | {^W}Fast Attack Speed
+  | 
+  | {^B}+15% Fire Damage
+  | {^B}5 ~ 9 Fire Damage
+  | {^B}3 ~ 6 Cold Damage
+  | {^B}12% Poison Resistance
+  | {^B}+40 Health
+  | {^B}+1.5 Health Regenerated per second
+ClassicAttributeRanges (0)
+ClassicAttributeSources (9)
+  | Base
+  | Base
+  | Base
+  | Prefix
+  | Prefix
+  | Base
+  | Suffix
+  | Suffix
+  | Suffix
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+AnimalPartComplete: Completed Charm
+AnimalPartCompleteBonus: Completion Bonus:
+AnimalPart: Charm
+AnimalPartRatio: {0} - {1} / {2}
+RelicComplete: Completed Relic
+RelicBonus: Completion Bonus:
+RelicShard: Relic
+RelicRatio: {0} - {1} / {2}
+RelicInfo1Description: Ember
+Relic1Attributes (2)
+  | {^B}+10% Fire Damage
+  | {^B}+8 Strength
+Relic2Attributes (0)
+RelicBonus1Attributes (1)
+  | {^B}+12 Dexterity
+RelicBonus2Attributes (0)
+RelicInfo1CompletionResolved: Completed Relic
+RelicInfo1CompletionBonusResolved: Completion Bonus:
+FormulaeArtifactAttributes (0)
+AttributesAll (11)
+  | 12 ~ 20 Physical Damage
+  | Fast Attack Speed
+  | 3 ~ 6 Cold Damage
+  | +15% Fire Damage
+  | 5 ~ 9 Fire Damage
+  | 12% Poison Resistance
+  | +40 Health
+  | +1.5 Health Regenerated per second
+  | +10% Fire Damage
+  | +8 Strength
+  | +12 Dexterity
+== GetFriendlyNames(ItemFullDisplay, filterExtra: false)
+FullNameClean: Burning Fine Sword of Testing Bronze of Life
+FullName: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltipClean: Burning Fine Sword of Testing Bronze of Life
+FullNameBagTooltip: Burning Fine Sword of Testing Bronze of Life
+PrefixInfoDescription: Burning
+PrefixAttributes (5)
+  | {^B}+15% Fire Damage
+  | {^B}5 ~ 9 Fire Damage
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagPrefixFire
+  | {^P}?itemClassification?: Magical
+PrefixInfoRecords: records\test\prefix_fire.dbr
+SuffixInfoDescription: of Life
+SuffixAttributes (6)
+  | {^B}12% Poison Resistance
+  | {^B}+40 Health
+  | {^B}+1.5 Health Regenerated per second
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagSuffixLife
+  | {^P}?itemClassification?: Rare
+SuffixInfoRecords: records\test\suffix_life.dbr
+BaseItemId: records\test\sword.dbr
+BaseItemRarity: [Rare]
+BaseItemInfoClass: tagItemWarBlade
+BaseItemInfoStyle: Bronze
+BaseItemInfoQuality: Fine
+BaseItemInfoDescription: Sword of Testing
+ItemSeed: Seed 1234 (0.04)
+ItemQuest: Quest Item
+ItemWith: with
+FlavorText (0)
+Requirements (4)
+  | Required Player Level: 20
+  | Required Strength: 58
+  | Required Dexterity: 30
+  | Required Intelligence: 30
+RequirementVariables (4)
+  | Dexterity = 30
+  | Intelligence = 30
+  | LevelRequirement = 20
+  | Strength = 58
+RequirementInfo: Lvl=20 Str=58 Dex=30 Int=30
+BaseAttributes (11)
+  | {^W}12 ~ 20 Physical Damage
+  | {^W}Fast Attack Speed
+  | {^B}3 ~ 6 Cold Damage
+  | {^P}?Class?: WeaponMelee_Sword
+  | {^P}?itemNameTag?: tagSword
+  | {^P}?itemQualityTag?: tagQualityFine
+  | {^P}?itemStyleTag?: tagStyleBronze
+  | {^P}?itemClassification?: Common
+  | {^P}?itemLevel?: 20
+  | {^P}?itemCostName?: records\test\itemcost.dbr
+  | {^P}?intelligenceRequirement?: 30
+ClassicAttributes (23)
+  | {^W}12 ~ 20 Physical Damage
+  | {^W}Fast Attack Speed
+  | 
+  | {^B}+15% Fire Damage
+  | {^B}5 ~ 9 Fire Damage
+  | {^B}3 ~ 6 Cold Damage
+  | {^B}12% Poison Resistance
+  | {^B}+40 Health
+  | {^B}+1.5 Health Regenerated per second
+  | {^P}?Class?: WeaponMelee_Sword
+  | {^P}?itemNameTag?: tagSword
+  | {^P}?itemQualityTag?: tagQualityFine
+  | {^P}?itemStyleTag?: tagStyleBronze
+  | {^P}?itemClassification?: Common
+  | {^P}?itemLevel?: 20
+  | {^P}?itemCostName?: records\test\itemcost.dbr
+  | {^P}?intelligenceRequirement?: 30
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagPrefixFire
+  | {^P}?itemClassification?: Magical
+  | {^P}?Class?: LootRandomizer
+  | {^P}?lootRandomizerName?: tagSuffixLife
+  | {^P}?itemClassification?: Rare
+ClassicAttributeRanges (0)
+ClassicAttributeSources (23)
+  | Base
+  | Base
+  | Base
+  | Prefix
+  | Prefix
+  | Base
+  | Suffix
+  | Suffix
+  | Suffix
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Base
+  | Prefix
+  | Prefix
+  | Prefix
+  | Suffix
+  | Suffix
+  | Suffix
+InGameRolls (0)
+PrefixAttributeRanges (0)
+SuffixAttributeRanges (0)
+BaseAttributeRanges (0)
+AnimalPartComplete: Completed Charm
+AnimalPartCompleteBonus: Completion Bonus:
+AnimalPart: Charm
+AnimalPartRatio: {0} - {1} / {2}
+RelicComplete: Completed Relic
+RelicBonus: Completion Bonus:
+RelicShard: Relic
+RelicRatio: {0} - {1} / {2}
+RelicInfo1Description: Ember
+Relic1Attributes (6)
+  | {^B}+10% Fire Damage
+  | {^B}+8 Strength
+  | {^P}?Class?: ItemRelic
+  | {^P}?description?: tagRelicEmber
+  | {^P}?itemText?: tagRelicEmberText
+  | {^P}?completedRelicLevel?: 3
+Relic2Attributes (0)
+RelicBonus1Attributes (2)
+  | {^B}+12 Dexterity
+  | {^P}?Class?: LootRandomizer
+RelicBonus2Attributes (0)
+RelicInfo1CompletionResolved: Completed Relic
+RelicInfo1CompletionBonusResolved: Completion Bonus:
+FormulaeArtifactAttributes (0)
+AttributesAll (30)
+  | 12 ~ 20 Physical Damage
+  | Fast Attack Speed
+  | 3 ~ 6 Cold Damage
+  | ?Class?: WeaponMelee_Sword
+  | ?itemNameTag?: tagSword
+  | ?itemQualityTag?: tagQualityFine
+  | ?itemStyleTag?: tagStyleBronze
+  | ?itemClassification?: Common
+  | ?itemLevel?: 20
+  | ?itemCostName?: records\test\itemcost.dbr
+  | ?intelligenceRequirement?: 30
+  | +15% Fire Damage
+  | 5 ~ 9 Fire Damage
+  | ?Class?: LootRandomizer
+  | ?lootRandomizerName?: tagPrefixFire
+  | ?itemClassification?: Magical
+  | 12% Poison Resistance
+  | +40 Health
+  | +1.5 Health Regenerated per second
+  | ?Class?: LootRandomizer
+  | ?lootRandomizerName?: tagSuffixLife
+  | ?itemClassification?: Rare
+  | +10% Fire Damage
+  | +8 Strength
+  | ?Class?: ItemRelic
+  | ?description?: tagRelicEmber
+  | ?itemText?: tagRelicEmberText
+  | ?completedRelicLevel?: 3
+  | +12 Dexterity
+  | ?Class?: LootRandomizer
+== Search
+FullText (20)
+  | Burning Fine Sword of Testing Bronze of Life
+  | Seed 1234 (0.04)
+  | Ember
+  | Completed Relic
+  | Completion Bonus:
+  | 12 ~ 20 Physical Damage
+  | Fast Attack Speed
+  | 3 ~ 6 Cold Damage
+  | +15% Fire Damage
+  | 5 ~ 9 Fire Damage
+  | 12% Poison Resistance
+  | +40 Health
+  | +1.5 Health Regenerated per second
+  | +10% Fire Damage
+  | +8 Strength
+  | +12 Dexterity
+  | Required Player Level: 20
+  | Required Strength: 58
+  | Required Dexterity: 30
+  | Required Intelligence: 30
+AttributesAll (11)
+  | 12 ~ 20 Physical Damage
+  | Fast Attack Speed
+  | 3 ~ 6 Cold Damage
+  | +15% Fire Damage
+  | 5 ~ 9 Fire Damage
+  | 12% Poison Resistance
+  | +40 Health
+  | +1.5 Health Regenerated per second
+  | +10% Fire Damage
+  | +8 Strength
+  | +12 Dexterity
+HasGrantedSkill: False
+GrantedSkillNames (0)

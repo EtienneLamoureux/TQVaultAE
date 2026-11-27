@@ -8,48 +8,72 @@ using TQVaultAE.Domain.Helpers;
 
 namespace TQVaultAE.Data;
 
-public class LootTableCollectionProvider : ILootTableCollectionProvider
+public class LootTableCollectionProvider(ILogger<LootTableCollectionProvider> log, IDatabase database, ITranslationService translationService, UserSettings uSettings) : ILootTableCollectionProvider, IGameDataCache
 {
 	private const StringComparison noCase = StringComparison.OrdinalIgnoreCase;
 
-	private readonly ILogger<LootTableCollectionProvider> Log;
-	private readonly IDatabase Database;
-	private readonly ITranslationService TranslationService;
-	private readonly UserSettings USettings;
+	private readonly ILogger<LootTableCollectionProvider> Log = log;
+	private readonly IDatabase Database = database;
+	private readonly ITranslationService TranslationService = translationService;
+	private readonly UserSettings USettings = uSettings;
 
-	private Dictionary<RecordId, LootTableCollection> LootTableCache = new();
+	/// <summary>The tables read so far, per data scope: a mod may override a table of the base game.</summary>
+	private Dictionary<string, Dictionary<RecordId, LootTableCollection>> _lootTableCaches = new(StringComparer.OrdinalIgnoreCase);
+	private Dictionary<string, ReadOnlyDictionary<RecordId, LootTableCollection>> _allLootRandomizerTables = new(StringComparer.OrdinalIgnoreCase);
 
-	ReadOnlyDictionary<RecordId, LootTableCollection> _AllLootRandomizerTable;
+	/// <summary>The tables read so far for the data the calling thread reads now.</summary>
+	private Dictionary<RecordId, LootTableCollection> LootTableCache
+	{
+		get
+		{
+			var scope = this.Database.DataScope ?? string.Empty;
+			if (!this._lootTableCaches.TryGetValue(scope, out var cache))
+				this._lootTableCaches[scope] = cache = [];
+			return cache;
+		}
+	}
+
+	/// <inheritdoc/>
+	public void ClearGameDataCache()
+	{
+		this._lootTableCaches = new(StringComparer.OrdinalIgnoreCase);
+		this._allLootRandomizerTables = new(StringComparer.OrdinalIgnoreCase);
+		this._allLootRandomizerTranslated = new(StringComparer.OrdinalIgnoreCase);
+	}
+
 	public ReadOnlyDictionary<RecordId, LootTableCollection> AllLootRandomizerTable
 	{
 		get
 		{
-			if (_AllLootRandomizerTable is null)
+			var scope = this.Database.DataScope ?? string.Empty;
+			if (!this._allLootRandomizerTables.TryGetValue(scope, out var all))
 			{
 				foreach (var tableId in Database.AllLootRandomizerTable.Keys)
 					LoadTable(tableId);
 
-				_AllLootRandomizerTable = new ReadOnlyDictionary<RecordId, LootTableCollection>(LootTableCache);
+				this._allLootRandomizerTables[scope] = all = new ReadOnlyDictionary<RecordId, LootTableCollection>(LootTableCache);
 			}
 
-			return _AllLootRandomizerTable;
+			return all;
 		}
 	}
 
-	private ReadOnlyDictionary<RecordId, LootRandomizerItem> _AllLootRandomizerTranslated;
+	/// <summary>The translated affix records, per data scope: a mod adds affixes and may override those of the base game.</summary>
+	private Dictionary<string, ReadOnlyDictionary<RecordId, LootRandomizerItem>> _allLootRandomizerTranslated = new(StringComparer.OrdinalIgnoreCase);
+
 	/// <summary>
-	/// Return all loot randomizer (Affix effect infos)
+	/// Return all loot randomizer (Affix effect infos) of the data the calling thread reads now.
 	/// </summary>
-	/// <returns></returns>
 	public ReadOnlyDictionary<RecordId, LootRandomizerItem> AllLootRandomizerTranslated
 	{
 		get
 		{
-			if (_AllLootRandomizerTranslated is null)
+			var scope = this.Database.DataScope ?? string.Empty;
+			if (!this._allLootRandomizerTranslated.TryGetValue(scope, out var translated))
 			{
 				var dico = Database.AllLootRandomizer.Select(r =>
 				{
-					string translation = null;
+					string? translation = null;
 
 					if (r.Value.TranslationTagIsEmpty)
 					{
@@ -70,19 +94,11 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 					};
 				}).ToDictionary(v => v.Id);
 
-				_AllLootRandomizerTranslated = new ReadOnlyDictionary<RecordId, LootRandomizerItem>(dico);
+				this._allLootRandomizerTranslated[scope] = translated = new ReadOnlyDictionary<RecordId, LootRandomizerItem>(dico);
 			}
 
-			return _AllLootRandomizerTranslated;
+			return translated;
 		}
-	}
-
-	public LootTableCollectionProvider(ILogger<LootTableCollectionProvider> log, IDatabase database, ITranslationService translationService, UserSettings uSettings)
-	{
-		this.Log = log;
-		this.Database = database;
-		this.TranslationService = translationService;
-		USettings = uSettings;
 	}
 
 	private Dictionary<RecordId, (float Weight, LootRandomizerItem LootRandomizer)> MakeTable(RecordId tableId, DBRecordCollection records)
@@ -91,59 +107,24 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 
 		#region Build Table
 
-		Dictionary<string, (RecordId AffixId, float Weight)> dico = new();
-		string number, randomizerName = "randomizerName", randomizerWeight = "randomizerWeight", affixId;
-		foreach (var variable in records)
-		{
-
-			switch (variable.Name)
-			{
-				case var name when name.StartsWith(randomizerName, noCase):
-					number = name.Substring(randomizerName.Length);
-					affixId = variable.GetString(0);
-					if (!string.IsNullOrWhiteSpace(affixId))
-					{
-						var recid = affixId.ToRecordId();
-						if (dico.TryGetValue(number, out var val))
-						{
-							val.AffixId = recid;
-							dico[number] = val;
-						}
-						else dico.Add(number, (recid, 0F));
-					}
-					break;
-				case var name when name.StartsWith(randomizerWeight, noCase):
-					number = name.Substring(randomizerWeight.Length);
-
-					// Make sure the value is an integer or float
-					float value = -1.0F;
-
-					if (variable.DataType == VariableDataType.Integer)
-						value = (float)variable.GetInt32(0);
-					else if (variable.DataType == VariableDataType.Float)
-						value = variable.GetSingle(0);
-
-					if (dico.TryGetValue(number, out var valBis))
-					{
-						valBis.Weight = value;
-						dico[number] = valBis;
-					}
-					else dico.Add(number, (RecordId.Empty, value));
-
-					break;
-			}
-		}
+		const string randomizerName = "randomizerName", randomizerWeight = "randomizerWeight";
+		var entries = records.GroupNumberedVariables(
+			variable => !variable.Name.StartsWith(randomizerName, noCase) || !string.IsNullOrWhiteSpace(variable.GetString(0))
+			, randomizerName, randomizerWeight);
 
 		// Iterate the query to build the new unweighted table.
-		foreach (var kvp in dico.Where(k => !(k.Value.Weight <= 0 || k.Value.AffixId.IsEmpty)))
+		foreach (var entry in entries.Values)
 		{
-			var affix = kvp.Value.AffixId;
+			var affix = entry[0] is { } name ? name.GetString(0).ToRecordId() : RecordId.Empty;
+			float weight = entry[1] is { } weightVariable ? WeightOf(weightVariable) : 0F;
+			if (weight <= 0 || affix.IsEmpty)
+				continue;
 
 			// Check for a double entry in the table.
 			if (Data.TryGetValue(affix, out var val))// DISTINCT
 			{
 				// for a double entry just add the chance.
-				val.Weight += kvp.Value.Weight;
+				val.Weight += weight;
 				Data[affix] = val;
 				continue;
 			}
@@ -158,7 +139,7 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 				lootrandom = LootRandomizerItem.Default(affix) with { Unknown = true };
 			}
 
-			Data.Add(affix, (kvp.Value.Weight, lootrandom));
+			Data.Add(affix, (weight, lootrandom));
 		}
 
 		#endregion
@@ -166,10 +147,18 @@ public class LootTableCollectionProvider : ILootTableCollectionProvider
 		return Data;
 	}
 
+	/// <summary>The weight of a table entry: its integer or float value, -1 for any other type.</summary>
+	private static float WeightOf(Variable variable) => variable.DataType switch
+	{
+		VariableDataType.Integer => variable.GetInt32(0),
+		VariableDataType.Float => variable.GetSingle(0),
+		_ => -1.0F,
+	};
+
 	/// <summary>
 	/// Builds the table from the database using the passed table Id.
 	/// </summary>
-	public LootTableCollection LoadTable(RecordId tableId)
+	public LootTableCollection? LoadTable(RecordId tableId)
 	{
 		if (RecordId.IsNullOrEmpty(tableId))
 			return null;

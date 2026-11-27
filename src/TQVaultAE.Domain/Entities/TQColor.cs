@@ -102,7 +102,7 @@ public static partial class TQColorHelper
 	/// <summary>
 	/// Regex Match color tag 4 chars & 2 chars
 	/// </summary>
-	public const string RegExTQTag = @"(?<ColorTag>\{\^(?<ColorId>\w)}|\^(?<ColorId>\w))";
+	public const string RegExTQTag = TQVaultAE.GameFiles.TextTags.ColorTagPattern;
 	[GeneratedRegex(RegExTQTag)]
 	public static partial Regex RegExTQTagInstance();
 	/// <summary>
@@ -156,18 +156,19 @@ public static partial class TQColorHelper
 		return map.Any() ? map.First() : 'W';
 	}
 
-	static Regex GetColorFromTaggedStringRegEx = new Regex(RegExStartingColorTagOrEmpty + ".*", RegexOptions.Compiled);
+	[GeneratedRegex(RegExStartingColorTagOrEmpty + ".*")]
+	private static partial Regex GetColorFromTaggedStringRegEx();
 	/// <summary>
 	/// Return the TQColor corresponding to color tag prefix
 	/// </summary>
 	/// <param name="text"></param>
 	/// <returns>null if no color prefix</returns>
-	public static TQColor? GetColorFromTaggedString(this string text)
+	public static TQColor? GetColorFromTaggedString(this string? text)
 	{
 		if (string.IsNullOrWhiteSpace(text)) return null;
 		TQColor? res = null;
-		string ColorId = GetColorFromTaggedStringRegEx.Replace(text, @"${ColorId}").ToUpperInvariant();
-		if (ColorId.Any())
+		string ColorId = GetColorFromTaggedStringRegEx().Replace(text, @"${ColorId}").ToUpperInvariant();
+		if (ColorId.Length != 0)
 			res = GetColorFromTagIdentifier(ColorId.First());
 		return res;
 	}
@@ -191,6 +192,63 @@ public static partial class TQColorHelper
 	{
 		if (string.IsNullOrWhiteSpace(TQText)) return TQText ?? string.Empty;
 		return RegExStartingColorTagOrEmptyInstance().Replace(TQText, string.Empty);
+	}
+
+	/// <summary>
+	/// Splits the leading color tag from <paramref name="TQText"/>.
+	/// </summary>
+	/// <param name="TQText">Text that may start with a color tag.</param>
+	/// <returns>The color of the leading tag (null when there is none) and the text without it.</returns>
+	public static (TQColor? Color, string Text) SplitLeadingColorTag(this string TQText)
+		=> (TQText.GetColorFromTaggedString(), TQText.RemoveLeadingColorTag());
+
+	/// <summary>
+	/// Splits <paramref name="TQText"/> on its color tags ('{'), each segment keeping the 4 chars color tag it starts with.
+	/// </summary>
+	/// <remarks>
+	/// Empty segments are dropped. A segment that does not start with a color tag (text before the first tag,
+	/// or after a lone '{') is returned without its '{'.
+	/// </remarks>
+	/// <param name="TQText">Text with color tags in the middle, like "{^Y}Name {^W}(level 3)".</param>
+	/// <returns>The segments, in order.</returns>
+	public static string[] SplitColorSegments(this string TQText)
+		=> TQText
+			.Split('{')
+			.Where(t => !string.IsNullOrEmpty(t))
+			.Select(t => t[0] == '^' ? '{' + t : t)
+			.ToArray();
+
+	[GeneratedRegex("""\{\^(?<a>[A-Za-z])\}""")]
+	private static partial Regex ColorTagRegex();
+
+	[GeneratedRegex("""\{\^(?<a>[A-Za-z])\}|\^(?<b>[A-Za-z])""")]
+	private static partial Regex ColorTagOrBareTagRegex();
+
+	/// <summary>
+	/// Splits a game text at its colour tags (<c>{^y}</c>, <c>{^w}</c>...), each part with the code of the tag before
+	/// it. Empty parts are left out; other tags stay in the text.
+	/// </summary>
+	/// <param name="text">The game text.</param>
+	/// <param name="bareTags">True to also split at the short tags (<c>^y</c>) the game's skill texts use.</param>
+	/// <returns>The parts in order; one part without code when the text has no tag.</returns>
+	public static IReadOnlyList<ColorRun> SplitColorRuns(this string text, bool bareTags = false)
+	{
+		var runs = new List<ColorRun>();
+		char? code = null;
+		int start = 0;
+		foreach (Match tag in (bareTags ? ColorTagOrBareTagRegex() : ColorTagRegex()).Matches(text))
+		{
+			if (tag.Index > start)
+				runs.Add(new ColorRun(text[start..tag.Index], code));
+
+			code = char.ToUpperInvariant((tag.Groups["a"].Success ? tag.Groups["a"] : tag.Groups["b"]).Value[0]);
+			start = tag.Index + tag.Length;
+		}
+
+		if (start < text.Length)
+			runs.Add(new ColorRun(text[start..], code));
+
+		return runs;
 	}
 
 

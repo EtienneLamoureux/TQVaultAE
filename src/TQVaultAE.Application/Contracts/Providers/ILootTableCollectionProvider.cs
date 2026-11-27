@@ -19,5 +19,5 @@ public interface ILootTableCollectionProvider
 	/// <summary>
 	/// Builds the table from the database using the passed table Id.
 	/// </summary>
-	LootTableCollection LoadTable(RecordId tableId);
+	LootTableCollection? LoadTable(RecordId tableId);
 }

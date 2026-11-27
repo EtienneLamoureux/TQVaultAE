@@ -7,13 +7,13 @@ This document provides comprehensive steps for integrating GitHub Actions to bui
 | Workflow | Trigger | Configurations | Retention | Purpose |
 |-----------|----------|---------------|-----------|---------|
 | `auto-version.yml` | `master` push, `version-info.json` changed | Permanent (GitHub Releases) | Production release |
-| `build-and-test.yml` | `master` push, `src/**`, `Directory.Build.props`, or `Directory.Packages.props` changed | 3 days (artifacts) | Code verification |
-| `build-and-test.yml` | Pull request to `master`, `src/**`, `Directory.Build.props`, or `Directory.Packages.props` changed | 3 days (artifacts) | PR verification |
+| `build-and-test.yml` | `master` push, `src/**` changed | 3 days (artifacts) | Code verification |
+| `build-and-test.yml` | Pull request to `master`, `src/**` changed | 3 days (artifacts) | PR verification |
 
 ### Key Principles
 - **Two separate workflows**: One for releases, one for code verification
 - **Version triggers releases**: Editing `version-info.json` triggers `auto-version.yml` which creates a release
-- **Code changes trigger verification**: Changes to `src/**`, `Directory.Build.props`, or `Directory.Packages.props` trigger `build-and-test.yml` for PRs and merges
+- **Code changes trigger verification**: Changes to `src/**` trigger `build-and-test.yml` for PRs and merges (manual runs too, `workflow_dispatch`)
 - **Release builds only**: Debug builds for local development
 - **No infinite loops**: Version sync commit uses `[skip ci]` to prevent re-triggering
 
@@ -65,7 +65,8 @@ The workflow requires a Personal Access Token to push commits and create tags on
 |---------|-----------------|-------------|------|
 | TQVaultAE.GUI | .NET 10.0 Windows | WinExe | src/TQVaultAE.GUI/TQVaultAE.GUI.csproj |
 | ARZExplorer | .NET 10.0 Windows | WinExe | src/ARZExplorer/ArzExplorer.csproj |
-| TQ.SaveFilesExplorer | .NET Framework 4.8 | WinExe | src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj |
+| TQ.SaveFilesExplorer | .NET 10.0 Windows | WinExe | src/TQSaveFilesExplorer/TQ.SaveFilesExplorer.csproj |
+| tqdb (TQVaultAE.DbCli) | .NET 10.0 | Exe | src/TQVaultAE.DbCli/TQVaultAE.DbCli.csproj |
 
 ### Libraries
 
@@ -77,14 +78,24 @@ The workflow requires a Personal Access Token to push commits and create tags on
 | TQVaultAE.Presentation | .NET 10.0 | src/TQVaultAE.Presentation/TQVaultAE.Presentation.csproj |
 | TQVaultAE.Data | .NET 10.0 | src/TQVaultAE.Data/TQVaultAE.Data.csproj |
 | TQVaultAE.Config | .NET 10.0 | src/TQVaultAE.Config/TQVaultAE.Config.csproj |
-| TQVaultAE.Logs | .NET 10.0 | src/TQVaultAE.Logs/TQVaultAE.Logs.csproj |
 | TQVaultAE.Services.Win32 | .NET 10.0 Windows | src/TQVaultAE.Services.Win32/TQVaultAE.Services.Win32.csproj |
+| TQVaultAE.GameFiles | .NET 10.0 | src/TQVaultAE.GameFiles/TQVaultAE.GameFiles.csproj |
+| TQVaultAE.Presentation.Win32 | .NET 10.0 Windows | src/TQVaultAE.Presentation.Win32/TQVaultAE.Presentation.Win32.csproj |
+| TQVaultAE.Automation | .NET 10.0 Windows | src/TQVaultAE.Automation/TQVaultAE.Automation.csproj |
 
 ### Test Projects
 
 | Project | Path |
 |---------|------|
-| TQVaultAE.Tests | src/TQVaultAE.Tests/TQVaultAE.Tests.csproj |
+| TQVaultAE.Domain.Tests | src/tests/TQVaultAE.Domain.Tests/TQVaultAE.Domain.Tests.csproj |
+| TQVaultAE.Application.Tests | src/tests/TQVaultAE.Application.Tests/TQVaultAE.Application.Tests.csproj |
+| TQVaultAE.Config.Tests | src/tests/TQVaultAE.Config.Tests/TQVaultAE.Config.Tests.csproj |
+| TQVaultAE.Data.Tests | src/tests/TQVaultAE.Data.Tests/TQVaultAE.Data.Tests.csproj |
+| TQVaultAE.Services.Tests | src/tests/TQVaultAE.Services.Tests/TQVaultAE.Services.Tests.csproj |
+| TQVaultAE.Services.Git.Tests | src/tests/TQVaultAE.Services.Git.Tests/TQVaultAE.Services.Git.Tests.csproj |
+| TQVaultAE.Presentation.Tests | src/tests/TQVaultAE.Presentation.Tests/TQVaultAE.Presentation.Tests.csproj |
+| TQVaultAE.DbCli.Tests | src/tests/TQVaultAE.DbCli.Tests/TQVaultAE.DbCli.Tests.csproj |
+| TQVaultAE.Tests.Win32 | src/tests/TQVaultAE.Tests.Win32/TQVaultAE.Tests.Win32.csproj |
 
 ## Why This Build Strategy?
 
@@ -121,10 +132,10 @@ Directory.Packages.props       # Centralized NuGet package versions (CPM)
 
 **Workflow Strategy:**
 - **auto-version.yml**: Triggers when `version-info.json` is pushed to `master`. Syncs version to `Directory.Build.props`, builds, creates tags, and publishes releases with ZIP archives.
-- **build-and-test.yml**: Triggers on `master` pushes (with `src/**`, `Directory.Build.props`, or `Directory.Packages.props` changes) and PRs to `master`. Builds and tests for verification with 3-day artifact retention.
+- **build-and-test.yml**: Triggers on `master` pushes and PRs to `master` with `src/**` changes, and by hand (`workflow_dispatch`). Builds and tests for verification with 3-day artifact retention.
 
 **Important**: Both workflows use a single solution file:
-- `TQVaultAE.slnx` - Modern .NET 10.0 SDK-style projects (all projects including .NET Framework 4.8 via TQ.SaveFilesExplorer)
+- `TQVaultAE.slnx` - Modern .NET 10.0 SDK-style projects (all projects)
 
 The Magick.NET-Q8-AnyCPU NuGet package includes all required native ImageMagick binaries, so no separate installation is needed.
 
@@ -182,21 +193,26 @@ dotnet build TQVaultAE.slnx --configuration Release --no-restore
 
 #### Test Options
 
+The tests run on Microsoft.Testing.Platform (xunit v3, selected in `global.json`), so `dotnet test` takes `--solution` or `--project`, and the filters and reports are xunit options.
+
 ```yaml
 # Run all tests (Release configuration for production CI/CD)
-dotnet test TQVaultAE.slnx --configuration Release
+dotnet test --solution TQVaultAE.slnx --configuration Release
 
 # Run specific test class
-dotnet test TQVaultAE.slnx --filter "FullyQualifiedName~GameFileServiceTests"
+dotnet test --solution TQVaultAE.slnx --filter-class "*GameFileServiceTests"
 
 # Run specific test
-dotnet test TQVaultAE.slnx --filter "FullyQualifiedName~GameFileServiceTests.GetGamePath_ReturnsExpected"
+dotnet test --solution TQVaultAE.slnx --filter-method "*GameFileServiceTests.BackupFile_WithExistingFile_ReturnsBackupPath"
 
-# Run tests with coverage
-dotnet test TQVaultAE.slnx --configuration Release --collect:"XPlat Code Coverage;Format=opencover"
+# Run tests with coverage (coverlet.MTP), written to TestResults/
+dotnet test --solution TQVaultAE.slnx --configuration Release --coverlet --coverlet-output-format opencover
+
+# Write a TRX report per test project, in TestResults/
+dotnet test --solution TQVaultAE.slnx --configuration Release --report-xunit-trx
 
 # Note: Use Debug configuration locally for debugging with full symbols
-dotnet test TQVaultAE.slnx --configuration Debug
+dotnet test --solution TQVaultAE.slnx --configuration Debug
 ```
 
 ## Advanced Workflow Features
@@ -452,7 +468,7 @@ git push origin --delete $(git tag -l)
 ## Workflow Summary
 
 ```
-feature/* → PR → main
+feature/* → PR → master
    ↓         ↓     ↓
   Verify   Verify  Release
  (3 days) (3 days) (permanent)

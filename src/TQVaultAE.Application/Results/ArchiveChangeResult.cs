@@ -1,0 +1,17 @@
+using TQVaultAE.Application.Session;
+
+namespace TQVaultAE.Application.Results;
+
+/// <summary>
+/// Outcome of archiving or unarchiving several characters.
+/// </summary>
+/// <param name="Changed">The saves moved to the requested state.</param>
+/// <param name="Failed">The saves that should have moved but did not.</param>
+/// <param name="FirstError">Why the first of <paramref name="Failed"/> did not move.</param>
+public sealed record ArchiveChangeResult(IReadOnlyList<PlayerSave> Changed, IReadOnlyList<PlayerSave> Failed, Exception? FirstError = null)
+{
+	/// <summary>
+	/// True when at least one save moved, so the character list must be refreshed.
+	/// </summary>
+	public bool AnyChanged => this.Changed.Count != 0;
+}

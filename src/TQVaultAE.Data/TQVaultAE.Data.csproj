@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<InternalsVisibleTo>TQVaultAE.Tests</InternalsVisibleTo>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Description>Data layer</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -12,16 +11,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="TQVaultAE.Data.Tests" />
+		<InternalsVisibleTo Include="TQVaultAE.Services.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Enums.NET" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\TQVaultAE.Application\TQVaultAE.Application.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
 		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
-		<ProjectReference Include="..\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
 	</ItemGroup>
 
 </Project>

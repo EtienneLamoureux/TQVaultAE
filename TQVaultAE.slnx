@@ -3,18 +3,22 @@
   <!-- Folders -->
   <Folder Name="/Solution Items/" Id="solution-items">
     <File Path=".gitignore" />
+    <File Path=".mcp.json" />
     <File Path="AGENTS.md" />
     <File Path="CHANGELOG.md" />
     <File Path="CONTRIBUTING.md" />
     <File Path="documentation/ADVANCEDSEARCH.md" />
     <File Path="documentation/AFFIXES.md" />
     <File Path="documentation/ARZEXPLORER.md" />
+    <File Path="documentation/AUTOMATION.md" />
+    <File Path="documentation/DBCLI.md" />
     <File Path="documentation/CHARMANAGE.md" />
     <File Path="documentation/FORGE.md" />
     <File Path="documentation/IMPORT_EXPORT.md" />
     <File Path="documentation/SAVEFILEEXPLORER.md" />
     <File Path="documentation/SHORTCUTS.md" />
     <File Path="documentation/TQORIGINAL.md" />
+    <File Path="documentation/tq-file-formats.md" />
     <File Path="documentation/TQVault common issues.md" />
     <File Path="documentation/TroubleshootingAndFAQ.md" />
     <File Path="GITHUB_ACTIONS_BUILD_TEST.md" />
@@ -31,14 +35,29 @@
   </Folder>
   <Project Path="src\ARZExplorer\ArzExplorer.csproj" />
   <Project Path="src\TQSaveFilesExplorer\TQ.SaveFilesExplorer.csproj" />
+  <Project Path="src\TQVaultAE.DbCli\TQVaultAE.DbCli.csproj" />
+  <Project Path="src\TQVaultAE.GameFiles\TQVaultAE.GameFiles.csproj" />
   <Project Path="src\TQVaultAE.Application\TQVaultAE.Application.csproj" />
+  <Project Path="src\TQVaultAE.Automation\TQVaultAE.Automation.csproj" />
   <Project Path="src\TQVaultAE.Config\TQVaultAE.Config.csproj" />
   <Project Path="src\TQVaultAE.Data\TQVaultAE.Data.csproj" />
   <Project Path="src\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
   <Project Path="src\TQVaultAE.GUI\TQVaultAE.GUI.csproj" />
-  <Project Path="src\TQVaultAE.Logs\TQVaultAE.Logs.csproj" />
   <Project Path="src\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+  <Project Path="src\TQVaultAE.Presentation.Win32\TQVaultAE.Presentation.Win32.csproj" />
   <Project Path="src\TQVaultAE.Services.Win32\TQVaultAE.Services.Win32.csproj" />
   <Project Path="src\TQVaultAE.Services\TQVaultAE.Services.csproj" />
-  <Project Path="src\TQVaultAE.Tests\TQVaultAE.Tests.csproj" />
+  <Folder Name="/tests/" Id="tests-folder">
+    <File Path="src\tests\TestProject.props" />
+    <File Path="src\tests\testconfig.json" />
+    <Project Path="src\tests\TQVaultAE.Domain.Tests\TQVaultAE.Domain.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Application.Tests\TQVaultAE.Application.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Config.Tests\TQVaultAE.Config.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Data.Tests\TQVaultAE.Data.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Services.Tests\TQVaultAE.Services.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Services.Git.Tests\TQVaultAE.Services.Git.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Presentation.Tests\TQVaultAE.Presentation.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.DbCli.Tests\TQVaultAE.DbCli.Tests.csproj" />
+    <Project Path="src\tests\TQVaultAE.Tests.Win32\TQVaultAE.Tests.Win32.csproj" />
+  </Folder>
 </Solution>

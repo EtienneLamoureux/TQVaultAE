@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Windows-only part of the presentation layer: System.Drawing bitmaps, fonts, icons and the UI images. -->
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Enums.NET" />
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="System.Drawing.Common" />
+		<PackageReference Include="System.Resources.Extensions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TQVaultAE.Application\TQVaultAE.Application.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Config\TQVaultAE.Config.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Domain\TQVaultAE.Domain.csproj" />
+		<ProjectReference Include="..\TQVaultAE.Presentation\TQVaultAE.Presentation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Images.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Images.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<!-- Files that are the same in every language, read by EmbeddedAssets. -->
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Fonts\*.ttf" LogicalName="Fonts.%(Filename)%(Extension)" />
+		<EmbeddedResource Include="Resources\Files\IconServiceList.json" LogicalName="IconServiceList.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Images.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Images.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>
