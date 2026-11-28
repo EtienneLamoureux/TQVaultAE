@@ -24,8 +24,7 @@ You can create a "requirement range" via Min/Max checkboxes.
 _**Note:** Leaving a value to 0 means "ignore"._
 
 The popup also has check boxes (Having Prefix, Having Suffix, Having Relic, Having Charm, Set Item, Having Skill, Modded)
-and lists to tick: item types, rarity, origin and, when mods are installed, the installed mods. The screenshot below is
-older and shows only the first two boxes.
+and lists to tick: item types, rarity, origin and, when mods are installed, the installed mods.
 
 *Modded* keeps the items that come from a mod, installed or not: the mod whose data gave at least one of the item's
 records, read with the data of its vault, character or shared stash (see [Mods](MODS.md#ItemMod) and
