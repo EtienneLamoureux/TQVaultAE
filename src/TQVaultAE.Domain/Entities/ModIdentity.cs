@@ -4,7 +4,7 @@ namespace TQVaultAE.Domain.Entities;
 /// The identity of a mod as items, vaults and links name it (<see cref="Item.Mod"/>): its folder name, which the game
 /// names its database and shared stash folder after, and where it is installed from, since a Steam Workshop mod and a
 /// custom map can have the same folder name. In memory both are one key, <c>name|source</c>; files keep the name in
-/// <c>"mod"</c> and the source in <c>"modSource"</c>, so that older versions still read the name.
+/// <c>"mod"</c> and the source in <c>"modSource"</c>.
 /// </summary>
 public static class ModIdentity
 {

@@ -73,7 +73,7 @@ public class ItemTextFormatterSkillWindowEffectsTests : ItemProviderTextTestBase
 
 	[Fact]
 	public void Modifier_WritesTheLifeTimeItAdds()
-		// Lasting Legacy, a modifier of Ancestral Horn, has only spawnObjectsTimeToLive: its blocks were empty.
+		// Lasting Legacy, a modifier of Ancestral Horn, has only spawnObjectsTimeToLive.
 		=> this.Effects(2, Floats("spawnObjectsTimeToLive", 4f, 7f)).Should().Equal("Extra Life Time 7 Seconds");
 
 	[Fact]
@@ -119,7 +119,7 @@ public class ItemTextFormatterSkillWindowEffectsTests : ItemProviderTextTestBase
 	[InlineData(2, "54 Fire Damage", "55 Cold Damage", "56 Lightning Damage")]
 	public void SkillCastOnDamageType_ShowsTheChance_AndTheDamageOfEachCastSkill(int level, string fire, string cold, string lightning)
 	{
-		// Echoes of the Ancestors casts a fire, cold or lightning blast on a kill: its blocks were empty.
+		// Echoes of the Ancestors casts a fire, cold or lightning blast on a kill.
 		this.CreateRecord("""records\test\fire.dbr""", "Skill_AttackRadius", Floats("offensiveFireMin", 40f, 54.6f));
 		this.CreateRecord("""records\test\cold.dbr""", "Skill_AttackRadius", Floats("offensiveColdMin", 41f, 55f));
 		this.CreateRecord("""records\test\lightning.dbr""", "Skill_AttackRadius", Floats("offensiveLightningMin", 42f, 56f));

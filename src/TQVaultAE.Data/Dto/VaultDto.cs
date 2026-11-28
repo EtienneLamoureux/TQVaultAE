@@ -34,7 +34,7 @@ public class VaultDto
 
 	/// <summary>
 	/// Where the mod of <see cref="mod"/> is installed from (<c>workshop:&lt;id&gt;</c> or <c>custommaps</c>): a Steam
-	/// Workshop mod and a custom map can have the same folder name. Older versions ignore it.
+	/// Workshop mod and a custom map can have the same folder name.
 	/// </summary>
 	[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
 	public string? modSource { get; set; }

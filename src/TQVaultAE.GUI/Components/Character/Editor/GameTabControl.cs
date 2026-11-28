@@ -113,7 +113,7 @@ internal sealed class GameTabControl : Control
 	}
 
 	/// <summary>
-	/// The frame and its pages are painted in one pass (<c>WS_EX_COMPOSITED</c>): a page with transparent parts no longer
+	/// The frame and its pages are painted in one pass (<c>WS_EX_COMPOSITED</c>): a page with transparent parts never
 	/// shows the frame's black under it for a moment when it appears.
 	/// </summary>
 	protected override CreateParams CreateParams

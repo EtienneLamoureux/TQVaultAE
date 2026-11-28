@@ -68,8 +68,8 @@ button or focus change reaches the user while an agent drives it.
   - a "Windows Forms Error" before the main form has loaded takes Abort (TQVault quits) instead of Ignore;
   - when startup fails (global error box of `Program.Main`), the box is listed under `unanswered`, the endpoint stays up
     10 s for `dialog_answers` and `recent_log` to report it, then the process exits with code 1;
-  - without `--headless`, that box is no longer a `DefaultDesktopOnly` box in Debug: `list_windows` and `close_dialog`
-    see it, and the process exits 10 s after it is answered.
+  - without `--headless`, that box is not a `DefaultDesktopOnly` box in Debug (it is in Release): `list_windows` and
+    `close_dialog` see it, and the process exits 10 s after it is answered.
 - Nothing can be seen or clicked by hand. Stop it with the Exit button (`click_control("TQVaultAE", "exitButton")`),
   which saves like a normal exit, or end the process.
 - Use another port (`TQVAULT_MCP_PORT`) when a visible Debug instance already listens on 47017.

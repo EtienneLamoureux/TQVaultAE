@@ -65,12 +65,11 @@ You can hide it.
 
 ![ShowHide](advancedsearch/showhide.png)
 
-The screenshots of this page are older. The form now also has:
+Not on the screenshots:
 
-- the "Origin", "Mod", "Sets" and "Item Skills" categories. "Mod" lists the mods the items come from (the mod whose
-  data gave at least one of the item's records, read with the data of its vault, character or shared stash), installed
-  mods first;
-- the "Having Skill" and "Modded" quick filters. "Modded" keeps every item from a mod.
+- the "Mod" category: the mods the items come from (the mod whose data gave at least one of the item's records, read
+  with the data of its vault, character or shared stash), installed mods first;
+- the "Modded" quick filter: keeps every item from a mod.
 
 ---
 
