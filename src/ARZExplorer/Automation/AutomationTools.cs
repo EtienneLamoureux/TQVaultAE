@@ -169,11 +169,25 @@ internal static class AutomationTools
 		return Json(task.Result);
 	}
 
-	[McpServerTool(Name = "capture", ReadOnly = true)]
-	[Description("Renders the main window to PNG with Control.DrawToBitmap (works when it is hidden behind others).")]
-	public static IEnumerable<ContentBlock> Capture()
+	[McpServerTool(Name = "capture", Destructive = false)]
+	[Description("Renders the main window to PNG with Control.DrawToBitmap (works when it is hidden behind others). 'shown=true' copies the pixels the window really shows on its desktop instead (PrintWindow), title bar included: use it for documentation pictures. 'width' and 'height' (pixels, both or none) resize the window first.")]
+	public static IEnumerable<ContentBlock> Capture(
+		[Description("Copy the pixels the window shows on its desktop instead of DrawToBitmap.")] bool shown = false,
+		[Description("New window width in pixels (0 keeps it).")] int width = 0,
+		[Description("New window height in pixels (0 keeps it).")] int height = 0)
 	{
-		var png = AutomationHost.OnUi(ControlImages.RenderPng, TimeSpan.FromSeconds(5));
+		var png = AutomationHost.OnUi(form =>
+		{
+			if (width > 0 && height > 0)
+			{
+				form.WindowState = System.Windows.Forms.FormWindowState.Normal;
+				form.Size = new System.Drawing.Size(width, height);
+				form.PerformLayout();
+			}
+
+			using var bitmap = shown ? ControlImages.RenderAsShown(form) : ControlImages.Render(form);
+			return ControlImages.Png(bitmap);
+		}, TimeSpan.FromSeconds(5));
 
 		var path = Path.Combine(Path.GetTempPath(), $"arzexplorer-capture-{DateTime.Now:yyyyMMdd-HHmmss-fff}.png");
 		File.WriteAllBytes(path, png);
