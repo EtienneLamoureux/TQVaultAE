@@ -146,7 +146,7 @@ public sealed class ModLinkServiceTests : IDisposable
 	[Fact]
 	public void Resolve_HomonymsLinkWithSource_FindsTheModOfThatSource_IgnoringAFolder()
 	{
-		// The custom map was linked; the Workshop mod has the same folder name. A "folder" (older files) is not read.
+		// The custom map was linked; the Workshop mod has the same folder name. A "folder" is not read.
 		this.AddWorkshopMod("1949340853", "shadowchampions");
 		var customMap = this.AddCustomMap("shadowchampions");
 		File.WriteAllText(this.LinkFile, """{ "version": 1, "mod": "shadowchampions", "source": "custommaps", "folder": "D:\\gone\\shadowchampions" }""");

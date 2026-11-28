@@ -76,8 +76,7 @@ public sealed class DialogAnswerQueueTests : IDisposable
 	[Fact]
 	public async Task QueueFromSeveralThreads_WhileAnswersAreTaken_LosesNoAnswer()
 	{
-		// Putting an answer first used to empty and refill the queue: answers queued or taken meanwhile were lost or
-		// taken twice.
+		// An answer put first while other threads queue and take answers: none is lost or taken twice.
 		const int perThread = 2000;
 		var ct = TestContext.Current.CancellationToken;
 		var taken = 0;

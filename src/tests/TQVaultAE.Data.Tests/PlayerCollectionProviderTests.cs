@@ -254,7 +254,7 @@ public class PlayerCollectionProviderTests
 		var loaded = new PlayerCollection("test", "vault.json") { IsVault = true };
 		_provider.LoadFile(loaded, "vault.json");
 
-		// The name stays in "mod", where older versions read it.
+		// The name in "mod", the source in "modSource".
 		using var doc = JsonDocument.Parse(written!);
 		doc.RootElement.GetProperty("mod").GetString().Should().Be("shadowchampions");
 		doc.RootElement.GetProperty("modSource").GetString().Should().Be("workshop:1949340853");

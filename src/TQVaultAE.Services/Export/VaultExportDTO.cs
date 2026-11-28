@@ -23,7 +23,7 @@ public class VaultExportDTO
 
 	/// <summary>
 	/// Where the mod of <see cref="Mod"/> is installed from (<c>workshop:&lt;id&gt;</c> or <c>custommaps</c>): a Steam
-	/// Workshop mod and a custom map can have the same folder name. Absent from older exports: the name alone is then
+	/// Workshop mod and a custom map can have the same folder name. When absent, the name alone is
 	/// looked up.
 	/// </summary>
 	[JsonPropertyName("modSource")]

@@ -169,7 +169,7 @@ public class PlayerCollectionProvider(ILogger<PlayerCollectionProvider> log, IIt
 			disabledtooltip = pc.DisabledTooltipBagId,
 			currentlyFocusedSackNumber = pc.currentlyFocusedSackNumber,
 			currentlySelectedSackNumber = pc.currentlySelectedSackNumber,
-			// The mod's name, and apart where it is installed from: older versions read the name.
+			// The mod's name, and apart where it is installed from.
 			mod = ModIdentity.NameOf(pc.Mod),
 			modSource = ModIdentity.SourceOf(pc.Mod),
 			sacks = pc.Select(sack => new SackDto()

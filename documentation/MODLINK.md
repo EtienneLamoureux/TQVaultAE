@@ -183,8 +183,7 @@ are two mods, told apart by the dialog, the *Modded vault* menu, the filters and
 
 ### In the files
 
-The vault's mod is `"mod"` at the top of the vault file. Items write no mod: an item's own `"mod"`, `"modSource"` or
-`"noMod"`, written by older TQVault versions of this branch, are ignored when read and dropped at the next save.
+The vault's mod is `"mod"` at the top of the vault file. Items write no mod.
 
 ```json
 {

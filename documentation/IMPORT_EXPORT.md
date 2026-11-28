@@ -181,7 +181,7 @@ All exports use a JSON envelope with the following structure:
 - **`data`** — Scope-specific payload:
   - `Item`: Single `ItemDto` object (includes `stackSize`, `seed`, `baseName`, `prefixName`, `suffixName`, `relicName`, `relicBonus`, `var1`, `relicName2`, `relicBonus2`, `var2`, `pointX`, `pointY`, `width`, `height`).
   - `width` and `height`: the item's real size in cells (one cell per 32 pixels of its picture), even when it shows in one cell for want of room. Older versions could write `0` for items whose picture was not drawn yet; imports ignore them.
-  - An `ItemDto` has no mod: an item's mod is computed from the data of the container it is put in ([Mod link](MODLINK.md)). Older exports of this branch could have an item's `mod`, `modSource` or `noMod`: imports ignore them.
+  - An `ItemDto` has no mod: an item's mod is computed from the data of the container it is put in ([Mod link](MODLINK.md)).
   - `MultiSelect`: array of `ItemDto` objects (two or more: one selected item exports as `Item`).
   - `Tab`: object with `sackNumber`, `items` (array of `ItemDto`), optional `iconInfo` (bag button label, display mode, icon RecordIds), and `mod` and `modSource` when its vault or character is linked to a mod. Its items are read with that mod until placed, then with their target's map. An import drops a mod not installed here.
   - `Vault`: object with the vault `name`, `sacks` (array of tabs with `sackNumber`, `items` and `iconInfo`, no mod of their own), and `mod` and `modSource` when the vault is linked to a mod.
