@@ -301,6 +301,9 @@ General rules:
   its label does, through the label's own handler: `filters` (selected filters; select some first with
   `check_list_items`), `results` (results found), `none` hides them. Returns `shown` (false with nothing to show).
   Capture with `capture("tooltip")`.
+- **`search_count_tooltip(list, index)`** *(Debug)*: rests the pointer on a category list entry of the open Advanced
+  Search dialog (the list's own MouseMove handler) and shows its "matching item(s)" tool tip; returns the text, the
+  screen bounds and a PNG of that native tool tip window (PrintWindow).
 
 ### State, search and mods
 
@@ -1107,7 +1110,7 @@ every build, ARZExplorer in Debug builds only; each keeps its own part in its
 | `grid_links`, `click_grid_cell(row, column)` | The link cells of a DBR record grid; a click on one (navigates, loading the archive it needs). |
 | `check_links(contains, maxRecords, render, path)` | Every link of the database records (see below). |
 | `decode_tex(key)` | Reads and decodes a TEX off the UI thread, with timings: tells a decoder problem from a UI one. |
-| `capture` | PNG of the window (`DrawToBitmap`). |
+| `capture(shown, width, height)` | PNG of the window (`DrawToBitmap`); `shown=true` copies what the window shows (`PrintWindow`, title bar included) for documentation pictures; `width` and `height` resize it first. |
 | `about` | Help > About without blocking: its texts and a PNG, then closes it. |
 | `drop_files(paths)` | Drops files on the window through its DragEnter and DragDrop handlers, as Explorer does. |
 | `sound_player(action)` | The sound player of a .wav or .mp3 entry: `state`, or a click on `play`, `loop`, `stop`; the sound is then loaded, which checks its wave data. |

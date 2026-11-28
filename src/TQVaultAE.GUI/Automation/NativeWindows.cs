@@ -175,44 +175,4 @@ internal static partial class NativeWindows
 
 	/// <summary>Posts <paramref name="msg"/> to a window's message queue, handled by its thread's message loop.</summary>
 	public static bool Post(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam) => Win32Window.Post(hwnd, msg, wParam, lParam);
-
-	/// <summary>PrintWindow: the window's content as the desktop composes it, not a WM_PRINT repaint.</summary>
-	private const uint PW_RENDERFULLCONTENT = 0x2;
-
-	[LibraryImport("user32.dll")]
-	[return: MarshalAs(UnmanagedType.Bool)]
-	private static partial bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
-
-	/// <summary>
-	/// The pixels of <paramref name="control"/> as the window shows them on its desktop (the hidden one in headless
-	/// mode): its top-level window is copied from the desktop's composition, after its pending paints, then cropped to
-	/// the control. Unlike <see cref="Control.DrawToBitmap"/> it keeps what the window really drew, overlaps and
-	/// transparent children included.
-	/// </summary>
-	public static Bitmap RenderAsShown(Control control)
-	{
-		var top = control.TopLevelControl ?? control;
-		top.Update();
-		var window = top is Form form ? form.Bounds : top.RectangleToScreen(top.ClientRectangle);
-		using var whole = new Bitmap(window.Width, window.Height);
-		using (var g = Graphics.FromImage(whole))
-		{
-			var hdc = g.GetHdc();
-			try
-			{
-				if (!PrintWindow(top.Handle, hdc, PW_RENDERFULLCONTENT))
-					throw new AutomationRefusedException("PrintWindow failed.");
-			}
-			finally
-			{
-				g.ReleaseHdc(hdc);
-			}
-		}
-
-		var area = control.RectangleToScreen(control.ClientRectangle);
-		if (control == top && top is Form)
-			area = window;
-		area.Offset(-window.X, -window.Y);
-		return whole.Clone(Rectangle.Intersect(area, new Rectangle(Point.Empty, whole.Size)), whole.PixelFormat);
-	}
 }

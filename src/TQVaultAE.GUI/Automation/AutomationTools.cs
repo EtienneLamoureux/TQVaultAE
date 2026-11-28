@@ -681,7 +681,7 @@ internal static partial class AutomationTools
 			if (target.Width <= 0 || target.Height <= 0)
 				throw new McpException($"'{control}' has no size (is it shown?).");
 
-			using var bitmap = shown ? NativeWindows.RenderAsShown(target) : AutomationImages.Render(target);
+			using var bitmap = shown ? ControlImages.RenderAsShown(target) : AutomationImages.Render(target);
 			return AutomationImages.Png(bitmap);
 		});
 

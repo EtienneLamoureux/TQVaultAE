@@ -1,8 +1,10 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol;
+using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using TQVaultAE.Application.Contracts.Services;
+using TQVaultAE.Automation;
 using TQVaultAE.Domain.Entities;
 using static TQVaultAE.Automation.ControlTree;
 
@@ -21,6 +23,30 @@ internal static partial class AutomationTools
 		[Description("Shows a tool tip of the open Advanced Search dialog as resting the pointer on its label does, through the label's own handler: 'filters' for the selected filters (label scalingLabelFiltersSelected; select some first with check_list_items), 'results' for the results found (label scalingLabelProgress), 'none' hides them. Capture it with capture('tooltip').")]
 		public static string SearchTooltip([Description("filters, results or none.")] string kind)
 			=> AutomationHost.OnUi(_ => Serialize(new { kind, shown = OpenSearchDialog().AutomationShowTooltip(kind) }));
+
+		[McpServerTool(Name = "search_count_tooltip", Destructive = true)]
+		[Description("Shows the matching items tool tip of a category list entry of the open Advanced Search dialog, as resting the pointer on it does (the list's own MouseMove handler sets it), and returns its text, screen bounds and a PNG of the native tool tip window (PrintWindow). Lists as list_items names them (scalingCheckedListBoxItemType...).")]
+		public static IEnumerable<ContentBlock> SearchCountTooltip(
+			[Description("Category list name.")] string list,
+			[Description("Entry index in the list.")] int index)
+		{
+			var (text, png, bounds) = AutomationHost.OnUi(_ =>
+			{
+				var dialog = OpenSearchDialog();
+				var shown = dialog.AutomationShowCountTooltip(FindVirtualList(dialog, list), index);
+				var tip = string.IsNullOrEmpty(shown) ? null
+					: NativeWindows.GetProcessTopLevelWindows().FirstOrDefault(w => w.ClassName.Contains("tooltips_class", StringComparison.OrdinalIgnoreCase));
+				if (tip is null)
+					return (shown, (byte[]?)null, Rectangle.Empty);
+				var (image, area) = ControlImages.RenderWindow(tip.Handle);
+				using (image)
+					return (shown, ControlImages.Png(image), area);
+			});
+			var result = new List<ContentBlock> { new TextContentBlock { Text = Serialize(new { text, shown = png is not null, bounds = new { bounds.X, bounds.Y, bounds.Width, bounds.Height } }) } };
+			if (png is not null)
+				result.Add(ImageContentBlock.FromBytes(png, "image/png"));
+			return result;
+		}
 
 		[McpServerTool(Name = "search_dialog_scroll", Destructive = true)]
 		[Description("Scrolls the open Advanced Search dialog like its scroll bars: the categories area to x, y (pixels from the top left), and/or a category list to its first shown column. Returns the dialog state as search_dialog_state does.")]

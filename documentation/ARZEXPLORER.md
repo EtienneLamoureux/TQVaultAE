@@ -74,8 +74,6 @@ The toolbar contains the following buttons:
 
 ![TypeRecord](arzexplorer/toolbar.png)
 
-_The screenshots of this page are older: they show a shorter toolbar and no "Search" menu._
-
 A file dropped on the window is opened.
 
 ---

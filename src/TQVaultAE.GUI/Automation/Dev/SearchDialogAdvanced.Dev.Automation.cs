@@ -31,4 +31,27 @@ public partial class SearchDialogAdvanced
 				throw new AutomationRefusedException($"Unknown tool tip '{kind}': filters, results or none.");
 		}
 	}
+
+	/// <summary>
+	/// Rests the pointer on entry <paramref name="index"/> of a category list: its own MouseMove handler sets the
+	/// matching items tool tip, which is then shown at once (the user sees it after the hover delay).
+	/// </summary>
+	/// <returns>The tool tip text (empty when the entry has none).</returns>
+	internal string AutomationShowCountTooltip(Components.Layout.VirtualCheckedListBox list, int index)
+	{
+		var point = Point.Empty;
+		var found = false;
+		for (int y = 1; y < list.ClientSize.Height && !found; y += 2)
+			for (int x = 4; x < list.ClientSize.Width && !found; x += 8)
+				if (list.IndexFromPoint(x, y) == index)
+					(point, found) = (new Point(x + 20, y), true);
+		if (!found)
+			throw new AutomationRefusedException($"Entry {index} of '{list.Name}' is not shown.");
+
+		this.scalingCheckedListBox_MouseMove(list, new MouseEventArgs(MouseButtons.None, 0, point.X, point.Y, 0));
+		var text = this.toolTip.GetToolTip(list) ?? string.Empty;
+		if (!string.IsNullOrEmpty(text))
+			this.toolTip.Show(text, list, point.X + 4, point.Y + 20);
+		return text;
+	}
 }
