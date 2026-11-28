@@ -301,6 +301,9 @@ General rules:
   its label does, through the label's own handler: `filters` (selected filters; select some first with
   `check_list_items`), `results` (results found), `none` hides them. Returns `shown` (false with nothing to show).
   Capture with `capture("tooltip")`.
+- **`search_count_tooltip(list, index)`** *(Debug)*: rests the pointer on a category list entry of the open Advanced
+  Search dialog (the list's own MouseMove handler) and shows its "matching item(s)" tool tip; returns the text, the
+  screen bounds and a PNG of that native tool tip window (PrintWindow).
 
 ### State, search and mods
 

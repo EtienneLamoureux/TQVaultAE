@@ -43,6 +43,45 @@ public static partial class ControlImages
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
 
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool GetWindowRect(IntPtr hWnd, out Win32Rect rect);
+
+	[StructLayout(LayoutKind.Sequential)]
+	private struct Win32Rect
+	{
+		public int Left, Top, Right, Bottom;
+	}
+
+	/// <summary>
+	/// The pixels of a top-level window as its desktop composes it (PrintWindow), with its screen bounds: for windows
+	/// that are no <see cref="Control"/>, such as a native tool tip.
+	/// </summary>
+	public static (Bitmap Image, Rectangle Bounds) RenderWindow(IntPtr hwnd)
+	{
+		if (!GetWindowRect(hwnd, out var r))
+			throw new InvalidOperationException("GetWindowRect failed.");
+		var bounds = Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom);
+		return (Print(hwnd, bounds.Size), bounds);
+	}
+
+	private static Bitmap Print(IntPtr hwnd, Size size)
+	{
+		var bitmap = new Bitmap(size.Width, size.Height);
+		using var g = Graphics.FromImage(bitmap);
+		var hdc = g.GetHdc();
+		try
+		{
+			if (!PrintWindow(hwnd, hdc, PW_RENDERFULLCONTENT))
+				throw new InvalidOperationException("PrintWindow failed.");
+		}
+		finally
+		{
+			g.ReleaseHdc(hdc);
+		}
+		return bitmap;
+	}
+
 	/// <summary>
 	/// The pixels of <paramref name="control"/> as the window shows them on its desktop (the hidden one in headless
 	/// mode): its top-level window is copied from the desktop's composition, after its pending paints, then cropped to
@@ -55,20 +94,7 @@ public static partial class ControlImages
 		var top = control.TopLevelControl ?? control;
 		top.Update();
 		var window = top is Form form ? form.Bounds : top.RectangleToScreen(top.ClientRectangle);
-		using var whole = new Bitmap(window.Width, window.Height);
-		using (var g = Graphics.FromImage(whole))
-		{
-			var hdc = g.GetHdc();
-			try
-			{
-				if (!PrintWindow(top.Handle, hdc, PW_RENDERFULLCONTENT))
-					throw new InvalidOperationException("PrintWindow failed.");
-			}
-			finally
-			{
-				g.ReleaseHdc(hdc);
-			}
-		}
+		using var whole = Print(top.Handle, window.Size);
 
 		var area = control.RectangleToScreen(control.ClientRectangle);
 		if (control == top && top is Form)
